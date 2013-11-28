@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="format-detection" content="telephone=no" />
+		<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+		<link rel="stylesheet" type="text/css" href="css/mobile.css" media="screen, projection" />
+		<script type="text/javascript" src="cordova-2.5.0.js"></script>
+		<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+		<script type="text/javascript" src="js/SequelSphereDB.js"></script>
+		<script type="text/javascript" src="js/models.js"></script>
+		<script type="text/javascript" src="js/loadStudy.js"></script>
+		<script type="text/javascript" src="js/evalExpression.js"></script>
+		<script type="text/javascript" src="js/buildQuestions.js"></script>
+		<script type="text/javascript" src="js/interpretTags.js"></script>
+		<script type="text/javascript" src="js/view.js"></script>
+		<script type="text/javascript" src="js/save.js"></script>
+		<script type="text/javascript" src="js/nav.js"></script>
+		<script type="text/javascript" src="js/upload.js"></script>
+		<script>
+currentPage = 0;
+completed = 0;
+interviewId = null;
+studyId = undefined;
+model = new Object;
+errorModel = new ErrorModel;
+
+function objToArray(obj){
+	arr = [];
+	for(k in obj){
+		arr.push(obj[k]);
+	}
+	return arr;
+}
+
+function getStudies(){
+	$('#interviewList').hide();
+	div = $('#studyList');
+	div.show();
+	var studies = db.queryObjects("SELECT * FROM study").data;
+	for (var i in studies) {
+		console.log(studies[i]);
+		if(typeof color == 'undefined' || color == ' colorB')
+		    color = ' colorA';
+		else
+		    color = ' colorB';
+		var studyServer = db.queryValue("SELECT address FROM serverstudy WHERE id = " + studies[i].ID);
+		var interviews = db.queryObjects("SELECT id FROM interview WHERE completed = -1 AND studyId = " + studies[i].ID).data.length;
+		console.log("SELECT id FROM interview WHERE completed = -1 AND studyId = " + studies[i].ID);
+		div.append("<div class='multiRow" + color + "' style='width:35%; text-align:left'>"+ studies[i].NAME + " (" + studies[i].MODIFIED + ")</div>");
+		div.append("<div class='multiRow" + color + "' style='width:20%; text-align:left'>"+ studyServer + "</div>");
+		div.append("<div class='multiRow" + color + "' style='width:20%; text-align:left'><button onclick='getInterviews(" + studies[i].ID + ")' style='margin-left:20px; padding:3px'>Open Study</button></div>");
+		if(interviews > 0)
+			div.append("<div class='multiRow" + color + "' style='width:25%'><button id='uploader-"+ studies[i].ID +"' onclick='upload(" +  studies[i].ID + ")' style='margin-left:20px; padding:3px'>Upload Data (" +  interviews + ")</button></div>");
+		else
+			div.append("<div class='multiRow" + color + "' style='width:20%'>&nbsp;</div>");
+		div.append("<br style='clear:both'>");
+	}
+}
+
+function getInterviews(studyId){
+	$('#navButton').hide();
+	$('#studyList').hide();
+	div = $('#interviewList');
+	div.show();
+	interviews = db.queryObjects("SELECT * FROM interview WHERE studyId = " + studyId).data;
+	div.append("<div class='multiRow' style='width:70%; text-align:left; height:50px'><h1>"+ getInterviewName(studyId) + "</h1></div>");
+	div.append("<div class='multiRow' style='height:50px'><button onclick='loadStudy(" + studyId + ")' style='margin-top:15px;'>New Interview</button></div>");
+	div.append("<br style='clear:both'>");
+	for (var i in interviews) {
+		div.append("<div class='multiRow" + color + "' style='width:70%; text-align:left'>"+ getEgoIdValue(interviews[i].ID) + "</div>");
+		if(parseInt(interviews[i].COMPLETED) == -1)
+			div.append("<div class='multiRow" + color + "'><b>Completed</b></div>");
+		else
+			div.append("<div class='multiRow" + color + "'><button onclick='loadStudy(" + studyId + "," + interviews[i].ID + ")' style='margin-left:20px; padding:3px'>Continue</button></div>");
+		div.append("<br style='clear:both'>");
+	}
+}
+
+$(function(){
+	setTimeout(function(){
+		getStudies();
+	}, 500);
+});
+
+function dateValue(array_id){
+	item = '.time-' + array_id;
+    if($(item + '#MINUTE').val() != '' && parseInt($(item + '#MINUTE').val()) < 10)
+    	$(item + '#MINUTE').val('0' + parseInt($(item + '#MINUTE').val()));
+	date = $(item + '#MONTH option:selected').val() + ' ' +
+		$(item + '#DAY').val() + ' ' +
+		$(item + '#YEAR').val() + ' ' +
+		$(item + '#HOUR').val() + ':' +
+		$(item + '#MINUTE').val() + ' ' +
+		$(item + '#AMPM:checked').val();
+	$('#Answer_' + array_id + '_value').val(date);
+	console.log(date);
+
+}
+
+function timeValue(array_id){
+	item = '.time-' + array_id;
+
+	date = $(item + '#years').val() + ' YEARS ' +
+		$(item + '#months').val() + ' MONTHS ' +
+		$(item + '#weeks').val() + ' WEEKS ' +
+		$(item + '#days').val() + ' DAYS ' +
+		$(item + '#hours').val() + ' HOURS ' +
+		$(item + '#minutes').val() + ' MINUTES';
+	$('#Answer_' + array_id + '_value').val(date);
+	console.log(date);
+}
+
+function multiSelect(array_id, item, maxCheck){
+	console.log(item);
+	console.log($('#Answer_' + array_id + '_value').val());
+	if($('#Answer_' + array_id + '_value').val())
+		values = $('#Answer_' + array_id + '_value').val().split(',');
+	else
+		values = [];
+	$('#Answer_' + array_id + '_SKIPREASON').val('NONE');
+	$('.multiselect-' + array_id).each(function() {
+		if($(this).is(':checked')){
+			$('.' + array_id + '-skipReason').prop('checked', false);
+			if(values.indexOf($(this).val()) == -1)
+				values.push($(this).val());
+		}else{
+			if(values.indexOf($(this).val()) != -1)
+				values.splice(values.indexOf(item.val()),1);
+		}
+	});
+	if(values.length > maxCheck){
+		value = values.shift();
+		$('input.multiselect-' + array_id + '[value="' + value + '"]').prop('checked', false);
+	}
+	$('#Answer_' + array_id + '_value').val(values.join(','));
+}
+
+function skipReason(array_id, checkbox){
+	if(checkbox.val() != $('#Answer_' + array_id + "_SKIPREASON").val()){
+		$('.' + array_id + '-skipReason').prop('checked', false);
+		checkbox.prop('checked', true);
+        $('.multiselect-' +  array_id).prop('checked', false);
+		$('#Answer_' + array_id +"_value").val('');
+		$('#Answer_' + array_id +"_OTHERSPECIFYTEXT").val('');
+		$('#Answer_' + array_id +"_SKIPREASON").val(checkbox.val());
+	}else{
+		$('#Answer_' + array_id + "_SKIPREASON").val('NONE');
+	}
+}
+
+function unSkip(array_id, val){
+	if(val != ""){
+        $('.multiselect-' +  array_id).prop('checked', false);
+		$('#Answer_' + array_id + "_SKIPREASON").val('NONE');
+		$('.' + array_id + '-skipReason').prop('checked', false);
+		$('#Answer_' + array_id +"_value").val('');
+	}
+}
+
+function addAlter(name){
+	var check = db.queryValue("SELECT id FROM alters WHERE interviewId = " +  interviewId + " AND name = '" + name + "'");
+	if(check){
+		$('#ERROR').html("Name already exists!");
+		$('#ERROR').show();
+		return;
+	}else{
+		$('#ERROR').hide();
+	}
+
+	if(!name)
+		return;
+
+	if(countAlters() == study.MAXALTERS - 1){
+		$('#ALTER_PROMPT').hide();
+	}
+
+	newId = db.queryValue("SELECT id FROM alters ORDER BY id DESC");
+	if(!newId)
+		newId = 0;
+	alter = [
+		parseInt(newId) + 1,
+		1,
+		parseInt(db.queryValue("SELECT ordering FROM alters WHERE interviewId = " + interviewId + " ORDER BY ordering DESC")) + 1,
+		name,
+		interviewId,
+		''
+	];
+	db.catalog.getTable('alters').insertRow(alter);
+	db.commit();
+	$('#Alters_name').val('');
+	displayAlters();
+}
+
+function removeAlter(id){
+	alter = db.queryRow("SELECT * FROM alters WHERE id = " + id);
+	console.log(alter);
+	if(alter)
+		db.catalog.getTable('alters').deleteRow(alter);
+	db.commit();
+	if(countAlters() < study.MAXALTERS)
+		$('#ALTER_PROMPT').show();
+	displayAlters();
+}
+
+function getAlterName(id){
+	return db.queryValue('SELECT name FROM alters WHERE id =' + id);
+}
+
+function displayAlters(){
+	alterTable = $('#alters-grid .items');
+	alterTable.html('');
+	alters = db.queryObjects("SELECT * FROM alters WHERE interviewId = " + interviewId).data;
+	rowClass = "odd";
+	i=0;
+	for(k in alters){
+		i++;
+		alterTable.append("<tr class='" + rowClass + "'><td>"+
+		i + ' ' + alters[k].NAME+ '<a href="javascript:void(0)" onclick="removeAlter(' + alters[k].ID + ')"><img src="css/delete.png"></a>' +
+		"</td></tr>");
+		if(rowClass == "odd")
+			rowClass = "even";
+		else
+			rowClass = "odd";
+	}
+	var objDiv = document.getElementById("alterListBox");
+	objDiv.scrollTop = objDiv.scrollHeight;
+}
+
+function countAlters(){
+	return db.queryObjects("SELECT * FROM alters WHERE interviewId = " + interviewId).data.length;
+}
+
+function loadFirst(id, page, intId){
+	studyId = id;
+	interviewId = intId;
+	view(id, interviewId, page);
+	$('#studyList').hide();
+	$('#interviewList').hide();
+	$('#navButton').show();
+}
+
+function toggleOther(option){
+	console.log(option);
+	option.toggle();
+}
+
+function changeOther(other_id){
+	otherText = [];
+	$('.' + array_id + '_other').each(function(index){
+		if($(this).is(":visible"))
+			otherText.push($(this).attr('id')+":"+$(this).val());
+	});
+	$('#Answer_' + other_id + '_OTHERSPECIFYTEXT').val(otherText.join(';;'));
+}
+</script>
+		<title>EgoWeb Mobile</title>
+	</head>
+	<body>
+		<div id="topbar">
+			<a href="index.html"><img id="home_button" src="css/home_button.png" /></a>
+			<h3 style="float:right; font:Arial 12px; margin-bottom:0">Exploring social networks via interviews</h3>
+		</div>
+
+		<div id="menubar">
+			<div id="nav">
+				<a id="navButton" href="javascript:void(0)" onclick="$('#navigation').toggle()" style="display:none"><img src="css/nav.png"></a>
+			</div>
+			<span class="title" wicket:id="inlineTitle">EgoWeb Mobile</span>
+		</div>
+
+<div style='display:none'>
+	<div id="EMPTY"></div>
+	<div id='ORANGETEXT' class="orangeText"></div>
+	<div id='ANSWERPRE'>
+		<input name="Answer[12765][ID]" id="Answer_12765_ID" type="hidden" class="IDValue" />
+		<input name="Answer[12765][ACTIVE]" id="Answer_12765_ACTIVE" type="hidden" class="ACTIVEValue" />
+		<input name="Answer[12765][QUESTIONID]" id="Answer_12765_QUESTIONID" type="hidden" class="QUESTIONIDValue" />
+		<input name="Answer[12765][INTERVIEWID]" id="Answer_12765_INTERVIEWID" type="hidden" class="INTERVIEWIDValue" />
+		<input name="Answer[12765][ALTERID1]" id="Answer_12765_ALTERID1" type="hidden" class="ALTERID1Value" />
+		<input name="Answer[12765][ALTERID2]" id="Answer_12765_ALTERID2" type="hidden" class="ALTERID2Value" />
+	</div>
+	<div id='ANSWERPOST'>
+		<input name="Answer[12765][OTHERSPECIFYTEXT]" id="Answer_12765_OTHERSPECIFYTEXT" type="input" class="OTHERSPECIFYTEXTValue" style="display:none" />
+		<input name="Answer[12765][SKIPREASON]" id="Answer_12765_SKIPREASON" type="hidden" class="SKIPREASONValue" />
+		<input name="Answer[12765][STUDYID]" id="Answer_12765_STUDYID" type="hidden" class="STUDYIDValue" />
+		<input name="Answer[12765][QUESTIONTYPE]" id="Answer_12765_QUESTIONTYPE" type="hidden" class="QUESTIONTYPEValue" />
+		<input name="Answer[12765][ANSWERTYPE]" id="Answer_12765_ANSWERTYPE" type="hidden" class="ANSWERTYPEValue" />
+	</div>
+	<div id='TEXTUAL'>
+		<input id="VALUE" type='text'>
+	</div>
+	<div id='TEXTUAL_PP'>
+		<textarea id="VALUE"></textarea>
+	</div>
+	<div id='NUMERICAL'>
+		<input id="VALUE" type='text'>
+	</div>
+	<div id='DATE'>
+		<div id='DATEFIELDS'>
+			<input type="text" id="HOUR" value="" style="float:left; width:30px" maxlength="2" />
+			<input type="text" id="MINUTE" value="" style="float:left; width:30px" maxlength="2" />
+
+			<input id="AMPM" name="AMPM" value="AM" type="radio" checked /><label for="AMPM" style="float:left; padding-right:5px"> AM </label>
+			<input id="AMPM" name="AMPM" value="PM" type="radio" /><label for="AMPM" style="float:left; padding-right:5px"> PM </label>
+
+			<select id="MONTH">
+			<option value="January">January</option>
+			<option value="February">February</option>
+			<option value="March">March</option>
+			<option value="April">April</option>
+			<option value="May">May</option>
+			<option value="June">June</option>
+			<option value="July">July</option>
+			<option value="August">August</option>
+			<option value="September">September</option>
+			<option value="October">October</option>
+			<option value="November">November</option>
+			<option value="December">December</option>
+			</select>
+
+			<input type="text" id="DAY" value="" style="width:30px" maxlength="2" />
+			<input type="text" id="YEAR" value="" style="width:60px" />
+		</div>
+		<input id="VALUE" type='hidden'>
+	</div>
+	<div id='TIME_SPAN'>
+		<div id='TIMEFIELDS'>
+			<input type="text" id="years" size="3" value="" />
+			Years
+			<input type="text" id="months" size="3" value="" />
+			Months
+			<input type="text" id="weeks" size="3" value="" />
+			Weeks
+			<input type="text" id="days" size="3" value="" />
+			Days
+			<input type="text" id="hours" size="3" value="" />
+			Hours
+			<input type="text" id="minutes" size="3" value="" />
+			Minutes
+		</div>
+		<input id="VALUE" type='hidden'>
+	</div>
+	<div id='SELECTION'>
+		<input id="VALUE" type='hidden'>
+		<input id="MULTISELECT" type='radio' />
+	</div>
+	<div id='MULTIPLE_SELECTION'>
+		<input id="VALUE" type='hidden'>
+		<input id="MULTISELECT" type='checkbox' />
+	</div>
+	<div id='SKIP'>
+		<input type="checkbox" name="skip[]" id="DONT_KNOW" value="DONT_KNOW"><label class="DONT_KNOW_LABEL" for="DONT_KNOW">Don't Know</label><br class="DONT_KNOW_LABEL">
+		<input type="checkbox" name="skip[]" id="REFUSE" value="REFUSE"><label class="REFUSE_LABEL" for="REFUSE">Refuse</label>
+	</div>
+	<form id="hiddenForm" method="post" action='http://75.146.48.253/mobile/uploadData'>
+		<textarea name="data" id="data"></textarea>
+	</form>
+</div>
+
+<div id="navigation">
+	<div id="navbox">
+		<ul></ul>
+	</div>
+</div>
+		<div id="content">
+			<div id="studyList">
+			    <h1>Studies</h1><br>
+			    <div id="status"></div><br>
+			</div>
+			<div id="interviewList" style="margin-top:20px">
+			</div>
+			<div id="alterListBox">
+			<div id="alters-grid" class="grid-view">
+			    <table class="items">
+			    		<tr><td colspan="3" class="empty"></td></tr>
+			    </table>
+			</div>
+			</div>
+			<div style="display:none" class="questionText"></div>
+			<div id="ERROR" class="errorSummary" style="float:left; display:none;clear:left; width:480px"></div>
+			<div class='question' style='clear:left'>
+			    <form></form>
+			    <div id="ALTER_PROMPT" style="display:none; float:left; width:480px">
+			    	<input id="Alters_name" type="text" value="" name="Alters[name]" />
+			    	<input value="74" name="Alters[interviewId]" id="Alters_interviewId" type="hidden" />
+			    	<button class="orangebutton" name="yt0" onclick='addAlter($("#Alters_name").val())'>+ Add</button>
+			    </div>
+			</div>
+			<br clear=left>
+			<div style="float:left; margin-top:20px">
+			    <a class="graybutton" href="javascript:void(0)" onclick="view(studyId,interviewId, currentPage-1)" style="display:none">Back</a>
+			    <button id="next" class='orangebutton' onclick="save(studyId,currentPage)" style="display:none">Next</button>
+			</div>
+		</div>
+	</body>
+</html>
+

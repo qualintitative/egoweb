@@ -1,0 +1,1 @@
+    		<?php echo $form->textArea($model,'value',array('rows'=>6, 'cols'=>50)); ?>
