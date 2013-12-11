@@ -114,6 +114,26 @@ $(function(){
 		<?php echo $form->error($model,'valueNotYetAnswered'); ?>
 	</div>
 
+	<div class="row">
+		<?php echo $form->labelEx($model,'multiSessionEgoId'); ?>
+		<?php $criteria=new CDbCriteria;
+		$criteria=array(
+			'condition'=>"studyId = " . $model->id . " AND subjectType = 'EGO_ID'",
+		);
+		?>
+		<?php echo $form->dropdownlist(
+			$model,
+		    'multiSessionEgoId',
+		    CHtml::listData(
+		    	Question::model()->findAll($criteria),
+		    	'id',
+				function($post) {return CHtml::encode(substr($post->title,0,40));}
+		    ),
+		    array('empty' => 'Choose One')
+		); ?>
+		<?php echo $form->error($model,'multiSessionEgoId'); ?>
+	</div>
+
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
 	</div>
@@ -127,9 +147,9 @@ $(function(){
 	<?php endif; ?>
 </div>
 
+<br style="clear:both">
 
-
-	<div class="row" style="width:50%; float:left; padding:10px">
+	<div class="row" style="float:left;width:100%; padding:10px">
 		<div id="alterPrompt" >
 		<?php
 			$criteria=new CDbCriteria;
@@ -142,7 +162,7 @@ $(function(){
    			$this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$model->id, 'ajax'=>true), false, false);
         ?>
 		</div>
-		<div style="float:left; width:400px;margin-top:15px;">
+		<div style="float:left; width:100%;margin-top:15px;">
 			<span class="smallheader">Add new alter prompt</span>
 			<?php
 				$alterPrompt = new AlterPrompt;
@@ -167,8 +187,7 @@ $(function(){
 			<?php $this->endWidget(); ?>
 			<div id="edit-alterPrompt" style="margin-top:15px;float:left;clear:both;"></div>
 		</div>
-	</div>
-	<div class="row" style="width:50%; float:left; padding:10px">
+
 		<div id="alterList" >
 		<?php
 			$criteria=new CDbCriteria;

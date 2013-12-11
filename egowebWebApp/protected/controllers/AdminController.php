@@ -13,7 +13,7 @@ class AdminController extends Controller
 			//'postOnly + delete', // we only allow deletion via POST request
 		);
 	}
-	
+
 	/**
 	 * Specifies the access control rules.
 	 * This method is used by the 'accessControl' filter.
@@ -23,7 +23,7 @@ class AdminController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index', 'download'),
+				'actions'=>array('index', 'download', 'user'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -38,6 +38,16 @@ class AdminController extends Controller
 		$this->render('index');
 	}
 
+	public function actionUser()
+	{
+		$dataProvider=new CActiveDataProvider('User',array(
+            //'criteria'=>$criteria,
+            'pagination'=>false,
+        ));
+		$this->render('user', array(
+			'dataProvider' => $dataProvider,
+		));
+	}
 
 	public function actionDownload()
 	{

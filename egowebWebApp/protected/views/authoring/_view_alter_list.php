@@ -1,10 +1,10 @@
 <?php
 Yii::app()->clientScript->registerScript('delete', "
 jQuery('a.delete').click(function() {
-        
+
         var url = $(this).attr('href');
         //  do your post request here
-        
+
 
         $.get(url,function(data){
              $('#alterList').html(data);
@@ -14,10 +14,10 @@ jQuery('a.delete').click(function() {
 ");
 Yii::app()->clientScript->registerScript('update', "
 jQuery('a.update').click(function() {
-        
+
         var url = $(this).attr('href');
         //  do your post request here
-        
+
 
         $.get(url,function(data){
              $('#edit-alterList').html(data);
@@ -30,7 +30,7 @@ Yii::app()->clientScript->registerScript('moveup-2', "
 jQuery('a.moveup').click(function() {
         var url = $(this).attr('href');
         //  do your post request here
-        
+
 
         $.get(url,function(data){
              $('#showLink').html(data);
@@ -40,10 +40,10 @@ jQuery('a.moveup').click(function() {
 ");
 Yii::app()->clientScript->registerScript('moveup-Alters', "
 function clickHandler(evt) {
-        
+
         var url = $(this).attr('href');
         //  do your post request here
-        
+
 
         $.get(url,function(data){
              $('#showLink').html(data);
@@ -52,7 +52,7 @@ function clickHandler(evt) {
 }
 ");
 ?>
-<div style="width:300px; float:left">
+<div style="width:100%; float:left">
 <label>Pre-defined Alter List</label>
 
 <?php
@@ -62,6 +62,7 @@ if(isset($model))
 $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'alters-grid',
 	'dataProvider'=>$dataProvider,
+	'cssFile'=>false,
 	'columns'=>array(
         'id',
 		'name',
@@ -90,7 +91,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
             		//'click'=>'function(){alert("Going down!");}',
         		),
     		),
-    
+
 		),
 	),
 	'summaryText'=>'',

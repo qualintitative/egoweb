@@ -19,7 +19,7 @@ ul.adminMenu{
 	list-style: none;
 	margin: 0;
 	padding-left:0;
-	position:absolute;
+	float:left;
 	overflow: visible;
 	z-index: 9999;
 }
@@ -461,7 +461,7 @@ td{
 }
 
 #content{
-	padding:30px 40px;
+	padding:10px;
 }
 
 #home_button{
@@ -470,7 +470,7 @@ td{
 #topbar{
 	color:#666;
 	background:#e6e7e8;
-	height:40px;
+	height:60px;
 	text-align:right;
 	padding-right:40px;
 }
@@ -611,7 +611,6 @@ ul.authoring {
 
 ul.authoring li {
     box-sizing: border-box;
-    background:#688db7;
 	float:left;
 	padding:0;
 }
@@ -631,6 +630,8 @@ ul.authoring li a:hover{
 	font-weight:bold;
 	text-decoration: none;
 }
+
+
 .smallheader{
 	display:block;
 	font-weight:bold;
@@ -681,5 +682,12 @@ ul.authoring li a:hover{
 
 #alters-grid .items #ordering {
     color:#DB6C3E;
+}
 
+.grid-view thead th{
+	background-color:#000;
+}
+
+.grid-view thead th a{
+	color:#fff;
 }

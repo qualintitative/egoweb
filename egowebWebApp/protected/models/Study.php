@@ -49,7 +49,7 @@ class Study extends CActiveRecord
 		return array(
 			array('name', 'required'),
 			array('active', 'numerical', 'integerOnly'=>true),
-			array('id, active, name, introduction, egoIdPrompt, alterPrompt, conclusion, minAlters, maxAlters, adjacencyExpressionId', 'length', 'max'=>2048),
+			array('id, active, name, introduction, egoIdPrompt, alterPrompt, conclusion, minAlters, maxAlters, adjacencyExpressionId, multiSessionEgoId', 'length', 'max'=>2048),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, active, name, introduction, egoIdPrompt, alterPrompt, conclusion, minAlters, maxAlters, adjacencyExpressionId, valueRefusal, valueDontKnow, valueLogicalSkip, valueNotYetAnswered', 'safe', 'on'=>'search'),
@@ -738,7 +738,7 @@ class Study extends CActiveRecord
 			'valueDontKnow' => 'Value Dont Know',
 			'valueLogicalSkip' => 'Value Logical Skip',
 			'valueNotYetAnswered' => 'Value Not Yet Answered',
-
+			'multiSessionEgoId' => "Multi-session"
 		);
 	}
 

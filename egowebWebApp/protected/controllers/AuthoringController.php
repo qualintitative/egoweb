@@ -115,10 +115,15 @@ class AuthoringController extends Controller
 			if($model->save())
 				$this->redirect(array('edit','id'=>$model->id));
 		}
-        $studies = Study::model()->findAll();
+
+        $single = Study::model()->findAllByAttributes(array('multiSessionEgoId'=>0));
+		$multi = Study::model()->findAll('multiSessionEgoId <> 0', $params = array('order'=>'multiSessionEgoId'));
+
  		$this->render('index',array(
 		    'model'=>$model,
-			'studies'=>$studies,
+			'single'=>$single,
+			'multi'=>$multi,
+
 		));
 	}
 
@@ -137,6 +142,8 @@ class AuthoringController extends Controller
 			$row = Question::model()->find($criteria);
 			$model->ordering = $row['ordering'];
 			$model->save();
+			$this->redirect(array('ego_id','id'=>$id));
+
 		}
 		    $model = new Question;
 		    $model->subjectType = "EGO_ID";

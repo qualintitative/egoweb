@@ -26,8 +26,15 @@
 </div>
 
 <div class="view" style="width:360px;float:left;margin-right:30px">
-<h2>Studies</h2>
-<?php foreach($studies as $data): ?>
+<h2>Single Session Studies</h2>
+<?php foreach($single as $data): ?>
+<?php echo CHtml::link(CHtml::encode($data->name), array('edit', 'id'=>$data->id))."<br>"; ?>
+<?php endforeach; ?>
+</div>
+
+<div class="view" style="width:360px;float:left;margin-right:30px">
+<h2>Multi Session Studies</h2>
+<?php foreach($multi as $data): ?>
 <?php echo CHtml::link(CHtml::encode($data->name), array('edit', 'id'=>$data->id))."<br>"; ?>
 <?php endforeach; ?>
 </div>

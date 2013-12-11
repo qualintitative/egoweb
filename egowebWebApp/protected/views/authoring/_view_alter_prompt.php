@@ -1,10 +1,10 @@
 <?php
 Yii::app()->clientScript->registerScript('delete-prompt', "
 jQuery('a.delete-prompt').click(function() {
-        
+
         var url = $(this).attr('href');
         //  do your post request here
-        
+
 
         $.get(url,function(data){
              $('#alterPrompt').html(data);
@@ -14,10 +14,10 @@ jQuery('a.delete-prompt').click(function() {
 ");
 Yii::app()->clientScript->registerScript('update-prompt', "
 jQuery('a.update-prompt').click(function() {
-        
+
         var url = $(this).attr('href');
         //  do your post request here
-        
+
 
         $.get(url,function(data){
              $('#edit-alterPrompt').html(data);
@@ -26,7 +26,7 @@ jQuery('a.update-prompt').click(function() {
 });
 ");
 ?>
-<div style="width:300px; float:left">
+<div style="width:100%; float:left">
 <label>Variable Alter Prompts</label>
 
 <?php
@@ -35,7 +35,8 @@ if(isset($model))
 $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'alters-prompt-grid',
 	'dataProvider'=>$dataProvider,
-	'columns'=>array(
+	'cssFile'=>false,
+		'columns'=>array(
         array(
             'name' =>'after',
             'value' => '$data->afterAltersEntered',
@@ -60,7 +61,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
             		'options'=>array('class'=>'update-prompt'),
         		),
     		),
-    
+
 		),
 	),
 	'summaryText'=>'',
