@@ -9354,3 +9354,174 @@ Stack trace:
 #3 {main}
 REQUEST_URI=/MyAdmin/scripts/setup.php
 ---
+2013/12/11 12:23:59 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-bolditalic-webfont.woff
+HTTP_REFERER=http://75.146.48.253/
+---
+2013/12/11 12:23:59 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-bold-webfont.woff
+HTTP_REFERER=http://75.146.48.253/
+---
+2013/12/11 12:23:59 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-bold-webfont.ttf
+HTTP_REFERER=http://75.146.48.253/
+---
+2013/12/11 12:23:59 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-bolditalic-webfont.ttf
+HTTP_REFERER=http://75.146.48.253/
+---
+2013/12/11 12:23:59 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-bold-webfont.svg
+HTTP_REFERER=http://75.146.48.253/
+---
+2013/12/11 12:23:59 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-bolditalic-webfont.svg
+HTTP_REFERER=http://75.146.48.253/
+---
+2013/12/11 12:24:03 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-bold-webfont.woff
+HTTP_REFERER=http://75.146.48.253/site/login
+---
+2013/12/11 12:24:03 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-bold-webfont.woff
+HTTP_REFERER=http://75.146.48.253/site/login
+---
+2013/12/11 12:24:03 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-bold-webfont.ttf
+HTTP_REFERER=http://75.146.48.253/site/login
+---
+2013/12/11 12:24:03 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-bold-webfont.svg
+HTTP_REFERER=http://75.146.48.253/site/login
+---
+2013/12/11 12:24:06 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-bold-webfont.woff
+HTTP_REFERER=http://75.146.48.253/admin
+---
+2013/12/11 12:24:06 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-bold-webfont.ttf
+HTTP_REFERER=http://75.146.48.253/admin
+---
+2013/12/11 12:24:06 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-bold-webfont.svg
+HTTP_REFERER=http://75.146.48.253/admin
+---
+2013/12/11 12:27:07 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-bold-webfont.woff
+HTTP_REFERER=http://75.146.48.253/importExport
+---
+2013/12/11 12:27:07 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-bold-webfont.ttf
+HTTP_REFERER=http://75.146.48.253/importExport
+---
+2013/12/11 12:27:08 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-bold-webfont.svg
+HTTP_REFERER=http://75.146.48.253/importExport
+---
+2013/12/11 12:51:56 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-black-webfont.woff
+HTTP_REFERER=http://75.146.48.253/
+---
+2013/12/11 12:51:56 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-black-webfont.ttf
+HTTP_REFERER=http://75.146.48.253/
+---
+2013/12/11 12:51:56 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "fonts/lato".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('fonts/lato')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/fonts/lato/lato-black-webfont.svg
+HTTP_REFERER=http://75.146.48.253/
+---

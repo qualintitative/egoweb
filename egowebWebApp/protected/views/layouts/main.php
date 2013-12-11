@@ -68,11 +68,6 @@
 					</ul>
 				<?php endif; ?>
 				<span class="title">EgoWeb 2.0 | Exploring social networks via interviews</span>
-				<?php if(!Yii::app()->user->isGuest): ?>
-				<a href="/admin"><img id="home_button" src="/images/home_button.png" style="float:right;"/></a>
-				<?php else: ?>
-				<img id="home_button" src="/images/home_button.png" style="float:right;" />
-				<?php endif; ?>
 			</div>
 			<div id="menubar">
 				<!-- navigation start -->

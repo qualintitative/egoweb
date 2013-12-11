@@ -44,6 +44,32 @@ class AdminController extends Controller
             //'criteria'=>$criteria,
             'pagination'=>false,
         ));
+
+		if(isset($_POST['User']))
+		{
+			// store the pic
+
+			$model->attributes=$_POST['User'];
+			if($model->validate())
+			{
+				// hash the password
+				$salt=User::generateSalt();
+				$password=$model->password;
+				$model->password=User::hashPassword($model->password,$salt).':'.$salt;
+				$model->confirm=$model->password;
+
+				if($model->save()){
+					$this->redirect($this->createUrl('user/profile/'.Yii::app()->user->getId()));
+				}else{
+					$error = Yii::app()->errorHandler->error;
+					print_r($error);
+				}
+			}else{
+				$error=Yii::app()->errorHandler->error;
+				print_r($error);
+			}
+
+		}
 		$this->render('user', array(
 			'dataProvider' => $dataProvider,
 		));
