@@ -83,7 +83,18 @@ class Expression extends CActiveRecord
 		);
 	}
 
-	public function fetchAlterAnswers($questionId, $interviewId){
+	public function fetchAlterAnswers($questionId, $interviewId, $multi = false)
+	{
+		/*
+		if($study->multiSessionEgoId){
+			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
+			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " .$multi . ")")->queryColumn();
+			$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
+			$interviewIds = q("SELECT interviewId FROM answer WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
+			$interviewId = implode(",", $interviewIds);
+		}
+		*/
+
 		$alters = q("SELECT * FROM alters WHERE interviewId = " . $interviewId)->queryAll();
 		$question = q("SELECT * FROM question WHERE id = " . $questionId)->queryRow();
 		$answers = q("SELECT * FROM answer WHERE questionId = ".$questionId)->queryAll();
@@ -111,6 +122,15 @@ class Expression extends CActiveRecord
 		if(!$expression)
 			return true;
 
+		$study = Study::model()->findByPk($expression->studyId);
+		if($study->multiSessionEgoId){
+			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
+			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
+			$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
+			$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
+			$interviewId = implode(",", $interviewIds);
+		}
+
 		if(is_numeric($expression->questionId)){
 			$row = q("SELECT id,subjectType,title FROM question WHERE id = ". $expression->questionId)->queryRow();
 			$subjectType = $row['subjectType'];
@@ -131,7 +151,7 @@ class Expression extends CActiveRecord
 		if(is_numeric($questionId)){
 			if($subjectType == 'ALTER_PAIR'){
 				if(!$this->answers)
-					$this->fetchAlterAnswers($questionId, $interviewId);
+					$this->fetchAlterAnswers($questionId, $interviewId,$study->multiSessionEgoId);
 				$array_id = $questionId . '-' .  $alterId1 . "and" . $alterId2;
 				if(isset($this->answers[$array_id]))
 					$answer = $this->answers[$array_id];
@@ -139,14 +159,14 @@ class Expression extends CActiveRecord
 					$answer = "";
 			}else if($subjectType == 'ALTER'){
 				if(!$this->answers)
-					$this->fetchAlterAnswers($questionId, $interviewId);
+					$this->fetchAlterAnswers($questionId, $interviewId,$study->multiSessionEgoId);
 				$array_id = $questionId . '-' .  $alterId1;
 				if(isset($this->answers[$array_id]))
 					$answer = $this->answers[$array_id];
 				else
 					$answer = "";
 			}else{
-				$answer = q("SELECT value FROM answer WHERE questionId = $questionId AND interviewId = $interviewId")->queryScalar();
+				$answer = q("SELECT value FROM answer WHERE questionId = $questionId AND interviewId in ($interviewId)")->queryScalar();
 			}
 		}
 
@@ -236,17 +256,12 @@ class Expression extends CActiveRecord
 
 	public function countQuestion($questionId, $interviewId, $operator, $alterId1 = null, $alterId2 = null)
 	{
-		//$criteria = new CDbCriteria;
 		$alter = ""; $alter2 = "";
 		if($alterId1 != null)
 			$alter = " AND alterId1 = " . $alterId1;
 		if($alterId2 != null)
 			$alter2 = " AND alterId2 = " . $alterId2;
-		//$criteria=array(
-		//	'condition'=>"questionId = " . $questionId . " AND interviewId = " . $interviewId . $alter . $alter2,
-		//);
 		$answer = q("SELECT value FROM answer WHERE questionId = " . $questionId . " AND interviewId = " . $interviewId . $alter . $alter2)->queryScalar();
-		//$answer = Answer::model()->find($criteria);
 		if(!$answer || !is_numeric($answer)){
 			return 0;
 		}else{

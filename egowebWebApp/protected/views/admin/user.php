@@ -1,51 +1,11 @@
-<?php
-$this->widget('zii.widgets.grid.CGridView', array(
-	'id'=>'users-grid',
-	'dataProvider'=>$dataProvider,
-	//'filter'=>$model,
-	'pager'=>array(
-		'header'=> '',
-	),
-	'cssFile'=>false,
-	'summaryText'=>'',
-	'columns'=>array(
-		'name',
-		'email',
-	),
-));
-?>
-
+<div id="userlist">
+<?php $this->renderPartial('_view_user', array('dataProvider'=>$dataProvider, 'ajax'=>true), false, true); ?>
+</div>
+<div id="userform">
 <?php
 $user = new User;
-$form = $this->beginWidget('CActiveForm', array(
-	'id'=>'add-alter-form',
-	'enableAjaxValidation'=>true,
-));
-?>
-<?php echo $form->hiddenField($user,'id',array('value'=>$user->id)); ?>
-<?php echo $form->labelEx($user,'name'); ?>
-<?php echo $form->textField($user,'name', array('style'=>'width:100px')); ?>
-<?php echo $form->error($user,'name'); ?>
-<?php echo $form->labelEx($user,'email'); ?>
-<?php echo $form->textField($user,'email', array('style'=>'width:100px')); ?>
-<?php echo $form->error($user,'email'); ?>
-<?php echo $form->labelEx($user,'permissions'); ?>
-
-<?php echo $form->dropdownlist(
-	$user,
-	'permissions',
-
-		array(
-			1=>"interviewer",
-			11=>"admin"
-		),
-
-	array('empty' => 'Choose One')
-); ?>
-
-<?php echo CHtml::ajaxSubmitButton ("Add Alter",
-	CController::createUrl('ajaxupdate'),
-	array('update' => '#alterList'),
-	array('id'=>uniqid(), 'live'=>false));
-?>
-<?php $this->endWidget(); ?>
+$this->renderPartial('_form_user', array('user'=>$user, 'ajax'=>true), false, true);
+ ?>
+</div>
+<div id="edit-user">
+</div>

@@ -13,15 +13,21 @@ $(function(){
 });
 </script>
 <?php endif; ?>
-<h2>Studies</h2>
 
-<?php foreach($studies as $data): ?>
-<?php echo CHtml::ajaxLink(
-		CHtml::encode(Study::getName($data->id)),
-		Yii::app()->createUrl('interviewing/study/'.$data->id),
+	<h2>Single Session Studies</h2>
+	<?php foreach($single as $data): ?>
+	<?php echo CHtml::ajaxLink(CHtml::encode($data->name), Yii::app()->createUrl('interviewing/study/'.$data->id),
 		array('update'=>'#interviewList')
 		)."<br>"; ?>
-<?php endforeach; ?>
+	<?php endforeach; ?>
+
+	<h2>Multi Session Studies</h2>
+	<?php foreach($multi as $data): ?>
+	<?php echo CHtml::ajaxLink(CHtml::encode($data->name),Yii::app()->createUrl('interviewing/study/'.$data->id),
+		array('update'=>'#interviewList')
+		)."<br>"; ?>
+	<?php endforeach; ?>
+
 </div>
 
 <div id="interviewList">

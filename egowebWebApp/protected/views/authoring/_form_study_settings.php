@@ -3,22 +3,14 @@
 /* @var $model Study */
 /* @var $form CActiveForm */
 ?>
-<script src="/js/nicEdit.js"></script>
-<script>
-$(function(){
-//	introduction = new nicEditor({maxHeight:120, buttonList : ['xhtml','fontSize','bold','italic','underline','strikeThrough','subscript','superscript','indent','outdent','hr','removeformat']}).panelInstance('Study_introduction');
-//	egoIdPrompt = new nicEditor({maxHeight:120, buttonList : ['xhtml','fontSize','bold','italic','underline','strikeThrough','subscript','superscript','indent','outdent','hr','removeformat']}).panelInstance('Study_egoIdPrompt');
-//	alterPrompt = new nicEditor({maxHeight:120, buttonList : ['xhtml','fontSize','bold','italic','underline','strikeThrough','subscript','superscript','indent','outdent','hr','removeformat']}).panelInstance('Study_alterPrompt');
-//	conclusion = new nicEditor({maxHeight:120, buttonList : ['xhtml','fontSize','bold','italic','underline','strikeThrough','subscript','superscript','indent','outdent','hr','removeformat']}).panelInstance('Study_conclusion');
-})
-</script>
+
 
 <div class="form">
 
-<?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'study-form',
-	'enableAjaxValidation'=>false,
-)); ?>
+	<?php $form=$this->beginWidget('CActiveForm', array(
+		'id'=>'study-form',
+		'enableAjaxValidation'=>false,
+	)); ?>
 
 	<?php echo $form->errorSummary($model); ?>
 
@@ -79,13 +71,13 @@ $(function(){
 		?>
 		<?php echo $form->dropdownlist(
 			$model,
-		    'adjacencyExpressionId',
-		    CHtml::listData(
-		    	Expression::model()->findAll($criteria),
-		    	'id',
+			'adjacencyExpressionId',
+			CHtml::listData(
+				Expression::model()->findAll($criteria),
+				'id',
 				function($post) {return CHtml::encode(substr($post->name,0,40));}
-		    ),
-		    array('empty' => 'Choose One')
+			),
+			array('empty' => 'Choose One')
 		); ?>
 		<?php echo $form->error($model,'adjacencyExpressionId'); ?>
 	</div>
@@ -123,13 +115,13 @@ $(function(){
 		?>
 		<?php echo $form->dropdownlist(
 			$model,
-		    'multiSessionEgoId',
-		    CHtml::listData(
-		    	Question::model()->findAll($criteria),
-		    	'id',
+			'multiSessionEgoId',
+			CHtml::listData(
+				Question::model()->findAll($criteria),
+				'id',
 				function($post) {return CHtml::encode(substr($post->title,0,40));}
-		    ),
-		    array('empty' => 'Choose One')
+			),
+			array('empty' => 'Choose One')
 		); ?>
 		<?php echo $form->error($model,'multiSessionEgoId'); ?>
 	</div>
@@ -150,42 +142,15 @@ $(function(){
 <br style="clear:both">
 
 	<div class="row" style="float:left;width:100%; padding:10px">
-		<div id="alterPrompt" >
+
+		<div id="interviewers">
 		<?php
-			$criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"studyId = " . $model->id,
-			);
-			$dataProvider=new CActiveDataProvider('AlterPrompt',array(
-            	'criteria'=>$criteria,
-            ));
-   			$this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$model->id, 'ajax'=>true), false, false);
-        ?>
-		</div>
-		<div style="float:left; width:100%;margin-top:15px;">
-			<span class="smallheader">Add new alter prompt</span>
-			<?php
-				$alterPrompt = new AlterPrompt;
-				$form=$this->beginWidget('CActiveForm', array(
-					'id'=>'add-alter-prompt-form',
-					'enableAjaxValidation'=>true,
-				));
-			?>
-			<?php echo $form->hiddenField($alterPrompt,'id',array('value'=>$alterPrompt->id)); ?>
-			<?php echo $form->hiddenField($alterPrompt,'studyId',array('value'=>$model->id)); ?>
-			<label style="float:left; padding:5px;">After</label>
-			<?php echo $form->textField($alterPrompt,'afterAltersEntered', array('style'=>'width:20px;float:left')); ?>
-			<label style="float:left; padding:5px;">alters, display </label>
-			<?php echo $form->textField($alterPrompt,'display', array('style'=>'width:100px;float:left')); ?>
-			<?php echo $form->error($alterPrompt,'afterAltersEntered'); ?>
-			<?php echo $form->error($alterPrompt,'display'); ?>
-			<?php echo CHtml::ajaxSubmitButton ("Add",
-        		CController::createUrl('ajaxupdate'),
-        		array('update' => '#alterPrompt'),
-        		array('id'=>uniqid(), 'live'=>false, 'style'=>'float:left; margin:3px 5px;'));
-			?>
-			<?php $this->endWidget(); ?>
-			<div id="edit-alterPrompt" style="margin-top:15px;float:left;clear:both;"></div>
+		$dataProvider=new CActiveDataProvider('Interviewer');
+		$this->renderPartial('_view_study_interviewers', array('dataProvider'=>$dataProvider, 'ajax'=>true), false, false);
+		$interviewer = new Interviewer;
+		$this->renderPartial('_form_study_interviewers', array('dataProvider'=>$dataProvider, 'model'=>$interviewer, 'studyId'=>$model->id, 'ajax'=>true), false, false);
+		?>
+
 		</div>
 
 		<div id="alterList" >
@@ -196,13 +161,13 @@ $(function(){
 				'order'=>'ordering',
 			);
 			$dataProvider=new CActiveDataProvider('AlterList',array(
-            	'criteria'=>$criteria,
-            ));
+				'criteria'=>$criteria,
+			));
    			$this->renderPartial('_view_alter_list', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$model->id, 'ajax'=>true), false, false);
-        ?>
+		?>
 		</div>
 
-        <div id="showLink" style="padding:10px;clear:both;"></div>
+		<div id="showLink" style="padding:10px;clear:both;"></div>
 
 		<div style="float:left; width:400px;">
 			<div style="margin-bottom:15px;">
@@ -222,13 +187,63 @@ $(function(){
 				<?php echo $form->labelEx($alterList,'email'); ?>
 				<?php echo $form->textField($alterList,'email', array('style'=>'width:100px')); ?>
 				<?php echo $form->error($alterList,'email'); ?>
+				<?php
+				$interviewerIds = q("SELECT interviewerId FROM interviewers WHERE studyId = " . $model->id)->queryColumn();
+				$interviewers = array();
+				foreach($interviewerIds as $interviewerId){
+					$interviewers[$interviewerId] = User::getName($interviewerId);
+				}
+				?>
+				<?php echo $form->dropdownlist(
+					$alterList,
+					'interviewerId',
+					$interviewers,
+					array('empty' => 'None')
+				); ?>
 				<?php echo CHtml::ajaxSubmitButton ("Add Alter",
-	        		CController::createUrl('ajaxupdate'),
-	        		array('update' => '#alterList'),
-	        		array('id'=>uniqid(), 'live'=>false));
+					CController::createUrl('ajaxupdate'),
+					array('update' => '#alterList'),
+					array('id'=>uniqid(), 'live'=>false));
 				?>
 				<?php $this->endWidget(); ?>
 			</div>
 			<div id="edit-alterList" style="margin-bottom:15px;"></div>
 		</div><!-- form -->
+		<div id="alterPrompt" >
+		<?php
+			$criteria=new CDbCriteria;
+			$criteria=array(
+				'condition'=>"studyId = " . $model->id,
+			);
+			$dataProvider=new CActiveDataProvider('AlterPrompt',array(
+				'criteria'=>$criteria,
+			));
+   			$this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$model->id, 'ajax'=>true), false, false);
+		?>
+		</div>
+		<div style="float:left; width:100%;margin-top:15px;">
+			<span class="smallheader">Add new alter prompt</span>
+			<?php
+				$alterPrompt = new AlterPrompt;
+				$form=$this->beginWidget('CActiveForm', array(
+					'id'=>'add-alter-prompt-form',
+					'enableAjaxValidation'=>true,
+				));
+			?>
+			<?php echo $form->hiddenField($alterPrompt,'id',array('value'=>$alterPrompt->id)); ?>
+			<?php echo $form->hiddenField($alterPrompt,'studyId',array('value'=>$model->id)); ?>
+			<label style="float:left; padding:5px;">After</label>
+			<?php echo $form->textField($alterPrompt,'afterAltersEntered', array('style'=>'width:20px;float:left')); ?>
+			<label style="float:left; padding:5px;">alters, display </label>
+			<?php echo $form->textField($alterPrompt,'display', array('style'=>'width:100px;float:left')); ?>
+			<?php echo $form->error($alterPrompt,'afterAltersEntered'); ?>
+			<?php echo $form->error($alterPrompt,'display'); ?>
+			<?php echo CHtml::ajaxSubmitButton ("Add",
+				CController::createUrl('ajaxupdate'),
+				array('update' => '#alterPrompt'),
+				array('id'=>uniqid(), 'live'=>false, 'style'=>'float:left; margin:3px 5px;'));
+			?>
+			<?php $this->endWidget(); ?>
+			<div id="edit-alterPrompt" style="margin-top:15px;float:left;clear:both;"></div>
+		</div>
 	</div>

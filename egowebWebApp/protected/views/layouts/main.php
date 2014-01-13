@@ -63,11 +63,12 @@
 										</li>
 									</ul>
 								</li>
+								<li><a href="/admin/user">User Admin</a>
 							</ul>
 						</li>
 					</ul>
 				<?php endif; ?>
-				<span class="title">EgoWeb 2.0 | Exploring social networks via interviews</span>
+				<span class="title"><a href="/admin">EgoWeb 2.0</a> | Exploring social networks via interviews</span>
 			</div>
 			<div id="menubar">
 				<!-- navigation start -->

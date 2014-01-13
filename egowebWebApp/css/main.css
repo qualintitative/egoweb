@@ -45,6 +45,7 @@ ul.adminMenu li ul{
 }
 
 ul.adminMenu li ul li div {
+	z-index:9999;
 	position:absolute;
 	background: #fff;
 	width:180px;

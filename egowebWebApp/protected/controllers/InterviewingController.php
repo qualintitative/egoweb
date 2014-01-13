@@ -6,7 +6,6 @@ class InterviewingController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
 	public $interviewId = "";
 
 	/**
@@ -495,6 +494,7 @@ class InterviewingController extends Controller
             	'criteria'=>$criteria,
             	'pagination'=>false,
             ));
+
 			$alter = new Alters;
 			$this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'model'=>$alter,'alterPrompt'=>$alterPrompt, 'studyId'=>$_GET['studyId'], 'interviewId'=>$interviewId, 'ajax'=>true), false, true);
 		}
@@ -505,12 +505,31 @@ class InterviewingController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$criteria=array(
+		$condition = "id != 0";
+		if(!Yii::app()->user->isSuperAdmin){
+			$studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->getId())->queryColumn();
+			if($studies)
+				$condition = "id IN (" . implode(",", $studies) . ")";
+		}
+
+
+		$criteria = array(
+			'condition'=>$condition . " AND multiSessionEgoId = 0",
 			'order'=>'id DESC',
 		);
-        $studies = Study::model()->findAll();
+
+		$single = Study::model()->findAll($criteria);
+
+		$criteria = array(
+			'condition'=>$condition . " AND multiSessionEgoId <> 0",
+			'order'=>'multiSessionEgoId DESC',
+		);
+
+		$multi = Study::model()->findAll($criteria);
+
 		$this->render('index',array(
-			'studies'=>$studies,
+			'single'=>$single,
+			'multi'=>$multi,
 		));
 	}
 

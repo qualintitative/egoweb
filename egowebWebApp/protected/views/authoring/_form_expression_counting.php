@@ -101,11 +101,26 @@ echo $form->dropdownlist($model,
 <div>
 <?php
 
+$study = Study::model()->findByPk($studyId);
+$criteria=new CDbCriteria;
+if($study->multiSessionEgoId){
+	$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " .$study->multiSessionEgoId . ")")->queryColumn();
+	$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
+	$criteria=array(
+		'condition'=>"studyId in (" . implode(",", $studyIds) . ")",
+	);
+} else {
+	$criteria=array(
+		'condition'=>"studyId = " . $studyId,
+		'order'=>'ordering',
+	);
+}
+
     $selected = explode(',', $expressionIds);
     echo CHtml::CheckboxList(
         'expressionList',
         $selected,
-        CHtml::listData(Expression::model()->findAllByAttributes(array('studyId'=>$studyId)), 'id', 'name'),
+        CHtml::listData(Expression::model()->findAll($criteria), 'id', 'name'),
         array(
             'separator'=>'<br>',
             'class'=>'expressionList',
@@ -121,7 +136,7 @@ echo $form->dropdownlist($model,
     echo CHtml::CheckboxList(
         'questionList',
         $selected,
-        CHtml::listData(Question::model()->findAllByAttributes(array('studyId'=>$studyId)), 'id', 'title'),
+        CHtml::listData(Question::model()->findAll($criteria), 'id', 'title'),
         array(
             'separator'=>'<br>',
             'class'=>'questionList',

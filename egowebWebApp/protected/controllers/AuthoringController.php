@@ -6,8 +6,7 @@ class AuthoringController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
-    public $studyId;
+	public $studyId;
 
 	/**
 	 * @return array action filters
@@ -44,8 +43,8 @@ class AuthoringController extends Controller
 	 */
 	public function actionView($id)
 	{
-    	// sets global studyId for authoring
- 	    $this->studyId = $id;
+		// sets global studyId for authoring
+ 		$this->studyId = $id;
 
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
@@ -83,7 +82,7 @@ class AuthoringController extends Controller
 	 */
 	public function actionEdit($id)
 	{
- 	    $this->studyId = $id;
+ 		$this->studyId = $id;
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -116,11 +115,11 @@ class AuthoringController extends Controller
 				$this->redirect(array('edit','id'=>$model->id));
 		}
 
-        $single = Study::model()->findAllByAttributes(array('multiSessionEgoId'=>0));
+		$single = Study::model()->findAllByAttributes(array('multiSessionEgoId'=>0));
 		$multi = Study::model()->findAll('multiSessionEgoId <> 0', $params = array('order'=>'multiSessionEgoId'));
 
  		$this->render('index',array(
-		    'model'=>$model,
+			'model'=>$model,
 			'single'=>$single,
 			'multi'=>$multi,
 
@@ -145,21 +144,21 @@ class AuthoringController extends Controller
 			$this->redirect(array('ego_id','id'=>$id));
 
 		}
-		    $model = new Question;
-		    $model->subjectType = "EGO_ID";
-		    $model->studyId = $id;
+			$model = new Question;
+			$model->subjectType = "EGO_ID";
+			$model->studyId = $id;
 
 		// Uncomment the following line if AJAX validation is needed
 
-        $criteria=new CDbCriteria;
-        $criteria=array(
-            'condition'=>"studyId = " . $id . " AND subjectType = '" . $model->subjectType . "'",
-            'order'=>'ordering',
-        );
+		$criteria=new CDbCriteria;
+		$criteria=array(
+			'condition'=>"studyId = " . $id . " AND subjectType = '" . $model->subjectType . "'",
+			'order'=>'ordering',
+		);
 		$dataProvider=new CActiveDataProvider('Question',array(
-            'criteria'=>$criteria,
-            'pagination'=>false,
-        ));
+			'criteria'=>$criteria,
+			'pagination'=>false,
+		));
 
 		$this->render('view_question',array(
 			'model'=>$model,
@@ -185,21 +184,21 @@ class AuthoringController extends Controller
 			$this->redirect(array('ego','id'=>$id));
 		}
 
-		    $model = new Question;
-		    $model->subjectType = "EGO";
-		    $model->studyId = $id;
+			$model = new Question;
+			$model->subjectType = "EGO";
+			$model->studyId = $id;
 
 		// Uncomment the following line if AJAX validation is needed
 
-        $criteria=new CDbCriteria;
-        $criteria=array(
-            'condition'=>"studyId = " . $id . " AND subjectType = '" . $model->subjectType . "'",
-            'order'=>'ordering',
-        );
+		$criteria=new CDbCriteria;
+		$criteria=array(
+			'condition'=>"studyId = " . $id . " AND subjectType = '" . $model->subjectType . "'",
+			'order'=>'ordering',
+		);
 		$dataProvider=new CActiveDataProvider('Question',array(
-            'criteria'=>$criteria,
-            'pagination'=>false,
-        ));
+			'criteria'=>$criteria,
+			'pagination'=>false,
+		));
 
 		$this->render('view_question',array(
 			'model'=>$model,
@@ -224,21 +223,21 @@ class AuthoringController extends Controller
 			$model->save();
 			$this->redirect(array('alter','id'=>$id));
 		}else{
-		    $model = new Question;
-		    $model->subjectType = "ALTER";
-		    $model->studyId = $id;
+			$model = new Question;
+			$model->subjectType = "ALTER";
+			$model->studyId = $id;
 		}
 		// Uncomment the following line if AJAX validation is needed
 
-        $criteria=new CDbCriteria;
-        $criteria=array(
-            'condition'=>"studyId = " . $id . " AND subjectType = '" . $model->subjectType . "'",
-            'order'=>'ordering',
-        );
+		$criteria=new CDbCriteria;
+		$criteria=array(
+			'condition'=>"studyId = " . $id . " AND subjectType = '" . $model->subjectType . "'",
+			'order'=>'ordering',
+		);
 		$dataProvider=new CActiveDataProvider('Question',array(
-            'criteria'=>$criteria,
-            'pagination'=>false,
-        ));
+			'criteria'=>$criteria,
+			'pagination'=>false,
+		));
 
 		$this->render('view_question',array(
 			'model'=>$model,
@@ -263,21 +262,21 @@ class AuthoringController extends Controller
 			$model->save();
 			$this->redirect(array('alterpair','id'=>$id));
 		}else{
-		    $model = new Question;
-		    $model->subjectType = "ALTER_PAIR";
-		    $model->studyId = $id;
+			$model = new Question;
+			$model->subjectType = "ALTER_PAIR";
+			$model->studyId = $id;
 		}
 		// Uncomment the following line if AJAX validation is needed
 
-        $criteria=new CDbCriteria;
-        $criteria=array(
-            'condition'=>"studyId = " . $id . " AND subjectType = '" . $model->subjectType . "'",
-            'order'=>'ordering',
-        );
+		$criteria=new CDbCriteria;
+		$criteria=array(
+			'condition'=>"studyId = " . $id . " AND subjectType = '" . $model->subjectType . "'",
+			'order'=>'ordering',
+		);
 		$dataProvider=new CActiveDataProvider('Question',array(
-            'criteria'=>$criteria,
-            'pagination'=>false,
-        ));
+			'criteria'=>$criteria,
+			'pagination'=>false,
+		));
 
 		$this->render('view_question',array(
 			'model'=>$model,
@@ -302,21 +301,21 @@ class AuthoringController extends Controller
 			$model->save();
 			$this->redirect(array('network','id'=>$id));
 		}else{
-		    $model = new Question;
-		    $model->subjectType = "NETWORK";
-		    $model->studyId = $id;
+			$model = new Question;
+			$model->subjectType = "NETWORK";
+			$model->studyId = $id;
 		}
 		// Uncomment the following line if AJAX validation is needed
 
-        $criteria=new CDbCriteria;
-        $criteria=array(
-            'condition'=>"studyId = " . $id . " AND subjectType = '" . $model->subjectType . "'",
-            'order'=>'ordering',
-        );
+		$criteria=new CDbCriteria;
+		$criteria=array(
+			'condition'=>"studyId = " . $id . " AND subjectType = '" . $model->subjectType . "'",
+			'order'=>'ordering',
+		);
 		$dataProvider=new CActiveDataProvider('Question',array(
-            'criteria'=>$criteria,
-            'pagination'=>false,
-        ));
+			'criteria'=>$criteria,
+			'pagination'=>false,
+		));
 
 		$this->render('view_question',array(
 			'model'=>$model,
@@ -340,13 +339,13 @@ class AuthoringController extends Controller
 
 			$skipList = array();
 			if($question->dontKnowButton)
-			    $skipList['DONT_KNOW'] = "Don't Know";
+				$skipList['DONT_KNOW'] = "Don't Know";
 			if($question->refuseButton)
-			    $skipList['REFUSE'] =  "Refuse";
+				$skipList['REFUSE'] =  "Refuse";
 			if(count($skipList) != 0){
-			        echo "<div clear=all>".
-			        CHtml::checkBoxList($array_id."_skip", array($model[$array_id]->skipReason), $skipList, array('class'=>$array_id.'-skipReason'))
-			        ."</div>";
+					echo "<div clear=all>".
+					CHtml::checkBoxList($array_id."_skip", array($model[$array_id]->skipReason), $skipList, array('class'=>$array_id.'-skipReason'))
+					."</div>";
 			}
 			$this->endWidget();
 			echo "</div></div><button onclick='loadData(".$question->id.  ", \"_form_question\"); return false'>Back</button>";
@@ -356,7 +355,7 @@ class AuthoringController extends Controller
 	public function actionExpression($id)
 	{
 		$this->studyId=$id;
-
+		$multi = false;
 		if(isset($_POST['Expression'])){
 			$model = Expression::model()->findByPk($_POST['Expression']['id']);
 			if(!$model)
@@ -369,18 +368,21 @@ class AuthoringController extends Controller
 		}
 
 		$model = new Expression;
+		$criteria=new CDbCriteria;
+		$multi = Study::isMulti($id);
+
+			$criteria=array(
+				'condition'=>"studyId = " . $id,
+			);
 
 
-        $criteria=new CDbCriteria;
-        $criteria=array(
-            'condition'=>"studyId = " . $id,
-        );
 		$dataProvider=new CActiveDataProvider('Expression',array(
-            'criteria'=>$criteria,
-            'pagination'=>false,
-        ));
+			'criteria'=>$criteria,
+			'pagination'=>false,
+		));
 
 		$this->render('view_expression',array(
+			'multi'=>$multi,
 			'studyId'=>$id,
 			'model'=>$model,
 			'dataProvider'=>$dataProvider,
@@ -389,8 +391,7 @@ class AuthoringController extends Controller
 
 	public function actionOptionlist($id)
 	{
-			$this->studyId=$id;
-
+		$this->studyId=$id;
 		$model = AnswerList::model()->findAllByAttributes(array('studyId'=>$id));
 		$this->render('view_option_list',array(
 			'studyId'=>$id,
@@ -398,19 +399,24 @@ class AuthoringController extends Controller
 		));
 	}
 
-	/**
-	 * Manages all models.
-	 */
-	public function actionAdmin()
+	public function actionAddInterviewer()
 	{
-		$model=new Study('search');
-		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Study']))
-			$model->attributes=$_GET['Study'];
-
-		$this->render('admin',array(
-			'model'=>$model,
-		));
+		if(isset($_POST['Interviewer'])){
+			$model = new Interviewer;
+			$model->attributes = $_POST['Interviewer'];
+			if($model->save())
+				Yii::app()->request->redirect("/authoring/edit/" . $model->studyId);
+			else
+				print_r($model->getErrors());
+		}
+	}
+	public function actionDeleteInterviewer(){
+		if(isset($_GET['interviewerId']))
+			$model = Interviewer::model()->findByAttributes(array("studyId"=>$_GET['studyId'], 'interviewerId'=>$_GET['interviewerId']));
+		if($model){
+			$model->delete();
+		}
+		Yii::app()->request->redirect("/authoring/edit/" . $model->studyId);
 	}
 
 	public function actionDelete($id){
@@ -434,13 +440,13 @@ class AuthoringController extends Controller
 			$model->ordering++;
 			$criteria = new CDbCriteria();
 			$criteria=array(
-			    'condition'=>"studyId = " . $copy->studyId . " AND ordering > ".$copy->ordering ,
-			    'order'=>'ordering',
+				'condition'=>"studyId = " . $copy->studyId . " AND ordering > ".$copy->ordering ,
+				'order'=>'ordering',
 			);
 			$models = Question::model()->findAll($criteria);
 			foreach($models as $other){
-			    $other->ordering++;
-			    $other->save();
+				$other->ordering++;
+				$other->save();
 			}
 			if(!$model->save())
 				print_r($model->getErrors());
@@ -521,9 +527,9 @@ class AuthoringController extends Controller
 				'order'=>'ordering',
 			);
 			$dataProvider=new CActiveDataProvider('QuestionOption',array(
-            	'criteria'=>$criteria,
-            	'pagination'=>false,
-            ));
+				'criteria'=>$criteria,
+				'pagination'=>false,
+			));
 			$this->renderPartial('_form_option', array('dataProvider'=>$dataProvider, 'questionId'=>$questionId, 'ajax'=>true), false, true);
 
 		}else if(isset($_POST['AlterList'])){
@@ -549,9 +555,9 @@ class AuthoringController extends Controller
 				'order'=>'ordering',
 			);
 			$dataProvider=new CActiveDataProvider('AlterList',array(
-            	'criteria'=>$criteria,
-            	'pagination'=>false,
-            ));
+				'criteria'=>$criteria,
+				'pagination'=>false,
+			));
    			$this->renderPartial('_view_alter_list', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$studyId, 'ajax'=>true), false, true);
 		}else if(isset($_POST['AlterPrompt'])){
 			// edit existing alterList entry
@@ -571,9 +577,9 @@ class AuthoringController extends Controller
 				'condition'=>"studyId = " . $studyId,
 			);
 			$dataProvider=new CActiveDataProvider('AlterPrompt',array(
-            	'criteria'=>$criteria,
-            	'pagination'=>false,
-            ));
+				'criteria'=>$criteria,
+				'pagination'=>false,
+			));
    			$this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$studyId, 'ajax'=>true), false, true);
 		}else if(isset($_POST['AnswerList'])){
 			$model = new AnswerList;
@@ -643,9 +649,9 @@ class AuthoringController extends Controller
 				'order'=>'ordering',
 			);
 			$dataProvider=new CActiveDataProvider('Question',array(
-            	'criteria'=>$criteria,
-            	'pagination'=>false,
-            ));
+				'criteria'=>$criteria,
+				'pagination'=>false,
+			));
 
 			$this->renderPartial('_view_question_list', array('dataProvider'=>$dataProvider, 'studyId'=>$studyId, 'ajax'=>true), false, true);
 		}else if(isset($_GET['QuestionOption'])){
@@ -671,9 +677,9 @@ class AuthoringController extends Controller
 				'order'=>'ordering',
 			);
 			$dataProvider=new CActiveDataProvider('QuestionOption',array(
-            	'criteria'=>$criteria,
-            	'pagination'=>false,
-            ));
+				'criteria'=>$criteria,
+				'pagination'=>false,
+			));
 
 			$this->renderPartial('_form_option', array('dataProvider'=>$dataProvider, 'questionId'=>$questionId, 'ajax'=>true), false, true);
 		}else if(isset($_GET['AlterList'])){
@@ -696,9 +702,9 @@ class AuthoringController extends Controller
 				'order'=>'ordering',
 			);
 			$dataProvider=new CActiveDataProvider('AlterList',array(
-            	'criteria'=>$criteria,
-            	'pagination'=>false,
-            ));
+				'criteria'=>$criteria,
+				'pagination'=>false,
+			));
 			$this->renderPartial('_view_alter_list', array('dataProvider'=>$dataProvider, 'studyId'=>$studyId, 'ajax'=>true), false, true);
 		}else if(isset($_GET['AlterPrompt'])){
 			$model = AlterPrompt::model()->findByPk($_GET['AlterPrompt']['id']);
@@ -712,9 +718,9 @@ class AuthoringController extends Controller
 				'condition'=>"studyId = " . $studyId,
 			);
 			$dataProvider=new CActiveDataProvider('AlterPrompt',array(
-            	'criteria'=>$criteria,
-            	'pagination'=>false,
-            ));
+				'criteria'=>$criteria,
+				'pagination'=>false,
+			));
 			$this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'studyId'=>$studyId, 'ajax'=>true), false, true);
 		}else if(isset($_GET['AnswerList'])){
 			$model = AnswerList::model()->findByPk($_GET['AnswerList']['id']);
@@ -783,9 +789,9 @@ class AuthoringController extends Controller
 					'order'=>'ordering',
 				);
 				$dataProvider=new CActiveDataProvider('QuestionOption',array(
-            		'criteria'=>$criteria,
-            		'pagination'=>false,
-            	));
+					'criteria'=>$criteria,
+					'pagination'=>false,
+				));
 				$this->renderPartial($_GET['form'], array('dataProvider'=>$dataProvider, 'questionId'=>$_GET['questionId'], 'ajax'=>true), false, true);
 			}else if($_GET['form'] == "_form_option_list"){
 				$answerList = AnswerList::model()->findByPk($_GET['answerListId']);
@@ -836,9 +842,9 @@ class AuthoringController extends Controller
 				'order'=>'ordering',
 			);
 			$dataProvider=new CActiveDataProvider('QuestionOption',array(
-            	'criteria'=>$criteria,
-            	'pagination'=>false,
-            ));
+				'criteria'=>$criteria,
+				'pagination'=>false,
+			));
 			$this->renderPartial('_form_option', array('dataProvider'=>$dataProvider, 'questionId'=>$model->questionId, 'ajax'=>true), false, true);
 		}else if(isset($_GET['alterListId'])){
 			AlterList::moveUp($_GET['alterListId']);
@@ -849,9 +855,9 @@ class AuthoringController extends Controller
 				'order'=>'ordering',
 			);
 			$dataProvider=new CActiveDataProvider('AlterList',array(
-            	'criteria'=>$criteria,
-            	'pagination'=>false,
-            ));
+				'criteria'=>$criteria,
+				'pagination'=>false,
+			));
 			$this->renderPartial('_view_alter_list', array('dataProvider'=>$dataProvider, 'studyId'=>$model->studyId, 'ajax'=>true), false, true);
 		}else if(isset($_GET['questionId'])){
 			Question::moveUp($_GET['questionId']);
@@ -862,9 +868,9 @@ class AuthoringController extends Controller
 				'order'=>'ordering',
 			);
 			$dataProvider=new CActiveDataProvider('Question',array(
-            	'criteria'=>$criteria,
-            	'pagination'=>false,
-            ));
+				'criteria'=>$criteria,
+				'pagination'=>false,
+			));
 			$this->renderPartial('_view_question_list', array('dataProvider'=>$dataProvider, 'studyId'=>$model->studyId, 'ajax'=>true), false, true);
 		}else if(isset($_GET['answerListId'])){
 			$answerList = AnswerList::model()->findByPk($_GET['answerListId']);

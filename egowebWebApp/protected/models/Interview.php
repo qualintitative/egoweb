@@ -154,13 +154,24 @@ class Interview extends CActiveRecord
 			$studyId = q("SELECT studyId FROM interview WHERE id = ".$interviewId)->queryScalar();
 		else
 			return $string;
+
+		$study = Study::model()->findByPk($studyId);
+		if($study->multiSessionEgoId){
+			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
+			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
+			$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
+			$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
+			$interviewId = implode(",", $interviewIds);
+			$studyId = $studyIds;
+		}
+	
 		// parse out and replace variables
 		preg_match('#<VAR (.+?) />#ims', $string, $vars);
 		foreach($vars as $var){
 			$question = Question::model()->findByAttributes(array('title'=>$var, 'studyId'=>$studyId));
 			if($question){
 				if($interviewId != null){
-					$end = " AND interviewId = ". $interviewId;
+					$end = " AND interviewId in (". $interviewId .")";
 				}else{
 					$end = "";
 				}
@@ -185,7 +196,7 @@ class Interview extends CActiveRecord
 				$question = Question::model()->findByAttributes(array('title'=>$var, 'studyId'=>$studyId));
 				if($question){
 					if($interviewId != null){
-						$end = " AND interviewId = ". $interviewId;
+						$end = " AND interviewId in (". $interviewId . ")";
 					}else{
 						$end = "";
 					}
@@ -221,7 +232,7 @@ class Interview extends CActiveRecord
 				if(!$option)
 					continue;
 					if($interviewId != null){
-						$end = " AND interviewId = ". $interviewId;
+						$end = " AND interviewId in (". $interviewId. ")";
 					}else{
 						$end = "";
 					}
@@ -248,7 +259,7 @@ class Interview extends CActiveRecord
 			if(!$question)
 				continue;
 			if($interviewId != null){
-				$end = " AND interviewId = ". $interviewId;
+				$end = " AND interviewId in (". $interviewId . ")";
 				if(is_numeric($alterId1))
 					$end .= " AND alterId1 = " . $alterId1;
 				if(is_numeric($alterId2))
@@ -290,7 +301,7 @@ class Interview extends CActiveRecord
 							continue;
 						}
 						if($interviewId != null){
-							$end = " AND interviewId = ". $interviewId;
+							$end = " AND interviewId in (". $interviewId .")";
 						}else{
 							$end = "";
 						}

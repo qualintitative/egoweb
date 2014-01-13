@@ -15,7 +15,7 @@ class User extends CActiveRecord
      * Returns the static model of the specified AR class.
      * @return CActiveRecord the static model class
      */
-     
+
     public $confirm;
 
     public static function model($className=__CLASS__)
@@ -25,7 +25,7 @@ class User extends CActiveRecord
 
 
     // ... other attributes
-    
+
     /**
      * @return string the associated database table name
      */
@@ -43,10 +43,12 @@ class User extends CActiveRecord
         // will receive user inputs.
         return array(
             array('password', 'compare', 'compareAttribute'=>'confirm'),
-            array('email, password, confirm, name', 'required','on'=>'insert'),
+            array('email, password, confirm, name, permissions', 'required','on'=>'insert'),
             array('email, name', 'unique'),
-            array('email, password, confirm', 'length', 'max'=>128),
-            array('last_activity', 'safe'),
+            array('email, password, confirm, permissions', 'length', 'max'=>128),
+			array('lastActivity','default',
+				'value'=>new CDbExpression('NOW()'),
+				'setOnEmpty'=>false,'on'=>'insert'),
         );
     }
 
@@ -57,9 +59,7 @@ class User extends CActiveRecord
     {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
-        return array(
-            'posts' => array(self::HAS_MANY, 'Post', 'author_id'),
-        );
+        return array();
     }
 
     /**
@@ -72,7 +72,7 @@ class User extends CActiveRecord
             'email' => 'Email',
             'password' => 'Password',
             'name' => 'Name',
-            'last_activity' => 'Last Activity',
+            'lastActivity' => 'Last Activity',
         );
     }
 
@@ -114,14 +114,11 @@ class User extends CActiveRecord
         return $salt;
         // return uniqid('',true);
     }
-    
+
     public function getName($member_id){
-        $member=User::model()->findByPk($member_id);
-        if(Yii::app()->user->isGuest){
+        $member = User::model()->findByPk($member_id);
+        if($member)
             return $member->name;
-        }else{
-            return CHtml::link(CHtml::encode($member->name), array('/profile/'.$member->id));
-        }
     }
 
 
@@ -138,11 +135,11 @@ class User extends CActiveRecord
 
         $criteria->compare('id',$this->id);
         $criteria->compare('name',$this->name);
-        $criteria->compare('last_activity',$this->last_activity);
+        $criteria->compare('lastActivity',$this->last_activity);
 
         return new CActiveDataProvider($this, array(
             'criteria'=>$criteria,
         ));
     }
-    
+
 }

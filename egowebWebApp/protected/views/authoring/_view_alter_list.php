@@ -67,6 +67,12 @@ $this->widget('zii.widgets.grid.CGridView', array(
         'id',
 		'name',
 		'email',
+		array(
+			'name'=>'interviwerId',
+			'header'=>'Interviewer',
+			'type'=>'raw',
+			'value'=>'User::getName($data->interviewerId)',
+		),
 		array
 		(
     		'class'=>'CButtonColumn',
@@ -88,7 +94,6 @@ $this->widget('zii.widgets.grid.CGridView', array(
         			'imageUrl'=>'/images/link.png',
             		'url'=>'Yii::app()->createUrl("/authoring/ajaxshowlink", array("alterListId"=>$data->id, "_"=>"'.uniqid().'"))',
             		'options'=>array('class'=>'moveup'),
-            		//'click'=>'function(){alert("Going down!");}',
         		),
     		),
 

@@ -41,6 +41,8 @@ class AnalysisController extends Controller
 		$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$study->id)->queryColumn();
 		if($questionIds)
 			$questionIds = implode(",", $questionIds);
+		else
+			$questionIds = 0;
 		$criteria = array(
 			'condition'=>"studyId = " . $study->id ." AND questionId in ($questionIds)",
 		);
