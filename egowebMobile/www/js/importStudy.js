@@ -38,7 +38,7 @@ function importStudy(address, id){
 
 	$('#status').html("Importing study...");
 	var url = 'http://' + address + '/mobile/ajaxdata/' + id;
-	
+
 	tableNames = new Array();
 	for(i=0; i<db.catalog.getAllTables().length; i++){
 		tableNames.push(db.catalog.getAllTables()[i].tableName);
@@ -66,7 +66,8 @@ function importStudy(address, id){
 				"valueDontKnow",
 				"valueLogicalSkip",
 				"valueNotYetAnswered",
-				"modified"
+				"modified",
+				"multiSessionEgoId"
 			],
 			primaryKey: [ "id" ],
 		};

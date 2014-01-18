@@ -30,7 +30,24 @@ function loadStudy(id, intId){
 	}else{
 		interviewId = intId;
 		page = db.queryValue("SELECT completed FROM interview WHERE id = " + intId);
-		answers = db.queryObjects("SELECT * FROM answer WHERE interviewId = " + intId).data;
+		if(parseInt(study.MULTISESSIONEGOID) != 0){
+			var egoValue = db.queryValue("SELECT VALUE FROM answer WHERE interviewId = " + intId + " AND questionID = " + study.MULTISESSIONEGOID);
+			console.log("egovalue:" + egoValue);
+			column = db.queryObjects("SELECT ID FROM question WHERE title = (SELECT q.title FROM question q WHERE q.ID = " + study.MULTISESSIONEGOID + ")").data;
+			var multiIds = [];
+			for (var k in column){
+				multiIds.push(column[k].ID)
+			}
+			column = db.queryObjects("SELECT INTERVIEWID FROM answer WHERE questionId in (" + multiIds.join(",") + ") AND value = '"  + egoValue + "'" ).data;
+			interviewIds = [];
+			for (var k in column){
+				interviewIds.push(column[k].INTERVIEWID)
+			}
+			answers = db.queryObjects("SELECT * FROM answer WHERE interviewId in (" + interviewIds.join(",") + ")").data;
+			console.log(answers);
+		}else{
+			answers = db.queryObjects("SELECT * FROM answer WHERE interviewId = " + intId).data;
+		}
 		for (k in answers){
 			if(answers[k].QUESTIONTYPE == "ALTER")
 				array_id = answers[k].QUESTIONID + "-" + answers[k].ALTERID1;

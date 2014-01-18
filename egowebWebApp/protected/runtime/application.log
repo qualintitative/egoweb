@@ -2247,3 +2247,234 @@ Stack trace:
 REQUEST_URI=/interviewing/study/39/update/%23interviewList?_=1389656518096
 HTTP_REFERER=http://75.146.48.253/interviewing
 ---
+2014/01/13 18:11:50 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "phppath/php".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('phppath/php')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/phppath/php
+---
+2014/01/13 19:33:54 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "user/soapCaller.bs".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('user/soapCaller...')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/user/soapCaller.bs
+---
+2014/01/14 11:26:11 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "HNAP1".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('HNAP1')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/HNAP1/
+HTTP_REFERER=http://75.146.48.253/
+---
+2014/01/14 16:21:54 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('favicon.ico')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
+2014/01/14 20:50:51 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "HNAP1".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('HNAP1')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/HNAP1/
+HTTP_REFERER=http://75.146.48.253/
+---
+2014/01/15 02:47:30 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "robots.txt".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('robots.txt')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/robots.txt
+---
+2014/01/15 03:08:12 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "HNAP1".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('HNAP1')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/HNAP1/
+HTTP_REFERER=http://75.146.48.253/
+---
+2014/01/15 04:35:36 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "HNAP1".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('HNAP1')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/HNAP1/
+HTTP_REFERER=http://75.146.48.253/
+---
+2014/01/15 10:34:33 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "w00tw00t.at.blackhats.romanian.anti-sec:)".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('w00tw00t.at.bla...')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/w00tw00t.at.blackhats.romanian.anti-sec:)
+---
+2014/01/15 10:34:33 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "phpMyAdmin/scripts".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('phpMyAdmin/scri...')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/phpMyAdmin/scripts/setup.php
+---
+2014/01/15 10:34:34 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "phpmyadmin/scripts".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('phpmyadmin/scri...')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/phpmyadmin/scripts/setup.php
+---
+2014/01/15 10:34:35 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "pma/scripts".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('pma/scripts')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/pma/scripts/setup.php
+---
+2014/01/15 10:34:35 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "myadmin/scripts".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('myadmin/scripts')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/myadmin/scripts/setup.php
+---
+2014/01/15 10:34:35 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "MyAdmin/scripts".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('MyAdmin/scripts')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/MyAdmin/scripts/setup.php
+---
+2014/01/15 18:35:03 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "HNAP1".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('HNAP1')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/HNAP1/
+HTTP_REFERER=http://75.146.48.253/
+---
+2014/01/15 20:57:37 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "HNAP1".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('HNAP1')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/HNAP1/
+HTTP_REFERER=http://75.146.48.253/
+---
+2014/01/15 21:31:02 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "HNAP1".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('HNAP1')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/HNAP1/
+HTTP_REFERER=http://75.146.48.253/
+---
+2014/01/16 04:11:22 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "HNAP1".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('HNAP1')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/HNAP1/
+HTTP_REFERER=http://75.146.48.253/
+---
+2014/01/16 06:29:47 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "HNAP1".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('HNAP1')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/HNAP1/
+HTTP_REFERER=http://75.146.48.253/
+---
+2014/01/16 18:50:54 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "HNAP1".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('HNAP1')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/HNAP1/
+HTTP_REFERER=http://75.146.48.253/
+---
+2014/01/16 18:57:02 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "phppath/php".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('phppath/php')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/%70%68%70%70%61%74%68/%70%68%70?%2D%64+%61%6C%6C%6F%77%5F%75%72%6C%5F%69%6E%63%6C%75%64%65%3D%6F%6E+%2D%64+%73%61%66%65%5F%6D%6F%64%65%3D%6F%66%66+%2D%64+%73%75%68%6F%73%69%6E%2E%73%69%6D%75%6C%61%74%69%6F%6E%3D%6F%6E+%2D%64+%64%69%73%61%62%6C%65%5F%66%75%6E%63%74%69%6F%6E%73%3D%22%22+%2D%64+%6F%70%65%6E%5F%62%61%73%65%64%69%72%3D%6E%6F%6E%65+%2D%64+%61%75%74%6F%5F%70%72%65%70%65%6E%64%5F%66%69%6C%65%3D%70%68%70%3A%2F%2F%69%6E%70%75%74+%2D%6E
+---
+2014/01/17 03:01:12 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "HNAP1".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('HNAP1')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/HNAP1/
+HTTP_REFERER=http://75.146.48.253/
+---
+2014/01/17 03:01:44 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "HNAP1".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('HNAP1')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/HNAP1/
+HTTP_REFERER=http://75.146.48.253/
+---
+2014/01/17 11:16:16 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "HNAP1".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('HNAP1')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/HNAP1/
+HTTP_REFERER=http://75.146.48.253/
+---
+2014/01/17 14:34:14 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "css/col2.png".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('css/col2.png')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/css/col2.png
+HTTP_REFERER=http://75.146.48.253/analysis/visualize?expressionId=7743&interviewId=305
+---
+2014/01/17 14:59:55 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "css/col2.png".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('css/col2.png')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/css/col2.png
+HTTP_REFERER=http://75.146.48.253/analysis/visualize?expressionId=7744&interviewId=305
+---
+2014/01/17 15:12:58 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/david/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('favicon.ico')
+#1 /Users/david/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/david/Sites/egoweb/egowebWebApp/index.php(17): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
