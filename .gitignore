@@ -3,7 +3,7 @@
 .DS_Store
 protected/runtime/
 egowebMobile/protected/runtime/
-egowebApp/protected/runtime/
+egowebWebApp/protected/runtime/
 assets
 egowebMobile/protected/assets/
 egowebApp/protected/assets/
