@@ -1,0 +1,209 @@
+/**************************************/
+/*               SPACES               */
+/**************************************/
+/**
+* Spacing classes
+* Should be used to modify the default spacing between objects (not between nodes of the same object)
+* Please use judiciously. You want to be using defaults most of the time, these are exceptions!
+* <type><location><size>
+*/
+@space_large:20px;
+@space_medium:(@space_large/2);
+@space_small:(@space_medium/2);
+/* spacing legend
+r,p,m = padding,margin
+a,t,r,b,l,h,v = all,top,right,bottom,left,*horizontal,*vertical
+s,m,l,n = small(@space_small),medium(@space_medium),large(@space_large),none(0px)
+*does not work for relative positioning
+*/
+.pan{padding:0 !important;}
+.pas(@space_small:@space_small){padding:@space_small !important;}
+.pam(@space_medium:@space_medium){padding:@space_medium !important;}
+.pal(@space_large:@space_large){padding:@space_large !important;}
+.pas{.pas(@space_small)}
+.pam{.pam(@space_medium)}
+.pal{.pal(@space_large)}
+
+.ptn{padding-top:0 !important;}
+.pts(@space_small:@space_small){padding-top:@space_small !important;}
+.ptm(@space_medium:@space_medium){padding-top:@space_medium !important;}
+.ptl(@space_large:@space_large){padding-top:@space_large !important;}
+.pts{.pts(@space_small)}
+.ptm{.ptm(@space_medium)}
+.ptl{.ptl(@space_large)}
+
+.prn{padding-right:0 !important;}
+.prs(@space_small:@space_small){padding-right:@space_small !important;}
+.prm(@space_medium:@space_medium){padding-right:@space_medium !important;}
+.prl(@space_large:@space_large){padding-right:@space_large !important;}
+.prs{.prs(@space_small)}
+.prm{.prm(@space_medium)}
+.prl{.prl(@space_large)}
+
+.pbn{padding-bottom:0 !important;}
+.pbs(@space_small:@space_small){padding-bottom:@space_small !important;}
+.pbm(@space_medium:@space_medium){padding-bottom:@space_medium !important;}
+.pbl(@space_large:@space_large){padding-bottom:@space_large !important;}
+.pbs{.pbs(@space_small)}
+.pbm{.pbm(@space_medium)}
+.pbl{.pbl(@space_large)}
+
+.pln{padding-left:0 !important;}
+.pls(@space_small:@space_small){padding-left:@space_small !important;}
+.plm(@space_medium:@space_medium){padding-left:@space_medium !important;}
+.pll(@space_large:@space_large){padding-left:@space_large !important;}
+.pls{.pls(@space_small)}
+.plm{.plm(@space_medium)}
+.pll{.pll(@space_large)}
+
+.phn{padding-left:0;padding-right:0 !important;}
+.phs(@space_small:@space_small){padding-left:@space_small !important;padding-right:@space_small !important;}
+.phm(@space_medium:@space_medium){padding-left:@space_medium !important;padding-right:@space_medium !important;}
+.phl(@space_large:@space_large){padding-left:@space_large !important;padding-right:@space_large !important;}
+.phs{.phs(@space_small)}
+.phm{.phm(@space_medium)}
+.phl{.phl(@space_large)}
+
+.pvn{padding-top:0;padding-bottom:0 !important;}
+.pvs(@space_small:@space_small){padding-top:@space_small !important;padding-bottom:@space_small !important;}
+.pvm(@space_medium:@space_medium){padding-top:@space_medium !important;padding-bottom:@space_medium !important;}
+.pvl(@space_large:@space_large){padding-top:@space_large !important;padding-bottom:@space_large !important;}
+.pvs{.pvs(@space_small)}
+.pvm{.pvm(@space_medium)}
+.pvl{.pvl(@space_large)}
+
+.man{margin:0 !important;}
+.mas(@space_small:@space_small){margin:@space_small !important;}
+.mam(@space_medium:@space_medium){margin:@space_medium !important;}
+.mal(@space_large:@space_large){margin:@space_large !important;}
+.mas{.mas(@space_small)}
+.mam{.mam(@space_medium)}
+.mal{.mal(@space_large)}
+
+.mtn{margin-top:0 !important;}
+.mts(@space_small:@space_small){margin-top:@space_small !important;}
+.mtm(@space_medium:@space_medium){margin-top:@space_medium !important;}
+.mtl(@space_large:@space_large){margin-top:@space_large !important;}
+.mts{.mts(@space_small)}
+.mtm{.mtm(@space_medium)}
+.mtl{.mtl(@space_large)}
+
+.mrn{margin-right:0 !important;}
+.mrs(@space_small:@space_small){margin-right:@space_small !important;}
+.mrm(@space_medium:@space_medium){margin-right:@space_medium !important;}
+.mrl(@space_large:@space_large){margin-right:@space_large !important;}
+.mrs{.mrs(@space_small)}
+.mrm{.mrm(@space_medium)}
+.mrl{.mrl(@space_large)}
+
+.mbn{margin-bottom:0 !important;}
+.mbs(@space_small:@space_small){margin-bottom:@space_small !important;}
+.mbm(@space_medium:@space_medium){margin-bottom:@space_medium !important;}
+.mbl(@space_large:@space_large){margin-bottom:@space_large !important;}
+.mbs{.mbs(@space_small)}
+.mbm{.mbm(@space_medium)}
+.mbl{.mbl(@space_large)}
+
+.mln{margin-left:0 !important;}
+.mls(@space_small:@space_small){margin-left:@space_small !important;}
+.mlm(@space_medium:@space_medium){margin-left:@space_medium !important;}
+.mll(@space_large:@space_large){margin-left:@space_large !important;}
+.mls{.mbs(@space_small)}
+.mlm{.mbm(@space_medium)}
+.mll{.mbl(@space_large)}
+
+.mhn{margin-left:0;margin-right:0 !important;}
+.mhs(@space_small:@space_small){margin-left:@space_small !important;margin-right:@space_small !important;}
+.mhm(@space_medium:@space_medium){margin-left:@space_medium !important;margin-right:@space_medium !important;}
+.mhl(@space_large:@space_large){margin-left:@space_large !important;margin-right:@space_large !important;}
+.mhs{.mhs(@space_small)}
+.mhm{.mhm(@space_medium)}
+.mhl{.mhl(@space_large)}
+
+.mvn{margin-top:0;margin-bottom:0 !important;}
+.mvs(@space_small:@space_small){margin-top:@space_small !important;margin-bottom:@space_small !important;}
+.mvm(@space_medium:@space_medium){margin-top:@space_medium !important;margin-bottom:@space_medium !important;}
+.mvl(@space_large:@space_large){margin-top:@space_large !important;margin-bottom:@space_large !important;}
+.mvs{.mvs(@space_small)}
+.mvm{.mvm(@space_medium)}
+.mvl{.mvl(@space_large)}
+
+.rtn,.rbn{position: relative; top:0 !important;}
+.rts(@space_small:@space_small){position: relative; top:@space_small !important;}
+.rtm(@space_medium:@space_medium){position: relative; top:@space_medium !important;}
+.rtl(@space_large:@space_large){position: relative; top:@space_large !important;}
+.rts{.rts(@space_small)}
+.rtm{.rtm(@space_medium)}
+.rtl{.rtl(@space_large)}
+
+.rrn,.rln{position: relative; left:0 !important;}
+.rrs(@space_small:@space_small){position: relative; left:-@space_small !important;}
+.rrm(@space_medium:@space_medium){position: relative; left:-@space_medium !important;}
+.rrl(@space_large:@space_large){position: relative; left:-@space_large !important;}
+.rrs{.rrs(@space_small)}
+.rrm{.rrm(@space_medium)}
+.rrl{.rrl(@space_large)}
+
+.rbs(@space_small:@space_small){position: relative; top:-@space_small !important;}
+.rbm(@space_medium:@space_medium){position: relative; top:-@space_medium !important;}
+.rbl(@space_large:@space_large){position: relative; top:-@space_large !important;}
+.rbs{.rbs(@space_small)}
+.rbm{.rbm(@space_medium)}
+.rbl{.rbl(@space_large)}
+
+.rls(@space_small:@space_small){position: relative; left:@space_small !important;}
+.rlm(@space_medium:@space_medium){position: relative; left:@space_medium !important;}
+.rll(@space_large:@space_large){position: relative; left:@space_large !important;}
+.rls{.rls(@space_small)}
+.rlm{.rlm(@space_medium)}
+.rll{.rll(@space_large)}
+
+.nas(@space_small:@space_small){margin:-@space_small !important;}
+.nam(@space_medium:@space_medium){margin:-@space_medium !important;}
+.nal(@space_large:@space_large){margin:-@space_large !important;}
+.nas{.nas(@space_small)}
+.nam{.nam(@space_medium)}
+.nal{.nal(@space_large)}
+
+.nts(@space_small:@space_small){margin-top:-@space_small !important;}
+.ntm(@space_medium:@space_medium){margin-top:-@space_medium !important;}
+.ntl(@space_large:@space_large){margin-top:-@space_large !important;}
+.nts{.nts(@space_small)}
+.ntm{.ntm(@space_medium)}
+.ntl{.ntl(@space_large)}
+
+.nrs(@space_small:@space_small){margin-right:-@space_small !important;}
+.nrm(@space_medium:@space_medium){margin-right:-@space_medium !important;}
+.nrl(@space_large:@space_large){margin-right:-@space_large !important;}
+.nrs{.nrs(@space_small)}
+.nrm{.nrm(@space_medium)}
+.nrl{.nrl(@space_large)}
+
+.nbs(@space_small:@space_small){margin-bottom:-@space_small !important;}
+.nbm(@space_medium:@space_medium){margin-bottom:-@space_medium !important;}
+.nbl(@space_large:@space_large){margin-bottom:-@space_large !important;}
+.nbs{.nrs(@space_small)}
+.nbm{.nrm(@space_medium)}
+.nbl{.nrl(@space_large)}
+
+.nls(@space_small:@space_small){margin-left:-@space_small !important;}
+.nlm(@space_medium:@space_medium){margin-left:-@space_medium !important;}
+.nll(@space_large:@space_large){margin-left:-@space_large !important;}
+.nls{.nrs(@space_small)}
+.nlm{.nrm(@space_medium)}
+.nll{.nrl(@space_large)}
+
+.nhs(@space_small:@space_small){margin-left:@space_small !important;margin-right:-@space_small !important;}
+.nhm(@space_medium:@space_medium){margin-left:@space_medium !important;margin-right:-@space_medium !important;}
+.nhl(@space_large:@space_large){margin-left:@space_large !important;margin-right:-@space_large !important;}
+.nhs{.nhs(@space_small)}
+.nhm{.nhm(@space_medium)}
+.nhl{.nhl(@space_large)}
+
+.nvs(@space_small:@space_small){margin-top:@space_small !important;margin-bottom:-@space_small !important;}
+.nvm(@space_medium:@space_medium){margin-top:@space_medium !important;margin-bottom:-@space_medium !important;}
+.nvl(@space_large:@space_large){margin-top:@space_large !important;margin-bottom:-@space_large !important;}
+.nvs{.nvs(@space_small)}
+.nvm{.nvm(@space_medium)}
+.nvl{.nvl(@space_large)}
+

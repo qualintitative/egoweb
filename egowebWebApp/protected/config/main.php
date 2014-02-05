@@ -12,6 +12,10 @@ return array(
 	// preloading 'log' component
 	'preload'=>array('log'),
 
+        'behaviors'=>array(
+	    'Classjs',
+	),
+        
 	// autoloading model and component classes
 	'import'=>array(
 		'application.models.*',
@@ -58,10 +62,10 @@ return array(
 		// uncomment the following to use a MySQL database
 		*/
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=dev_egoweb',
+			'connectionString' => 'mysql:host=localhost;dbname=bak_egoweb',
 			'emulatePrepare' => true,
-			'username' => 'blufella',
-			'password' => "blufella101",
+			'username' => 'root',
+			'password' => "10f00tp0le",
 			'charset' => 'utf8',
 		),
 
@@ -92,7 +96,7 @@ return array(
 
 		),
 	),
-
+	'theme'=>'egoweb',
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']
 	'params'=>array(

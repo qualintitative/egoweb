@@ -1,0 +1,173 @@
+@import "spaces.less";
+@c-normal:400;
+@c-z-index:999;
+@c-spritesheet-class-prefix:"spritesheet-";
+.unlist {
+    margin-left: 0;
+    padding-left: 0;
+    list-style: none;
+    li {
+        margin-left: 0;
+        padding-left: 0;
+        list-style: none;
+    }
+}
+.hl {
+    .unlist();
+    li, & li {
+        float: left;
+    }
+}
+.hlist {
+    .hl;
+}
+.vlist {
+    .unlist();
+    li, & li {
+        float: none;
+    }
+}
+.vcenter {
+    display: table;
+    > * {
+        display: table-cell;
+        vertical-align: middle;
+    }
+}
+.centered(@w, @h) when (@w=100%), (@h=100%) {
+    position: static !important;
+    top: 0 !important;
+    left: 0 !important;
+    margin-top: 0 !important;
+    margin-left: 0 !important;
+    width: auto !important;
+    height: auto !important;
+}
+.centered(@w, @h) when not (@w=100%), (@h=100%) {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -(@h/2);
+    margin-left: -(@w/2);
+    width: (@w);
+    height: (@h);
+}
+.centered(@w) {
+    margin: 0 auto;
+    width: @w;
+}
+.centered {
+    margin: 0 auto;
+}
+.ar {
+    display: block;
+    float: right;
+}
+.alignright,.align-right {
+    .ar;
+}
+.al {
+    display: block;
+    float: left;
+}
+.alignleft,.align-left {
+    .al;
+}
+.ac {
+    display: block;
+    margin: 0 auto;
+}
+.aligncenter,.align-center,.center {
+    .ac;
+}
+.tal {
+    text-align: left;
+}
+.text-align-left, .txt-align-left {
+    .tal;
+}
+.tac {
+    text-align: center;
+}
+.text-align-center, .txt-align-center {
+    .tac;
+}
+.tar {
+    text-align: right;
+}
+.text-align-right, .txt-align-right {
+    text-align: right;
+}
+.uc {
+    text-transform: uppercase;
+}
+.text-uppercase, .txt-uppercase, .ucase, .uppercase {
+    .uc;
+}
+.lc {
+    text-transform: lowercase;
+}
+.text-lowercase, .txt-lowercase, .lcase, .lowercase {
+    .lc;
+}
+.caps {
+    text-transform: capitalize;
+}
+.text-capitalize, .txt-capitalize {
+    .caps;
+}
+.line-through {
+    text-decoration: line-through;
+}
+.normal {
+    font-weight: @c-normal;
+}
+.text-normal, .txt-normal {
+    .normal;
+}
+.em {
+    font-style: italic;
+}
+.txt-em {
+    .em;
+}
+.relative {
+    position: relative;
+}
+.absolute {
+    position: absolute;
+}
+.none {
+    display: none;
+}
+.block {
+    display: block;
+}
+.overflow-hidden, .hide-overflow {
+    overflow: hidden;
+}
+.vscroll,.vertical-scroll {
+    overflow-y: scroll;
+}
+.hscroll,.horizontal-scroll {
+    overflow-y: scroll;
+}
+.overflow,.overflow-visible,.show-overflow {
+    overflow: visible;
+}
+.jsshow {
+    display: none;
+}
+.jshidden {
+    display: block;
+}
+.lift {
+    position: relative;
+    z-index: @c-z-index;
+}
+span[class^=@{c-spritesheet-class-prefix}] {
+    display: inline-block;
+}
+div[class^=@{c-spritesheet-class-prefix}] {
+    display: block;
+}
