@@ -2587,3 +2587,11 @@ Stack trace:
 #22 {main}
 REQUEST_URI=/
 ---
+2014/02/05 20:39:40 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('favicon.ico')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---

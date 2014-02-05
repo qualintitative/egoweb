@@ -45,7 +45,8 @@
 						<li>
 							<a href="<?php echo  Yii::app()->createUrl('admin/user'); ?>">User Admin</a>
 						</li>
-						<?php /*
+						<?php
+						/*
 						/**
 						 * This is sample of how to implement a subsubmenu
 						 * 
@@ -55,7 +56,8 @@
 								<li><a href="">test</a></li>
 							</ul>
 						</li>
-						*/ ?>
+						*/
+						?>
 					</ul>
 				</li>
 			</ul>

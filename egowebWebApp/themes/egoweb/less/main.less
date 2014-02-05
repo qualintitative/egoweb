@@ -101,11 +101,15 @@ body {
                     color: @gray;
                     .rlm;
                     .plm;
+                    visibility: hidden;
                 }
             }
             @media screen and (min-width: @screen-sm-min) {
                 .brand {
                     .relative;
+                    > span {
+                        visibility: visible;
+                    }
                 }
             }
         }
@@ -126,7 +130,7 @@ body {
 /**************************************/
 .open {
     .dropdown-menu {
-        background: @clouds;
+        background-color: @navbar-default-bg;
         .mtn;
     }
     .dropdown-submenu{
@@ -158,6 +162,16 @@ body {
             left:-100%;
             margin-left:10px;
         }
+    }
+}
+.navbar-toggle {
+    .mrl;
+    .rts;
+}
+@media screen and (min-width: @screen-sm-min) {
+    .navbar-toggle {
+        .mrn;
+        .rtn;
     }
 }
 /**************************************/
