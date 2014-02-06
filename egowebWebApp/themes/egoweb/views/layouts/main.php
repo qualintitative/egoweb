@@ -63,7 +63,7 @@
 			</ul>
 			<div class="brand">EgoWeb 2.0<span>Exploring social networks via interviews</span></div>
 		</nav>
-		<nav class="navbar navbar-inverse" role="navigation">
+		<nav class="navbar navbar-inverse mbn" role="navigation">
 			&nbsp;
 		</nav>	
 		<?php echo $content; ?>

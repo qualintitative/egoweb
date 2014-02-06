@@ -3,5 +3,5 @@
 assets
 
 egowebWebApp/protected/runtime/
-egowebApp/protected/assets/
+egowebWebApp/protected/assets/
 egowebWebApp/node_modules/

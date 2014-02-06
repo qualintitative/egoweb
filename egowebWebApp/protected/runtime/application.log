@@ -2595,3 +2595,1282 @@ Stack trace:
 #3 {main}
 REQUEST_URI=/favicon.ico
 ---
+2014/02/05 23:32:15 [error] [exception.CException] exception 'CException' with message 'The asset "C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\zii\widgets\assets" to be published does not exist.' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CAssetManager.php:257
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\zii\widgets\grid\CGridView.php(325): CAssetManager->publish('C:\xampp\htdocs...')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(147): CGridView->init()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(172): CBaseController->createWidget('zii.widgets.gri...', Array)
+#3 C:\xampp\htdocs\dev_egoweb\egowebWebApp\themes\egoweb\views\authoring\_view_study_interviewers.php(45): CBaseController->widget('zii.widgets.gri...', Array)
+#4 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(126): require('C:\xampp\htdocs...')
+#5 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(95): CBaseController->renderInternal('C:\xampp\htdocs...', Array, true)
+#6 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(869): CBaseController->renderFile('C:\xampp\htdocs...', Array, true)
+#7 C:\xampp\htdocs\dev_egoweb\egowebWebApp\themes\egoweb\views\authoring\_form_study_settings.php(149): CController->renderPartial('_view_study_int...', Array, false, false)
+#8 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(126): require('C:\xampp\htdocs...')
+#9 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(95): CBaseController->renderInternal('C:\xampp\htdocs...', Array, true)
+#10 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(869): CBaseController->renderFile('C:\xampp\htdocs...', Array, true)
+#11 C:\xampp\htdocs\dev_egoweb\egowebWebApp\themes\egoweb\views\authoring\edit.php(9): CController->renderPartial('_form_study_set...', Array)
+#12 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(126): require('C:\xampp\htdocs...')
+#13 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(95): CBaseController->renderInternal('C:\xampp\htdocs...', Array, true)
+#14 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(869): CBaseController->renderFile('C:\xampp\htdocs...', Array, true)
+#15 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(782): CController->renderPartial('edit', Array, true)
+#16 C:\xampp\htdocs\dev_egoweb\egowebWebApp\protected\controllers\AuthoringController.php(102): CController->render('edit', Array)
+#17 [internal function]: AuthoringController->actionEdit('93')
+#18 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\actions\CAction.php(108): ReflectionMethod->invokeArgs(Object(AuthoringController), Array)
+#19 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\actions\CInlineAction.php(47): CAction->runWithParamsInternal(Object(AuthoringController), Object(ReflectionMethod), Array)
+#20 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(308): CInlineAction->runWithParams(Array)
+#21 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#22 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilter.php(40): CFilterChain->run()
+#23 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(1145): CFilter->filter(Object(CFilterChain))
+#24 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#25 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#26 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(291): CFilterChain->run()
+#27 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#28 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(282): CController->run('edit')
+#29 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('authoring/edit')
+#30 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#31 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#32 {main}
+REQUEST_URI=/authoring/edit/93
+HTTP_REFERER=http://dev1.egoweb.com/authoring
+---
+2014/02/05 23:33:42 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/05 23:33:42 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:18:46 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:18:46 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:26:47 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:26:47 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:30:04 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:30:04 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:32:42 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:32:42 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:34:38 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:34:38 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:36:01 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:36:01 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:37:12 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:37:12 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:41:55 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:41:55 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:42:41 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:42:41 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:44:20 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:44:20 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:47:24 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:47:24 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:50:53 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:50:53 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:51:43 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:51:43 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:56:02 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:56:02 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:57:16 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:57:16 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:58:54 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 00:58:54 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:03:40 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:03:40 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:05:07 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:05:08 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:10:07 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:10:07 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:11:14 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:11:14 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:11:34 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:11:34 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:13:33 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:13:33 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:15:13 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:15:13 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:17:51 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:17:51 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:18:43 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:18:43 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:19:34 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:19:34 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:19:55 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:19:55 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:25:24 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:25:24 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:26:09 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:26:09 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:26:15 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:26:15 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:26:28 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:26:28 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:26:35 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:26:35 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:27:27 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:27:27 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:28:00 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:28:00 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:28:08 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:28:08 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:29:37 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:29:37 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:29:45 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:29:45 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:30:15 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:30:15 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:36:22 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:36:22 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:38:32 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:38:32 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:43:31 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:43:31 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:45:18 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:45:18 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:51:06 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:51:06 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:52:31 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:52:31 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:53:28 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:53:28 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:53:53 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:53:53 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:57:20 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:57:20 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:57:33 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 01:57:33 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:00:47 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:00:47 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:01:03 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:01:04 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:01:14 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:01:14 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:01:25 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:01:25 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:02:45 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:02:46 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:03:03 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:03:03 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:03:36 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:03:36 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:04:25 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:04:26 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:05:03 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:05:04 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:08:39 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:08:58 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:09:08 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:09:29 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:09:39 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:09:54 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:10:07 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:10:07 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:10:50 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:11:12 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:11:39 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:11:53 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:11:53 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:13:52 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:13:52 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:14:28 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:14:28 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:18:57 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+---
+2014/02/06 02:25:28 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:25:28 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:31:36 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:31:36 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---

@@ -60,11 +60,6 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
-@import "fonts.less";
-@import "bootstrap.less";
-@import "flat-ui/flat-ui.less";
-@import "sprites.less";
-@import "common.less";
 
 /**************************************/
 /*               COLORS               */
@@ -72,11 +67,53 @@ textarea {
 
 @gray-body: #77777A;
 @orange-brand: #F46D00;
+/**************************************/
+/*               MISC                 */
+/**************************************/
+@ego-input-radius: 4px;
+@import "fonts.less";
+@import "bootstrap.less";
+@import "flat-ui/flat-ui.less";
+@import "sprites.less";
+@import "common.less";
 
 /**************************************/
 /*               COMMON               */
 /**************************************/
-
+.h3, h3,
+.h4, h4,
+.h5, h5,
+.h6, h6 {
+    font-family: "oswaldlight", Helvetica, Arial, sans-serif;
+    color: @orange-brand;
+    
+}
+.h1, h1,
+.h2, h2 {
+    .h3;
+}
+.h4, h4,
+.h5, h5,
+.h6, h6 {
+    .ucase;
+}
+.grid-view {
+    table {
+        .mtl;
+        .table;
+        th {
+            color: #fff;
+            background: @wet-asphalt;
+            .ucase;
+            a {
+                color: #fff;
+                &:hover {
+                    color: #fff;
+                }
+            }
+        }
+    }
+}
 body {
     background: @gray-body;
     > .container {
