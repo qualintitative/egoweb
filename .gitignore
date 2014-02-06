@@ -1,7 +1,7 @@
 *.komodoproject
 .DS_Store
 assets
-
+*.log
 egowebWebApp/protected/runtime/
 egowebWebApp/protected/assets/
 egowebWebApp/node_modules/

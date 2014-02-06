@@ -16,12 +16,11 @@ $this->widget('zii.widgets.grid.CGridView', array(
         array(
                 'name' =>'interviewerId',
                 'value' => 'User::getName($data->interviewerId)',
-                'type' => 'raw',
-                'htmlOptions' => array('style'=>'width:60px;'),
+                'type' => 'raw'
         ),
         array
         (
-            'class'=>'CButtonColumn',
+            'class'=>'EWebCButtonColumn',
             'template'=>'{delete}',
             'buttons'=>array
             (

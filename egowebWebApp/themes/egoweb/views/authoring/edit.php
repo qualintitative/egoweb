@@ -35,80 +35,95 @@
                     ));
                     $this->renderPartial('_view_alter_list', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$model->id, 'ajax'=>true), false, false);
             ?>
+            <div id="showLink"></div>
+            <?php
+            $alterList = new AlterList;
+            $form=$this->beginWidget('CActiveForm', array(
+                    'id'=>'add-alter-form',
+                    'enableAjaxValidation'=>true,
+                    'htmlOptions'=>array('class'=>'mbl')
+            ));
+            ?>
+                
+                <?php echo $form->hiddenField($alterList,'id',array('value'=>$alterList->id)); ?>
+                <?php echo $form->hiddenField($alterList,'studyId',array('value'=>$model->id)); ?>
+                <?php echo CHtml::label('Add new alter','interviewerId',array('class'=>'control-label')); ?>
+                <div class="form-inline">
+                    <div class="form-group">
+                        <?php echo $form->labelEx($alterList,'name',array('class'=>'control-label')); ?>
+                        <?php echo $form->textField($alterList,'name',array('class'=>'form-control input-lg')); ?>
+                        <?php echo $form->error($alterList,'name'); ?>
+                    </div>
+                    <div class="form-group">
+                        <?php echo $form->labelEx($alterList,'email',array('class'=>'control-label')); ?>
+                        <?php echo $form->textField($alterList,'email',array('class'=>'form-control input-lg')); ?>
+                        <?php echo $form->error($alterList,'email'); ?>
+                    </div>
+                    <?php
+                    $interviewerIds = q("SELECT interviewerId FROM interviewers WHERE studyId = " . $model->id)->queryColumn();
+                    $interviewers = array();
+                    foreach($interviewerIds as $interviewerId){
+                            $interviewers[$interviewerId] = User::getName($interviewerId);
+                    }
+                    ?>
+                    <?php echo $form->dropdownlist(
+                            $alterList,
+                            'interviewerId',
+                            $interviewers,
+                            array('empty' => 'None','class'=>'form-control input-lg')
+                    ); ?>
+                    <?php echo CHtml::ajaxSubmitButton ("Add Alter",
+                        CController::createUrl('ajaxupdate'),
+                        array('update' => '#alterList',),
+                        array('id'=>uniqid(), 'live'=>false,'class'=>'btn btn-primary btn-lg'));
+                    ?>
+		</div>
+            <?php $this->endWidget(); ?>
         </div>
         <div class="tab-pane" id="variable-alter-prompts">
-            <div id="showLink" style="padding:10px;clear:both;"></div>
-            <span class="smallheader">Add new alter</span>
-            <?php
-                    $alterList = new AlterList;
-                    $form=$this->beginWidget('CActiveForm', array(
-                            'id'=>'add-alter-form',
-                            'enableAjaxValidation'=>true,
-                    ));
-            ?>
-            <?php echo $form->hiddenField($alterList,'id',array('value'=>$alterList->id)); ?>
-            <?php echo $form->hiddenField($alterList,'studyId',array('value'=>$model->id)); ?>
-            <?php echo $form->labelEx($alterList,'name'); ?>
-            <?php echo $form->textField($alterList,'name', array('style'=>'width:100px')); ?>
-            <?php echo $form->error($alterList,'name'); ?>
-            <?php echo $form->labelEx($alterList,'email'); ?>
-            <?php echo $form->textField($alterList,'email', array('style'=>'width:100px')); ?>
-            <?php echo $form->error($alterList,'email'); ?>
-            <?php
-            $interviewerIds = q("SELECT interviewerId FROM interviewers WHERE studyId = " . $model->id)->queryColumn();
-            $interviewers = array();
-            foreach($interviewerIds as $interviewerId){
-                    $interviewers[$interviewerId] = User::getName($interviewerId);
-            }
-            ?>
-            <?php echo $form->dropdownlist(
-                    $alterList,
-                    'interviewerId',
-                    $interviewers,
-                    array('empty' => 'None')
-            ); ?>
-            <?php echo CHtml::ajaxSubmitButton ("Add Alter",
-                    CController::createUrl('ajaxupdate'),
-                    array('update' => '#alterList'),
-                    array('id'=>uniqid(), 'live'=>false));
-            ?>
-            <?php $this->endWidget(); ?>
-            <div id="edit-alterList" style="margin-bottom:15px;"></div>
+            <div id="edit-alterList"></div>
             <div id="alterPrompt" >
-            <?php
-                    $criteria=new CDbCriteria;
-                    $criteria=array(
-                            'condition'=>"studyId = " . $model->id,
-                    );
-                    $dataProvider=new CActiveDataProvider('AlterPrompt',array(
-                            'criteria'=>$criteria,
-                    ));
-                    $this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$model->id, 'ajax'=>true), false, false);
-            ?>
+                <?php
+                        $criteria=new CDbCriteria;
+                        $criteria=array(
+                                'condition'=>"studyId = " . $model->id,
+                        );
+                        $dataProvider=new CActiveDataProvider('AlterPrompt',array(
+                                'criteria'=>$criteria,
+                        ));
+                        $this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$model->id, 'ajax'=>true), false, false);
+                ?>
             </div>
-            <span class="smallheader">Add new alter prompt</span>
             <?php
-                    $alterPrompt = new AlterPrompt;
-                    $form=$this->beginWidget('CActiveForm', array(
-                            'id'=>'add-alter-prompt-form',
-                            'enableAjaxValidation'=>true,
-                    ));
+            $alterPrompt = new AlterPrompt;
+            $form=$this->beginWidget('CActiveForm', array(
+                    'id'=>'add-alter-prompt-form',
+                    'enableAjaxValidation'=>true,
+                    'htmlOptions'=>array('class'=>'mbl')
+            ));
             ?>
-            <?php echo $form->hiddenField($alterPrompt,'id',array('value'=>$alterPrompt->id)); ?>
-            <?php echo $form->hiddenField($alterPrompt,'studyId',array('value'=>$model->id)); ?>
-            <label style="float:left; padding:5px;">After</label>
-            <?php echo $form->textField($alterPrompt,'afterAltersEntered', array('style'=>'width:20px;float:left')); ?>
-            <label style="float:left; padding:5px;">alters, display </label>
-            <?php echo $form->textField($alterPrompt,'display', array('style'=>'width:100px;float:left')); ?>
-            <?php echo $form->error($alterPrompt,'afterAltersEntered'); ?>
-            <?php echo $form->error($alterPrompt,'display'); ?>
-            <?php echo CHtml::ajaxSubmitButton ("Add",
-                    CController::createUrl('ajaxupdate'),
-                    array('update' => '#alterPrompt'),
-                    array('id'=>uniqid(), 'live'=>false, 'style'=>'float:left; margin:3px 5px;'));
-            ?>
+                <?php echo $form->hiddenField($alterPrompt,'id',array('value'=>$alterPrompt->id)); ?>
+                <?php echo $form->hiddenField($alterPrompt,'studyId',array('value'=>$model->id)); ?>
+                <?php echo CHtml::label('Add new alter prompt','',array('class'=>'control-label')); ?>
+                <div class="form-inline">
+                    <div class="form-group">
+                        <?php echo CHtml::label('After','afterAltersEntered',array('class'=>'control-label')); ?>
+                        <?php echo $form->textField($alterPrompt,'afterAltersEntered',array('class'=>'form-control input-lg')); ?>
+                        <?php echo $form->error($alterPrompt,'afterAltersEntered'); ?>
+                    </div>
+                    <div class="form-group">
+                        <?php echo CHtml::label('alters display','display',array('class'=>'control-label')); ?>
+                        <?php echo $form->textField($alterPrompt,'display',array('class'=>'form-control input-lg')); ?>
+                        <?php echo $form->error($alterPrompt,'display'); ?>
+                    </div>
+                    <?php echo CHtml::ajaxSubmitButton ("Add",
+                            CController::createUrl('ajaxupdate'),
+                            array('update' => '#alterPrompt'),
+                            array('id'=>uniqid(), 'live'=>false,'class'=>'btn btn-primary btn-lg'));
+                    ?>
+		</div>
             <?php $this->endWidget(); ?>
-            <div id="edit-alterPrompt" style="margin-top:15px;float:left;clear:both;"></div>
+            <div id="edit-alterPrompt"></div>
         </div>
     </div>
 </div>

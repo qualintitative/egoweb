@@ -101,14 +101,35 @@ textarea {
     table {
         .mtl;
         .table;
-        th {
-            color: #fff;
-            background: @wet-asphalt;
-            .ucase;
-            a {
+        tr {
+            &.odd {
+                background-color: @navbar-default-bg;
+            }
+            th {
                 color: #fff;
-                &:hover {
+                background: @wet-asphalt;
+                .ucase;
+                a {
                     color: #fff;
+                    &:hover {
+                        color: #fff;
+                    }
+                }
+                &:last-child {
+                    text-align: right;
+                }
+            }
+            td {
+                &:last-child {
+                    text-align: right;
+                    .fui-cross {
+                        color: @pomegranate;
+                    }
+                    a {
+                        .fui-cross {
+                            color: @pomegranate;
+                        }
+                    }
                 }
             }
         }
@@ -165,50 +186,53 @@ body {
 /**************************************/
 /*             NAVIGATION             */
 /**************************************/
-.open {
-    .dropdown-menu {
-        background-color: @navbar-default-bg;
-        .mtn;
-    }
-    .dropdown-submenu{
-        position:relative;
-        > .dropdown-menu {
+.navbar-nav {
+    .open {
+        .dropdown-menu {
+            background-color: @navbar-default-bg;
             .mtn;
-            top:0;
-            left:100%;
+            border-radius: 0;
         }
-        &:hover {
+        .dropdown-submenu{
+            position:relative;
             > .dropdown-menu {
-                visibility: visible;
-                opacity: 1;
+                .mtn;
+                top:0;
+                left:100%;
+            }
+            &:hover {
+                > .dropdown-menu {
+                    visibility: visible;
+                    opacity: 1;
+                    display:block;
+                }
+            }
+            > a:after{
                 display:block;
+                content:" ";
+                float:right;
+                width:0;
+                height:0;
+                margin-right:-10px;
+            }
+            &.pull-left{
+                float:none;
+            }
+            &.pull-left > .dropdown-menu{
+                left:-100%;
+                margin-left:10px;
             }
         }
-        > a:after{
-            display:block;
-            content:" ";
-            float:right;
-            width:0;
-            height:0;
-            margin-right:-10px;
-        }
-        &.pull-left{
-            float:none;
-        }
-        &.pull-left > .dropdown-menu{
-            left:-100%;
-            margin-left:10px;
-        }
     }
-}
-.navbar-toggle {
-    .mrl;
-    .rts;
-}
-@media screen and (min-width: @screen-sm-min) {
     .navbar-toggle {
-        .mrn;
-        .rtn;
+        .mrl;
+        .rts;
+    }
+    @media screen and (min-width: @screen-sm-min) {
+        .navbar-toggle {
+            .mrn;
+            .rtn;
+        }
     }
 }
 /**************************************/

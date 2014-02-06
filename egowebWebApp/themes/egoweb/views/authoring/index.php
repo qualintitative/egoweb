@@ -3,13 +3,25 @@
 /* @var $dataProvider CActiveDataProvider */
 ?>
 <div class="container">
-	<form class="form-inline mvl" role="form">
-		<div class="form-group">
-			<label for="study_name" class="sr-only">Study Name</label>
-			<input type="email" class="form-control input-lg" id="study_name" placeholder="Study Name">
+	<div class="row">
+		<div class="col-sm-6">
+			<?php $form=$this->beginWidget('CActiveForm', array(
+				'id'=>'study-form',
+				'enableAjaxValidation'=>false,
+				    'htmlOptions'=>array('class'=>'mvl')
+			)); ?>
+				<?php echo $form->errorSummary($model); ?>
+				<?php echo $form->labelEx($model,'name',array('class'=>'control-label')); ?>
+				<div class="form-inline">
+					<div class="form-group">
+						<?php echo $form->textField($model,'name',array('maxlength'=>100,'class'=>'form-control input-lg')); ?>
+						<?php echo $form->error($model,'name'); ?>
+					</div>
+					<?php echo CHtml::submitButton($model->isNewRecord?'Create':'Save',array('class'=>'btn btn-primary btn-lg')); ?>
+				</div>
+			<?php $this->endWidget(); ?>
 		</div>
-		<button type="submit" class="btn btn-primary btn-lg">Create</button>
-	</form>
+	</div>
 	<div class="row">
 		<div class="col-sm-6">
 			<div class="h6">Single Session Studies</div>

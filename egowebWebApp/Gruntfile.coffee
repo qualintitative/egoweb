@@ -37,7 +37,7 @@ module.exports = (grunt) ->
                 files:[__dirname + "/themes/"+theme+"/js/plugins/*.js", __dirname + "/themes/"+theme+"/js/plugins.js", __dirname + "/themes/"+theme+"/coffee/*.coffee", __dirname + "/themes/"+theme+"/coffee/classes/*.coffee"]
                 tasks: ['myscripts']
             myless:
-                files:[__dirname + "/themes/"+theme+"/less/*.less", __dirname + "/themes/"+theme+"/less/flat-ui/*.less"]
+                files:[__dirname + "/themes/"+theme+"/less/*.less", __dirname + "/themes/"+theme+"/less/flat-ui/*.less", __dirname + "/themes/"+theme+"/less/flat-ui/modules/*.less"]
                 tasks: ['less']
     # Load external Grunt task plugins.
     grunt.loadNpmTasks "grunt-spritesmith"

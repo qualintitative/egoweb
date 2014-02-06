@@ -1768,18 +1768,23 @@ div[class^="spritesheet-"]{display:block}
 .grid-view table>caption+thead>tr:first-child>th,.grid-view table>colgroup+thead>tr:first-child>th,.grid-view table>thead:first-child>tr:first-child>th,.grid-view table>caption+thead>tr:first-child>td,.grid-view table>colgroup+thead>tr:first-child>td,.grid-view table>thead:first-child>tr:first-child>td{border-top:0}
 .grid-view table>tbody+tbody{border-top:2px solid #ddd}
 .grid-view table .table{background-color:#fff}
-.grid-view table th{color:#fff;background:#4c4b4b;text-transform:uppercase}.grid-view table th a{color:#fff}.grid-view table th a:hover{color:#fff}
+.grid-view table tr.odd{background-color:#efeeef}
+.grid-view table tr th{color:#fff;background:#4c4b4b;text-transform:uppercase}.grid-view table tr th a{color:#fff}.grid-view table tr th a:hover{color:#fff}
+.grid-view table tr th:last-child{text-align:right}
+.grid-view table tr td:last-child{text-align:right}.grid-view table tr td:last-child .fui-cross{color:#c0392b}
+.grid-view table tr td:last-child a .fui-cross{color:#c0392b}
 body{background:#77777a}body>.container{background:#fff;box-shadow:0 0 60px 0 #333;-webkit-box-shadow:0 0 60px 0 #333;box-shadow:0 0 60px 0 #333}body>.container>nav{position:relative}body>.container>nav .nav{position:relative;z-index:2}
 body>.container>nav .brand{font-family:"oswaldlight",Helvetica,Arial,sans-serif;font-size:20px;color:#f46d00;margin-top:10px;margin-right:10px;margin-bottom:10px;margin-left:10px;margin:10px !important;position:absolute;top:0}body>.container>nav .brand>span{border-left:1px solid #95a5a6;color:#95a5a6;position:relative;left:10px !important;padding-left:10px;padding-left:10px !important;visibility:hidden}
 @media screen and (min-width:768px){body>.container>nav .brand{position:relative}body>.container>nav .brand>span{visibility:visible}}
-.open .dropdown-menu{background-color:#efeeef;margin-top:0px;margin-top:0 !important}
-.open .dropdown-submenu{position:relative}.open .dropdown-submenu>.dropdown-menu{margin-top:0px;margin-top:0 !important;top:0;left:100%}
-.open .dropdown-submenu:hover>.dropdown-menu{visibility:visible;opacity:1;display:block}
-.open .dropdown-submenu>a:after{display:block;content:" ";float:right;width:0;height:0;margin-right:-10px}
-.open .dropdown-submenu.pull-left{float:none}
-.open .dropdown-submenu.pull-left>.dropdown-menu{left:-100%;margin-left:10px}
-.navbar-toggle{margin-right:20px;margin-right:20px !important;top:5px !important;position:relative;top:5px !important}
-@media screen and (min-width:768px){.navbar-toggle{margin-right:0px;margin-right:0 !important;position:relative;top:0 !important}}@media only screen and (min-width:35em){}@media print,(-o-min-device-pixel-ratio:5/4),(-webkit-min-device-pixel-ratio:1.25),(min-resolution:120dpi){}.ir{background-color:transparent;border:0;overflow:hidden;*text-indent:-9999px}
+.navbar-nav .open .dropdown-menu{background-color:#efeeef;margin-top:0px;margin-top:0 !important;border-radius:0}
+.navbar-nav .open .dropdown-submenu{position:relative}.navbar-nav .open .dropdown-submenu>.dropdown-menu{margin-top:0px;margin-top:0 !important;top:0;left:100%}
+.navbar-nav .open .dropdown-submenu:hover>.dropdown-menu{visibility:visible;opacity:1;display:block}
+.navbar-nav .open .dropdown-submenu>a:after{display:block;content:" ";float:right;width:0;height:0;margin-right:-10px}
+.navbar-nav .open .dropdown-submenu.pull-left{float:none}
+.navbar-nav .open .dropdown-submenu.pull-left>.dropdown-menu{left:-100%;margin-left:10px}
+.navbar-nav .navbar-toggle{margin-right:20px;margin-right:20px !important;top:5px !important;position:relative;top:5px !important}
+@media screen and (min-width:768px){.navbar-nav .navbar-toggle{margin-right:0px;margin-right:0 !important;position:relative;top:0 !important}}
+@media only screen and (min-width:35em){}@media print,(-o-min-device-pixel-ratio:5/4),(-webkit-min-device-pixel-ratio:1.25),(min-resolution:120dpi){}.ir{background-color:transparent;border:0;overflow:hidden;*text-indent:-9999px}
 .ir:before{content:"";display:block;width:0;height:150%}
 .hidden{display:none !important;visibility:hidden}
 .visuallyhidden{border:0;clip:rect(0 0 0 0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px}

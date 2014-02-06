@@ -3874,3 +3874,477 @@ Stack trace:
 REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
 HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
 ---
+2014/02/06 02:56:52 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 02:56:52 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 03:06:44 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 03:06:44 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/delete.png
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 03:09:54 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 03:09:57 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "themes/egoweb".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/egoweb')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/themes/egoweb/fonts/glyphicons-halflings-regular.woff
+HTTP_REFERER=http://dev1.egoweb.com/themes/egoweb/css/main.css
+---
+2014/02/06 03:09:58 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "themes/egoweb".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('themes/egoweb')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/themes/egoweb/fonts/glyphicons-halflings-regular.ttf
+HTTP_REFERER=http://dev1.egoweb.com/themes/egoweb/css/main.css
+---
+2014/02/06 03:13:05 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 03:14:45 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 03:17:26 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 03:17:51 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 03:23:32 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 03:31:41 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 03:39:43 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 03:41:24 [error] [exception.CException] exception 'CException' with message 'Property "CActiveForm.class" is not defined.' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CComponent.php:173
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWidgetFactory.php(161): CComponent->__set('class', 'form-inline')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(146): CWidgetFactory->createWidget(Object(AuthoringController), 'CActiveForm', Array)
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(189): CBaseController->createWidget('CActiveForm', Array)
+#3 C:\xampp\htdocs\dev_egoweb\egowebWebApp\themes\egoweb\views\authoring\_form_study_interviewers.php(7): CBaseController->beginWidget('CActiveForm', Array)
+#4 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(126): require('C:\xampp\htdocs...')
+#5 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(95): CBaseController->renderInternal('C:\xampp\htdocs...', Array, true)
+#6 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(869): CBaseController->renderFile('C:\xampp\htdocs...', Array, true)
+#7 C:\xampp\htdocs\dev_egoweb\egowebWebApp\themes\egoweb\views\authoring\edit.php(23): CController->renderPartial('_form_study_int...', Array, false, false)
+#8 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(126): require('C:\xampp\htdocs...')
+#9 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(95): CBaseController->renderInternal('C:\xampp\htdocs...', Array, true)
+#10 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(869): CBaseController->renderFile('C:\xampp\htdocs...', Array, true)
+#11 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(782): CController->renderPartial('edit', Array, true)
+#12 C:\xampp\htdocs\dev_egoweb\egowebWebApp\protected\controllers\AuthoringController.php(102): CController->render('edit', Array)
+#13 [internal function]: AuthoringController->actionEdit('93')
+#14 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\actions\CAction.php(108): ReflectionMethod->invokeArgs(Object(AuthoringController), Array)
+#15 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\actions\CInlineAction.php(47): CAction->runWithParamsInternal(Object(AuthoringController), Object(ReflectionMethod), Array)
+#16 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(308): CInlineAction->runWithParams(Array)
+#17 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#18 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilter.php(40): CFilterChain->run()
+#19 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(1145): CFilter->filter(Object(CFilterChain))
+#20 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#21 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#22 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(291): CFilterChain->run()
+#23 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#24 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(282): CController->run('edit')
+#25 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('authoring/edit')
+#26 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#27 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#28 {main}
+REQUEST_URI=/authoring/edit/93
+---
+2014/02/06 03:41:25 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 03:42:06 [error] [exception.CException] exception 'CException' with message 'Property "CActiveForm.class" is not defined.' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CComponent.php:173
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWidgetFactory.php(161): CComponent->__set('class', 'form-inline')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(146): CWidgetFactory->createWidget(Object(AuthoringController), 'CActiveForm', Array)
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(189): CBaseController->createWidget('CActiveForm', Array)
+#3 C:\xampp\htdocs\dev_egoweb\egowebWebApp\themes\egoweb\views\authoring\_form_study_interviewers.php(7): CBaseController->beginWidget('CActiveForm', Array)
+#4 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(126): require('C:\xampp\htdocs...')
+#5 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(95): CBaseController->renderInternal('C:\xampp\htdocs...', Array, true)
+#6 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(869): CBaseController->renderFile('C:\xampp\htdocs...', Array, true)
+#7 C:\xampp\htdocs\dev_egoweb\egowebWebApp\themes\egoweb\views\authoring\edit.php(23): CController->renderPartial('_form_study_int...', Array, false, false)
+#8 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(126): require('C:\xampp\htdocs...')
+#9 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(95): CBaseController->renderInternal('C:\xampp\htdocs...', Array, true)
+#10 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(869): CBaseController->renderFile('C:\xampp\htdocs...', Array, true)
+#11 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(782): CController->renderPartial('edit', Array, true)
+#12 C:\xampp\htdocs\dev_egoweb\egowebWebApp\protected\controllers\AuthoringController.php(102): CController->render('edit', Array)
+#13 [internal function]: AuthoringController->actionEdit('93')
+#14 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\actions\CAction.php(108): ReflectionMethod->invokeArgs(Object(AuthoringController), Array)
+#15 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\actions\CInlineAction.php(47): CAction->runWithParamsInternal(Object(AuthoringController), Object(ReflectionMethod), Array)
+#16 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(308): CInlineAction->runWithParams(Array)
+#17 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#18 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilter.php(40): CFilterChain->run()
+#19 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(1145): CFilter->filter(Object(CFilterChain))
+#20 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#21 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#22 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(291): CFilterChain->run()
+#23 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#24 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(282): CController->run('edit')
+#25 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('authoring/edit')
+#26 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#27 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#28 {main}
+REQUEST_URI=/authoring/edit/93
+---
+2014/02/06 03:42:07 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 03:43:44 [error] [exception.CException] exception 'CException' with message 'Property "CActiveForm.class" is not defined.' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CComponent.php:173
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWidgetFactory.php(161): CComponent->__set('class', 'form-inline')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(146): CWidgetFactory->createWidget(Object(AuthoringController), 'CActiveForm', Array)
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(189): CBaseController->createWidget('CActiveForm', Array)
+#3 C:\xampp\htdocs\dev_egoweb\egowebWebApp\themes\egoweb\views\authoring\_form_study_interviewers.php(7): CBaseController->beginWidget('CActiveForm', Array)
+#4 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(126): require('C:\xampp\htdocs...')
+#5 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(95): CBaseController->renderInternal('C:\xampp\htdocs...', Array, true)
+#6 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(869): CBaseController->renderFile('C:\xampp\htdocs...', Array, true)
+#7 C:\xampp\htdocs\dev_egoweb\egowebWebApp\themes\egoweb\views\authoring\edit.php(23): CController->renderPartial('_form_study_int...', Array, false, false)
+#8 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(126): require('C:\xampp\htdocs...')
+#9 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(95): CBaseController->renderInternal('C:\xampp\htdocs...', Array, true)
+#10 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(869): CBaseController->renderFile('C:\xampp\htdocs...', Array, true)
+#11 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(782): CController->renderPartial('edit', Array, true)
+#12 C:\xampp\htdocs\dev_egoweb\egowebWebApp\protected\controllers\AuthoringController.php(102): CController->render('edit', Array)
+#13 [internal function]: AuthoringController->actionEdit('93')
+#14 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\actions\CAction.php(108): ReflectionMethod->invokeArgs(Object(AuthoringController), Array)
+#15 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\actions\CInlineAction.php(47): CAction->runWithParamsInternal(Object(AuthoringController), Object(ReflectionMethod), Array)
+#16 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(308): CInlineAction->runWithParams(Array)
+#17 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#18 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilter.php(40): CFilterChain->run()
+#19 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(1145): CFilter->filter(Object(CFilterChain))
+#20 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#21 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#22 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(291): CFilterChain->run()
+#23 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#24 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(282): CController->run('edit')
+#25 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('authoring/edit')
+#26 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#27 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#28 {main}
+REQUEST_URI=/authoring/edit/93
+---
+2014/02/06 03:43:45 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 03:45:15 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 03:49:28 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 03:56:00 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 03:56:28 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 04:08:44 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 04:11:59 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 04:14:22 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 04:16:39 [error] [php] get_class() expects parameter 1 to be object, string given (C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\helpers\CHtml.php:2220)
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\widgets\CActiveForm.php(547): activeLabel()
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\themes\egoweb\views\authoring\_form_study_interviewers.php(9): CActiveForm->label()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(126): require()
+#3 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(95): AuthoringController->renderInternal()
+#4 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(869): AuthoringController->renderFile()
+#5 C:\xampp\htdocs\dev_egoweb\egowebWebApp\themes\egoweb\views\authoring\edit.php(23): AuthoringController->renderPartial()
+#6 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(126): require()
+#7 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(95): AuthoringController->renderInternal()
+#8 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(869): AuthoringController->renderFile()
+#9 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(782): AuthoringController->renderPartial()
+#10 C:\xampp\htdocs\dev_egoweb\egowebWebApp\protected\controllers\AuthoringController.php(102): AuthoringController->render()
+#11 unknown(0): AuthoringController->actionEdit()
+#12 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\actions\CAction.php(108): ReflectionMethod->invokeArgs()
+#13 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\actions\CInlineAction.php(47): CInlineAction->runWithParamsInternal()
+#14 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(308): CInlineAction->runWithParams()
+#15 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilterChain.php(133): AuthoringController->runAction()
+#16 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilter.php(40): CFilterChain->run()
+#17 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(1145): CAccessControlFilter->filter()
+#18 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CInlineFilter.php(58): AuthoringController->filterAccessControl()
+#19 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilterChain.php(130): CInlineFilter->filter()
+#20 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(291): CFilterChain->run()
+#21 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(265): AuthoringController->runActionWithFilters()
+#22 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(282): AuthoringController->run()
+#23 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController()
+#24 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#25 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CWebApplication->run()
+REQUEST_URI=/authoring/edit/93
+2014/02/06 04:16:40 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 04:17:56 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 04:25:46 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 04:27:15 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 04:34:18 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 04:42:32 [error] [exception.CException] exception 'CException' with message 'Property "AlterList.display" is not defined.' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CComponent.php:130
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\db\ar\CActiveRecord.php(143): CComponent->__get('display')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\helpers\CHtml.php(2255): CActiveRecord->__get('display')
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\helpers\CHtml.php(1980): CHtml::resolveValue(Object(AlterList), 'display')
+#3 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\helpers\CHtml.php(1257): CHtml::activeInputField('text', Object(AlterList), 'display', Array)
+#4 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\widgets\CActiveForm.php(657): CHtml::activeTextField(Object(AlterList), 'display', Array)
+#5 C:\xampp\htdocs\dev_egoweb\egowebWebApp\themes\egoweb\views\authoring\edit.php(116): CActiveForm->textField(Object(AlterList), 'display', Array)
+#6 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(126): require('C:\xampp\htdocs...')
+#7 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CBaseController.php(95): CBaseController->renderInternal('C:\xampp\htdocs...', Array, true)
+#8 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(869): CBaseController->renderFile('C:\xampp\htdocs...', Array, true)
+#9 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(782): CController->renderPartial('edit', Array, true)
+#10 C:\xampp\htdocs\dev_egoweb\egowebWebApp\protected\controllers\AuthoringController.php(102): CController->render('edit', Array)
+#11 [internal function]: AuthoringController->actionEdit('93')
+#12 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\actions\CAction.php(108): ReflectionMethod->invokeArgs(Object(AuthoringController), Array)
+#13 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\actions\CInlineAction.php(47): CAction->runWithParamsInternal(Object(AuthoringController), Object(ReflectionMethod), Array)
+#14 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(308): CInlineAction->runWithParams(Array)
+#15 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#16 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilter.php(40): CFilterChain->run()
+#17 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(1145): CFilter->filter(Object(CFilterChain))
+#18 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#19 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\filters\CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#20 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(291): CFilterChain->run()
+#21 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#22 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(282): CController->run('edit')
+#23 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('authoring/edit')
+#24 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#25 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#26 {main}
+REQUEST_URI=/authoring/edit/93
+---
+2014/02/06 04:42:32 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 04:43:45 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 04:49:05 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 04:51:37 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 04:54:43 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
+2014/02/06 05:10:13 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/16c444f7".' in C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php:286
+Stack trace:
+#0 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\web\CWebApplication.php(141): CWebApplication->runController('assets/16c444f7')
+#1 C:\xampp\htdocs\dev_egoweb\egowebWebApp\system\framework\base\CApplication.php(169): CWebApplication->processRequest()
+#2 C:\xampp\htdocs\dev_egoweb\egowebWebApp\index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/16c444f7/gridview/jquery.yiigridview.js
+HTTP_REFERER=http://dev1.egoweb.com/authoring/edit/93
+---
