@@ -57,6 +57,13 @@ return array(
 		),
 		// uncomment the following to use a MySQL database
 		*/
+		//'db'=>array(
+		//	'connectionString' => 'mysql:host=localhost;dbname=randblu_egowebdata',
+		//	'emulatePrepare' => true,
+		//	'username' => 'randblu_egoweb',
+		//	'password' => ",./l;'p[]",
+		//	'charset' => 'utf8',
+		//),
 		'db'=>array(
 			'connectionString' => 'mysql:host=localhost;dbname=dev_egoweb',
 			'emulatePrepare' => true,

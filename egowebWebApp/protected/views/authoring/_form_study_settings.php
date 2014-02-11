@@ -75,7 +75,7 @@
 			CHtml::listData(
 				Expression::model()->findAll($criteria),
 				'id',
-				function($post) {return CHtml::encode(substr($post->name,0,40));}
+				CHtml::encode(substr($post->name,0,40))
 			),
 			array('empty' => 'Choose One')
 		); ?>
@@ -119,7 +119,7 @@
 			CHtml::listData(
 				Question::model()->findAll($criteria),
 				'id',
-				function($post) {return CHtml::encode(substr($post->title,0,40));}
+				CHtml::encode(substr($post->title,0,40))
 			),
 			array('empty' => 'Choose One')
 		); ?>
