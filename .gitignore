@@ -1,5 +1,4 @@
 *.komodoproject
 .DS_Store
 egowebWebApp/protected/runtime/
-assets
 egowebApp/protected/assets/

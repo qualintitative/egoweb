@@ -27,11 +27,7 @@ function deleteInterviews(){
 <?php echo CHtml::dropdownlist(
     'adjacencyExpressionId',
     "",
-    CHtml::listData(
-    	Expression::model()->findAll($criteria),
-    	'id',
-    	function($post) {return CHtml::encode(substr($post->name,0,40));}
-    ),
+    $expressions,
     array(
     	'empty' => 'Choose One',
 		'onchange' => '$("#expressionId").val($(this).val())'

@@ -39,17 +39,22 @@ class AnalysisController extends Controller
 		$interviews = q("SELECT * FROM interview WHERE studyId = ".$id)->queryAll();
 		$study = Study::model()->findByPk($id);
 		$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$study->id)->queryColumn();
-		if($questionIds)
+		$expressions = [];
+		if(count($questionIds) > 0){
 			$questionIds = implode(",", $questionIds);
-		else
-			$questionIds = 0;
-		$criteria = array(
+			$criteria = array(
 			'condition'=>"studyId = " . $study->id ." AND questionId in ($questionIds)",
-		);
+			);
+			$expressions = CHtml::listData(
+			    	Expression::model()->findAll($criteria),
+			    	'id',
+			    	function($post) {return CHtml::encode(substr($post->name,0,40));}
+			    );
+		}
 		$this->render('study', array(
 			'study'=>$study,
 			'interviews'=>$interviews,
-			'criteria'=>$criteria,
+			'expressions'=>$expressions,
 		));
 	}
 

@@ -9,19 +9,19 @@ expressions = new Object;
 function loadStudy(id, intId){
 	console.log("loading study");
 	study = db.queryRowObject("SELECT * FROM study WHERE id = " + id);
-	console.log(study);
+	//console.log(study);
 	ego_id_questions = db.queryObjects("SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId = " + id + " ORDER BY ORDERING").data;
-	console.log(ego_id_questions);
+	//console.log(ego_id_questions);
 	ego_questions = db.queryObjects("SELECT * FROM question WHERE subjectType = 'EGO' AND studyId = " + id + " ORDER BY ORDERING").data;
-	console.log(ego_questions);
+	//console.log(ego_questions);
 	alter_questions = db.queryObjects("SELECT * FROM question WHERE subjectType = 'ALTER' AND studyId = " + id + " ORDER BY ORDERING").data;
-	console.log(alter_questions);
+	//console.log(alter_questions);
 	alter_pair_questions = db.queryObjects("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = " + id + " ORDER BY ORDERING").data;
-	console.log(alter_pair_questions);
+	//console.log(alter_pair_questions);
 	network_questions = db.queryObjects("SELECT * FROM question WHERE subjectType = 'NETWORK' AND studyId = " + id + " ORDER BY ORDERING").data;
-	console.log(network_questions);
+	//console.log(network_questions);
 	options = db.queryObjects("SELECT * FROM questionOption WHERE studyId = " + id + " ORDER BY ORDERING").data;
-	console.log(options);
+	//console.log(options);
 	expressions = db.queryObjects("SELECT * FROM expression WHERE studyId = " + id).data;
 	console.log(expressions);
 
@@ -30,7 +30,7 @@ function loadStudy(id, intId){
 	}else{
 		interviewId = intId;
 		page = db.queryValue("SELECT completed FROM interview WHERE id = " + intId);
-		if(parseInt(study.MULTISESSIONEGOID) != 0){
+		if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
 			var egoValue = db.queryValue("SELECT VALUE FROM answer WHERE interviewId = " + intId + " AND questionID = " + study.MULTISESSIONEGOID);
 			console.log("egovalue:" + egoValue);
 			column = db.queryObjects("SELECT ID FROM question WHERE title = (SELECT q.title FROM question q WHERE q.ID = " + study.MULTISESSIONEGOID + ")").data;

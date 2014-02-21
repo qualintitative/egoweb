@@ -123,7 +123,7 @@ class Expression extends CActiveRecord
 			return true;
 
 		$study = Study::model()->findByPk($expression->studyId);
-		if($study->multiSessionEgoId){
+		if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
 			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
 			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
 			$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
