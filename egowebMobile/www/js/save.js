@@ -171,91 +171,92 @@ function save(id, page){
 				errorModel.addError('0', 'Please list ' + study.MINALTERS + ' people');
 				view(studyId, interviewId, page);
 			}else{
-				var alters = db.queryObjects("SELECT * FROM alters WHERE interviewId = " + interviewId).data;
-				testAlterQ = alter_questions.slice(0).shift();
-				testAlter = alters.shift();
-				var a_id = testAlterQ.ID + "-" + testAlter.ID;
-				if(typeof model[a_id] == "undefined"){
+				if(alter_questions.length > 0){
+					var alters = db.queryObjects("SELECT * FROM alters WHERE interviewId = " + interviewId).data;
+					testAlterQ = alter_questions.slice(0).shift();
+					testAlter = alters.shift();
+					var a_id = testAlterQ.ID + "-" + testAlter.ID;
+					if(typeof model[a_id] == "undefined"){
 
-				for(k in alter_questions){
-					for(a in alters){
-						a_id = alter_questions[k].ID + "-" + alters[a].ID;
-						if(typeof model[a_id] == "undefined"){
-							newId = db.queryValue("SELECT id FROM answer ORDER BY id DESC");
-							newId = parseInt(newId) + 1;
-							newAnswer = [
-							    newId,
-							    1,
-							    alter_questions[k].ID,
-							    interviewId,
-							    alters[a].ID,
-							    '',
-							    study.VALUENOTYETANSWERED,
-							    '',
-							    'NONE',
-							    study.ID,
-							    alter_questions[k].SUBJECTTYPE,
-							    alter_questions[k].ANSWERTYPE
-							];
-							db.catalog.getTable('answer').insertRow(newAnswer);
-						}
-					}
-				}
-				for(k in alter_pair_questions){
-					for(a in alters){
-						alters2 = alters.slice(0);
-						if(alter_pair_questions[k].SYMMETRIC)
-							alters2.shift();
-						for(b in alters2){
-							a_id = alter_pair_questions[k].ID + "-" + alters[a].ID + "and" + alters2[b].ID;
+					for(k in alter_questions){
+						for(a in alters){
+							a_id = alter_questions[k].ID + "-" + alters[a].ID;
 							if(typeof model[a_id] == "undefined"){
 								newId = db.queryValue("SELECT id FROM answer ORDER BY id DESC");
 								newId = parseInt(newId) + 1;
 								newAnswer = [
 								    newId,
 								    1,
-								    alter_pair_questions[k].ID,
+								    alter_questions[k].ID,
 								    interviewId,
 								    alters[a].ID,
-								    alters2[b].ID,
+								    '',
 								    study.VALUENOTYETANSWERED,
 								    '',
 								    'NONE',
 								    study.ID,
-								    alter_pair_questions[k].SUBJECTTYPE,
-								    alter_pair_questions[k].ANSWERTYPE
+								    alter_questions[k].SUBJECTTYPE,
+								    alter_questions[k].ANSWERTYPE
 								];
 								db.catalog.getTable('answer').insertRow(newAnswer);
 							}
 						}
 					}
-				}
-
-				for(k in network_questions){
-					a_id = network_questions[k].ID;
-
-					if(typeof model[a_id] == "undefined"){
-						newId = db.queryValue("SELECT id FROM answer ORDER BY id DESC");
-						newId = parseInt(newId) + 1;
-						newAnswer = [
-							newId,
-					        1,
-					        network_questions[k].ID,
-					        interviewId,
-					        '',
-					        '',
-					        study.VALUENOTYETANSWERED,
-					        '',
-					        'NONE',
-					        study.ID,
-					        network_questions[k].SUBJECTTYPE,
-					        network_questions[k].ANSWERTYPE
-					    ];
-					    db.catalog.getTable('answer').insertRow(newAnswer);
+					for(k in alter_pair_questions){
+						for(a in alters){
+							alters2 = alters.slice(0);
+							if(alter_pair_questions[k].SYMMETRIC)
+								alters2.shift();
+							for(b in alters2){
+								a_id = alter_pair_questions[k].ID + "-" + alters[a].ID + "and" + alters2[b].ID;
+								if(typeof model[a_id] == "undefined"){
+									newId = db.queryValue("SELECT id FROM answer ORDER BY id DESC");
+									newId = parseInt(newId) + 1;
+									newAnswer = [
+									    newId,
+									    1,
+									    alter_pair_questions[k].ID,
+									    interviewId,
+									    alters[a].ID,
+									    alters2[b].ID,
+									    study.VALUENOTYETANSWERED,
+									    '',
+									    'NONE',
+									    study.ID,
+									    alter_pair_questions[k].SUBJECTTYPE,
+									    alter_pair_questions[k].ANSWERTYPE
+									];
+									db.catalog.getTable('answer').insertRow(newAnswer);
+								}
+							}
+						}
 					}
-				}
 
-				db.commit();
+					for(k in network_questions){
+						a_id = network_questions[k].ID;
+
+						if(typeof model[a_id] == "undefined"){
+							newId = db.queryValue("SELECT id FROM answer ORDER BY id DESC");
+							newId = parseInt(newId) + 1;
+							newAnswer = [
+								newId,
+						        1,
+						        network_questions[k].ID,
+						        interviewId,
+						        '',
+						        '',
+						        study.VALUENOTYETANSWERED,
+						        '',
+						        'NONE',
+						        study.ID,
+						        network_questions[k].SUBJECTTYPE,
+						        network_questions[k].ANSWERTYPE
+						    ];
+						    db.catalog.getTable('answer').insertRow(newAnswer);
+						}
+					}
+					}
+					db.commit();
 				}
 				view(studyId, interviewId, page + 1);
 			}
