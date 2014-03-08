@@ -83,33 +83,42 @@ class Expression extends CActiveRecord
 		);
 	}
 
+	/**
+	 * FUNCTION
+	 * fetches all the answers for an alter / alter pair question
+	 *
+	 */
 	public function fetchAlterAnswers($questionId, $interviewId, $multi = false)
 	{
-		/*
-		if($study->multiSessionEgoId){
-			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
+	/*
+		$alters = array();
+		if($multi){
+			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionId = " . $study->multiSessionEgoId)->queryScalar();
 			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " .$multi . ")")->queryColumn();
 			$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
 			$interviewIds = q("SELECT interviewId FROM answer WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
-			$interviewId = implode(",", $interviewIds);
+
+			foreach($interviewIds as $interviewId){
+				$newBatch = q("SELECT * FROM alters WHERE interviewId =  $interviewId ")->queryAll();
+				if($newBatch)
+					$alters = array_merge($alters, $newBatch);
+			}
+			//$interviewId = implode(",", $interviewIds);
 		}
 		*/
-
-		$alters = q("SELECT * FROM alters WHERE interviewId = " . $interviewId)->queryAll();
-		$question = q("SELECT * FROM question WHERE id = " . $questionId)->queryRow();
-		$answers = q("SELECT * FROM answer WHERE questionId = ".$questionId)->queryAll();
-		if($question['subjectType'] == "ALTER"){
-			foreach ($answers as $answer){
-				$array_id = $question['id'] . '-' . $answer['alterId1'];
+		$alters = q("SELECT * FROM alters WHERE interviewId =  $interviewId ")->queryAll();
+		$answers = q("SELECT * FROM answer WHERE questionId = ".$questionId . " and interviewId = $interviewId")->queryAll();
+		foreach ($answers as $answer){
+			if($answer['questionType'] == "ALTER"){
+				$array_id = $answer['questionId'] . '-' . $answer['alterId1'];
 				$this->answers[$array_id] = $answer['value'];
-			}
-		}else if($question['subjectType'] == "ALTER_PAIR"){
-			foreach ($answers as $answer){
-				$array_id = $question['id'] . '-' . $answer['alterId1'] . 'and' . $answer['alterId2'] ;
+			}else if($answer['questionType'] == "ALTER_PAIR"){
+				$array_id = $answer['questionId'] . '-' . $answer['alterId1'] . 'and' . $answer['alterId2'] ;
 				$this->answers[$array_id] = $answer['value'];
 			}
 		}
 	}
+
 	/**
 	 * CORE FUNCTION
 	 * Show logic for the expressions. determines whether or not to display a question
@@ -149,16 +158,34 @@ class Expression extends CActiveRecord
 
 		if(is_numeric($questionId)){
 			if($subjectType == 'ALTER_PAIR'){
-				if(!$this->answers)
-					$this->fetchAlterAnswers($questionId, $interviewId,$study->multiSessionEgoId);
+				if(!$this->answers){
+					if(strstr($interviewId, ",")){
+						foreach(explode(",", $interviewId) as $id){
+							$studyId = q("SELECT studyId FROM interview WHERE id = $id")->queryScalar();
+							if(q("SELECT id FROM question WHERE id = $questionId and studyId = $studyId")->queryScalar())
+								$this->fetchAlterAnswers($questionId, $id);
+						}
+					}else{
+						$this->fetchAlterAnswers($questionId, $interviewId);
+					}
+				}
 				$array_id = $questionId . '-' .  $alterId1 . "and" . $alterId2;
 				if(isset($this->answers[$array_id]))
 					$answer = $this->answers[$array_id];
 				else
 					$answer = "";
 			}else if($subjectType == 'ALTER'){
-				if(!$this->answers)
-					$this->fetchAlterAnswers($questionId, $interviewId,$study->multiSessionEgoId);
+				if(!$this->answers){
+					if(strstr($interviewId, ",")){
+						foreach(explode(",", $interviewId) as $id){
+							$studyId = q("SELECT studyId FROM interview WHERE id = $id")->queryScalar();
+							if(q("SELECT id FROM question WHERE id = $questionId and studyId = $studyId")->queryScalar())
+								$this->fetchAlterAnswers($questionId, $id);
+						}
+					}else{
+						$this->fetchAlterAnswers($questionId, $interviewId);
+					}
+				}
 				$array_id = $questionId . '-' .  $alterId1;
 				if(isset($this->answers[$array_id]))
 					$answer = $this->answers[$array_id];
@@ -170,7 +197,6 @@ class Expression extends CActiveRecord
 		}
 
 		if($expression->type == "Text"){
-			//$answer = Answer::model()->find($criteria);
 			if(!$answer)
 				return $expression->resultForUnanswered;
 			if($expression->operator == "Contains"){
@@ -181,7 +207,6 @@ class Expression extends CActiveRecord
 					return true;
 			}
 		}else if($expression->type == "Number"){
-			//$answer = Answer::model()->find($criteria);
 			if(!$answer || !is_numeric($answer))
 				return $expression->resultForUnanswered;
 			$logic = "return " . $answer . " " . $comparers[$expression->operator] . " " . $expression->value . ";";

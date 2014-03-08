@@ -129,7 +129,10 @@
 						}else{
 							end = "";
 						}
-						lastAnswer = db.queryValue("SELECT VALUE FROM answer WHERE questionId = " + question.ID + end + ' ORDER BY id DESC');
+						if(question)
+							lastAnswer = db.queryValue("SELECT VALUE FROM answer WHERE questionId = " + question.ID + end + ' ORDER BY id DESC');
+						else
+							return false;
 						exp[i] = lastAnswer;
 					}
 				}

@@ -1,5 +1,6 @@
 <script>
-<?php  if(Interview::countAlters($interviewId) >= Study::model()->findByPk($studyId)->maxAlters): ?>
+<?php $study = Study::model()->findByPk($studyId); ?>
+<?php  if(Interview::countAlters($interviewId) >= $study->maxAlters): ?>
 jQuery(document).ready(function(){
 	jQuery('#alter-form').hide();
 });
@@ -19,34 +20,34 @@ jQuery(document).ready(function(){
 
 jQuery(document).ready(function(){
 	var objDiv = document.getElementById("alterListBox");
-	objDiv.scrollTop = objDiv.scrollHeight;	
+	objDiv.scrollTop = objDiv.scrollHeight;
 });
 </script>
 <?php
 
 Yii::app()->clientScript->registerScript('alter-delete', "
 jQuery('a.alter-delete').click(function() {
-        
-        var url = $(this).attr('href');
-        //  do your post request here
-        
 
-        $.get(url,function(data){
-             $('#alterListBox').html(data);
-         });
-        return false;
+		var url = $(this).attr('href');
+		//  do your post request here
+
+
+		$.get(url,function(data){
+			 $('#alterListBox').html(data);
+		 });
+		return false;
 });
 ");
 
 $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'alters-grid',
 	'dataProvider'=>$dataProvider,
-    'hideHeader'=>'true',
+	'hideHeader'=>'true',
 	'columns'=>array(
 		array(
 			'type'=>'raw',
 			'name'=>'number',
-			'value'=>'$data->ordering + 1',
+			'value'=>'$data->isRepeat',
 			'htmlOptions'=>array('style'=>"width:20px;",'id'=>'ordering'),
 		),
 		array(
@@ -57,17 +58,17 @@ $this->widget('zii.widgets.grid.CGridView', array(
 		),
 		array
 		(
-    		'class'=>'CButtonColumn',
-    		'template'=>'{delete}',
-    		'buttons'=>array
-    		(
-        		'delete' => array
-        		(
-            		'url'=>'Yii::app()->createUrl("/interviewing/ajaxdelete", array("interviewId"=>'.$interviewId.', "studyId"=>'.$studyId.', "Alters[id]"=>$data->id, "_"=>"'.uniqid().'"))',
-            		'options'=>array('class'=>'alter-delete'),
-        		),
-    		),
-    
+			'class'=>'CButtonColumn',
+			'template'=>'{delete}',
+			'buttons'=>array
+			(
+				'delete' => array
+				(
+					'url'=>'Yii::app()->createUrl("/interviewing/ajaxdelete", array("interviewId"=>'.$interviewId.', "studyId"=>'.$studyId.', "Alters[id]"=>$data->id, "_"=>"'.uniqid().'"))',
+					'options'=>array('class'=>'alter-delete'),
+				),
+			),
+
 		),
 	),
 	'summaryText'=>'',

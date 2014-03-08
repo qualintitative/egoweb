@@ -692,3 +692,8 @@ ul.authoring li a:hover{
 .grid-view thead th a{
 	color:#fff;
 }
+
+#previous_alters{
+	padding:10px;
+	clear:left;
+}

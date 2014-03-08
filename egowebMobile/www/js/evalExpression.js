@@ -11,6 +11,14 @@ function evalExpression(id, interviewId, alterId1, alterId2)
     questionId = "";
     subjectType = "";
 	if(expression[id] && expression[id].QUESTIONID){
+		if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
+			var interviewIds = getInterviewIds(interviewId);
+			for(k in interviewIds){
+				var studyId = db.queryValue("SELECT studyId FROM interview WHERE id = " + interviewIds[k]);
+				if(db.queryValue("SELECT id FROM question WHERE id = "  + id + "and studyId = " + studyId))
+					interviewId = interviewIds[k];
+			}
+		}
 		row = db.queryRow("SELECT id,subjectType FROM question WHERE id = " + expression[id].QUESTIONID);
 		if(row){
 			questionId = row[0];
@@ -28,9 +36,10 @@ function evalExpression(id, interviewId, alterId1, alterId2)
 
     if(questionId)
     	array_id = questionId;
-    if(typeof alterId1 != 'undefined' && subjectType == 'ALTER')
+    if(typeof alterId1 != 'undefined' && subjectType == 'ALTER'){
+
     	array_id += "-" + alterId1;
-    else if(typeof alterId2 != 'undefined' && subjectType == 'ALTER_PAIR')
+    }else if(typeof alterId2 != 'undefined' && subjectType == 'ALTER_PAIR')
     	array_id += 'and' + alterId2;
     if(typeof model[array_id] != "undefined")
 		answer = model[array_id].VALUE;

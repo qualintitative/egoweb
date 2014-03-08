@@ -51,7 +51,7 @@ $(function(){
 $alterPrompt = AlterPrompt::getPrompt($studyId, Interview::countAlters($interviewId));
 // fetch alter list
 $criteria=array(
-	'condition'=>"interviewId = " . $interviewId,
+	'condition'=>"FIND_IN_SET(" . $interviewId . ", interviewId)",
 	'order'=>'ordering',
 );
 $dataProvider=new CActiveDataProvider('Alters',array(
@@ -72,6 +72,23 @@ $this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterP
 		<div class="question">
 	<?php endif; ?>
 	<?php if($questions[0]->answerType == 'ALTER_PROMPT'): ?>
+<?php if($study->multiSessionEgoId): ?>
+<div id="previous_alters">
+<?php
+$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionId = " . $study->multiSessionEgoId)->queryScalar();
+$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
+$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
+$interviewIds = implode(",",array_diff($interviewIds, array($interviewId)));
+$alters = q("SELECt * FROM alters WHERE FIND_IN_SET(interviewId,'$interviewIds')")->queryAll();
+if($alters){
+	echo "<b>Previous Alters</b><br><br>";
+	foreach($alters as $oldAlter){
+		echo $oldAlter['name'] . "<br>";
+	}
+}
+?>
+</div>
+<?php endif; ?>
 		<div id="alterPrompt" class="orangeText" style="width:500px"></div>
 		<?php
 		$panel = strtolower($questions[0]->answerType);
@@ -95,6 +112,7 @@ $this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterP
 			</div>
 		<?php endif; ?>
 	</div>
+
 	<?php endif;?>
 <?php endif;?>
 

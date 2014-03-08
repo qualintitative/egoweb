@@ -37,7 +37,14 @@ function view(id, interviewId, page)
 	$('#ERROR').html('');
 	$('#ERROR').hide();
 
-	for (var k in questions) {
+	for (var l in questions) {
+		questionOrder = [];
+		$(ego_id_questions).each(function(index){questionOrder.push(ego_id_questions[index].ID)});
+		if(questions[l].SUBJECTTYPE == "EGO_ID")
+			var k = questionOrder[counter];
+		else
+			var k = l;
+
 		if(counter == 0){
 			if(questions[k].SUBJECTTYPE == "EGO_ID")
 				$('.questionText').html(study.EGOIDPROMPT);

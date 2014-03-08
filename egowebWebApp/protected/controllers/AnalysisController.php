@@ -65,10 +65,14 @@ class AnalysisController extends Controller
 			$interview = Interview::model()->findByPk($_GET['interviewId']);
 			$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$interview->studyId)->queryColumn();
 			$questionIds = implode(",", $questionIds);
+			if(!$questionIds)
+				$questionIds = 0;
 			$alter_pair_expressions = q("SELECT * FROM expression WHERE studyId = " . $interview->studyId . " AND questionId in (" . $questionIds . ")")->queryAll();
+			$studyId = q("SELECT studyId FROM interview WHERE id = ".$_GET['interviewId'])->queryScalar();
 
 			$this->render('visualize',
 				array(
+					'studyId'=>$studyId,
 					'alter_pair_expressions'=> $alter_pair_expressions,
 					'interviewId'=>$_GET['interviewId'],
 				)

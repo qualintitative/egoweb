@@ -66,8 +66,8 @@ function importStudy(address, id){
 				"valueDontKnow",
 				"valueLogicalSkip",
 				"valueNotYetAnswered",
-				"modified"/*,
-				"multiSessionEgoId"*/
+				"modified",
+				"multiSessionEgoId"
 			],
 			primaryKey: [ "id" ],
 		};
@@ -134,7 +134,7 @@ function importStudy(address, id){
 				"networkNSizeQId",
 				"networkEColorQId",
 				"networkESizeQId",
-				"useAlterListField"
+				"useAlterListField",
 			],
 		};
 

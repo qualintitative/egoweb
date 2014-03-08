@@ -15,7 +15,6 @@ if(isset($_GET['expressionId']))
 if(isset($_GET['params']))
 	$params = $_GET['params'];
 
-$studyId = q("SELECT studyId FROM interview WHERE id = ".$interviewId)->queryScalar();
 echo "<h1>".CHtml::link(Study::getName($studyId), $this->createUrl("/analysis/study/".$studyId)) . " - " . Interview::getRespondant($interviewId)."</h1>";
 ?>
 <h3>Adjacency
@@ -63,7 +62,7 @@ if($interviewId && $expressionId){
 		//echo $stats->names[$node] . ": closeness: ". $stats->getCloseness($node)."<br>";
 		echo $stats->names[$node] . ": eigenvector: ". $stats->eigenvectorCentrality($node)."<br>";
 	}
-	
+
 	echo "<br>";
 	echo "Density:". $stats->getDensity()."<br>";
 	echo "Max degree value:" .$stats->maxDegree()."<br>";

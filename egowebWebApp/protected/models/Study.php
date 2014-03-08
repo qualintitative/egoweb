@@ -56,7 +56,10 @@ class Study extends CActiveRecord
 			array('modified','default',
 				'value'=>new CDbExpression('NOW()'),
 				'setOnEmpty'=>true,'on'=>'insert'),
-		);
+			array('multiSessionEgoId','default',
+				'value'=>0,
+			'setOnEmpty'=>true),
+			);
 	}
 
 	/**
@@ -327,7 +330,10 @@ class Study extends CActiveRecord
 				return $page[$i];
 			}
 			$i++;
-			$alters = Alters::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+			$criteria = array(
+				'condition'=>"FIND_IN_SET(" . $interviewId . ", interviewId)",
+			);
+			$alters = Alters::model()->findAll($criteria);
 			if(count($alters) > 0){
 				$result = q("SELECT id, preface, askingStyleList,answerReasonExpressionId FROM question WHERE subjectType = 'ALTER' AND studyId = $id ORDER BY ordering")->queryAll();
 				$alterQuestionIds = array();

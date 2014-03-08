@@ -158,7 +158,7 @@ function unSkip(array_id, val){
 }
 
 function addAlter(name){
-	var check = db.queryValue("SELECT id FROM alters WHERE interviewId = " +  interviewId + " AND name = '" + name + "'");
+	var check = db.queryValue("SELECT id FROM alters WHERE CONCAT(',', interviewId, ',') LIKE '%," + interviewId + ",%' AND name = '" + name + "'");
 	if(check){
 		$('#ERROR').html("Name already exists!");
 		$('#ERROR').show();
@@ -174,18 +174,41 @@ function addAlter(name){
 		$('#ALTER_PROMPT').hide();
 	}
 
-	newId = db.queryValue("SELECT id FROM alters ORDER BY id DESC");
-	if(!newId)
-		newId = 0;
-	alter = [
-		parseInt(newId) + 1,
-		1,
-		parseInt(db.queryValue("SELECT ordering FROM alters WHERE interviewId = " + interviewId + " ORDER BY ordering DESC")) + 1,
-		name,
-		interviewId,
-		''
-	];
-	db.catalog.getTable('alters').insertRow(alter);
+	if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
+		var interviewIds = getInterviewIds(interviewId);
+		for(k in interviewIds){
+			var oldAlter = db.queryRow("SELECT * FROM alters WHERE CONCAT(',', interviewId, ',') LIKE '%," + interviewIds[k] + ",%' AND name = '" + name + "'");
+			if(oldAlter)
+				break;
+		}
+	}
+
+	if(typeof oldAlter != "undefined" && oldAlter){
+		alter = [
+			oldAlter[0],
+			1,
+			parseInt(db.queryValue("SELECT ordering FROM alters WHERE CONCAT(',', interviewId, ',') LIKE '%," + interviewId + ",%' ORDER BY ordering DESC")) + 1,
+			name,
+			oldAlter[4] + "," + interviewId,
+			''
+		];
+		db.catalog.getTable('alters').updateRow(alter);
+	}else{
+		var newId = db.queryValue("SELECT id FROM alters ORDER BY id DESC");
+		if(!newId)
+			newId = 0;
+		newId = parseInt(newId) + 1;
+		alter = [
+			newId,
+			1,
+			parseInt(db.queryValue("SELECT ordering FROM alters WHERE CONCAT(',', interviewId, ',') LIKE '%," + interviewId + ",%' ORDER BY ordering DESC")) + 1,
+			name,
+			interviewId,
+			''
+		];
+		db.catalog.getTable('alters').insertRow(alter);
+	}
+
 	db.commit();
 	$('#Alters_name').val('');
 	displayAlters();
@@ -193,9 +216,19 @@ function addAlter(name){
 
 function removeAlter(id){
 	alter = db.queryRow("SELECT * FROM alters WHERE id = " + id);
-	console.log(alter);
-	if(alter)
+	if(!alter)
+		return false;
+	if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
+		var interviewIds = alter[4].split(",");
+		$(interviewIds).each(function(index){
+			if(interviewIds[index] == interviewId)
+				interviewIds.splice(index,1);
+		});
+		alter[4] = interviewIds.join(",");
+		db.catalog.getTable('alters').updateRow(alter);
+	}else{
 		db.catalog.getTable('alters').deleteRow(alter);
+	}
 	db.commit();
 	if(countAlters() < study.MAXALTERS)
 		$('#ALTER_PROMPT').show();
@@ -209,7 +242,7 @@ function getAlterName(id){
 function displayAlters(){
 	alterTable = $('#alters-grid .items');
 	alterTable.html('');
-	alters = db.queryObjects("SELECT * FROM alters WHERE interviewId = " + interviewId).data;
+	alters = db.queryObjects("SELECT * FROM alters WHERE CONCAT(',', interviewId, ',') LIKE '%," + interviewId + ",%'").data;
 	rowClass = "odd";
 	i=0;
 	for(k in alters){
@@ -227,7 +260,7 @@ function displayAlters(){
 }
 
 function countAlters(){
-	return db.queryObjects("SELECT * FROM alters WHERE interviewId = " + interviewId).data.length;
+	return db.queryObjects("SELECT * FROM alters WHERE CONCAT(',', interviewId, ',') LIKE '%," + interviewId + ",%'").data.length;
 }
 
 function loadFirst(id, page, intId){

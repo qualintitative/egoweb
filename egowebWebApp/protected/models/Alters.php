@@ -40,7 +40,7 @@ class Alters extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('ordering, name, interviewId', 'required'),
-			array('ordering, interviewId', 'numerical', 'integerOnly'=>true),
+			array('ordering', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, active, ordering, name, interviewId', 'length', 'max'=>1024),
@@ -63,7 +63,7 @@ class Alters extends CActiveRecord
 	{
 		$criteria = new CDbCriteria();
 		$criteria=array(
-			'condition'=>"interviewId = " . $interviewId . " AND ordering > ".$ordering ,
+			'condition'=>"interviewId in (" . $interviewId . ") AND ordering > ".$ordering ,
 			'order'=>'ordering',
 		);
 		$models = Alters::model()->findAll($criteria);
@@ -100,6 +100,12 @@ class Alters extends CActiveRecord
 		);
 	}
 
+	public function getIsRepeat()
+	{
+		if(strstr($this->interviewId, ","))
+			return "#";
+		return "";
+	}
 	public function getName($id){
 		$model = Alters::model()->findByPk($id);
 		if($model)

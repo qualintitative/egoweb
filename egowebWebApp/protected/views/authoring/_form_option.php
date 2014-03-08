@@ -1,3 +1,4 @@
+<div style="overflow-y:auto; height:320px">
 <div style="width:300px; float:left; margin-left:20px">
 <?php
 $studyId = q("SELECT studyId FROM question WHERE id = " . $questionId)->queryScalar();
@@ -167,4 +168,5 @@ $this->widget('zii.widgets.grid.CGridView', array(
 			</tr>
 		</table>
 	</div>
+</div>
 </div>

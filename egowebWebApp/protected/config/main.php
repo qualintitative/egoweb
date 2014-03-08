@@ -58,10 +58,10 @@ return array(
 		// uncomment the following to use a MySQL database
 		*/
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=dev_egoweb',
+			'connectionString' => 'mysql:host=localhost;dbname=egoweb_data',
 			'emulatePrepare' => true,
-			'username' => 'blufella',
-			'password' => "blufella101",
+			'username' => 'egoweb',
+			'password' => "test1234",
 			'charset' => 'utf8',
 		),
 

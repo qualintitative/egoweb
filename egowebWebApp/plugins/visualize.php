@@ -321,7 +321,6 @@ class visualize extends Plugin
 			$answers = q("SELECT * FROM answer WHERE interviewId = ". $this->method . " AND questionId = ". $expression->questionId . " ORDER BY alterId1, alterId2")->queryAll();
 		else
 			$answers = array();
-		//print_r($answers);
 		$currentNode = '';
 		foreach($answers as $answer){
 			if($expression->evalExpression($expression->id, $this->method, $answer['alterId1'], $answer['alterId2'])){

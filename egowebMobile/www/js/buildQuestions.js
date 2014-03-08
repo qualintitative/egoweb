@@ -87,12 +87,12 @@ function buildQuestions(id, pageNumber, interviewId){
 		}
 		i++;
 		page[i] = new Object;
-		var alters = db.queryObjects("SELECT * FROM alters WHERE interviewId = " + interviewId).data;
+		var alters = db.queryObjects("SELECT * FROM alters WHERE CONCAT(',', interviewId, ',') LIKE '%," + interviewId + ",%'").data;
 		if(alters.length > 0){
 			for(j in alter_questions){
 				alter_question_list = new Object;
 				for(k in alters){
-					if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, interviewId, alters[k].ID) != true)
+					if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].INTERVIEWID, alters[k].ID) != true)
 						continue;
 
 					question = $.extend(true,{}, alter_questions[j]);

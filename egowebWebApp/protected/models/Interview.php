@@ -105,7 +105,10 @@ class Interview extends CActiveRecord
 	}
 
 	public function countAlters($id){
-		$models = Alters::model()->findAllByAttributes(array('interviewId'=>$id));
+		$criteria=array(
+			'condition'=>"FIND_IN_SET(" . $id .", interviewId)",
+		);
+		$models = Alters::model()->findAll($criteria);
 		return count($models);
 	}
 
@@ -164,7 +167,7 @@ class Interview extends CActiveRecord
 			$interviewId = implode(",", $interviewIds);
 			$studyId = $studyIds;
 		}
-	
+
 		// parse out and replace variables
 		preg_match('#<VAR (.+?) />#ims', $string, $vars);
 		foreach($vars as $var){
@@ -182,10 +185,19 @@ class Interview extends CActiveRecord
 				);
 				$lastAnswer = Answer::model()->find($criteria);
 			}
-			if(isset($lastAnswer))
+			if(isset($lastAnswer)){
+				if($question->answerType == "SELECTION" || $question->answerType == "MULTIPLE_SELECTION"){
+					$option = QuestionOption::model()->findbyPk($lastAnswer->value);
+					if($option){
+						$lastAnswer->value = $option->name;
+					}else{
+						$lastAnswer->value = "";
+					}
+				}
 				$string =  preg_replace('#<VAR '.$var.' />#', $lastAnswer->value, $string);
-			else
+			}else{
 				$string =  preg_replace('#<VAR '.$var.' />#', '', $string);
+			}
 		}
 
 		// performs calculations on questions
@@ -231,11 +243,11 @@ class Interview extends CActiveRecord
 				$option = QuestionOption::model()->findbyAttributes(array('name'=>$answer, 'questionId'=>$question->id));
 				if(!$option)
 					continue;
-					if($interviewId != null){
-						$end = " AND interviewId in (". $interviewId. ")";
-					}else{
-						$end = "";
-					}
+				if($interviewId != null){
+					$end = " AND interviewId in (". $interviewId. ")";
+				}else{
+					$end = "";
+				}
 				$criteria=array(
 					'condition'=>'questionId = '. $question->id .' AND FIND_IN_SET('. $option->id .' ,value)' . $end,
 				);
@@ -315,7 +327,10 @@ class Interview extends CActiveRecord
 					}
 				}
 				$logic = 'return ' . $exp[1] . ' ' . $exp[2] . ' ' . $exp[3] . ';';
-				$show = eval($logic);
+				if($exp[1] && $exp[2] && $exp[3])
+					$show = eval($logic);
+				else
+					$show = false;
 				if($show){
 					$string =  str_replace("<IF ".$showlogic." />", $exp[4], $string);
 				}else{

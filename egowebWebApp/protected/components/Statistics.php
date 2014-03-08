@@ -1,5 +1,5 @@
 <?php
-class Statistics extends CFormModel {
+class Statistics extends CComponent {
 
 
 	public $adjacencies = array();

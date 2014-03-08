@@ -47,10 +47,12 @@ class InterviewingController extends Controller
 
 	/**
 	 *  CORE FUNCTION
+	 *  Displays a page of the study
 	 * @param integer $id the ID of the study for interviewing
 	 */
 	public function actionView($id)
 	{
+		$study = Study::model()->findByPk($id);
 		$currentPage = 0;
 		if(isset($_GET['page']))
 			$currentPage = $_GET['page'];
@@ -98,6 +100,7 @@ class InterviewingController extends Controller
 			'questions'=>$questions,
 			'page'=>$currentPage,
 			'model'=>$model,
+			'study'=>$study,
 			'interviewId'=>$interviewId,
 		));
 	}
@@ -394,13 +397,17 @@ class InterviewingController extends Controller
 
 	public function actionAjaxupdate(){
 		if(isset($_POST['Alters'])){
+			$studyId = q("SELECT studyId FROM interview WHERE id = " . $_POST['Alters']['interviewId'])->queryScalar();
 
 			$name_exists = Alters::model()->findByAttributes(array('name'=>$_POST['Alters']['name'], 'interviewId'=>$_POST['Alters']['interviewId']));
 			$model = new Alters;
+			$model->attributes = $_POST['Alters'];
 			if($name_exists){
 				$model->addError('name', $_POST['Alters']['name']. ' has already been added!');
 			}
-			$studyId = q("SELECT studyId FROM interview WHERE id = " . $_POST['Alters']['interviewId'])->queryScalar();
+
+
+			// check to see if pre-defined alters exist.  If they do exist, check name against list
 			$alterCount = q("SELECT count(id) FROM alterList WHERE studyId = ".$studyId)->queryScalar();
 			if($alterCount > 0){
 				$nameInList = q('SELECT name FROM alterList WHERE name = "'.$_POST['Alters']['name'].'" AND studyId = '. $studyId)->queryScalar();
@@ -409,27 +416,39 @@ class InterviewingController extends Controller
 				}
 			}
 
+			$study = Study::model()->findByPk($studyId);
+			if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
+				$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $model->interviewId . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
+				$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
+				$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
+				$interviewIds = array_diff($interviewIds, array($_POST['Alters']['interviewId']));
+				foreach($interviewIds as $interviewId){
+					$oldAlterId = q("SELECT id FROM alters WHERE FIND_IN_SET (" . $interviewId . ", interviewId) and name = '" . $_POST['Alters']['name'] . "' LIMIT 1")->queryScalar();
+					if($oldAlterId){
+						$model = Alters::model()->findByPk($oldAlterId);
+						$model->interviewId = $model->interviewId . ",". $_POST['Alters']['interviewId'];
+						break;
+					}
+				}
+			}
 			$criteria=new CDbCriteria;
 			$criteria->condition = ('interviewId = '.$_POST['Alters']['interviewId']);
 			$criteria->select='count(ordering) AS ordering';
 			$row = Alters::model()->find($criteria);
 			$model->ordering = $row['ordering'];
-			$this->performAjaxValidation($model);
-			$model->attributes = $_POST['Alters'];
 			if(!$model->getError('name'))
 				$model->save();
-			$interviewId = $model->interviewId;
-
+			$interviewId = $_POST['Alters']['interviewId'];
 
 			$criteria=new CDbCriteria;
 			$criteria=array(
 				'condition'=>"afterAltersEntered <= " . Interview::countAlters($interviewId),
 				'order'=>'afterAltersEntered DESC',
 			);
-            $alterPrompt = AlterPrompt::getPrompt($studyId, Interview::countAlters($interviewId));
+			$alterPrompt = AlterPrompt::getPrompt($studyId, Interview::countAlters($interviewId));
 
 			$criteria=array(
-				'condition'=>"interviewId = " . $interviewId,
+				'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId)",
 				'order'=>'ordering',
 			);
 
@@ -437,6 +456,7 @@ class InterviewingController extends Controller
 				'criteria'=>$criteria,
 				'pagination'=>false,
 			));
+
 			$this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterPrompt'=>$alterPrompt, 'model'=>$model, 'studyId'=>$studyId, 'interviewId'=>$interviewId, 'ajax'=>true), false, true);
 		}
 	}
@@ -478,22 +498,29 @@ class InterviewingController extends Controller
 		if(isset($_GET['Alters'])){
 			$model = Alters::model()->findByPk($_GET['Alters']['id']);
 			if($model){
-				$interviewId = $model->interviewId;
+				$interviewId = $_GET['interviewId'];
 				$ordering = $model->ordering;
-				$model->delete();
+				if(strstr($model->interviewId, ",")){
+					$interviewIds = explode(",", $model->interviewId);
+					$interviewIds = array_diff($interviewIds,array($interviewId));
+					$model->interviewId = implode(",", $interviewIds);
+					$model->save();
+				}else{
+					$model->delete();
+				}
 				Alters::sortOrder($ordering, $interviewId);
 			}
 			$criteria=new CDbCriteria;
-            $alterPrompt = AlterPrompt::getPrompt($_GET['studyId'], Interview::countAlters($interviewId));
+			$alterPrompt = AlterPrompt::getPrompt($_GET['studyId'], Interview::countAlters($interviewId));
 
 			$criteria=array(
-				'condition'=>"interviewId = " . $interviewId,
-				'order'=>'ordering',
+				'condition'=>"FIND_IN_SET(" . $interviewId . ", interviewId)",
+				'order'=>'id',
 			);
 			$dataProvider=new CActiveDataProvider('Alters',array(
-            	'criteria'=>$criteria,
-            	'pagination'=>false,
-            ));
+				'criteria'=>$criteria,
+				'pagination'=>false,
+			));
 
 			$alter = new Alters;
 			$this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'model'=>$alter,'alterPrompt'=>$alterPrompt, 'studyId'=>$_GET['studyId'], 'interviewId'=>$interviewId, 'ajax'=>true), false, true);
@@ -573,7 +600,10 @@ class InterviewingController extends Controller
 	public function createAlterAnswers($interviewId, $studyId){
 		$questions = q("SELECT * FROM question WHERE subjectType != 'EGO' AND subjectType != 'EGO_ID' AND studyId = " . $studyId)->queryAll();
 		$study = q("SELECT * FROM study WHERE id = ".$studyId)->queryRow();
-		$alters = Alters::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+		$criteria = array(
+			'condition'=>"FIND_IN_SET(" . $interviewId . ", interviewId)",
+		);
+		$alters = Alters::model()->findAll($criteria);
 		$checkOnce = false;
 		foreach($questions as $question){
 			if($question['subjectType'] == 'ALTER'){

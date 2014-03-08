@@ -5,7 +5,7 @@
 
 
 	<?php echo CHtml::ajaxLink(
-		CHtml::encode(Study::getName($data->id)), 
+		CHtml::encode(Study::getName($data->id)),
 		Yii::app()->createUrl('interviewing/study/'.$data->id),
 		array('update'=>'#interviewList')
 		); ?>
