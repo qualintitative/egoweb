@@ -47,8 +47,8 @@ class InterviewingController extends Controller
 
 	/**
 	 *  CORE FUNCTION
-	 *  Displays a page of the study
-	 * @param integer $id the ID of the study for interviewing
+	 *  Displays a page from a study for an interviewing session
+	 * @param integer $id the ID of the study
 	 */
 	public function actionView($id)
 	{
@@ -60,7 +60,6 @@ class InterviewingController extends Controller
 		if(isset($_GET['interviewId'])){
 			$interviewId = $_GET['interviewId'];
 			$questions = Study::buildQuestions($id, $currentPage, $interviewId);
-			$unValue = q("SELECT valueNotYetAnswered FROM study WHERE id = ".$id)->queryScalar();
 			if(!$questions){
 				$this->redirect(Yii::app()->createUrl(
 					'interviewing/'.$id.'?'.
@@ -68,6 +67,8 @@ class InterviewingController extends Controller
 					'page=0'
 				));
 			}
+
+			// loads answers into array model
 			foreach($questions as $question){
 				if(is_numeric($question->alterId1) && !is_numeric($question->alterId2)){
 					$array_id = $question->id . '-' . $question->alterId1;
@@ -82,7 +83,7 @@ class InterviewingController extends Controller
 				if(!$model[$array_id]){
 					$model[$array_id] = new Answer;
 				}else{
-					if($model[$array_id]->value == $unValue)
+					if($model[$array_id]->value == $study->valueNotYetAnswered)
 						$model[$array_id]->value = "";
 				}
 			}
@@ -105,6 +106,11 @@ class InterviewingController extends Controller
 		));
 	}
 
+	/**
+	 *  CORE FUNCTION
+	 *  Saves answers for all the questions on a page
+	 * @param integer $id the ID of the study
+	 */
 	public function actionSave($id){
 
 		if(isset($_POST['Answer']))
@@ -534,11 +540,12 @@ class InterviewingController extends Controller
 	{
 		$condition = "id != 0";
 		if(!Yii::app()->user->isSuperAdmin){
-			$studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->getId())->queryColumn();
+			$studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
 			if($studies)
 				$condition = "id IN (" . implode(",", $studies) . ")";
+			else
+				$condition = "id = -1";
 		}
-
 
 		$criteria = array(
 			'condition'=>$condition . " AND multiSessionEgoId = 0",
@@ -572,7 +579,7 @@ class InterviewingController extends Controller
 		$this->renderPartial('study', array(
 			'dataProvider'=>$dataProvider,
 			'studyId'=>$id,
-		),false,true);
+		),false,false);
 	}
 
 	// loads blank answers for everything before the alter questions

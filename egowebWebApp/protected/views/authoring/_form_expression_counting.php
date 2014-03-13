@@ -112,7 +112,6 @@ if($study->multiSessionEgoId){
 } else {
 	$criteria=array(
 		'condition'=>"studyId = " . $studyId,
-		'order'=>'ordering',
 	);
 }
 
@@ -132,6 +131,7 @@ if($study->multiSessionEgoId){
     	 	<span style="text-decoration:underline">Questions</span>
     	 	<div>
 <?php
+	$criteria['order'] = 'FIELD(subjectType, "EGO_ID", "EGO","ALTER", "ALTER_PAIR", "NETWORK")';
     $selected = explode(',', $questionIds);
     echo CHtml::CheckboxList(
         'questionList',

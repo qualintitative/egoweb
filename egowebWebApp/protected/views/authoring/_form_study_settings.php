@@ -145,7 +145,15 @@
 
 		<div id="interviewers">
 		<?php
-		$dataProvider=new CActiveDataProvider('Interviewer');
+					$criteria=new CDbCriteria;
+					$criteria = array(
+					'condition'=>"studyId = " . $model->id,
+					'order'=>'id DESC',
+				);
+		$dataProvider=new CActiveDataProvider('Interviewer',array(
+				'criteria'=>$criteria,
+				'pagination'=>false,
+			));
 		$this->renderPartial('_view_study_interviewers', array('dataProvider'=>$dataProvider, 'ajax'=>true), false, false);
 		$interviewer = new Interviewer;
 		$this->renderPartial('_form_study_interviewers', array('dataProvider'=>$dataProvider, 'model'=>$interviewer, 'studyId'=>$model->id, 'ajax'=>true), false, false);

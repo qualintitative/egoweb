@@ -7,10 +7,6 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title><?php echo CHtml::encode($this->pageTitle); ?></title>
-		<!-- blueprint CSS framework -->
-		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/screen.css" media="screen, projection" />
-		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/print.css" media="print" />
-		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 		<!--[if lt IE 8]>
 		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/ie.css" media="screen, projection" />
 		<![endif]-->
@@ -21,55 +17,69 @@
 	</head>
 	<body>
 		<div id="wrapper">
-			<div id="topbar">
+			<nav class="navbar">
+			<div class="collapse navbar-collapse" id="topbar">
 				<?php if(!Yii::app()->user->isGuest): ?>
-				<ul class="adminMenu">
-					<li><a href="javascript:void(0)"><img src="/images/menu.png" style="float:right"></a>
-						<ul>
+				<?php
+				$condition = "id != 0";
+				if(!Yii::app()->user->isSuperAdmin){
+					$studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
+					if($studies)
+						$condition = "id IN (" . implode(",", $studies) . ")";
+					else
+						$condition = "id = -1";
+				}
+
+				$criteria = array(
+					'condition'=>$condition,
+					'order'=>'id DESC',
+				);
+				?>
+				<ul class="nav navbar-nav navbar-left">
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							<span class="fui-list"></span>
+						</a>
+						<ul class="dropdown-menu">
 							<li><a href="/authoring">Authoring</a>
-							    <ul>
-							    <li>
-							    	<div>
-									<?php $studies = Study::model()->findAll(); ?>
+								<ul>
+									<?php $studies = Study::model()->findAll($criteria); ?>
 									<?php foreach($studies as $data): ?>
-									<?php echo CHtml::link(CHtml::encode($data->name), array('/authoring/edit', 'id'=>$data->id))."<br>"; ?>
-									<?php endforeach; ?>
-									</div>
+									<li>
+									<?php echo CHtml::link(CHtml::encode($data->name), array('/authoring/edit', 'id'=>$data->id)); ?>
 									</li>
-									</ul>
-								</li>
-								<li><a href="/analysis">Analysis</a>
-									<ul>
-										<li>
-											<div>
-												<?php $studies = Study::model()->findAll(); ?>
-												<?php foreach($studies as $data): ?>
-												<?php echo CHtml::link(CHtml::encode($data->name), array('/analysis/', 'study'=>$data->id))."<br>"; ?>
-												<?php endforeach; ?>
-											</div>
-										</li>
-									</ul>
-								</li>
-								<li><a href="/importExport">Import / Export</a></li>
-								<li><a href="/interviewing">Interviewing</a>
-									<ul>
-										<li>
-											<div>
-												<?php $studies = Study::model()->findAll(); ?>
-												<?php foreach($studies as $data): ?>
-												<?php echo CHtml::link(CHtml::encode($data->name), array('/interviewing?studyId='.$data->id))."<br>"; ?>
-												<?php endforeach; ?>
-											</div>
-										</li>
-									</ul>
-								</li>
-								<li><a href="/admin/user">User Admin</a>
-							</ul>
-						</li>
-					</ul>
+									<?php endforeach; ?>
+								</ul>
+							</li>
+							<li><a href="/analysis">Analysis</a>
+								<ul>
+									<?php foreach($studies as $data): ?>
+									<li>
+									<?php echo CHtml::link(CHtml::encode($data->name), array('/analysis/', 'study'=>$data->id)); ?>
+									</li>
+									<?php endforeach; ?>
+								</ul>
+							</li>
+							<li><a href="/importExport">Import / Export</a></li>
+							<li><a href="/interviewing">Interviewing</a>
+								<ul>
+									<?php foreach($studies as $data): ?>
+									<li>
+									<?php echo CHtml::link(CHtml::encode($data->name), array('/interviewing?studyId='.$data->id)); ?>
+									</li>
+									<?php endforeach; ?>
+								</ul>
+							</li>
+							<?php if(Yii::app()->user->isSuperAdmin): ?>
+							<li><a href="/admin/user">User Admin</a>
+							<?php endif; ?>
+						</ul>
+					</li>
+				</ul>
 				<?php endif; ?>
 				<span class="title"><a href="/admin">EgoWeb 2.0</a> | Exploring social networks via interviews</span>
 			</div>
+			</nav>
 			<div id="menubar">
 				<!-- navigation start -->
 				<?php $this->widget('zii.widgets.CMenu',array(

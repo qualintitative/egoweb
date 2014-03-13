@@ -34,7 +34,7 @@ if($multi){
 } else {
 	$criteria=array(
 		'condition'=>"studyId = " . $studyId,
-		'order'=>'ordering',
+		'order'=>'FIELD(subjectType, "EGO_ID", "EGO","ALTER", "ALTER_PAIR", "NETWORK"), ordering',
 	);
 }
 

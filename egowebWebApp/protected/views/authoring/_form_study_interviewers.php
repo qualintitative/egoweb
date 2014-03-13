@@ -3,7 +3,6 @@
 	'enableAjaxValidation'=>false,
 	'action'=>'/authoring/addInterviewer',
 )); ?>
-<span class="smallheader">Edit an alter</span>
 <?php echo $form->hiddenField($model,'studyId',array('value'=>$studyId)); ?>
 		<?php echo $form->dropdownlist(
 			$model,

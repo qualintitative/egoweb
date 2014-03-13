@@ -21,4 +21,12 @@ class Controller extends CController
 	 */
 	public $breadcrumbs=array();
 
+	public function init() {
+		// load bootstrap
+		Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/bootstrap.min.js');
+		Yii::app()->clientScript->registerCssFile(Yii::app()->clientScript->getCoreScriptUrl().'/jui/css/base/jquery-ui.css');
+
+		parent::init();
+	}
+
 }

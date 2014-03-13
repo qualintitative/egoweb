@@ -115,9 +115,34 @@ class AuthoringController extends Controller
 				$this->redirect(array('edit','id'=>$model->id));
 		}
 
+		$condition = "id != 0";
+		if(!Yii::app()->user->isSuperAdmin){
+			$studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
+			if($studies)
+				$condition = "id IN (" . implode(",", $studies) . ")";
+			else
+				$condition = "id = -1";
+		}
+
+
+		$criteria = array(
+			'condition'=>$condition . " AND multiSessionEgoId = 0",
+			'order'=>'id DESC',
+		);
+
+		$single = Study::model()->findAll($criteria);
+
+		$criteria = array(
+			'condition'=>$condition . " AND multiSessionEgoId <> 0",
+			'order'=>'multiSessionEgoId DESC',
+		);
+
+		$multi = Study::model()->findAll($criteria);
+
+/*
 		$single = Study::model()->findAllByAttributes(array('multiSessionEgoId'=>0));
 		$multi = Study::model()->findAll('multiSessionEgoId <> 0', $params = array('order'=>'multiSessionEgoId'));
-
+*/
  		$this->render('index',array(
 			'model'=>$model,
 			'single'=>$single,
