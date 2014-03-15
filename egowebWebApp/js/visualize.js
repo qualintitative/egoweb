@@ -25,14 +25,31 @@ var Log = {
   }
 };
 
-function init(json){
-	console.log(json);
+
+function saveNodes()
+{
+        var nodes = {};
+        for(var k in fd.graph.nodes){
+	        nodes[k] = {x:fd.graph.nodes[k].pos.x, y:fd.graph.nodes[k].pos.y};
+        }
+        $("#Graph_nodes").val(JSON.stringify(nodes));
+}
+
+
+function saveGraph(){
+	saveNodes();
+	$('#graph-form').submit();
+}
+function init(json)
+{
   // init data
-  if(!json){
-  var json = [];
-  }
+  if(!json)
+  	json = [];
+  else
+  	$("#Graph_json").val(JSON.stringify(json));
   // end
   // init ForceDirected
+
   fd = new $jit.ForceDirected({
     //id of the visualization container
     injectInto: 'infovis',
@@ -87,6 +104,7 @@ function init(json){
       onDragMove: function(node, eventInfo, e) {
         var pos = eventInfo.getPos();
         node.pos.setc(pos.x, pos.y);
+		saveNodes();
         fd.plot();
       },
       //Implement the same handler for touchscreens
@@ -98,7 +116,7 @@ function init(json){
     //Number of iterations for the FD algorithm
     iterations: 200,
     //Edge length
-    levelDistance: 130,
+    levelDistance: 10,
     // This method is only triggered
     // on label creation and only for DOM labels (not native canvas ones).
     onCreateLabel: function(domElement, node){
@@ -189,21 +207,40 @@ function init(json){
   fd.loadJSON(json);
   // compute positions incrementally and animate.
   fd.computeIncremental({
-    iter: 40,
+    iter: 200,
     property: 'end',
     onStep: function(perc){
       Log.write(perc + '% loaded...');
     },
     onComplete: function(){
       Log.write('done');
+
       fd.canvas.scale(0.9,0.9);
       $('#log').hide();
+
       fd.animate({
         modes: ['linear'],
         transition: $jit.Trans.Elastic.easeOut,
-        duration: 2500
+        duration: 0,
+        onComplete: function(){
+        	// loads saved node positions
+			if($('#Graph_nodes').val()){
+				nodes = fd.graph.nodes;
+				nodePositions = JSON.parse($('#Graph_nodes').val());
+				for (k in nodes) {
+					nodes[k].pos.x = nodePositions[k].x;
+					nodes[k].pos.y = nodePositions[k].y;
+				}
+				fd.plot();
+			}
+
+        }
       });
+
+
+
     }
   });
+
   // end
 }

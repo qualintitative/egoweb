@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2011 Sencha Inc. - Author: Nicolas Garcia Belmonte (http://philogb.github.com/)
+Copyright (c) 2013 Sencha Inc. - Author: Nicolas Garcia Belmonte (http://philogb.github.com/)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
  */
- (function () {
+
+(function () {
 
 /*
   File: Core.js
@@ -34,7 +35,7 @@ THE SOFTWARE.
  This variable is the *only* global variable defined in the Toolkit.
  There are also other interesting properties attached to this variable described below.
  */
-window.$jit = function(w) {
+this.$jit = function(w) {
   w = w || window;
   for(var k in $jit) {
     if($jit[k].$extend) {
@@ -132,6 +133,7 @@ $.type = function(elem) {
   var type = $.type.s.call(elem).match(/^\[object\s(.*)\]$/)[1].toLowerCase();
   if(type != 'object') return type;
   if(elem && elem.$$family) return elem.$$family;
+  if(elem && elem.nodeType == 9) return 'htmldocument';
   return (elem && elem.nodeName && elem.nodeType == 1)? 'element' : type;
 };
 $.type.s = Object.prototype.toString;
@@ -163,7 +165,7 @@ $.each = function(iterable, fn) {
 };
 
 $.indexOf = function(array, item) {
-  if(Array.indexOf) return array.indexOf(item);
+  if(array.indexOf) return array.indexOf(item);
   for(var i=0,l=array.length; i<l; i++) {
     if(array[i] === item) return i;
   }
@@ -433,6 +435,25 @@ $.getPos = function(elem) {
   function isBody(element) {
     return (/^(?:body|html)$/i).test(element.tagName);
   }
+};
+
+/*
+  Method: $.getDir
+
+  Get or compute the direction style (right-to-left or left-to-right) of an element (or document body by default if no element is provided). Returns the direction as a string "rtl" / "ltr".
+
+  Parameters:
+
+  elem - (optional) The element to check direction of (document.body if undefined).
+*/
+$.getDir = function(elem) {
+    var element = document.getElementById(elem) || document.body;
+    if (element.currentStyle)
+	var dir = element.currentStyle.direction;
+    else if (window.getComputedStyle)
+	var dir = document.defaultView.getComputedStyle(element, null)
+	              .getPropertyValue('direction');
+    return dir;
 };
 
 $.event = {
@@ -1142,6 +1163,7 @@ Options.Canvas = {
   align - (string) Default's *center*. Whether the tree alignment is 'left', 'center' or 'right'.
   indent - (number) Default's 10. Used when *align* is left or right and shows an indentation between parent and children.
   multitree - (boolean) Default's *false*. Used with the node $orn data property for creating multitrees.
+  levelSpacing - (string) Whether each level is evenly spaced or level spacing is relative tothe size of the parent node. The former (which is the default) is 'even', the latter is 'parent'.
 
 */
 Options.Tree = {
@@ -1152,7 +1174,8 @@ Options.Tree = {
     siblingOffset: 5,
     indent:10,
     multitree: false,
-    align:"center"
+    align:"center",
+    levelSpacing: "even"
 };
 
 
@@ -1750,8 +1773,10 @@ Options.Events = {
   onTouchStart: $.empty,
   onTouchMove: $.empty,
   onTouchEnd: $.empty,
+  onTouchCancel: $.empty,
   onMouseWheel: $.empty
 };
+
 
 /*
  * File: Options.Navigation.js
@@ -1875,6 +1900,7 @@ Options.Navigation = {
    onAfterPlotNode(node) - This method is triggered right after plotting each <Graph.Node>.
    onBeforePlotLine(adj) - This method is triggered right before plotting a <Graph.Adjacence>. This method is useful for adding some styles to a particular edge before being plotted.
    onAfterPlotLine(adj) - This method is triggered right after plotting a <Graph.Adjacence>.
+   onBeforeRemoveNode(node) - This method is triggered right before removing each <Graph.Node>.
 
     *Used in <ST>, <TM.Base> and <Icicle> visualizations*
 
@@ -1884,15 +1910,16 @@ Options.Navigation = {
 Options.Controller = {
   $extend: true,
 
-  onBeforeCompute: $.empty,
-  onAfterCompute:  $.empty,
-  onCreateLabel:   $.empty,
-  onPlaceLabel:    $.empty,
-  onComplete:      $.empty,
-  onBeforePlotLine:$.empty,
-  onAfterPlotLine: $.empty,
-  onBeforePlotNode:$.empty,
-  onAfterPlotNode: $.empty,
+  onBeforeCompute:   $.empty,
+  onAfterCompute:    $.empty,
+  onCreateLabel:     $.empty,
+  onPlaceLabel:      $.empty,
+  onComplete:        $.empty,
+  onBeforePlotLine:  $.empty,
+  onAfterPlotLine:   $.empty,
+  onBeforePlotNode:  $.empty,
+  onAfterPlotNode:   $.empty,
+  onBeforeRemoveNode:$.empty,
   request:         false
 };
 
@@ -2375,10 +2402,21 @@ Extras.Classes.Tips = new Class({
         style = tip.style,
         cont = this.config;
     style.display = '';
-    //get window dimensions
-    var win = {
-      'height': document.body.clientHeight,
-      'width': document.body.clientWidth
+    //get viewport dimensions
+    var elem = document.compatMode === "CSS1Compat" && document.documentElement ||
+               document.body ||
+               document.documentElement;
+    var view = {
+      'width': elem.clientWidth,
+      'height': elem.clientHeight,
+      'x': window.pageXOffset ||
+           document.documentElement && document.documentElement.scrollLeft ||
+           document.body && document.body.scrollLeft ||
+           0,
+      'y': window.pageYOffset ||
+           document.documentElement && document.documentElement.scrollTop ||
+           document.body && document.body.scrollTop ||
+           0
     };
     //get tooltip dimensions
     var obj = {
@@ -2387,9 +2425,9 @@ Extras.Classes.Tips = new Class({
     };
     //set tooltip position
     var x = cont.offsetX, y = cont.offsetY;
-    style.top = ((pos.y + y + obj.height > win.height)?
+    style.top = ((pos.y + obj.height + y > view.height + view.y)?
         (pos.y - obj.height - y) : pos.y + y) + 'px';
-    style.left = ((pos.x + obj.width + x > win.width)?
+    style.left = ((pos.x + obj.width + x > view.width + view.x)?
         (pos.x - obj.width - x) : pos.x + x) + 'px';
   },
 
@@ -2627,7 +2665,9 @@ Extras.Classes.Navigation = new Class({
 
   onMouseDown: function(e, win, eventInfo) {
     if(!this.config.panning) return;
-    if(this.config.panning == 'avoid nodes' && (this.dom? this.isLabel(e, win) : eventInfo.getNode())) return;
+    e.preventDefault ? e.preventDefault() : e.returnValue = false;
+    $.addClass(this.canvas.getElement(), 'grabbing');
+    if(this.config.panning == 'avoid nodes' && (this.dom? this.isLabel(e, win) : (eventInfo.getNode() || eventInfo.getEdge()))) return;
     this.pressed = true;
     this.pos = eventInfo.getPos();
     var canvas = this.canvas,
@@ -2664,6 +2704,7 @@ Extras.Classes.Navigation = new Class({
 
   onMouseUp: function(e, win, eventInfo, isRightClick) {
     if(!this.config.panning) return;
+    $.removeClass(this.canvas.getElement(), 'grabbing');
     this.pressed = false;
   }
 });
@@ -2964,6 +3005,40 @@ var Canvas;
         this.canvases[i].scale(x, y, true);
       }
       this.translate(dx, dy, false);
+    },
+    /*
+      Method: getZoom
+
+      Returns canvas zooming factors. *1* means initial zoom.
+
+      Returns:
+
+      An object with *x* and *y* properties.
+    */
+    getZoom: function() {
+      return new Complex(this.scaleOffsetX, this.scaleOffsetY);
+    },
+    /*
+      Method: setZoom
+
+      Sets the zoom to given factors. *1* means initial zoom.
+
+      Parameters:
+
+      x - (number) zooming factor
+      y - (number) zooming factor
+      disablePlot - (boolean) Default's *false*. Set this to *true* if you don't want to refresh the visualization.
+
+      Example:
+      (start code js)
+      canvas.setZoom(2, 2); //sets 2x zoom
+      (end code)
+    */
+    setZoom: function(x, y, disablePlot) {
+      var cur = this.getZoom(),
+          px = x / cur.x,
+          py = y / cur.y;
+      this.scale(px, py, disablePlot);
     },
     /*
       Method: getPos
@@ -3894,6 +3969,7 @@ Complex.prototype = {
 var $C = function(a, b) { return new Complex(a, b); };
 
 Complex.KER = $C(0, 0);
+Complex.IM = $C(0, 1);
 
 
 
@@ -4637,6 +4713,30 @@ Graph.Node = new Class({
     },
 
     /*
+     Method: adjacentWithDirectionTo
+
+     Indicates if the node has a directed edge to the node specified by id
+
+     Parameters:
+
+     id - (string) A node id.
+
+     Example:
+     (start code js)
+     node.adjacentWithDirectionTo('nodeId') == true;
+     (end code)
+     */
+    adjacentWithDirectionTo: function(node) {
+        var areNeighbors = node.id in this.adjacencies;
+        if (!areNeighbors) {
+            return false;
+        }
+
+        var direction = this.adjacencies[node.id].data.$direction;
+        return direction[0] === this.id ;
+    },
+
+    /*
        Method: getAdjacency
 
        Returns a <Graph.Adjacence> object connecting the current <Graph.Node> and the node having *id* as id.
@@ -4932,7 +5032,7 @@ Graph.Util = {
             node._flag = true;
             this.eachAdjacency(node, function(adj) {
                 var n = adj.nodeTo;
-                if(n._flag == false && filter(n)) {
+                if(n._flag == false && filter(n) && !adj._hiding) {
                     if(n._depth < 0) n._depth = node._depth + 1 + startDepth;
                     queue.unshift(n);
                 }
@@ -4972,11 +5072,12 @@ Graph.Util = {
         var queue = [graph.getNode(id)];
         while(queue.length != 0) {
             var node = queue.pop();
+            if (!node) return;
             node._flag = true;
             action(node, node._depth);
             this.eachAdjacency(node, function(adj) {
                 var n = adj.nodeTo;
-                if(n._flag == false && filter(n)) {
+                if(n._flag == false && filter(n) && !adj._hiding) {
                     n._flag = true;
                     queue.unshift(n);
                 }
@@ -4988,6 +5089,7 @@ Graph.Util = {
        Method: eachLevel
 
        Iterates over a node's subgraph applying *action* to the nodes of relative depth between *levelBegin* and *levelEnd*.
+       In case you need to break the iteration, *action* should return false.
 
        Also implemented by:
 
@@ -5002,12 +5104,14 @@ Graph.Util = {
 
     */
     eachLevel: function(node, levelBegin, levelEnd, action, flags) {
-        var d = node._depth, filter = this.filter(flags), that = this;
+        var d = node._depth, filter = this.filter(flags), that = this, shouldContinue = true;
         levelEnd = levelEnd === false? Number.MAX_VALUE -d : levelEnd;
         (function loopLevel(node, levelBegin, levelEnd) {
-            var d = node._depth;
-            if(d >= levelBegin && d <= levelEnd && filter(node)) action(node, d);
-            if(d < levelEnd) {
+            if(!shouldContinue) return;
+            var d = node._depth, ret;
+            if(d >= levelBegin && d <= levelEnd && filter(node)) ret = action(node, d);
+            if(typeof ret !== "undefined") shouldContinue = ret;
+            if(shouldContinue && d < levelEnd) {
                 that.eachAdjacency(node, function(adj) {
                     var n = adj.nodeTo;
                     if(n._depth > d) loopLevel(n, levelBegin, levelEnd);
@@ -5347,7 +5451,10 @@ Graph.Op = {
         var i, that, nodeObj;
         switch(options.type) {
             case 'nothing':
-                for(i=0; i<n.length; i++) viz.graph.removeNode(n[i]);
+                for(i=0; i<n.length; i++) {
+                    options.onBeforeRemoveNode(viz.graph.getNode(n[i]));
+                    viz.graph.removeNode(n[i]);
+                }
                 break;
 
             case 'replot':
@@ -5743,6 +5850,12 @@ Graph.Op = {
                             adj.setData('alpha', 1);
                             adj.setData('alpha', 1, 'start');
                             adj.setData('alpha', 0, 'end');
+                            adj._hiding = true;
+                        } else if (adj.data.$direction && adj.data.$direction[0] === nodeFrom.id) {
+                            // only check one direction (from -> to)
+                            if (!nodeFrom.adjacentWithDirectionTo(nodeTo)) {
+                                adj._reversing = true;
+                            }
                         }
                     });
                 });
@@ -5768,6 +5881,8 @@ Graph.Op = {
                 } else {
                   viz.compute('end');
                 }
+                this._updateDirectedEdges();
+
                 viz.graph.eachNode(function(elem) {
                     if (elem.id != root && elem.pos.getp().equals(Polar.KER)) {
                       elem.pos.set(elem.endPos); elem.startPos.set(elem.endPos);
@@ -5793,6 +5908,36 @@ Graph.Op = {
         }
     },
 
+    _updateDirectedEdges: function () {
+        var graph = this.viz.graph;
+        graph.eachNode(function(node) {
+            node.eachAdjacency(function (adj) {
+
+                var isDirectedEdge = adj.data.$direction;
+                if (isDirectedEdge && adj.nodeFrom.id !== adj.data.$direction[0]) {
+                    return;
+                }
+
+                if (adj._hiding) {
+                    graph.removeAdjacence(adj.nodeFrom.id, adj.nodeTo.id);
+                }
+
+                if (adj._reversing) {
+                    var from = adj.nodeFrom.id;
+                    var to = adj.nodeTo.id;
+//
+//                    // swap instead of adding and removing
+                    var edge1 = graph.edges[from][to];
+                    var edge2 = graph.edges[to][from];
+
+                    edge1.data.$direction = [to, from];
+                    edge2.data.$direction = [to, from];
+
+                    adj._reversing = undefined;
+                }
+            });
+        });
+    },
 
   /*
     Method: contract
@@ -5939,672 +6084,679 @@ Graph.Op = {
 
 
 /*
-   File: Helpers.js
+ File: Helpers.js
 
-   Helpers are objects that contain rendering primitives (like rectangles, ellipses, etc), for plotting nodes and edges.
-   Helpers also contain implementations of the *contains* method, a method returning a boolean indicating whether the mouse
-   position is over the rendered shape.
+ Helpers are objects that contain rendering primitives (like rectangles, ellipses, etc), for plotting nodes and edges.
+ Helpers also contain implementations of the *contains* method, a method returning a boolean indicating whether the mouse
+ position is over the rendered shape.
 
-   Helpers are very useful when implementing new NodeTypes, since you can access them through *this.nodeHelper* and
-   *this.edgeHelper* <Graph.Plot> properties, providing you with simple primitives and mouse-position check functions.
+ Helpers are very useful when implementing new NodeTypes, since you can access them through *this.nodeHelper* and
+ *this.edgeHelper* <Graph.Plot> properties, providing you with simple primitives and mouse-position check functions.
 
-   Example:
-   (start code js)
-   //implement a new node type
-   $jit.Viz.Plot.NodeTypes.implement({
-     'customNodeType': {
-       'render': function(node, canvas) {
-         this.nodeHelper.circle.render ...
-       },
-       'contains': function(node, pos) {
-         this.nodeHelper.circle.contains ...
-       }
-     }
-   });
-   //implement an edge type
-   $jit.Viz.Plot.EdgeTypes.implement({
-     'customNodeType': {
-       'render': function(node, canvas) {
-         this.edgeHelper.circle.render ...
-       },
-       //optional
-       'contains': function(node, pos) {
-         this.edgeHelper.circle.contains ...
-       }
-     }
-   });
-   (end code)
+ Example:
+ (start code js)
+ //implement a new node type
+ $jit.Viz.Plot.NodeTypes.implement({
+ 'customNodeType': {
+ 'render': function(node, canvas) {
+ this.nodeHelper.circle.render ...
+ },
+ 'contains': function(node, pos) {
+ this.nodeHelper.circle.contains ...
+ }
+ }
+ });
+ //implement an edge type
+ $jit.Viz.Plot.EdgeTypes.implement({
+ 'customEdgeType': {
+ 'render': function(node, canvas) {
+ this.edgeHelper.circle.render ...
+ },
+ //optional
+ 'contains': function(node, pos) {
+ this.edgeHelper.circle.contains ...
+ }
+ }
+ });
+ (end code)
 
-*/
+ */
 
 /*
-   Object: NodeHelper
+ Object: NodeHelper
 
-   Contains rendering and other type of primitives for simple shapes.
+ Contains rendering and other type of primitives for simple shapes.
  */
 var NodeHelper = {
-  'none': {
-    'render': $.empty,
-    'contains': $.lambda(false)
-  },
-  /*
-   Object: NodeHelper.circle
-   */
-  'circle': {
+    'none': {
+        'render': $.empty,
+        'contains': $.lambda(false)
+    },
     /*
-     Method: render
-
-     Renders a circle into the canvas.
-
-     Parameters:
-
-     type - (string) Possible options are 'fill' or 'stroke'.
-     pos - (object) An *x*, *y* object with the position of the center of the circle.
-     radius - (number) The radius of the circle to be rendered.
-     canvas - (object) A <Canvas> instance.
-
-     Example:
-     (start code js)
-     NodeHelper.circle.render('fill', { x: 10, y: 30 }, 30, viz.canvas);
-     (end code)
+     Object: NodeHelper.circle
      */
-    'render': function(type, pos, radius, canvas){
-      var ctx = canvas.getCtx();
-      ctx.beginPath();
-      ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2, true);
-      ctx.closePath();
-      ctx[type]();
-    },
-    /*
-    Method: contains
+    'circle': {
+        /*
+         Method: render
 
-    Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
+         Renders a circle into the canvas.
 
-    Parameters:
+         Parameters:
 
-    npos - (object) An *x*, *y* object with the <Graph.Node> position.
-    pos - (object) An *x*, *y* object with the position to check.
-    radius - (number) The radius of the rendered circle.
+         type - (string) Possible options are 'fill' or 'stroke'.
+         pos - (object) An *x*, *y* object with the position of the center of the circle.
+         radius - (number) The radius of the circle to be rendered.
+         canvas - (object) A <Canvas> instance.
 
-    Example:
-    (start code js)
-    NodeHelper.circle.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, 30); //true
-    (end code)
-    */
-    'contains': function(npos, pos, radius){
-      var diffx = npos.x - pos.x,
-          diffy = npos.y - pos.y,
-          diff = diffx * diffx + diffy * diffy;
-      return diff <= radius * radius;
-    }
-  },
-  /*
-  Object: NodeHelper.ellipse
-  */
-  'ellipse': {
-    /*
-    Method: render
+         Example:
+         (start code js)
+         NodeHelper.circle.render('fill', { x: 10, y: 30 }, 30, viz.canvas);
+         (end code)
+         */
+        'render': function(type, pos, radius, canvas){
+            var ctx = canvas.getCtx();
+            ctx.beginPath();
+            ctx.arc(pos.x, pos.y, radius, 0, Math.PI * 2, true);
+            ctx.closePath();
+            ctx[type]();
+        },
+        /*
+         Method: contains
 
-    Renders an ellipse into the canvas.
+         Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
 
-    Parameters:
+         Parameters:
 
-    type - (string) Possible options are 'fill' or 'stroke'.
-    pos - (object) An *x*, *y* object with the position of the center of the ellipse.
-    width - (number) The width of the ellipse.
-    height - (number) The height of the ellipse.
-    canvas - (object) A <Canvas> instance.
+         npos - (object) An *x*, *y* object with the <Graph.Node> position.
+         pos - (object) An *x*, *y* object with the position to check.
+         radius - (number) The radius of the rendered circle.
 
-    Example:
-    (start code js)
-    NodeHelper.ellipse.render('fill', { x: 10, y: 30 }, 30, 40, viz.canvas);
-    (end code)
-    */
-    'render': function(type, pos, width, height, canvas){
-      var ctx = canvas.getCtx(),
-          scalex = 1,
-          scaley = 1,
-          scaleposx = 1,
-          scaleposy = 1,
-          radius = 0;
-
-      if (width > height) {
-          radius = width / 2;
-          scaley = height / width;
-          scaleposy = width / height;
-      } else {
-          radius = height / 2;
-          scalex = width / height;
-          scaleposx = height / width;
-      }
-
-      ctx.save();
-      ctx.scale(scalex, scaley);
-      ctx.beginPath();
-      ctx.arc(pos.x * scaleposx, pos.y * scaleposy, radius, 0, Math.PI * 2, true);
-      ctx.closePath();
-      ctx[type]();
-      ctx.restore();
-    },
-    /*
-    Method: contains
-
-    Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
-
-    Parameters:
-
-    npos - (object) An *x*, *y* object with the <Graph.Node> position.
-    pos - (object) An *x*, *y* object with the position to check.
-    width - (number) The width of the rendered ellipse.
-    height - (number) The height of the rendered ellipse.
-
-    Example:
-    (start code js)
-    NodeHelper.ellipse.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, 30, 40);
-    (end code)
-    */
-    'contains': function(npos, pos, width, height){
-      var radius = 0,
-          scalex = 1,
-          scaley = 1,
-          diffx = 0,
-          diffy = 0,
-          diff = 0;
-
-      if (width > height) {
-	      radius = width / 2;
-	      scaley = height / width;
-      } else {
-          radius = height / 2;
-          scalex = width / height;
-      }
-
-      diffx = (npos.x - pos.x) * (1 / scalex);
-      diffy = (npos.y - pos.y) * (1 / scaley);
-      diff = diffx * diffx + diffy * diffy;
-      return diff <= radius * radius;
-    }
-  },
-  /*
-  Object: NodeHelper.square
-  */
-  'square': {
-    /*
-    Method: render
-
-    Renders a square into the canvas.
-
-    Parameters:
-
-    type - (string) Possible options are 'fill' or 'stroke'.
-    pos - (object) An *x*, *y* object with the position of the center of the square.
-    dim - (number) The radius (or half-diameter) of the square.
-    canvas - (object) A <Canvas> instance.
-
-    Example:
-    (start code js)
-    NodeHelper.square.render('stroke', { x: 10, y: 30 }, 40, viz.canvas);
-    (end code)
-    */
-    'render': function(type, pos, dim, canvas){
-      canvas.getCtx()[type + "Rect"](pos.x - dim, pos.y - dim, 2*dim, 2*dim);
-    },
-    /*
-    Method: contains
-
-    Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
-
-    Parameters:
-
-    npos - (object) An *x*, *y* object with the <Graph.Node> position.
-    pos - (object) An *x*, *y* object with the position to check.
-    dim - (number) The radius (or half-diameter) of the square.
-
-    Example:
-    (start code js)
-    NodeHelper.square.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, 30);
-    (end code)
-    */
-    'contains': function(npos, pos, dim){
-      return Math.abs(pos.x - npos.x) <= dim && Math.abs(pos.y - npos.y) <= dim;
-    }
-  },
-  /*
-  Object: NodeHelper.rectangle
-  */
-  'rectangle': {
-    /*
-    Method: render
-
-    Renders a rectangle into the canvas.
-
-    Parameters:
-
-    type - (string) Possible options are 'fill' or 'stroke'.
-    pos - (object) An *x*, *y* object with the position of the center of the rectangle.
-    width - (number) The width of the rectangle.
-    height - (number) The height of the rectangle.
-    canvas - (object) A <Canvas> instance.
-
-    Example:
-    (start code js)
-    NodeHelper.rectangle.render('fill', { x: 10, y: 30 }, 30, 40, viz.canvas);
-    (end code)
-    */
-    'render': function(type, pos, width, height, canvas){
-      canvas.getCtx()[type + "Rect"](pos.x - width / 2, pos.y - height / 2,
-                                      width, height);
-    },
-    /*
-    Method: contains
-
-    Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
-
-    Parameters:
-
-    npos - (object) An *x*, *y* object with the <Graph.Node> position.
-    pos - (object) An *x*, *y* object with the position to check.
-    width - (number) The width of the rendered rectangle.
-    height - (number) The height of the rendered rectangle.
-
-    Example:
-    (start code js)
-    NodeHelper.rectangle.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, 30, 40);
-    (end code)
-    */
-    'contains': function(npos, pos, width, height){
-      return Math.abs(pos.x - npos.x) <= width / 2
-          && Math.abs(pos.y - npos.y) <= height / 2;
-    }
-  },
-  /*
-  Object: NodeHelper.triangle
-  */
-  'triangle': {
-    /*
-    Method: render
-
-    Renders a triangle into the canvas.
-
-    Parameters:
-
-    type - (string) Possible options are 'fill' or 'stroke'.
-    pos - (object) An *x*, *y* object with the position of the center of the triangle.
-    dim - (number) Half the base and half the height of the triangle.
-    canvas - (object) A <Canvas> instance.
-
-    Example:
-    (start code js)
-    NodeHelper.triangle.render('stroke', { x: 10, y: 30 }, 40, viz.canvas);
-    (end code)
-    */
-    'render': function(type, pos, dim, canvas){
-      var ctx = canvas.getCtx(),
-          c1x = pos.x,
-          c1y = pos.y - dim,
-          c2x = c1x - dim,
-          c2y = pos.y + dim,
-          c3x = c1x + dim,
-          c3y = c2y;
-      ctx.beginPath();
-      ctx.moveTo(c1x, c1y);
-      ctx.lineTo(c2x, c2y);
-      ctx.lineTo(c3x, c3y);
-      ctx.closePath();
-      ctx[type]();
-    },
-    /*
-    Method: contains
-
-    Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
-
-    Parameters:
-
-    npos - (object) An *x*, *y* object with the <Graph.Node> position.
-    pos - (object) An *x*, *y* object with the position to check.
-    dim - (number) Half the base and half the height of the triangle.
-
-    Example:
-    (start code js)
-    NodeHelper.triangle.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, 30);
-    (end code)
-    */
-    'contains': function(npos, pos, dim) {
-      return NodeHelper.circle.contains(npos, pos, dim);
-    }
-  },
-  /*
-  Object: NodeHelper.star
-  */
-  'star': {
-    /*
-    Method: render
-
-    Renders a star (concave decagon) into the canvas.
-
-    Parameters:
-
-    type - (string) Possible options are 'fill' or 'stroke'.
-    pos - (object) An *x*, *y* object with the position of the center of the star.
-    dim - (number) The length of a side of a concave decagon.
-    canvas - (object) A <Canvas> instance.
-
-    Example:
-    (start code js)
-    NodeHelper.star.render('stroke', { x: 10, y: 30 }, 40, viz.canvas);
-    (end code)
-    */
-    'render': function(type, pos, dim, canvas){
-      var ctx = canvas.getCtx(),
-          pi5 = Math.PI / 5;
-      ctx.save();
-      ctx.translate(pos.x, pos.y);
-      ctx.beginPath();
-      ctx.moveTo(dim, 0);
-      for (var i = 0; i < 9; i++) {
-        ctx.rotate(pi5);
-        if (i % 2 == 0) {
-          ctx.lineTo((dim / 0.525731) * 0.200811, 0);
-        } else {
-          ctx.lineTo(dim, 0);
+         Example:
+         (start code js)
+         NodeHelper.circle.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, 30); //true
+         (end code)
+         */
+        'contains': function(npos, pos, radius){
+            var diffx = npos.x - pos.x,
+                diffy = npos.y - pos.y,
+                diff = diffx * diffx + diffy * diffy;
+            return diff <= radius * radius;
         }
-      }
-      ctx.closePath();
-      ctx[type]();
-      ctx.restore();
     },
     /*
-    Method: contains
+     Object: NodeHelper.ellipse
+     */
+    'ellipse': {
+        /*
+         Method: render
 
-    Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
+         Renders an ellipse into the canvas.
 
-    Parameters:
+         Parameters:
 
-    npos - (object) An *x*, *y* object with the <Graph.Node> position.
-    pos - (object) An *x*, *y* object with the position to check.
-    dim - (number) The length of a side of a concave decagon.
+         type - (string) Possible options are 'fill' or 'stroke'.
+         pos - (object) An *x*, *y* object with the position of the center of the ellipse.
+         width - (number) The width of the ellipse.
+         height - (number) The height of the ellipse.
+         canvas - (object) A <Canvas> instance.
 
-    Example:
-    (start code js)
-    NodeHelper.star.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, 30);
-    (end code)
-    */
-    'contains': function(npos, pos, dim) {
-      return NodeHelper.circle.contains(npos, pos, dim);
+         Example:
+         (start code js)
+         NodeHelper.ellipse.render('fill', { x: 10, y: 30 }, 30, 40, viz.canvas);
+         (end code)
+         */
+        'render': function(type, pos, width, height, canvas){
+            var ctx = canvas.getCtx(),
+                scalex = 1,
+                scaley = 1,
+                scaleposx = 1,
+                scaleposy = 1,
+                radius = 0;
+
+            if (width > height) {
+                radius = width / 2;
+                scaley = height / width;
+                scaleposy = width / height;
+            } else {
+                radius = height / 2;
+                scalex = width / height;
+                scaleposx = height / width;
+            }
+
+            ctx.save();
+            ctx.scale(scalex, scaley);
+            ctx.beginPath();
+            ctx.arc(pos.x * scaleposx, pos.y * scaleposy, radius, 0, Math.PI * 2, true);
+            ctx.closePath();
+            ctx[type]();
+            ctx.restore();
+        },
+        /*
+         Method: contains
+
+         Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
+
+         Parameters:
+
+         npos - (object) An *x*, *y* object with the <Graph.Node> position.
+         pos - (object) An *x*, *y* object with the position to check.
+         width - (number) The width of the rendered ellipse.
+         height - (number) The height of the rendered ellipse.
+
+         Example:
+         (start code js)
+         NodeHelper.ellipse.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, 30, 40);
+         (end code)
+         */
+        'contains': function(npos, pos, width, height){
+            var radius = 0,
+                scalex = 1,
+                scaley = 1,
+                diffx = 0,
+                diffy = 0,
+                diff = 0;
+
+            if (width > height) {
+                radius = width / 2;
+                scaley = height / width;
+            } else {
+                radius = height / 2;
+                scalex = width / height;
+            }
+
+            diffx = (npos.x - pos.x) * (1 / scalex);
+            diffy = (npos.y - pos.y) * (1 / scaley);
+            diff = diffx * diffx + diffy * diffy;
+            return diff <= radius * radius;
+        }
+    },
+    /*
+     Object: NodeHelper.square
+     */
+    'square': {
+        /*
+         Method: render
+
+         Renders a square into the canvas.
+
+         Parameters:
+
+         type - (string) Possible options are 'fill' or 'stroke'.
+         pos - (object) An *x*, *y* object with the position of the center of the square.
+         dim - (number) The radius (or half-diameter) of the square.
+         canvas - (object) A <Canvas> instance.
+
+         Example:
+         (start code js)
+         NodeHelper.square.render('stroke', { x: 10, y: 30 }, 40, viz.canvas);
+         (end code)
+         */
+        'render': function(type, pos, dim, canvas){
+            canvas.getCtx()[type + "Rect"](pos.x - dim, pos.y - dim, 2*dim, 2*dim);
+        },
+        /*
+         Method: contains
+
+         Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
+
+         Parameters:
+
+         npos - (object) An *x*, *y* object with the <Graph.Node> position.
+         pos - (object) An *x*, *y* object with the position to check.
+         dim - (number) The radius (or half-diameter) of the square.
+
+         Example:
+         (start code js)
+         NodeHelper.square.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, 30);
+         (end code)
+         */
+        'contains': function(npos, pos, dim){
+            return Math.abs(pos.x - npos.x) <= dim && Math.abs(pos.y - npos.y) <= dim;
+        }
+    },
+    /*
+     Object: NodeHelper.rectangle
+     */
+    'rectangle': {
+        /*
+         Method: render
+
+         Renders a rectangle into the canvas.
+
+         Parameters:
+
+         type - (string) Possible options are 'fill' or 'stroke'.
+         pos - (object) An *x*, *y* object with the position of the center of the rectangle.
+         width - (number) The width of the rectangle.
+         height - (number) The height of the rectangle.
+         canvas - (object) A <Canvas> instance.
+
+         Example:
+         (start code js)
+         NodeHelper.rectangle.render('fill', { x: 10, y: 30 }, 30, 40, viz.canvas);
+         (end code)
+         */
+        'render': function(type, pos, width, height, canvas){
+            canvas.getCtx()[type + "Rect"](pos.x - width / 2, pos.y - height / 2,
+                width, height);
+        },
+        /*
+         Method: contains
+
+         Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
+
+         Parameters:
+
+         npos - (object) An *x*, *y* object with the <Graph.Node> position.
+         pos - (object) An *x*, *y* object with the position to check.
+         width - (number) The width of the rendered rectangle.
+         height - (number) The height of the rendered rectangle.
+
+         Example:
+         (start code js)
+         NodeHelper.rectangle.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, 30, 40);
+         (end code)
+         */
+        'contains': function(npos, pos, width, height){
+            return Math.abs(pos.x - npos.x) <= width / 2
+                && Math.abs(pos.y - npos.y) <= height / 2;
+        }
+    },
+    /*
+     Object: NodeHelper.triangle
+     */
+    'triangle': {
+        /*
+         Method: render
+
+         Renders a triangle into the canvas.
+
+         Parameters:
+
+         type - (string) Possible options are 'fill' or 'stroke'.
+         pos - (object) An *x*, *y* object with the position of the center of the triangle.
+         dim - (number) Half the base and half the height of the triangle.
+         canvas - (object) A <Canvas> instance.
+
+         Example:
+         (start code js)
+         NodeHelper.triangle.render('stroke', { x: 10, y: 30 }, 40, viz.canvas);
+         (end code)
+         */
+        'render': function(type, pos, dim, canvas){
+            var ctx = canvas.getCtx(),
+                c1x = pos.x,
+                c1y = pos.y - dim,
+                c2x = c1x - dim,
+                c2y = pos.y + dim,
+                c3x = c1x + dim,
+                c3y = c2y;
+            ctx.beginPath();
+            ctx.moveTo(c1x, c1y);
+            ctx.lineTo(c2x, c2y);
+            ctx.lineTo(c3x, c3y);
+            ctx.closePath();
+            ctx[type]();
+        },
+        /*
+         Method: contains
+
+         Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
+
+         Parameters:
+
+         npos - (object) An *x*, *y* object with the <Graph.Node> position.
+         pos - (object) An *x*, *y* object with the position to check.
+         dim - (number) Half the base and half the height of the triangle.
+
+         Example:
+         (start code js)
+         NodeHelper.triangle.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, 30);
+         (end code)
+         */
+        'contains': function(npos, pos, dim) {
+            return NodeHelper.circle.contains(npos, pos, dim);
+        }
+    },
+    /*
+     Object: NodeHelper.star
+     */
+    'star': {
+        /*
+         Method: render
+
+         Renders a star (concave decagon) into the canvas.
+
+         Parameters:
+
+         type - (string) Possible options are 'fill' or 'stroke'.
+         pos - (object) An *x*, *y* object with the position of the center of the star.
+         dim - (number) The length of a side of a concave decagon.
+         canvas - (object) A <Canvas> instance.
+
+         Example:
+         (start code js)
+         NodeHelper.star.render('stroke', { x: 10, y: 30 }, 40, viz.canvas);
+         (end code)
+         */
+        'render': function(type, pos, dim, canvas){
+            var ctx = canvas.getCtx(),
+                pi5 = Math.PI / 5;
+            ctx.save();
+            ctx.translate(pos.x, pos.y);
+            ctx.beginPath();
+            ctx.moveTo(dim, 0);
+            for (var i = 0; i < 9; i++) {
+                ctx.rotate(pi5);
+                if (i % 2 == 0) {
+                    ctx.lineTo((dim / 0.525731) * 0.200811, 0);
+                } else {
+                    ctx.lineTo(dim, 0);
+                }
+            }
+            ctx.closePath();
+            ctx[type]();
+            ctx.restore();
+        },
+        /*
+         Method: contains
+
+         Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
+
+         Parameters:
+
+         npos - (object) An *x*, *y* object with the <Graph.Node> position.
+         pos - (object) An *x*, *y* object with the position to check.
+         dim - (number) The length of a side of a concave decagon.
+
+         Example:
+         (start code js)
+         NodeHelper.star.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, 30);
+         (end code)
+         */
+        'contains': function(npos, pos, dim) {
+            return NodeHelper.circle.contains(npos, pos, dim);
+        }
     }
-  }
 };
 
 /*
-  Object: EdgeHelper
+ Object: EdgeHelper
 
-  Contains rendering primitives for simple edge shapes.
-*/
+ Contains rendering primitives for simple edge shapes.
+ */
 var EdgeHelper = {
-  /*
-    Object: EdgeHelper.line
-  */
-  'line': {
-      /*
-      Method: render
+    /*
+     Object: EdgeHelper.line
+     */
+    'line': {
+        /*
+         Method: render
 
-      Renders a line into the canvas.
+         Renders a line into the canvas.
 
-      Parameters:
+         Parameters:
 
-      from - (object) An *x*, *y* object with the starting position of the line.
-      to - (object) An *x*, *y* object with the ending position of the line.
-      canvas - (object) A <Canvas> instance.
+         from - (object) An *x*, *y* object with the starting position of the line.
+         to - (object) An *x*, *y* object with the ending position of the line.
+         canvas - (object) A <Canvas> instance.
 
-      Example:
-      (start code js)
-      EdgeHelper.line.render({ x: 10, y: 30 }, { x: 10, y: 50 }, viz.canvas);
-      (end code)
-      */
-      'render': function(from, to, canvas){
-        var ctx = canvas.getCtx();
-        ctx.beginPath();
-        ctx.moveTo(from.x, from.y);
-        ctx.lineTo(to.x, to.y);
-        ctx.stroke();
-      },
-      /*
-      Method: contains
+         Example:
+         (start code js)
+         EdgeHelper.line.render({ x: 10, y: 30 }, { x: 10, y: 50 }, viz.canvas);
+         (end code)
+         */
+        'render': function(from, to, canvas){
+            var ctx = canvas.getCtx();
+            ctx.beginPath();
+            ctx.moveTo(from.x, from.y);
+            ctx.lineTo(to.x, to.y);
+            ctx.stroke();
+        },
+        /*
+         Method: contains
 
-      Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
+         Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
 
-      Parameters:
+         Parameters:
 
-      posFrom - (object) An *x*, *y* object with a <Graph.Node> position.
-      posTo - (object) An *x*, *y* object with a <Graph.Node> position.
-      pos - (object) An *x*, *y* object with the position to check.
-      epsilon - (number) The dimension of the shape.
+         posFrom - (object) An *x*, *y* object with a <Graph.Node> position.
+         posTo - (object) An *x*, *y* object with a <Graph.Node> position.
+         pos - (object) An *x*, *y* object with the position to check.
+         epsilon - (number) The dimension of the shape.
 
-      Example:
-      (start code js)
-      EdgeHelper.line.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, { x: 15, y: 35 }, 30);
-      (end code)
-      */
-      'contains': function(posFrom, posTo, pos, epsilon) {
-        var min = Math.min,
-            max = Math.max,
-            minPosX = min(posFrom.x, posTo.x),
-            maxPosX = max(posFrom.x, posTo.x),
-            minPosY = min(posFrom.y, posTo.y),
-            maxPosY = max(posFrom.y, posTo.y);
+         Example:
+         (start code js)
+         EdgeHelper.line.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, { x: 15, y: 35 }, 30);
+         (end code)
+         */
+        'contains': function(posFrom, posTo, pos, epsilon) {
+            var min = Math.min,
+                max = Math.max,
+                minPosX = min(posFrom.x, posTo.x) - epsilon,
+                maxPosX = max(posFrom.x, posTo.x) + epsilon,
+                minPosY = min(posFrom.y, posTo.y) - epsilon,
+                maxPosY = max(posFrom.y, posTo.y) + epsilon;
 
-        if(pos.x >= minPosX && pos.x <= maxPosX
-            && pos.y >= minPosY && pos.y <= maxPosY) {
-          if(Math.abs(posTo.x - posFrom.x) <= epsilon) {
-            return true;
-          }
-          var dist = (posTo.y - posFrom.y) / (posTo.x - posFrom.x) * (pos.x - posFrom.x) + posFrom.y;
-          return Math.abs(dist - pos.y) <= epsilon;
+            if(pos.x >= minPosX && pos.x <= maxPosX
+                && pos.y >= minPosY && pos.y <= maxPosY) {
+                if(Math.abs(posTo.x - posFrom.x) <= epsilon) {
+                    return true;
+                }
+                var dist = (posTo.y - posFrom.y) / (posTo.x - posFrom.x) * (pos.x - posFrom.x) + posFrom.y;
+                return Math.abs(dist - pos.y) <= epsilon;
+            }
+            return false;
         }
-        return false;
-      }
-    },
-  /*
-    Object: EdgeHelper.arrow
-  */
-  'arrow': {
-      /*
-      Method: render
-
-      Renders an arrow into the canvas.
-
-      Parameters:
-
-      from - (object) An *x*, *y* object with the starting position of the arrow.
-      to - (object) An *x*, *y* object with the ending position of the arrow.
-      dim - (number) The dimension of the arrow.
-      swap - (boolean) Whether to set the arrow pointing to the starting position or the ending position.
-      canvas - (object) A <Canvas> instance.
-
-      Example:
-      (start code js)
-      EdgeHelper.arrow.render({ x: 10, y: 30 }, { x: 10, y: 50 }, 13, false, viz.canvas);
-      (end code)
-      */
-    'render': function(from, to, dim, swap, canvas){
-        var ctx = canvas.getCtx();
-        // invert edge direction
-        if (swap) {
-          var tmp = from;
-          from = to;
-          to = tmp;
-        }
-        var vect = new Complex(to.x - from.x, to.y - from.y);
-        vect.$scale(dim / vect.norm());
-        var intermediatePoint = new Complex(to.x - vect.x, to.y - vect.y),
-            normal = new Complex(-vect.y / 2, vect.x / 2),
-            v1 = intermediatePoint.add(normal),
-            v2 = intermediatePoint.$add(normal.$scale(-1));
-
-        ctx.beginPath();
-        ctx.moveTo(from.x, from.y);
-        ctx.lineTo(to.x, to.y);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(v1.x, v1.y);
-        ctx.lineTo(v2.x, v2.y);
-        ctx.lineTo(to.x, to.y);
-        ctx.closePath();
-        ctx.fill();
     },
     /*
-    Method: contains
+     Object: EdgeHelper.arrow
+     */
+    'arrow': {
+        /*
+         Method: render
 
-    Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
+         Renders an arrow into the canvas.
 
-    Parameters:
+         Parameters:
 
-    posFrom - (object) An *x*, *y* object with a <Graph.Node> position.
-    posTo - (object) An *x*, *y* object with a <Graph.Node> position.
-    pos - (object) An *x*, *y* object with the position to check.
-    epsilon - (number) The dimension of the shape.
+         from - (object) An *x*, *y* object with the starting position of the arrow.
+         to - (object) An *x*, *y* object with the ending position of the arrow.
+         dim - (number) The dimension of the arrow.
+         swap - (boolean) Whether to set the arrow pointing to the starting position or the ending position.
+         canvas - (object) A <Canvas> instance.
 
-    Example:
-    (start code js)
-    EdgeHelper.arrow.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, { x: 15, y: 35 }, 30);
-    (end code)
-    */
-    'contains': function(posFrom, posTo, pos, epsilon) {
-      return EdgeHelper.line.contains(posFrom, posTo, pos, epsilon);
+         Example:
+         (start code js)
+         EdgeHelper.arrow.render({ x: 10, y: 30 }, { x: 10, y: 50 }, 13, false, viz.canvas);
+         (end code)
+         */
+        'render': function(from, to, dim, swap, canvas, arrowPosition){
+            var ctx = canvas.getCtx();
+            // invert edge direction
+            if (swap) {
+                var tmp = from;
+                from = to;
+                to = tmp;
+            }
+            var vect = new Complex(to.x - from.x, to.y - from.y);
+            vect.$scale(dim / vect.norm());
+            var posVect;
+            switch (arrowPosition) {
+                case 'end':    posVect = vect; break;
+                case 'center': posVect = new Complex((to.x - from.x)/2, (to.y - from.y)/2); break;
+            }
+            var intermediatePoint = new Complex(to.x - posVect.x, to.y - posVect.y),
+                normal = new Complex(-vect.y / 2, vect.x / 2),
+                endPoint = intermediatePoint.add(vect),
+                v1 = intermediatePoint.add(normal),
+                v2 = intermediatePoint.$add(normal.$scale(-1));
+
+            ctx.beginPath();
+            ctx.moveTo(from.x, from.y);
+            ctx.lineTo(to.x, to.y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(v1.x, v1.y);
+            ctx.moveTo(v1.x, v1.y);
+            ctx.lineTo(v2.x, v2.y);
+            ctx.lineTo(endPoint.x, endPoint.y);
+            ctx.closePath();
+            ctx.fill();
+        },
+        /*
+         Method: contains
+
+         Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
+
+         Parameters:
+
+         posFrom - (object) An *x*, *y* object with a <Graph.Node> position.
+         posTo - (object) An *x*, *y* object with a <Graph.Node> position.
+         pos - (object) An *x*, *y* object with the position to check.
+         epsilon - (number) The dimension of the shape.
+
+         Example:
+         (start code js)
+         EdgeHelper.arrow.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, { x: 15, y: 35 }, 30);
+         (end code)
+         */
+        'contains': function(posFrom, posTo, pos, epsilon) {
+            return EdgeHelper.line.contains(posFrom, posTo, pos, epsilon);
+        }
+    },
+    /*
+     Object: EdgeHelper.hyperline
+     */
+    'hyperline': {
+        /*
+         Method: render
+
+         Renders a hyperline into the canvas. A hyperline are the lines drawn for the <Hypertree> visualization.
+
+         Parameters:
+
+         from - (object) An *x*, *y* object with the starting position of the hyperline. *x* and *y* must belong to [0, 1).
+         to - (object) An *x*, *y* object with the ending position of the hyperline. *x* and *y* must belong to [0, 1).
+         r - (number) The scaling factor.
+         canvas - (object) A <Canvas> instance.
+
+         Example:
+         (start code js)
+         EdgeHelper.hyperline.render({ x: 10, y: 30 }, { x: 10, y: 50 }, 100, viz.canvas);
+         (end code)
+         */
+        'render': function(from, to, r, canvas){
+            var ctx = canvas.getCtx();
+            var centerOfCircle = computeArcThroughTwoPoints(from, to);
+            if (centerOfCircle.a > 1000 || centerOfCircle.b > 1000
+                || centerOfCircle.ratio < 0) {
+                ctx.beginPath();
+                ctx.moveTo(from.x * r, from.y * r);
+                ctx.lineTo(to.x * r, to.y * r);
+                ctx.stroke();
+            } else {
+                var angleBegin = Math.atan2(to.y - centerOfCircle.y, to.x
+                    - centerOfCircle.x);
+                var angleEnd = Math.atan2(from.y - centerOfCircle.y, from.x
+                    - centerOfCircle.x);
+                var sense = sense(angleBegin, angleEnd);
+                ctx.beginPath();
+                ctx.arc(centerOfCircle.x * r, centerOfCircle.y * r, centerOfCircle.ratio
+                    * r, angleBegin, angleEnd, sense);
+                ctx.stroke();
+            }
+            /*
+             Calculates the arc parameters through two points.
+
+             More information in <http://en.wikipedia.org/wiki/Poincar%C3%A9_disc_model#Analytic_geometry_constructions_in_the_hyperbolic_plane>
+
+             Parameters:
+
+             p1 - A <Complex> instance.
+             p2 - A <Complex> instance.
+             scale - The Disk's diameter.
+
+             Returns:
+
+             An object containing some arc properties.
+             */
+            function computeArcThroughTwoPoints(p1, p2){
+                var aDen = (p1.x * p2.y - p1.y * p2.x), bDen = aDen;
+                var sq1 = p1.squaredNorm(), sq2 = p2.squaredNorm();
+                // Fall back to a straight line
+                if (aDen == 0)
+                    return {
+                        x: 0,
+                        y: 0,
+                        ratio: -1
+                    };
+
+                var a = (p1.y * sq2 - p2.y * sq1 + p1.y - p2.y) / aDen;
+                var b = (p2.x * sq1 - p1.x * sq2 + p2.x - p1.x) / bDen;
+                var x = -a / 2;
+                var y = -b / 2;
+                var squaredRatio = (a * a + b * b) / 4 - 1;
+                // Fall back to a straight line
+                if (squaredRatio < 0)
+                    return {
+                        x: 0,
+                        y: 0,
+                        ratio: -1
+                    };
+                var ratio = Math.sqrt(squaredRatio);
+                var out = {
+                    x: x,
+                    y: y,
+                    ratio: ratio > 1000? -1 : ratio,
+                    a: a,
+                    b: b
+                };
+
+                return out;
+            }
+            /*
+             Sets angle direction to clockwise (true) or counterclockwise (false).
+
+             Parameters:
+
+             angleBegin - Starting angle for drawing the arc.
+             angleEnd - The HyperLine will be drawn from angleBegin to angleEnd.
+
+             Returns:
+
+             A Boolean instance describing the sense for drawing the HyperLine.
+             */
+            function sense(angleBegin, angleEnd){
+                return (angleBegin < angleEnd)? ((angleBegin + Math.PI > angleEnd)? false
+                    : true) : ((angleEnd + Math.PI > angleBegin)? true : false);
+            }
+        },
+        /*
+         Method: contains
+
+         Not Implemented
+
+         Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
+
+         Parameters:
+
+         posFrom - (object) An *x*, *y* object with a <Graph.Node> position.
+         posTo - (object) An *x*, *y* object with a <Graph.Node> position.
+         pos - (object) An *x*, *y* object with the position to check.
+         epsilon - (number) The dimension of the shape.
+
+         Example:
+         (start code js)
+         EdgeHelper.hyperline.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, { x: 15, y: 35 }, 30);
+         (end code)
+         */
+        'contains': $.lambda(false)
     }
-  },
-  /*
-    Object: EdgeHelper.hyperline
-  */
-  'hyperline': {
-    /*
-    Method: render
-
-    Renders a hyperline into the canvas. A hyperline are the lines drawn for the <Hypertree> visualization.
-
-    Parameters:
-
-    from - (object) An *x*, *y* object with the starting position of the hyperline. *x* and *y* must belong to [0, 1).
-    to - (object) An *x*, *y* object with the ending position of the hyperline. *x* and *y* must belong to [0, 1).
-    r - (number) The scaling factor.
-    canvas - (object) A <Canvas> instance.
-
-    Example:
-    (start code js)
-    EdgeHelper.hyperline.render({ x: 10, y: 30 }, { x: 10, y: 50 }, 100, viz.canvas);
-    (end code)
-    */
-    'render': function(from, to, r, canvas){
-      var ctx = canvas.getCtx();
-      var centerOfCircle = computeArcThroughTwoPoints(from, to);
-      if (centerOfCircle.a > 1000 || centerOfCircle.b > 1000
-          || centerOfCircle.ratio < 0) {
-        ctx.beginPath();
-        ctx.moveTo(from.x * r, from.y * r);
-        ctx.lineTo(to.x * r, to.y * r);
-        ctx.stroke();
-      } else {
-        var angleBegin = Math.atan2(to.y - centerOfCircle.y, to.x
-            - centerOfCircle.x);
-        var angleEnd = Math.atan2(from.y - centerOfCircle.y, from.x
-            - centerOfCircle.x);
-        var sense = sense(angleBegin, angleEnd);
-        ctx.beginPath();
-        ctx.arc(centerOfCircle.x * r, centerOfCircle.y * r, centerOfCircle.ratio
-            * r, angleBegin, angleEnd, sense);
-        ctx.stroke();
-      }
-      /*
-        Calculates the arc parameters through two points.
-
-        More information in <http://en.wikipedia.org/wiki/Poincar%C3%A9_disc_model#Analytic_geometry_constructions_in_the_hyperbolic_plane>
-
-        Parameters:
-
-        p1 - A <Complex> instance.
-        p2 - A <Complex> instance.
-        scale - The Disk's diameter.
-
-        Returns:
-
-        An object containing some arc properties.
-      */
-      function computeArcThroughTwoPoints(p1, p2){
-        var aDen = (p1.x * p2.y - p1.y * p2.x), bDen = aDen;
-        var sq1 = p1.squaredNorm(), sq2 = p2.squaredNorm();
-        // Fall back to a straight line
-        if (aDen == 0)
-          return {
-            x: 0,
-            y: 0,
-            ratio: -1
-          };
-
-        var a = (p1.y * sq2 - p2.y * sq1 + p1.y - p2.y) / aDen;
-        var b = (p2.x * sq1 - p1.x * sq2 + p2.x - p1.x) / bDen;
-        var x = -a / 2;
-        var y = -b / 2;
-        var squaredRatio = (a * a + b * b) / 4 - 1;
-        // Fall back to a straight line
-        if (squaredRatio < 0)
-          return {
-            x: 0,
-            y: 0,
-            ratio: -1
-          };
-        var ratio = Math.sqrt(squaredRatio);
-        var out = {
-          x: x,
-          y: y,
-          ratio: ratio > 1000? -1 : ratio,
-          a: a,
-          b: b
-        };
-
-        return out;
-      }
-      /*
-        Sets angle direction to clockwise (true) or counterclockwise (false).
-
-        Parameters:
-
-           angleBegin - Starting angle for drawing the arc.
-           angleEnd - The HyperLine will be drawn from angleBegin to angleEnd.
-
-        Returns:
-
-           A Boolean instance describing the sense for drawing the HyperLine.
-      */
-      function sense(angleBegin, angleEnd){
-        return (angleBegin < angleEnd)? ((angleBegin + Math.PI > angleEnd)? false
-            : true) : ((angleEnd + Math.PI > angleBegin)? true : false);
-      }
-    },
-    /*
-    Method: contains
-
-    Not Implemented
-
-    Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
-
-    Parameters:
-
-    posFrom - (object) An *x*, *y* object with a <Graph.Node> position.
-    posTo - (object) An *x*, *y* object with a <Graph.Node> position.
-    pos - (object) An *x*, *y* object with the position to check.
-    epsilon - (number) The dimension of the shape.
-
-    Example:
-    (start code js)
-    EdgeHelper.hyperline.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, { x: 15, y: 35 }, 30);
-    (end code)
-    */
-    'contains': $.lambda(false)
-  }
 };
 
 
-/*
+	/*
  * File: Graph.Plot.js
  */
 
@@ -6648,7 +6800,8 @@ Graph.Plot = {
           'angularWidth':'number',
           'span':'number',
           'valueArray':'array-number',
-          'dimArray':'array-number'
+          'dimArray':'array-number',
+          'vertices':'polygon'
           //'colorArray':'array-color'
         },
 
@@ -6776,6 +6929,53 @@ Graph.Plot = {
 
         'edge-style': function(elem, props, delta) {
           this['edge'](elem, props, delta, 'canvas', 'getCanvasStyle', 'setCanvasStyle');
+        },
+
+        'polygon': function(elem, prop, delta, getter, setter) {
+          var from = elem[getter](prop, 'start'),
+              to = elem[getter](prop, 'end'),
+              cur = [];
+          if (typeof from.offset == 'undefined') {
+            if (from === 0) {
+              from = $.map(to, function() {
+                return new $jit.Complex(0, 0);
+              });
+              from.offset = 0;
+            }
+            else {
+              if (from.length == 0) {
+                from.push(new $jit.Complex(0, 0));
+              }
+              while (from.length < to.length) {
+                from.push(from[0]);
+              }
+              while (from.length > to.length) {
+                to.push(to[0] || new $jit.Complex(0, 0));
+              }
+              if (from.length == 0) return;
+              var l = from.length;
+              var minDist = 1e300;
+              for (var offset = 0; offset < l; offset ++) {
+                var d = 0;
+                for (var i = 0; i < l; i++) {
+                  d +=Geometry.dist2(from[(offset + i) % l], to[i]);
+                }
+                if (d < minDist) {
+                  from.offset = offset;
+                  minDist = d;
+                }
+              }
+            }
+          }
+
+          for (var i = 0, l = from.length; i < l; i++) {
+            var fromi = from[(i + from.offset) % l], toi = to[i];
+            cur.push(new $jit.Complex(
+                this.compute(fromi.x, toi.x, delta),
+                this.compute(fromi.y, toi.y, delta)
+            ));
+          }
+          elem[setter](prop, cur);
         }
     },
 
@@ -7033,6 +7233,10 @@ Graph.Plot = {
       (end code)
    */
    nodeFx: function(opt) {
+     if (this.nodeFxAnimation == undefined) {
+       this.nodeFxAnimation = new Animation();
+     }
+
      var viz = this.viz,
          graph  = viz.graph,
          animation = this.nodeFxAnimation,
@@ -7150,10 +7354,10 @@ Graph.Plot = {
    */
    plotTree: function(node, opt, animating) {
        var that = this,
-       viz = this.viz,
-       canvas = viz.canvas,
-       config = this.config,
-       ctx = canvas.getCtx();
+           viz = this.viz,
+           canvas = viz.canvas,
+           config = this.config,
+           ctx = canvas.getCtx();
        var nodeAlpha = node.getData('alpha');
        node.eachSubnode(function(elem) {
          if(opt.plotSubtree(node, elem) && elem.exist && elem.drawn) {
@@ -7478,7 +7682,29 @@ Graph.Label.Native = new Class({
       ctx.fillText(node.name, pos.x, pos.y + node.getData("height") / 2);
     },
 
-    hideLabel: $.empty,
+    /*
+       Method: hideLabel
+
+       Hides the corresponding <Graph.Node> label.
+
+       Parameters:
+
+       node - (object) A <Graph.Node>. Can also be an array of <Graph.Nodes>.
+       show - (boolean) If *true*, nodes will be shown. Otherwise nodes will be hidden.
+
+       Example:
+       (start code js)
+        var rg = new $jit.Viz(options);
+        viz.labels.hideLabel(viz.graph.getNode('someid'), false);
+       (end code)
+    */
+    hideLabel: function(node, show) {
+      node = $.splat(node);
+      var al = show ? false : true;
+      $.each(node, function(n) {
+        n._hideLabel = al;
+      });
+    },
     hideLabels: $.empty
 });
 
@@ -7644,7 +7870,7 @@ Graph.Label.DOM = new Class({
       node = $.splat(node);
       var st = show ? "" : "none", lab, that = this;
       $.each(node, function(n) {
-        var lab = that.getLabel(n.id);
+        lab = that.getLabel(n.id);
         if (lab) {
           lab.style.display = st;
         }
@@ -7668,8 +7894,14 @@ Graph.Label.DOM = new Class({
     */
     fitsInCanvas: function(pos, canvas) {
       var size = canvas.getSize();
-      if(pos.x >= size.width || pos.x < 0
+      if (pos.w && pos.h) {
+      	if (pos.x >= size.width || pos.x < -pos.w
+         || pos.y >= size.height || pos.y < -pos.h) return false;
+      }
+      else {
+      	if (pos.x >= size.width || pos.x < 0
          || pos.y >= size.height || pos.y < 0) return false;
+      }
        return true;
     }
 });
@@ -8344,8 +8576,14 @@ Layouts.Tree = (function() {
             if (n.exist
                 && (!multitree || ('$orn' in n.data) && n.data.$orn == orn)) {
 
-              if (!chmaxsize)
-                chmaxsize = getBoundaries(graph, config, n._depth, orn, prop);
+              if (config.levelSpacing == 'even') {
+                if (!chmaxsize) {
+                  chmaxsize = getBoundaries(graph, config, n._depth, orn, prop);
+                }
+              } else {
+                chmaxsize = { width: n.getData('width'), height: n.getData('height') };
+              }
+
 
               var s = $design(n, chmaxsize[nots], acum + chacum);
               trees.push(s.tree);
@@ -8431,6 +8669,7 @@ Layouts.Tree = (function() {
   });
 
 })();
+
 
 /*
  * File: Spacetree.js
@@ -8726,11 +8965,18 @@ $jit.ST= (function() {
 
        reposition: function() {
             this.graph.computeLevels(this.root, 0, "ignore");
-             this.geom.setRightLevelToShow(this.clickedNode, this.canvas);
+            this.geom.setRightLevelToShow(this.clickedNode, this.canvas);
             this.graph.eachNode(function(n) {
                 if(n.exist) n.drawn = true;
             });
             this.compute('end');
+            if (this.clickedNode) {
+              var offset = {
+                  x: this.canvas.translateOffsetX + this.config.offsetX || 0,
+                  y: this.canvas.translateOffsetY + this.config.offsetY || 0
+              };
+              this.geom.translate(this.clickedNode.endPos.add(offset).$scale(-1), 'end');
+            }
         },
 
         requestNodes: function(node, onComplete) {
@@ -8768,6 +9014,8 @@ $jit.ST= (function() {
             };
             if(move.enable) {
                 this.geom.translate(node.endPos.add(offset).$scale(-1), "end");
+            } else {
+                this.geom.translate($C(offset.x, offset.y).$scale(-1), "end");
             }
             this.fx.animate($.merge(this.controller, { modes: ['linear'] }, onComplete));
          },
@@ -9029,8 +9277,8 @@ $jit.ST= (function() {
         var innerController = {
             Move: {
         	    enable: true,
-              offsetX: config.offsetX || 0,
-              offsetY: config.offsetY || 0
+              offsetX: canvas.translateOffsetX + config.offsetX || 0,
+              offsetY: canvas.translateOffsetY + config.offsetY || 0
             },
             setRightLevelToShowConfig: false,
             onBeforeRequest: $.empty,
@@ -9727,6 +9975,9 @@ $jit.ST.Label.DOM = new Class({
             }
         } else throw "align: not implemented";
 
+		labelPos.w=w;
+		labelPos.h=h;
+
         var style = tag.style;
         style.left = labelPos.x + 'px';
         style.top  = labelPos.y + 'px';
@@ -9820,7 +10071,7 @@ $jit.ST.Plot.NodeTypes = new Class({
       var dim  = node.getData('dim'),
           npos = this.getAlignedPos(node.pos.getc(true), dim, dim),
           dim2 = dim/2;
-      this.nodeHelper.circle.contains({x:npos.x+dim2, y:npos.y+dim2}, pos, dim2);
+      return this.nodeHelper.circle.contains({x:npos.x+dim2, y:npos.y+dim2}, pos, dim2);
     }
   },
   'square': {
@@ -9834,7 +10085,7 @@ $jit.ST.Plot.NodeTypes = new Class({
       var dim  = node.getData('dim'),
           npos = this.getAlignedPos(node.pos.getc(true), dim, dim),
           dim2 = dim/2;
-      this.nodeHelper.square.contains({x:npos.x+dim2, y:npos.y+dim2}, pos, dim2);
+      return this.nodeHelper.square.contains({x:npos.x+dim2, y:npos.y+dim2}, pos, dim2);
     }
   },
   'ellipse': {
@@ -9848,7 +10099,7 @@ $jit.ST.Plot.NodeTypes = new Class({
       var width = node.getData('width'),
           height = node.getData('height'),
           npos = this.getAlignedPos(node.pos.getc(true), width, height);
-      this.nodeHelper.ellipse.contains({x:npos.x+width/2, y:npos.y+height/2}, pos, width, height);
+      return this.nodeHelper.ellipse.contains({x:npos.x+width/2, y:npos.y+height/2}, pos, width, height);
     }
   },
   'rectangle': {
@@ -9862,7 +10113,7 @@ $jit.ST.Plot.NodeTypes = new Class({
       var width = node.getData('width'),
           height = node.getData('height'),
           npos = this.getAlignedPos(node.pos.getc(true), width, height);
-      this.nodeHelper.rectangle.contains({x:npos.x+width/2, y:npos.y+height/2}, pos, width, height);
+      return this.nodeHelper.rectangle.contains({x:npos.x+width/2, y:npos.y+height/2}, pos, width, height);
     }
   }
 });
@@ -9919,9 +10170,10 @@ $jit.ST.Plot.EdgeTypes = new Class({
          var orn = this.getOrientation(adj),
              node = adj.nodeFrom,
              child = adj.nodeTo,
+             rel = (node._depth < child._depth),
              dim = adj.getData('dim'),
-             from = this.viz.geom.getEdge(node, 'begin', orn),
-             to = this.viz.geom.getEdge(child, 'end', orn),
+             from = this.viz.geom.getEdge((rel?node:child), 'begin', orn),
+             to = this.viz.geom.getEdge((rel?child:node), 'end', orn),
              direction = adj.data.$direction,
              inv = (direction && direction.length>1 && direction[0] != node.id);
          this.edgeHelper.arrow.render(from, to, dim, inv, canvas);
@@ -10118,8 +10370,9 @@ $jit.ST.Plot.NodeTypes.implement({
           if(aggValue !== false) {
             ctx.fillText(aggValue !== true? aggValue : valAcum, x, y - acumLeft - config.labelOffset - label.size/2, width);
           }
-          if(showLabels(node.name, valLeft, valRight, node)) {
-            ctx.fillText(node.name, x, y + label.size/2 + config.labelOffset);
+          var labValue = showLabels(node.name, valLeft, valRight, node)
+          if(labValue !== false) {
+            ctx.fillText(labValue !== true? labValue : node.name, x, y + label.size/2 + config.labelOffset);
           }
           ctx.restore();
         }
@@ -11029,15 +11282,17 @@ $jit.ST.Plot.NodeTypes.implement({
               ctx.fillText(aggValue, x + width/2, y - Math.max.apply(null, dimArray) - label.size/2 - config.labelOffset);
             }
           }
-          if(showLabels(node.name, valAcum, node)) {
+          var labValue = showLabels(node.name, valAcum, node);
+          if(labValue !== false) {
+            labValue = labValue !== true? labValue : node.name;
             if(horz) {
               ctx.textAlign = 'center';
               ctx.translate(x - config.labelOffset - label.size/2, y + height/2);
               ctx.rotate(Math.PI / 2);
-              ctx.fillText(node.name, 0, 0);
+              ctx.fillText(labValue, 0, 0);
             } else {
               ctx.textAlign = 'center';
-              ctx.fillText(node.name, x + width/2, y + label.size/2 + config.labelOffset);
+              ctx.fillText(labValue, x + width/2, y + label.size/2 + config.labelOffset);
             }
           }
           ctx.restore();
@@ -11328,8 +11583,11 @@ $jit.BarChart = new Class({
       var val = values[i]
       var valArray = $.splat(values[i].values);
       var acum = 0;
+      if (typeof val.id == 'undefined') {
+        val.id = val.label;
+      }
       ch.push({
-        'id': prefix + val.label,
+        'id': prefix + val.id,
         'name': val.label,
         'data': {
           'value': valArray,
@@ -13079,7 +13337,7 @@ Layouts.TM.SliceAndDice = new Class({
     });
 
     var config = this.config,
-        offst = config.offset,
+        offset = config.offset,
         width  = par.getData('width', prop),
         height = Math.max(par.getData('height', prop) - config.titleHeight, 0),
         fact = par == ch? 1 : (ch.getData('area', prop) / totalArea);
@@ -13149,8 +13407,8 @@ Layouts.TM.Area = {
     root.setData('height', height, prop);
     //create a coordinates object
     var coord = {
-        'top': -height/2 + config.titleHeight,
-        'left': -width/2,
+        'top': -height/2 + config.titleHeight + offst / 2,
+        'left': -width/2 + offst / 2,
         'width': offwdth,
         'height': offhght - config.titleHeight
     };
@@ -13305,8 +13563,8 @@ Layouts.TM.Squarified = new Class({
        coord = {
          'width': width,
          'height': height,
-         'top': chipos.y + config.titleHeight,
-         'left': chipos.x
+         'top': chipos.y + config.titleHeight + offst / 2,
+         'left': chipos.x + offst / 2
        };
        this.computePositions(chi, coord, prop);
      }
@@ -13380,14 +13638,17 @@ Layouts.TM.Squarified = new Class({
    }
  },
 
- layoutV: function(ch, w, coord, prop) {
+layoutV: function(ch, w, coord, prop) {
    var totalArea = 0, rnd = function(x) { return x; };
    $.each(ch, function(elem) { totalArea += elem._area; });
-   var width = rnd(totalArea / w), top =  0;
+   var width = rnd(totalArea / w) || 0, top =  0;
    for(var i=0, l=ch.length; i<l; i++) {
-     var h = rnd(ch[i]._area / width);
+     var h = rnd(ch[i]._area / width) || 0;
      var chi = ch[i];
-     chi.getPos(prop).setc(coord.left, coord.top + top);
+
+     var posx = $.getDir() === 'rtl' ? (-1 * coord.left)-width : coord.left;
+
+     chi.getPos(prop).setc(posx, coord.top + top);
      chi.setData('width', width, prop);
      chi.setData('height', h, prop);
      top += h;
@@ -13407,14 +13668,18 @@ Layouts.TM.Squarified = new Class({
  layoutH: function(ch, w, coord, prop) {
    var totalArea = 0;
    $.each(ch, function(elem) { totalArea += elem._area; });
-   var height = totalArea / w,
+   var height = totalArea / w || 0,
        top = coord.top,
        left = 0;
 
    for(var i=0, l=ch.length; i<l; i++) {
      var chi = ch[i];
-     var w = chi._area / height;
-     chi.getPos(prop).setc(coord.left + left, top);
+     var w = chi._area / height || 0;
+
+     var posx = $.getDir() === 'rtl' ?
+	   (-1 * (coord.left + left)) - w : coord.left + left;
+
+     chi.getPos(prop).setc(posx, top);
      chi.setData('width', w, prop);
      chi.setData('height', height, prop);
      left += w;
@@ -13428,7 +13693,29 @@ Layouts.TM.Squarified = new Class({
    ans.dim = Math.min(ans.width, ans.height);
    if(ans.dim != ans.width) this.layout.change();
    return ans;
+ },
+
+ /*
+    layoutLast
+
+   Performs the layout of the last computed sibling with respect to direction
+
+    Parameters:
+
+       ch - An array of nodes.
+       w - A fixed dimension where nodes will be layed out.
+     coord - A coordinates object specifying width, height, left and top style properties (assumes ltr direction).
+ */
+ layoutLast: function(ch, w, coord, prop) {
+   var child = ch[0];
+
+   var posx = $.getDir() === 'rtl' ? -1*coord.left-coord.width: coord.left;
+
+   child.getPos(prop).setc(posx, coord.top);
+   child.setData('width', coord.width, prop);
+   child.setData('height', coord.height, prop);
  }
+
 });
 
 Layouts.TM.Strip = new Class({
@@ -13459,8 +13746,8 @@ Layouts.TM.Strip = new Class({
          coord = {
            'width': width,
            'height': height,
-           'top': chipos.y + config.titleHeight,
-           'left': chipos.x
+           'top': chipos.y + config.titleHeight + offst / 2,
+           'left': chipos.x + offst / 2
          };
          this.computePositions(chi, coord, prop);
        }
@@ -13534,10 +13821,10 @@ Layouts.TM.Strip = new Class({
     layoutV: function(ch, w, coord, prop) {
      var totalArea = 0;
      $.each(ch, function(elem) { totalArea += elem._area; });
-     var width = totalArea / w, top =  0;
+     var width = totalArea / w || 0, top =  0;
      for(var i=0, l=ch.length; i<l; i++) {
        var chi = ch[i];
-       var h = chi._area / width;
+       var h = chi._area / width || 0;
        chi.getPos(prop).setc(coord.left,
            coord.top + (w - h - top));
        chi.setData('width', width, prop);
@@ -13557,13 +13844,13 @@ Layouts.TM.Strip = new Class({
     layoutH: function(ch, w, coord, prop) {
      var totalArea = 0;
      $.each(ch, function(elem) { totalArea += elem._area; });
-     var height = totalArea / w,
+     var height = totalArea / w || 0,
          top = coord.height - height,
          left = 0;
 
      for(var i=0, l=ch.length; i<l; i++) {
        var chi = ch[i];
-       var s = chi._area / height;
+       var s = chi._area / height || 0;
        chi.getPos(prop).setc(coord.left + left, coord.top + top);
        chi.setData('width', s, prop);
        chi.setData('height', height, prop);
@@ -13578,6 +13865,211 @@ Layouts.TM.Strip = new Class({
      };
     }
  });
+
+
+Layouts.TM.Voronoi = new Class({
+  Implements : Layouts.TM.Area,
+  compute : function(prop) {
+    this.controller.onBeforeCompute(root);
+    var root = this.graph.getNode(this.clickedNode && this.clickedNode.id || this.root),
+        size = this.canvas.getSize(),
+        config = this.config,
+        offset = config.offset,
+        width = size.width,
+        height = size.height;
+
+    this.graph.computeLevels(this.root, 0, 0);
+
+    // set root position and dimensions
+    root.getPos(prop).setc(-5, -5);
+    if (!root.histoPos) {
+      root.histoPos = [];
+    }
+    root.histoPos[0] = $C(0, 0);
+    var bound = [
+      $C(-width * 0.5, -height * 0.5),
+      $C(width * 0.5, -height * 0.5),
+      $C(width * 0.5, height * 0.5),
+      $C(-width * 0.5, height * 0.5)
+    ];
+    bound = Geometry.offsetConvex(bound, -offset * 0.5);
+    root.setData('vertices', bound, prop);
+    root.setData('width', 0, prop);
+    root.setData('height', 0, prop);
+
+    bound = Geometry.offsetConvex(bound, -offset * 1.5);
+    this.computePositions(root, bound, prop, 0);
+    this.controller.onAfterCompute(root);
+  },
+
+
+  computePositions : function(node, bound, prop, level) {
+    var me = this,
+        chs = node.getSubnodes([ 1, 1 ], "ignore"),
+        config = this.config,
+        offset = config.offset,
+        historyPosition = node.histoPos[level] || c(0, 0),
+        sites,
+        polygons;
+
+    node.setData('width', 0, prop);
+    node.setData('height', 0, prop);
+    node.getPos(prop).setc(historyPosition.x, historyPosition.y);
+
+    if (chs.length > 0) {
+      if (!chs[0].histoPos || !chs[0].histoPos[level + 1]) {
+        sites = $jit.util.map(chs, function(ch) {
+          var pt = Geometry.randPointInPolygon(bound);
+          if (ch.data && ch.data.$area)
+            pt.area = ch.data.$area;
+          return pt;
+        });
+        sites = me[me.config.centroidType](sites, bound);
+        $jit.util.each(sites, function(p, i) {
+          if (!chs[i].histoPos) {
+            chs[i].histoPos = [];
+          }
+          chs[i].histoPos[level + 1] = p;
+        });
+      }
+      sites = $jit.util.map(chs, function(ch) {
+        return ch.histoPos[level + 1];
+      });
+      polygons = Geometry.voronoi(sites, bound);
+
+      $jit.util.each(chs, function(ch, i) {
+        var vertices = polygons[i];
+        var newBoundary = vertices.slice(0);
+        if (Geometry.area(vertices) < 0) {
+          vertices.reverse();
+        }
+        if (offset) {
+          newBoundary = Geometry.offsetConvex(vertices, -offset * 2);
+          vertices = Geometry.offsetConvex(vertices, -offset * 0.5);
+          ch.offset = offset;
+        }
+        ch.setData('vertices', vertices, prop);
+        me.computePositions(ch, newBoundary, prop, level + 1);
+      });
+    }
+  },
+
+  centroid : function(sites, bound) {
+    var tdist = 2, polygons;
+    while (tdist > 1e-3) {
+      polygons = Geometry.voronoi(sites, bound);
+      tdist = 0;
+      sites = polygons.map(function(p, j) {
+        var c = Geometry.centroid(p);
+        tdist += Geometry.dist2(c, sites[j]);
+        return c;
+      });
+    }
+    return sites;
+  },
+
+  doLayoutPressure: function () {
+    var me = this,
+        root = me.graph.getNode(me.clickedNode && me.clickedNode.id || me.root);
+    root.eachNode(function() {
+
+    });
+  },
+
+  weightedCentroid : function(sites, bound) {
+    // sites = this.centroid(sites, bound);
+    var pascal = [];
+    var tdist = 2, polygons, totalArea = Geometry.area(bound), totalWeight = 0, adjust;
+    $.each(sites, function(site, i) {
+      totalWeight += site.area;
+    });
+    adjust = totalArea / totalWeight;
+    polygons = Geometry.voronoi(sites, bound);
+    $.each(polygons, function(p, i) {
+        pascal[i] = sites[i].area * adjust / Geometry.area(p);
+      });
+    var s = 0, s2 = 0;
+    $.each(pascal, function(p, i) {
+      s += p;
+      s2 += p * p;
+    });
+    console.log('from ' + (s2 - s * s / pascal.length) / pascal.length);
+    while (tdist > 1e-3) {
+      polygons = Geometry.voronoi(sites, bound);
+      $.each(polygons, function(p, i) {
+        pascal[i] = sites[i].area * adjust / Geometry.area(p);
+      });
+      tdist = 0;
+      sites = polygons.map(function(p, j) {
+        var c = $C(0, 0), totalW = 0;
+        $.each(p, function(v, i) {
+          var poly = [sites[j], v, p[i + 1] || p[0]],
+              targetPascal = (v.attached) ? pascal[v.attached[0]] : 1,
+              w = Geometry.area(poly) * Math.exp((pascal[j] - targetPascal) * 2);
+          totalW += w;
+          c.$add(v.add(poly[2]).scale(0.5 * w));
+        });
+        c.$scale(1 / totalW);
+        c.area = sites[j].area;
+        tdist += Geometry.dist(c, sites[j]);
+        return c;
+      });
+    }
+    var s = 0, s2 = 0;
+    $.each(pascal, function(p, i) {
+      s += p;
+      s2 += p * p;
+    });
+    console.log('to ' + (s2 - s * s / pascal.length) / pascal.length);
+    return sites;
+  },
+
+  byArea : function(sites, bound) {
+    sites = this.centroid(sites, bound);
+    var tw = 0, iter = 0, polygons, pressure, polygons;
+    $jit.util.each(sites, function(s) {
+      tw += s.area;
+    });
+    tw = Geometry.area(bound) / tw;
+    for (; iter < 100; iter++) {
+      polygons = Geometry.voronoi(sites, bound);
+      for (var j = 0; j < sites.length; j++) {
+        if (polygons[j].length == 0) {
+          sites = polygons.map(function(p, j) {
+            return Geometry.centroid(p);
+          });
+          // iter = 1;
+          break;
+        }
+      }
+      pressure = polygons.map(function(p, ind) {
+        return p.area * tw / (Geometry.area(p) + 1e-10);
+      });
+      polygons = Geometry.voronoi(sites, bound);
+      sites = polygons.map(function(p, ind) {
+        var po = $C(sites[ind].x, sites[ind].y), totalPressure, i;
+        po.area = sites[ind].area;
+        totalPressure = $C(0, 0);
+        $jit.util.each(p, function(v, i) {
+          var target = (v.attached) ? v.attached : -1,
+              targetPressure = (v.attached) ? pressure[v.attached[0]] : 1,
+              start = v,
+              stop = p[i + 1] || p[0],
+              pr = (pressure[ind] - targetPressure),
+              dx = stop.x - start.x,
+              dy = stop.y - start.y;
+          totalPressure.x += dy * pr;
+          totalPressure.y -= dx * pr;
+        });
+        po.x += totalPressure.x / 10;
+        po.y += totalPressure.y / 10;
+        po.tp = totalPressure;
+        return po;
+      });
+    }
+    return sites;
+  }
+});
 
 
 /*
@@ -13823,7 +14315,8 @@ $jit.Icicle = new Class({
     this.busy = true;
 
     var that = this,
-        config = this.config;
+        config = this.config,
+        clickedNode = node;
 
     var callback = {
       onComplete: function() {
@@ -13866,7 +14359,7 @@ $jit.Icicle = new Class({
     };
 
     if(config.request) {
-      this.requestNodes(clickedNode, callback);
+      this.requestNodes(node, callback);
     } else {
       callback.onComplete();
     }
@@ -13889,7 +14382,8 @@ $jit.Icicle = new Class({
         parents = GUtil.getParents(graph.getNode(this.clickedNode && this.clickedNode.id || this.root)),
         parent = parents[0],
         clickedNode = parent,
-        previousClickedNode = this.clickedNode;
+        previousClickedNode = this.clickedNode,
+        callback;
 
     this.busy = true;
     this.events.hoveredNode = false;
@@ -13961,8 +14455,6 @@ $jit.Icicle = new Class({
         if (n.drawn && !Graph.Util.anySubnode(n)) {
           leaves.push(n);
           n._level = n._depth - d;
-          if (this.config.constrained)
-            n._level = levelsToShow - n._level;
 
         }
       });
@@ -14303,6 +14795,761 @@ $jit.Icicle.Plot.EdgeTypes = new Class( {
  *
 */
 
+/** Prefuse have been ported and adapted to Javascript from the Prefuse Java
+ * distribution (https://github.com/prefuse/Prefuse).
+ *
+ * Many original comments from the Prefuse code have been retained in the Javascript as
+ * well as original author credit.
+ *
+ * Prefuse javascript written by Scott Yeadon at the Australian National University.
+ */
+
+/**
+ * Class: QuadTreeNode
+ *
+ * Represents a node in the quadtree.
+ *
+ * Java source: <https://github.com/prefuse/Prefuse/blob/master/src/prefuse/util/force/NBodyForce.java>
+ *
+ * jeffrey heer <http://jheer.org">
+ */
+var QuadTreeNode = new Class({
+	com: [0.0, 0.0],
+	children: [null, null, null, null],
+	hasChildren: false,
+	mass: null,
+	fItem: null
+});
+
+/**
+ * Class: QuadTreeNodeFactory
+ *
+ * Helper object to minimize number of object creations across multiple
+ * uses of the quadtree.
+ *
+ * Java source: <https://github.com/prefuse/Prefuse/blob/master/src/prefuse/util/force/NBodyForce.java>
+ *
+ * jeffrey heer <http://jheer.org">
+ */
+var QuadTreeNodeFactory = new Class({
+	maxNodes: 50000,
+	nodes: null,
+
+	setup: function() {
+		this.nodes = new Array();
+	},
+
+	getQuadTreeNode: function() {
+		if (this.nodes.length > 0)
+		{
+			return this.nodes.pop();
+		}
+		else
+		{
+			return new QuadTreeNode();
+		}
+	},
+
+	// n is a QuadTreeNode
+	reclaim: function(n){
+		n.mass = 0;
+		n.com[0] = 0.0;
+		n.com[1] = 0.0;
+		n.fItem = null;
+		n.hasChildren = false;
+		n.children = [null, null, null, null];
+		if (this.nodes.length < this.maxNodes)
+		{
+			this.nodes.push(n);
+		}
+	}
+});
+
+/**
+ * Class: NBodyForce
+ *
+ * Force function which computes an n-body force such as gravity,
+ * anti-gravity, or the results of electric charges. This function implements
+ * the the Barnes-Hut algorithm for efficient n-body force simulations,
+ * using a quad-tree with aggregated mass values to compute the n-body
+ * force in O(N log N) time, where N is the number of ForceItems.
+ *
+ * The algorithm used is that of J. Barnes and P. Hut, in their research
+ * paper A Hierarchical O(n log n) force calculation algorithm, Nature,
+ * v.324, December 1986. For more details on the algorithm, see one of
+ *  the following links --
+ *
+ *   James Demmel's UC Berkeley lecture notes:
+ * <http://www.cs.berkeley.edu/~demmel/cs267/lecture26/lecture26.html>
+ *   Description of the Barnes-Hut algorithm:
+ * <http://www.physics.gmu.edu/~large/lr_forces/desc/bh/bhdesc.html>
+ *   Joshua Barnes' recent implementation
+ * <href="http://www.ifa.hawaii.edu/~barnes/treecode/treeguide.html">
+ *
+ * Java source: <https://github.com/prefuse/Prefuse/blob/master/src/prefuse/util/force/NBodyForce.java>
+ *
+ * jeffrey heer <http://jheer.org">
+ */
+var NBodyForce = new Class({
+	pnames: ["GravitationalConstant", "Distance", "BarnesHutTheta" ],
+
+	DEFAULT_GRAV_CONSTANT: -30.0,
+	DEFAULT_MIN_GRAV_CONSTANT: -40.0,
+	DEFAULT_MAX_GRAV_CONSTANT: -20.0,
+
+	DEFAULT_DISTANCE: -1.0,
+	DEFAULT_MIN_DISTANCE: -1.0,
+	DEFAULT_MAX_DISTANCE: 500.0,
+
+	DEFAULT_THETA: 0.9,
+	DEFAULT_MIN_THETA: 0.0,
+	DEFAULT_MAX_THETA: 1.0,
+
+	GRAVITATIONAL_CONST: 0,
+	MIN_DISTANCE: 1,
+	BARNES_HUT_THETA: 2,
+
+	xMin: null,
+	xMax: null,
+	yMin: null,
+	yMax: null,
+
+	params: null,
+	minValues: null,
+	maxValues: null,
+
+	factory: null,
+	root: null,
+
+	setup: function(){
+		this.params = [this.DEFAULT_GRAV_CONSTANT, this.DEFAULT_DISTANCE, this.DEFAULT_THETA];
+		this.minValues = [this.DEFAULT_MIN_GRAV_CONSTANT, this.DEFAULT_MIN_DISTANCE, this.DEFAULT_MIN_THETA];
+		this.maxValues = [this.DEFAULT_MAX_GRAV_CONSTANT, this.DEFAULT_MAX_DISTANCE, this.DEFAULT_MAX_THETA];
+
+		this.factory = new QuadTreeNodeFactory();
+		this.factory.setup();
+		this.root = this.factory.getQuadTreeNode();
+	},
+
+
+	/**
+	* Set the bounds of the region for which to compute the n-body simulation
+	* xMin - the minimum x-coordinate
+	* yMin - the minimum y-coordinate
+	* xMax - the maximum x-coordinate
+	* yMax - the maximum y-coordinate
+	*/
+	setBounds: function(xMin, yMin, xMax, yMax){
+		this.xMin = xMin;
+		this.yMin = yMin;
+		this.xMax = xMax;
+		this.yMax = yMax;
+	},
+
+	insertHelper: function(p, n, x1, y1, x2, y2){
+		var x = p.location[0];
+		var y = p.location[1];
+		var splitx = (x1+x2)/2;
+		var splity = (y1+y2)/2;
+		var	i = (x>=splitx ? 1 : 0) + (y>=splity ? 2 : 0);
+		// create new child node, if necessary
+		if (n.children[i] == null)
+		{
+			n.children[i] = this.factory.getQuadTreeNode();
+			n.hasChildren = true;
+		}
+		// update bounds
+		if (i == 1 || i == 3)
+		{
+			x1 = splitx;
+		}
+		else
+		{
+			x2 = splitx;
+		}
+
+		if (i > 1)
+		{
+			y1 = splity;
+		}
+		else
+		{
+			y2 = splity;
+		}
+
+		// recurse
+		this.insert(p, n.children[i], x1, y1, x2, y2);
+	},
+
+	isSameLocation: function(fItem1, fItem2){
+		var dx = Math.abs(fItem1.location[0]-fItem2.location[0]);
+		var dy = Math.abs(fItem1.location[1]-fItem2.location[1]);
+		return (dx < 0.01 && dy < 0.01);
+	},
+
+	insert: function(p, n, x1, y1, x2, y2){
+		// try to insert particle p at node n in the quadtree
+		// by construction, each leaf will contain either 1 or 0 particles
+		if (n.hasChildren)
+		{
+			// n contains more than 1 particle
+			this.insertHelper(p, n, x1, y1, x2, y2);
+		}
+		else if (n.fItem != null)
+		{
+			// n contains 1 particle
+			if (this.isSameLocation(n.fItem, p))
+			{
+				this.insertHelper(p, n, x1, y1, x2, y2);
+			}
+			else
+			{
+				var v = n.fItem;
+				n.fItem = null;
+				this.insertHelper(v, n, x1, y1, x2, y2);
+				this.insertHelper(p, n, x1, y1, x2, y2);
+			}
+		}
+		else // n is empty, so is a leaf
+		{
+			n.fItem = p;
+		}
+	},
+
+	calcMass: function(n){
+		var xcom = 0;
+		var ycom = 0;
+		n.mass = 0;
+		if (n.hasChildren)
+		{
+			for (var i=0; i < n.children.length; i++)
+			{
+				if (n.children[i] != null)
+				{
+					this.calcMass(n.children[i]);
+					n.mass += n.children[i].mass;
+					xcom += n.children[i].mass * n.children[i].com[0];
+					ycom += n.children[i].mass * n.children[i].com[1];
+				}
+			}
+		}
+
+		if (n.fItem != null)
+		{
+			n.mass += n.fItem.mass;
+			xcom += n.fItem.mass * n.fItem.location[0];
+			ycom += n.fItem.mass * n.fItem.location[1];
+		}
+
+		n.com[0] = xcom / n.mass;
+		n.com[1] = ycom / n.mass;
+	},
+
+
+	insertRoot: function(fItem){
+		this.insert(fItem, this.root, this.xMin, this.yMin, this.xMax, this.yMax);
+	},
+
+	clearHelper: function(n){
+		for (var i = 0; i < n.children.length; i++)
+		{
+			if (n.children[i] != null)
+			{
+				this.clearHelper(n.children[i]);
+			}
+		}
+		this.factory.reclaim(n);
+	},
+
+	clear: function(){
+		this.clearHelper(this.root);
+		this.root = this.factory.getQuadTreeNode();
+	},
+
+	init: function(fSim){
+		this.clear();
+
+		var x1 = Number.MAX_VALUE;
+		var y1 = Number.MAX_VALUE;
+		var x2 = Number.MIN_VALUE;
+		var y2 = Number.MIN_VALUE;
+
+		for (var i = 0; i < fSim.items.length; i++)
+		{
+			var x = fSim.items[i].location[0];
+			var y = fSim.items[i].location[1];
+
+			if (x < x1) x1 = x;
+			if (y < y1) y1 = y;
+			if (x > x2) x2 = x;
+			if (y > y2) y2 = y;
+		}
+		var dx = x2-x1;
+		var dy = y2-y1;
+		if (dx > dy)
+		{
+			y2 = y1 + dx;
+		}
+		else
+		{
+			x2 = x1 + dy;
+		}
+		this.setBounds(x1, y1, x2, y2);
+
+		for (var i = 0; i < fSim.items.length; i++)
+		{
+			this.insertRoot(fSim.items[i]);
+		}
+
+		// calculate magnitudes and centers of mass
+		this.calcMass(this.root);
+	},
+
+ 	/**
+	* Updates the force calculation on the given ForceItem.
+ 	*/
+	getForce: function(fItem){
+		this.forceHelper(fItem, this.root, this.xMin, this.yMin, this.xMax, this.yMax);
+	},
+
+	forceHelper: function(item, n, x1, y1, x2, y2){
+		var dx = n.com[0] - item.location[0];
+		var dy = n.com[1] - item.location[1];
+		var r = Math.sqrt(dx*dx+dy*dy);
+		var same = false;
+
+		if (r == 0.0)
+		{
+			dx = (Math.random()-0.5) / 50.0;
+			dy = (Math.random()-0.5) / 50.0;
+			r = Math.sqrt(dx*dx+dy*dy);
+			same = true;
+		}
+
+		var minDist = this.params[this.MIN_DISTANCE] > 0 && r > this.params[this.MIN_DISTANCE];
+
+		// the Barnes-Hut approximation criteria is if the ratio of the
+		// size of the quadtree box to the distance between the point and
+		// the box's center of mass is beneath some threshold theta.
+		if ((!n.hasChildren && n.fItem != item) || (!same && (x2 - x1)/r < this.params[this.BARNES_HUT_THETA]))
+		{
+			if (minDist)
+			{
+				return;
+			}
+			var v = this.params[this.GRAVITATIONAL_CONST]*item.mass*n.mass / (r*r*r);
+			item.force[0] += v*dx;
+			item.force[1] += v*dy;
+		}
+ 		else if (n.hasChildren)
+ 		{
+ 			// recurse for more accurate calculation
+ 			var splitx = (x1+x2)/2;
+ 			var splity = (y1+y2)/2;
+ 			for (var i = 0; i < n.children.length; i++)
+ 			{
+ 				if (n.children[i] != null)
+ 				{
+ 					this.forceHelper(item, n.children[i], (i==1||i==3?splitx:x1), (i>1?splity:y1), (i==1||i==3?x2:splitx), (i>1?y2:splity));
+ 				}
+ 			}
+
+ 			if (minDist)
+ 			{
+ 				return;
+ 			}
+
+ 			if (n.fItem != null && n.fItem != item)
+ 			{
+ 				var v = this.params[this.GRAVITATIONAL_CONST]*item.mass*n.fItem.mass / (r*r*r);
+ 				item.force[0] += v*dx;
+ 				item.force[1] += v*dy;
+ 			}
+ 		}
+ 	}
+});
+
+/**
+ * Class: SpringForce
+ *
+ * Force function that computes the force acting on ForceItems due to a
+ * given Spring.
+ *
+ * Java source:
+<https://github.com/prefuse/Prefuse/blob/master/src/prefuse/util/force/SpringForce.java>
+ *
+ * jeffrey heer <http://jheer.org">
+ */
+var SpringForce = new Class({
+	pnames: ["SpringCoefficient", "DefaultSpringLength"],
+
+	DEFAULT_SPRING_COEFF: 1e-6,
+	DEFAULT_MAX_SPRING_COEFF: 1e-6,
+	DEFAULT_MIN_SPRING_COEFF: 1e-6,
+	DEFAULT_SPRING_LENGTH: 50,
+	DEFAULT_MIN_SPRING_LENGTH: 0,
+	DEFAULT_MAX_SPRING_LENGTH: 100,
+	SPRING_COEFF: 0,
+	SPRING_LENGTH: 1,
+
+	params: null,
+	minValues: null,
+	maxValues: null,
+
+	setup: function(){
+		this.params = [this.DEFAULT_SPRING_COEFF, this.DEFAULT_SPRING_LENGTH];
+		this.minValues = [this.DEFAULT_MIN_SPRING_COEFF, this.DEFAULT_MIN_SPRING_LENGTH];
+		this.maxValues = [this.DEFAULT_MAX_SPRING_COEFF, this.DEFAULT_MAX_SPRING_LENGTH];
+	},
+
+	/**
+	* Calculates the force vector acting on the items due to the given spring.
+	* Updates the force calculation on the given Spring. The ForceItems attached to
+	* Spring will have their force values updated appropriately.
+	* s - the Spring on which to compute updated forces
+	*/
+	getForce: function(s){
+		var fItem1 = s.item1;
+		var fItem2 = s.item2;
+		var length = (s.length < 0 ? this.params[this.SPRING_LENGTH] : s.length);
+		var x1 = fItem1.location[0];
+		var y1 = fItem1.location[1];
+		var x2 = fItem2.location[0];
+		var y2 = fItem2.location[1];
+		var dx = x2-x1;
+		var dy = y2-y1;
+		var r = Math.sqrt(dx*dx+dy*dy);
+		if (r == 0.0)
+		{
+			dx = (Math.random()-0.5) / 50.0;
+			dy = (Math.random()-0.5) / 50.0;
+			r = Math.sqrt(dx*dx+dy*dy);
+		}
+		var d = r - length;
+		var coeff = (s.coeff < 0 ? this.params[this.SPRING_COEFF] : s.coeff)*d/r;
+		fItem1.force[0] += coeff*dx;
+		fItem1.force[1] += coeff*dy;
+		fItem2.force[0] += -coeff*dx;
+		fItem2.force[1] += -coeff*dy;
+	},
+
+	init: function(){
+	}
+});
+
+/**
+ * Class: DragForce
+ *
+ * Implements a viscosity/drag force to help stabilize items.
+ *
+ * Java source:
+<https://github.com/prefuse/Prefuse/blob/master/src/prefuse/util/force/DragForce.java>
+ *
+ * jeffrey heer <http://jheer.org">
+ */
+var DragForce = new Class({
+	pnames: ["DragCoefficient"],
+
+	DEFAULT_DRAG_COEFF: 0.01,
+	DEFAULT_MIN_DRAG_COEFF: 0.0,
+	DEFAULT_MAX_DRAG_COEFF: 0.1,
+	DRAG_COEFF: 0,
+
+	params: null,
+	minValues: null,
+	maxValues: null,
+
+	setup: function(){
+		this.params = [this.DEFAULT_DRAG_COEFF];
+		this.minValues = [this.DEFAULT_MIN_DRAG_COEFF];
+		this.maxValues = [this.DEFAULT_MAX_DRAG_COEFF];
+	},
+
+	getForce: function(fItem){
+		fItem.force[0] -= this.params[this.DRAG_COEFF]*fItem.velocity[0];
+		fItem.force[1] -= this.params[this.DRAG_COEFF]*fItem.velocity[1];
+	},
+
+	init: function(){
+	}
+});
+
+/**
+ * Class: RungeKuttaIntegrator
+ *
+ * Updates velocity and position data using the 4th-Order Runge-Kutta method.
+ * It is slower but more accurate than other techniques such as Euler's Method.
+ * The technique requires re-evaluating forces 4 times for a given timestep.
+ *
+ * Java source:
+<https://github.com/prefuse/Prefuse/blob/master/src/prefuse/util/force/RungeKuttaIntegrator.java>
+ *
+ * jeffrey heer <http://jheer.org">
+ */
+var RungeKuttaIntegrator = new Class({
+	integrate: function(sim, timestep){
+		var speedLimit = sim.speedLimit;
+		var vx, vy, v, coeff;
+		var k, l
+
+		for (var i = 0; i < sim.items.length; i++)
+		{
+			var item = sim.items[i];
+			coeff = timestep / item.mass;
+			k = item.k;
+			l = item.l;
+			item.plocation[0] = item.location[0];
+			item.plocation[1] = item.location[1];
+			k[0][0] = timestep*item.velocity[0];
+			k[0][1] = timestep*item.velocity[1];
+			l[0][0] = coeff*item.force[0];
+			l[0][1] = coeff*item.force[1];
+
+			// Set the position to the new predicted position
+			item.location[0] += 0.5*k[0][0];
+			item.location[1] += 0.5*k[0][1];
+		}
+
+		// recalculate forces
+		sim.accumulate();
+
+		for (var i = 0; i < sim.items.length; i++)
+		{
+			var item = sim.items[i];
+			coeff = timestep / item.mass;
+			k = item.k;
+			l = item.l;
+			vx = item.velocity[0] + 0.5*l[0][0];
+			vy = item.velocity[1] + 0.5*l[0][1];
+			v = Math.sqrt(vx*vx+vy*vy);
+			if (v > speedLimit)
+			{
+				vx = speedLimit * vx / v;
+				vy = speedLimit * vy / v;
+			}
+
+			k[1][0] = timestep*vx;
+			k[1][1] = timestep*vy;
+			l[1][0] = coeff*item.force[0];
+			l[1][1] = coeff*item.force[1];
+
+			// Set the position to the new predicted position
+			item.location[0] = item.plocation[0] + 0.5*k[1][0];
+			item.location[1] = item.plocation[1] + 0.5*k[1][1];
+		}
+
+		// recalculate forces
+		sim.accumulate();
+
+		for (var i = 0; i < sim.items.length; i++)
+		{
+			var item = sim.items[i];
+			coeff = timestep / item.mass;
+			k = item.k;
+			l = item.l;
+			vx = item.velocity[0] + 0.5*l[1][0];
+			vy = item.velocity[1] + 0.5*l[1][1];
+			v = Math.sqrt(vx*vx+vy*vy);
+			if (v > speedLimit)
+			{
+				vx = speedLimit * vx / v;
+				vy = speedLimit * vy / v;
+			}
+			k[2][0] = timestep*vx;
+			k[2][1] = timestep*vy;
+			l[2][0] = coeff*item.force[0];
+			l[2][1] = coeff*item.force[1];
+
+			// Set the position to the new predicted position
+			item.location[0] = item.plocation[0] + 0.5*k[2][0];
+			item.location[1] = item.plocation[1] + 0.5*k[2][1];
+		}
+
+		// recalculate forces
+		sim.accumulate();
+
+		for (var i = 0; i < sim.items.length; i++)
+		{
+			var item = sim.items[i];
+			coeff = timestep / item.mass;
+			k = item.k;
+			l = item.l;
+			var p = item.plocation;
+			vx = item.velocity[0] + l[2][0];
+			vy = item.velocity[1] + l[2][1];
+			v = Math.sqrt(vx*vx+vy*vy);
+			if (v > speedLimit)
+			{
+				vx = speedLimit * vx / v;
+				vy = speedLimit * vy / v;
+			}
+			k[3][0] = timestep*vx;
+			k[3][1] = timestep*vy;
+			l[3][0] = coeff*item.force[0];
+			l[3][1] = coeff*item.force[1];
+			item.location[0] = p[0] + (k[0][0]+k[3][0])/6.0 + (k[1][0]+k[2][0])/3.0;
+			item.location[1] = p[1] + (k[0][1]+k[3][1])/6.0 + (k[1][1]+k[2][1])/3.0;
+
+			vx = (l[0][0]+l[3][0])/6.0 + (l[1][0]+l[2][0])/3.0;
+			vy = (l[0][1]+l[3][1])/6.0 + (l[1][1]+l[2][1])/3.0;
+			v = Math.sqrt(vx*vx+vy*vy);
+			if (v > speedLimit)
+			{
+				vx = speedLimit * vx / v;
+				vy = speedLimit * vy / v;
+			}
+			item.velocity[0] += vx;
+			item.velocity[1] += vy;
+		}
+	}
+});
+
+/**
+ * Class: ForceSimulator
+ *
+ * Manages a simulation of physical forces acting on bodies using N-body, Drag and
+ * Spring forces with a Runge-Kutta integrator.
+ *
+ * Java source: <https://github.com/prefuse/Prefuse/blob/master/src/prefuse/util/force/ForceSimulator.java>
+ *
+ * jeffrey heer <http://jheer.org">
+ */
+var ForceSimulator = new Class({
+	speedLimit: 1.0,
+	iflen: 0,
+	sflen: 0,
+	integrator: null,
+	items: null,
+	springs: null,
+	iforces: null,
+	sforces: null,
+
+	setup: function(){
+		this.items = new Array();
+		this.springs = new Array();
+		this.iforces = new Array();
+		this.sforces = new Array();
+		this.integrator = new RungeKuttaIntegrator();
+	},
+
+	accumulate: function(){
+		for (var i = 0; i < this.iforces.length; i++)
+		{
+			this.iforces[i].init(this);
+		}
+
+		for (var i = 0; i < this.sforces.length; i++)
+		{
+			this.sforces[i].init(this);
+		}
+
+		for (var i = 0; i < this.items.length; i++)
+		{
+			this.items[i].force[0] = 0.0;
+			this.items[i].force[1] = 0.0;
+			for (var j = 0; j < this.iforces.length; j++)
+			{
+				this.iforces[j].getForce(this.items[i]);
+			}
+		}
+
+		for (var i = 0; i < this.springs.length; i++)
+		{
+			for (var j = 0; j < this.sforces.length; j++)
+			{
+				this.sforces[j].getForce(this.springs[i]);
+			}
+		}
+	},
+
+	runSimulator: function(timestep){
+		this.accumulate();
+		this.integrator.integrate(this, timestep);
+	},
+
+	addForce: function(f, itemForce){
+		if (itemForce)
+		{
+			this.iforces.push(f);
+			this.iflen++;
+		}
+		else
+		{
+			this.sforces.push(f);
+			this.sflen++;
+		}
+	},
+
+	addItem: function(fItem){
+		this.items.push(fItem);
+	},
+
+	addSpring: function(spring){
+		this.springs.push(spring);
+	},
+});
+
+/**
+ * Class: Spring
+ *
+ * Represents a spring in a force simulation.
+ *
+ * Java source: <https://github.com/prefuse/Prefuse/blob/master/src/prefuse/util/force/Spring.java>
+ *
+ * jeffrey heer <http://jheer.org">
+ */
+var Spring = new Class({
+	item1: null,
+	item2: null,
+	coeff: null,
+	length: null,
+
+	setup: function(fItem1, fItem2, coeff, len){
+		this.item1 = fItem1;
+		this.item2 = fItem2;
+		this.coeff = coeff;
+		this.length = len;
+	}
+});
+
+/**
+ * Class: ForceItem
+ *
+ * Represents a point particle in a force simulation, maintaining values for
+ * mass, forces, velocity, and position.
+ *
+ * Java source: <https://github.com/prefuse/Prefuse/blob/master/src/prefuse/util/force/ForceItem.java>
+ *
+ * jeffrey heer <http://jheer.org">
+ */
+var ForceItem = new Class({
+	mass: 1.0,
+	force: null,
+	velocity: null,
+	location: null,
+	plocation: null,
+	k: [[0,0], [0,0], [0,0], [0,0]],
+	l: [[0,0], [0,0], [0,0], [0,0]],
+
+	setup: function(){
+		this.force = new Array();
+		this.velocity = new Array();
+		this.location = new Array();
+		this.plocation = new Array();
+	},
+
+	init: function(xLoc, yLoc){
+		this.force[0] = 0;
+		this.force[1] = 0;
+		this.velocity[0] = 0;
+		this.velocity[1] = 0;
+		this.location[0] = xLoc;
+		this.location[1] = yLoc;
+		this.plocation[0] = 0;
+		this.plocation[1] = 0;
+	}
+});
+
 /*
  * Class: Layouts.ForceDirected
  *
@@ -14331,116 +15578,195 @@ Layouts.ForceDirected = new Class({
     var l = this.config.levelDistance;
 
     return {
-      width: w,
-      height: h,
+      width: w - l,
+      height: h - l,
       tstart: w * 0.1,
       nodef: function(x) { return k2 / (x || 1); },
-      edgef: function(x) { return x * x / k; /* k * (x - l);*/ }
+      edgef: function(x) { return /* x * x / k; */ k * (x - l); }
     };
   },
 
   compute: function(property, incremental) {
+    this.computeFast(property, incremental);
+  },
+
+  // Prefuse layout computation
+  computeFast: function(property, incremental){
+  	var sim = new ForceSimulator();
+  	sim.setup();
+  	var nbody = new NBodyForce();
+  	nbody.setup();
+  	var spring =  new SpringForce();
+  	spring.setup();
+  	var drag = new DragForce();
+  	drag.setup();
+  	sim.addForce(nbody, true);
+  	sim.addForce(spring, false);
+  	sim.addForce(drag, true);
+    var timestep = 1000;
     var prop = $.splat(property || ['current', 'start', 'end']);
     var opt = this.getOptions();
+    var adjDone = [];
     NodeDim.compute(this.graph, prop, this.config);
     this.graph.computeLevels(this.root, 0, "ignore");
     this.graph.eachNode(function(n) {
       $.each(prop, function(p) {
         var pos = n.getPos(p);
-        if(pos.equals(Complex.KER)) {
-          pos.x = opt.width/5 * (Math.random() - 0.5);
-          pos.y = opt.height/5 * (Math.random() - 0.5);
-        }
+        pos.x = opt.width/2;
+        pos.y = opt.height/2;
+		n.forceItem = new ForceItem();
+		n.forceItem.setup();
+		n.forceItem.init(pos.x, pos.y);
+		sim.addItem(n.forceItem);
+
         //initialize disp vector
         n.disp = {};
         $.each(prop, function(p) {
           n.disp[p] = $C(0, 0);
         });
-      });
-    });
-    this.computePositions(prop, opt, incremental);
-  },
+	  });
+	});
 
-  computePositions: function(property, opt, incremental) {
-    var times = this.config.iterations, i = 0, that = this;
-    if(incremental) {
-      (function iter() {
-        for(var total=incremental.iter, j=0; j<total; j++) {
-          opt.t = opt.tstart;
-          if(times) opt.t *= (1 - i++/(times -1));
-          that.computePositionStep(property, opt);
-          if(times && i >= times) {
-            incremental.onComplete();
-            return;
-          }
-        }
+    this.graph.eachNode(function(n) {
+      	n.eachAdjacency(function(adj){
+			if (adjDone[adj.nodeTo.id] === undefined)
+			{
+				var s = new Spring();
+				s.setup(adj.nodeFrom.forceItem, adj.nodeTo.forceItem, -1, -1);
+				sim.addSpring(s);
+				adjDone[adj.nodeFrom.id] = [];
+				adjDone[adj.nodeFrom.id][adj.nodeTo.id] = true;
+			}
+		});
+	});
+
+	var numTimes = Math.ceil(this.config.iterations/incremental.iter);
+	var iterCount = 0;
+	var timesCount = 0;
+	var times = this.config.iterations;
+	var i = 0;
+	var graph = this.graph;
+
+   (function iter(){
+        for(var total=incremental.iter, j=0; j<total; j++)
+		{
+			opt.t = opt.tstart;
+			if (times) opt.t *= (1 - i++/(times -1));
+			timestep *= (1.0 - i/times);
+			var step = timestep+50;
+			sim.runSimulator(step);
+			if(times && i >= times)
+			{
+				var x1 = 0;
+				var y1 = 0;
+				var x2 = opt.width/2;
+				var y2 = opt.height/2;
+
+				graph.eachNode(function(n){
+				  $.each(prop, function(p) {
+					var x = n.forceItem.location[0];
+					var y = n.forceItem.location[1];
+					var hw = n.getData("dim") * 2;
+					var hh = n.getData("dim") * 2;
+					var disp = n.disp[p];
+					var norm = disp.norm() || 1;
+					var pos = n.getPos(p);
+					pos.x = x;
+					pos.y = y;
+				   	 });
+    			});
+
+				incremental.onComplete();
+				var maxX = -Number.MAX_VALUE;
+				var minX = Number.MAX_VALUE;
+				var maxY = -Number.MAX_VALUE;
+				var minY = Number.MAX_VALUE;
+
+			   	graph.eachNode(function(n){
+			   		$.each(prop, function(p) {
+						var l = n.getPos(p);
+						if (l.x > maxX) maxX = l.x;
+						if (l.x < minX) minX = l.x;
+						if (l.y > maxY) maxY = l.y;
+						if (l.y < minY) minY = l.y;
+					});
+				});
+			   // determine height and width of fd layout
+			   var lh;
+			   var lw;
+			   if (maxX < 0)
+			   {
+			   		lw = Math.ceil(Math.floor(Math.abs(minX)) - Math.floor(Math.abs(maxX)));
+			   }
+			   else
+			   {
+			   		if (minX >=0)
+			   		{
+			   			lw = Math.ceil(maxX - minX);
+			   		}
+			   		else
+			   		{
+			   			lw = Math.ceil(maxX + Math.abs(minX));
+			   		}
+			   }
+
+			   if (maxY < 0)
+			   {
+			   		lh = Math.ceil(Math.floor(Math.abs(minY)) - Math.floor(Math.abs(maxY)));
+			   }
+			   else
+			   {
+			   		if (minY >=0)
+			   		{
+			   			lh = Math.ceil(maxY - minY);
+			   		}
+			   		else
+			   		{
+			   			lh = Math.ceil(maxY + Math.abs(minY));
+			   		}
+			   }
+
+				var x2 = opt.width/2;
+				var y2 = opt.height/2;
+
+				// adjust each Node's position based on canvas dims
+				graph.eachNode(function(n){
+					$.each(prop, function(p) {
+					var l = n.getPos(p);
+					var pad = n.getData("dim");
+					if (minX < 0)
+					{
+						l.x = ((l.x + Math.abs(minX))*(opt.width/lw))-(opt.width/2);
+					}
+					else
+					{
+						l.x = ((l.x - minX)*(opt.width/lw))-(opt.width/2);
+					}
+					if (l.x <= -x2 + pad) l.x = -x2 + (pad*2);
+					if (l.x >= x2 - pad) l.x = x2 - (pad*2);
+
+					if (minY < 0)
+					{
+						l.y = ((l.y + Math.abs(minY))*(opt.height/lh))-(opt.height/2);
+					}
+					else
+					{
+						l.y = ((l.y - minY)*(opt.height/lh))-(opt.height/2);
+					}
+					if (l.y <= -y2 + pad) l.y = -y2 + (pad*2);
+					if (l.y >= y2 - pad) l.y = y2 - (pad*2);
+					});
+				});
+
+				return;
+        	}
+		}
         incremental.onStep(Math.round(i / (times -1) * 100));
         setTimeout(iter, 1);
-      })();
-    } else {
-      for(; i < times; i++) {
-        opt.t = opt.tstart * (1 - i/(times -1));
-        this.computePositionStep(property, opt);
-      }
-    }
-  },
-
-  computePositionStep: function(property, opt) {
-    var graph = this.graph;
-    var min = Math.min, max = Math.max;
-    var dpos = $C(0, 0);
-    //calculate repulsive forces
-    graph.eachNode(function(v) {
-      //initialize disp
-      $.each(property, function(p) {
-        v.disp[p].x = 0; v.disp[p].y = 0;
-      });
-      graph.eachNode(function(u) {
-        if(u.id != v.id) {
-          $.each(property, function(p) {
-            var vp = v.getPos(p), up = u.getPos(p);
-            dpos.x = vp.x - up.x;
-            dpos.y = vp.y - up.y;
-            var norm = dpos.norm() || 1;
-            v.disp[p].$add(dpos
-                .$scale(opt.nodef(norm) / norm));
-          });
-        }
-      });
-    });
-    //calculate attractive forces
-    var T = !!graph.getNode(this.root).visited;
-    graph.eachNode(function(node) {
-      node.eachAdjacency(function(adj) {
-        var nodeTo = adj.nodeTo;
-        if(!!nodeTo.visited === T) {
-          $.each(property, function(p) {
-            var vp = node.getPos(p), up = nodeTo.getPos(p);
-            dpos.x = vp.x - up.x;
-            dpos.y = vp.y - up.y;
-            var norm = dpos.norm() || 1;
-            node.disp[p].$add(dpos.$scale(-opt.edgef(norm) / norm));
-            nodeTo.disp[p].$add(dpos.$scale(-1));
-          });
-        }
-      });
-      node.visited = !T;
-    });
-    //arrange positions to fit the canvas
-    var t = opt.t, w2 = opt.width / 2, h2 = opt.height / 2;
-    graph.eachNode(function(u) {
-      $.each(property, function(p) {
-        var disp = u.disp[p];
-        var norm = disp.norm() || 1;
-        var p = u.getPos(p);
-        p.$add($C(disp.x * min(Math.abs(disp.x), t) / norm,
-            disp.y * min(Math.abs(disp.y), t) / norm));
-        p.x = min(w2, max(-w2, p.x));
-        p.y = min(h2, max(-h2, p.y));
-      });
-    });
+    })();
   }
 });
+
 
 /*
  * File: ForceDirected.js
@@ -14615,7 +15941,7 @@ $jit.ForceDirected = new Class( {
 
   */
   computeIncremental: function(opt) {
-    opt = $.merge( {
+    opt = $.merge({
       iter: 20,
       property: 'end',
       onStep: $.empty,
@@ -14624,6 +15950,34 @@ $jit.ForceDirected = new Class( {
 
     this.config.onBeforeCompute(this.graph.getNode(this.root));
     this.compute(opt.property, opt);
+  },
+
+  /*
+    Method: computePrefuse
+
+    Exactly the same as computeIncremental except it applies the Prefuse
+    Force Directed algorithm ((http://prefuse.cvs.sourceforge.net/) as opposed
+    to the default JIT algorithm making it better suited for larger graphs (200+ nodes).
+    Best results are obtained using Chrome, Safari or Opera. Firefox and IE 9+ only
+    provide marginal speed improvement (presumably due to inefficiencies in their
+    Javascript engines).
+
+    Regarding the algorithm, the code is a Javascript port of the key classes of the
+    Prefuse Java distribution, namely NBodyForce.java, SpringForce.java, DragForce.java,
+    RungeKuttaIntegrator.java, ForceSimulator.java, Spring.java, ForceItem.java.
+
+	This method should be treated as experimental.
+  */
+  computePrefuse: function(opt) {
+    opt = $.merge( {
+      iter: 20,
+      property: 'end',
+      onStep: $.empty,
+      onComplete: $.empty
+    }, opt || {});
+
+    this.config.onBeforeCompute(this.graph.getNode(this.root));
+    this.computeFast(opt.property, opt);
   },
 
   /*
@@ -15039,10 +16393,12 @@ $jit.TM.$extend = true;
   offset - (number) Default's *2*. Boxes offset.
   constrained - (boolean) Default's *false*. Whether to show the entire tree when loaded or just the number of levels specified by _levelsToShow_.
   levelsToShow - (number) Default's *3*. The number of levels to show for a subtree. This number is relative to the selected node.
+  labelsToShow - describe the range of levels to show for labels of sub tree. Default's [0, -1].
   animate - (boolean) Default's *false*. Whether to animate transitions.
   Node.type - Described in <Options.Node>. Default's *rectangle*.
   duration - Described in <Options.Fx>. Default's *700*.
   fps - Described in <Options.Fx>. Default's *45*.
+
 
   Instance Properties:
 
@@ -15083,6 +16439,7 @@ TM.Base = {
       titleHeight: 13,
       offset: 2,
       levelsToShow: 0,
+      labelsToShow: [0, -1],
       constrained: false,
       animate: false,
       Node: {
@@ -15092,7 +16449,8 @@ TM.Base = {
         //right, Firefox?
         width: 3,
         height: 3,
-        color: '#444'
+        color: '#444',
+        props: 'node-property:width:height'
       },
       Label: {
         textAlign: 'center',
@@ -15120,7 +16478,10 @@ TM.Base = {
         }, canvasConfig.background);
       }
       this.canvas = new Canvas(this, canvasConfig);
-      this.config.labelContainer = (typeof canvasConfig.injectInto == 'string'? canvasConfig.injectInto : canvasConfig.injectInto.id) + '-label';
+      this.config.labelContainer = (
+        typeof canvasConfig.injectInto == 'string'?
+        canvasConfig.injectInto :
+        canvasConfig.injectInto.id) + '-label';
     }
 
     this.graphOptions = {
@@ -15155,10 +16516,10 @@ TM.Base = {
     var that = this;
     if(this.config.animate) {
       this.compute('end');
-      this.config.levelsToShow > 0 && this.geom.setRightLevelToShow(this.graph.getNode(this.clickedNode
+      this.geom.setRightLevelToShow(this.graph.getNode(this.clickedNode
           && this.clickedNode.id || this.root));
       this.fx.animate($.merge(this.config, {
-        modes: ['linear', 'node-property:width:height'],
+        modes: ['linear', this.config.Node.props],
         onComplete: function() {
           that.busy = false;
         }
@@ -15166,12 +16527,11 @@ TM.Base = {
     } else {
       var labelType = this.config.Label.type;
       if(labelType != 'Native') {
-        var that = this;
         this.graph.eachNode(function(n) { that.labels.hideLabel(n, false); });
       }
       this.busy = false;
       this.compute();
-      this.config.levelsToShow > 0 && this.geom.setRightLevelToShow(this.graph.getNode(this.clickedNode
+      this.geom.setRightLevelToShow(this.graph.getNode(this.clickedNode
           && this.clickedNode.id || this.root));
       this.plot();
     }
@@ -15216,7 +16576,6 @@ TM.Base = {
   enter: function(n){
     if(this.busy) return;
     this.busy = true;
-
     var that = this,
         config = this.config,
         graph = this.graph,
@@ -15226,19 +16585,20 @@ TM.Base = {
     var callback = {
       onComplete: function() {
         //ensure that nodes are shown for that level
-        if(config.levelsToShow > 0) {
-          that.geom.setRightLevelToShow(n);
-        }
+        that.geom.setRightLevelToShow(n);
+
         //compute positions of newly inserted nodes
-        if(config.levelsToShow > 0 || config.request) that.compute();
+        if(config.request) that.compute();
         if(config.animate) {
           //fade nodes
           graph.nodeList.setData('alpha', 0, 'end');
           n.eachSubgraph(function(n) {
             n.setData('alpha', 1, 'end');
+            n.selected = false;
           }, "ignore");
+          clickedNode.selected = true;
           that.fx.animate({
-            duration: 500,
+            duration: that.config.duration / 3,
             modes:['node-property:alpha'],
             onComplete: function() {
               //compute end positions
@@ -15248,12 +16608,13 @@ TM.Base = {
               //TODO(nico) commenting this line didn't seem to throw errors...
               that.clickedNode = previousClickedNode;
               that.fx.animate({
-                modes:['linear', 'node-property:width:height'],
-                duration: 1000,
+                duration: 2 * that.config.duration / 3,
+                modes:['linear', that.config.Node.props],
                 onComplete: function() {
                   that.busy = false;
                   //TODO(nico) check comment above
                   that.clickedNode = clickedNode;
+                  that.geom.setRightLevelToShow(clickedNode);
                 }
               });
             }
@@ -15265,6 +16626,7 @@ TM.Base = {
         }
       }
     };
+    this.geom.setRightLevelToShow(n);
     if(config.request) {
       this.requestNodes(clickedNode, callback);
     } else {
@@ -15296,9 +16658,12 @@ TM.Base = {
       this.busy = false;
       return;
     }
+    parent.selected = true;
+
     //final plot callback
-    callback = {
+    var callback = {
       onComplete: function() {
+        previousClickedNode.selected = false;
         that.clickedNode = parent;
         if(config.request) {
           that.requestNodes(parent, {
@@ -15313,11 +16678,12 @@ TM.Base = {
           that.plot();
           that.busy = false;
         }
+        that.geom.setRightLevelToShow(parent);
+        that.plot();
       }
     };
     //prune tree
-    if (config.levelsToShow > 0)
-      this.geom.setRightLevelToShow(parent);
+    this.geom.setRightLevelToShow(parent);
     //animate node positions
     if(config.animate) {
       this.clickedNode = clickedNode;
@@ -15325,13 +16691,13 @@ TM.Base = {
       //animate the visible subtree only
       this.clickedNode = previousClickedNode;
       this.fx.animate({
-        modes:['linear', 'node-property:width:height'],
-        duration: 1000,
+        duration: 2 * this.config.duration / 3,
+        modes:['linear', this.config.Node.props],
         onComplete: function() {
           //animate the parent subtree
           that.clickedNode = clickedNode;
           //change nodes alpha
-          graph.eachNode(function(n) {
+          clickedNode.eachSubgraph(function(n) {
             n.setDataset(['current', 'end'], {
               'alpha': [0, 1]
             });
@@ -15339,8 +16705,9 @@ TM.Base = {
           previousClickedNode.eachSubgraph(function(node) {
             node.setData('alpha', 1);
           }, "ignore");
+          that.geom.setRightLevelToShow(parent);
           that.fx.animate({
-            duration: 500,
+            duration: that.config.duration / 3,
             modes:['node-property:alpha'],
             onComplete: function() {
               callback.onComplete();
@@ -15376,6 +16743,7 @@ TM.Base = {
   }
 };
 
+
 /*
   Class: TM.Op
 
@@ -15408,10 +16776,13 @@ TM.Geom = new Class({
 
   setRightLevelToShow: function(node) {
     var level = this.getRightLevelToShow(),
+        labelRange = this.viz.config.labelsToShow,
         fx = this.viz.labels;
-    node.eachLevel(0, level+1, function(n) {
+    var dump = {};
+    node.eachLevel(0, false, function(n) {
       var d = n._depth - node._depth;
-      if(d > level) {
+      n._hideLabel = labelRange[0] >= 0 && d < labelRange[0] || labelRange[1] >= 0 && d > labelRange[1];
+      if(level > 0 && d > level) {
         n.drawn = false;
         n.exist = false;
         n.ignore = true;
@@ -15421,6 +16792,7 @@ TM.Geom = new Class({
         n.exist = true;
         delete n.ignore;
       }
+      dump[n.name] = n._hideLabel;
     });
     node.drawn = true;
     delete node.ignore;
@@ -15554,15 +16926,18 @@ TM.Label.Native = new Class({
   },
 
   renderLabel: function(canvas, node, controller){
-    if(!this.leaf(node) && !this.config.titleHeight) return;
+    if(node._hideLabel || !this.leaf(node) && !this.config.titleHeight) return;
     var pos = node.pos.getc(true),
         ctx = canvas.getCtx(),
         width = node.getData('width'),
         height = node.getData('height'),
-        x = pos.x + width/2,
+        x = pos.x + width / 2,
         y = pos.y;
-
-    ctx.fillText(node.name, x, y, width);
+      if (isNaN(width) || width === 0) {
+        ctx.fillText(node.name, x, y);
+      } else {
+        ctx.fillText(node.name, x, y, width);
+      }
   }
 });
 
@@ -15601,6 +16976,7 @@ TM.Label.SVG = new Class( {
 
   */
   placeLabel: function(tag, node, controller){
+  	controller = controller || this.viz.controller;
     var pos = node.pos.getc(true),
         canvas = this.viz.canvas,
         ox = canvas.translateOffsetX,
@@ -15615,7 +16991,7 @@ TM.Label.SVG = new Class( {
     tag.setAttribute('x', labelPos.x);
     tag.setAttribute('y', labelPos.y);
 
-    if(!this.leaf(node) && !this.config.titleHeight) {
+    if(node._hideLabel || !this.leaf(node) && !this.config.titleHeight) {
       tag.style.display = 'none';
     }
     controller.onPlaceLabel(tag, node);
@@ -15658,6 +17034,7 @@ TM.Label.HTML = new Class( {
 
   */
   placeLabel: function(tag, node, controller){
+    controller = controller || this.viz.controller;
     var pos = node.pos.getc(true),
         canvas = this.viz.canvas,
         ox = canvas.translateOffsetX,
@@ -15673,12 +17050,12 @@ TM.Label.HTML = new Class( {
     var style = tag.style;
     style.left = labelPos.x + 'px';
     style.top = labelPos.y + 'px';
-    style.width = node.getData('width') * sx + 'px';
-    style.height = node.getData('height') * sy + 'px';
+    style.width = Math.max(0, node.getData('width') * sx) + 'px';
+    style.height = Math.max(0, node.getData('height') * sy) + 'px';
     style.zIndex = node._depth * 100;
     style.display = '';
 
-    if(!this.leaf(node) && !this.config.titleHeight) {
+    if(node._hideLabel || !this.leaf(node) && !this.config.titleHeight) {
       tag.style.display = 'none';
     }
     controller.onPlaceLabel(tag, node);
@@ -15826,250 +17203,250 @@ TM.Strip = new Class( {
  */
 
 /*
-   Class: RGraph
+ Class: RGraph
 
-   A radial graph visualization with advanced animations.
+ A radial graph visualization with advanced animations.
 
-   Inspired by:
+ Inspired by:
 
-   Animated Exploration of Dynamic Graphs with Radial Layout (Ka-Ping Yee, Danyel Fisher, Rachna Dhamija, Marti Hearst) <http://bailando.sims.berkeley.edu/papers/infovis01.htm>
+ Animated Exploration of Dynamic Graphs with Radial Layout (Ka-Ping Yee, Danyel Fisher, Rachna Dhamija, Marti Hearst) <http://bailando.sims.berkeley.edu/papers/infovis01.htm>
 
-   Note:
+ Note:
 
-   This visualization was built and engineered from scratch, taking only the paper as inspiration, and only shares some features with the visualization described in the paper.
+ This visualization was built and engineered from scratch, taking only the paper as inspiration, and only shares some features with the visualization described in the paper.
 
-  Implements:
+ Implements:
 
-  All <Loader> methods
+ All <Loader> methods
 
-   Constructor Options:
+ Constructor Options:
 
-   Inherits options from
+ Inherits options from
 
-   - <Options.Canvas>
-   - <Options.Controller>
-   - <Options.Node>
-   - <Options.Edge>
-   - <Options.Label>
-   - <Options.Events>
-   - <Options.Tips>
-   - <Options.NodeStyles>
-   - <Options.Navigation>
+ - <Options.Canvas>
+ - <Options.Controller>
+ - <Options.Node>
+ - <Options.Edge>
+ - <Options.Label>
+ - <Options.Events>
+ - <Options.Tips>
+ - <Options.NodeStyles>
+ - <Options.Navigation>
 
-   Additionally, there are other parameters and some default values changed
+ Additionally, there are other parameters and some default values changed
 
-   interpolation - (string) Default's *linear*. Describes the way nodes are interpolated. Possible values are 'linear' and 'polar'.
-   levelDistance - (number) Default's *100*. The distance between levels of the tree.
+ interpolation - (string) Default's *linear*. Describes the way nodes are interpolated. Possible values are 'linear' and 'polar'.
+ levelDistance - (number) Default's *100*. The distance between levels of the tree.
 
-   Instance Properties:
+ Instance Properties:
 
-   canvas - Access a <Canvas> instance.
-   graph - Access a <Graph> instance.
-   op - Access a <RGraph.Op> instance.
-   fx - Access a <RGraph.Plot> instance.
-   labels - Access a <RGraph.Label> interface implementation.
-*/
+ canvas - Access a <Canvas> instance.
+ graph - Access a <Graph> instance.
+ op - Access a <RGraph.Op> instance.
+ fx - Access a <RGraph.Plot> instance.
+ labels - Access a <RGraph.Label> interface implementation.
+ */
 
 $jit.RGraph = new Class( {
 
-  Implements: [
-      Loader, Extras, Layouts.Radial
-  ],
+    Implements: [
+        Loader, Extras, Layouts.Radial
+    ],
 
-  initialize: function(controller){
-    var $RGraph = $jit.RGraph;
+    initialize: function(controller){
+        var $RGraph = $jit.RGraph;
 
-    var config = {
-      interpolation: 'linear',
-      levelDistance: 100
-    };
+        var config = {
+            interpolation: 'linear',
+            levelDistance: 100
+        };
 
-    this.controller = this.config = $.merge(Options("Canvas", "Node", "Edge",
-        "Fx", "Controller", "Tips", "NodeStyles", "Events", "Navigation", "Label"), config, controller);
+        this.controller = this.config = $.merge(Options("Canvas", "Node", "Edge",
+            "Fx", "Controller", "Tips", "NodeStyles", "Events", "Navigation", "Label"), config, controller);
 
-    var canvasConfig = this.config;
-    if(canvasConfig.useCanvas) {
-      this.canvas = canvasConfig.useCanvas;
-      this.config.labelContainer = this.canvas.id + '-label';
-    } else {
-      if(canvasConfig.background) {
-        canvasConfig.background = $.merge({
-          type: 'Circles'
-        }, canvasConfig.background);
-      }
-      this.canvas = new Canvas(this, canvasConfig);
-      this.config.labelContainer = (typeof canvasConfig.injectInto == 'string'? canvasConfig.injectInto : canvasConfig.injectInto.id) + '-label';
-    }
+        var canvasConfig = this.config;
+        if(canvasConfig.useCanvas) {
+            this.canvas = canvasConfig.useCanvas;
+            this.config.labelContainer = this.canvas.id + '-label';
+        } else {
+            if(canvasConfig.background) {
+                canvasConfig.background = $.merge({
+                    type: 'Circles'
+                }, canvasConfig.background);
+            }
+            this.canvas = new Canvas(this, canvasConfig);
+            this.config.labelContainer = (typeof canvasConfig.injectInto == 'string'? canvasConfig.injectInto : canvasConfig.injectInto.id) + '-label';
+        }
 
-    this.graphOptions = {
-      'klass': Polar,
-      'Node': {
-        'selected': false,
-        'exist': true,
-        'drawn': true
-      }
-    };
-    this.graph = new Graph(this.graphOptions, this.config.Node,
-        this.config.Edge);
-    this.labels = new $RGraph.Label[canvasConfig.Label.type](this);
-    this.fx = new $RGraph.Plot(this, $RGraph);
-    this.op = new $RGraph.Op(this);
-    this.json = null;
-    this.root = null;
-    this.busy = false;
-    this.parent = false;
-    // initialize extras
-    this.initializeExtras();
-  },
+        this.graphOptions = {
+            'klass': Polar,
+            'Node': {
+                'selected': false,
+                'exist': true,
+                'drawn': true
+            }
+        };
+        this.graph = new Graph(this.graphOptions, this.config.Node,
+            this.config.Edge);
+        this.labels = new $RGraph.Label[canvasConfig.Label.type](this);
+        this.fx = new $RGraph.Plot(this, $RGraph);
+        this.op = new $RGraph.Op(this);
+        this.json = null;
+        this.root = null;
+        this.busy = false;
+        this.parent = false;
+        // initialize extras
+        this.initializeExtras();
+    },
 
-  /*
+    /*
 
-    createLevelDistanceFunc
+     createLevelDistanceFunc
 
-    Returns the levelDistance function used for calculating a node distance
-    to its origin. This function returns a function that is computed
-    per level and not per node, such that all nodes with the same depth will have the
-    same distance to the origin. The resulting function gets the
-    parent node as parameter and returns a float.
+     Returns the levelDistance function used for calculating a node distance
+     to its origin. This function returns a function that is computed
+     per level and not per node, such that all nodes with the same depth will have the
+     same distance to the origin. The resulting function gets the
+     parent node as parameter and returns a float.
 
-   */
-  createLevelDistanceFunc: function(){
-    var ld = this.config.levelDistance;
-    return function(elem){
-      return (elem._depth + 1) * ld;
-    };
-  },
+     */
+    createLevelDistanceFunc: function(){
+        var ld = this.config.levelDistance;
+        return function(elem){
+            return (elem._depth + 1) * ld;
+        };
+    },
 
-  /*
+    /*
      Method: refresh
 
      Computes positions and plots the tree.
 
-   */
-  refresh: function(){
-    this.compute();
-    this.plot();
-  },
+     */
+    refresh: function(){
+        this.compute();
+        this.plot();
+    },
 
-  reposition: function(){
-    this.compute('end');
-  },
+    reposition: function(){
+        this.compute('end');
+    },
 
-  /*
-   Method: plot
+    /*
+     Method: plot
 
-   Plots the RGraph. This is a shortcut to *fx.plot*.
-  */
-  plot: function(){
-    this.fx.plot();
-  },
-  /*
-   getNodeAndParentAngle
+     Plots the RGraph. This is a shortcut to *fx.plot*.
+     */
+    plot: function(){
+        this.fx.plot();
+    },
+    /*
+     getNodeAndParentAngle
 
-   Returns the _parent_ of the given node, also calculating its angle span.
-  */
-  getNodeAndParentAngle: function(id){
-    var theta = false;
-    var n = this.graph.getNode(id);
-    var ps = n.getParents();
-    var p = (ps.length > 0)? ps[0] : false;
-    if (p) {
-      var posParent = p.pos.getc(), posChild = n.pos.getc();
-      var newPos = posParent.add(posChild.scale(-1));
-      theta = Math.atan2(newPos.y, newPos.x);
-      if (theta < 0)
-        theta += 2 * Math.PI;
-    }
-    return {
-      parent: p,
-      theta: theta
-    };
-  },
-  /*
-   tagChildren
+     Returns the _parent_ of the given node, also calculating its angle span.
+     */
+    getNodeAndParentAngle: function(id){
+        var theta = false;
+        var n = this.graph.getNode(id);
+        var ps = n.getParents();
+        var p = (ps.length > 0)? ps[0] : false;
+        if (p) {
+            var posParent = p.pos.getc(), posChild = n.pos.getc();
+            var newPos = posParent.add(posChild.scale(-1));
+            theta = Math.atan2(newPos.y, newPos.x);
+            if (theta < 0)
+                theta += 2 * Math.PI;
+        }
+        return {
+            parent: p,
+            theta: theta
+        };
+    },
+    /*
+     tagChildren
 
-   Enumerates the children in order to maintain child ordering (second constraint of the paper).
-  */
-  tagChildren: function(par, id){
-    if (par.angleSpan) {
-      var adjs = [];
-      par.eachAdjacency(function(elem){
-        adjs.push(elem.nodeTo);
-      }, "ignore");
-      var len = adjs.length;
-      for ( var i = 0; i < len && id != adjs[i].id; i++)
-        ;
-      for ( var j = (i + 1) % len, k = 0; id != adjs[j].id; j = (j + 1) % len) {
-        adjs[j].dist = k++;
-      }
-    }
-  },
-  /*
-  Method: onClick
+     Enumerates the children in order to maintain child ordering (second constraint of the paper).
+     */
+    tagChildren: function(par, id){
+        if (par.angleSpan) {
+            var adjs = [];
+            par.eachAdjacency(function(elem){
+                adjs.push(elem.nodeTo);
+            }, "ignore");
+            var len = adjs.length;
+            for ( var i = 0; i < len && id != adjs[i].id; i++)
+                ;
+            for ( var j = (i + 1) % len, k = 0; id != adjs[j].id; j = (j + 1) % len) {
+                adjs[j].dist = k++;
+            }
+        }
+    },
+    /*
+     Method: onClick
 
-  Animates the <RGraph> to center the node specified by *id*.
+     Animates the <RGraph> to center the node specified by *id*.
 
-   Parameters:
+     Parameters:
 
-   id - A <Graph.Node> id.
-   opt - (optional|object) An object containing some extra properties described below
-   hideLabels - (boolean) Default's *true*. Hide labels when performing the animation.
+     id - A <Graph.Node> id.
+     opt - (optional|object) An object containing some extra properties described below
+     hideLabels - (boolean) Default's *true*. Hide labels when performing the animation.
 
-   Example:
+     Example:
 
-   (start code js)
+     (start code js)
      rgraph.onClick('someid');
      //or also...
      rgraph.onClick('someid', {
-      hideLabels: false
+     hideLabels: false
      });
-    (end code)
+     (end code)
 
-  */
-  onClick: function(id, opt){
-    if (this.root != id && !this.busy) {
-      this.busy = true;
-      this.root = id;
-      var that = this;
-      this.controller.onBeforeCompute(this.graph.getNode(id));
-      var obj = this.getNodeAndParentAngle(id);
+     */
+    onClick: function(id, opt){
+        if (this.root != id && !this.busy) {
+            this.busy = true;
+            this.root = id;
+            var that = this;
+            this.controller.onBeforeCompute(this.graph.getNode(id));
+            var obj = this.getNodeAndParentAngle(id);
 
-      // second constraint
-      this.tagChildren(obj.parent, id);
-      this.parent = obj.parent;
-      this.compute('end');
+            // second constraint
+            this.tagChildren(obj.parent, id);
+            this.parent = obj.parent;
+            this.compute('end');
 
-      // first constraint
-      var thetaDiff = obj.theta - obj.parent.endPos.theta;
-      this.graph.eachNode(function(elem){
-        elem.endPos.set(elem.endPos.getp().add($P(thetaDiff, 0)));
-      });
+            // first constraint
+            var thetaDiff = obj.theta - obj.parent.endPos.theta;
+            this.graph.eachNode(function(elem){
+                elem.endPos.set(elem.endPos.getp().add($P(thetaDiff, 0)));
+            });
 
-      var mode = this.config.interpolation;
-      opt = $.merge( {
-        onComplete: $.empty
-      }, opt || {});
+            var mode = this.config.interpolation;
+            opt = $.merge( {
+                onComplete: $.empty
+            }, opt || {});
 
-      this.fx.animate($.merge( {
-        hideLabels: true,
-        modes: [
-          mode
-        ]
-      }, opt, {
-        onComplete: function(){
-          that.busy = false;
-          opt.onComplete();
+            this.fx.animate($.merge( {
+                hideLabels: true,
+                modes: [
+                    mode
+                ]
+            }, opt, {
+                onComplete: function(){
+                    that.busy = false;
+                    opt.onComplete();
+                }
+            }));
         }
-      }));
     }
-  }
 });
 
 $jit.RGraph.$extend = true;
 
 (function(RGraph){
 
-  /*
+    /*
      Class: RGraph.Op
 
      Custom extension of <Graph.Op>.
@@ -16082,51 +17459,51 @@ $jit.RGraph.$extend = true;
 
      <Graph.Op>
 
-  */
-  RGraph.Op = new Class( {
+     */
+    RGraph.Op = new Class( {
 
-    Implements: Graph.Op
+        Implements: Graph.Op
 
-  });
+    });
 
-  /*
+    /*
      Class: RGraph.Plot
 
-    Custom extension of <Graph.Plot>.
+     Custom extension of <Graph.Plot>.
 
-    Extends:
+     Extends:
 
-    All <Graph.Plot> methods
+     All <Graph.Plot> methods
 
-    See also:
+     See also:
 
-    <Graph.Plot>
+     <Graph.Plot>
 
-  */
-  RGraph.Plot = new Class( {
+     */
+    RGraph.Plot = new Class( {
 
-    Implements: Graph.Plot
+        Implements: Graph.Plot
 
-  });
+    });
 
-  /*
-    Object: RGraph.Label
+    /*
+     Object: RGraph.Label
 
-    Custom extension of <Graph.Label>.
-    Contains custom <Graph.Label.SVG>, <Graph.Label.HTML> and <Graph.Label.Native> extensions.
+     Custom extension of <Graph.Label>.
+     Contains custom <Graph.Label.SVG>, <Graph.Label.HTML> and <Graph.Label.Native> extensions.
 
-    Extends:
+     Extends:
 
-    All <Graph.Label> methods and subclasses.
+     All <Graph.Label> methods and subclasses.
 
-    See also:
+     See also:
 
-    <Graph.Label>, <Graph.Label.Native>, <Graph.Label.HTML>, <Graph.Label.SVG>.
+     <Graph.Label>, <Graph.Label.Native>, <Graph.Label.HTML>, <Graph.Label.SVG>.
 
-   */
-  RGraph.Label = {};
+     */
+    RGraph.Label = {};
 
-  /*
+    /*
      RGraph.Label.Native
 
      Custom extension of <Graph.Label.Native>.
@@ -16139,64 +17516,64 @@ $jit.RGraph.$extend = true;
 
      <Graph.Label.Native>
 
-  */
-  RGraph.Label.Native = new Class( {
-    Implements: Graph.Label.Native
-  });
-
-  /*
-     RGraph.Label.SVG
-
-    Custom extension of <Graph.Label.SVG>.
-
-    Extends:
-
-    All <Graph.Label.SVG> methods
-
-    See also:
-
-    <Graph.Label.SVG>
-
-  */
-  RGraph.Label.SVG = new Class( {
-    Implements: Graph.Label.SVG,
-
-    initialize: function(viz){
-      this.viz = viz;
-    },
+     */
+    RGraph.Label.Native = new Class( {
+        Implements: Graph.Label.Native
+    });
 
     /*
-       placeLabel
+     RGraph.Label.SVG
 
-       Overrides abstract method placeLabel in <Graph.Plot>.
+     Custom extension of <Graph.Label.SVG>.
 
-       Parameters:
+     Extends:
 
-       tag - A DOM label element.
-       node - A <Graph.Node>.
-       controller - A configuration/controller object passed to the visualization.
+     All <Graph.Label.SVG> methods
+
+     See also:
+
+     <Graph.Label.SVG>
 
      */
-    placeLabel: function(tag, node, controller){
-      var pos = node.pos.getc(true),
-          canvas = this.viz.canvas,
-          ox = canvas.translateOffsetX,
-          oy = canvas.translateOffsetY,
-          sx = canvas.scaleOffsetX,
-          sy = canvas.scaleOffsetY,
-          radius = canvas.getSize();
-      var labelPos = {
-        x: Math.round(pos.x * sx + ox + radius.width / 2),
-        y: Math.round(pos.y * sy + oy + radius.height / 2)
-      };
-      tag.setAttribute('x', labelPos.x);
-      tag.setAttribute('y', labelPos.y);
+    RGraph.Label.SVG = new Class( {
+        Implements: Graph.Label.SVG,
 
-      controller.onPlaceLabel(tag, node);
-    }
-  });
+        initialize: function(viz){
+            this.viz = viz;
+        },
 
-  /*
+        /*
+         placeLabel
+
+         Overrides abstract method placeLabel in <Graph.Plot>.
+
+         Parameters:
+
+         tag - A DOM label element.
+         node - A <Graph.Node>.
+         controller - A configuration/controller object passed to the visualization.
+
+         */
+        placeLabel: function(tag, node, controller){
+            var pos = node.pos.getc(true),
+                canvas = this.viz.canvas,
+                ox = canvas.translateOffsetX,
+                oy = canvas.translateOffsetY,
+                sx = canvas.scaleOffsetX,
+                sy = canvas.scaleOffsetY,
+                radius = canvas.getSize();
+            var labelPos = {
+                x: Math.round(pos.x * sx + ox + radius.width / 2),
+                y: Math.round(pos.y * sy + oy + radius.height / 2)
+            };
+            tag.setAttribute('x', labelPos.x);
+            tag.setAttribute('y', labelPos.y);
+
+            controller.onPlaceLabel(tag, node);
+        }
+    });
+
+    /*
      RGraph.Label.HTML
 
      Custom extension of <Graph.Label.HTML>.
@@ -16209,210 +17586,211 @@ $jit.RGraph.$extend = true;
 
      <Graph.Label.HTML>
 
-  */
-  RGraph.Label.HTML = new Class( {
-    Implements: Graph.Label.HTML,
+     */
+    RGraph.Label.HTML = new Class( {
+        Implements: Graph.Label.HTML,
 
-    initialize: function(viz){
-      this.viz = viz;
-    },
+        initialize: function(viz){
+            this.viz = viz;
+        },
+        /*
+         placeLabel
+
+         Overrides abstract method placeLabel in <Graph.Plot>.
+
+         Parameters:
+
+         tag - A DOM label element.
+         node - A <Graph.Node>.
+         controller - A configuration/controller object passed to the visualization.
+
+         */
+        placeLabel: function(tag, node, controller){
+            var pos = node.pos.getc(true),
+                canvas = this.viz.canvas,
+                ox = canvas.translateOffsetX,
+                oy = canvas.translateOffsetY,
+                sx = canvas.scaleOffsetX,
+                sy = canvas.scaleOffsetY,
+                radius = canvas.getSize();
+            var labelPos = {
+                x: Math.round(pos.x * sx + ox + radius.width / 2),
+                y: Math.round(pos.y * sy + oy + radius.height / 2)
+            };
+
+            var style = tag.style;
+            style.left = labelPos.x + 'px';
+            style.top = labelPos.y + 'px';
+            style.display = this.fitsInCanvas(labelPos, canvas)? '' : 'none';
+
+            controller.onPlaceLabel(tag, node);
+        }
+    });
+
     /*
-       placeLabel
+     Class: RGraph.Plot.NodeTypes
 
-       Overrides abstract method placeLabel in <Graph.Plot>.
+     This class contains a list of <Graph.Node> built-in types.
+     Node types implemented are 'none', 'circle', 'triangle', 'rectangle', 'star', 'ellipse' and 'square'.
 
-       Parameters:
+     You can add your custom node types, customizing your visualization to the extreme.
 
-       tag - A DOM label element.
-       node - A <Graph.Node>.
-       controller - A configuration/controller object passed to the visualization.
+     Example:
+
+     (start code js)
+     RGraph.Plot.NodeTypes.implement({
+     'mySpecialType': {
+     'render': function(node, canvas) {
+     //print your custom node to canvas
+     },
+     //optional
+     'contains': function(node, pos) {
+     //return true if pos is inside the node or false otherwise
+     }
+     }
+     });
+     (end code)
 
      */
-    placeLabel: function(tag, node, controller){
-      var pos = node.pos.getc(true),
-          canvas = this.viz.canvas,
-          ox = canvas.translateOffsetX,
-          oy = canvas.translateOffsetY,
-          sx = canvas.scaleOffsetX,
-          sy = canvas.scaleOffsetY,
-          radius = canvas.getSize();
-      var labelPos = {
-        x: Math.round(pos.x * sx + ox + radius.width / 2),
-        y: Math.round(pos.y * sy + oy + radius.height / 2)
-      };
-
-      var style = tag.style;
-      style.left = labelPos.x + 'px';
-      style.top = labelPos.y + 'px';
-      style.display = this.fitsInCanvas(labelPos, canvas)? '' : 'none';
-
-      controller.onPlaceLabel(tag, node);
-    }
-  });
-
-  /*
-    Class: RGraph.Plot.NodeTypes
-
-    This class contains a list of <Graph.Node> built-in types.
-    Node types implemented are 'none', 'circle', 'triangle', 'rectangle', 'star', 'ellipse' and 'square'.
-
-    You can add your custom node types, customizing your visualization to the extreme.
-
-    Example:
-
-    (start code js)
-      RGraph.Plot.NodeTypes.implement({
-        'mySpecialType': {
-          'render': function(node, canvas) {
-            //print your custom node to canvas
-          },
-          //optional
-          'contains': function(node, pos) {
-            //return true if pos is inside the node or false otherwise
-          }
-        }
-      });
-    (end code)
-
-  */
-  RGraph.Plot.NodeTypes = new Class({
-    'none': {
-      'render': $.empty,
-      'contains': $.lambda(false)
-    },
-    'circle': {
-      'render': function(node, canvas){
-        var pos = node.pos.getc(true),
-            dim = node.getData('dim');
-        this.nodeHelper.circle.render('fill', pos, dim, canvas);
-      },
-      'contains': function(node, pos){
-        var npos = node.pos.getc(true),
-            dim = node.getData('dim');
-        return this.nodeHelper.circle.contains(npos, pos, dim);
-      }
-    },
-    'ellipse': {
-      'render': function(node, canvas){
-        var pos = node.pos.getc(true),
-            width = node.getData('width'),
-            height = node.getData('height');
-        this.nodeHelper.ellipse.render('fill', pos, width, height, canvas);
+    RGraph.Plot.NodeTypes = new Class({
+        'none': {
+            'render': $.empty,
+            'contains': $.lambda(false)
         },
-      'contains': function(node, pos){
-        var npos = node.pos.getc(true),
-            width = node.getData('width'),
-            height = node.getData('height');
-        return this.nodeHelper.ellipse.contains(npos, pos, width, height);
-      }
-    },
-    'square': {
-      'render': function(node, canvas){
-        var pos = node.pos.getc(true),
-            dim = node.getData('dim');
-        this.nodeHelper.square.render('fill', pos, dim, canvas);
-      },
-      'contains': function(node, pos){
-        var npos = node.pos.getc(true),
-            dim = node.getData('dim');
-        return this.nodeHelper.square.contains(npos, pos, dim);
-      }
-    },
-    'rectangle': {
-      'render': function(node, canvas){
-        var pos = node.pos.getc(true),
-            width = node.getData('width'),
-            height = node.getData('height');
-        this.nodeHelper.rectangle.render('fill', pos, width, height, canvas);
-      },
-      'contains': function(node, pos){
-        var npos = node.pos.getc(true),
-            width = node.getData('width'),
-            height = node.getData('height');
-        return this.nodeHelper.rectangle.contains(npos, pos, width, height);
-      }
-    },
-    'triangle': {
-      'render': function(node, canvas){
-        var pos = node.pos.getc(true),
-            dim = node.getData('dim');
-        this.nodeHelper.triangle.render('fill', pos, dim, canvas);
-      },
-      'contains': function(node, pos) {
-        var npos = node.pos.getc(true),
-            dim = node.getData('dim');
-        return this.nodeHelper.triangle.contains(npos, pos, dim);
-      }
-    },
-    'star': {
-      'render': function(node, canvas){
-        var pos = node.pos.getc(true),
-            dim = node.getData('dim');
-        this.nodeHelper.star.render('fill', pos, dim, canvas);
-      },
-      'contains': function(node, pos) {
-        var npos = node.pos.getc(true),
-            dim = node.getData('dim');
-        return this.nodeHelper.star.contains(npos, pos, dim);
-      }
-    }
-  });
-
-  /*
-    Class: RGraph.Plot.EdgeTypes
-
-    This class contains a list of <Graph.Adjacence> built-in types.
-    Edge types implemented are 'none', 'line' and 'arrow'.
-
-    You can add your custom edge types, customizing your visualization to the extreme.
-
-    Example:
-
-    (start code js)
-      RGraph.Plot.EdgeTypes.implement({
-        'mySpecialType': {
-          'render': function(adj, canvas) {
-            //print your custom edge to canvas
-          },
-          //optional
-          'contains': function(adj, pos) {
-            //return true if pos is inside the arc or false otherwise
-          }
+        'circle': {
+            'render': function(node, canvas){
+                var pos = node.pos.getc(true),
+                    dim = node.getData('dim');
+                this.nodeHelper.circle.render('fill', pos, dim, canvas);
+            },
+            'contains': function(node, pos){
+                var npos = node.pos.getc(true),
+                    dim = node.getData('dim');
+                return this.nodeHelper.circle.contains(npos, pos, dim);
+            }
+        },
+        'ellipse': {
+            'render': function(node, canvas){
+                var pos = node.pos.getc(true),
+                    width = node.getData('width'),
+                    height = node.getData('height');
+                this.nodeHelper.ellipse.render('fill', pos, width, height, canvas);
+            },
+            'contains': function(node, pos){
+                var npos = node.pos.getc(true),
+                    width = node.getData('width'),
+                    height = node.getData('height');
+                return this.nodeHelper.ellipse.contains(npos, pos, width, height);
+            }
+        },
+        'square': {
+            'render': function(node, canvas){
+                var pos = node.pos.getc(true),
+                    dim = node.getData('dim');
+                this.nodeHelper.square.render('fill', pos, dim, canvas);
+            },
+            'contains': function(node, pos){
+                var npos = node.pos.getc(true),
+                    dim = node.getData('dim');
+                return this.nodeHelper.square.contains(npos, pos, dim);
+            }
+        },
+        'rectangle': {
+            'render': function(node, canvas){
+                var pos = node.pos.getc(true),
+                    width = node.getData('width'),
+                    height = node.getData('height');
+                this.nodeHelper.rectangle.render('fill', pos, width, height, canvas);
+            },
+            'contains': function(node, pos){
+                var npos = node.pos.getc(true),
+                    width = node.getData('width'),
+                    height = node.getData('height');
+                return this.nodeHelper.rectangle.contains(npos, pos, width, height);
+            }
+        },
+        'triangle': {
+            'render': function(node, canvas){
+                var pos = node.pos.getc(true),
+                    dim = node.getData('dim');
+                this.nodeHelper.triangle.render('fill', pos, dim, canvas);
+            },
+            'contains': function(node, pos) {
+                var npos = node.pos.getc(true),
+                    dim = node.getData('dim');
+                return this.nodeHelper.triangle.contains(npos, pos, dim);
+            }
+        },
+        'star': {
+            'render': function(node, canvas){
+                var pos = node.pos.getc(true),
+                    dim = node.getData('dim');
+                this.nodeHelper.star.render('fill', pos, dim, canvas);
+            },
+            'contains': function(node, pos) {
+                var npos = node.pos.getc(true),
+                    dim = node.getData('dim');
+                return this.nodeHelper.star.contains(npos, pos, dim);
+            }
         }
-      });
-    (end code)
+    });
 
-  */
-  RGraph.Plot.EdgeTypes = new Class({
-    'none': $.empty,
-    'line': {
-      'render': function(adj, canvas) {
-        var from = adj.nodeFrom.pos.getc(true),
-            to = adj.nodeTo.pos.getc(true);
-        this.edgeHelper.line.render(from, to, canvas);
-      },
-      'contains': function(adj, pos) {
-        var from = adj.nodeFrom.pos.getc(true),
-            to = adj.nodeTo.pos.getc(true);
-        return this.edgeHelper.line.contains(from, to, pos, this.edge.epsilon);
-      }
-    },
-    'arrow': {
-      'render': function(adj, canvas) {
-        var from = adj.nodeFrom.pos.getc(true),
-            to = adj.nodeTo.pos.getc(true),
-            dim = adj.getData('dim'),
-            direction = adj.data.$direction,
-            inv = (direction && direction.length>1 && direction[0] != adj.nodeFrom.id);
-        this.edgeHelper.arrow.render(from, to, dim, inv, canvas);
-      },
-      'contains': function(adj, pos) {
-        var from = adj.nodeFrom.pos.getc(true),
-            to = adj.nodeTo.pos.getc(true);
-        return this.edgeHelper.arrow.contains(from, to, pos, this.edge.epsilon);
-      }
-    }
-  });
+    /*
+     Class: RGraph.Plot.EdgeTypes
+
+     This class contains a list of <Graph.Adjacence> built-in types.
+     Edge types implemented are 'none', 'line' and 'arrow'.
+
+     You can add your custom edge types, customizing your visualization to the extreme.
+
+     Example:
+
+     (start code js)
+     RGraph.Plot.EdgeTypes.implement({
+     'mySpecialType': {
+     'render': function(adj, canvas) {
+     //print your custom edge to canvas
+     },
+     //optional
+     'contains': function(adj, pos) {
+     //return true if pos is inside the arc or false otherwise
+     }
+     }
+     });
+     (end code)
+
+     */
+    RGraph.Plot.EdgeTypes = new Class({
+        'none': $.empty,
+        'line': {
+            'render': function(adj, canvas) {
+                var from = adj.nodeFrom.pos.getc(true),
+                    to = adj.nodeTo.pos.getc(true);
+                this.edgeHelper.line.render(from, to, canvas);
+            },
+            'contains': function(adj, pos) {
+                var from = adj.nodeFrom.pos.getc(true),
+                    to = adj.nodeTo.pos.getc(true);
+                return this.edgeHelper.line.contains(from, to, pos, this.edge.epsilon);
+            }
+        },
+        'arrow': {
+            'render': function(adj, canvas) {
+                var from = adj.nodeFrom.pos.getc(true),
+                    to = adj.nodeTo.pos.getc(true),
+                    dim = adj.getData('dim'),
+                    direction = adj.data.$direction,
+                    inv = (direction && direction.length>1 && direction[0] != adj.nodeFrom.id),
+                    arrowPosition = this.edge.arrowPosition || 'end';
+                this.edgeHelper.arrow.render(from, to, dim, inv, canvas, arrowPosition);
+            },
+            'contains': function(adj, pos) {
+                var from = adj.nodeFrom.pos.getc(true),
+                    to = adj.nodeTo.pos.getc(true);
+                return this.edgeHelper.arrow.contains(from, to, pos, this.edge.epsilon);
+            }
+        }
+    });
 
 })($jit.RGraph);
 

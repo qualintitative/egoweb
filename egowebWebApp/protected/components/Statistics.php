@@ -205,6 +205,17 @@ class Statistics extends CComponent {
 			return false;
 	}
 
+	public function minBetweenness(){
+		$max = array();
+		foreach($this->nodes as $node){
+			$max[] = $this->getBetweenness($node);
+		}
+		if(count($max) > 0)
+			return min($max);
+		else
+			return false;
+	}
+
 	public function maxDegree(){
 		$max = array();
 		if(count($this->nodes) > 0){
@@ -212,6 +223,18 @@ class Statistics extends CComponent {
 				$max[] = count($this->connections[$node]);
 			}
 			return max($max);
+		}else{
+			return false;
+		}
+	}
+
+	public function minDegree(){
+		$max = array();
+		if(count($this->nodes) > 0){
+			foreach($this->nodes as $node){
+				$max[] = count($this->connections[$node]);
+			}
+			return min($max);
 		}else{
 			return false;
 		}
@@ -334,6 +357,19 @@ class Statistics extends CComponent {
 		}
 		if(count($max) > 0)
 			return round(max($max),3);
+		else
+			return false;
+	}
+
+	public function minEigenvector(){
+		$max = array();
+		if(count($this->eigenvectorCentralities) == 0)
+			$this->eigenvectorCentrality();
+		foreach($this->eigenvectorCentralities as $node=>$value){
+			$max[] = $value;
+		}
+		if(count($max) > 0)
+			return round(min($max),3);
 		else
 			return false;
 	}

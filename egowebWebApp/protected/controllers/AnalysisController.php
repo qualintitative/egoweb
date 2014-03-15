@@ -24,7 +24,7 @@ class AnalysisController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index', 'exportego', 'exportalterpair', 'exportalterlist', 'exportother', 'visualize', 'study', 'ajaxAdjacencies'),
+				'actions'=>array('index', 'exportego', 'savenote', 'exportalterpair', 'exportalterlist', 'exportother', 'visualize', 'study', 'ajaxAdjacencies'),
 				'users'=>array('@'),
 			),
 			array('allow',  // deny all users
@@ -60,8 +60,10 @@ class AnalysisController extends Controller
 
 	public function actionVisualize()
 	{
-
+		$graphs = array();
 		if(isset($_GET['interviewId'])){
+			if(isset($_GET['graphId'])){
+			}
 			$interview = Interview::model()->findByPk($_GET['interviewId']);
 			$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$interview->studyId)->queryColumn();
 			$questionIds = implode(",", $questionIds);
@@ -70,8 +72,13 @@ class AnalysisController extends Controller
 			$alter_pair_expressions = q("SELECT * FROM expression WHERE studyId = " . $interview->studyId . " AND questionId in (" . $questionIds . ")")->queryAll();
 			$studyId = q("SELECT studyId FROM interview WHERE id = ".$_GET['interviewId'])->queryScalar();
 
+			if(isset($_GET['expressionId'])){
+				$graphs = Graph::model()->findAllByAttributes(array('expressionId'=>$_GET['expressionId'],'interviewId'=>$_GET['interviewId']));
+
+			}
 			$this->render('visualize',
 				array(
+					'graphs'=>$graphs,
 					'studyId'=>$studyId,
 					'alter_pair_expressions'=> $alter_pair_expressions,
 					'interviewId'=>$_GET['interviewId'],
@@ -484,6 +491,54 @@ class AnalysisController extends Controller
 			echo implode(',', $row) . "\n";
 		}
 		Yii::app()->end();
+	}
+
+	public function actionSavegraph()
+	{
+		if($_POST['Graph']){
+			if($_POST['Graph']['id'])
+				$graph = Graph::model()->findByPk($_POST['Graph']['id']);
+			else
+				$graph = new Graph;
+			$graph->attributes = $_POST['Graph'];
+			if($graph->save()){
+				$url =  "graphId=" . $graph->id . "&interviewId=" . $graph->interviewId . "&expressionId=".$graph->expressionId."&params=".urlencode($graph->params);
+				Yii::app()->request->redirect($this->createUrl("/analysis/visualize?" . $url));
+			}else{
+				print_r($graph->errors);
+			}
+		}
+	}
+
+	public function actionGetnote()
+	{
+		if(isset($_GET['interviewId']) && isset($_GET['expressionId']) && isset($_GET['alterId'])){
+			$model = Note::model()->findByAttributes(array(
+				'interviewId' => $_GET['interviewId'],
+				'expressionId' => $_GET['expressionId'],
+				'alterId' => $_GET['alterId']
+			));
+			if(!$model){
+				$model = new Note;
+				$model->interviewId = $_GET['interviewId'];
+				$model->expressionId = $_GET['expressionId'];
+				$model->alterId = $_GET['alterId'];
+			}
+			$this->renderPartial('_form_note', array('model'=>$model, 'ajax'=>true), false, false);
+		}
+	}
+
+	public function actionSavenote()
+	{
+		if(isset($_POST['Note'])){
+			if($_POST['Note']['id'])
+				$note = Note::model()->findByPk($_POST['Note']['id']);
+			else
+				$note = new Note;
+			$note->attributes = $_POST['Note'];
+			if(!$note->save())
+				print_r($note->errors);
+		}
 	}
 
 	public function actionDeleteinterviews(){
