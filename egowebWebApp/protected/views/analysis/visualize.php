@@ -30,106 +30,106 @@ function getGraph(graphId){
 		document.location = url;
 	}
 }
-function saveNote(){
-	$.post("/analysis/savenote", $("#note-form").serialize(), function(data){
-		console.log(data);
-	});
-}
 </script>
 <?php
-
-echo "<h1>".CHtml::link(Study::getName($studyId), $this->createUrl("/analysis/study/".$studyId)) . " - " . Interview::getRespondant($interviewId)."</h1>";
+echo "<h3 class='margin-top-10'>".CHtml::link("Analysis &nbsp| &nbsp", $this->createUrl("/analysis/study/".$studyId)) . "<small>" .Study::getName($studyId) . " &nbsp| &nbsp" . Interview::getRespondant($interviewId)."</small></h3>";
 ?>
 
-<form  class="form-horizontal" role="form">
+	<?php if($expressionId): ?>
+	<div id="load-bar" class="col-sm-3 pull-right">
+		<form  class="form-horizontal" role="form">
+			<div class="form-group">
+		<?php
+		echo CHtml::dropDownList(
+			'loadGraph',
+			$graphId,
+			CHtml::listData($graphs,'id','name'),
+			array(
+				'empty' => 'Load saved graphs',
+				'onchange'=>'js:getGraph($("option:selected", this).val(),'.$interviewId .')',
+				'class'=>'form-control'
+			)
+		);
+		?>
+			</div>
+		</form>
+	</div>
+	<?php endif; ?>
 
-  <div class="form-group col-sm-6 pull-left">
+	<div id="expression-bar" class="col-sm-3 pull-left">
+		<form  class="form-horizontal" role="form">
+			<div class="form-group">
+				<label class="control-label">Adjacency</label>
+				<?php
+				$list = array();
+				foreach($alter_pair_expressions as $expression){
+					$list[$expression['id']] = substr($expression['name'], 0 , 30);
+				}
+				echo CHtml::dropDownList(
+					'loadAdj',
+					$expressionId,
+					$list,
+					array(
+						'empty' => 'Select',
+						'onchange'=>'js:getAdjacencies($("#loadAdj option:selected").val(),'.$interviewId .')',
+						'class'=>'form-control'
+					)
+				);
+				?>
+			</div>
+		</form>
+	</div>
 
-<label>Adjacency</label>
-<?php
-$list = array();
-$list[''] = "-- select Expression --";
-foreach($alter_pair_expressions as $expression){
-	$list[$expression['id']] = substr($expression['name'], 0 , 30);
-}
-echo CHtml::dropDownList(
-	'loadAdj',
-	$expressionId,
-	$list,
-	array('onchange'=>'js:getAdjacencies($("#loadAdj option:selected").val(),'.$interviewId .')',
-	)
-);
 
-?>
-</div>
-  <div class="form-group col-sm-6 pull-right">
-<label>Load saved graph</label>
 
-<?php
-echo CHtml::dropDownList(
-	'loadGraph',
-	$graphId,
-	CHtml::listData($graphs,'id','name'),
-	array(
-		'empty' => '-- SELECT --',
-		'onchange'=>'js:getGraph($("option:selected", this).val(),'.$interviewId .')',
-	)
-);
-?>
-  </div>
-</form>
 
+<?php if($expressionId): ?>
 <div class="col-sm-9 pull-right">
-
 <?php $this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$expressionId, 'params'=>$params)); ?>
 </div>
-<div class="col-sm-3 pull-left">
 
-<?php
-$this->widget('plugins.visualize', array('method'=>'nodecolor', 'id'=>$interviewId, 'params'=>$params));
-?><br><?php
-$this->widget('plugins.visualize', array('method'=>'nodeshape', 'id'=>$interviewId, 'params'=>$params));
-?><br><?php
-$this->widget('plugins.visualize', array('method'=>'nodesize', 'id'=>$interviewId, 'params'=>$params));
-?><br><?php
-$this->widget('plugins.visualize', array('method'=>'edgecolor', 'id'=>$interviewId, 'params'=>$params));
-?><br><?php
-$this->widget('plugins.visualize', array('method'=>'edgesize', 'id'=>$interviewId, 'params'=>$params));
-?>
-<?php
-if(isset($_GET['graphId']) && $_GET['graphId'])
-	$graph = Graph::model()->findByPk($_GET['graphId']);
-else
-	$graph = new Graph;
-$form=$this->beginWidget('CActiveForm', array(
-	'id'=>'graph-form',
-	'action'=>'/analysis/savegraph',
-	//'htmlOptions'=>array("class"=>"form-horizontal"),
-));?>
-<?php echo $form->hiddenField($graph,'id',array('value'=>$graph->id)); ?>
-  <div class="form-group">
-<?php echo $form->textField($graph,'name',array('value'=>$graph->name, 'class'=>'form-control', 'placeholder'=>'graph name')); ?>
-
-  </div>
-<?php echo $form->hiddenField($graph,'interviewId',array('value'=>$interviewId)); ?>
-<?php echo $form->hiddenField($graph,'expressionId',array('value'=>$expressionId)); ?>
-<?php echo $form->hiddenField($graph,'json',array('value'=>$graph->json)); ?>
-<?php echo $form->hiddenField($graph,'nodes',array('value'=>$graph->nodes)); ?>
-<?php echo $form->hiddenField($graph,'params',array('value'=>$params)); ?>
-  <div class="form-group">
-
-<button class="btn btn-primary" onclick="saveGraph();return false;">Save</button>
-
-<button class="btn btn-info" onclick="reload(refresh());return false;">Refresh</button>
-
-  </div>
-<?php $this->endWidget(); ?>
-
+<div id="visualize-bar" class="col-sm-3 pull-left">
+	<form class="form-horizontal">
+		<?php
+		$this->widget('plugins.visualize', array('method'=>'nodecolor', 'id'=>$studyId, 'params'=>$params));
+		$this->widget('plugins.visualize', array('method'=>'nodeshape', 'id'=>$studyId, 'params'=>$params));
+		$this->widget('plugins.visualize', array('method'=>'nodesize', 'id'=>$studyId, 'params'=>$params));
+		$this->widget('plugins.visualize', array('method'=>'edgecolor', 'id'=>$studyId, 'params'=>$params));
+		$this->widget('plugins.visualize', array('method'=>'edgesize', 'id'=>$studyId, 'params'=>$params));
+		?>
+	</form>
+	<?php
+	if(isset($_GET['graphId']) && $_GET['graphId'])
+		$graph = Graph::model()->findByPk($_GET['graphId']);
+	else
+		$graph = new Graph;
+	$form  =$this->beginWidget('CActiveForm', array(
+		'id'=>'graph-form',
+		'action'=>'/analysis/savegraph',
+		'htmlOptions'=>array("class"=>"form-horizontal"),
+	));?>
+		<?php echo $form->hiddenField($graph,'id',array('value'=>$graph->id)); ?>
+		<?php echo $form->hiddenField($graph,'interviewId',array('value'=>$interviewId)); ?>
+		<?php echo $form->hiddenField($graph,'expressionId',array('value'=>$expressionId)); ?>
+		<?php echo $form->hiddenField($graph,'json',array('value'=>$graph->json)); ?>
+		<?php echo $form->hiddenField($graph,'nodes',array('value'=>$graph->nodes)); ?>
+		<?php echo $form->hiddenField($graph,'params',array('value'=>$params)); ?>
+		<div class="form-group">
+			<label>Graph Name</label>
+			<?php echo $form->textField($graph,'name',array('value'=>$graph->name, 'class'=>'form-control', 'placeholder'=>'graph name')); ?>
+		</div>
+		<div class="form-group">
+			<button class="btn btn-primary" onclick="saveGraph();return false;">Save</button>
+			<button class="btn btn-info" onclick="reload(refresh());return false;">Refresh</button>
+		</div>
+	<?php $this->endWidget(); ?>
+	<br><br>
 </div>
-
-<br><?php
-if($interviewId && $expressionId){
+<?php endif; ?>
+<?php
 /*
+
+if($interviewId && $expressionId){
 
 	$stats = new Statistics;
 	$stats->initComponents($interviewId, $expressionId);
@@ -150,6 +150,6 @@ if($interviewId && $expressionId){
 	echo "Components:".count($stats->components)."<br>";
 	echo "Dyads:".count($stats->dyads)."<br>";
 	echo "Isolates:".count($stats->isolates)."<br>";
-	*/
 }
+*/
 ?>

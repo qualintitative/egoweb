@@ -10,20 +10,20 @@ if($model->value == "")
 	$model->value = "1:" . $expression->id;
 
 list($compare, $expressiond->id) = preg_split('/:/',$model->value);
-echo $form->hiddenField($model, 'id', array('value'=>$model->id)); 
+echo $form->hiddenField($model, 'id', array('value'=>$model->id));
 echo $form->hiddenField($model, 'studyId', array('value'=>$studyId));
 echo $form->hiddenField($model, 'value', array('value'=>$model->value));
 echo $form->hiddenField($model, 'type', array('value'=>'Comparison'));
 
 
-Yii::app()->clientScript->registerScript('compareToValue', "
+echo "<script>
 jQuery('#compare').change(function() {
 	if($(this).val() == '')
 		$(this).val(1);
     $('#Expression_value').val($(this).val() + ':' + ". $expression->id . ");
     console.log($('#Expression_value').val());
 });
-");
+</script>";
 ?>
 <?php echo $form->labelEx($model,'name'); ?>
 <?php echo $form->textField($model,'name', array('style'=>'width:100px')); ?>

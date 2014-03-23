@@ -5,13 +5,14 @@ $form=$this->beginWidget('CActiveForm', array(
 	'action'=>'/authoring/expression/'.$studyId,
 
 ));
-echo $form->hiddenField($model, 'id', array('value'=>$model->id)); 
+echo $form->hiddenField($model, 'id', array('value'=>$model->id));
 echo $form->hiddenField($model, 'studyId', array('value'=>$studyId));
 echo $form->hiddenField($model, 'questionId', array('value'=>$question->id));
 echo $form->hiddenField($model, 'value', array('value'=>$model->value));
 echo $form->hiddenField($model, 'type', array('value'=>'Compound'));
 
-Yii::app()->clientScript->registerScript('expressionsToValue', "
+echo "
+<script>
 jQuery('.expressionList').change(function() {
 	$('#Expression_value').val('');
 	$('.expressionList').each(function() {
@@ -24,7 +25,7 @@ jQuery('.expressionList').change(function() {
 	});
 	console.log($('#Expression_value').val());
 });
-");
+</script>";
 ?>
 
 <?php echo $form->labelEx($model,'name'); ?>

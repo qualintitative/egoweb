@@ -781,16 +781,16 @@ class AuthoringController extends Controller
 		if(isset($_GET['form'])){
 			if($_GET['form'] == "_form_question"){
 				$model = Question::model()->findByPk($_GET['questionId']);
-				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true), false, false);
+				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true), false, true);
 			}else if($_GET['form'] == "_form_alter_list_edit"){
 				$model = AlterList::model()->findByPk($_GET['alterListId']);
-				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'studyId'=>$model->studyId), false, false);
+				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'studyId'=>$model->studyId), false, true);
 			}else if($_GET['form'] == "_form_alter_prompt_edit"){
 				$model = AlterPrompt::model()->findByPk($_GET['alterPromptId']);
-				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'studyId'=>$model->studyId), false, false);
+				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'studyId'=>$model->studyId), false, true);
 			}else if($_GET['form'] == "_form_option_edit"){
 				$model = QuestionOption::model()->findByPk($_GET['optionId']);
-				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'questionId'=>$model->questionId), false, false);
+				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'questionId'=>$model->questionId), false, true);
 			}else if($_GET['form'] == "_form_expression_text" || $_GET['form'] == "_form_expression_counting" || $_GET['form'] == "_form_expression_comparison" || $_GET['form'] == "_form_expression_compound"){
 				$questionId = "";
 				if(isset($_GET['questionId']) && is_numeric($_GET['questionId']) && $_GET['questionId'] != 0)
@@ -817,7 +817,7 @@ class AuthoringController extends Controller
 					'criteria'=>$criteria,
 					'pagination'=>false,
 				));
-				$this->renderPartial($_GET['form'], array('dataProvider'=>$dataProvider, 'questionId'=>$_GET['questionId'], 'ajax'=>true), false, false);
+				$this->renderPartial($_GET['form'], array('dataProvider'=>$dataProvider, 'questionId'=>$_GET['questionId'], 'ajax'=>true), false, true);
 			}else if($_GET['form'] == "_form_option_list"){
 				$answerList = AnswerList::model()->findByPk($_GET['answerListId']);
 				$listOptions = preg_split('/,/', $answerList->listOptionNames);
@@ -828,9 +828,9 @@ class AuthoringController extends Controller
 						$options[$key] = $value;
 					}
 				}
-				$this->renderPartial($_GET['form'], array('options'=>$options, 'answerList'=>$answerList, 'ajax'=>true), false, false);
+				$this->renderPartial($_GET['form'], array('options'=>$options, 'answerList'=>$answerList, 'ajax'=>true), false, true);
 			}else if($_GET['form'] == "_form_option_list_edit"){
-				$this->renderPartial($_GET['form'], array('answerListId'=>$_GET['answerListId'], 'key'=>$_GET['key'], 'value'=>$_GET['value'], 'ajax'=>true), false, false);
+				$this->renderPartial($_GET['form'], array('answerListId'=>$_GET['answerListId'], 'key'=>$_GET['key'], 'value'=>$_GET['value'], 'ajax'=>true), false, true);
 			}
 		}
 		Yii::app()->end();

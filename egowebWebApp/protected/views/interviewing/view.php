@@ -127,6 +127,9 @@ $form=$this->beginWidget('CActiveForm', array(
 <?php
 // preload error message if there is one
 $error_id = "";
+
+$networkQuestion = "";
+
 foreach($questions as $question) {
 	if(is_numeric($question->alterId1) && !is_numeric($question->alterId2)){
 		$array_id = $question->id . "-" . $question->alterId1;
@@ -240,7 +243,7 @@ foreach($questions as $question) {
 
 <?php
 		if($question->subjectType == "NETWORK" && is_numeric($question->networkRelationshipExprId))
-			$this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$question->networkRelationshipExprId));
+			$networkQuestion = $question;
 ?>
 	<?php
 	// display error
@@ -444,7 +447,14 @@ $('.".$array_id."-skipReason').click(function(event){
 		<br style="clear:left">
 	<?php endif; ?>
 <?php endforeach; ?>
-	<div id="buttonRow" style="float:left;padding-bottom:100px ">
+
+<?php $this->endWidget(); ?>
+<?php
+if($networkQuestion)
+	$this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$networkQuestion->networkRelationshipExprId, 'params'=>$networkQuestion->networkParams));
+
+?>
+	<div id="buttonRow" style="float:left;padding-bottom:20px;clear:left">
 		<input name="page" type=hidden value=<?php echo $page ?> />
 		<input name="studyId" type=hidden value=<?php echo $studyId ?> />
 		<?php if($page != 0 ): ?>
@@ -452,9 +462,9 @@ $('.".$array_id."-skipReason').click(function(event){
 		<?php endif; ?>
 		<?php if($completed != -1): ?>
 			<?php if($question->answerType != "CONCLUSION"): ?>
-				<input class='orangebutton' type="submit" value="Next"/>
+				<input class='orangebutton' onclick='$("#answer-form").submit()' value="Next"/>
 			<?php else: ?>
-				<input class='orangebutton' type="submit" value="Finish"/>
+				<input class='orangebutton' onclick='$("#answer-form").submit()' value="Finish"/>
 			<?php endif; ?>
 		<?php else: ?>
 			<?php if($question->answerType != "CONCLUSION"): ?>
@@ -462,7 +472,6 @@ $('.".$array_id."-skipReason').click(function(event){
 			<?php endif; ?>
 		<?php endif; ?>
 	</div>
-<?php $this->endWidget(); ?>
 <script>
 $(function(){
 	nav = <?php echo Study::nav($studyId, $page, $interviewId); ?>;

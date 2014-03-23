@@ -6,13 +6,11 @@ $form=$this->beginWidget('CActiveForm', array(
 
 ));
 
-Yii::app()->clientScript->registerScript('optionsToValue', "
+echo "<script>
 function buildValue(times, expressionIds, questionIds){
     $('#Expression_value').val(times + ':' + expressionIds + ':' + questionIds);
 }
-");
 
-Yii::app()->clientScript->registerScript('expressionsToValue', "
 jQuery('.expressionList').change(function() {
     expressionValue = $('#Expression_value').val().split(/:/);
     expressionValue[1] = '';
@@ -27,9 +25,9 @@ jQuery('.expressionList').change(function() {
     buildValue(expressionValue[0], expressionValue[1], expressionValue[2]);
     console.log($('#Expression_value').val());
 });
-");
 
-Yii::app()->clientScript->registerScript('questionsToValue', "
+
+
 jQuery('.questionList').change(function() {
     expressionValue = $('#Expression_value').val().split(/:/);
     expressionValue[2] = '';
@@ -44,16 +42,14 @@ jQuery('.questionList').change(function() {
     buildValue(expressionValue[0], expressionValue[1], expressionValue[2]);
     console.log($('#Expression_value').val());
 });
-");
 
-Yii::app()->clientScript->registerScript('timesToValue', "
 jQuery('#times').change(function() {
     expressionValue = $('#Expression_value').val().split(/:/);
     expressionValue[0] = $(this).val();
     buildValue(expressionValue[0], expressionValue[1], expressionValue[2]);
     console.log($('#Expression_value').val());
 });
-");
+</script>";
 
 echo $form->hiddenField($model, 'id', array('value'=>$model->id));
 echo $form->hiddenField($model, 'studyId', array('value'=>$studyId));

@@ -15,7 +15,7 @@ $('.multiselect-".$array_id."').change(function() {
 				values.push($(this).val());
 		}else{
 			if(values.indexOf($(this).val()) != -1)
-				values.splice(values.indexOf(current.val()),1);	
+				values.splice(values.indexOf(current.val()),1);
 		}
 	});
 	if(values.length > parseInt(".$question->maxCheckableBoxes.")){

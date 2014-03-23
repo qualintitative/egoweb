@@ -1,8 +1,6 @@
 #container {
+	clear:both;
     width: 640px;
-    height:480px;
-    margin:0 auto;
-    float:right;
     position:relative;
 }
 
@@ -15,15 +13,16 @@
 }
 
 #left-container {
+	height:240px;
+	width:520px;
 	clear:both;
 	float:left;
-    background-image:url('col2.png');
-    background-position:center right;
 }
 
 #right-container {
+	width:120px;
+
     right:0;
-    background-image:url('col1.png');
     background-position:center left;
     border-right:1px solid #ddd;
 }
@@ -46,9 +45,16 @@
 #inner-details {
     font-size:0.8em;
     list-style:none;
-    margin:7px;
+    margin:15px 0;
 }
 
+#inner-details .col-sm-3 {
+	margin-left:10px;
+}
+
+#inner-details textarea {
+	height:100px;
+}
 #log {
     position:absolute;
     top:10px;
@@ -63,7 +69,7 @@
     width:640px;
     height:480px;
     margin:auto;
-    background-color: #fafafa;
+    background-color: #fcfcfc;
     overflow:hidden;
 }
 

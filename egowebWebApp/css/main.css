@@ -517,15 +517,24 @@ td{
 	height:40px;
 }
 
-
+.titlelink {
+	float:left;
+	font-family:Oswald Light;
+	font-size:20px;
+    display:block;
+	padding:15px 0;
+	margin-left:20px;
+}
 .title {
 	float:left;
 	font-family:Oswald Light;
 	font-size:20px;
-	color:#DB6C3E;
+	color:#707070;
     display:block;
-	padding:15px 0;
-	margin-left:20px;
+	padding:5px 0;
+	margin:10px 0 10px 20px;
+	padding-left:20px;
+	border-left: 1px solid #707070;
 }
 .intleft{
 	padding:0 3px 0 6px;
@@ -689,10 +698,25 @@ ul.authoring li a:hover{
     color:#DB6C3E;
 }
 
-.grid-view thead th{
-	background-color:#000;
+.grid-view table {
+	width:100%;
 }
 
+.grid-view thead th{
+	color:#fff;
+	background-color:#000;
+	text-transform:uppercase;
+}
+
+.grid-view > table > tbody > tr:nth-child(odd) > td,
+.grid-view > table > tbody > tr:nth-child(odd) > th, .odd {
+  background-color: #f9f9f9;
+}
+
+.grid-view th, .grid-view td {
+	padding:10px;
+
+}
 .grid-view thead th a{
 	color:#fff;
 }
@@ -700,4 +724,50 @@ ul.authoring li a:hover{
 #previous_alters{
 	padding:10px;
 	clear:left;
+}
+
+#visualize-bar label, #expression-bar label, #load-bar label,#inner-details label {
+	margin-bottom: 0;
+	padding-top:0;
+}
+
+.nodeColorOptions, .nodeShapeOptions, .edgeColorOptions, .nodeSizeOptions, .edgeSizeOptions {
+	margin-left:15px;
+}
+
+#visualize-bar .form-group:first-child{
+	margin-top:0;
+}
+#visualize-bar .form-group{
+	margin: 20px 0 0 0;
+}
+#load-bar .form-group{
+	margin:0;
+}
+
+#expression-bar{
+	clear:both;
+}
+#expression-bar .form-group{
+	margin: 0 0 20px 0;
+}
+
+#visualize-bar select, #expression-bar select, #loadGraph {
+	-webkit-appearance:menulist;
+	height:32px;
+	padding:4px 8px;
+}
+
+#loadGraph {
+	margin-top:5px;
+}
+
+.margin-top-10 {
+	float:left;
+	margin-top: 10px;
+}
+
+.name{
+	padding:1px 2px;
+	border-radius: 2px;
 }

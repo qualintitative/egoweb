@@ -1,8 +1,5 @@
 <?php /* @var $this Controller */ ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<?php Yii::app()->clientScript->registerCoreScript('jquery'); ?>
-<?php Yii::app()->clientScript->registerCoreScript('jquery.ui'); ?>
-
 <html lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -78,7 +75,7 @@
 					</li>
 				</ul>
 				<?php endif; ?>
-				<span class="title"><a href="/admin">EgoWeb 2.0</a> | Exploring social networks via interviews</span>
+				<a class="titlelink" href="/admin">EgoWeb 2.0</a><span class="title">Exploring social networks via interviews</span>
 			</div>
 			</nav>
 			<div id="menubar">

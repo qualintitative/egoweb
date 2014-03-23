@@ -24,17 +24,17 @@ class visualize extends Plugin
 		'#c0f'=>'purple',
 	);
 	public $nodeShapes = array(
-		'star'=>'star',
 		'circle'=>'circle',
+		'star'=>'star',
 		'triangle'=>'triangle',
 		'square'=>'square',
 	);
 	public $nodeSizes = array(
-		5=>'1',
-		10=>'2',
-		15=>'3',
-		20=>'4',
-		25=>'5',
+		4=>'1',
+		6=>'2',
+		8=>'3',
+		10=>'4',
+		12=>'5',
 	);
 	public $gradient = array(
 		0=>"#00f",
@@ -73,6 +73,21 @@ class visualize extends Plugin
 				$range = $max - $min;
 				$value = round((($value-$min) / ($range)) * 9);
 				return $this->gradient[$value];
+			}else if(stristr($this->params['nodeColor']['questionId'], "expression")){
+				$expression = new Expression;
+				list($label, $expressionId) = explode("_", $this->params['nodeColor']['questionId']);
+				if($expression->evalExpression($expressionId, $this->method, $nodeId)){
+					foreach($this->params['nodeColor']['options'] as $option){
+						if($option['id'] == 1)
+							return $option['color'];
+					}
+				}else{
+					foreach($this->params['nodeColor']['options'] as $option){
+						if($option['id'] == 0)
+							return $option['color'];
+					}
+				}
+
 			}else{
 				$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeColor']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar();
 				$answer = explode(',', $answer);
@@ -100,7 +115,7 @@ class visualize extends Plugin
 
 
 	private function getNodeSize($nodeId){
-		$default = 5;
+		$default = 4;
 		if(isset($this->params['nodeSize'])){
 			$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeSize']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar();
 			$answer = explode(',', $answer);
@@ -149,11 +164,11 @@ class visualize extends Plugin
 				$nodeColors[$option['id']] = $option['color'];
 			}
 		}
-		$interview = Interview::model()->findByPk($this->id);
-		$alter_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $interview->studyId)->queryAll();
-		echo "<h3>Node Color";
-		echo "<select id='nodeColorSelect' style='margin-left:20px' onchange='$(\".nodeColorOptions\").hide();$(\"#\" + $(\"option:selected\", this).val()).toggle()'>";
-		echo "<option value=''> -- SELECT -- </option>";
+		$alter_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
+		echo "<div class='form-group'>";
+		echo "<label class='control-label'>Node Color</label>";
+		echo "<select id='nodeColorSelect' class='form-control' onchange='$(\".nodeColorOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle();'>";
+		echo "<option value=''> Select </option>";
 
 		foreach($centralities as $centrality){
 			$selected = '';
@@ -162,13 +177,34 @@ class visualize extends Plugin
 			echo "<option value='" . $centrality . "_nodeColor' $selected>" . ucfirst($centrality) . " Centrality</option>";
 		}
 
+			$questionIds = [];
+			foreach($alter_qs as $alter_q){
+				$questionIds[] = $alter_q['id'];
+			}
+			$questionIds = implode(",", $questionIds);
+			if(!$questionIds)
+				$questionIds = 0;
+			$alter_expression_ids = q("SELECT id FROM expression WHERE studyId = " . $this->id . " AND questionId in (" . $questionIds . ")")->queryColumn();
+			$all_expression_ids = $alter_expression_ids;
+			foreach($alter_expression_ids as $id){
+				$all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
+			}
+			$alter_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
+
+		foreach($alter_expressions as $expression){
+			$selected = '';
+			if($nodeColorId == "expression_" . $expression['id'])
+				$selected = "selected";
+			echo "<option value='expression_"  . $expression['id']. "_nodeColor' $selected>" .$expression['name'].  "</option>";
+
+		}
 		foreach($alter_qs as $question){
 			$selected = '';
 			if($nodeColorId == $question['id'])
 				$selected = "selected";
 			echo "<option value='"  . $question['id']. "_nodeColor' $selected>" .$question['title'].  "</option>";
 		}
-		echo "</select></h3>";
+		echo "</select></div>";
 		foreach($alter_qs as $question){
 			echo "<div class='nodeColorOptions' id='" .$question['id'] ."_nodeColor' style='" . ( $question['id'] != $nodeColorId ? "display:none" : "") . "'>";
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
@@ -181,6 +217,21 @@ class visualize extends Plugin
 				). "<br>";
 			}
 			echo "</div>";
+		}
+
+		foreach($alter_expressions as $expression){
+			echo "<div class='nodeColorOptions' id='expression_" .$expression['id'] ."_nodeColor' style='" . ( "expression_" . $expression['id'] != $nodeColorId ? "display:none" : "") . "'>";
+			$options = array("false", "true");
+			foreach($options as $index=>$option){
+				echo "<label style='width:200px;float:left'>". $option. "</label>";
+				echo CHtml::dropDownList(
+					$index,
+					(isset($nodeColors[$index]) ? $nodeColors[$index] : ''),
+					$this->nodeColors
+				). "<br>";
+			}
+			echo "</div>";
+
 		}
 		foreach($centralities as $centrality){
 			echo "<div class='nodeColorOptions' id='" .$centrality ."_nodeColor' style='" . ($centrality != $nodeColorId ? "display:none" : "") . "'>";
@@ -209,12 +260,12 @@ class visualize extends Plugin
 				$nodeShapes[$option['id']] = $option['shape'];
 			}
 		}
-		$interview = Interview::model()->findByPk($this->id);
-		$alter_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $interview->studyId)->queryAll();
-		echo "<h3>Node Shape";
-			echo "<select id='nodeShapeSelect' style='margin-left:20px' onchange='$(\".nodeShapeOptions\").hide();$(\"#\" + $(\"option:selected\", this).val()).toggle()'>";
+		$alter_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
+		echo "<div class='form-group'>";
+		echo "<label class='control-label'>Node Shape</label>";
+			echo "<select id='nodeShapeSelect' class='form-control' onchange='$(\".nodeShapeOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
 
-			echo "<option value=''> -- SELECT -- </option>";
+			echo "<option value=''> Select </option>";
 
 		foreach($alter_qs as $question){
 			$selected = '';
@@ -222,7 +273,7 @@ class visualize extends Plugin
 				$selected = "selected";
 			echo "<option value='"  . $question['id']. "_nodeShape' $selected>" .$question['title'].  "</option>";
 		}
-		echo "</select></h3>";
+		echo "</select></div>";
 		foreach($alter_qs as $question){
 
 			echo "<div class='nodeShapeOptions' id='" .$question['id'] ."_nodeShape' style='" . ( $question['id'] != $nodeShapeId ? "display:none" : "") . "'>";
@@ -249,12 +300,12 @@ class visualize extends Plugin
 				$nodeSizes[$option['id']] = $option['size'];
 			}
 		}
-		$interview = Interview::model()->findByPk($this->id);
-		$alter_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $interview->studyId)->queryAll();
-		echo "<h3>Node Size";
-			echo "<select id='nodeSizeSelect' style='margin-left:20px' onchange='$(\".nodeSizeOptions\").hide();$(\"#\" + $(\"option:selected\", this).val()).toggle()'>";
+		$alter_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
+		echo "<div class='form-group'>";
+		echo "<label class='control-label'>Node Size</label>";
+			echo "<select id='nodeSizeSelect' class='form-control' onchange='$(\".nodeSizeOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
 
-			echo "<option value=''> -- SELECT -- </option>";
+			echo "<option value=''> Select </option>";
 
 		foreach($alter_qs as $question){
 			$selected = '';
@@ -262,7 +313,7 @@ class visualize extends Plugin
 				$selected = "selected";
 			echo "<option value='"  . $question['id']. "_nodeSize' $selected>" .$question['title'].  "</option>";
 		}
-		echo "</select></h3>";
+		echo "</select></div>";
 		foreach($alter_qs as $question){
 
 			echo "<div class='nodeSizeOptions' id='" .$question['id'] ."_nodeSize' style='" . ( $question['id'] != $nodeSizeId ? "display:none" : "") . "'>";
@@ -289,12 +340,12 @@ class visualize extends Plugin
 				$edgeColors[$option['id']] = $option['color'];
 			}
 		}
-		$interview = Interview::model()->findByPk($this->id);
-		$alter_pair_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $interview->studyId)->queryAll();
-		echo "<h3>Edge Color";
-			echo "<select id='edgeColorSelect' style='margin-left:20px' onchange='$(\".edgeColorOptions\").hide();$(\"#\" + $(\"option:selected\", this).val()).toggle()'>";
+		$alter_pair_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
+		echo "<div class='form-group'>";
+		echo "<label class='control-label'>Edge Color</label>";
+			echo "<select id='edgeColorSelect' class='form-control' onchange='$(\".edgeColorOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
 
-			echo "<option value=''> -- SELECT -- </option>";
+			echo "<option value=''> Select </option>";
 
 		foreach($alter_pair_qs as $question){
 			$selected = '';
@@ -302,7 +353,7 @@ class visualize extends Plugin
 				$selected = "selected";
 			echo "<option value='"  . $question['id']. "_edgeColor' $selected>" .$question['title'].  "</option>";
 		}
-		echo "</select></h3>";
+		echo "</select></div>";
 		foreach($alter_pair_qs as $question){
 
 			echo "<div class='edgeColorOptions' id='" .$question['id'] ."_edgeColor' style='" . ( $question['id'] != $edgeColorId ? "display:none" : "") . "'>";
@@ -329,12 +380,12 @@ class visualize extends Plugin
 				$edgeSizes[$option['id']] = $option['size'];
 			}
 		}
-		$interview = Interview::model()->findByPk($this->id);
-		$alter_pair_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $interview->studyId)->queryAll();
-		echo "<h3>Edge Size";
-			echo "<select id='edgeSizeSelect' style='margin-left:20px' onchange='$(\".edgeSizeOptions\").hide();$(\"#\" + $(\"option:selected\", this).val()).toggle()'>";
+		$alter_pair_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
+		echo "<div class='form-group'>";
+		echo "<label class='control-label'>Edge Size</label>";
 
-			echo "<option value=''> -- SELECT -- </option>";
+		echo "<select id='edgeSizeSelect' class='form-control' onchange='$(\".edgeSizeOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
+			echo "<option value=''> Select </option>";
 
 		foreach($alter_pair_qs as $question){
 			$selected = '';
@@ -342,7 +393,7 @@ class visualize extends Plugin
 				$selected = "selected";
 			echo "<option value='"  . $question['id']. "_edgeSize' $selected>" .$question['title'].  "</option>";
 		}
-		echo "</select></h3>";
+		echo "</select></div>";
 		foreach($alter_pair_qs as $question){
 
 			echo "<div class='edgeSizeOptions' id='" .$question['id'] ."_edgeSize' style='" . ( $question['id'] != $edgeSizeId ? "display:none" : "") . "'>";
@@ -376,27 +427,62 @@ class visualize extends Plugin
 		$this->stats = new Statistics;
 		$this->stats->initComponents($this->method, $this->id);
 
+		$notes = Note::model()->findAllByAttributes(array("interviewId"=>$this->method, "expressionId"=>$this->id));
+		$alterNotes = array();
+		foreach($notes as $note){
+			$alterNotes[$note->alterId] = $note;
+		}
+
+		$interview = Interview::model()->findByPK($this->method);
+
+			$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$interview->studyId)->queryColumn();
+			$questionIds = implode(",", $questionIds);
+			if(!$questionIds)
+				$questionIds = 0;
+			$alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId = " . $interview->studyId . " AND questionId in (" . $questionIds . ")")->queryColumn();
+
 		$expression = Expression::model()->findByPk($this->id);
-		if($expression->questionId)
-			$answers = q("SELECT * FROM answer WHERE interviewId = ". $this->method . " AND questionId = ". $expression->questionId . " ORDER BY alterId1, alterId2")->queryAll();
-		else
-			$answers = array();
+		if($expression->type == "Compound"){
+			$expressionIds = explode(",", $expression->value);
+			foreach($expressionIds as $expressionId){
+				if(in_array($expressionId, $alter_pair_expression_ids))
+					$expression = Expression::model()->findByPk($expressionId);
+				else
+					$filterIds[] = $expressionId;
+			}
+			foreach($filterIds as $filterId){
+				$filter = Expression::model()->findByPK($filterId);
+				foreach($alters as $index=>$alter){
+					if(!$filter->evalExpression($filterId, $this->method, $alter['id'])){
+						array_splice($alters, $index, 1);
+						array_splice($alterIds, $index, 1);
+					}
+				}
+			}
+		}
+
 		$currentNode = '';
-		foreach($answers as $answer){
-			if($expression->evalExpression($expression->id, $this->method, $answer['alterId1'], $answer['alterId2'])){
-				if($currentNode != $answer['alterId1']){
-					$currentNode = $answer['alterId1'];
+		$alters2 = $alters;
+		array_shift($alters2);
+		//foreach($answers as $answer){
+		foreach($alters as $alter){
+			foreach($alters2 as $alter2){
+
+			if($expression->evalExpression($expression->id, $this->method, $alter['id'], $alter2['id'])){
+				if($currentNode != $alter['id']){
+					$currentNode = $alter2['id'];
 					$nodes[$currentNode]['id'] = $currentNode;
 					$nodes[$currentNode]['name'] = $alterNames[$currentNode];
 				}
 				$nodes[$currentNode]['adjacencies'][] = array(
-					'nodeTo'=>$answer['alterId2'],
-					'nodeFrom'=>$answer['alterId1'],
+					'nodeTo'=>$alter['id'],
+					'nodeFrom'=>$alter2['id'],
 					'data'=>array(
-						"\$color"=>$this->getEdgeColor($answer['alterId1'], $answer['alterId2']),
-						"\$lineWidth"=>$this->getEdgeSize($answer['alterId1'], $answer['alterId2'])
+						"\$color"=>$this->getEdgeColor($alter['id'], $alter2['id']),
+						"\$lineWidth"=>$this->getEdgeSize($alter['id'], $alter2['id'])
 					),
 				);
+			}
 			}
 		}
 		$json = array();
@@ -409,7 +495,7 @@ class visualize extends Plugin
 				array(
 					'adjacencies'=>$node['adjacencies'],
 					'id'=>$node['id'],
-					'name'=>$node['name'],
+					'name'=>$node['name'] . (isset($alterNotes[$node['id']]) ? " <span class='fui-new'></span>" : ""),
 					"data"=>array(
 						"\$color"=>$this->getNodeColor($node['id']),
 						"\$type"=>$this->getNodeShape($node['id']),
@@ -426,7 +512,7 @@ class visualize extends Plugin
 					array(
 						'adjacencies'=>array(),
 						'id'=>$node,
-						'name'=>$alterNames[$node],
+						'name'=>$alterNames[$node]  . (isset($alterNotes[$node]) ? " <span class='fui-new'></span>" : ""),
 						"data"=>array(
 							"\$color"=>$this->getNodeColor($node),
 							"\$type"=>$this->getNodeShape($node),
@@ -479,9 +565,13 @@ function saveNodes()
 }
 
 function saveGraph(){
-	refresh();
-	saveNodes();
-	$('#graph-form').submit();
+	if($("#Graph_name").val()){
+		refresh();
+		saveNodes();
+		$('#graph-form').submit();
+	}else{
+		alert ("Please enter a graph name");
+	}
 }
 
 function init(json)
@@ -503,8 +593,8 @@ function init(json)
 			type: 'Native',
 			//Enable panning events only if we're dragging the empty
 			//canvas (and not a node).
-			panning: 'avoid nodes',
-			zooming: 40 //zoom speed. higher is more sensible
+			panning: false,//'avoid nodes',
+			zooming: false //40 //zoom speed. higher is more sensible
 		},
 		// Change node and edge styles such as
 		// color and width.
@@ -542,21 +632,29 @@ function init(json)
 			type: 'Native',
 			//Change cursor style when hovering a node
 			onMouseEnter: function(node, eventInfo, e) {
-				if(typeof node.nodeFrom == "undefined") {
-					fd.canvas.getElement().style.cursor = 'move';
+				if(node){
+					if(typeof node.nodeFrom == "undefined") {
+						fd.canvas.getElement().style.cursor = 'move';
+					}else{
+						fd.canvas.getElement().style.cursor = 'crosshair';
+					}
 				}else{
-					fd.canvas.getElement().style.cursor = 'crosshair';
+					fd.canvas.getElement().style.cursor = 'default';
 				}
 			},
 			onMouseMove: function(node, eventInfo, e) {
-				if(typeof node.nodeFrom == "undefined") {
-					fd.canvas.getElement().style.cursor = 'move';
+				if(node){
+					if(typeof node.nodeFrom == "undefined") {
+						fd.canvas.getElement().style.cursor = 'move';
+					}else{
+						fd.canvas.getElement().style.cursor = 'crosshair';
+					}
 				}else{
-					fd.canvas.getElement().style.cursor = 'crosshair';
+					fd.canvas.getElement().style.cursor = 'default';
 				}
 			},
 			onMouseLeave: function() {
-				fd.canvas.getElement().style.cursor = '';
+				fd.canvas.getElement().style.cursor = 'default';
 			},
 			//Update node positions when dragged
 			onDragMove: function(node, eventInfo, e) {
@@ -575,7 +673,7 @@ function init(json)
 		},
 
 		//Number of iterations for the FD algorithm
-		iterations: 300,
+		iterations: 500,
 		//Edge length
 		levelDistance: 10,
 		// This method is only triggered
@@ -592,7 +690,7 @@ function init(json)
 			closeButton.innerHTML = '';
 			domElement.appendChild(nameContainer);
 			domElement.appendChild(closeButton);
-			style.fontSize = "0.8em";
+			style.fontSize = "1em";
 			style.color = "#111";
 			//Fade the node and its connections when
 			//clicking the close button
@@ -615,7 +713,7 @@ function init(json)
 				//set final styles
 				fd.graph.eachNode(function(n) {
 					if(n.id != node.id) delete n.selected;
-					n.setData('dim', 5, 'end');
+					//n.setData('dim', 5, 'end');
 					/*n.eachAdjacency(function(adj) {
 						adj.setDataset('end', {
 							lineWidth: 0.4,
@@ -635,7 +733,7 @@ function init(json)
 				} else {
 					delete node.selected;
 				}
-				$('.name').css("background-color", "#FFF");
+				$('.name').css("background-color", "transparent");
 				$('.name').css("color", "#000");
 				$(this).css("color", "#FFF");
 				$(this).css("background-color", "#555");
@@ -648,17 +746,19 @@ function init(json)
 				});
 				// Build the right column relations list.
 				// This is done by traversing the clicked node connections.
-				var html = "<h4>" + node.name + "</h4><b> connections:</b><ul><li>",
+				var html = "<b> connections:</b><ul><li>",
 					list = [];
 				node.eachAdjacency(function(adj){
-					if(adj.getData('alpha')) list.push(adj.nodeTo.name);
+					if(adj.getData('alpha')) list.push(adj.nodeTo.name.replace("<span class='fui-new'></span>",""));
 				});
 				//append connections information
 				var url = "/analysis/getnote?interviewId=" + interviewId + "&expressionId=" + expressionId + "&alterId=" + node.id;
 				$.get(url, function(data){
 					$jit.id('inner-details').innerHTML = data;
+					$jit.id('inner-details').innerHTML = $jit.id('inner-details').innerHTML + "<div class='pull-left col-sm-3'>" +
+					"<label>Connections</label><br>" +
+					list.join("</li><li>") + "</li></ul></div>"
 				});
-				//$jit.id('inner-details').innerHTML = html + list.join("</li><li>") + "</li></ul>";
 			};
 		},
 		// Change node styles when DOM labels are placed
@@ -669,7 +769,7 @@ function init(json)
 			var top = parseInt(style.top);
 			var w = domElement.offsetWidth;
 			style.left = (left - w / 2) + 'px';
-			style.top = (top + 5) + 'px';
+			style.top = (top + 6) + 'px';
 			style.display = '';
 		}
 	});
@@ -678,7 +778,7 @@ function init(json)
 	fd.loadJSON(json);
 	// compute positions incrementally and animate.
 	fd.computeIncremental({
-		iter: 200,
+		iter: 500,
 		property: 'end',
 		onStep: function(perc){
 			Log.write(perc + '% loaded...');
@@ -708,54 +808,56 @@ function init(json)
 	});
 }
 
-function refresh(){
+function refresh(container){
 	var params = new Object;
-	if($('option:selected', '#nodeColorSelect').val()){
+	if(typeof container == "undefined")
+		container = $('body');
+	if($('#nodeColorSelect option:selected', container).val()){
 		var nodeColor = new Object;
-		var question = $('option:selected', '#nodeColorSelect').val();
+		var question = $('#nodeColorSelect option:selected', container).val();
 		nodeColor['questionId'] = question.replace('_nodeColor','');
 		nodeColor['options'] = [];
-		$("select", "#" + question).each(function(index){
+		$("#" + question + " select", container).each(function(index){
 			nodeColor['options'].push({"id":$(this).attr('id'),"color":$("option:selected", this).val()});
 		});
 		params['nodeColor'] = nodeColor;
 	}
-	if($('option:selected', '#nodeShapeSelect').val()){
+	if($('#nodeShapeSelect option:selected', container).val()){
 		var nodeShape = new Object;
-		var question = $('option:selected', '#nodeShapeSelect').val();
+		var question = $('#nodeShapeSelect option:selected', container).val();
 		nodeShape['questionId'] = question.replace('_nodeShape','');
 		nodeShape['options'] = [];
-		$("select", "#" + question).each(function(index){
+		$("#" + question + " select", container).each(function(index){
 			nodeShape['options'].push({"id":$(this).attr('id'),"shape":$("option:selected", this).val()});
 		});
 		params['nodeShape'] = nodeShape;
 	}
-	if($('option:selected', '#nodeSizeSelect').val()){
+	if($('#nodeSizeSelect option:selected', container).val()){
 		var nodeSize = new Object;
-		var question = $('option:selected', '#nodeSizeSelect').val();
+		var question = $('#nodeSizeSelect option:selected', container).val();
 		nodeSize['questionId'] = question.replace('_nodeSize','');
 		nodeSize['options'] = [];
-		$("select", "#" + question).each(function(index){
+		$( "#" + question + " select", container).each(function(index){
 			nodeSize['options'].push({"id":$(this).attr('id'),"size":$("option:selected", this).val()});
 		});
 		params['nodeSize'] = nodeSize;
 	}
-	if($('option:selected', '#edgeColorSelect').val()){
+	if($('#edgeColorSelect option:selected', container).val()){
 		var edgeColor = new Object;
-		var question = $('option:selected', '#edgeColorSelect').val();
+		var question = $('#edgeColorSelect option:selected', container).val();
 		edgeColor['questionId'] = question.replace('_edgeColor','');
 		edgeColor['options'] = [];
-		$("select", "#" + question).each(function(index){
+		$("#" + question + " select", container).each(function(index){
 			edgeColor['options'].push({"id":$(this).attr('id'),"color":$("option:selected", this).val()});
 		});
 		params['edgeColor'] = edgeColor;
 	}
-	if($('option:selected', '#edgeSizeSelect').val()){
+	if($('#edgeSizeSelect option:selected', container).val()){
 		var edgeSize = new Object;
-		var question = $('option:selected', '#edgeSizeSelect').val();
+		var question = $('#edgeSizeSelect option:selected', container).val();
 		edgeSize['questionId'] = question.replace('_edgeSize','');
 		edgeSize['options'] = [];
-		$("select", "#" + question).each(function(index){
+		$("#" + question + " select", container).each(function(index){
 			edgeSize['options'].push({"id":$(this).attr('id'),"size":$("option:selected", this).val()});
 		});
 		params['edgeSize'] = edgeSize;
@@ -775,6 +877,16 @@ $(function(){
 	init(json);
 });
 
+function print(){
+	params = refresh();
+	url = "/analysis/visualize?print&expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent(JSON.stringify(params));
+	document.location = url;
+}
+function saveNote(){
+	$.post("/analysis/savenote", $("#note-form").serialize(), function(data){
+		$("#" + data + " .name").html($("#" + data + " .name").html() + " <span class='fui-new'></span>");
+	});
+}
 </script>
 		<div id="container">
 			<div id="center-container">
@@ -784,6 +896,9 @@ $(function(){
 				<div id="inner-details">
 
 				</div>
+			</div>
+			<div id="right-container">
+				<button  onclick="print()" class="btn btn-primary print-button">Export Graph</button>
 			</div>
 			<div id="log"></div>
 		</div>

@@ -14893,7 +14893,7 @@ var QuadTreeNodeFactory = new Class({
 var NBodyForce = new Class({
 	pnames: ["GravitationalConstant", "Distance", "BarnesHutTheta" ],
 
-	DEFAULT_GRAV_CONSTANT: -30.0,
+	DEFAULT_GRAV_CONSTANT: -40.0,
 	DEFAULT_MIN_GRAV_CONSTANT: -40.0,
 	DEFAULT_MAX_GRAV_CONSTANT: -20.0,
 
@@ -15183,10 +15183,10 @@ var NBodyForce = new Class({
 var SpringForce = new Class({
 	pnames: ["SpringCoefficient", "DefaultSpringLength"],
 
-	DEFAULT_SPRING_COEFF: 1e-6,
-	DEFAULT_MAX_SPRING_COEFF: 1e-6,
-	DEFAULT_MIN_SPRING_COEFF: 1e-6,
-	DEFAULT_SPRING_LENGTH: 50,
+	DEFAULT_SPRING_COEFF: 6e-7,
+	DEFAULT_MAX_SPRING_COEFF: 1e-5,
+	DEFAULT_MIN_SPRING_COEFF: 1e-7,
+	DEFAULT_SPRING_LENGTH: 100,
 	DEFAULT_MIN_SPRING_LENGTH: 0,
 	DEFAULT_MAX_SPRING_LENGTH: 100,
 	SPRING_COEFF: 0,

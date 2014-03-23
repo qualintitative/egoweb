@@ -64,26 +64,43 @@ class AnalysisController extends Controller
 		if(isset($_GET['interviewId'])){
 			if(isset($_GET['graphId'])){
 			}
-			$interview = Interview::model()->findByPk($_GET['interviewId']);
-			$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$interview->studyId)->queryColumn();
+			$studyId = q("SELECT studyId FROM interview WHERE id = ".$_GET['interviewId'])->queryScalar();
+			$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$studyId)->queryColumn();
 			$questionIds = implode(",", $questionIds);
 			if(!$questionIds)
 				$questionIds = 0;
-			$alter_pair_expressions = q("SELECT * FROM expression WHERE studyId = " . $interview->studyId . " AND questionId in (" . $questionIds . ")")->queryAll();
-			$studyId = q("SELECT studyId FROM interview WHERE id = ".$_GET['interviewId'])->queryScalar();
+			$alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId = " . $studyId . " AND questionId in (" . $questionIds . ")")->queryColumn();
+			$all_expression_ids = $alter_pair_expression_ids;
+			foreach($alter_pair_expression_ids as $id){
+				$all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
+			}
+			$alter_pair_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
 
-			if(isset($_GET['expressionId'])){
+			if(isset($_GET['expressionId']))
 				$graphs = Graph::model()->findAllByAttributes(array('expressionId'=>$_GET['expressionId'],'interviewId'=>$_GET['interviewId']));
 
+
+			if(isset($_GET['print'])){
+				$this->renderPartial('print',
+					array(
+						'graphs'=>$graphs,
+						'studyId'=>$studyId,
+						'alter_pair_expressions'=> $alter_pair_expressions,
+						'interviewId'=>$_GET['interviewId'],
+					), false, true
+				);
+			}else{
+				$this->render('visualize',
+					array(
+						'graphs'=>$graphs,
+						'studyId'=>$studyId,
+						'alter_pair_expressions'=> $alter_pair_expressions,
+						'interviewId'=>$_GET['interviewId'],
+					)
+				);
+
 			}
-			$this->render('visualize',
-				array(
-					'graphs'=>$graphs,
-					'studyId'=>$studyId,
-					'alter_pair_expressions'=> $alter_pair_expressions,
-					'interviewId'=>$_GET['interviewId'],
-				)
-			);
+
 		}
 	}
 
@@ -531,13 +548,18 @@ class AnalysisController extends Controller
 	public function actionSavenote()
 	{
 		if(isset($_POST['Note'])){
-			if($_POST['Note']['id'])
+			$new = false;
+			if($_POST['Note']['id']){
 				$note = Note::model()->findByPk($_POST['Note']['id']);
-			else
+			}else{
 				$note = new Note;
+				$new = true;
+			}
 			$note->attributes = $_POST['Note'];
 			if(!$note->save())
 				print_r($note->errors);
+			if($new)
+				echo $note->alterId;
 		}
 	}
 

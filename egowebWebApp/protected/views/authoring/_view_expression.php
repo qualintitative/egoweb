@@ -15,9 +15,9 @@
 	}else{
 		$expressionId = "";
 	}
-	echo 
+	echo
 CHtml::ajaxLink (CHtml::encode($data->name),
-        		CController::createUrl('ajaxload'), 
+        		CController::createUrl('ajaxload'),
         		array('update' => '#Expression', 'data'=>'form='.$form.'&studyId='.$data->studyId.'&id='.$data->id.'&questionId='.$data->questionId.$expressionId),
         		array('id'=>uniqid(), 'live'=>false)
 

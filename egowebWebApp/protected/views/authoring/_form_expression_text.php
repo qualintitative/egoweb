@@ -7,7 +7,8 @@ $form=$this->beginWidget('CActiveForm', array(
     'action'=>'/authoring/expression/'.$studyId,
 ));
 // converts multiple selection checkboxes into answer value
-Yii::app()->clientScript->registerScript('optionsToValue', "
+echo "
+<script>
 jQuery('.valueList').change(function() {
     $('#Expression_value').val('');
     $('.valueList').each(function() {
@@ -20,7 +21,7 @@ jQuery('.valueList').change(function() {
     });
     console.log($('#Expression_value').val());
 });
-");
+</script>";
 ?>
 
 <?php echo $form->labelEx($model,'name'); ?>
@@ -68,10 +69,9 @@ echo $after . "<br>";
 <?php echo $form->error($model,'operator'); ?>
 
 <?php
-echo $form->hiddenField($model, 'id', array('value'=>$model->id)); 
+echo $form->hiddenField($model, 'id', array('value'=>$model->id));
 echo $form->hiddenField($model, 'studyId', array('value'=>$studyId));
 echo $form->hiddenField($model, 'questionId', array('value'=>$question->id));
-
 
 if($after != ""){
     $selected = explode(',', $model->value);
@@ -84,17 +84,17 @@ if($after != ""){
             'class'=>'valueList',
         )
     );
-    echo $form->hiddenField($model, 'value', array('value'=>$model->value)); 
+    echo $form->hiddenField($model, 'value', array('value'=>$model->value));
 
 }else{
-    echo $form->textField($model, 'value', array('style'=>'width:100px')); 
+    echo $form->textField($model, 'value', array('style'=>'width:100px'));
 }
 ?>
 
 <br />
 
 Expression is
-<?php 
+<?php
 echo $form->dropdownlist($model,
     'resultForUnanswered',
     array(

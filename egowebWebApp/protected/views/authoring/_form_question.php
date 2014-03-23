@@ -282,47 +282,122 @@ jQuery('input.time-".$model->id."').change(function() {
 					<?php echo $form->checkBox($model,'noneButton', array("id"=>$model->id . "_" . "noneButton")); ?><br style="clear:both">
 				<label for="<?php echo $model->id . "_" . "allButton"; ?>">Set Alls</label>
 					<?php echo $form->checkBox($model,'allButton', array("id"=>$model->id . "_" . "allButton")); ?></td>
-					<!--   <td style="padding-left:0; padding-right:0;" align="right">'All' Response: -->
-					<!--		<select wicket:id="allOption"></select></td>						  -->
 				</tr>
 			</table>
 		</div>
 	</div>
 
-	<div class="panel-<?php echo $model->id; ?>" id="NETWORK" style="display:none">
+	<br style="clear:both" />
+	<?php echo $form->hiddenField($model,'networkParams',array('value'=>$model->networkParams)); ?>
+
+	<?php if($model->subjectType == "NETWORK"): ?>
+
+
 		<div class="row">
-Alters are adjacent when:
-		<?php echo $form->labelEx($model,'networkRelationshipExprId'); ?>
-		<?php $criteria=new CDbCriteria;
-		$criteria=array(
-			'condition'=>"studyId = " . $model->studyId,
-		);
-		?>
-		<?php echo $form->dropdownlist(
+			Alters are adjacent when:
+		<?php
+			$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$model->studyId)->queryColumn();
+			$questionIds = implode(",", $questionIds);
+			if(!$questionIds)
+				$questionIds = 0;
+			$alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId = " . $model->studyId . " AND questionId in (" . $questionIds . ")")->queryColumn();
+			$all_expression_ids = $alter_pair_expression_ids;
+			foreach($alter_pair_expression_ids as $id){
+				$all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
+			}
+			$alter_pair_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
+				$list = array();
+				foreach($alter_pair_expressions as $expression){
+					$list[$expression['id']] = substr($expression['name'], 0 , 30);
+				}
+
+		echo $form->dropdownlist(
 			$model,
 			'networkRelationshipExprId',
-			CHtml::listData(Expression::model()->findAll($criteria), 'id', 'name'),
+			$list,
 			array('empty' => 'Choose One')
 		); ?>
 		<?php echo $form->error($model,'networkRelationshipExprId'); ?>
 		</div>
 
-		<div class="row">
-			<?php echo $form->labelEx($model,'networkNShapeQId'); ?>
-			<?php $criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"studyId = " . $model->studyId . " AND subjectType = 'ALTER'",
-				'order'=>'ordering',
-			);
-			?>
-			<?php echo $form->dropdownlist(
-				$model,
-				'networkNShapeQId',
-				CHtml::listData(Question::model()->findAll($criteria), 'id', 'title'),
-				array('empty' => 'Choose One')
-			); ?>
-			<?php echo $form->error($model,'networkNShapeQId'); ?>
-		</div>
+	<div id="visualize-bar" class="col-sm-8 pull-left">
+
+	<?php
+	$this->widget('plugins.visualize', array('method'=>'nodecolor', 'id'=>$model->studyId, 'params'=>$model->networkParams));
+		$this->widget('plugins.visualize', array('method'=>'nodeshape', 'id'=>$model->studyId, 'params'=>$model->networkParams));
+		$this->widget('plugins.visualize', array('method'=>'nodesize', 'id'=>$model->studyId, 'params'=>$model->networkParams));
+		$this->widget('plugins.visualize', array('method'=>'edgecolor', 'id'=>$model->studyId, 'params'=>$model->networkParams));
+		$this->widget('plugins.visualize', array('method'=>'edgesize', 'id'=>$model->studyId, 'params'=>$model->networkParams));
+
+	?>
+	</div>
+	<script>
+function refresh(container){
+	var params = new Object;
+	if(typeof container == "undefined")
+		container = $('body');
+	if($('#nodeColorSelect option:selected', container).val()){
+		var nodeColor = new Object;
+		var question = $('#nodeColorSelect option:selected', container).val();
+		nodeColor['questionId'] = question.replace('_nodeColor','');
+		nodeColor['options'] = [];
+		$("#" + question + " select", container).each(function(index){
+			nodeColor['options'].push({"id":$(this).attr('id'),"color":$("option:selected", this).val()});
+		});
+		params['nodeColor'] = nodeColor;
+	}
+	if($('#nodeShapeSelect option:selected', container).val()){
+		var nodeShape = new Object;
+		var question = $('#nodeShapeSelect option:selected', container).val();
+		nodeShape['questionId'] = question.replace('_nodeShape','');
+		nodeShape['options'] = [];
+		$("#" + question + " select", container).each(function(index){
+			nodeShape['options'].push({"id":$(this).attr('id'),"shape":$("option:selected", this).val()});
+		});
+		params['nodeShape'] = nodeShape;
+	}
+	if($('#nodeSizeSelect option:selected', container).val()){
+		var nodeSize = new Object;
+		var question = $('#nodeSizeSelect option:selected', container).val();
+		nodeSize['questionId'] = question.replace('_nodeSize','');
+		nodeSize['options'] = [];
+		$( "#" + question + " select", container).each(function(index){
+			nodeSize['options'].push({"id":$(this).attr('id'),"size":$("option:selected", this).val()});
+		});
+		params['nodeSize'] = nodeSize;
+	}
+	if($('#edgeColorSelect option:selected', container).val()){
+		var edgeColor = new Object;
+		var question = $('#edgeColorSelect option:selected', container).val();
+		edgeColor['questionId'] = question.replace('_edgeColor','');
+		edgeColor['options'] = [];
+		$("#" + question + " select", container).each(function(index){
+			edgeColor['options'].push({"id":$(this).attr('id'),"color":$("option:selected", this).val()});
+		});
+		params['edgeColor'] = edgeColor;
+	}
+	if($('#edgeSizeSelect option:selected', container).val()){
+		var edgeSize = new Object;
+		var question = $('#edgeSizeSelect option:selected', container).val();
+		edgeSize['questionId'] = question.replace('_edgeSize','');
+		edgeSize['options'] = [];
+		$("#" + question + " select", container).each(function(index){
+			edgeSize['options'].push({"id":$(this).attr('id'),"size":$("option:selected", this).val()});
+		});
+		params['edgeSize'] = edgeSize;
+	}
+	console.log(JSON.stringify(params));
+
+	$("#Graph_params").val(JSON.stringify(params));
+	return JSON.stringify(params);
+}
+	$('#<?= $model->id; ?> #visualize-bar select').change(function(){
+		$('#<?= $model->id; ?> #Question_networkParams').val(refresh($('#<?= $model->id; ?> #visualize-bar')));
+	});
+	</script>
+	<!--
+	<div class="panel-<?php echo $model->id; ?>" id="NETWORK" style="display:none">
+
 
 		<div class="row">
 			<?php echo $form->labelEx($model,'networkNColorQId'); ?>
@@ -391,7 +466,8 @@ Alters are adjacent when:
 			); ?>
 			<?php echo $form->error($model,'networkESizeQId'); ?>
 		</div>
-	</div>
+	</div>-->
+	<?php endif;?>
 
 </div>
 
