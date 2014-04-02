@@ -204,14 +204,14 @@ body {
   background-color: #ffffff;
 }
 a {
-  color: #DB6C3E;
+  color: #ef8355;
   text-decoration: none;
   -webkit-transition: 0.25s;
   transition: 0.25s;
 }
 a:hover,
 a:focus {
-  color: #e67240;
+  color: #fd966a;
   text-decoration: none;
 }
 .img-rounded {

@@ -1,5 +1,7 @@
 function getStudyList(server){
 	url = 'http://' + server.ADDRESS + '/mobile/ajaxstudies';
+	if(typeof userId != "undefined")
+		url = url + "?userId=" + userId;
 	$.get(url,function(data){
 		div = $('#' + server.ID);
 		div.html('');

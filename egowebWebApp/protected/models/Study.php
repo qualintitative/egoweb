@@ -360,6 +360,7 @@ class Study extends CActiveRecord
 					$question = Question::model()->findByPk($questionId);
 					foreach($alters as $alter){
 						if(!$expression->evalExpression($alterQuestionExpressions[$questionId], $interviewId, $alter->id)){
+
 							$data = array(
 								'value'=>$study->valueLogicalSkip,
 							);
@@ -379,6 +380,7 @@ class Study extends CActiveRecord
 					    			$preface->answerType = "PREFACE";
 					    			$preface->prompt = $alterPrefaces[$questionId];
 					    			$page[$i] = array('0'=>$preface);
+
 					    			return $page[$i];
 					    		}
 					    		$alterPrefaces[$questionId] = "";
@@ -452,7 +454,8 @@ class Study extends CActiveRecord
 								$data = array(
 									'value'=>$study->valueLogicalSkip,
 								);
-				    			u('answer', $data, "id = " . $answers[$question->id.'-'.$alter->id.'and'.$alter2->id]['id']);
+								if(isset($answers[$question->id.'-'.$alter->id.'and'.$alter2->id]))
+				    				u('answer', $data, "id = " . $answers[$question->id.'-'.$alter->id.'and'.$alter2->id]['id']);
 								continue;
 							}
 							$alter_pair_question = new Question;
@@ -461,7 +464,7 @@ class Study extends CActiveRecord
 							$alter_pair_question->prompt = str_replace('$$2', $alter2->name, $alter_pair_question->prompt);
 							$alter_pair_question->alterId1 = $alter->id;
 							$alter_pair_question->alterId2 = $alter2->id;
-							$alter_pair_question_list[$question->id.'-'.$alter->id.'and'.$alter2->id]=$alter_pair_question;
+							$alter_pair_question_list[$question->id.'-'.$alter->id.'and'.$alter2->id] = $alter_pair_question;
 						}
 						if(count($alter_pair_question_list) > 0){
 						    if($alterPairPrefaces[$questionId] != ""){

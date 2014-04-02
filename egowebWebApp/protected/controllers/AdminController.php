@@ -106,7 +106,7 @@ class AdminController extends Controller
 			$model = User::model()->findByPk($_GET['userId']);
 		else
 			$model = new User;
-		$this->renderPartial('_form_user', array('user'=>$model, 'ajax'=>true), false, true);
+		$this->renderPartial('_form_user', array('user'=>$model, 'ajax'=>true), false, false);
 	}
 
 	public function actionUserDelete(){
@@ -118,7 +118,7 @@ class AdminController extends Controller
             //'criteria'=>$criteria,
             'pagination'=>false,
         ));
-		$this->renderPartial('_view_user', array('dataProvider'=>$dataProvider, 'ajax'=>true), false, true);
+		$this->renderPartial('_view_user', array('dataProvider'=>$dataProvider, 'ajax'=>true), false, false);
 	}
 
 	public function actionDownload()

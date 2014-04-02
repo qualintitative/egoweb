@@ -12,6 +12,10 @@
 		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/main.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/form.css" />
 		<script type="text/javascript" src="<?php echo Yii::app()->request->baseUrl; ?>/js/indexof.js"></script>
+		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/bootstrap.min.js');
+		Yii::app()->clientScript->registerCssFile(Yii::app()->clientScript->getCoreScriptUrl().'/jui/css/base/jquery-ui.css');
+		Yii::app()->clientScript->registerCoreScript('jquery');
+		Yii::app()->clientScript->registerCoreScript('jquery.ui'); ?>
 	</head>
 	<body>
 		<div id="wrapper">

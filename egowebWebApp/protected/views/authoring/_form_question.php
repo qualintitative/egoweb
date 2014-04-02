@@ -305,12 +305,15 @@ jQuery('input.time-".$model->id."').change(function() {
 			foreach($alter_pair_expression_ids as $id){
 				$all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
 			}
+			if($all_expression_ids){
 			$alter_pair_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
 				$list = array();
 				foreach($alter_pair_expressions as $expression){
 					$list[$expression['id']] = substr($expression['name'], 0 , 30);
 				}
-
+			}else{
+				$list = array();
+			}
 		echo $form->dropdownlist(
 			$model,
 			'networkRelationshipExprId',

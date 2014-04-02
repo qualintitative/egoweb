@@ -5560,3 +5560,1219 @@ Stack trace:
 REQUEST_URI=/authoring/network/136
 HTTP_REFERER=http://egoweb/authoring/expression/136
 ---
+2014/03/22 22:44:27 [error] [exception.CException] exception 'CException' with message 'Property "CActiveForm.class" is not defined.' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CComponent.php:173
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWidgetFactory.php(161): CComponent->__set('class', 'form-inline')
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(146): CWidgetFactory->createWidget(Object(AdminController), 'CActiveForm', Array)
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(189): CBaseController->createWidget('CActiveForm', Array)
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/admin/_form_user.php(7): CBaseController->beginWidget('CActiveForm', Array)
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/admin/user.php(8): CController->renderPartial('_form_user', Array, false, false)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(782): CController->renderPartial('user', Array, true)
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/AdminController.php(95): CController->render('user', Array)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(49): AdminController->actionUser()
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('user')
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('admin/user')
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#26 {main}
+REQUEST_URI=/admin/user
+HTTP_REFERER=http://egoweb/admin/user
+---
+2014/03/27 12:16:34 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId =  ORDER BY ordering.
+2014/03/27 12:16:34 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Interview.php(139): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/main.php(96): Interview->getEgoId('758')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(76): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(54): CContentDecorator->decorate('??<script>????f...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/COutputProcessor.php(44): CContentDecorator->processOutput('??<script>????f...')
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(206): COutputProcessor->run()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(300): CBaseController->endWidget('CContentDecorat...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/column2.php(22): CBaseController->endContent()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(784): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(106): CController->render('view', Array)
+#15 [internal function]: InterviewingController->actionView('175')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#26 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#27 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#28 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#29 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#30 {main}
+REQUEST_URI=/interviewing/175?interviewId=758&page=18
+---
+2014/03/28 14:18:39 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId =  ORDER BY ordering.
+2014/03/28 14:18:39 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Interview.php(139): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/main.php(96): Interview->getEgoId('759')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(76): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(54): CContentDecorator->decorate('??<script>????f...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/COutputProcessor.php(44): CContentDecorator->processOutput('??<script>????f...')
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(206): COutputProcessor->run()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(300): CBaseController->endWidget('CContentDecorat...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/column2.php(22): CBaseController->endContent()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(784): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(106): CController->render('view', Array)
+#15 [internal function]: InterviewingController->actionView('175')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#26 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#27 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#28 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#29 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#30 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=14
+---
+2014/03/28 14:19:33 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId =  ORDER BY ordering.
+2014/03/28 14:19:33 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Interview.php(139): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/main.php(96): Interview->getEgoId('759')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(76): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(54): CContentDecorator->decorate('??<script>????f...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/COutputProcessor.php(44): CContentDecorator->processOutput('??<script>????f...')
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(206): COutputProcessor->run()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(300): CBaseController->endWidget('CContentDecorat...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/column2.php(22): CBaseController->endContent()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(784): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(106): CController->render('view', Array)
+#15 [internal function]: InterviewingController->actionView('175')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#26 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#27 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#28 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#29 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#30 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=13
+---
+2014/03/28 14:19:43 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId =  ORDER BY ordering.
+2014/03/28 14:19:43 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Interview.php(139): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/main.php(96): Interview->getEgoId('759')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(76): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(54): CContentDecorator->decorate('??<script>????f...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/COutputProcessor.php(44): CContentDecorator->processOutput('??<script>????f...')
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(206): COutputProcessor->run()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(300): CBaseController->endWidget('CContentDecorat...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/column2.php(22): CBaseController->endContent()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(784): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(106): CController->render('view', Array)
+#15 [internal function]: InterviewingController->actionView('175')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#26 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#27 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#28 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#29 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#30 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=14
+---
+2014/03/28 14:19:49 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId =  ORDER BY ordering.
+2014/03/28 14:19:49 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Interview.php(139): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/main.php(96): Interview->getEgoId('759')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(76): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(54): CContentDecorator->decorate('??<script>????f...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/COutputProcessor.php(44): CContentDecorator->processOutput('??<script>????f...')
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(206): COutputProcessor->run()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(300): CBaseController->endWidget('CContentDecorat...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/column2.php(22): CBaseController->endContent()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(784): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(106): CController->render('view', Array)
+#15 [internal function]: InterviewingController->actionView('175')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#26 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#27 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#28 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#29 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#30 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=12
+---
+2014/03/28 14:19:54 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId =  ORDER BY ordering.
+2014/03/28 14:19:54 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Interview.php(139): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/main.php(96): Interview->getEgoId('759')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(76): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(54): CContentDecorator->decorate('??<script>????f...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/COutputProcessor.php(44): CContentDecorator->processOutput('??<script>????f...')
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(206): COutputProcessor->run()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(300): CBaseController->endWidget('CContentDecorat...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/column2.php(22): CBaseController->endContent()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(784): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(106): CController->render('view', Array)
+#15 [internal function]: InterviewingController->actionView('175')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#26 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#27 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#28 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#29 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#30 {main}
+REQUEST_URI=/interviewing/175?interviewId=759
+---
+2014/03/28 14:20:01 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId =  ORDER BY ordering.
+2014/03/28 14:20:01 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Interview.php(139): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/main.php(96): Interview->getEgoId('759')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(76): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(54): CContentDecorator->decorate('??<script>????f...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/COutputProcessor.php(44): CContentDecorator->processOutput('??<script>????f...')
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(206): COutputProcessor->run()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(300): CBaseController->endWidget('CContentDecorat...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/column2.php(22): CBaseController->endContent()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(784): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(106): CController->render('view', Array)
+#15 [internal function]: InterviewingController->actionView('175')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#26 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#27 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#28 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#29 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#30 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=0
+---
+2014/03/28 14:20:04 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId =  ORDER BY ordering.
+2014/03/28 14:20:04 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Interview.php(139): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/main.php(96): Interview->getEgoId('759')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(76): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(54): CContentDecorator->decorate('??<script>????f...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/COutputProcessor.php(44): CContentDecorator->processOutput('??<script>????f...')
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(206): COutputProcessor->run()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(300): CBaseController->endWidget('CContentDecorat...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/column2.php(22): CBaseController->endContent()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(784): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(106): CController->render('view', Array)
+#15 [internal function]: InterviewingController->actionView('175')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#26 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#27 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#28 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#29 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#30 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=14
+---
+2014/03/28 14:20:11 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId =  ORDER BY ordering.
+2014/03/28 14:20:11 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Interview.php(139): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/main.php(96): Interview->getEgoId('759')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(76): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(54): CContentDecorator->decorate('??<script>????f...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/COutputProcessor.php(44): CContentDecorator->processOutput('??<script>????f...')
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(206): COutputProcessor->run()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(300): CBaseController->endWidget('CContentDecorat...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/column2.php(22): CBaseController->endContent()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(784): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(106): CController->render('view', Array)
+#15 [internal function]: InterviewingController->actionView('175')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#26 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#27 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#28 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#29 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#30 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=13
+---
+2014/03/28 14:20:13 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId =  ORDER BY ordering.
+2014/03/28 14:20:13 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Interview.php(139): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/main.php(96): Interview->getEgoId('759')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(76): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(54): CContentDecorator->decorate('??<script>????f...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/COutputProcessor.php(44): CContentDecorator->processOutput('??<script>????f...')
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(206): COutputProcessor->run()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(300): CBaseController->endWidget('CContentDecorat...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/column2.php(22): CBaseController->endContent()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(784): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(106): CController->render('view', Array)
+#15 [internal function]: InterviewingController->actionView('175')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#26 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#27 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#28 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#29 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#30 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=14
+---
+2014/03/28 14:21:38 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId =  ORDER BY ordering.
+2014/03/28 14:21:38 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Interview.php(139): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/main.php(96): Interview->getEgoId('759')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(76): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(54): CContentDecorator->decorate('??<script>????f...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/COutputProcessor.php(44): CContentDecorator->processOutput('??<script>????f...')
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(206): COutputProcessor->run()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(300): CBaseController->endWidget('CContentDecorat...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/column2.php(22): CBaseController->endContent()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(784): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(106): CController->render('view', Array)
+#15 [internal function]: InterviewingController->actionView('175')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#26 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#27 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#28 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#29 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#30 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=14
+---
+2014/03/28 14:21:40 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId =  ORDER BY ordering.
+2014/03/28 14:21:40 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Interview.php(139): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/main.php(96): Interview->getEgoId('759')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(76): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(54): CContentDecorator->decorate('??<script>????f...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/COutputProcessor.php(44): CContentDecorator->processOutput('??<script>????f...')
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(206): COutputProcessor->run()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(300): CBaseController->endWidget('CContentDecorat...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/column2.php(22): CBaseController->endContent()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(784): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(106): CController->render('view', Array)
+#15 [internal function]: InterviewingController->actionView('175')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#26 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#27 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#28 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#29 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#30 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=0
+---
+2014/03/28 14:21:42 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId =  ORDER BY ordering.
+2014/03/28 14:21:42 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Interview.php(139): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/main.php(96): Interview->getEgoId('759')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(76): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(54): CContentDecorator->decorate('??<script>????f...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/COutputProcessor.php(44): CContentDecorator->processOutput('??<script>????f...')
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(206): COutputProcessor->run()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(300): CBaseController->endWidget('CContentDecorat...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/column2.php(22): CBaseController->endContent()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(784): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(106): CController->render('view', Array)
+#15 [internal function]: InterviewingController->actionView('175')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#26 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#27 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#28 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#29 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#30 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=14
+---
+2014/03/28 14:24:20 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId =  ORDER BY ordering.
+2014/03/28 14:24:20 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Interview.php(139): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/main.php(96): Interview->getEgoId('759')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(76): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(54): CContentDecorator->decorate('??<script>????f...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/COutputProcessor.php(44): CContentDecorator->processOutput('??<script>????f...')
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(206): COutputProcessor->run()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(300): CBaseController->endWidget('CContentDecorat...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/column2.php(22): CBaseController->endContent()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(784): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(106): CController->render('view', Array)
+#15 [internal function]: InterviewingController->actionView('175')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#26 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#27 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#28 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#29 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#30 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=14
+---
+2014/03/28 14:24:23 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId =  ORDER BY ordering.
+2014/03/28 14:24:23 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Interview.php(139): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/main.php(96): Interview->getEgoId('759')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(76): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/CContentDecorator.php(54): CContentDecorator->decorate('??<script>????f...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/widgets/COutputProcessor.php(44): CContentDecorator->processOutput('??<script>????f...')
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(206): COutputProcessor->run()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(300): CBaseController->endWidget('CContentDecorat...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/layouts/column2.php(22): CBaseController->endContent()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(784): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(106): CController->render('view', Array)
+#15 [internal function]: InterviewingController->actionView('175')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#26 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#27 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#28 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#29 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#30 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=12
+---
+2014/03/28 14:35:21 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'egoweb_data.session' doesn't exist. The SQL statement executed was: DELETE FROM `session` WHERE expire<:expire.
+2014/03/28 14:35:21 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'egoweb_data.study' doesn't exist. The SQL statement executed was: SHOW FULL COLUMNS FROM `study`.
+2014/03/28 14:35:21 [error] [exception.CDbException] exception 'CDbException' with message 'The table "study" for active record class "Study" cannot be found in the database.' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php:2310
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(387): CActiveRecordMetaData->__construct(Object(Study))
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Study.php(31): CActiveRecord::model('Study')
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(55): Study::model()
+#3 [internal function]: InterviewingController->actionView('175')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#18 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=12
+---
+2014/03/28 14:35:50 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1. The SQL statement executed was: UPDATE `answer` SET `value`=:value WHERE id = .
+2014/03/28 14:35:50 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:357
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(1282): CDbCommand->execute(Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/extensions/custy.php(36): CDbCommand->update('answer', Array, 'id = ')
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Study.php(366): u('answer', Array, 'id = ')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(62): Study->buildQuestions('175', '14', '759')
+#4 [internal function]: InterviewingController->actionView('175')
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#19 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=14
+---
+2014/03/28 14:36:10 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1. The SQL statement executed was: UPDATE `answer` SET `value`=:value WHERE id = .
+2014/03/28 14:36:10 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:357
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(1282): CDbCommand->execute(Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/extensions/custy.php(36): CDbCommand->update('answer', Array, 'id = ')
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Study.php(366): u('answer', Array, 'id = ')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(62): Study->buildQuestions('175', '15', '759')
+#4 [internal function]: InterviewingController->actionView('175')
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#19 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=15
+HTTP_REFERER=http://egoweb/interviewing/175?interviewId=759&page=12
+---
+2014/03/28 14:36:41 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1. The SQL statement executed was: UPDATE `answer` SET `value`=:value WHERE id = .
+2014/03/28 14:36:41 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:357
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(1282): CDbCommand->execute(Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/extensions/custy.php(36): CDbCommand->update('answer', Array, 'id = ')
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Study.php(366): u('answer', Array, 'id = ')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(62): Study->buildQuestions('175', '15', '759')
+#4 [internal function]: InterviewingController->actionView('175')
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#19 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=15
+HTTP_REFERER=http://egoweb/interviewing/save/175
+---
+2014/03/28 14:40:22 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1. The SQL statement executed was: UPDATE `answer` SET `value`=:value WHERE id = .
+2014/03/28 14:40:22 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:357
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(1282): CDbCommand->execute(Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/extensions/custy.php(36): CDbCommand->update('answer', Array, 'id = ')
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Study.php(367): u('answer', Array, 'id = ')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(62): Study->buildQuestions('175', '14', '759')
+#4 [internal function]: InterviewingController->actionView('175')
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#19 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=14
+---
+2014/03/28 14:40:27 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1. The SQL statement executed was: UPDATE `answer` SET `value`=:value WHERE id = .
+2014/03/28 14:40:27 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:357
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(1282): CDbCommand->execute(Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/extensions/custy.php(36): CDbCommand->update('answer', Array, 'id = ')
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Study.php(367): u('answer', Array, 'id = ')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(62): Study->buildQuestions('175', '14', '759')
+#4 [internal function]: InterviewingController->actionView('175')
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#19 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=14
+---
+2014/03/28 14:41:13 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1. The SQL statement executed was: UPDATE `answer` SET `value`=:value WHERE id = .
+2014/03/28 14:41:13 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:357
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(1282): CDbCommand->execute(Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/extensions/custy.php(36): CDbCommand->update('answer', Array, 'id = ')
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Study.php(367): u('answer', Array, 'id = ')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(62): Study->buildQuestions('175', '14', '759')
+#4 [internal function]: InterviewingController->actionView('175')
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#19 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=14
+---
+2014/03/28 14:41:17 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1. The SQL statement executed was: UPDATE `answer` SET `value`=:value WHERE id = .
+2014/03/28 14:41:17 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:357
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(1282): CDbCommand->execute(Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/extensions/custy.php(36): CDbCommand->update('answer', Array, 'id = ')
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Study.php(367): u('answer', Array, 'id = ')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(62): Study->buildQuestions('175', '14', '759')
+#4 [internal function]: InterviewingController->actionView('175')
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#19 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=14
+---
+2014/03/28 14:41:23 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1. The SQL statement executed was: UPDATE `answer` SET `value`=:value WHERE id = .
+2014/03/28 14:41:23 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:357
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(1282): CDbCommand->execute(Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/extensions/custy.php(36): CDbCommand->update('answer', Array, 'id = ')
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Study.php(367): u('answer', Array, 'id = ')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(62): Study->buildQuestions('175', '14', '759')
+#4 [internal function]: InterviewingController->actionView('175')
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#19 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=14
+---
+2014/03/28 14:47:17 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1. The SQL statement executed was: UPDATE `answer` SET `value`=:value WHERE id = .
+2014/03/28 14:47:17 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:357
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(1282): CDbCommand->execute(Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/extensions/custy.php(36): CDbCommand->update('answer', Array, 'id = ')
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Study.php(367): u('answer', Array, 'id = ')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(62): Study->buildQuestions('175', '14', '759')
+#4 [internal function]: InterviewingController->actionView('175')
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#19 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=14
+---
+2014/03/28 14:47:34 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1. The SQL statement executed was: UPDATE `answer` SET `value`=:value WHERE id = .
+2014/03/28 14:47:34 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:357
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(1282): CDbCommand->execute(Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/extensions/custy.php(36): CDbCommand->update('answer', Array, 'id = ')
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Study.php(367): u('answer', Array, 'id = ')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(62): Study->buildQuestions('175', '14', '759')
+#4 [internal function]: InterviewingController->actionView('175')
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#19 {main}
+REQUEST_URI=/interviewing/175?interviewId=759&page=14
+---
+2014/03/28 14:51:25 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's leadership (battalion)') ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM `alterList` `t` WHERE name LIKE '%a%' AND studyId = 175 AND name != '1' AND name NOT IN ('The accused' , 'Installation SARC' , 'Brigade VA' , 'Victim's leadership (battalion)') ORDER BY ordering.
+2014/03/28 14:51:25 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's leadership (battalion)') ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1297): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1416): CActiveRecord->query(Object(CDbCriteria), true)
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(489): CActiveRecord->findAll(Array)
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(49): InterviewingController->actionAutocomplete()
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('autocomplete')
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/au...')
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#17 {main}
+REQUEST_URI=/interviewing/autocomplete?term=a&field=name&studyId=175&self=1&interviewId=762
+HTTP_REFERER=http://egoweb/interviewing/save/175
+---
+2014/03/28 14:51:27 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's leadership (battalion)') ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM `alterList` `t` WHERE name LIKE '%c%' AND studyId = 175 AND name != '1' AND name NOT IN ('The accused' , 'Installation SARC' , 'Brigade VA' , 'Victim's leadership (battalion)') ORDER BY ordering.
+2014/03/28 14:51:27 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's leadership (battalion)') ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1297): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1416): CActiveRecord->query(Object(CDbCriteria), true)
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(489): CActiveRecord->findAll(Array)
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(49): InterviewingController->actionAutocomplete()
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('autocomplete')
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/au...')
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#17 {main}
+REQUEST_URI=/interviewing/autocomplete?term=c&field=name&studyId=175&self=1&interviewId=762
+HTTP_REFERER=http://egoweb/interviewing/save/175
+---
+2014/03/28 14:51:29 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's leadership (battalion)') ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM `alterList` `t` WHERE name LIKE '%a%' AND studyId = 175 AND name != '1' AND name NOT IN ('The accused' , 'Installation SARC' , 'Brigade VA' , 'Victim's leadership (battalion)') ORDER BY ordering.
+2014/03/28 14:51:29 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's leadership (battalion)') ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1297): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1416): CActiveRecord->query(Object(CDbCriteria), true)
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(489): CActiveRecord->findAll(Array)
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(49): InterviewingController->actionAutocomplete()
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('autocomplete')
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/au...')
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#17 {main}
+REQUEST_URI=/interviewing/autocomplete?term=a&field=name&studyId=175&self=1&interviewId=762
+HTTP_REFERER=http://egoweb/interviewing/save/175
+---
+2014/03/28 14:51:33 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's leadership (battalion)') ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM `alterList` `t` WHERE name LIKE '%i%' AND studyId = 175 AND name != '1' AND name NOT IN ('The accused' , 'Installation SARC' , 'Brigade VA' , 'Victim's leadership (battalion)') ORDER BY ordering.
+2014/03/28 14:51:33 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's leadership (battalion)') ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1297): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1416): CActiveRecord->query(Object(CDbCriteria), true)
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(489): CActiveRecord->findAll(Array)
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(49): InterviewingController->actionAutocomplete()
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('autocomplete')
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/au...')
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#17 {main}
+REQUEST_URI=/interviewing/autocomplete?term=i&field=name&studyId=175&self=1&interviewId=762
+HTTP_REFERER=http://egoweb/interviewing/save/175
+---
+2014/03/28 14:51:37 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's leadership (battalion)') ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM `alterList` `t` WHERE name LIKE '%th%' AND studyId = 175 AND name != '1' AND name NOT IN ('The accused' , 'Installation SARC' , 'Brigade VA' , 'Victim's leadership (battalion)') ORDER BY ordering.
+2014/03/28 14:51:37 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's leadership (battalion)') ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1297): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1416): CActiveRecord->query(Object(CDbCriteria), true)
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(489): CActiveRecord->findAll(Array)
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(49): InterviewingController->actionAutocomplete()
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('autocomplete')
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/au...')
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#17 {main}
+REQUEST_URI=/interviewing/autocomplete?term=th&field=name&studyId=175&self=1&interviewId=762
+HTTP_REFERER=http://egoweb/interviewing/save/175
+---
+2014/03/28 14:51:37 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's leadership (battalion)') ORDER BY ordering' at line 1. The SQL statement executed was: SELECT * FROM `alterList` `t` WHERE name LIKE '%the%' AND studyId = 175 AND name != '1' AND name NOT IN ('The accused' , 'Installation SARC' , 'Brigade VA' , 'Victim's leadership (battalion)') ORDER BY ordering.
+2014/03/28 14:51:37 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 's leadership (battalion)') ORDER BY ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1297): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1416): CActiveRecord->query(Object(CDbCriteria), true)
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(489): CActiveRecord->findAll(Array)
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(49): InterviewingController->actionAutocomplete()
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('autocomplete')
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/au...')
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#17 {main}
+REQUEST_URI=/interviewing/autocomplete?term=the&field=name&studyId=175&self=1&interviewId=762
+HTTP_REFERER=http://egoweb/interviewing/save/175
+---
+2014/03/28 14:58:27 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1. The SQL statement executed was: SELECT * FROM expression WHERE id in ().
+2014/03/28 14:58:27 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/authoring/_form_question.php(308): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/authoring/view_question.php(108): CController->renderPartial('_form_question', Array, false, false)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(782): CController->renderPartial('view_question', Array, true)
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/AuthoringController.php(348): CController->render('view_question', Array)
+#11 [internal function]: AuthoringController->actionNetwork('219')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(AuthoringController), Array)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(AuthoringController), Object(ReflectionMethod), Array)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('network')
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('authoring/netwo...')
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#26 {main}
+REQUEST_URI=/authoring/network/219
+---
+2014/03/28 14:59:18 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1. The SQL statement executed was: SELECT * FROM expression WHERE id in ().
+2014/03/28 14:59:18 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/plugins/visualize.php(192): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/components/Plugin.php(27): visualize->actionNodecolor()
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(173): Plugin->run()
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/authoring/_form_question.php(326): CBaseController->widget('plugins.visuali...', Array)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/authoring/view_question.php(108): CController->renderPartial('_form_question', Array, false, false)
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(782): CController->renderPartial('view_question', Array, true)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/AuthoringController.php(348): CController->render('view_question', Array)
+#14 [internal function]: AuthoringController->actionNetwork('219')
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(AuthoringController), Array)
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(AuthoringController), Object(ReflectionMethod), Array)
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('network')
+#26 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('authoring/netwo...')
+#27 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#28 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#29 {main}
+REQUEST_URI=/authoring/network/219
+---
+2014/03/28 14:59:56 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1. The SQL statement executed was: SELECT * FROM expression WHERE id in ().
+2014/03/28 14:59:56 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/plugins/visualize.php(192): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/components/Plugin.php(27): visualize->actionNodecolor()
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(173): Plugin->run()
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/authoring/_form_question.php(329): CBaseController->widget('plugins.visuali...', Array)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/authoring/view_question.php(108): CController->renderPartial('_form_question', Array, false, false)
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(782): CController->renderPartial('view_question', Array, true)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/AuthoringController.php(348): CController->render('view_question', Array)
+#14 [internal function]: AuthoringController->actionNetwork('219')
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(AuthoringController), Array)
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(AuthoringController), Object(ReflectionMethod), Array)
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('network')
+#26 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('authoring/netwo...')
+#27 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#28 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#29 {main}
+REQUEST_URI=/authoring/network/219
+---
+2014/03/28 15:01:29 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1. The SQL statement executed was: SELECT * FROM expression WHERE id in ().
+2014/03/28 15:01:29 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/authoring/_form_question.php(308): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/authoring/view_question.php(108): CController->renderPartial('_form_question', Array, false, false)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(782): CController->renderPartial('view_question', Array, true)
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/AuthoringController.php(348): CController->render('view_question', Array)
+#11 [internal function]: AuthoringController->actionNetwork('219')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(AuthoringController), Array)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(AuthoringController), Object(ReflectionMethod), Array)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('network')
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('authoring/netwo...')
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#26 {main}
+REQUEST_URI=/authoring/network/219
+---
+2014/03/28 15:01:43 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1. The SQL statement executed was: SELECT * FROM expression WHERE id in ().
+2014/03/28 15:01:43 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/authoring/_form_question.php(308): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/authoring/view_question.php(108): CController->renderPartial('_form_question', Array, false, false)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(782): CController->renderPartial('view_question', Array, true)
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/AuthoringController.php(348): CController->render('view_question', Array)
+#11 [internal function]: AuthoringController->actionNetwork('219')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(AuthoringController), Array)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(AuthoringController), Object(ReflectionMethod), Array)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('network')
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('authoring/netwo...')
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#26 {main}
+REQUEST_URI=/authoring/network/219
+---
+2014/03/28 15:01:48 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1. The SQL statement executed was: SELECT * FROM expression WHERE id in ().
+2014/03/28 15:01:48 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(395): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/authoring/_form_question.php(308): CDbCommand->queryAll()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/authoring/view_question.php(108): CController->renderPartial('_form_question', Array, false, false)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(782): CController->renderPartial('view_question', Array, true)
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/AuthoringController.php(348): CController->render('view_question', Array)
+#11 [internal function]: AuthoringController->actionNetwork('219')
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(AuthoringController), Array)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(AuthoringController), Object(ReflectionMethod), Array)
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('network')
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('authoring/netwo...')
+#24 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#25 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#26 {main}
+REQUEST_URI=/authoring/network/219
+---
+2014/03/28 16:10:33 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1. The SQL statement executed was: UPDATE `answer` SET `value`=:value WHERE id = .
+2014/03/28 16:10:33 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:357
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(1282): CDbCommand->execute(Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/extensions/custy.php(36): CDbCommand->update('answer', Array, 'id = ')
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/models/Study.php(457): u('answer', Array, 'id = ')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(62): Study->buildQuestions('175', '21', '761')
+#4 [internal function]: InterviewingController->actionView('175')
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#19 {main}
+REQUEST_URI=/interviewing/175?interviewId=761&page=21
+---

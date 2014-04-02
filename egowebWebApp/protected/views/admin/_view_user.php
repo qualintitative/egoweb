@@ -6,9 +6,11 @@ jQuery('a.delete').click(function() {
 		//  do your post request here
 
 
+		if(confirm('Do really want to delete ' +$(this).parent().parent().children(':first-child').text()+'?')){
 		$.get(url,function(data){
 			 $('#userlist').html(data);
 		 });
+		}
 		return false;
 });
 ");
@@ -28,7 +30,6 @@ jQuery('a.update').click(function() {
 $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'users-grid',
 	'dataProvider'=>$dataProvider,
-	//'filter'=>$model,
 	'pager'=>array(
 		'header'=> '',
 	),
@@ -37,6 +38,12 @@ $this->widget('zii.widgets.grid.CGridView', array(
 	'columns'=>array(
 		'name',
 		'email',
+		array(
+			'name'=>'permissions',
+			'header'=>'Permission',
+			'type'=>'raw',
+			'value'=>'$data->permission',
+		),
 		array
 		(
 			'class'=>'CButtonColumn',
@@ -45,11 +52,15 @@ $this->widget('zii.widgets.grid.CGridView', array(
 			(
 				'delete' => array
 				(
+					'label' => '<span class="fui-cross"></i>',
+					'imageUrl' => false,
 					'url'=>'Yii::app()->createUrl("/admin/userdelete", array("userId"=>$data->id, "_"=>"'.uniqid().'"))',
 					'options'=>array('class'=>'delete'),
 				),
 				'update' => array
 				(
+					'label' => '<span class="fui-new"></i>',
+					'imageUrl' => false,
 					'url'=>'Yii::app()->createUrl("/admin/useredit", array("userId"=>$data->id, "_"=>"'.uniqid().'"))',
 					'options'=>array('class'=>'update'),
 				),

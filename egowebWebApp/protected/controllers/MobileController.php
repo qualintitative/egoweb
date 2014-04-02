@@ -26,7 +26,20 @@ class MobileController extends Controller
 		$this->render('import');
 	}
 	public function actionAjaxstudies(){
-		$studies = q("SELECT id,name FROM study")->queryAll();
+		if(isset($_GET['userId'])){
+			$permission = q("SELECT permissions FROM user WHERE id = " . $_GET['userId'])->queryScalar();
+			if($permission != 11)
+				$studyIds = q("SELECT studyId FROM interviewers WHERE interviewerId = " . $_GET['userId'])->queryColumn();
+			else
+				$studyIds = "";
+		}else{
+			$studyIds = "";
+		}
+		if($studyIds)
+			$studies = q("SELECT id,name FROM study WHERE id IN (" . implode(",", $studyIds) . ")")->queryAll();
+		else
+			$studies = q("SELECT id,name FROM study")->queryAll();
+
 		foreach($studies as $study){
 			$json[$study['id']] = $study['name'];
 		}
@@ -85,7 +98,7 @@ class MobileController extends Controller
 			$model->attributes=$_POST['LoginForm'];
 			// validate user input and redirect to the previous page if valid
 			if($model->validate() && $model->login()){
-				echo "success";
+				echo Yii::app()->user->id;
 			}else{
 				echo "failed";
 			}

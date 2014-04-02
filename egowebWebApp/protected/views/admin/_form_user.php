@@ -3,17 +3,19 @@ $form = $this->beginWidget('CActiveForm', array(
 	'id'=>'add-alter-form',
 	'enableAjaxValidation'=>false,
 	'action'=>'user',
+	'htmlOptions'=>array('class'=>'form-inline'),
 ));
 ?>
 <?php echo $form->hiddenField($user,'id',array('value'=>$user->id)); ?>
+<div class="form-group">
 <?php echo $form->labelEx($user,'name'); ?>
-<?php echo $form->textField($user,'name', array('style'=>'width:100px')); ?>
-<?php echo $form->error($user,'name'); ?>
-<?php echo $form->labelEx($user,'email'); ?>
-<?php echo $form->textField($user,'email', array('style'=>'width:100px')); ?>
-<?php echo $form->error($user,'email'); ?>
-<?php echo $form->labelEx($user,'permissions'); ?>
-
+<?php echo $form->textField($user,'name', array('class'=>'form-control input-sm')); ?>
+</div>
+<div class="form-group">
+<?php echo $form->labelEx($user,'email', array('class'=>'control-label')); ?>
+<?php echo $form->textField($user,'email', array('class'=>'form-control input-sm')); ?>
+</div>
+<div class="form-group">
 <?php echo $form->dropdownlist(
 	$user,
 	'permissions',
@@ -22,9 +24,9 @@ $form = $this->beginWidget('CActiveForm', array(
 			11=>"admin"
 		),
 
-	array('empty' => 'Choose One')
+	array('empty' => 'Select Permission')
 ); ?>
-
-<?php echo CHtml::submitButton (($user->isNewRecord) ? "Add User" : "Update");
+</div>
+<?php echo CHtml::submitButton (($user->isNewRecord) ? "Add" : "Update", array("class"=>'btn btn-primary'));
 ?>
 <?php $this->endWidget(); ?>

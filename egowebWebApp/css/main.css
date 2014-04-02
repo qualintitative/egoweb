@@ -771,3 +771,7 @@ ul.authoring li a:hover{
 	padding:1px 2px;
 	border-radius: 2px;
 }
+
+.form-inline{
+	padding:20px 10px;
+}

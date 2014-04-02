@@ -121,6 +121,12 @@ class User extends CActiveRecord
             return $member->name;
     }
 
+	public function getPermission(){
+		if($this->permissions == 11)
+			return "admin";
+		if(!Yii::app()->user->isGuest)
+			return "interviewer";
+	}
 
     /**
      * Retrieves a list of models based on the current search/filter conditions.

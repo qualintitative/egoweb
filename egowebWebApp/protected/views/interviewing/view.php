@@ -448,12 +448,6 @@ $('.".$array_id."-skipReason').click(function(event){
 	<?php endif; ?>
 <?php endforeach; ?>
 
-<?php $this->endWidget(); ?>
-<?php
-if($networkQuestion)
-	$this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$networkQuestion->networkRelationshipExprId, 'params'=>$networkQuestion->networkParams));
-
-?>
 	<div id="buttonRow" style="float:left;padding-bottom:20px;clear:left">
 		<input name="page" type=hidden value=<?php echo $page ?> />
 		<input name="studyId" type=hidden value=<?php echo $studyId ?> />
@@ -462,9 +456,9 @@ if($networkQuestion)
 		<?php endif; ?>
 		<?php if($completed != -1): ?>
 			<?php if($question->answerType != "CONCLUSION"): ?>
-				<input class='orangebutton' onclick='$("#answer-form").submit()' value="Next"/>
+				<input class='orangebutton' type="submit" value="Next"/>
 			<?php else: ?>
-				<input class='orangebutton' onclick='$("#answer-form").submit()' value="Finish"/>
+				<input class='orangebutton' type="submit" value="Finish"/>
 			<?php endif; ?>
 		<?php else: ?>
 			<?php if($question->answerType != "CONCLUSION"): ?>
@@ -472,6 +466,14 @@ if($networkQuestion)
 			<?php endif; ?>
 		<?php endif; ?>
 	</div>
+
+<?php $this->endWidget(); ?>
+<?php
+if($networkQuestion)
+	$this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$networkQuestion->networkRelationshipExprId, 'params'=>$networkQuestion->networkParams));
+
+?>
+
 <script>
 $(function(){
 	nav = <?php echo Study::nav($studyId, $page, $interviewId); ?>;

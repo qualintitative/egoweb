@@ -189,8 +189,11 @@ class visualize extends Plugin
 			foreach($alter_expression_ids as $id){
 				$all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
 			}
+			if($all_expression_ids){
 			$alter_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
-
+			}else{
+				$alter_expressions = array();
+			}
 		foreach($alter_expressions as $expression){
 			$selected = '';
 			if($nodeColorId == "expression_" . $expression['id'])
@@ -468,7 +471,7 @@ class visualize extends Plugin
 		foreach($alters as $alter){
 			foreach($alters2 as $alter2){
 
-			if($expression->evalExpression($expression->id, $this->method, $alter['id'], $alter2['id'])){
+			if($expression && $expression->evalExpression($expression->id, $this->method, $alter['id'], $alter2['id'])){
 				if($currentNode != $alter['id']){
 					$currentNode = $alter2['id'];
 					$nodes[$currentNode]['id'] = $currentNode;

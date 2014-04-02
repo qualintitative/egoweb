@@ -49,8 +49,9 @@ function verifyServer(address, data){
 		data:data,
 		crossDomain: true,
 		success: function(data){
-			if(data == "success"){
+			if(!isNaN(data)){
 				console.log(server);
+				userId = data;
 				$('#' + server.ID + '_serverForm').hide();
 				getStudyList(server);
 				$('#addServerButton').show();
