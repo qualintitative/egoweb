@@ -27,7 +27,7 @@ jQuery('a.update-prompt').click(function() {
 ");
 ?>
 <div style="width:100%; float:left">
-<label>Variable Alter Prompts</label>
+<h3>Variable Alter Prompts</h3>
 
 <?php
 if(isset($model))

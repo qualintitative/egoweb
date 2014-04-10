@@ -387,7 +387,7 @@ class AuthoringController extends Controller
 				$model = new Expression;
 			$model->attributes = $_POST['Expression'];
 			if(!$model->save())
-				print_r($model->getErrors);
+				print_r($model->errors);
 			else
 				$this->redirect(array('expression','id'=>$model->studyId));
 		}
@@ -489,9 +489,14 @@ class AuthoringController extends Controller
 				$model = new Question;
 			$this->performAjaxValidation($model);
 			$oldTitle = $model->title;
+			if($model->answerType == "MULTIPLE_SELECTION")
+				$oldTitle .= ' <div class="optionLink" style="height:20px; width:60px;float:right">Options</div>';
 			$model->attributes=$_POST['Question'];
 			if($model->save()){
 				Study::updated($model->studyId);
+
+			if($model->answerType == "MULTIPLE_SELECTION")
+				$model->title .= ' <div class="optionLink" style="height:20px; width:60px;float:right">Options</div>';
 				echo $oldTitle . ";;;" . $model->title;
 			}else{
 				print_r($model->getErrors());

@@ -1,6 +1,6 @@
 <br style="clear:left">
-
 <?php
+if($study->useAsAlters){
 $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
 	'model' => $model,
 	'name' => 'Alters[name]',
@@ -32,6 +32,9 @@ $this->widget('zii.widgets.jui.CJuiAutoComplete', array(
 )
 
 ));
+}else{
+	echo $form->textField($model, 'name', array("style"=>"float:left"));
+}
 echo $form->hiddenField($model, 'interviewId',array('value'=>$interviewId));
 
 ?>

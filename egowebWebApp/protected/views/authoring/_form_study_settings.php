@@ -126,6 +126,11 @@
 		<?php echo $form->error($model,'multiSessionEgoId'); ?>
 	</div>
 
+		<br style="clear:both">
+		<label>Restrict Ego Id to participant list</label>
+		<?php echo $form->checkBox($model,'useAsAlters'); ?>
+
+
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
 	</div>
@@ -138,9 +143,6 @@
 		); ?>
 	<?php endif; ?>
 </div>
-
-<br style="clear:both">
-
 	<div class="row" style="float:left;width:100%; padding:10px">
 
 		<div id="interviewers">
@@ -175,11 +177,13 @@
 		?>
 		</div>
 
+
+
 		<div id="showLink" style="padding:10px;clear:both;"></div>
 
 		<div style="float:left; width:400px;">
 			<div style="margin-bottom:15px;">
-				<span class="smallheader">Add new alter</span>
+				<span class="smallheader">Add new participant</span>
 				<?php
 					$alterList = new AlterList;
 					$form=$this->beginWidget('CActiveForm', array(
@@ -216,7 +220,8 @@
 				<?php $this->endWidget(); ?>
 			</div>
 			<div id="edit-alterList" style="margin-bottom:15px;"></div>
-		</div><!-- form -->
+		</div>
+
 		<div id="alterPrompt" >
 		<?php
 			$criteria=new CDbCriteria;

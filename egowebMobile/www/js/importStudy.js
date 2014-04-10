@@ -69,7 +69,8 @@ function importStudy(address, id){
 				"valueLogicalSkip",
 				"valueNotYetAnswered",
 				"modified",
-				"multiSessionEgoId"
+				"multiSessionEgoId",
+				"useAsAlters"
 			],
 			primaryKey: [ "id" ],
 		};

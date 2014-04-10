@@ -257,7 +257,7 @@ class InterviewingController extends Controller
 				}
 
 				if($Answer['value'] == "" && $Answer['skipReason'] == "NONE" && $Answer['answerType'] == "TEXTUAL"){
-					$model[$array_id]->addError('value', 'Value cannot be blank');
+					$model[$array_id]->addError('value', 'Please enter a valid response');
 					$errors++;
 				}
 
@@ -412,17 +412,19 @@ class InterviewingController extends Controller
 				$model->addError('name', $_POST['Alters']['name']. ' has already been added!');
 			}
 
+			$study = Study::model()->findByPk($studyId);
 
 			// check to see if pre-defined alters exist.  If they do exist, check name against list
-			$alterCount = q("SELECT count(id) FROM alterList WHERE studyId = ".$studyId)->queryScalar();
-			if($alterCount > 0){
-				$nameInList = q('SELECT name FROM alterList WHERE name = "'.$_POST['Alters']['name'].'" AND studyId = '. $studyId)->queryScalar();
-				if(!$nameInList){
-					$model->addError('name', $_POST['Alters']['name']. ' is not in our list of participants');
+			if($study->useAsAlters){
+				$alterCount = q("SELECT count(id) FROM alterList WHERE studyId = ".$studyId)->queryScalar();
+				if($alterCount > 0){
+					$nameInList = q('SELECT name FROM alterList WHERE name = "'.$_POST['Alters']['name'].'" AND studyId = '. $studyId)->queryScalar();
+					if(!$nameInList){
+						$model->addError('name', $_POST['Alters']['name']. ' is not in our list of participants');
+					}
 				}
 			}
 
-			$study = Study::model()->findByPk($studyId);
 			if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
 				$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $model->interviewId . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
 				$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
@@ -469,21 +471,24 @@ class InterviewingController extends Controller
 
 	function actionAutocomplete() {
 		if (Yii::app()->request->isAjaxRequest && isset($_GET['term'])) {
-			$self = '';
+			$self = ''; $filter = "";
 			if(isset($_GET['self']))
 				$self = $_GET['self'];
-			$names = array();
+			$names = "";
 			if(isset($_GET['interviewId'])){
 				$sql = "SELECT " . $_GET['field'] .  " FROM alters WHERE interviewId = " . $_GET['interviewId'];
 				$names = Yii::app()->db->createCommand($sql)->queryColumn();
 				$names = implode("' , '", $names);
 			}
+			if(!Yii::app()->user->isSuperAdmin)
+				$filter = " AND interviewerId = " . Yii::app()->user->id;
+
 			$criteria = new CDbCriteria();
 			$criteria=array(
 				'condition'=>$_GET['field'] . " LIKE '%" . $_GET['term'] .
 				"%' AND studyId = ". $_GET['studyId'] .
 				" AND " . $_GET['field']. " != '" . $self . "'" .
-				" AND " . $_GET['field']. " NOT IN ('" . $names . "')",
+				" AND " . $_GET['field']. " NOT IN ('" . $names . "')" . $filter,
 				'order'=>'ordering',
 			);
 			$models = AlterList::model()->findAll($criteria);

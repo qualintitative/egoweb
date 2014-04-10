@@ -36,6 +36,7 @@
 					'condition'=>$condition,
 					'order'=>'id DESC',
 				);
+				$studies = Study::model()->findAll($criteria);
 				?>
 				<ul class="nav navbar-nav navbar-left">
 					<li class="dropdown">
@@ -43,9 +44,18 @@
 							<span class="fui-list"></span>
 						</a>
 						<ul class="dropdown-menu">
+							<li><a href="/interviewing">Interviewing</a>
+								<ul>
+									<?php foreach($studies as $data): ?>
+									<li>
+									<?php echo CHtml::link(CHtml::encode($data->name), array('/interviewing?studyId='.$data->id)); ?>
+									</li>
+									<?php endforeach; ?>
+								</ul>
+							</li>
+							<?php if(Yii::app()->user->isSuperAdmin): ?>
 							<li><a href="/authoring">Authoring</a>
 								<ul>
-									<?php $studies = Study::model()->findAll($criteria); ?>
 									<?php foreach($studies as $data): ?>
 									<li>
 									<?php echo CHtml::link(CHtml::encode($data->name), array('/authoring/edit', 'id'=>$data->id)); ?>
@@ -63,19 +73,19 @@
 								</ul>
 							</li>
 							<li><a href="/importExport">Import / Export</a></li>
-							<li><a href="/interviewing">Interviewing</a>
-								<ul>
-									<?php foreach($studies as $data): ?>
-									<li>
-									<?php echo CHtml::link(CHtml::encode($data->name), array('/interviewing?studyId='.$data->id)); ?>
-									</li>
-									<?php endforeach; ?>
-								</ul>
-							</li>
-							<?php if(Yii::app()->user->isSuperAdmin): ?>
 							<li><a href="/admin/user">User Admin</a>
 							<?php endif; ?>
+							<li><a href="/mobile">Mobile</a>
+							<li><a href="/site/logout">Log Out</a>
 						</ul>
+					</li>
+				</ul>
+				<?php else: ?>
+				<ul class="nav navbar-nav navbar-left">
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							<span class="fui-lock"></span>
+						</a>
 					</li>
 				</ul>
 				<?php endif; ?>

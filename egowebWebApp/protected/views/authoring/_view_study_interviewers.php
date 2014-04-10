@@ -9,7 +9,7 @@ jQuery('a.delete-interviewer').click(function() {
 ");
 ?>
 <div style="width:100%; float:left">
-<label>Interviewers</label>
+<h3>Interviewers</h3>
 
 <?php
 if(isset($model))

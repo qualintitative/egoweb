@@ -53,7 +53,7 @@ function clickHandler(evt) {
 ");
 ?>
 <div style="width:100%; float:left">
-<label>Pre-defined Alter List</label>
+<h3>Pre-defined Participant List</h3>
 
 <?php
 $afterAjaxUpdate = 'function(id, data) { $("a.moveup").bind("click", clickHandler); }';

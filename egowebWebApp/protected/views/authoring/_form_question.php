@@ -29,7 +29,8 @@ if(!is_numeric($model->id))
 jQuery(document).ready(function(){
 	if('<?php echo $model->subjectType; ?>' != '')
 		jQuery('.panel-<?php echo $model->id; ?>#<?php echo $model->subjectType; ?>').show();
-
+	if('<?php echo $model->answerType; ?>' != '')
+		jQuery('.panel-<?php echo $model->id; ?>#<?php echo $model->answerType; ?>').show();
 	if('<?php echo $model->answerType; ?>' == 'MULTIPLE_SELECTION')
 		jQuery('.panel-<?php echo $model->id; ?>#SELECTION').show();
 	if('<?php echo $model->subjectType; ?>' == 'NETWORK')
@@ -516,7 +517,7 @@ function refresh(container){
 		$model->isNewRecord ? 'Create' : 'Save',
 		CController::createUrl('ajaxupdate?_'.uniqid()),
 		array(
-			'success' => 'js:function(data){data=data.split(";;;");console.log(data);$("#' . $model->id .' > h3").html($("#' . $model->id .' > h3").html().replace(data[0], data[1]));$("#' . $model->id .' > h3").click();}',
+			'success' => 'js:function(data){data=data.split(";;;");console.log(data);$("#' . $model->id .' > h3").html($("#' . $model->id .' > h3").html().replace(data[0], data[1]));$(".optionLink").click(function(e){clickOption[$(this).parent().parent().attr("id")] = true;});$("#' . $model->id .' > h3").click();}',
 ),
 		array('id'=>uniqid(), 'live'=>false));
 	?>

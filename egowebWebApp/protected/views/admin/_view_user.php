@@ -27,6 +27,19 @@ jQuery('a.update').click(function() {
 		return false;
 });
 ");
+Yii::app()->clientScript->registerScript('link', "
+jQuery('a.link').click(function() {
+
+		var url = $(this).attr('href');
+		//  do your post request here
+
+
+		$.get(url,function(data){
+			 $('#reset-link').html(data);
+		 });
+		return false;
+});
+");
 $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'users-grid',
 	'dataProvider'=>$dataProvider,
@@ -47,7 +60,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
 		array
 		(
 			'class'=>'CButtonColumn',
-			'template'=>'{update}{delete}',
+			'template'=>'{link}{update}{delete}',
 			'buttons'=>array
 			(
 				'delete' => array
@@ -64,9 +77,17 @@ $this->widget('zii.widgets.grid.CGridView', array(
 					'url'=>'Yii::app()->createUrl("/admin/useredit", array("userId"=>$data->id, "_"=>"'.uniqid().'"))',
 					'options'=>array('class'=>'update'),
 				),
+				'link' => array
+				(
+					'label' => '<span class="fui-cmd"></i>',
+					'imageUrl' => false,
+					'url'=>'Yii::app()->createUrl("/admin/getlink", array("email"=>$data->email, "_"=>"'.uniqid().'"))',
+					'options'=>array('class'=>'link'),
+				),
 			),
 
 		),
 	),
 ));
 ?>
+<div class="col-sm-12" id="reset-link"></div>

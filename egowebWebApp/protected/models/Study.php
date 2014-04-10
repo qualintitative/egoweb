@@ -56,7 +56,7 @@ class Study extends CActiveRecord
 			array('modified','default',
 				'value'=>new CDbExpression('NOW()'),
 				'setOnEmpty'=>true,'on'=>'insert'),
-			array('multiSessionEgoId','default',
+			array('multiSessionEgoId, useAsAlters','default',
 				'value'=>0,
 			'setOnEmpty'=>true),
 			);
@@ -583,8 +583,8 @@ class Study extends CActiveRecord
 		          $newQuestion->minPrevQues = $newQuestionIds[$newQuestion->minPrevQues];
 		      if(is_numeric($newQuestion->maxPrevQues) && $newQuestion->maxPrevQues != 0)
 		          $newQuestion->maxPrevQues = $newQuestionIds[$newQuestion->maxPrevQues];
-		      if(is_numeric($newQuestion->networkNShapeQId) && $newQuestion->networkNShapeQId != 0)
-		          $newQuestion->networkNShapeQId = $newQuestionIds[$newQuestion->networkNShapeQId];
+		      if(is_numeric($newQuestion->networkParams) && $newQuestion->networkParams != 0)
+		          $newQuestion->networkParams = $newQuestionIds[$newQuestion->networkParams];
 		      if(is_numeric($newQuestion->networkNColorQId) && $newQuestion->networkNColorQId != 0)
 		          $newQuestion->networkNColorQId = $newQuestionIds[$newQuestion->networkNColorQId];
 		      if(is_numeric($newQuestion->networkNSizeQId) && $newQuestion->networkNSizeQId != 0)

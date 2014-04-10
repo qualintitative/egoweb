@@ -34,9 +34,7 @@ function loadData(id, form){
 }
 
 function initList(){
-$('.optionLink').click(function(e){
-	console.log("option click");
-	clickOption[$(this).parent().parent().attr('id')] = true;
+	$('.optionLink').click(function(e){clickOption[$(this).parent().parent().attr('id')] = true;
 });
 
 $('.items')

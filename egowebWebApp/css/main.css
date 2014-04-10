@@ -775,3 +775,11 @@ ul.authoring li a:hover{
 .form-inline{
 	padding:20px 10px;
 }
+
+.button-column a span {
+	margin-left:5px;
+}
+
+#reset-link{
+	padding:10px;
+}

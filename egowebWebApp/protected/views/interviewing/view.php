@@ -34,6 +34,68 @@ $(function(){
 		$(".orangebutton").prop('disabled', false);
 		$(".graybutton").prop('disabled', false);
 	}
+	/*$('.pageLevel').change(function(){
+		console.log($(this).attr("checked"));
+		$('input[value="' + $(this).val() + '"]').prop("checked", $(this).is(":checked"));
+		if($(this).is(":checked")){
+			$( "input[class*='skipReason']").prop("checked", false);
+			$( "input[class*='multiselect']").prop("checked", false);
+			$( "input[value='" + $(this).val() + "']").prop("checked", true);
+
+			if($(this).val() == "DONT_KNOW" || $(this).val() == "REFUSE")
+				$( "input[name*='value']" ).val('');
+			else
+				$( "input[name*='value']" ).val($(this).val());
+			$(".skipReasonValue").val($(this).val());
+		}else{
+			$(".skipReasonValue").val("NONE");
+		}
+	})*/
+	$('.pageLevel').change(function(){
+		var selected = $(this);
+		if($(this).is(":checked")){
+			$( "input[class*='skipReason']").prop("checked", false);
+			$( "input[class*='multiselect-']").prop("checked", false);
+			$( "input[value='" + selected.val() + "']").each(function(index){
+				if($(this).attr('class').match(/multiselect-(.*)/) && $(this).attr('class').match(/multiselect-(.*)/).length > 1){
+					var multi = $(this).attr('class').match(/multiselect-(.*)/)[1];
+					var realVal = $("#Answer_" + multi + "_value");
+					var values = realVal.val().split(',');
+					if(realVal.val() == ""){
+						$(this).prop("checked", true);
+						if(selected.val() == "DONT_KNOW" || selected.val() == "REFUSE"){
+							$("#Answer_" + multi + "_skipReason" ).val(selected.val());
+						}else{
+							$("#Answer_" + multi + "_skipReason" ).val("NONE");
+						}
+						values.push(selected.val());
+						realVal.val(values.join(","));
+					}else{
+						for(var k in values){
+							$(".multiselect-" +  multi + "[value='" + values[k] + "']").prop("checked", true);
+						}
+					}
+				}
+			});
+		}else{
+			$( "input[value='" + selected.val() + "']").each(function(index){
+				if($(this).attr('class').match(/multiselect-(.*)/) && $(this).attr('class').match(/multiselect-(.*)/).length > 1){
+					var multi = $(this).attr('class').match(/multiselect-(.*)/)[1];
+					var realVal = $("#Answer_" + multi + "_value");
+					var values = realVal.val().split(',');
+					for(var k in values){
+						if(values[k] == selected.val()){
+							$(this).prop("checked", false);
+							if(selected.val() == "DONT_KNOW" || selected.val() == "REFUSE"){
+								$("#Answer_" + multi + "_skipReason" ).val("NONE");
+							}
+							realVal.val('');
+						}
+					}
+				}
+			});
+		}
+	})
 });
 </script>
 
@@ -72,23 +134,23 @@ $this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterP
 		<div class="question">
 	<?php endif; ?>
 	<?php if($questions[0]->answerType == 'ALTER_PROMPT'): ?>
-<?php if($study->multiSessionEgoId): ?>
-<div id="previous_alters">
-<?php
-$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionId = " . $study->multiSessionEgoId)->queryScalar();
-$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
-$interviewIds = implode(",",array_diff($interviewIds, array($interviewId)));
-$alters = q("SELECt * FROM alters WHERE FIND_IN_SET(interviewId,'$interviewIds')")->queryAll();
-if($alters){
-	echo "<b>Previous Alters</b><br><br>";
-	foreach($alters as $oldAlter){
-		echo $oldAlter['name'] . "<br>";
-	}
-}
-?>
-</div>
-<?php endif; ?>
+		<?php if($study->multiSessionEgoId): ?>
+		<div id="previous_alters">
+		<?php
+		$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionId = " . $study->multiSessionEgoId)->queryScalar();
+		$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
+		$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
+		$interviewIds = implode(",",array_diff($interviewIds, array($interviewId)));
+		$alters = q("SELECt * FROM alters WHERE FIND_IN_SET(interviewId,'$interviewIds')")->queryAll();
+		if($alters){
+			echo "<b>Previous Alters</b><br><br>";
+			foreach($alters as $oldAlter){
+				echo $oldAlter['name'] . "<br>";
+			}
+		}
+		?>
+		</div>
+		<?php endif; ?>
 		<div id="alterPrompt" class="orangeText" style="width:500px"></div>
 		<?php
 		$panel = strtolower($questions[0]->answerType);
@@ -97,7 +159,7 @@ if($alters){
 			'enableAjaxValidation'=>true,
 		));
 
-		$this->renderPartial('_form_'.$panel, array('question'=>$questions[0], 'interviewId'=>$interviewId,  'form'=>$form, 'model'=>$alter, 'ajax'=>true), false, true);
+		$this->renderPartial('_form_'.$panel, array('question'=>$questions[0], 'interviewId'=>$interviewId,  'form'=>$form, 'model'=>$alter, 'study'=>$study, 'ajax'=>true), false, true);
 		echo CHtml::ajaxSubmitButton ("+ Add",
 			CController::createUrl('ajaxupdate'),
 			array('success'=>'js:function(data){$("#alterListBox").html(data);$("#Alters_name").val("");$(".flash-error").hide()}'),
@@ -149,14 +211,22 @@ foreach($questions as $question) {
 <?php $counter = 0; $phrase = ""; ?>
 <?php foreach($questions as $question): ?>
 
-		<?php if(!Yii::app()->user->isGuest && $counter == 0): ?>
-			<?php echo $question->title . "<br style='clear:left'><br style='clear:left'>"; ?>
-		<?php endif; ?>
+	<?php if(!Yii::app()->user->isGuest && $counter == 0): ?>
+		<?php echo $question->title . "<br style='clear:left'><br style='clear:left'>"; ?>
+	<?php endif; ?>
 
-		<?php
-		if(count($questions > 1) && $counter == 0 && $question->askingStyleList)
-			echo "<div class='floatingNav' style='background:#fff'>";
-		?>
+	<?php
+	if(count($questions > 1) && $counter == 0 && $question->askingStyleList)
+		echo "<div class='floatingNav' style='background:#fff'>";
+	?>
+
+	<?php
+	// display error
+	if($counter == 0 && $error_id != ""){
+		echo $form->errorSummary($model[$error_id]);
+	}
+	?>
+
 	<?php if($counter == 0 && !in_array($question->answerType, $prompts)): ?>
 	<div class="questionText">
 		<?php
@@ -241,15 +311,9 @@ foreach($questions as $question) {
 		<br clear=all>
 	<?php endif; ?>
 
-<?php
+	<?php
 		if($question->subjectType == "NETWORK" && is_numeric($question->networkRelationshipExprId))
 			$networkQuestion = $question;
-?>
-	<?php
-	// display error
-	if($counter == 0 && $error_id != ""){
-		echo $form->errorSummary($model[$error_id]);
-	}
 	?>
 
 	<?php
@@ -408,7 +472,7 @@ $('.".$array_id."-skipReason').click(function(event){
 			$rowColor = "error";
 		}
 
-		$this->renderPartial('_form_'.$panel, array('skipList'=>$skipList, 'rowColor'=>$rowColor, 'question'=>$question, 'interviewId'=>$interviewId, 'form'=>$form, 'array_id'=>$array_id, 'model'=>$model, 'ajax'=>true), false, false);
+		$this->renderPartial('_form_'.$panel, array(/*'skipList'=>$skipList,*/'rowColor'=>$rowColor, 'question'=>$question, 'interviewId'=>$interviewId, 'form'=>$form, 'array_id'=>$array_id, 'model'=>$model, 'ajax'=>true), false, false);
 
 		if(count($skipList) != 0){
 			if($rowColor != "" && $question->askingStyleList){
@@ -434,16 +498,56 @@ $('.".$array_id."-skipReason').click(function(event){
 		echo $form->hiddenField($model[$array_id], '['.$array_id.']'.'interviewId',array('value'=>$interviewId));
 	}
 
-	if($question->subjectType == 'ALTER'){
+	if($question->subjectType == 'ALTER' || $question->subjectType == 'ALTER_PAIR'){
 		echo $form->hiddenField($model[$array_id], '['.$array_id.']'.'alterId1',array('value'=>$question->alterId1));
-	}else if($question->subjectType == 'ALTER_PAIR'){
-		echo $form->hiddenField($model[$array_id], '['.$array_id.']'.'alterId1',array('value'=>$question->alterId1));
-		echo $form->hiddenField($model[$array_id], '['.$array_id.']'.'alterId2',array('value'=>$question->alterId2));
+		if($question->subjectType == 'ALTER_PAIR')
+			echo $form->hiddenField($model[$array_id], '['.$array_id.']'.'alterId2',array('value'=>$question->alterId2));
 	}
 	?>
 	<?php $counter++; ?>
 	<?php if(count($questions) == $counter && $question->answerType != "ALTER_PROMPT"): ?>
-		</div>
+
+<?php
+	if($question->allButton && ($question->subjectType == 'ALTER' || $question->subjectType == 'ALTER_PAIR')){
+if($rowColor != "" && $question->askingStyleList){
+	$columns = count($options) + count($skipList);
+	$maxwidth = 180;
+	if($columns != 0)
+		$maxwidth = intval(620 / $columns);
+	if($maxwidth > 180)
+		$maxwidth = 180;
+
+	echo "<br clear=all><div class='multiRow palette-sun-flower' style='width:180px; text-align:left'>Set All</div><div class='multiRow palette-sun-flower' style='width:".$maxwidth."px'>".CHtml::checkBoxList(
+			'multiselect-pageLevel',
+			$selected,
+			CHtml::listData($options, 'id', ''),
+			array('class'=>'multiselect pageLevel', 'container'=>'', 'separator'=>"</div><div class='multiRow palette-sun-flower'  style='width:".$maxwidth."px'>")
+		) . "</div>";
+}else{
+	echo CHtml::checkBoxList(
+	    'multiselect-pageLevel',
+	    $selected,
+	    CHtml::listData($options, 'id', 'name'),
+	    array('class'=>'multiselect pageLevel')
+	);
+	echo "<br>";
+}
+		if(count($skipList) != 0){
+			if($rowColor != "" && $question->askingStyleList){
+			    echo "<div class='multiRow palette-sun-flower' style='width:".$maxwidth."px'>".CHtml::checkBoxList(
+			    	"pageLevel_skip",
+			    	array($model[$array_id]->skipReason),
+			    	$skipList,
+			    	array('class'=>'pageLevel-skipReason pageLevel', 'container'=>'', 'separator'=>"</div><div class='multiRow palette-sun-flower' style='width:".$maxwidth."px'>")
+			    ) . "</div>";
+			}else{
+			    echo "<div clear=all>".
+			    CHtml::checkBoxList("pageLevel_skip pageLevel", array($model[$array_id]->skipReason), $skipList, array('class'=>'pageLevel-skipReason'))
+			    ."</div>";
+			}
+		}
+	}
+?>		</div>
 		<br style="clear:left">
 	<?php endif; ?>
 <?php endforeach; ?>

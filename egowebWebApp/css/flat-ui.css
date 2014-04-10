@@ -2048,6 +2048,7 @@ fieldset[disabled] .form-control + .input-icon,
   clear: left;
   float: left;
 }
+/*
 .pager {
   background-color: #34495e;
   border-radius: 6px;
@@ -2090,7 +2091,7 @@ fieldset[disabled] .form-control + .input-icon,
 .pager li > a span + [class*="fui-"],
 .pager li > span span + [class*="fui-"] {
   margin-left: 8px;
-}
+}*/
 .pagination {
   position: relative;
 }

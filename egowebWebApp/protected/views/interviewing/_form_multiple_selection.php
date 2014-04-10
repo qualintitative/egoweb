@@ -40,11 +40,11 @@ if($question->refuseButton)
 
 if($rowColor != "" && $question->askingStyleList){
 	$columns = count($options) + count($skipList);
-			$maxwidth = 180;
-			if($columns != 0)
-				$maxwidth = intval(620 / $columns);
-			if($maxwidth > 180)
-				$maxwidth = 180;
+	$maxwidth = 180;
+	if($columns != 0)
+		$maxwidth = intval(620 / $columns);
+	if($maxwidth > 180)
+		$maxwidth = 180;
 
 	if($question->subjectType == "ALTER")
 		$name = Alters::getName($question->alterId1);

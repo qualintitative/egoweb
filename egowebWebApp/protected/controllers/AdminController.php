@@ -27,7 +27,7 @@ class AdminController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index', 'download', 'user', 'useredit', 'userdelete'),
+				'actions'=>array('index', 'download', 'user', 'useredit', 'userdelete', 'getlink'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -126,7 +126,20 @@ class AdminController extends Controller
 		$this->render('download');
 	}
 
-	function actionForgot(){
+	public function actionGetlink()
+	{
+		if(Yii::app()->user->isSuperAdmin){
+			if(isset($_GET['email'])){
+				$model=User::model()->findByAttributes(array('email'=>$_GET['email']));
+				if($model){
+					echo "Password Reset Link for ". $model->name . "<br>" . Yii::app()->getBaseUrl(true).$this->createUrl('admin/resetpass').'/'.$model->id.':'.
+					User::model()->hashPassword($model->password,'miranda');
+				}
+			}
+		}
+	}
+
+	public function actionForgot(){
 		if(isset($_POST['email'])&&$_POST['email']!=''){
 			$email=$_POST['email'];
 			$model=User::model()->findByAttributes(array('email'=>$email));
@@ -170,7 +183,7 @@ class AdminController extends Controller
 					$login->username=$model->email;
 					$login->password=$password;
 					if($login->validate() && $login->login()){
-						$this->redirect($this->createUrl('admin'));
+						$this->redirect($this->createUrl('/admin'));
 					}
 				}
 			}

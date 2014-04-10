@@ -41,7 +41,7 @@
  * @property integer $studyId
  * @property integer $answerReasonExpressionId
  * @property integer $networkRelationshipExprId
- * @property integer $networkNShapeQId
+ * @property integer $networkParams
  * @property integer $networkNColorQId
  * @property integer $networkNSizeQId
  * @property integer $networkEColorQId
@@ -142,7 +142,7 @@ class Question extends CActiveRecord
 			'studyId' => 'Study',
 			'answerReasonExpressionId' => 'Answer Reason Expression',
 			'networkRelationshipExprId' => 'Network Relationship Expr',
-			'networkNShapeQId' => 'Network Node Shape Q',
+			'networkParams' => 'Network Node Shape Q',
 			'networkNColorQId' => 'Network Node Color Q',
 			'networkNSizeQId' => 'Network Node Size Q',
 			'networkEColorQId' => 'Network Edge Color Q',
@@ -269,7 +269,7 @@ class Question extends CActiveRecord
 		$criteria->compare('studyId',$this->studyId);
 		$criteria->compare('answerReasonExpressionId',$this->answerReasonExpressionId);
 		$criteria->compare('networkRelationshipExprId',$this->networkRelationshipExprId);
-		$criteria->compare('networkNShapeQId',$this->networkNShapeQId);
+		$criteria->compare('networkParams',$this->networkParams);
 		$criteria->compare('networkNColorQId',$this->networkNColorQId);
 		$criteria->compare('networkNSizeQId',$this->networkNSizeQId);
 		$criteria->compare('networkEColorQId',$this->networkEColorQId);
