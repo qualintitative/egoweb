@@ -34,23 +34,6 @@ if($question->subjectType == "EGO_ID" && $question->useAlterListField != ""){
 			'select' => "js:function(event, ui) {
 				$('#Answer_".$array_id." _value').val(ui.item.name);
 			}",
-			'change'=>'js:function( event, ui ) {
-  if ( !ui.item ) {
-    var matcher = new RegExp("^" + $.ui.autocomplete.escapeRegex($(this).val()) + "$", "i" ), valid = false;
-
-
-      if ($(this).text().match(matcher)) {
-        this.selected = valid = true;
-        return false;
-      }
-
-
-    if (!valid) {
-      $(this).val("");
-      return false;
-    }
-  }
-}',
 		)
 	));
 	echo "<br clear=all>";

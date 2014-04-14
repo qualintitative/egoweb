@@ -37,6 +37,33 @@ class AuthoringController extends Controller
 		);
 	}
 
+	public function actionImportlist()
+	{
+		if(!is_uploaded_file($_FILES['userfile']['tmp_name'])) //checks that file is uploaded
+			die("Error importing Participant list");
+
+		$file = fopen($_FILES['userfile']['tmp_name'],"r");
+
+		while(! feof($file)){
+			$data = fgetcsv($file);
+			if(isset($data[0]) && isset($data[1]) && $data[0] && $data[1]){
+				$model = new AlterList;
+				$criteria=new CDbCriteria;
+				$criteria->condition = ('studyId = '.$_POST['studyId']);
+				$criteria->select='count(ordering) AS ordering';
+				$row = AlterList::model()->find($criteria);
+				$model->ordering = $row['ordering'];
+				$model->name = trim($data[0]);
+				$model->email = $data[1];
+				$model->studyId = $_POST['studyId'];
+				$model->save();
+			}
+
+		}
+		fclose($file);
+		$this->redirect(Yii::app()->request->getUrlReferrer());
+	}
+
 	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed

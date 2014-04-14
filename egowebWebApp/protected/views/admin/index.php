@@ -1,4 +1,5 @@
 <?php
+
 /* @var $this AdminController */
 ?>
 	<table cellspacing=0 cellpadding=0 class="admin">

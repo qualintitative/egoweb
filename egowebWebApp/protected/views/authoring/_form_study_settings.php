@@ -127,8 +127,14 @@
 	</div>
 
 		<br style="clear:both">
-		<label>Restrict Ego Id to participant list</label>
+
+		<label>Fill auto-complete with participant list</label>
 		<?php echo $form->checkBox($model,'useAsAlters'); ?>
+
+		<br style="clear:both">
+
+		<label>Restrict alters to participant list</label>
+		<?php echo $form->checkBox($model,'restrictAlters'); ?>
 
 
 	<div class="row buttons">
@@ -221,7 +227,15 @@
 			</div>
 			<div id="edit-alterList" style="margin-bottom:15px;"></div>
 		</div>
-
+		<div style="float:left; width:400px; clear:left">
+<form enctype="multipart/form-data" method="POST" action="/authoring/importlist">
+    <!-- MAX_FILE_SIZE must precede the file input field -->
+    <!-- Name of input element determines name in $_FILES array -->
+     <input name="userfile" type="file" />
+    <input type="hidden" name="studyId" value="<?= $model->id; ?>" />
+    <input class="btn btn-primary" type="submit" value="Import Participant List" />
+</form>
+	</div>
 		<div id="alterPrompt" >
 		<?php
 			$criteria=new CDbCriteria;
@@ -231,7 +245,7 @@
 			$dataProvider=new CActiveDataProvider('AlterPrompt',array(
 				'criteria'=>$criteria,
 			));
-   			$this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$model->id, 'ajax'=>true), false, false);
+			$this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$model->id, 'ajax'=>true), false, false);
 		?>
 		</div>
 		<div style="float:left; width:100%;margin-top:15px;">

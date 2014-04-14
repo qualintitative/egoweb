@@ -194,7 +194,6 @@ class InterviewingController extends Controller
 				else
 					$array_id = $Answer['questionId'];
 
-
 				if(isset($array_id) && $questions[$array_id] && !isset($model[$array_id])){
 					if($questions[$array_id]->subjectType == "ALTER")
 						$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId, 'questionId'=>$questions[$array_id]->id, 'alterId1'=>$questions[$array_id]->alterId1));
@@ -206,6 +205,17 @@ class InterviewingController extends Controller
 
 				if(!$model[$array_id])
 					$model[$array_id] = new Answer;
+
+
+				if($questions[$array_id]->useAlterListField){
+					$interviewer = "";
+					$field = $questions[$array_id]->useAlterListField;
+					if(!Yii::app()->user->isSuperAdmin)
+						$interviewer = " AND interviewerId = " . Yii::app()->user->id;
+					$restricted = q("SELECT " . $field . " FROM alterList WHERE studyId = " . $_POST['studyId'] . $interviewer)->queryColumn();
+					if(!in_array($Answer['value'], $restricted))
+						$model[$array_id]->addError('value', $Answer['value'] . " is either not in the participant list or has been assigned to another interviewer");
+				}
 
 				// check for list range limitations
 				$checks = 0;
@@ -228,7 +238,7 @@ class InterviewingController extends Controller
 						}else{
 								$errorMsg = "at least ".$questions[$array_id]->minListRange;
 						}
-						$model[$array_id]->addError('value', "Too many options were selected.  Please select " . $errorMsg . " response(s).");
+						$model[$array_id]->addError('value', "Please select " . $errorMsg . " response(s).");
 					}
 
 				}
@@ -419,7 +429,7 @@ class InterviewingController extends Controller
 				$alterCount = q("SELECT count(id) FROM alterList WHERE studyId = ".$studyId)->queryScalar();
 				if($alterCount > 0){
 					$nameInList = q('SELECT name FROM alterList WHERE name = "'.$_POST['Alters']['name'].'" AND studyId = '. $studyId)->queryScalar();
-					if(!$nameInList){
+					if(!$nameInList && $study->restrictAlters){
 						$model->addError('name', $_POST['Alters']['name']. ' is not in our list of participants');
 					}
 				}
@@ -479,9 +489,10 @@ class InterviewingController extends Controller
 				$sql = "SELECT " . $_GET['field'] .  " FROM alters WHERE interviewId = " . $_GET['interviewId'];
 				$names = Yii::app()->db->createCommand($sql)->queryColumn();
 				$names = implode("' , '", $names);
+			}else{
+				if(!Yii::app()->user->isSuperAdmin)
+					$filter = " AND interviewerId = " . Yii::app()->user->id;
 			}
-			if(!Yii::app()->user->isSuperAdmin)
-				$filter = " AND interviewerId = " . Yii::app()->user->id;
 
 			$criteria = new CDbCriteria();
 			$criteria=array(

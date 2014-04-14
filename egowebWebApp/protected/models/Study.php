@@ -56,7 +56,7 @@ class Study extends CActiveRecord
 			array('modified','default',
 				'value'=>new CDbExpression('NOW()'),
 				'setOnEmpty'=>true,'on'=>'insert'),
-			array('multiSessionEgoId, useAsAlters','default',
+			array('multiSessionEgoId, useAsAlters, restrictAlters','default',
 				'value'=>0,
 			'setOnEmpty'=>true),
 			);
@@ -364,7 +364,8 @@ class Study extends CActiveRecord
 							$data = array(
 								'value'=>$study->valueLogicalSkip,
 							);
-							u('answer', $data, "id = " . $answers[$question->id.'-'.$alter->id]['id']);
+							if(isset($answers[$question->id.'-'.$alter->id]['id']))
+								u('answer', $data, "id = " . $answers[$question->id.'-'.$alter->id]['id']);
 							continue;
 						}
 					    if($alterAskingStyles[$questionId]){

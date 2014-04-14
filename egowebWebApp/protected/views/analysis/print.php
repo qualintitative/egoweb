@@ -1,3 +1,4 @@
+		<?php Yii::app()->clientScript->registerCoreScript('jquery'); ?>
 <style>
 .print-button{
 	display:none;

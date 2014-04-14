@@ -70,7 +70,8 @@ function importStudy(address, id){
 				"valueNotYetAnswered",
 				"modified",
 				"multiSessionEgoId",
-				"useAsAlters"
+				"useAsAlters",
+				"restrictAlters"
 			],
 			primaryKey: [ "id" ],
 		};

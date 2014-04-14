@@ -69,7 +69,7 @@ $(function(){
 							$("#Answer_" + multi + "_skipReason" ).val("NONE");
 						}
 						values.push(selected.val());
-						realVal.val(values.join(","));
+						realVal.val(selected.val());
 					}else{
 						for(var k in values){
 							$(".multiselect-" +  multi + "[value='" + values[k] + "']").prop("checked", true);

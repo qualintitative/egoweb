@@ -43,7 +43,9 @@ class AlterList extends CActiveRecord
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, studyId, name, email, ordering, interviewerId', 'length', 'max'=>1024),
-
+			array('interviewerId','default',
+				'value'=>0,
+			'setOnEmpty'=>true),
 			array('id, studyId, name, email, ordering', 'safe', 'on'=>'search'),
 		);
 	}

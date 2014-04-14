@@ -147,6 +147,8 @@ class Question extends CActiveRecord
 			'networkNSizeQId' => 'Network Node Size Q',
 			'networkEColorQId' => 'Network Edge Color Q',
 			'networkESizeQId' => 'Network Edge Size Q',
+			'useAlterListField' => 'Use Participant List Field',
+
 		);
 	}
 

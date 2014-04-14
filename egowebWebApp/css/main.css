@@ -783,3 +783,7 @@ ul.authoring li a:hover{
 #reset-link{
 	padding:10px;
 }
+
+#userlist {
+	clear:both;
+}
