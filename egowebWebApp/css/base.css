@@ -4,6 +4,11 @@
     position:relative;
 }
 
+#print-view #container {
+    width: 900px;
+
+}
+
 #left-container, #right-container {
     color:#686c70;
     text-align: left;
@@ -34,6 +39,13 @@
 #center-container {
     width:640px;
     height:480px;
+    background-color:#fff;
+    color:#111;
+}
+
+#print-view #center-container {
+    width:900px;
+    height:675px;
     background-color:#fff;
     color:#111;
 }
@@ -71,6 +83,11 @@
     margin:auto;
     background-color: #fcfcfc;
     overflow:hidden;
+}
+
+#print-view #infovis {
+    width:900px;
+    height:675px;
 }
 
 /*TOOLTIPS*/

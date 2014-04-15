@@ -7553,3 +7553,58 @@ Stack trace:
 REQUEST_URI=/authoring/importlist
 HTTP_REFERER=http://egoweb/authoring/edit/234
 ---
+2014/04/14 18:13:02 [error] [exception.CDbException] SQLSTATE[HY000] [1044] Access denied for user 'egoweb'@'localhost' to database 'egowebdata'
+2014/04/14 18:13:02 [error] [exception.CDbException] exception 'CDbException' with message 'CDbConnection failed to open the DB connection.' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbConnection.php:387
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbConnection.php(330): CDbConnection->open()
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbConnection.php(308): CDbConnection->setActive(true)
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CModule.php(387): CDbConnection->init()
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CDbHttpSession.php(160): CModule->getComponent('db')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CDbHttpSession.php(184): CDbHttpSession->getDbConnection()
+#5 [internal function]: CDbHttpSession->openSession('', 'PHPSESSID')
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CHttpSession.php(118): session_start()
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CHttpSession.php(92): CHttpSession->open()
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CModule.php(387): CHttpSession->init()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(201): CModule->getComponent('session')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/auth/CWebUser.php(193): CWebApplication->getSession()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CModule.php(387): CWebUser->init()
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(209): CModule->getComponent('user')
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/auth/CAccessControlFilter.php(129): CWebApplication->getUser()
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(38): CAccessControlFilter->preFilter(Object(CFilterChain))
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('study')
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('analysis/study')
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#24 {main}
+REQUEST_URI=/analysis/study/235
+HTTP_REFERER=http://egoweb/authoring/ego/234
+---
+2014/04/14 18:13:09 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1. The SQL statement executed was: SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = .
+2014/04/14 18:13:09 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(454): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/AnalysisController.php(41): CDbCommand->queryColumn()
+#2 [internal function]: AnalysisController->actionStudy('235')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(AnalysisController), Array)
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(AnalysisController), Object(ReflectionMethod), Array)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('study')
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('analysis/study')
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#17 {main}
+REQUEST_URI=/analysis/study/235
+HTTP_REFERER=http://egoweb/authoring/ego/234
+---

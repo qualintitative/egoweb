@@ -153,6 +153,14 @@ class visualize extends Plugin
 		return $default;
 	}
 
+	public function actionNotes()
+	{
+		$notes = Note::model()->findAllByAttributes(array("interviewId"=>$this->params, "expressionId"=>$this->id));
+		foreach($notes as $note){
+			echo "<div style='width:50%;float:left;padding-right:20px' class=''><h3>" . Alters::getName($note->alterId) . " </h3><small>$note->notes</small></div>";
+		}
+	}
+
 	public function actionNodecolor(){
 		$params = json_decode($this->params, true);
 		$nodeColorId = ''; $nodeColors = array();
@@ -630,7 +638,7 @@ function init(json)
 		},
 		// Add node events
 		Events: {
-			enable: true,
+			enable: (typeof printView == "undefined" ? true : false),
 			enableForEdges: true,
 			type: 'Native',
 			//Change cursor style when hovering a node
@@ -713,6 +721,10 @@ function init(json)
 			//node styles like its dimension and the color
 			//and lineWidth of its adjacencies.
 			nameContainer.onclick = function() {
+
+				if(typeof printView != "undefined")
+					return;
+
 				//set final styles
 				fd.graph.eachNode(function(n) {
 					if(n.id != node.id) delete n.selected;

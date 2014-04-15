@@ -1,6 +1,11 @@
 		<?php Yii::app()->clientScript->registerCoreScript('jquery'); ?>
+		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/bootstrap.css" />
+		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/flat-ui.css" />
 <style>
 .print-button{
+	display:none;
+}
+#left-container{
 	display:none;
 }
 </style>
@@ -36,22 +41,24 @@ function getGraph(graphId){
 		document.location = url;
 	}
 }
-function saveNote(){
-	$.post("/analysis/savenote", $("#note-form").serialize(), function(data){
-		$("#" + data + " .name").html($("#" + data + " .name").html() + " <span class='fui-new'></span>");
-	});
-}
+printView = true;
 </script>
-<?php
-echo "<h3 class='margin-top-10'>" . "<small>" .Study::getName($studyId) . " &nbsp| &nbsp" . Interview::getRespondant($interviewId)."</small></h3>";
-?>
 
+<div id="print-view" style="width:960px">
 <?php if($expressionId): ?>
+<div class="col-sm-12 pull-left">
+	<?php echo "<h2 class='margin-top-10'>" .Study::getName($studyId) . " &nbsp| &nbsp" . Interview::getRespondant($interviewId)."</h2>"; ?>
+</div>
+
 <div class="col-sm-12 pull-left">
 <?php $this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$expressionId, 'params'=>$params)); ?>
 </div>
-
+<div class="col-sm-12 pull-left">
+<h2 class='margin-top-10'>Notes</h2>
+<?php $this->widget('plugins.visualize', array('method'=>"notes", 'id'=>$expressionId, 'params'=>$interviewId)); ?>
+</div>
 <?php endif; ?>
+</div>
 <?php
 /*
 

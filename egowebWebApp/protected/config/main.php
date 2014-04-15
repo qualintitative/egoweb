@@ -61,8 +61,8 @@ return array(
 			/*'connectionString' => 'mysql:host=localhost;dbname=egoweb_data',
 			'username' => 'egoweb',
 			'password' => "test1234",*/
-			'connectionString' => 'mysql:host=localhost;dbname=egowebdata2',
-			'username' => 'egoweb2',
+			'connectionString' => 'mysql:host=localhost;dbname=egoweb_data',
+			'username' => 'egoweb',
 			'password' => "test1234",
 			'emulatePrepare' => true,
 			'charset' => 'utf8',
