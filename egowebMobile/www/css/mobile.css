@@ -40,10 +40,6 @@ input[type=checkbox]{
 	height:20px;
 }
 
-#EMPTY{
-	padding:5px 0;
-}
-
 #EMPTY label{
 	vertical-align: top;
 }
@@ -697,7 +693,15 @@ ul.authoring li a:hover{
     font-weight:bold;
 }
 
+.palette-sun-flower {
+  background-color: #f1c40f;
+}
 #alters-grid .items #ordering {
     color:#DB6C3E;
 
+}
+
+#previous_alters{
+	padding:10px;
+	clear:left;
 }

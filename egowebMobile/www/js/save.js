@@ -1,3 +1,4 @@
+
 string = {};
 string.repeat = function(string, count)
 {
@@ -97,7 +98,6 @@ function save(id, page){
 	errorModel = new ErrorModel;
 	answers = post.answer;
 	errors = 0;
-	questions = buildQuestions(id, page, interviewId);
 	for(var k in answers){
 		answer = answers[k];
 
@@ -266,12 +266,13 @@ function save(id, page){
 		// check for list range limitations
 		checks = 0;
 		if(parseInt(questions[array_id].WITHLISTRANGE) != 0){
-			for(i = 0; i < answers.length; i++){
+			for(i in answers){
+					console.log(answers[i].VALUE + ":" + questions[array_id].LISTRANGESTRING);
 				if(answers[i].VALUE.split(',').indexOf(questions[array_id].LISTRANGESTRING) != -1){
 					checks++;
 				}
 			}
-			if(checks < questions[array_id].MAXLISTRANGE || checks > questions[array_id].MAXLISTRANGE){
+			if(checks < questions[array_id].MINLISTRANGE || checks > questions[array_id].MAXLISTRANGE){
 				errorMsg = "";
 				if(questions[array_id].MINLISTRANGE && questions[array_id].MAXLISTRANGE){
 					if(questions[array_id].MINLISTRANGE != questions[array_id].MAXLISTRANGE)
@@ -283,7 +284,7 @@ function save(id, page){
 				}else{
 						errorMsg = "at least " + questions[array_id].MINLISTRANGE;
 				}
-				errorModel.addError(array_id, "Too many options were selected.  Please select "  + errorMsg + " response(s).");
+				errorModel.addError(array_id, "Please select "  + errorMsg + " response(s).  You selected " + checks);
 			}
 		}
 
@@ -352,6 +353,7 @@ function save(id, page){
 		}
 
 		if(answer.ANSWERTYPE == "MULTIPLE_SELECTION"){
+			console.log(questions[array_id]);
 			min = questions[array_id].MINCHECKABLEBOXES;
 			max = questions[array_id].MAXCHECKABLEBOXES;
 			numberErrors = 0; showError = false; errorMsg = "";

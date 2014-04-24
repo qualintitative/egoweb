@@ -56,7 +56,7 @@ class Study extends CActiveRecord
 			array('modified','default',
 				'value'=>new CDbExpression('NOW()'),
 				'setOnEmpty'=>true,'on'=>'insert'),
-			array('multiSessionEgoId, useAsAlters, restrictAlters','default',
+			array('multiSessionEgoId, useAsAlters, restrictAlters, fillAlterList','default',
 				'value'=>0,
 			'setOnEmpty'=>true),
 			);
@@ -91,10 +91,9 @@ class Study extends CActiveRecord
 		}
 	}
 
-	public function nav($id, $pageNumber, $interviewId = null){
+	public function nav($study, $pageNumber, $interviewId = null){
 		$i = 0;
 		$pages = array();
-		$study = Study::model()->findByPk($id);
 		if($study->introduction != ""){
 			$pages[$i] = Study::checkPage($i, $pageNumber, "INTRODUCTION");
 			$i++;
@@ -103,12 +102,12 @@ class Study extends CActiveRecord
 		$i++;
 		if(!$interviewId)
 			return json_encode($pages);
-		$ego_qs = q("SELECT * FROM question WHERE studyId = $id AND subjectType ='EGO' order by ordering")->queryAll();
+		$ego_qs = q("SELECT * FROM question WHERE studyId = $study->id AND subjectType ='EGO' order by ordering")->queryAll();
 		$prompt = "";
 		$ego_question_list = array();
+		$expression = new Expression;
 		foreach($ego_qs as $question){
 			if($interviewId){
-				$expression = new Expression;
 				if(!$expression->evalExpression($question['answerReasonExpressionId'], $interviewId))
 					continue;
 			}
@@ -140,11 +139,12 @@ class Study extends CActiveRecord
 		$alters = Alters::model()->findAllByAttributes(array('interviewId'=>$interviewId));
 		$answers = q("SELECT count(id) FROM answer WHERE interviewId = " . $interviewId . " AND (questionType =  'ALTER' OR questionType = 'ALTER_PAIR') ")->queryScalar();
 		if(count($alters) > 0 && $answers > 0){
-			$alter_qs = q("SELECT * FROM question WHERE studyId = $id AND subjectType ='ALTER' order by ordering")->queryAll();
+			$alter_qs = q("SELECT * FROM question WHERE studyId = $study->id AND subjectType ='ALTER' order by ordering")->queryAll();
 			$prompt = "";
 			$alter_question_list = array();
-			foreach($alter_qs as $question){
 				$expression = new Expression;
+
+			foreach($alter_qs as $question){
 				foreach($alters as $alter){
 				    if(!$expression->evalExpression($question['answerReasonExpressionId'], $interviewId, $alter->id)){
 				    	continue;
@@ -171,12 +171,12 @@ class Study extends CActiveRecord
 				    }
 				}
 			}
-			$alter_pair_qs = q("SELECT * FROM question WHERE studyId = $id AND subjectType ='ALTER_PAIR' order by ordering")->queryAll();
+			$alter_pair_qs = q("SELECT * FROM question WHERE studyId = $study->id AND subjectType ='ALTER_PAIR' order by ordering")->queryAll();
 			$prompt = "";
 			$alter_pair_question_list = array();
 			foreach ($alter_pair_qs as $question){
+				$expression = new Expression;
 			    $alters2 = $alters;
-			    $expression = new Expression;
 			    foreach($alters as $alter){
 			    	if($question['symmetric'])
 			    		array_shift($alters2);
@@ -184,7 +184,7 @@ class Study extends CActiveRecord
 			    	foreach($alters2 as $alter2){
 			    		if($alter->id == $alter2->id)
 			    			continue;
-			    		if(!$expression->evalExpression($question['answerReasonExpressionId'], $interviewId, $alter->id, $alter2->id))
+			    		if($question['answerReasonExpressionId'] && !$expression->evalExpression($question['answerReasonExpressionId'], $interviewId, $alter->id, $alter2->id))
 			    			continue;
 			    		$alter_pair_question_list = $question;
 			    	}
@@ -199,11 +199,11 @@ class Study extends CActiveRecord
 					}
 				}
 			}
-			$network_qs = q("SELECT * FROM question WHERE studyId = $id AND subjectType ='NETWORK' order by ordering")->queryAll();
+			$network_qs = q("SELECT * FROM question WHERE studyId = $study->id AND subjectType ='NETWORK' order by ordering")->queryAll();
 			foreach($network_qs as $question){
 			    if($interviewId){
 			    	$expression = new Expression;
-			    	if(!$expression->evalExpression($question['answerReasonExpressionId'], $interviewId))
+			    	if($question['answerReasonExpressionId'] && !$expression->evalExpression($question['answerReasonExpressionId'], $interviewId))
 			    		continue;
 			    }
 			    if($question['preface'] != ""){
@@ -228,10 +228,9 @@ class Study extends CActiveRecord
 	 * CORE FUNCTION
 	 * @return array pages of questions
 	 */
-	public function buildQuestions($id, $pageNumber = null, $interviewId = null){
+	public function buildQuestions($study, $pageNumber = null, $interviewId = null){
 		$page = array();
 		$i = 0;
-		$study = Study::model()->findByPk($id);
 		if($study->introduction != ""){
 			if($i == $pageNumber){
 				$introduction = new Question;
@@ -243,7 +242,7 @@ class Study extends CActiveRecord
 			$i++;
 		}
 		if($pageNumber == $i){
-			$questions = Question::model()->findAllByAttributes(array('studyId'=>$id, 'subjectType'=>'EGO_ID'), $params=array('order'=>'ordering'));
+			$questions = Question::model()->findAllByAttributes(array('studyId'=>$study->id, 'subjectType'=>'EGO_ID'), $params=array('order'=>'ordering'));
 			foreach($questions as $question){
 				$ego_id_questions[$question->id] = $question;
 			}
@@ -252,7 +251,7 @@ class Study extends CActiveRecord
 		}
 		if(is_numeric($interviewId)){
 			$i++;
-			$result = q("SELECT id, preface,answerReasonExpressionId FROM question WHERE subjectType = 'EGO' AND studyId = $id ORDER BY ordering")->queryAll();
+			$result = q("SELECT id, preface,answerReasonExpressionId FROM question WHERE subjectType = 'EGO' AND studyId = $study->id ORDER BY ordering")->queryAll();
 			$egoQuestionIds = array();
 			$egoPrefaces = array();
 			$egoQuestionExpressions = array();
@@ -325,7 +324,7 @@ class Study extends CActiveRecord
 				$alter_prompt = new Question;
 				$alter_prompt->answerType = "ALTER_PROMPT";
 				$alter_prompt->prompt = $study->alterPrompt;
-				$alter_prompt->studyId = $id;
+				$alter_prompt->studyId = $study->id;
 				$page[$i] = array('0'=>$alter_prompt);
 				return $page[$i];
 			}
@@ -335,7 +334,7 @@ class Study extends CActiveRecord
 			);
 			$alters = Alters::model()->findAll($criteria);
 			if(count($alters) > 0){
-				$result = q("SELECT id, preface, askingStyleList,answerReasonExpressionId FROM question WHERE subjectType = 'ALTER' AND studyId = $id ORDER BY ordering")->queryAll();
+				$result = q("SELECT id, preface, askingStyleList,answerReasonExpressionId FROM question WHERE subjectType = 'ALTER' AND studyId = $study->id ORDER BY ordering")->queryAll();
 				$alterQuestionIds = array();
 				$alterQuestionPrefaces = array();
 				$alterAskingStyles = array();
@@ -359,7 +358,7 @@ class Study extends CActiveRecord
 					$expression = new Expression;
 					$question = Question::model()->findByPk($questionId);
 					foreach($alters as $alter){
-						if(!$expression->evalExpression($alterQuestionExpressions[$questionId], $interviewId, $alter->id)){
+						if($alterQuestionExpressions[$questionId] && !$expression->evalExpression($alterQuestionExpressions[$questionId], $interviewId, $alter->id)){
 
 							$data = array(
 								'value'=>$study->valueLogicalSkip,
@@ -421,7 +420,7 @@ class Study extends CActiveRecord
 					}
 				}
 
-				$result = q("SELECT id, preface, askingStyleList,answerReasonExpressionId, symmetric FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = $id ORDER BY ordering")->queryAll();
+				$result = q("SELECT id, preface, askingStyleList,answerReasonExpressionId, symmetric FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = $study->id ORDER BY ordering")->queryAll();
 				$alterPairQuestionIds = array();
 				$alterPairQuestionPrefaces = array();
 				$alterPairSymmetry = array();
@@ -443,15 +442,15 @@ class Study extends CActiveRecord
 				foreach ($alterPairQuestionIds as $questionId){
 					$alters2 = $alters;
 					$question = Question::model()->findByPk($questionId);
-					$expression = new Expression;
 					foreach($alters as $alter){
+						$expression = new Expression;
 						if($alterPairSymmetry[$questionId])
 							array_shift($alters2);
 						$alter_pair_question_list = array();
 						foreach($alters2 as $alter2){
 							if($alter->id == $alter2->id)
 								continue;
-							if(!$expression->evalExpression($alterPairQuestionExpressions[$questionId], $interviewId, $alter->id, $alter2->id)){
+							if($alterPairQuestionExpressions[$questionId] && !$expression->evalExpression($alterPairQuestionExpressions[$questionId], $interviewId, $alter->id, $alter2->id)){
 								$data = array(
 									'value'=>$study->valueLogicalSkip,
 								);
@@ -487,7 +486,7 @@ class Study extends CActiveRecord
 						}
 					}
 				}
-				$result = q("SELECT id, preface, answerReasonExpressionId FROM question WHERE subjectType = 'NETWORK' AND studyId = $id ORDER BY ordering")->queryAll();
+				$result = q("SELECT id, preface, answerReasonExpressionId FROM question WHERE subjectType = 'NETWORK' AND studyId = $study->id ORDER BY ordering")->queryAll();
 				$networkQuestionIds = array();
 				$networkPrefaces = array();
 				$networkExpressions = array();
@@ -575,6 +574,10 @@ class Study extends CActiveRecord
 			$newQuestion->studyId = $newStudy->id;
 			if(!$newQuestion->save())
 				return false;
+			if($newStudy->multiSessionEgoId == $question->id){
+				$newStudy->multiSessionEgoId = $newQuestion->id;
+				$newStudy->save();
+			}
 			$newQuestionIds[$question->id] = $newQuestion->id;
 		}
 		foreach($questions as $question){

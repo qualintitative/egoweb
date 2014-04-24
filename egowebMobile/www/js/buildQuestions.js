@@ -99,7 +99,7 @@ function buildQuestions(id, pageNumber, interviewId){
 					question.PROMPT = question.PROMPT.replace("$$", alters[k].NAME);
 					question.ALTERID1 = alters[k].ID;
 
-					if(alter_questions[j].ASKINGSTYLELIST){
+					if(alter_questions[j].ASKINGSTYLELIST == 1){
 						alter_question_list[question.ID + '-' + question.ALTERID1] = question;
 					}else{
 						if(alter_questions[j].PREFACE != ""){
@@ -123,7 +123,7 @@ function buildQuestions(id, pageNumber, interviewId){
 						}
 					}
 				}
-				if(alter_questions[j].ASKINGSTYLELIST){
+				if(alter_questions[j].ASKINGSTYLELIST == 1){
 					if(Object.keys(alter_question_list).length > 0){
 						if(alter_questions[j].PREFACE != ""){
 							if(i == pageNumber){
@@ -208,11 +208,11 @@ function buildQuestions(id, pageNumber, interviewId){
 				}
 			}
 		}
-			conclusion = new Question;
-			conclusion.ANSWERTYPE = "CONCLUSION";
-			conclusion.PROMPT = study.CONCLUSION;
-			page[i][0] = conclusion;
-			return page[i];
+		conclusion = new Question;
+		conclusion.ANSWERTYPE = "CONCLUSION";
+		conclusion.PROMPT = study.CONCLUSION;
+		page[i][0] = conclusion;
+		return page[i];
 
 	}
 	return false;

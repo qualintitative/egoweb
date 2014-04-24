@@ -59,7 +59,7 @@ class InterviewingController extends Controller
 
 		if(isset($_GET['interviewId'])){
 			$interviewId = $_GET['interviewId'];
-			$questions = Study::buildQuestions($id, $currentPage, $interviewId);
+			$questions = Study::buildQuestions($study, $currentPage, $interviewId);
 			if(!$questions){
 				$this->redirect(Yii::app()->createUrl(
 					'interviewing/'.$id.'?'.
@@ -88,11 +88,27 @@ class InterviewingController extends Controller
 				}
 			}
 		}else{
-			$questions = Study::buildQuestions($id, $currentPage);
+			$questions = Study::buildQuestions($study, $currentPage);
 			$interviewId = '';
 			foreach($questions as $question){
 				$array_id = $question->id;
 				$model[$array_id] = new Answer;
+			}
+		}
+
+		if(isset($questions[0]) && $questions[0]->answerType == 'ALTER_PROMPT' && $study->fillAlterList){
+			$check = q("SELECT count(id) FROM alters WHERE interviewId = " . $interviewId)->queryScalar();
+			if(!$check){
+				$names = q("SELECT name FROM alterList where studyId = " . $study->id)->queryColumn();
+				$count = 0;
+				foreach($names as $name){
+					$alter = new Alters;
+					$alter->name = $name;
+					$alter->ordering = $count;
+					$alter->interviewId = $interviewId;
+					$alter->save();
+					$count++;
+				}
 			}
 		}
 
@@ -116,6 +132,8 @@ class InterviewingController extends Controller
 		if(isset($_POST['Answer']))
 		{
 
+			$study = Study::model()->findByPk($id);
+
 			if(isset($_POST['Answer'][0]) && $_POST['Answer'][0]['answerType'] == "CONCLUSION"){
 				$interview = Interview::model()->findByPk($_POST['Answer'][0]['interviewId']);
 				$interview->completed = -1;
@@ -137,15 +155,13 @@ class InterviewingController extends Controller
 			}
 			$errors = 0;
 
-
-
 			foreach($_POST['Answer'] as $Answer){
 
 				if(!isset($interviewId) || !$interviewId)
 					$interviewId = $Answer['interviewId'];
 
 				if(!isset($questions))
-					$questions = Study::buildQuestions($id,$_POST['page'], $interviewId);
+					$questions = Study::buildQuestions($study, $_POST['page'], $interviewId);
 
 				if($Answer['questionType'] == "EGO_ID" && $Answer['value'] != "" && !$interviewId){
 					if(Yii::app()->user->isGuest){
@@ -403,6 +419,7 @@ class InterviewingController extends Controller
 					'studyId'=>$_POST['studyId'],
 					'questions'=>$questions,
 					'page'=>$_POST['page'],
+					'study'=>$study,
 					'model'=>$model,
 					'interviewId'=>$interviewId,
 				));
@@ -476,6 +493,14 @@ class InterviewingController extends Controller
 			));
 
 			$this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterPrompt'=>$alterPrompt, 'model'=>$model, 'studyId'=>$studyId, 'interviewId'=>$interviewId, 'ajax'=>true), false, true);
+		}else if(isset($_GET['studyId']) && isset($_GET['interviewId'])){
+			$study = Study::model()->findByPk($_GET['studyId']);
+			$alter_prompt = new Question;
+			$alter_prompt->answerType = "ALTER_PROMPT";
+			$alter_prompt->prompt = $study->alterPrompt;
+			$alter_prompt->studyId = $study->id;
+			$alter = new Alters;
+			$this->renderPartial('_form_alter_prompt', array( 'question'=>$alter_prompt, 'interviewId'=>$_GET['interviewId'], 'model'=>$alter, 'study'=>$study, 'ajax'=>true), false, true);
 		}
 	}
 
@@ -488,7 +513,7 @@ class InterviewingController extends Controller
 			if(isset($_GET['interviewId'])){
 				$sql = "SELECT " . $_GET['field'] .  " FROM alters WHERE interviewId = " . $_GET['interviewId'];
 				$names = Yii::app()->db->createCommand($sql)->queryColumn();
-				$names = implode("' , '", $names);
+				$names = addslashes(implode("' , '", $names));
 			}else{
 				if(!Yii::app()->user->isSuperAdmin)
 					$filter = " AND interviewerId = " . Yii::app()->user->id;
@@ -537,7 +562,7 @@ class InterviewingController extends Controller
 
 			$criteria=array(
 				'condition'=>"FIND_IN_SET(" . $interviewId . ", interviewId)",
-				'order'=>'id',
+				'order'=>'ordering',
 			);
 			$dataProvider=new CActiveDataProvider('Alters',array(
 				'criteria'=>$criteria,

@@ -490,6 +490,7 @@ td{
 }
 
 #navigation{
+	z-index:1;
 	display:none;
 	margin-top:-30px;
 	margin-left:-40px;
@@ -592,7 +593,7 @@ td{
 	width:200px;
 }
 #alterListBox{
-	height:500px;
+	height:530px;
 	width:180px;
 	overflow-y:scroll;
 	float:right;

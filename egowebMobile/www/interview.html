@@ -63,7 +63,7 @@ function getInterviews(studyId){
 	div = $('#interviewList');
 	div.show();
 	interviews = db.queryObjects("SELECT * FROM interview WHERE studyId = " + studyId).data;
-	div.append("<div class='multiRow' style='width:70%; text-align:left; height:50px'><h1>"+ getInterviewName(studyId) + "</h1></div>");
+	div.append("<div class='multiRow' style='width:70%; text-align:left; height:50px'><h3>"+ getInterviewName(studyId) + "</h3></div>");
 	div.append("<div class='multiRow' style='height:50px'><button onclick='loadStudy(" + studyId + ")' style='margin-top:15px;'>New Interview</button></div>");
 	div.append("<br style='clear:both'>");
 	for (var i in interviews) {
@@ -212,6 +212,7 @@ function addAlter(name){
 	db.commit();
 	$('#Alters_name').val('');
 	displayAlters();
+	previousAlters();
 }
 
 function removeAlter(id){
@@ -219,7 +220,7 @@ function removeAlter(id){
 	if(!alter)
 		return false;
 	if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
-		var interviewIds = alter[4].split(",");
+		var interviewIds = alter[4].toString().split(",");
 		$(interviewIds).each(function(index){
 			if(interviewIds[index] == interviewId)
 				interviewIds.splice(index,1);
@@ -233,6 +234,7 @@ function removeAlter(id){
 	if(countAlters() < study.MAXALTERS)
 		$('#ALTER_PROMPT').show();
 	displayAlters();
+	previousAlters();
 }
 
 function getAlterName(id){
@@ -246,9 +248,12 @@ function displayAlters(){
 	rowClass = "odd";
 	i=0;
 	for(k in alters){
+		var mark = "";
+		if(alters[k].INTERVIEWID.toString().match(","))
+			mark = "#";
 		i++;
-		alterTable.append("<tr class='" + rowClass + "'><td>"+
-		i + ' ' + alters[k].NAME+ '<a href="javascript:void(0)" onclick="removeAlter(' + alters[k].ID + ')"><img src="css/delete.png"></a>' +
+		alterTable.append("<tr class='" + rowClass + "'><td>" +
+		mark + ' ' + alters[k].NAME+ ' <a href="javascript:void(0)" onclick="removeAlter(' + alters[k].ID + ')"><img src="css/delete.png"></a>' +
 		"</td></tr>");
 		if(rowClass == "odd")
 			rowClass = "even";
@@ -257,6 +262,25 @@ function displayAlters(){
 	}
 	var objDiv = document.getElementById("alterListBox");
 	objDiv.scrollTop = objDiv.scrollHeight;
+}
+
+
+function previousAlters(){
+	if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
+		var interviewIds = getInterviewIds(interviewId);
+		interviewIds.splice(interviewIds.indexOf(interviewId),1);
+		$("#previous_alters").html("");
+		for(var k in interviewIds){
+			var prevAlters = db.queryObjects("SELECT * FROM alters WHERE CONCAT(',', interviewId, ',') LIKE '%," + interviewIds[k] + ",%' AND CONCAT(',', interviewId, ',') NOT LIKE '%," + interviewId + ",%'").data;
+			if(Object.keys(prevAlters).length > 0){
+				if($("#previous_alters").html() == "")
+					$("#previous_alters").html("<b>Previous Alters</b><br><br>");
+				for(var k in prevAlters){
+					$("#previous_alters").html($("#previous_alters").html() + prevAlters[k].NAME + "<br>");
+				}
+			}
+		}
+	}
 }
 
 function countAlters(){
@@ -320,13 +344,13 @@ function changeOther(other_id){
 		<input name="Answer[12765][ANSWERTYPE]" id="Answer_12765_ANSWERTYPE" type="hidden" class="ANSWERTYPEValue" />
 	</div>
 	<div id='TEXTUAL'>
-		<input id="VALUE" type='text'>
+		<input id="VALUE" type='text' style="float:left">
 	</div>
 	<div id='TEXTUAL_PP'>
 		<textarea id="VALUE"></textarea>
 	</div>
 	<div id='NUMERICAL'>
-		<input id="VALUE" type='text'>
+		<input id="VALUE" type='text' style="float:left">
 	</div>
 	<div id='DATE'>
 		<div id='DATEFIELDS'>
@@ -382,8 +406,8 @@ function changeOther(other_id){
 		<input id="MULTISELECT" type='checkbox' />
 	</div>
 	<div id='SKIP'>
-		<input type="checkbox" name="skip[]" id="DONT_KNOW" value="DONT_KNOW"><label class="DONT_KNOW_LABEL" for="DONT_KNOW">Don't Know</label><br class="DONT_KNOW_LABEL">
-		<input type="checkbox" name="skip[]" id="REFUSE" value="REFUSE"><label class="REFUSE_LABEL" for="REFUSE">Refuse</label>
+		<input type="checkbox" name="skip[]" id="DONT_KNOW" value="DONT_KNOW" class=""><label class="DONT_KNOW_LABEL" for="DONT_KNOW">Don't Know</label><br class="DONT_KNOW_LABEL">
+		<input type="checkbox" name="skip[]" id="REFUSE" value="REFUSE" class=""><label class="REFUSE_LABEL" for="REFUSE">Refuse</label>
 	</div>
 	<form id="hiddenForm" method="post" action='http://75.146.48.253/mobile/uploadData'>
 		<textarea name="data" id="data"></textarea>
@@ -413,7 +437,8 @@ function changeOther(other_id){
 			<div id="ERROR" class="errorSummary" style="float:left; display:none;clear:left; width:480px"></div>
 			<div class='question' style='clear:left'>
 			    <form></form>
-			    <div id="ALTER_PROMPT" style="display:none; float:left; width:480px">
+			    <div id="previous_alters" style="display:none; float:left; width:480px"></div>
+			    <div id="ALTER_PROMPT" style="display:none; float:left; width:480px; clear:left">
 			    	<input id="Alters_name" type="text" value="" name="Alters[name]" />
 			    	<input value="74" name="Alters[interviewId]" id="Alters_interviewId" type="hidden" />
 			    	<button class="orangebutton" name="yt0" onclick='addAlter($("#Alters_name").val())'>+ Add</button>

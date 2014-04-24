@@ -136,6 +136,10 @@
 		<label>Restrict alters to participant list</label>
 		<?php echo $form->checkBox($model,'restrictAlters'); ?>
 
+		<br style="clear:both">
+
+		<label>Populate alter list from participant list</label>
+		<?php echo $form->checkBox($model,'fillAlterList'); ?>
 
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

@@ -32,7 +32,14 @@ function getGraph(graphId){
 }
 </script>
 <?php
-echo "<h3 class='margin-top-10'>".CHtml::link("Analysis &nbsp| &nbsp", $this->createUrl("/analysis/study/".$studyId)) . "<small>" .Study::getName($studyId) . " &nbsp| &nbsp" . Interview::getRespondant($interviewId)."</small></h3>";
+$flashMessages = Yii::app()->user->getFlashes();
+if ($flashMessages) {
+    foreach($flashMessages as $key => $message) {
+        echo '<div class="center halfsize flash-' . $key . '">' . $message . "</div><br><br>\n";
+    }
+}
+
+echo "<h3 class='margin-top-10'>".CHtml::link("Analysis &nbsp| &nbsp", $this->createUrl("/analysis/study/".$studyId)) . "<small>" .Study::getName($studyId) . " &nbsp| &nbsp" . Interview::getEgoId($interviewId)."</small></h3>";
 ?>
 
 	<?php if($expressionId): ?>

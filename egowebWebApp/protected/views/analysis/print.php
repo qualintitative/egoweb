@@ -43,11 +43,11 @@ function getGraph(graphId){
 }
 printView = true;
 </script>
-
+<input type="hidden" id="Graph_nodes" value='<?= $_GET['nodes']; ?>'>
 <div id="print-view" style="width:960px">
 <?php if($expressionId): ?>
 <div class="col-sm-12 pull-left">
-	<?php echo "<h2 class='margin-top-10'>" .Study::getName($studyId) . " &nbsp| &nbsp" . Interview::getRespondant($interviewId)."</h2>"; ?>
+	<?php echo "<h2 class='margin-top-10'>" .Study::getName($studyId) . " &nbsp| &nbsp" . Interview::getEgoId($interviewId)."</h2>"; ?>
 </div>
 
 <div class="col-sm-12 pull-left">

@@ -518,11 +518,16 @@ class AnalysisController extends Controller
 			else
 				$graph = new Graph;
 			$graph->attributes = $_POST['Graph'];
-			if($graph->save()){
+			$check = Graph::model()->findByAttributes(array("interviewId"=>$graph->interviewId,"expressionId"=>$graph->expressionId, "name"=>$graph->name));
+			if($check){
 				$url =  "graphId=" . $graph->id . "&interviewId=" . $graph->interviewId . "&expressionId=".$graph->expressionId."&params=".urlencode($graph->params);
+				Yii::app()->user->setFlash('error', "Graph name already exists for this expression!");
 				Yii::app()->request->redirect($this->createUrl("/analysis/visualize?" . $url));
 			}else{
-				print_r($graph->errors);
+				if($graph->save()){
+					$url =  "graphId=" . $graph->id . "&interviewId=" . $graph->interviewId . "&expressionId=".$graph->expressionId."&params=".urlencode($graph->params);
+					Yii::app()->request->redirect($this->createUrl("/analysis/visualize?" . $url));
+				}
 			}
 		}
 	}

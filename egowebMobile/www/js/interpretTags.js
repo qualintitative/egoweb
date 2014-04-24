@@ -15,10 +15,19 @@
 				}
 				lastAnswer = db.queryValue("SELECT value FROM answer WHERE questionId = " + question.ID + end + ' ORDER BY id DESC');
 			}
-			if(typeof lastAnswer != 'undefined')
+			if(typeof lastAnswer != 'undefined'){
+				if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
+					option = db.queryValue("SELECT NAME FROM questionOption WHERE id = " + lastAnswer);
+					if(option){
+						lastAnswer = option;
+					}else{
+						lastAnswer = "";
+					}
+				}
 				string = string.replace('<VAR ' + thisVar + ' />', lastAnswer);
-			else
+			}else{
 				string = string.replace('<VAR ' + thisVar + ' />', '');
+			}
 		}
 
 		// performs calculations on questions
@@ -40,10 +49,19 @@
 					}
 					lastAnswer = db.queryValue("SELECT VALUE FROM answer WHERE questionId = " + question.ID + end + ' ORDER BY id DESC');
 				}
-				if(typeof lastAnswer != 'undefined')
+				if(typeof lastAnswer != 'undefined'){
+					if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
+						option = db.queryValue("SELECT NAME FROM questionOption WHERE id = " + lastAnswer);
+						if(option){
+							lastAnswer = option;
+						}else{
+							lastAnswer = "";
+						}
+					}
 					logic =  calc.replace(thisVar, lastAnswer);
-				else
+				}else{
 					logic =  calc.replace(thisVar, '0');
+				}
 			}
 			try{
 				calculation = eval(logic);

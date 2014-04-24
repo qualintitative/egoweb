@@ -76,8 +76,8 @@ class Interview extends CActiveRecord
 	// CORE FUNCTION
 	public function getLastUnanswered($id){
 		$model = Interview::model()->findByPk($id);
-		$pages = Study::buildQuestions($model->studyId, null, $id);
 		$study = Study::model()->findByPk($model->studyId);
+		$pages = Study::buildQuestions($model, null, $id);
 		for($i=0; $i < count($pages); $i++){
 			foreach($pages[$i] as $question){
 				if($question->answerType == "ALTER_PROMPT"){
@@ -151,14 +151,17 @@ class Interview extends CActiveRecord
 	}
 
 	// CORE FUNCTION
-	public function interpretTags($string, $interviewId = null, $alterId1 = null, $alterId2 = null)
+	public function interpretTags($string, $interviewId = null, $alterId1 = null, $alterId2 = null,  $study = null)
 	{
-		if($interviewId)
-			$studyId = q("SELECT studyId FROM interview WHERE id = ".$interviewId)->queryScalar();
-		else
+
+		if(!$interviewId)
 			return $string;
 
-		$study = Study::model()->findByPk($studyId);
+		if($study == null){
+			$studyId = q("SELECT studyId FROM interview WHERE id = ".$interviewId)->queryScalar();
+			$study = Study::model()->findByPk($studyId);
+		}
+
 		if($study->multiSessionEgoId){
 			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
 			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();

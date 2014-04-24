@@ -71,7 +71,8 @@ function importStudy(address, id){
 				"modified",
 				"multiSessionEgoId",
 				"useAsAlters",
-				"restrictAlters"
+				"restrictAlters",
+				"fillAlterList"
 			],
 			primaryKey: [ "id" ],
 		};

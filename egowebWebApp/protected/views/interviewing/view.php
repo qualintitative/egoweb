@@ -1,7 +1,7 @@
 <?php
 /* @var $this InterviewingController */
 /* @var $model[$array_id] Answer */
-$this->pageTitle = Study::getName($studyId);
+$this->pageTitle = $study->name;
 $completed = 0;
 if($interviewId)
 	$completed = Interview::model()->findByPk($interviewId)->completed;
@@ -34,62 +34,57 @@ $(function(){
 		$(".orangebutton").prop('disabled', false);
 		$(".graybutton").prop('disabled', false);
 	}
-	/*$('.pageLevel').change(function(){
-		console.log($(this).attr("checked"));
-		$('input[value="' + $(this).val() + '"]').prop("checked", $(this).is(":checked"));
-		if($(this).is(":checked")){
-			$( "input[class*='skipReason']").prop("checked", false);
-			$( "input[class*='multiselect']").prop("checked", false);
-			$( "input[value='" + $(this).val() + "']").prop("checked", true);
-
-			if($(this).val() == "DONT_KNOW" || $(this).val() == "REFUSE")
-				$( "input[name*='value']" ).val('');
-			else
-				$( "input[name*='value']" ).val($(this).val());
-			$(".skipReasonValue").val($(this).val());
-		}else{
-			$(".skipReasonValue").val("NONE");
-		}
-	})*/
 	$('.pageLevel').change(function(){
 		var selected = $(this);
 		if($(this).is(":checked")){
-			$( "input[class*='skipReason']").prop("checked", false);
+			$( "input[class*='-skipReason']").prop("checked", false);
 			$( "input[class*='multiselect-']").prop("checked", false);
 			$( "input[value='" + selected.val() + "']").each(function(index){
-				if($(this).attr('class').match(/multiselect-(.*)/) && $(this).attr('class').match(/multiselect-(.*)/).length > 1){
-					var multi = $(this).attr('class').match(/multiselect-(.*)/)[1];
+				if(!$(this).hasClass("pageLevel") && (($(this).attr('class').match(/multiselect-(.*)/) && $(this).attr('class').match(/multiselect-(.*)/).length > 1) || ($(this).attr('class').match(/(.*)-skipReason/) && $(this).attr('class').match(/(.*)-skipReason/).length > 1))){
+					if($(this).attr('class').match(/multiselect-(.*)/))
+						var multi = $(this).attr('class').match(/multiselect-(.*)/)[1];
+					else
+						var multi = $(this).attr('class').match(/(.*)-skipReason/)[1];
 					var realVal = $("#Answer_" + multi + "_value");
 					var values = realVal.val().split(',');
-					if(realVal.val() == ""){
+					var skipVal = $("#Answer_" + multi + "_skipReason" ).val();
+					if(realVal.val() == "" && $("#Answer_" + multi + "_skipReason" ).val() == "NONE"){
 						$(this).prop("checked", true);
+						realVal.val(selected.val());
 						if(selected.val() == "DONT_KNOW" || selected.val() == "REFUSE"){
 							$("#Answer_" + multi + "_skipReason" ).val(selected.val());
-						}else{
-							$("#Answer_" + multi + "_skipReason" ).val("NONE");
+							realVal.val("");
 						}
-						values.push(selected.val());
-						realVal.val(selected.val());
 					}else{
-						for(var k in values){
-							$(".multiselect-" +  multi + "[value='" + values[k] + "']").prop("checked", true);
+						if(skipVal == "NONE"){
+							for(var k in values){
+								$(".multiselect-" +  multi + "[value='" + values[k] + "']").prop("checked", true);
+							}
+						}else{
+							$("." +  multi + "-skipReason[value='" + skipVal + "']").prop("checked", true);
 						}
 					}
 				}
 			});
 		}else{
 			$( "input[value='" + selected.val() + "']").each(function(index){
-				if($(this).attr('class').match(/multiselect-(.*)/) && $(this).attr('class').match(/multiselect-(.*)/).length > 1){
-					var multi = $(this).attr('class').match(/multiselect-(.*)/)[1];
-					var realVal = $("#Answer_" + multi + "_value");
-					var values = realVal.val().split(',');
-					for(var k in values){
-						if(values[k] == selected.val()){
-							$(this).prop("checked", false);
-							if(selected.val() == "DONT_KNOW" || selected.val() == "REFUSE"){
-								$("#Answer_" + multi + "_skipReason" ).val("NONE");
+				if(($(this).attr('class').match(/multiselect-(.*)/) && $(this).attr('class').match(/multiselect-(.*)/).length > 1) || ($(this).attr('class').match(/(.*)-skipReason/) && $(this).attr('class').match(/(.*)-skipReason/).length > 1)){
+					if($(this).attr('class').match(/multiselect-(.*)/)){
+						var multi = $(this).attr('class').match(/multiselect-(.*)/)[1];
+						var realVal = $("#Answer_" + multi + "_value");
+						var values = realVal.val().split(',');
+						for(var k in values){
+							if(values[k] == selected.val()){
+								$(this).prop("checked", false);
+								realVal.val('');
 							}
-							realVal.val('');
+						}
+					}else{
+						var multi = $(this).attr('class').match(/(.*)-skipReason/)[1];
+						var skipVal = $("#Answer_" + multi + "_skipReason");
+						if(selected.val() == skipVal.val()){
+							$(this).prop("checked", false);
+							$("#Answer_" + multi + "_skipReason" ).val("NONE");
 						}
 					}
 				}
@@ -134,47 +129,9 @@ $this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterP
 		<div class="question">
 	<?php endif; ?>
 	<?php if($questions[0]->answerType == 'ALTER_PROMPT'): ?>
-		<?php if($study->multiSessionEgoId): ?>
-		<div id="previous_alters">
-		<?php
-		$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionId = " . $study->multiSessionEgoId)->queryScalar();
-		$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-		$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
-		$interviewIds = implode(",",array_diff($interviewIds, array($interviewId)));
-		$alters = q("SELECt * FROM alters WHERE FIND_IN_SET(interviewId,'$interviewIds')")->queryAll();
-		if($alters){
-			echo "<b>Previous Alters</b><br><br>";
-			foreach($alters as $oldAlter){
-				echo $oldAlter['name'] . "<br>";
-			}
-		}
-		?>
-		</div>
-		<?php endif; ?>
 		<div id="alterPrompt" class="orangeText" style="width:500px"></div>
-		<?php
-		$panel = strtolower($questions[0]->answerType);
-		$form=$this->beginWidget('CActiveForm', array(
-			'id'=>'alter-form',
-			'enableAjaxValidation'=>true,
-		));
-
-		$this->renderPartial('_form_'.$panel, array('question'=>$questions[0], 'interviewId'=>$interviewId,  'form'=>$form, 'model'=>$alter, 'study'=>$study, 'ajax'=>true), false, true);
-		echo CHtml::ajaxSubmitButton ("+ Add",
-			CController::createUrl('ajaxupdate'),
-			array('success'=>'js:function(data){$("#alterListBox").html(data);$("#Alters_name").val("");$(".flash-error").hide()}'),
-			array('id'=>uniqid(), 'live'=>false, 'class'=>"orangebutton"));
-
-		$this->endWidget();
-		?>
-
-		<?php if(isset($model[0])): ?>
-			<div class="flash-error" style="width:200px;">
-				<?php echo $model[0]->getError('value'); ?>
-			</div>
-		<?php endif; ?>
-	</div>
-
+		<div id="alterFormBox"></div>
+		</div>
 	<?php endif;?>
 <?php endif;?>
 
@@ -538,11 +495,11 @@ if($rowColor != "" && $question->askingStyleList){
 			    	"pageLevel_skip",
 			    	array($model[$array_id]->skipReason),
 			    	$skipList,
-			    	array('class'=>'pageLevel-skipReason pageLevel', 'container'=>'', 'separator'=>"</div><div class='multiRow palette-sun-flower' style='width:".$maxwidth."px'>")
+			    	array('class'=>'skipReason pageLevel', 'container'=>'', 'separator'=>"</div><div class='multiRow palette-sun-flower' style='width:".$maxwidth."px'>")
 			    ) . "</div>";
 			}else{
 			    echo "<div clear=all>".
-			    CHtml::checkBoxList("pageLevel_skip pageLevel", array($model[$array_id]->skipReason), $skipList, array('class'=>'pageLevel-skipReason'))
+			    CHtml::checkBoxList("pageLevel_skip pageLevel", array($model[$array_id]->skipReason), $skipList, array('class'=>'skipReason pageLevel'))
 			    ."</div>";
 			}
 		}
@@ -552,35 +509,39 @@ if($rowColor != "" && $question->askingStyleList){
 	<?php endif; ?>
 <?php endforeach; ?>
 
-	<div id="buttonRow" style="float:left;padding-bottom:20px;clear:left">
 		<input name="page" type=hidden value=<?php echo $page ?> />
 		<input name="studyId" type=hidden value=<?php echo $studyId ?> />
-		<?php if($page != 0 ): ?>
-			<a class="graybutton" href="/interviewing/<?php echo $studyId. "?interviewId=". $interviewId . "&page=". ($page - 1) . $key; ?>">Back</a>
-		<?php endif; ?>
-		<?php if($completed != -1): ?>
-			<?php if($question->answerType != "CONCLUSION"): ?>
-				<input class='orangebutton' type="submit" value="Next"/>
-			<?php else: ?>
-				<input class='orangebutton' type="submit" value="Finish"/>
-			<?php endif; ?>
-		<?php else: ?>
-			<?php if($question->answerType != "CONCLUSION"): ?>
-				<a class="orangebutton" href="/interviewing/<?php echo $studyId. "?interviewId=". $interviewId . "&page=". ($page + 1) . $key; ?>">Next</a>
-			<?php endif; ?>
-		<?php endif; ?>
-	</div>
 
 <?php $this->endWidget(); ?>
-<?php
-if($networkQuestion)
-	$this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$networkQuestion->networkRelationshipExprId, 'params'=>$networkQuestion->networkParams));
 
+<?php
+if($networkQuestion){
+	echo "<div style='margin-left:20px'>";
+	$this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$networkQuestion->networkRelationshipExprId, 'params'=>$networkQuestion->networkParams));
+	echo "</div>";
+}
 ?>
+
+<div id="buttonRow" style="float:left;padding-bottom:20px;clear:left">
+	<?php if($page != 0 ): ?>
+		<a class="graybutton" href="/interviewing/<?php echo $studyId. "?interviewId=". $interviewId . "&page=". ($page - 1) . $key; ?>">Back</a>
+	<?php endif; ?>
+	<?php if($completed != -1): ?>
+		<?php if($question->answerType != "CONCLUSION"): ?>
+			<input class='orangebutton' type="submit" onclick="$('#answer-form').submit()" value="Next"/>
+		<?php else: ?>
+			<input class='orangebutton' type="submit" onclick="$('#answer-form').submit()" value="Finish"/>
+		<?php endif; ?>
+	<?php else: ?>
+		<?php if($question->answerType != "CONCLUSION"): ?>
+			<a class="orangebutton" href="/interviewing/<?php echo $studyId. "?interviewId=". $interviewId . "&page=". ($page + 1) . $key; ?>">Next</a>
+		<?php endif; ?>
+	<?php endif; ?>
+</div>
 
 <script>
 $(function(){
-	nav = <?php echo Study::nav($studyId, $page, $interviewId); ?>;
+	nav = <?php echo Study::nav($study, $page, $interviewId); ?>;
 	console.log(nav);
 	for(k in nav){
 		$('#navbox ul').append("<li><a href='/interviewing/<?php echo $studyId. "?interviewId=". $interviewId . "&page="; ?>" + k + "'>" + k + ". " + nav[k] + "</a></li>");

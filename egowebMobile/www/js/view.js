@@ -29,7 +29,6 @@ function view(id, interviewId, page)
 		interviewId = '';
 	}
 
-	//console.log(questions);
 	$('.orangebutton').show();
 	$('#navigation').hide()
 
@@ -76,18 +75,18 @@ function view(id, interviewId, page)
 				$('#ALTER_PROMPT').show();
 			$('#alterListBox').show();
 			displayAlters();
+			$('#previous_alters').show();
+			previousAlters();
 		}else{
 			$('#ALTER_PROMPT').hide();
 			$('#alterListBox').hide();
+			$('#previous_alters').hide();
+
 		}
 
 		if(!model[array_id])
 			model[array_id] = new Answer;
 
-		//console.log(array_id);
-		//console.log(model[array_id]);
-
-		//console.log('value:' + model[array_id].VALUE);
 		if(model[array_id].VALUE == study.VALUENOTYETANSWERED)
 			model[array_id].VALUE = "";
 
@@ -138,6 +137,15 @@ function view(id, interviewId, page)
 				$(this).attr('id', 'Answer_' + array_id + '_value');
 				$(this).val(model[array_id].VALUE);
 				if(parseInt(questions[k].ASKINGSTYLELIST) && (questions[k].ANSWERTYPE == "TEXTUAL" || questions[k].ANSWERTYPE == "NUMERICAL")){
+					columnWidth = 480 / (2 + Object.keys(skipList).length);
+					if(columnWidth > 180)
+						columnWidth = 180;
+					if(counter == 0){
+						newForm.append('<div class="multiRow" style="width:300px">&nbsp;</div>');
+						for (s in skipList){
+							newForm.append('<div class="multiRow" style="width:'+columnWidth+'px">'+skipList[s] +'</div>');
+						}
+					}
 					if(questions[k].SUBJECTTYPE == "ALTER")
 						name =  getAlterName(questions[k].ALTERID1);
 					else if(questions[k].SUBJECTTYPE == "ALTER_PAIR")
@@ -145,20 +153,17 @@ function view(id, interviewId, page)
 					else
 						name = questions[k].CITATION;
 						multi = 'multiRow';
-					newForm.append('<div class="'+multi+'" style="width:180pxpx; text-align:left">' + name + '</div>');
+					newForm.append('<div class="'+multi+'" style="width:180px; text-align:left">' + name + '</div>');
 					newForm.append($(this));
-					newForm.append('<br style="clear:left;">');
 				}else{
 					newForm.append($(this));
 				}
 			}else if($(this).attr('id') == "MULTISELECT"){
 				options = db.queryObjects("SELECT * FROM questionOption WHERE questionId = " + questions[k].ID).data;
-				//console.log(options);
 				if(typeof model[array_id].VALUE != 'undefined')
 					values = model[array_id].VALUE.split(',');
 				else
 					values = [];
-				newForm.append('<br clear=all>');
 				if(parseInt(questions[k].ASKINGSTYLELIST)){
 					columnWidth = 480 / (Object.keys(options).length + Object.keys(skipList).length);
 					if(columnWidth > 180)
@@ -173,12 +178,12 @@ function view(id, interviewId, page)
 						}
 						newForm.append('<br clear=all>');
 					}
-						multi = 'multiRow';
-						if(typeof color == 'undefined' || color == ' colorB')
-							color = ' colorA';
-						else
-							color = ' colorB';
-						multi += color;
+					multi = 'multiRow';
+					if(typeof color == 'undefined' || color == ' colorB')
+						color = ' colorA';
+					else
+						color = ' colorB';
+					multi += color;
 					if(questions[k].SUBJECTTYPE == "ALTER")
 						name =  getAlterName(questions[k].ALTERID1);
 					else if(questions[k].SUBJECTTYPE == "ALTER_PAIR")
@@ -189,7 +194,6 @@ function view(id, interviewId, page)
 				}
 				var oi = 0;
 				for (o in options){
-					//console.log(values + ":" + String(options[o].ID) + ":" +values.indexOf(String(options[o].ID)) );
 					$(this).val(options[o].ID);
 					$(this).attr('class', 'multiselect-' + array_id);
 
@@ -288,7 +292,6 @@ function view(id, interviewId, page)
 			}
 		});
 
-		$('.question form').append(newForm);
 
 		if(typeof model[array_id].OTHERSPECIFYTEXT != 'undefined'){
 			otherValue = [];
@@ -319,7 +322,7 @@ function view(id, interviewId, page)
 		});
 
 		if(Object.keys(skipList).length > 0){
-			var skipForm =$('#SKIP').clone();
+			var skipForm = $('#SKIP').clone();
 			$('input', skipForm).each(function(index){
 				if(typeof skipList[$(this).attr('id')] != 'undefined'){
 					var thisSkip = $(this).attr('id').slice(0);
@@ -342,10 +345,15 @@ function view(id, interviewId, page)
 
 					if(!parseInt(questions[k].ASKINGSTYLELIST))
 						skipContainer.append($('.' + thisSkip + '_LABEL', skipForm));
-					$('.question form').append(skipContainer);
+					newForm.append(skipContainer);
 				}
 			});
 		}
+
+		if(questions[k].ANSWERTYPE != "ALTER_PROMPT")
+			newForm.append('<br clear=all>');
+
+		$('.question form').append(newForm);
 
 		var answerInput = $('#ANSWERPOST').children().clone();
 		answerInput.each(function(index){
@@ -367,19 +375,122 @@ function view(id, interviewId, page)
 		$('.question form').append(answerInput);
 		counter++;
 
+		if(counter == Object.keys(questions).length){
+			if(parseInt(questions[k].ASKINGSTYLELIST) && parseInt(questions[k].ALLBUTTON)){
+				options = db.queryObjects("SELECT * FROM questionOption WHERE questionId = " + questions[k].ID).data;
+				var newForm = $('#EMPTY').clone();
+				columnWidth = 480 / (Object.keys(options).length + Object.keys(skipList).length);
+				if(columnWidth > 180)
+					columnWidth = 180;
+				newForm.append('<div class="multiRow palette-sun-flower" style="width:180px; text-align:left">Set All</div>');
+				for (o in options){
+					checkbox = $("#MULTIPLE_SELECTION #MULTISELECT").clone();
+					checkbox.val(options[o].ID);
+					checkbox.attr('class', 'pageLevel multiselect');
+					checkbox.attr('id', 'multiselect-' + array_id + "_pageLevel");
+					if(questions[k].MAXCHECKABLEBOXES == null)
+						questions[k].MAXCHECKABLEBOXES = 1;
+					multi = 'multiRow palette-sun-flower';
+
+					newElement = $('#EMPTY').clone();
+					newElement.toggleClass(multi);
+					if(parseInt(questions[k].ASKINGSTYLELIST)){
+						newElement.css('width',columnWidth + 'px');
+					}
+					newElement.append(checkbox.clone());
+					newForm.append(newElement);
+				}
+				if(Object.keys(skipList).length > 0){
+					var skipForm = $('#SKIP').clone();
+					$('input', skipForm).each(function(index){
+						if(typeof skipList[$(this).attr('id')] != 'undefined'){
+							var thisSkip = $(this).attr('id').slice(0);
+							skipContainer = $('#EMPTY').clone();
+								$('.' + thisSkip + '_LABEL', skipForm).remove();
+								skipContainer.css('width', columnWidth);
+								skipContainer.toggleClass(multi);
+							$(this).attr('class', 'pageLevel skipReason');
+							$(this).attr('id', 'skipReason_' + thisSkip);
+							skipContainer.append($(this));
+							newForm.append(skipContainer);
+						}
+					});
+				}
+				$('.question form').append(newForm);
+				$('.pageLevel').change(function(){
+					var selected = $(this);
+					if($(this).is(":checked")){
+						$( "input[class*='-skipReason']").prop("checked", false);
+						$( "input[class*='multiselect-']").prop("checked", false);
+						$( "input:checkbox[value='" + selected.val() + "']").each(function(index){
+							console.log($(this));
+							console.log(!$(this).hasClass("pageLevel"));
+							if(!$(this).hasClass("pageLevel") && (($(this).attr('class').match(/multiselect-(.*)/) && $(this).attr('class').match(/multiselect-(.*)/).length > 1) || ($(this).attr('class').match(/(.*)-skipReason/) && $(this).attr('class').match(/(.*)-skipReason/).length > 1))){
+								if($(this).attr('class').match(/multiselect-(.*)/))
+									var multi = $(this).attr('class').match(/multiselect-(.*)/)[1];
+								else
+									var multi = $(this).attr('class').match(/(.*)-skipReason/)[1];
+								var realVal = $("#Answer_" + multi + "_value");
+								var values = realVal.val().split(',');
+								var skipVal = $("#Answer_" + multi + "_SKIPREASON" ).val();
+								if(realVal.val() == "" && $("#Answer_" + multi + "_SKIPREASON" ).val() == "NONE"){
+									$(this).prop("checked", true);
+									realVal.val(selected.val());
+									if(selected.val() == "DONT_KNOW" || selected.val() == "REFUSE"){
+										$("#Answer_" + multi + "_SKIPREASON" ).val(selected.val());
+										realVal.val("");
+									}
+								}else{
+									if(skipVal == "NONE"){
+										for(var k in values){
+											$(".multiselect-" +  multi + "[value='" + values[k] + "']").prop("checked", true);
+										}
+									}else{
+										$("." +  multi + "-skipReason[value='" + skipVal + "']").prop("checked", true);
+									}
+								}
+							}
+						});
+					}else{
+						$( "input:checkbox[value='" + selected.val() + "']").each(function(index){
+							if(($(this).attr('class').match(/multiselect-(.*)/) && $(this).attr('class').match(/multiselect-(.*)/).length > 1) || ($(this).attr('class').match(/(.*)-skipReason/) && $(this).attr('class').match(/(.*)-skipReason/).length > 1)){
+								if($(this).attr('class').match(/multiselect-(.*)/)){
+									var multi = $(this).attr('class').match(/multiselect-(.*)/)[1];
+									var realVal = $("#Answer_" + multi + "_value");
+									var values = realVal.val().split(',');
+									for(var k in values){
+										if(values[k] == selected.val()){
+											$(this).prop("checked", false);
+											realVal.val('');
+										}
+									}
+								}else{
+									var multi = $(this).attr('class').match(/(.*)-skipReason/)[1];
+									var skipVal = $("#Answer_" + multi + "_SKIPREASON");
+									if(selected.val() == skipVal.val()){
+										$(this).prop("checked", false);
+										$("#Answer_" + multi + "_SKIPREASON" ).val("NONE");
+									}
+								}
+							}
+						});
+					}
+				})
+			}
+		}
 		if(questions[k].ANSWERTYPE == "CONCLUSION")
 			$('#next.orangebutton').html('Finish');
 		else
 			$('#next.orangebutton').html('Next');
 
 	}
+
+
 	if(currentPage > 0)
 		$('.graybutton').show();
 	else
 		$('.graybutton').hide();
 	buildNav(currentPage, interviewId);
-	//console.log('rendered page:' + currentPage);
-	//console.log(questions);
 	$('body').scrollTop(0);
 
 }

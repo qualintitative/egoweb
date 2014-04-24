@@ -1,16 +1,15 @@
 <script>
 <?php $study = Study::model()->findByPk($studyId); ?>
-<?php  if(Interview::countAlters($interviewId) >= $study->maxAlters): ?>
 jQuery(document).ready(function(){
-	jQuery('#alter-form').hide();
-});
-<?php  else: ?>
-jQuery(document).ready(function(){
-	jQuery('#alter-form').show();
+	<?php  if(Interview::countAlters($interviewId) < $study->maxAlters): ?>
+	$.get("/interviewing/ajaxupdate?studyId=<?=$studyId;?>&interviewId=<?=$interviewId;?>",function(data){
+		$('#alterFormBox').html(data);
+	});
 	jQuery('#Alters_name').focus();
-
+	<?php else: ?>
+		$('#alterFormBox').html("");
+	<?php endif; ?>
 });
-<?php endif; ?>
 
 <?php if($alterPrompt): ?>
 jQuery(document).ready(function(){
@@ -74,7 +73,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
 	'summaryText'=>'',
 ));
 ?>
-
+<br>
 <div>
 <?php
 echo $model->getError('name');

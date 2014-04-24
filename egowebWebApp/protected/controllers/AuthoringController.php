@@ -64,6 +64,26 @@ class AuthoringController extends Controller
 		$this->redirect(Yii::app()->request->getUrlReferrer());
 	}
 
+	public function actionImportaudio()
+	{
+		if(isset($_POST['studyId']) && isset($_POST['type']) && isset($_POST['id'])){
+			if(!is_uploaded_file($_FILES['userfile']['tmp_name'])) //checks that file is uploaded
+				die("Error importing Audio");
+
+			if(!is_dir(Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type']))
+				mkdir(Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type'], 0777, true);
+
+			$extension = strrchr($_FILES['userfile']['name'], '.');
+			move_uploaded_file($tmp_name, Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type'] . "/". $_POST['id'] . ".mp3");
+		}else if(isset($_GET['studyId']) && isset($_GET['type']) && isset($_GET['id'])){
+			$this->renderPartial('form_audio',array(
+				'studyId'=>$_GET['studyId'],
+				'type'=>$_GET['type'],
+				'id'=>$_GET['id'],
+			));
+		}
+	}
+
 	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed

@@ -8,7 +8,6 @@ expressions = new Object;
 
 function getInterviewIds(intId){
 	var egoValue = db.queryValue("SELECT VALUE FROM answer WHERE CONCAT(',', interviewId, ',') LIKE '%," + intId + ",%' AND questionID = " + study.MULTISESSIONEGOID);
-	console.log("egovalue:" + egoValue);
 	column = db.queryObjects("SELECT ID FROM question WHERE title = (SELECT q.title FROM question q WHERE q.ID = " + study.MULTISESSIONEGOID + ")").data;
 	var multiIds = [];
 	for (var k in column){
@@ -40,7 +39,6 @@ function loadStudy(id, intId){
 		if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
 			var interviewIds = getInterviewIds(intId);
 			answers = db.queryObjects("SELECT * FROM answer WHERE interviewId in (" + interviewIds.join(",") + ")").data;
-			console.log(answers);
 		}else{
 			answers = db.queryObjects("SELECT * FROM answer WHERE interviewId = " + intId).data;
 		}
@@ -69,6 +67,12 @@ function getInterviewName(studyId){
 
 function getEgoIdValue(interviewId){
 	var studyId = db.queryValue("SELECT studyID FROM interview WHERE id = " + interviewId);
-	var firstId = db.queryValue("SELECT ID FROM question WHERE studyId = " + studyId + " AND subjectType = 'EGO_ID' AND ORDERING = 0");
-	return db.queryValue("SELECT value FROM answer WHERE questionId = " + firstId + " AND interviewId = " + interviewId);
+	var egoIdQs = db.queryObjects("SELECT * FROM question WHERE studyId = " + studyId + " AND subjectType = 'EGO_ID' ORDER BY ORDERING").data;
+	var egoId = "";
+	for(var k in egoIdQs){
+		if(egoId)
+			egoId = egoId + "_";
+		egoId = egoId + db.queryValue("SELECT value FROM answer WHERE questionId = " + egoIdQs[k].ID + " AND interviewId = " + interviewId);
+	}
+	return egoId;
 }

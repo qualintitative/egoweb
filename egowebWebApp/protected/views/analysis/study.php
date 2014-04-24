@@ -55,7 +55,7 @@ foreach($interviews as $interview){
 		$completed = "<span style='color:#0B0'>COMPLETED</span>";
 	else
 		$completed = "INCOMPLETE";
-	echo "<div class='multiRow' style='width:200px;text-align:left'>".CHtml::checkbox('export[' .$interview['id'].']').Interview::getRespondant($interview['id'])."</div>";
+	echo "<div class='multiRow' style='width:200px;text-align:left'>".CHtml::checkbox('export[' .$interview['id'].']'). " " . Interview::getEgoId($interview['id'])."</div>";
 	echo "<div class='multiRow' style='width:120px'>".$completed."</div>";
 	echo "<div class='multiRow'>".CHtml::button('Review',array('submit'=>$this->createUrl('/interviewing/'.$study->id.'?interviewId='.$interview['id'])))."</div>";
 	echo "<div class='multiRow'>".CHtml::button('Visualize',array('submit'=>$this->createUrl('/analysis/visualize?expressionId=&interviewId='.$interview['id'])))."</div>";

@@ -61,9 +61,10 @@ return array(
 			/*'connectionString' => 'mysql:host=localhost;dbname=egoweb_data',
 			'username' => 'egoweb',
 			'password' => "test1234",*/
-			'connectionString' => 'mysql:host=localhost;dbname=egoweb_data',
-			'username' => 'egoweb',
-			'password' => "test1234",
+			'connectionString' => 'mysql:host=localhost;dbname=egowebbl_egoweb',
+			'username' => 'egowebbl',
+			'password' => "blu35ky!",
+			//'enableProfiling'=>true,
 			'emulatePrepare' => true,
 			'charset' => 'utf8',
 		),
@@ -89,7 +90,7 @@ return array(
 					'class'=>'XWebDebugRouter',
 					'config'=>'alignLeft, opaque, fixedPos, collapsed, yamlStyle',
 					'levels'=>'error, warning, trace, profile, info',
-					'allowedIPs'=>array('127.0.0.1','::1','localhost'),
+					'allowedIPs'=>array('127.0.0.1','::1','localhost', '71.231.64.172'),
 				),
 			),
 

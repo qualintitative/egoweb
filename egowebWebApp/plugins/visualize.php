@@ -428,7 +428,7 @@ class visualize extends Plugin
 		$this->params = json_decode($this->params, true);
 		$adjacencies = array();
 		$nodes = array();
-		$alters = q("SELECT * FROM alters WHERE interviewId = ".$this->method)->queryAll();
+		$alters = q("SELECT * FROM alters WHERE FIND_IN_SET(".$this->method .", interviewId)")->queryAll();
 		$alterNames = array();
 		$alterIds = array();
 		foreach($alters as $alter){
@@ -445,12 +445,23 @@ class visualize extends Plugin
 		}
 
 		$interview = Interview::model()->findByPK($this->method);
+		$study = Study::model()->findByPk($interview->studyId);
 
-			$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$interview->studyId)->queryColumn();
-			$questionIds = implode(",", $questionIds);
-			if(!$questionIds)
-				$questionIds = 0;
-			$alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId = " . $interview->studyId . " AND questionId in (" . $questionIds . ")")->queryColumn();
+		$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$interview->studyId)->queryColumn();
+		$questionIds = implode(",", $questionIds);
+		if(!$questionIds)
+			$questionIds = 0;
+
+		if($study->multiSessionEgoId){
+			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
+			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
+			$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
+			$studyId = implode(",", $studyIds);
+		}else{
+			$studyId = $interview->studyId;
+		}
+
+		$alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId in (" . $studyId . ") AND questionId in (" . $questionIds . ")")->queryColumn();
 
 		$expression = Expression::model()->findByPk($this->id);
 		if($expression->type == "Compound"){
@@ -480,11 +491,9 @@ class visualize extends Plugin
 			foreach($alters2 as $alter2){
 
 			if($expression && $expression->evalExpression($expression->id, $this->method, $alter['id'], $alter2['id'])){
-				if($currentNode != $alter['id']){
-					$currentNode = $alter2['id'];
-					$nodes[$currentNode]['id'] = $currentNode;
-					$nodes[$currentNode]['name'] = $alterNames[$currentNode];
-				}
+				$currentNode = $alter2['id'];
+				$nodes[$currentNode]['id'] = $currentNode;
+				$nodes[$currentNode]['name'] = $alterNames[$currentNode];
 				$nodes[$currentNode]['adjacencies'][] = array(
 					'nodeTo'=>$alter['id'],
 					'nodeFrom'=>$alter2['id'],
@@ -532,7 +541,7 @@ class visualize extends Plugin
 					)
 				);
 			}
-			$adjacencies =json_encode($json);
+			$adjacencies = json_encode($json);
 		}
 		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/jit.js');
 		Yii::app()->clientScript->registerCssFile(Yii::app()->getBaseUrl().'/css/base.css');
@@ -573,6 +582,7 @@ function saveNodes()
 		nodes[k] = {x:fd.graph.nodes[k].pos.x, y:fd.graph.nodes[k].pos.y};
 	}
 	$("#Graph_nodes").val(JSON.stringify(nodes));
+	$("#nodeList").val(JSON.stringify(nodes));
 }
 
 function saveGraph(){
@@ -893,9 +903,10 @@ $(function(){
 });
 
 function print(){
+	saveNodes();
 	params = refresh();
-	url = "/analysis/visualize?print&expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent(JSON.stringify(params));
-	document.location = url;
+	url = "/analysis/visualize?print&expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent($("#nodeParams").val()) + "&nodes=" +  encodeURIComponent($("#nodeList").val());
+	window.open(url);
 }
 function saveNote(){
 	$.post("/analysis/savenote", $("#note-form").serialize(), function(data){
@@ -909,10 +920,12 @@ function saveNote(){
 			</div>
 			<div id="left-container">
 				<div id="inner-details">
-
 				</div>
 			</div>
 			<div id="right-container">
+				<input type="hidden" id="nodeList">
+				<input type="hidden" id="nodeParams" value=<?php echo json_encode($this->params); ?>>
+
 				<button  onclick="print()" class="btn btn-primary print-button">Export Graph</button>
 			</div>
 			<div id="log"></div>

@@ -132,12 +132,15 @@ class Expression extends CActiveRecord
 		if(!$expression)
 			return true;
 
+
 		$study = Study::model()->findByPk($expression->studyId);
 		if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
-			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
-			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-			$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
-			$interviewId = implode(",", $interviewIds);
+			if(!stristr($interviewId, ",")){
+				$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
+				$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
+				$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
+				$interviewId = implode(",", $interviewIds);
+			}
 		}
 
 		if(is_numeric($expression->questionId)){
@@ -213,7 +216,6 @@ class Expression extends CActiveRecord
 			$logic = "return " . $answer . " " . $comparers[$expression->operator] . " " . $expression->value . ";";
 			return eval($logic);
 		}else if($expression->type == "Selection"){
-			//$answer = Answer::model()->find($criteria);
 			if(!$answer)
 				return $expression->resultForUnanswered;
 			$selectedOptions = explode(',', $answer);
