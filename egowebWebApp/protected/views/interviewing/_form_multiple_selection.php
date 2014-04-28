@@ -56,13 +56,18 @@ if($rowColor != "" && $question->askingStyleList){
 			'multiselect-'.$array_id,
 			$selected,
 			CHtml::listData($options, 'id', ''),
-			array('class'=>'multiselect-'.$array_id, 'container'=>'', 'separator'=>"</div><div class='multiRow ".$rowColor."'  style='width:".$maxwidth."px'>")
+			array(
+				'class'=>'multiselect-'.$array_id,
+				'container'=>'',
+				'separator'=>"</div><div class='multiRow ".$rowColor."'  style='width:".$maxwidth."px'>",
+			)
 		) . "</div>";
 }else{
 	echo CHtml::checkBoxList(
 	    'multiselect-'.$array_id,
 	    $selected,
-	    CHtml::listData($options, 'id', 'name'),
+	    CHtml::listData($options, 'id', function($data){
+	    	return $data->name .(file_exists(Yii::app()->basePath."/../audio/".$data->studyId . "/OPTION/" . $data->id . ".mp3") ? '<script>var optionAudio_' . $data->id . ' = loadAudio("/audio/' . $data->studyId  . "/OPTION/"  . $data->id . '.mp3");</script>'. "<a class=\"playSound\" onclick=\"playSound('/audio/" . $data->studyId  . "/OPTION/"  . $data->id . ".mp3')\" href=\"#\"><span class=\"fui-volume play-sound\"></span></a>": "");}),
 	    array('class'=>'multiselect-'.$array_id)
 	);
 	echo "<br>";

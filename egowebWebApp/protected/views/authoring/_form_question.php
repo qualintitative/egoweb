@@ -3,7 +3,7 @@
 /* @var $model Question */
 /* @var $form CActiveForm */
 ?>
-
+<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/modal.js'); ?>
 <?php
 $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'question-form',
@@ -399,84 +399,16 @@ function refresh(container){
 		$('#<?= $model->id; ?> #Question_networkParams').val(refresh($('#<?= $model->id; ?> #visualize-bar')));
 	});
 	</script>
-	<!--
-	<div class="panel-<?php echo $model->id; ?>" id="NETWORK" style="display:none">
-
-
-		<div class="row">
-			<?php echo $form->labelEx($model,'networkNColorQId'); ?>
-			<?php $criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"studyId = " . $model->studyId . " AND subjectType = 'ALTER'",
-				'order'=>'ordering',
-			);
-			?>
-			<?php echo $form->dropdownlist(
-				$model,
-				'networkNColorQId',
-				CHtml::listData(Question::model()->findAll($criteria), 'id', 'title'),
-				array('empty' => 'Choose One')
-			); ?>
-			<?php echo $form->error($model,'networkNColorQId'); ?>
-		</div>
-
-		<div class="row">
-			<?php echo $form->labelEx($model,'networkNSizeQId'); ?>
-			<?php $criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"studyId = " . $model->studyId . " AND subjectType = 'ALTER'",
-				'order'=>'ordering',
-			);
-			?>
-			<?php echo $form->dropdownlist(
-				$model,
-				'networkNSizeQId',
-				CHtml::listData(Question::model()->findAll($criteria), 'id', 'title'),
-				array('empty' => 'Choose One')
-			); ?>
-			<?php echo $form->error($model,'networkNSizeQId'); ?>
-		</div>
-
-		<div class="row">
-			<?php echo $form->labelEx($model,'networkEColorQId'); ?>
-			<?php $criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"studyId = " . $model->studyId . " AND subjectType = 'ALTER_PAIR'",
-				'order'=>'ordering',
-			);
-			?>
-			<?php echo $form->dropdownlist(
-				$model,
-				'networkEColorQId',
-				CHtml::listData(Question::model()->findAll($criteria), 'id', 'title'),
-				array('empty' => 'Choose One')
-			); ?>
-			<?php echo $form->error($model,'networkEColorQId'); ?>
-		</div>
-
-		<div class="row">
-			<?php echo $form->labelEx($model,'networkESizeQId'); ?>
-			<?php $criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"studyId = " . $model->studyId . " AND subjectType = 'ALTER_PAIR'",
-				'order'=>'ordering',
-			);
-			?>
-			<?php echo $form->dropdownlist(
-				$model,
-				'networkESizeQId',
-				CHtml::listData(Question::model()->findAll($criteria), 'id', 'title'),
-				array('empty' => 'Choose One')
-			); ?>
-			<?php echo $form->error($model,'networkESizeQId'); ?>
-		</div>
-	</div>-->
 	<?php endif;?>
 
 </div>
 
 	<div class="row" style="width:50%; float:left; padding:10px 20px">
-		<?php echo $form->labelEx($model,'prompt', array('onclick'=>'$(".nicEdit-main", this.parentNode)[0].focus()')); ?>
+		<?php echo $form->labelEx($model,'prompt', array('onclick'=>'$(".nicEdit-main", this.parentNode)[0].focus()','class'=>'prompt')); ?>
+		<div class="audioPlay" id="<?= $model->subjectType; ?>_<?= $model->id; ?>"><?php if(file_exists(Yii::app()->basePath."/../audio/".$model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3")): ?><a class="play-sound" onclick="playSound($(this).attr('file'))" href="#" file="/audio/<?= $model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3"; ?>"><span class="fui-volume"></span></a><?php endif; ?></div>
+		<?php if(!$model->isNewRecord):?>
+		<a class="btn btn-primary pull-right btn-sm" data-toggle="modal" data-target="#myModal" href="/authoring/uploadaudio?type=<?= $model->subjectType; ?>&id=<?= $model->id; ?>&studyId=<?= $model->studyId; ?>">Upload Audio</a>
+		<?php endif;?>
 		<?php echo $form->textArea($model,'prompt',array('rows'=>6, 'cols'=>50, 'id'=>'prompt'.$model->id)); ?>
 		<?php echo $form->error($model,'prompt'); ?>
 		<br>

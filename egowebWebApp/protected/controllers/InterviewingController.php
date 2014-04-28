@@ -112,12 +112,14 @@ class InterviewingController extends Controller
 			}
 		}
 
+		$qNav = Study::nav($study, $currentPage, $interviewId);
 		$this->render('view',array(
 			'studyId'=>$id,
 			'questions'=>$questions,
 			'page'=>$currentPage,
 			'model'=>$model,
 			'study'=>$study,
+			'qNav'=>$qNav,
 			'interviewId'=>$interviewId,
 		));
 	}
@@ -415,12 +417,14 @@ class InterviewingController extends Controller
 					'page='.$page.$key
 				));
 			}else{
+				$qNav =  Study::nav($study, $_POST['page'], $interviewId);
 				$this->render('view',array(
 					'studyId'=>$_POST['studyId'],
 					'questions'=>$questions,
 					'page'=>$_POST['page'],
 					'study'=>$study,
 					'model'=>$model,
+					'qNav'=>$qNav,
 					'interviewId'=>$interviewId,
 				));
 			}

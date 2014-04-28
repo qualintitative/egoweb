@@ -192,6 +192,12 @@ foreach($questions as $question) {
 		else
 			echo Interview::interpretTags($question->prompt, $interviewId , $question->alterId1, $question->alterId2);
 		?>
+		<?php if(file_exists(Yii::app()->basePath."/../audio/".$question->studyId . "/" . $question->subjectType . "/" . $question->id . ".mp3")):?>
+			<script>
+			var promptAudio_<?=$question->id;?> = loadAudio("/audio/<?= $question->studyId . "/" . $question->subjectType . "/" . $question->id . ".mp3"; ?>");
+			</script>
+			<a class="play-sound" onclick='playSound("/audio/<?= $question->studyId . "/" . $question->subjectType . "/" . $question->id . ".mp3" ?>")' href="#"><span class="fui-volume"></span></a>
+		<?php endif; ?>
 	</div>
 	<br style="clear:left">
 
@@ -541,7 +547,7 @@ if($networkQuestion){
 
 <script>
 $(function(){
-	nav = <?php echo Study::nav($study, $page, $interviewId); ?>;
+	nav = <?= $qNav ?>;
 	console.log(nav);
 	for(k in nav){
 		$('#navbox ul').append("<li><a href='/interviewing/<?php echo $studyId. "?interviewId=". $interviewId . "&page="; ?>" + k + "'>" + k + ". " + nav[k] + "</a></li>");

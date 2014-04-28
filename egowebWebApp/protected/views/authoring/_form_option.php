@@ -5,71 +5,89 @@ $studyId = q("SELECT studyId FROM question WHERE id = " . $questionId)->querySca
 Yii::app()->clientScript->registerScript('delete', "
 jQuery('a.delete').click(function() {
 
-        var url = $(this).attr('href');
-        //  do your post request here
+		var url = $(this).attr('href');
+		//  do your post request here
 
 
-        $.get(url,function(data){
-             $('#data-".$questionId."').html(data);
-         });
-        return false;
+		$.get(url,function(data){
+			 $('#data-".$questionId."').html(data);
+		 });
+		return false;
 });
 ");
+Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/modal.js');
 Yii::app()->clientScript->registerScript('update', "
 jQuery('a.update').click(function() {
 
-        var url = $(this).attr('href');
-        //  do your post request here
+		var url = $(this).attr('href');
+		//  do your post request here
 
 
-        $.get(url,function(data){
-             $('#edit-option-".$questionId."').html(data);
-         });
-        return false;
+		$.get(url,function(data){
+			 $('#edit-option-".$questionId."').html(data);
+		 });
+		return false;
 });
 ");
 Yii::app()->clientScript->registerScript('moveup', "
 jQuery('a.moveup').click(function() {
 
-        var url = $(this).attr('href');
-        //  do your post request here
+		var url = $(this).attr('href');
+		//  do your post request here
 
 
-        $.get(url,function(data){
-             $('#data-".$questionId."').html(data);
-         });
-        return false;
+		$.get(url,function(data){
+			 $('#data-".$questionId."').html(data);
+		 });
+		return false;
 });
 ");
 $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'option-grid-'.$questionId,
 	'dataProvider'=>$dataProvider,
 	'columns'=>array(
-		'name',
+				array(
+					'name'=>'name',
+					'value'=>'"<label>$data->name</label>" . "<div id=\"OPTION_" . $data->id  . "\" class=\"audioPlay\">" . (file_exists(Yii::app()->basePath."/../audio/".$data->studyId . "/OPTION/" . $data->id . ".mp3") ? ' .
+					'"<a class=\"playSound\" onclick=\"playSound($(this).attr(\'file\'))\" href=\"#\" file=\"/audio/$data->studyId/OPTION/$data->id.mp3\"><span class=\"fui-volume play-sound\"></span></a></div>" : "")',
+					'type'=>'raw',
+					'htmlOptions'=>array(
+						'style'=>'width:60%',
+					),
+				),
 		'value',
 		array
 		(
-    		'class'=>'CButtonColumn',
-    		'template'=>'{moveup}{update}{delete}',
-    		'buttons'=>array
-    		(
-        		'delete' => array
-        		(
-            		'url'=>'Yii::app()->createUrl("/authoring/ajaxdelete", array("QuestionOption[id]"=>$data->id, "_"=>"'.uniqid().'"))',
-            		'options'=>array('class'=>'delete'),
-        		),
-        		'update' => array
-        		(
-            		'url'=>'Yii::app()->createUrl("/authoring/ajaxload", array("optionId"=>$data->id, "_"=>"'.uniqid().'", "form"=>"_form_option_edit"))',
-            		'options'=>array('class'=>'update'),
-        		),
-        		'moveup' => array
-        		(
-        			'imageUrl'=>'/images/arrow_up.png',
-            		'url'=>'Yii::app()->createUrl("/authoring/ajaxmoveup", array("optionId"=>$data->id, "_"=>"'.uniqid().'"))',
-            		'options'=>array('class'=>'moveup'),
-        		),
-    		),
+			'class'=>'CButtonColumn',
+			'template'=>'{moveup}{update}{delete}{upload}',
+			'buttons'=>array
+			(
+				'delete' => array
+				(
+					'url'=>'Yii::app()->createUrl("/authoring/ajaxdelete", array("QuestionOption[id]"=>$data->id, "_"=>"'.uniqid().'"))',
+					'options'=>array('class'=>'delete'),
+				),
+				'update' => array
+				(
+					'url'=>'Yii::app()->createUrl("/authoring/ajaxload", array("optionId"=>$data->id, "_"=>"'.uniqid().'", "form"=>"_form_option_edit"))',
+					'options'=>array('class'=>'update'),
+				),
+				'moveup' => array
+				(
+					'imageUrl'=>'/images/arrow_up.png',
+					'url'=>'Yii::app()->createUrl("/authoring/ajaxmoveup", array("optionId"=>$data->id, "_"=>"'.uniqid().'"))',
+					'options'=>array('class'=>'moveup'),
+				),
+				'upload' => array
+				(
+					'label'=>'<span class="fui-gear"></span>Audio',
+					'url'=>'Yii::app()->createUrl("/authoring/uploadaudio", array("id"=>$data->id, "studyId"=>$data->studyId, "type"=>"OPTION", "_"=>"'.uniqid().'"))',
+					'options'=>array(
+						'data-toggle'=>"modal",
+						'data-target'=>"#myModal",
+					),
+				),
+			),
 
 		),
 	),
@@ -100,11 +118,11 @@ $this->widget('zii.widgets.grid.CGridView', array(
 			echo $form->textField($model,'value', array('style'=>'width:100px'));
 			echo $form->error($model,'value');
 
-		    echo CHtml::ajaxSubmitButton ("Add Option",
-        		CController::createUrl('ajaxupdate'),
-        		array('update' => '#data-'.$questionId),
-        		array('id'=>uniqid(), 'live'=>false)
-        	);
+			echo CHtml::ajaxSubmitButton ("Add Option",
+				CController::createUrl('ajaxupdate'),
+				array('update' => '#data-'.$questionId),
+				array('id'=>uniqid(), 'live'=>false)
+			);
 
 			$this->endWidget();
 		?>

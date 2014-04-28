@@ -504,7 +504,7 @@ class AnalysisController extends Controller
 			$row[] = $alter['id'];
 			$row[] = $alter['name'];
 			$row[] = $alter['email'];
-			$row[] = "http://rand.bluscs.com/interviewing/".$study->id."?".$key;
+			$row[] =  Yii::app()->getBaseUrl(true) . "/interviewing/".$study->id."?".$key;
 			echo implode(',', $row) . "\n";
 		}
 		Yii::app()->end();

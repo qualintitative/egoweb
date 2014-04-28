@@ -727,6 +727,11 @@ ul.authoring li a:hover{
 	clear:left;
 }
 
+a.btn {
+	color:#fff;
+	margin-bottom:5px;
+}
+
 #visualize-bar label, #expression-bar label, #load-bar label,#inner-details label {
 	margin-bottom: 0;
 	padding-top:0;
@@ -787,4 +792,21 @@ ul.authoring li a:hover{
 
 #userlist {
 	clear:both;
+}
+
+.play-sound {
+	margin-left:5px;
+}
+
+.audioPlay{
+	float:left;
+	font-size:16px;
+}
+
+label.prompt , .grid-view label {
+	float:left;
+}
+
+.grid-view label {
+	width:85%;
 }

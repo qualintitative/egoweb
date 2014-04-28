@@ -35,7 +35,7 @@ class ImportExportController extends Controller
 			foreach($question->attributes() as $key=>$value){
 				if($key == "id")
 					$oldId = intval($value);
-				if($key!="key" && $key != "id")
+				if($key!="key" && $key != "id" && $key != "networkNShapeQId")
 					$newQuestion->$key = $value;
 			}
 			if($newQuestion->answerType == "SELECTION"){
@@ -333,6 +333,7 @@ EOT;
 				$question->preface = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $question->preface)), ENT_QUOTES, "UTF-8", false);
 				$question->prompt = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $question->prompt)), ENT_QUOTES, "UTF-8", false);
 				$question->citation = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $question->citation)), ENT_QUOTES, "UTF-8", false);
+				$question->networkParams = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $question->networkParams)), ENT_QUOTES, "UTF-8", false);
 
 				echo <<<EOT
 

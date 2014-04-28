@@ -64,23 +64,34 @@ class AuthoringController extends Controller
 		$this->redirect(Yii::app()->request->getUrlReferrer());
 	}
 
-	public function actionImportaudio()
+	public function actionUploadaudio()
 	{
 		if(isset($_POST['studyId']) && isset($_POST['type']) && isset($_POST['id'])){
 			if(!is_uploaded_file($_FILES['userfile']['tmp_name'])) //checks that file is uploaded
 				die("Error importing Audio");
 
+			if(!is_dir(Yii::app()->basePath."/../audio/".$_POST['studyId']))
+				mkdir(Yii::app()->basePath."/../audio/".$_POST['studyId'], 0777, true);
+
 			if(!is_dir(Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type']))
 				mkdir(Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type'], 0777, true);
 
-			$extension = strrchr($_FILES['userfile']['name'], '.');
-			move_uploaded_file($tmp_name, Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type'] . "/". $_POST['id'] . ".mp3");
+			if(move_uploaded_file($_FILES['userfile']['tmp_name'], Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type'] . "/". $_POST['id'] . ".mp3"))
+				echo "<a class=\"playSound\" onclick=\"playSound($(this).attr('file'))\" href=\"#\" file=\"/audio/".$_POST['studyId'] . "/" . $_POST['type'] . "/". $_POST['id'] . ".mp3\"><span class=\"fui-volume play-sound\"></span></a>";
 		}else if(isset($_GET['studyId']) && isset($_GET['type']) && isset($_GET['id'])){
-			$this->renderPartial('form_audio',array(
+			$this->renderPartial('_form_audio',array(
 				'studyId'=>$_GET['studyId'],
 				'type'=>$_GET['type'],
 				'id'=>$_GET['id'],
 			));
+		}
+	}
+
+	public function actionDeleteaudio()
+	{
+		if(isset($_POST['studyId']) && isset($_POST['type']) && isset($_POST['id'])){
+			if(file_exists(Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type'] . "/". $_POST['id'] . ".mp3"))
+				unlink(Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type'] . "/". $_POST['id'] . ".mp3");
 		}
 	}
 
@@ -712,6 +723,8 @@ class AuthoringController extends Controller
 				$ordering = $model->ordering;
 				$subjectType = $model->subjectType;
 				$questionId = $model->id;
+				if(file_exists(Yii::app()->basePath."/../audio/".$model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3"))
+					unlink(Yii::app()->basePath."/../audio/".$model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3");
 				$model->delete();
 				Question::sortOrder($ordering, $studyId);
 				$expressions = Expression::model()->findAllByAttributes(array('questionId'=>$questionId));
@@ -737,6 +750,8 @@ class AuthoringController extends Controller
 				if($model){
 					$questionId = $model->questionId;
 					$ordering = $model->ordering;
+					if(file_exists(Yii::app()->basePath."/../audio/".$model->studyId . "/OPTION/". $model->id . ".mp3"))
+						unlink(Yii::app()->basePath."/../audio/".$model->studyId . "/OPTION/". $model->id . ".mp3");
 					$model->delete();
 					Study::updated($model->studyId);
 					QuestionOption::sortOrder($ordering, $questionId);
@@ -905,7 +920,7 @@ class AuthoringController extends Controller
 
 			$alter = AlterList::model()->findByPk($_GET['alterListId']);
 			$key = "key=".User::hashPassword($alter->email);
-			echo "<div style='clear:both'><label>Authorized Link</label><br>http://rand.bluscs.com/interviewing/".$alter->studyId."?".$key."</div>";
+			echo "<div style='clear:both'><label>Authorized Link</label><br>" . Yii::app()->getBaseUrl(true) . "/interviewing/".$alter->studyId."?".$key."</div>";
 		}
 	}
 	public function actionAjaxmoveup()
@@ -994,6 +1009,8 @@ class AuthoringController extends Controller
 		$models = QuestionOption::model()->findAllByAttributes(array('questionId'=>$questionId));
 		foreach($models as $model){
 			$studyId = $model->studyId;
+			if(file_exists(Yii::app()->basePath."/../audio/".$studyId . "/OPTION/". $model->id . ".mp3"))
+				unlink(Yii::app()->basePath."/../audio/".$studyId . "/OPTION/". $model->id . ".mp3");
 			$model->delete();
 		}
 		if(isset($studyId))
