@@ -135,6 +135,17 @@ class InterviewingController extends Controller
 		{
 
 			$study = Study::model()->findByPk($id);
+			$errors = 0;
+
+			if(stristr($id, "key"))
+				list($id, $key) = explode('&key=', $id);
+			else
+				$key = '';
+
+			if(isset($_POST['nodes']))
+				$nodes = "&nodes=" .  urlencode($_POST['nodes']);
+			else
+				$nodes = "";
 
 			if(isset($_POST['Answer'][0]) && $_POST['Answer'][0]['answerType'] == "CONCLUSION"){
 				$interview = Interview::model()->findByPk($_POST['Answer'][0]['interviewId']);
@@ -145,17 +156,6 @@ class InterviewingController extends Controller
 				else
 					$this->redirect(Yii::app()->createUrl('admin/'));
 			}
-
-			if(isset($_GET['key'])){
-				$key = '&key='.$_GET['key'];
-			}else{
-				if(Yii::app()->user->isGuest && Yii::app()->request->hostInfo != "http://localhost"){
-					echo "Unauthorized Access";
-					die();
-				}
-				$key = '';
-			}
-			$errors = 0;
 
 			foreach($_POST['Answer'] as $Answer){
 
@@ -176,7 +176,7 @@ class InterviewingController extends Controller
 								$email_id = $array_id;
 							}
 						}
-						if(!isset($_GET['key']) || User::hashPassword($email) != $_GET['key']){
+						if($key && User::hashPassword($email) != $key){
 							$model[$email_id]->addError('value', 'You do not have the correct email for this survey.');
 							$errors++;
 							break;
@@ -189,7 +189,7 @@ class InterviewingController extends Controller
 								$this->redirect(Yii::app()->createUrl(
 									'interviewing/'.$_POST['studyId'].'?'.
 									'interviewId='.$interview->id.'&'.
-									'page='.($interview->completed).$key
+									'page='.($interview->completed).'&key=' . $key
 								));
 							}
 						}
@@ -199,7 +199,7 @@ class InterviewingController extends Controller
 							$interviewId = $interview->id;
 							$this->createEgoAnswers($interviewId, $id);
 						}else{
-							print_r($interview->getErrors());
+							print_r($interview->errors);
 							die();
 						}
 					}
@@ -228,7 +228,7 @@ class InterviewingController extends Controller
 				if($questions[$array_id]->useAlterListField){
 					$interviewer = "";
 					$field = $questions[$array_id]->useAlterListField;
-					if(!Yii::app()->user->isSuperAdmin)
+					if(!Yii::app()->user->isSuperAdmin && !Yii::app()->user->isGuest)
 						$interviewer = " AND interviewerId = " . Yii::app()->user->id;
 					$restricted = q("SELECT " . $field . " FROM alterList WHERE studyId = " . $_POST['studyId'] . $interviewer)->queryColumn();
 					if(!in_array($Answer['value'], $restricted))
@@ -270,7 +270,7 @@ class InterviewingController extends Controller
 						$this->redirect(Yii::app()->createUrl(
 							'interviewing/'.$_POST['studyId'].'?'.
 							'interviewId='.$Answer['interviewId'].'&'.
-							'page='.($_POST['page']+1).$key
+							'page='.($_POST['page']+1).'&key=' . $key
 						));
 					}
 				}
@@ -280,7 +280,7 @@ class InterviewingController extends Controller
 						$this->redirect(Yii::app()->createUrl(
 							'interviewing/'.$_POST['studyId'].'?'.
 							'interviewId='.$Answer['interviewId'].'&'.
-							'page='.($_POST['page']+1).$key
+							'page='.($_POST['page']+1).'&key=' . $key
 						));
 				}
 
@@ -414,7 +414,7 @@ class InterviewingController extends Controller
 				$this->redirect(Yii::app()->createUrl(
 					'interviewing/'.$_POST['studyId'].'?'.
 					'interviewId='.$interviewId.'&'.
-					'page='.$page.$key
+					'page='.$page.'&key=' . $key . $nodes
 				));
 			}else{
 				$qNav =  Study::nav($study, $_POST['page'], $interviewId);
@@ -425,6 +425,7 @@ class InterviewingController extends Controller
 					'study'=>$study,
 					'model'=>$model,
 					'qNav'=>$qNav,
+					'key'=>$key,
 					'interviewId'=>$interviewId,
 				));
 			}
@@ -514,12 +515,12 @@ class InterviewingController extends Controller
 			if(isset($_GET['self']))
 				$self = $_GET['self'];
 			$names = "";
-			if(isset($_GET['interviewId'])){
+			if(isset($_GET['interviewId']) && $_GET['interviewId']){
 				$sql = "SELECT " . $_GET['field'] .  " FROM alters WHERE interviewId = " . $_GET['interviewId'];
 				$names = Yii::app()->db->createCommand($sql)->queryColumn();
 				$names = addslashes(implode("' , '", $names));
 			}else{
-				if(!Yii::app()->user->isSuperAdmin)
+				if(!Yii::app()->user->isSuperAdmin && !Yii::app()->user->isGuest)
 					$filter = " AND interviewerId = " . Yii::app()->user->id;
 			}
 

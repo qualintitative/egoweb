@@ -89,7 +89,7 @@ $(function(){
 	array_id = '<?php echo $array_id ?>';
 	otherValue = <?php echo json_encode($otherValue); ?>;
 	$('#multiselect-' + array_id + ' label').each(function(index){
-		if($(this).html().match(/OTHER SPECIFY/i)){
+		if($(this).html().match(/OTHER \(*SPECIFY\)*/i)){
 			display = '';
 			val = '';
 			if($('#' + $(this).attr('for')).prop('checked') != true)

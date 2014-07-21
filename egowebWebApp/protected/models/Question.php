@@ -142,7 +142,7 @@ class Question extends CActiveRecord
 			'studyId' => 'Study',
 			'answerReasonExpressionId' => 'Answer Reason Expression',
 			'networkRelationshipExprId' => 'Network Relationship Expr',
-			'networkParams' => 'Network Node Shape Q',
+			'networkParams' => 'Network Parameters',
 			'networkNColorQId' => 'Network Node Color Q',
 			'networkNSizeQId' => 'Network Node Size Q',
 			'networkEColorQId' => 'Network Edge Color Q',

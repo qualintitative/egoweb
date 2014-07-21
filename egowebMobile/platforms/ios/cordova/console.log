@@ -1,0 +1,19 @@
+2014-07-04 23:15:55.338 EgoWeb Mobile[44258:70b] Multi-tasking -> Device: YES, App: YES
+2014-07-04 23:15:55.366 EgoWeb Mobile[44258:70b] Unlimited access to network resources
+2014-07-04 23:15:55.368 EgoWeb Mobile[44258:70b] 
+
+Started backup to iCloud! Please be careful.
+Your application might rejected by Apple if you store too much data.
+For more information please read "iOS Data Storage Guidelines"
+You could find it at the following address https://developer.apple.com/icloud/documentation/data-storage/ .
+
+2014-07-04 23:15:55.502 EgoWeb Mobile[44258:70b] [CDVTimer][file] 1.688004ms
+2014-07-04 23:15:55.503 EgoWeb Mobile[44258:70b] [CDVTimer][TotalPluginStartup] 2.197981ms
+2014-07-04 23:15:55.654 EgoWeb Mobile[44258:70b] Resetting plugins due to page load.
+2014-07-04 23:15:55.810 EgoWeb Mobile[44258:70b] Finished load of: file:///Users/zhangster/Library/Application%20Support/iPhone%20Simulator/7.1/Applications/8FBBE2AC-7DC5-4297-A1EE-CA1909B07CB9/EgoWeb%20Mobile.app/www/index.html
+2014-07-04 23:15:57.661 EgoWeb Mobile[44258:70b] Resetting plugins due to page load.
+2014-07-04 23:15:57.747 EgoWeb Mobile[44258:70b] Finished load of: file:///Users/zhangster/Library/Application%20Support/iPhone%20Simulator/7.1/Applications/8FBBE2AC-7DC5-4297-A1EE-CA1909B07CB9/EgoWeb%20Mobile.app/www/admin.html
+2014-07-04 23:16:37.289 EgoWeb Mobile[44258:70b] Resetting plugins due to page load.
+2014-07-04 23:16:37.302 EgoWeb Mobile[44258:70b] Finished load of: file:///Users/zhangster/Library/Application%20Support/iPhone%20Simulator/7.1/Applications/8FBBE2AC-7DC5-4297-A1EE-CA1909B07CB9/EgoWeb%20Mobile.app/www/index.html
+2014-07-04 23:16:38.301 EgoWeb Mobile[44258:70b] Resetting plugins due to page load.
+2014-07-04 23:16:38.366 EgoWeb Mobile[44258:70b] Finished load of: file:///Users/zhangster/Library/Application%20Support/iPhone%20Simulator/7.1/Applications/8FBBE2AC-7DC5-4297-A1EE-CA1909B07CB9/EgoWeb%20Mobile.app/www/interview.html

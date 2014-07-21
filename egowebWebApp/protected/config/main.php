@@ -90,7 +90,7 @@ return array(
 					'class'=>'XWebDebugRouter',
 					'config'=>'alignLeft, opaque, fixedPos, collapsed, yamlStyle',
 					'levels'=>'error, warning, trace, profile, info',
-					'allowedIPs'=>array('127.0.0.1','::1','localhost', '71.231.64.172'),
+					'allowedIPs'=>array('127.0.0.1','::1','localhost', /*'71.231.64.172'*/),
 				),
 			),
 

@@ -4,16 +4,17 @@ jQuery(document).ready(function(){
 	<?php  if(Interview::countAlters($interviewId) < $study->maxAlters): ?>
 	$.get("/interviewing/ajaxupdate?studyId=<?=$studyId;?>&interviewId=<?=$interviewId;?>",function(data){
 		$('#alterFormBox').html(data);
+		jQuery('#Alters_name').focus();
 	});
-	jQuery('#Alters_name').focus();
+
 	<?php else: ?>
 		$('#alterFormBox').html("");
 	<?php endif; ?>
 });
 
 <?php if($alterPrompt): ?>
-jQuery(document).ready(function(){
-	jQuery('#alterPrompt').html('<?php echo $alterPrompt; ?>');
+$(document).ready(function(){
+	$('#alterPrompt').html('<?php echo $alterPrompt; ?>');
 });
 <?php endif; ?>
 
