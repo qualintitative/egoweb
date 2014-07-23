@@ -501,14 +501,14 @@ if($rowColor != "" && $question->askingStyleList){
 
 	echo "<br clear=all><div class='multiRow palette-sun-flower' style='width:180px; text-align:left'>Set All</div><div class='multiRow palette-sun-flower' style='width:".$maxwidth."px'>".CHtml::checkBoxList(
 			'multiselect-pageLevel',
-			$selected,
+			'',
 			CHtml::listData($options, 'id', ''),
 			array('class'=>'multiselect pageLevel', 'container'=>'', 'separator'=>"</div><div class='multiRow palette-sun-flower'  style='width:".$maxwidth."px'>")
 		) . "</div>";
 }else{
 	echo CHtml::checkBoxList(
 	    'multiselect-pageLevel',
-	    $selected,
+	    '',
 	    CHtml::listData($options, 'id', 'name'),
 	    array('class'=>'multiselect pageLevel')
 	);
