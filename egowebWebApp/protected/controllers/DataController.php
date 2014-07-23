@@ -384,7 +384,8 @@ class DataController extends Controller
 							else
 								$answers[] = $study->valueRefusal;
 						} else {
-							if(is_numeric($question['answerReasonExpressionId']) && !Expression::evalExpression($question['answerReasonExpressionId'], $interview->id, $alter['id'], $alter2['id']))
+							$expression = new Expression;
+							if(is_numeric($question['answerReasonExpressionId']) && !$expression->evalExpression($question['answerReasonExpressionId'], $interview->id, $alter['id'], $alter2['id']))
 								$answers[] = $study->valueLogicalSkip;
 							else
 								$answers[] = $study->valueNotYetAnswered;
