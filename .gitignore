@@ -21,3 +21,4 @@ Thumbs.db
 egowebWebApp/protected/runtime/
 egowebApp/protected/assets/
 egowebWebApp/protected/runtime/application.log
+egowebWebApp/protected/config/main.php
