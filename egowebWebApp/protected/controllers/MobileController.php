@@ -58,6 +58,42 @@ class MobileController extends Controller
 		$answers = q("SELECT * FROM answer WHERE studyId = " . $id)->queryAll(false);
 		$interviewIds = array();
 		$interviews = q("SELECT * FROM interview WHERE studyId = " . $id)->queryAll(false);
+		$audioFiles = array();
+
+		if(file_exists(Yii::app()->basePath."/../audio/".$id . "/STUDY/ALTERPROMPT.mp3")){
+			$audioFiles[] = array(
+				"url"=>Yii::app()->getBaseUrl(true)."/audio/". $id . "/STUDY/ALTERPROMPT.mp3",
+				"type"=>"STUDY",
+				"id"=>"ALTERPROMPT"
+			);
+		}
+
+		foreach($questions as $question){
+			if($question[4] && file_exists(Yii::app()->basePath."/../audio/".$id . "/PREFACE/" . $question[0] . ".mp3")){
+				$audioFiles[] = array(
+					"url"=>Yii::app()->getBaseUrl(true)."/audio/". $id . "/PREFACE/" . $question[0] . ".mp3",
+					"type"=>"PREFACE",
+					"id"=>$question[0]
+				);
+			}
+			if(file_exists(Yii::app()->basePath."/../audio/".$id . "/" .  $question[6] . "/" . $question[0] . ".mp3")){
+				$audioFiles[] = array(
+					"url"=>Yii::app()->getBaseUrl(true)."/audio/". $id . "/" .  $question[6] . "/"  . $question[0] . ".mp3",
+					"type"=>$question[6],
+					"id"=>$question[0]
+				);
+			}
+		}
+
+		foreach($options as $option){
+			if(file_exists(Yii::app()->basePath."/../audio/".$id . "/OPTION/" . $option[0] . ".mp3")){
+				$audioFiles[] = array(
+					"url"=>Yii::app()->getBaseUrl(true)."/audio/". $id . "/OPTION/"  . $option[0] . ".mp3",
+					"type"=>"OPTION",
+					"id"=>$option[0]
+				);
+			}
+		}
 
 		foreach($interviews as $interview){
 			array_push($interviewIds, $interview[0]);
@@ -77,6 +113,7 @@ class MobileController extends Controller
 			'answers'=>$answers,
 			'interviews'=>$interviews,
 			'alters'=>$alters,
+			'audioFiles'=>$audioFiles,
 		);
 		if (isset($_SERVER['HTTP_ORIGIN'])) {
 		    header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
@@ -99,6 +136,7 @@ class MobileController extends Controller
 			// validate user input and redirect to the previous page if valid
 			if($model->validate() && $model->login()){
 				echo Yii::app()->user->id;
+				Yii::app()->end();
 			}else{
 				echo "failed";
 			}

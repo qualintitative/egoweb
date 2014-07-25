@@ -575,11 +575,8 @@ td{
 	float:left;
  	font-family:Oswald Light;
 	font-size:18px;
-}
-
-.questionText {
 	padding:0 20px 20px 20px;
-	width:600px;
+	width:100%;
 }
 
 .multiSelect{

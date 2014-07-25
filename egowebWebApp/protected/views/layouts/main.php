@@ -64,16 +64,17 @@
 									<?php endforeach; ?>
 								</ul>
 							</li>
-							<li><a href="/analysis">Analysis</a>
+							<li><a href="/data">Data Processing</a>
 								<ul>
 									<?php foreach($studies as $data): ?>
 									<li>
-									<?php echo CHtml::link(CHtml::encode($data->name), array('/analysis/', 'study'=>$data->id)); ?>
+									<?php echo CHtml::link(CHtml::encode($data->name), array('/data/', 'study'=>$data->id)); ?>
 									</li>
 									<?php endforeach; ?>
 								</ul>
 							</li>
-							<li><a href="/importExport">Import / Export</a></li>
+							<li><a href="/archive">Archive</a></li>
+							<li><a href="/importExport">Import & Export Studies</a></li>
 							<li><a href="/admin/user">User Admin</a>
 							<?php endif; ?>
 							<li><a href="/mobile">Mobile</a>

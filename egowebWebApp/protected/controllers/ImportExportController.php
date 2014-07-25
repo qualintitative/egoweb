@@ -318,7 +318,7 @@ class ImportExportController extends Controller
 
 ';
 		echo <<<EOT
-<study id="{$study->id}" name="{$study->name}" minAlters="{$study->minAlters}" maxAlters="{$study->maxAlters}" valueDontKnow="{$study->valueDontKnow}" valueLogicalSkip="{$study->valueLogicalSkip}" valueNotYetAnswered="{$study->valueNotYetAnswered}" valueRefusal="{$study->valueRefusal}" adjacencyExpressionId="{$study->adjacencyExpressionId}">
+<study id="{$study->id}" name="{$study->name}" minAlters="{$study->minAlters}" maxAlters="{$study->maxAlters}" valueDontKnow="{$study->valueDontKnow}" valueLogicalSkip="{$study->valueLogicalSkip}" valueNotYetAnswered="{$study->valueNotYetAnswered}" valueRefusal="{$study->valueRefusal}" adjacencyExpressionId="{$study->adjacencyExpressionId}" modified="{$study->modified}" multiSessionEgoId="{$study->multiSessionEgoId}" useAsAlters="{$study->useAsAlters}" restrictAlters="{$study->restrictAlters}" fillAlterList="{$study->fillAlterList}">
 	<introduction>{$study->introduction}</introduction>
 	<egoIdPrompt>{$study->egoIdPrompt}</egoIdPrompt>
 	<alterPrompt>{$study->alterPrompt}</alterPrompt>

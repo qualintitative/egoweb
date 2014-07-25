@@ -46,7 +46,7 @@ class AuthoringController extends Controller
 
 		while(! feof($file)){
 			$data = fgetcsv($file);
-			if(isset($data[0]) && isset($data[1]) && $data[0] && $data[1]){
+			if(isset($data[0]) && $data[0]){
 				$model = new AlterList;
 				$criteria=new CDbCriteria;
 				$criteria->condition = ('studyId = '.$_POST['studyId']);
@@ -54,7 +54,7 @@ class AuthoringController extends Controller
 				$row = AlterList::model()->find($criteria);
 				$model->ordering = $row['ordering'];
 				$model->name = trim($data[0]);
-				$model->email = $data[1];
+				$model->email = isset($data[1]) ? $data[1] : "";
 				$model->studyId = $_POST['studyId'];
 				$model->save();
 			}
@@ -78,6 +78,7 @@ class AuthoringController extends Controller
 
 			if(move_uploaded_file($_FILES['userfile']['tmp_name'], Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type'] . "/". $_POST['id'] . ".mp3"))
 				echo "<a class=\"playSound\" onclick=\"playSound($(this).attr('file'))\" href=\"#\" file=\"/audio/".$_POST['studyId'] . "/" . $_POST['type'] . "/". $_POST['id'] . ".mp3\"><span class=\"fui-volume play-sound\"></span></a>";
+
 		}else if(isset($_GET['studyId']) && isset($_GET['type']) && isset($_GET['id'])){
 			$this->renderPartial('_form_audio',array(
 				'studyId'=>$_GET['studyId'],
@@ -175,7 +176,7 @@ class AuthoringController extends Controller
 
 		$condition = "id != 0";
 		if(!Yii::app()->user->isSuperAdmin){
-			$studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
+			$studies = q("SELECT studyId FROM interviewers WHERE active = 1 AND interviewerId = " . Yii::app()->user->id)->queryColumn();
 			if($studies)
 				$condition = "id IN (" . implode(",", $studies) . ")";
 			else
@@ -510,6 +511,18 @@ class AuthoringController extends Controller
 			$study = Study::model()->findByPk($id);
 			$study->delete();
 			Yii::app()->request->redirect("/authoring");
+		}
+	}
+
+	public function actionArchive($id){
+		$interviews = Interview::model()->findAllByAttributes(array("studyId"=>$id));
+		if(count($interviews) > 0){
+			echo "Please delete all interviews before archiving this study";
+		}else{
+			$study = Study::model()->findByPk($id);
+			$study->active = 0;
+			$study->save();
+			Yii::app()->request->redirect("/archive");
 		}
 	}
 
@@ -875,16 +888,18 @@ class AuthoringController extends Controller
 					$expression = new Expression;
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'expression'=>$expression, 'ajax'=>true, 'question'=>$question, 'studyId'=>$_GET['studyId']), false, false);
 			}else if($_GET['form'] == "_form_option"){
+
 				$criteria=new CDbCriteria;
 				$criteria=array(
 					'condition'=>"questionId = " . $_GET['questionId'],
 					'order'=>'ordering',
 				);
+
 				$dataProvider=new CActiveDataProvider('QuestionOption',array(
 					'criteria'=>$criteria,
 					'pagination'=>false,
 				));
-				$this->renderPartial($_GET['form'], array('dataProvider'=>$dataProvider, 'questionId'=>$_GET['questionId'], 'ajax'=>true), false, true);
+				$this->renderPartial("_form_option", array('dataProvider'=>$dataProvider, 'questionId'=>$_GET['questionId'], 'ajax'=>true), false, true);
 			}else if($_GET['form'] == "_form_option_list"){
 				$answerList = AnswerList::model()->findByPk($_GET['answerListId']);
 				$listOptions = preg_split('/,/', $answerList->listOptionNames);

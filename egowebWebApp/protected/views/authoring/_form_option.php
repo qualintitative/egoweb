@@ -15,6 +15,8 @@ jQuery('a.delete').click(function() {
 		return false;
 });
 ");
+
+
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/modal.js');
 Yii::app()->clientScript->registerScript('update', "
 jQuery('a.update').click(function() {
@@ -42,6 +44,7 @@ jQuery('a.moveup').click(function() {
 		return false;
 });
 ");
+
 $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'option-grid-'.$questionId,
 	'dataProvider'=>$dataProvider,
@@ -93,6 +96,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
 	),
 	'summaryText'=>'',
 ));
+
 ?>
 	<a class='delete' href="<?php echo Yii::app()->createUrl("/authoring/ajaxdelete", array("QuestionOption[id]"=>"all", "questionId"=>$questionId)); ?>">Delete all</a>
 </div>
@@ -127,16 +131,19 @@ $this->widget('zii.widgets.grid.CGridView', array(
 			$this->endWidget();
 		?>
 	</div>
+
 	<div id="edit-option-<?php echo $questionId; ?>" style="margin-bottom:15px;"></div>
 	<div>
+
 		<span class="smallheader">Replace options</span>
 		<table>
 			<tr>
 				<td>
+
 				<?php
 					// Replace options with options from option list
 					$model = Question::model()->findByPk($questionId);
-					$form=$this->beginWidget('CActiveForm', array(
+					$form = $this->beginWidget('CActiveForm', array(
 						'id'=>'replace-option-preset-form',
 						'enableAjaxValidation'=>true,
 					));
@@ -153,6 +160,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
 
 					$this->endWidget();
 				?>
+
 				</td>
 			</tr>
 			<tr>

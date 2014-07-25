@@ -4,7 +4,7 @@
     position:relative;
 }
 
-#print-view #container {
+#print-view #container, #interviewing #container {
     width: 900px;
 
 }
@@ -43,7 +43,7 @@
     color:#111;
 }
 
-#print-view #center-container {
+#print-view #center-container, #interviewing #center-container {
     width:900px;
     height:675px;
     background-color:#fff;
@@ -81,11 +81,11 @@
     width:640px;
     height:480px;
     margin:auto;
-    background-color: #fcfcfc;
+    background-color: #fff;
     overflow:hidden;
 }
 
-#print-view #infovis {
+#print-view #infovis, #interviewing #infovis {
     width:900px;
     height:675px;
 }
@@ -120,6 +120,9 @@ span.close {
 
 span.name {
   cursor: pointer;
+  text-shadow: 0px 0px 5px white, 0px 0px 5px white,0px 0px 5px white, 0px 0px 5px white,0px 0px 5px white, 0px 0px 5px white;
+  padding:5px;
+
 }
 
 /*TOOLTIPS*/
@@ -128,6 +131,7 @@ span.name {
    width:auto;
    max-width:500px;
 }
+
 
 .tip-title {
   font-size: 11px;

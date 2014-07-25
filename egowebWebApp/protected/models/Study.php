@@ -123,7 +123,8 @@ class Study extends CActiveRecord
 			}
 			if($question['askingStyleList'] == 1){
 			    $prompt = trim(preg_replace('/<\/*[^>]*>/', '', $question['prompt']));
-			    $ego_question_list = $question;
+			    if(count($ego_question_list) == 0)
+			    	$ego_question_list = $question;
 			}else{
 			    $pages[$i] = Study::checkPage($i, $pageNumber, $question['title']);
 			    $i++;
@@ -132,19 +133,25 @@ class Study extends CActiveRecord
 		}
 		if(count($ego_question_list) > 0){
 			$pages[$i] = Study::checkPage($i, $pageNumber, $ego_question_list['title']);
+			$ego_question_list = array();
 			$i++;
 		}
-		$pages[$i] = Study::checkPage($i, $pageNumber, "ALTER_PROMPT");
-		$i++;
-		$alters = Alters::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+		if(trim(preg_replace('/<\/*[^>]*>/', '', $study->alterPrompt)) != ""){
+			$pages[$i] = Study::checkPage($i, $pageNumber, "ALTER_PROMPT");
+			$i++;
+		}
+		$criteria = array(
+			'condition'=>"FIND_IN_SET(" . $interviewId . ", interviewId)",
+		);
+		$alters = Alters::model()->findAll($criteria);
 		$answers = q("SELECT count(id) FROM answer WHERE interviewId = " . $interviewId . " AND (questionType =  'ALTER' OR questionType = 'ALTER_PAIR') ")->queryScalar();
 		if(count($alters) > 0 && $answers > 0){
 			$alter_qs = q("SELECT * FROM question WHERE studyId = $study->id AND subjectType ='ALTER' order by ordering")->queryAll();
 			$prompt = "";
 			$alter_question_list = array();
-				$expression = new Expression;
 
 			foreach($alter_qs as $question){
+				$expression = new Expression;
 				foreach($alters as $alter){
 				    if(!$expression->evalExpression($question['answerReasonExpressionId'], $interviewId, $alter->id)){
 				    	continue;
@@ -156,7 +163,7 @@ class Study extends CActiveRecord
 				    		$pages[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
 				    		$i++;
 				    	}
-				    	$pages[$i] = Study::checkPage($i, $pageNumber, $question['title']);
+				    	$pages[$i] = Study::checkPage($i, $pageNumber, $question['title'] . " - " . $alter->name);
 				    	$i++;
 				    }
 				}
@@ -166,7 +173,7 @@ class Study extends CActiveRecord
 				    		$pages[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
 				    		$i++;
 				    	}
-				    	$pages[$i] = Study::checkPage($i, $pageNumber, $alter_question_list['title']);
+				    	$pages[$i] = Study::checkPage($i, $pageNumber, $question['title']);
 				    	$i++;
 				    }
 				}
@@ -276,7 +283,8 @@ class Study extends CActiveRecord
 				    $data = array(
 				    	'value'=>$study->valueLogicalSkip,
 				    );
-				    u('answer', $data, "id = " . $answers[$questionId]['id']);
+				    if(isset($answers[$questionId]['id']))
+					    u('answer', $data, "id = " . $answers[$questionId]['id']);
 				    continue;
 				}
 				$question = Question::model()->findByPk($questionId);
@@ -285,7 +293,6 @@ class Study extends CActiveRecord
 				    	$page[$i] = $ego_question_list;
 				    	return $page[$i];
 				    }
-
 				    $prompt = trim(preg_replace('/<\/*[^>]*>/', '', $question->prompt));
 				    $ego_question_list = array();
 				    $i++;
@@ -293,6 +300,7 @@ class Study extends CActiveRecord
 				if($egoPrefaces[$questionId] != ""){
 				    if($pageNumber == $i){
 				    	$preface = new Question;
+				    	$preface->id = $questionId;
 				    	$preface->answerType = "PREFACE";
 				    	$preface->prompt = $egoPrefaces[$questionId];
 				    	$page[$i] = array('0'=>$preface);
@@ -320,11 +328,12 @@ class Study extends CActiveRecord
 				$i++;
 			}
 
-			if($pageNumber == $i){
+			if($pageNumber == $i && trim(preg_replace('/<\/*[^>]*>/', '', $study->alterPrompt)) != ""){
 				$alter_prompt = new Question;
 				$alter_prompt->answerType = "ALTER_PROMPT";
 				$alter_prompt->prompt = $study->alterPrompt;
 				$alter_prompt->studyId = $study->id;
+				$alter_prompt->id = 0;
 				$page[$i] = array('0'=>$alter_prompt);
 				return $page[$i];
 			}
@@ -377,6 +386,7 @@ class Study extends CActiveRecord
 					    	if($alterPrefaces[$questionId] != ""){
 					    		if($i == $pageNumber){
 					    			$preface = new Question;
+									$preface->id = $questionId;
 					    			$preface->answerType = "PREFACE";
 					    			$preface->prompt = $alterPrefaces[$questionId];
 					    			$page[$i] = array('0'=>$preface);
@@ -403,6 +413,7 @@ class Study extends CActiveRecord
 					    	if($alterPrefaces[$questionId] != ""){
 					    		if($i == $pageNumber){
 					    			$preface = new Question;
+									$preface->id = $questionId;
 					    			$preface->answerType = "PREFACE";
 					    			$preface->prompt = $alterPrefaces[$questionId];
 					    			$page[$i] = array('0'=>$preface);
@@ -470,6 +481,7 @@ class Study extends CActiveRecord
 						    if($alterPairPrefaces[$questionId] != ""){
 						    	if($i == $pageNumber){
 						    		$preface = new Question;
+									$preface->id = $questionId;
 						    		$preface->answerType = "PREFACE";
 						    		$preface->prompt = $alterPairPrefaces[$questionId];
 						    		$page[$i] = array('0'=>$preface);
@@ -512,13 +524,15 @@ class Study extends CActiveRecord
 				        	$data = array(
 				        		'value'=>$study->valueLogicalSkip,
 				        	);
-				        	u('answer', $data, "id = " . $answers[$questionId]['id']);
+				        	if(isset($answers[$questionId]['id']))
+				        		u('answer', $data, "id = " . $answers[$questionId]['id']);
 				        	continue;
 				        }
 				    }
 				    if($networkPrefaces[$questionId] != ""){
 				        if($pageNumber == $i){
 				        	$preface = new Question;
+							$preface->id = $questionId;
 				        	$preface->answerType = "PREFACE";
 				        	$preface->prompt = $networkPrefaces[$questionId];
 				        	$page[$i] = array('0'=>$preface);

@@ -46,8 +46,8 @@ if($question->subjectType == "EGO_ID" && $question->useAlterListField != ""){
 		else
 			$name = $question->citation;
 		echo "<div class='multiRow ".$rowColor."' style='width:180px;  text-align:left'>".$name."</div>";
-		echo "<div class='multiRow ".$rowColor."'>" . $form->textField($model[$array_id], '['.$array_id.']'.'value',array('class'=>$array_id));
-		echo "</div>";
+		echo "<div class='multiRow ".$rowColor."'>" . $form->textField($model[$array_id], '['.$array_id.']'.'value',array('class'=>$array_id)) . "</div>";
+		echo "<br clear=all>";
 	}else{
 		echo $form->textField($model[$array_id], '['.$array_id.']'.'value',array('class'=>$array_id)) . "<br style='clear:both'>";
 	}

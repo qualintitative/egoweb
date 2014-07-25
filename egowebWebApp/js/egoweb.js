@@ -20,9 +20,12 @@ function createUUID() {
     return uuid;
 }
 
+var audio = new Audio();
 function playSound(uri){
-	var audio = new Audio(uri);
-	audio.play();
+	if(audio.paused){
+		audio = new Audio(uri);
+		audio.play();
+	}
 }
 
 function uploadAudio(file, id, studyId, type, update){

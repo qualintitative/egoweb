@@ -6135,6 +6135,54 @@ var NodeHelper = {
     /*
      Object: NodeHelper.circle
      */
+
+    'note': {
+        /*
+         Method: render
+
+         Renders a circle into the canvas.
+
+         Parameters:
+
+         type - (string) Possible options are 'fill' or 'stroke'.
+         pos - (object) An *x*, *y* object with the position of the center of the circle.
+         radius - (number) The radius of the circle to be rendered.
+         canvas - (object) A <Canvas> instance.
+
+         Example:
+         (start code js)
+         NodeHelper.circle.render('fill', { x: 10, y: 30 }, 30, viz.canvas);
+         (end code)
+         */
+        'render': function(type, pos, dim, canvas){
+            var ctx = canvas.getCtx();
+			ctx.font = "12px Flat-UI-Icons";
+			ctx.fillText(String.fromCharCode("0xe00d"),pos.x,pos.y);
+			//"";
+            //ctx[type]();
+        },
+        /*
+         Method: contains
+
+         Returns *true* if *pos* is contained in the area of the shape. Returns *false* otherwise.
+
+         Parameters:
+
+         npos - (object) An *x*, *y* object with the <Graph.Node> position.
+         pos - (object) An *x*, *y* object with the position to check.
+         radius - (number) The radius of the rendered circle.
+
+         Example:
+         (start code js)
+         NodeHelper.circle.contains({ x: 10, y: 30 }, { x: 15, y: 35 }, 30); //true
+         (end code)
+         */
+        'contains': function(npos, pos, dim){
+            return Math.abs(pos.x - npos.x) <= dim && Math.abs(pos.y - npos.y) <= dim;
+
+        }
+    },
+
     'circle': {
         /*
          Method: render
@@ -16215,6 +16263,18 @@ $jit.ForceDirected.$extend = true;
       'render': $.empty,
       'contains': $.lambda(false)
     },
+  'note': {
+      'render': function(node, canvas){
+        var pos = node.pos.getc(true),
+            dim = node.getData('dim');
+        this.nodeHelper.note.render('fill', pos, dim, canvas);
+      },
+      'contains': function(node, pos){
+        var npos = node.pos.getc(true),
+            dim = node.getData('dim');
+        return this.nodeHelper.note.contains(npos, pos, dim);
+      }
+  },
     'circle': {
       'render': function(node, canvas){
         var pos = node.pos.getc(true),
