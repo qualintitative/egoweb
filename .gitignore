@@ -1,6 +1,6 @@
 # PHPStorm files #
 ##################
-.idea
+.idea/
 
 # OS generated files #
 ######################
@@ -12,6 +12,12 @@
 ehthumbs.db
 Thumbs.db
 
+# Komodo files #
+######################
 *.komodoproject
+
+# dynamic Egoweb files #
+########################
 egowebWebApp/protected/runtime/
 egowebApp/protected/assets/
+egowebWebApp/protected/runtime/application.log
