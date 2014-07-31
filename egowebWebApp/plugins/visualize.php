@@ -114,7 +114,8 @@ class visualize extends Plugin
 				}
 
 			}else if($this->params['nodeColor']['questionId']){
-				$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeColor']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar();
+                #OK FOR SQL INJECTION
+                $answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeColor']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar();
 				$answer = explode(',', $answer);
 				foreach($this->params['nodeColor']['options'] as $option){
 					if($option['id'] == $answer || in_array($option['id'], $answer))
@@ -128,6 +129,7 @@ class visualize extends Plugin
 	private function getNodeShape($nodeId){
 		$default = "circle";
 		if(isset($this->params['nodeShape'])){
+            #OK FOR SQL INJECTION
 			$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeShape']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar();
 			$answer = explode(',', $answer);
 			foreach($this->params['nodeShape']['options'] as $option){
@@ -162,6 +164,7 @@ class visualize extends Plugin
 				$value = round((($value-$min) / ($range)) * 9) + 1;
 				$default = array_keys($this->nodeSizes, $value)[0];
 			}else{
+                #OK FOR SQL INJECTION
 				$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeSize']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar();
 				$answer = explode(',', $answer);
 				foreach($this->params['nodeSize']['options'] as $option){
@@ -177,7 +180,8 @@ class visualize extends Plugin
 	private function getEdgeColor($nodeId1, $nodeId2){
 		$default = "#000";
 		if(isset($this->params['edgeColor'])){
-			$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['edgeColor']['questionId']. " AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2)->queryScalar();
+            #OK FOR SQL INJECTION
+            $answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['edgeColor']['questionId']. " AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2)->queryScalar();
 			$answer = explode(',', $answer);
 			foreach($this->params['edgeColor']['options'] as $option){
 				if($option['id'] == $answer || in_array($option['id'], $answer))
@@ -190,6 +194,7 @@ class visualize extends Plugin
 	private function getEdgeSize($nodeId1, $nodeId2){
 		$default = 0.5;
 		if(isset($this->params['edgeSize'])){
+            #OK FOR SQL INJECTION
 			$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['edgeSize']['questionId']. " AND alterId1 = " .$nodeId1. " AND alterId2 = " . $nodeId2)->queryScalar();
 			$answer = explode(',', $answer);
 			foreach($this->params['edgeSize']['options'] as $option){
@@ -223,6 +228,7 @@ class visualize extends Plugin
 				$nodeColors[$option['id']] = $option['color'];
 			}
 		}
+        #OK FOR SQL INJECTION
 		$alter_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
 		echo "<div class='form-group'>";
 		echo "<label class='control-label'>Node Color</label>";
@@ -243,12 +249,15 @@ class visualize extends Plugin
 		$questionIds = implode(",", $questionIds);
 		if(!$questionIds)
 			$questionIds = 0;
+        #OK FOR SQL INJECTION
 		$alter_expression_ids = q("SELECT id FROM expression WHERE studyId = " . $this->id . " AND questionId in (" . $questionIds . ")")->queryColumn();
 		$all_expression_ids = $alter_expression_ids;
 		foreach($alter_expression_ids as $id){
+            #OK FOR SQL INJECTION
 			$all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
 		}
 		if($all_expression_ids){
+            #OK FOR SQL INJECTION
 		$alter_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
 		}else{
 			$alter_expressions = array();
@@ -270,7 +279,8 @@ class visualize extends Plugin
 		echo "</select></div>";
 		foreach($alter_qs as $question){
 			echo "<div class='nodeColorOptions' id='" .$question['id'] ."_nodeColor' style='" . ( $question['id'] != $nodeColorId ? "display:none" : "") . "'>";
-			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
+            #OK FOR SQL INJECTION
+            $options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
 				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
 				echo CHtml::dropDownList(
@@ -315,6 +325,7 @@ class visualize extends Plugin
 				$nodeShapes[$option['id']] = $option['shape'];
 			}
 		}
+        #OK FOR SQL INJECTION
 		$alter_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
 		echo "<div class='form-group'>";
 		echo "<label class='control-label'>Node Shape</label>";
@@ -332,6 +343,7 @@ class visualize extends Plugin
 
 			echo "<div class='nodeShapeOptions' id='" .$question['id'] ."_nodeShape' style='" . ( $question['id'] != $nodeShapeId ? "display:none" : "") . "'>";
 
+            #OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
 				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
@@ -356,6 +368,7 @@ class visualize extends Plugin
 				$nodeSizes[$option['id']] = $option['size'];
 			}
 		}
+        #OK FOR SQL INJECTION
 		$alter_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
 		echo "<div class='form-group'>";
 		echo "<label class='control-label'>Node Size</label>";
@@ -380,7 +393,8 @@ class visualize extends Plugin
 
 			echo "<div class='nodeSizeOptions' id='" .$question['id'] ."_nodeSize' style='" . ( $question['id'] != $nodeSizeId ? "display:none" : "") . "'>";
 
-			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
+            #OK FOR SQL INJECTION
+            $options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
 				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
 				echo CHtml::dropDownList(
@@ -407,6 +421,7 @@ class visualize extends Plugin
 				$edgeColors[$option['id']] = $option['color'];
 			}
 		}
+        #OK FOR SQL INJECTION
 		$alter_pair_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
 		echo "<div class='form-group'>";
 		echo "<label class='control-label'>Edge Color</label>";
@@ -425,6 +440,7 @@ class visualize extends Plugin
 
 			echo "<div class='edgeColorOptions' id='" .$question['id'] ."_edgeColor' style='" . ( $question['id'] != $edgeColorId ? "display:none" : "") . "'>";
 
+            #OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
 				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
@@ -447,6 +463,7 @@ class visualize extends Plugin
 				$edgeSizes[$option['id']] = $option['size'];
 			}
 		}
+        #OK FOR SQL INJECTION
 		$alter_pair_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
 		echo "<div class='form-group'>";
 		echo "<label class='control-label'>Edge Size</label>";
@@ -465,6 +482,7 @@ class visualize extends Plugin
 
 			echo "<div class='edgeSizeOptions' id='" .$question['id'] ."_edgeSize' style='" . ( $question['id'] != $edgeSizeId ? "display:none" : "") . "'>";
 
+            #OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
 				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
@@ -484,6 +502,7 @@ class visualize extends Plugin
 		$this->params = json_decode($this->params, true);
 		$adjacencies = array();
 		$nodes = array();
+        #OK FOR SQL INJECTION
 		$alters = q("SELECT * FROM alters WHERE FIND_IN_SET(".$this->method .", interviewId)")->queryAll();
 		$alterNames = array();
 		$alterIds = array();
@@ -504,20 +523,25 @@ class visualize extends Plugin
 		$interview = Interview::model()->findByPK($this->method);
 		$study = Study::model()->findByPk($interview->studyId);
 
+        #OK FOR SQL INJECTION
 		$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$interview->studyId)->queryColumn();
 		$questionIds = implode(",", $questionIds);
 		if(!$questionIds)
 			$questionIds = 0;
 
 		if($study->multiSessionEgoId){
+            #OK FOR SQL INJECTION
 			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
-			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-			$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
+            #OK FOR SQL INJECTION
+            $multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
+            #OK FOR SQL INJECTION
+            $studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
 			$studyId = implode(",", $studyIds);
 		}else{
 			$studyId = $interview->studyId;
 		}
 
+        #OK FOR SQL INJECTION
 		$alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId in (" . $studyId . ") AND questionId in (" . $questionIds . ")")->queryColumn();
 
 		$expression = Expression::model()->findByPk($this->id);
