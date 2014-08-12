@@ -34,6 +34,7 @@ class ArchiveController extends Controller
 
 		$condition = "id != 0";
 		if(!Yii::app()->user->isSuperAdmin){
+            #OK FOR SQL INJECTION
 			$studies = q("SELECT studyId FROM interviewers WHERE active = 1 AND interviewerId = " . Yii::app()->user->id)->queryColumn();
 			if($studies)
 				$condition = "id IN (" . implode(",", $studies) . ") AND active = 0";

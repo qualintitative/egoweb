@@ -176,6 +176,7 @@ class AuthoringController extends Controller
 
 		$condition = "id != 0";
 		if(!Yii::app()->user->isSuperAdmin){
+            #OK FOR SQL INJECTION
 			$studies = q("SELECT studyId FROM interviewers WHERE active = 1 AND interviewerId = " . Yii::app()->user->id)->queryColumn();
 			if($studies)
 				$condition = "id IN (" . implode(",", $studies) . ")";
@@ -772,7 +773,12 @@ class AuthoringController extends Controller
 			}else{
 				$this->deleteAllOptions($_GET['questionId']);
 				$questionId = $_GET['questionId'];
-				$studyId = q("SELECT studyId FROM question WHERE id = " . $_GET['questionId'])->queryScalar();
+                #OK FOR SQL INJECTION
+                $params = new stdClass();
+                $params->name = ':questionId';
+                $params->value = $_GET['questionId'];
+                $params->dataType = PDO::PARAM_INT;
+				$studyId = q("SELECT studyId FROM question WHERE id = :questionId", array($params) )->queryScalar();
 				Study::updated($studyId);
 			}
 
