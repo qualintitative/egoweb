@@ -10,6 +10,7 @@ class LoginForm extends CFormModel
 	public $username;
 	public $password;
 	public $rememberMe;
+        public $verifyCode;
 
 	private $_identity;
 
@@ -27,7 +28,10 @@ class LoginForm extends CFormModel
 			array('rememberMe', 'boolean'),
 			// password needs to be authenticated
 			array('password', 'authenticate'),
-		);
+			// captcha must pass if required
+                        array('username,password,verifyCode','required','on'=>'captchaRequired'),
+                        array('verifyCode', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements(), 'on'=>'captchaRequired'),
+                    );
 	}
 
 	/**
