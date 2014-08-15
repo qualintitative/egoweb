@@ -325,7 +325,7 @@ class DataController extends Controller
 		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
 			die("nothing to export");
 
-		$study = Study::model()->findByPk($_POST['studyId']);
+		$study = Study::model()->findByPk((int)$_POST['studyId']);
         #OK FOR SQL INJECTION
 		$optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
 
@@ -524,7 +524,7 @@ class DataController extends Controller
 		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
 			die("nothing to export");
 
-		$study = Study::model()->findByPk($_POST['studyId']);
+		$study = Study::model()->findByPk((int)$_POST['studyId']);
         #OK FOR SQL INJECTION
 		$alters = q("SELECT * FROM alterList WHERE studyId = " . $study->id)->queryAll();
 
@@ -558,7 +558,7 @@ class DataController extends Controller
 	{
 		if($_POST['Graph']){
 			if($_POST['Graph']['id'])
-				$graph = Graph::model()->findByPk($_POST['Graph']['id']);
+				$graph = Graph::model()->findByPk((int)$_POST['Graph']['id']);
 			else
 				$graph = new Graph;
 			$graph->attributes = $_POST['Graph'];
@@ -599,7 +599,7 @@ class DataController extends Controller
 		if(isset($_POST['Note'])){
 			$new = false;
 			if($_POST['Note']['id']){
-				$note = Note::model()->findByPk($_POST['Note']['id']);
+				$note = Note::model()->findByPk((int)$_POST['Note']['id']);
 			}else{
 				$note = new Note;
 				$new = true;
@@ -616,7 +616,7 @@ class DataController extends Controller
 	{
 		if(isset($_POST['Note'])){
 
-			$note = Note::model()->findByPk($_POST['Note']['id']);
+			$note = Note::model()->findByPk((int)$_POST['Note']['id']);
 			$alterId = $note->alterId;
 			if($note){
 				$note->delete();
@@ -630,7 +630,7 @@ class DataController extends Controller
 			return false;
 		foreach($_POST['export'] as $interviewId=>$selected){
 			if($selected){
-				$model = Interview::model()->findByPk($interviewId);
+				$model = Interview::model()->findByPk((int)$interviewId);
 				if($model){
 					$answers = Answer::model()->findAllByAttributes(array("interviewId"=>$interviewId));
 					foreach($answers as $answer)

@@ -107,7 +107,7 @@ echo "<h3 class='margin-top-10'>".CHtml::link("Analysis &nbsp| &nbsp", $this->cr
 	</form>
 	<?php
 	if(isset($_GET['graphId']) && $_GET['graphId'])
-		$graph = Graph::model()->findByPk($_GET['graphId']);
+		$graph = Graph::model()->findByPk((int)$_GET['graphId']);
 	else
 		$graph = new Graph;
 	$form  =$this->beginWidget('CActiveForm', array(

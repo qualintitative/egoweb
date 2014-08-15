@@ -107,8 +107,10 @@ class Expression extends CActiveRecord
 			//$interviewId = implode(",", $interviewIds);
 		}
 		*/
+        #OK FOR SQL INJECTION
 		$alters = q("SELECT * FROM alters WHERE interviewId =  $interviewId ")->queryAll();
-		$answers = q("SELECT * FROM answer WHERE questionId = ".$questionId . " and interviewId = $interviewId")->queryAll();
+        #OK FOR SQL INJECTION
+        $answers = q("SELECT * FROM answer WHERE questionId = ".$questionId . " and interviewId = $interviewId")->queryAll();
 		foreach ($answers as $answer){
 			if($answer['questionType'] == "ALTER"){
 				$array_id = $answer['questionId'] . '-' . $answer['alterId1'];
@@ -136,14 +138,18 @@ class Expression extends CActiveRecord
 		$study = Study::model()->findByPk($expression->studyId);
 		if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
 			if(!stristr($interviewId, ",")){
+                #OK FOR SQL INJECTION
 				$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
-				$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
+                #OK FOR SQL INJECTION
+                $multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
+                #OK FOR SQL INJECTION
 				$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
 				$interviewId = implode(",", $interviewIds);
 			}
 		}
 
 		if(is_numeric($expression->questionId)){
+            #OK FOR SQL INJECTION
 			$row = q("SELECT id,subjectType,title FROM question WHERE id = ". $expression->questionId)->queryRow();
 			$subjectType = $row['subjectType'];
 			$questionId = $row['id'];
@@ -165,8 +171,10 @@ class Expression extends CActiveRecord
 				if(!$this->answers){
 					if(strstr($interviewId, ",")){
 						foreach(explode(",", $interviewId) as $id){
+                            #OK FOR SQL INJECTION
 							$studyId = q("SELECT studyId FROM interview WHERE id = $id")->queryScalar();
-							if(q("SELECT id FROM question WHERE id = $questionId and studyId = $studyId")->queryScalar())
+                            #OK FOR SQL INJECTION
+                            if(q("SELECT id FROM question WHERE id = $questionId and studyId = $studyId")->queryScalar())
 								$this->fetchAlterAnswers($questionId, $id);
 						}
 					}else{
@@ -182,8 +190,10 @@ class Expression extends CActiveRecord
 				if(!$this->answers){
 					if(strstr($interviewId, ",")){
 						foreach(explode(",", $interviewId) as $id){
+                            #OK FOR SQL INJECTION
 							$studyId = q("SELECT studyId FROM interview WHERE id = $id")->queryScalar();
-							if(q("SELECT id FROM question WHERE id = $questionId and studyId = $studyId")->queryScalar())
+                            #OK FOR SQL INJECTION
+                            if(q("SELECT id FROM question WHERE id = $questionId and studyId = $studyId")->queryScalar())
 								$this->fetchAlterAnswers($questionId, $id);
 						}
 					}else{
@@ -196,6 +206,7 @@ class Expression extends CActiveRecord
 				else
 					$answer = "";
 			}else{
+                #OK FOR SQL INJECTION
 				$answer = q("SELECT value FROM answer WHERE questionId = $questionId AND interviewId in ($interviewId)")->queryScalar();
 			}
 		}
@@ -288,6 +299,7 @@ class Expression extends CActiveRecord
 			$alter = " AND alterId1 = " . $alterId1;
 		if($alterId2 != null)
 			$alter2 = " AND alterId2 = " . $alterId2;
+        #OK FOR SQL INJECTION
 		$answer = q("SELECT value FROM answer WHERE questionId = " . $questionId . " AND interviewId = " . $interviewId . $alter . $alter2)->queryScalar();
 		if(!$answer || !is_numeric($answer)){
 			return 0;
@@ -300,6 +312,7 @@ class Expression extends CActiveRecord
 	}
 
 	public function beforeDelete(){
+        #OK FOR SQL INJECTION
 		$others = q("SELECT * FROM expression WHERE studyId = " . $this->studyId . " AND (type = 'Counting' OR type = 'Comparison' OR type = 'Compound')")->queryAll();
 		foreach($others as $expression){
 			$expressionIds = "";

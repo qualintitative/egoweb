@@ -1,6 +1,7 @@
 <div style="overflow-y:auto; height:320px">
 <div style="width:300px; float:left; margin-left:20px">
 <?php
+#OK FOR SQL INJECTION
 $studyId = q("SELECT studyId FROM question WHERE id = " . $questionId)->queryScalar();
 Yii::app()->clientScript->registerScript('delete', "
 jQuery('a.delete').click(function() {

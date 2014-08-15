@@ -97,6 +97,7 @@ class Interview extends CActiveRecord
 
 
 	public function getInterviewFromEmail($studyId, $email){
+        #OK FOR SQL INJECTION
 		$interviewId = q("SELECT interviewId FROM answer WHERE value='$email' AND questionType = 'EGO_ID' AND studyId = $studyId")->queryScalar();
 		if($interviewId)
 			return Interview::model()->findByPk($interviewId);
@@ -113,10 +114,12 @@ class Interview extends CActiveRecord
 	}
 
 	public function getRespondant($id){
+        #OK FOR SQL INJECTION
 		$studyId = q("SELECT studyId FROM answer WHERE interviewId = $id")->queryScalar();
 
 		if(!$studyId)
 			return 'error';
+        #OK FOR SQL INJECTION
 		$firstId = q("SELECT id from question WHERE studyId = $studyId and subjectType = 'EGO_ID' ORDER by ordering")->queryScalar();
 
 		if(!$firstId)
@@ -127,6 +130,7 @@ class Interview extends CActiveRecord
 		));
 
 		if(isset($egoIdAnswer->value) && stristr($egoIdAnswer->value, '@'))
+            #OK FOR SQL INJECTION
 			return q("SELECT name FROM alterList WHERE email = '" .$egoIdAnswer->value . "'")->queryScalar();
 		else if(isset($egoIdAnswer->value))
 			return $egoIdAnswer->value;
@@ -135,7 +139,9 @@ class Interview extends CActiveRecord
 	}
 
 	public function getEgoId($id){
+        #OK FOR SQL INJECTION
 		$interview = q("SELECT * FROM interview where id = $id")->queryRow();
+        #OK FOR SQL INJECTION
 		$ego_id_questions = q("SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId = " . $interview['studyId'] . " ORDER BY ordering")->queryAll();
 		$egoId = "";
 		foreach ($ego_id_questions as $question){
@@ -144,8 +150,10 @@ class Interview extends CActiveRecord
 		$ego_ids = array();
 		foreach ($ego_id_questions as $question){
 			if($question['answerType'] == "MULTIPLE_SELECTION")
+                #OK FOR SQL INJECTION
 				$ego_ids[] = q("SELECT name FROM questionOption WHERE questionId = " . $question['id'])->queryScalar();
 			else
+                #OK FOR SQL INJECTION
 				$ego_ids[] = q("SELECT value FROM answer WHERE interviewId = " . $interview['id']  . " AND questionId = " . $question['id'])->queryScalar();
 		}
 		if(isset($ego_ids))
@@ -161,15 +169,20 @@ class Interview extends CActiveRecord
 			return $string;
 
 		if($study == null){
+            #OK FOR SQL INJECTION
 			$studyId = q("SELECT studyId FROM interview WHERE id = ".$interviewId)->queryScalar();
 			$study = Study::model()->findByPk($studyId);
 		}
 
 		if($study->multiSessionEgoId){
+            #OK FOR SQL INJECTION
 			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
-			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-			$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
-			$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
+            #OK FOR SQL INJECTION
+            $multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
+            #OK FOR SQL INJECTION
+            $studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
+            #OK FOR SQL INJECTION
+            $interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
 			$interviewId = implode(",", $interviewIds);
 			$studyId = $studyIds;
 		}

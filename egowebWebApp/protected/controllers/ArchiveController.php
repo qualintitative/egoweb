@@ -67,14 +67,14 @@ class ArchiveController extends Controller
 
 	public function actionDelete($id)
 	{
-		$study = Study::model()->findByPk($id);
+		$study = Study::model()->findByPk((int)$id);
 		$study->delete();
 		Yii::app()->request->redirect("/archive");
 	}
 
 	public function actionRestore($id)
 	{
-		$study = Study::model()->findByPk($id);
+		$study = Study::model()->findByPk((int)$id);
 		$study->active = 1;
 		$study->save();
 		Yii::app()->request->redirect("/authoring/edit/" . $study->id);

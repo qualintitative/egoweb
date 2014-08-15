@@ -26,8 +26,10 @@ echo CHtml::hiddenField("form", "_form_expression_text");
 
 $criteria=new CDbCriteria;
 if($multi){
+    #OK FOR SQL INJECTION
 	$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " .$multi . ")")->queryColumn();
-	$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
+    #OK FOR SQL INJECTION
+    $studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
 	$criteria=array(
 		'condition'=>"studyId in (" . implode(",", $studyIds) . ")",
 	);

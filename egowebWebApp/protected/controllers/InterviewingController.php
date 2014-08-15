@@ -150,7 +150,7 @@ class InterviewingController extends Controller
 				$nodes = "";
 
 			if(isset($_POST['Answer'][0]) && $_POST['Answer'][0]['answerType'] == "CONCLUSION"){
-				$interview = Interview::model()->findByPk($_POST['Answer'][0]['interviewId']);
+				$interview = Interview::model()->findByPk((int)$_POST['Answer'][0]['interviewId']);
 				$interview->completed = -1;
 				$interview->save();
 				if(Yii::app()->user->isGuest)
@@ -400,7 +400,7 @@ class InterviewingController extends Controller
 				$model[$array_id]->attributes=$Answer;
 				if($interviewId){
 					$model[$array_id]->interviewId = $interviewId;
-					$interview = Interview::model()->findByPk($interviewId);
+					$interview = Interview::model()->findByPk((int)$interviewId);
 					if(!$model[$array_id]->getError('value')){
 						$model[$array_id]->save();
 						if($interview->completed != -1){
@@ -527,7 +527,7 @@ class InterviewingController extends Controller
 
 			$this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterPrompt'=>$alterPrompt, 'model'=>$model, 'studyId'=>$studyId, 'interviewId'=>$interviewId, 'ajax'=>true), false, true);
 		}else if(isset($_GET['studyId']) && isset($_GET['interviewId'])){
-			$study = Study::model()->findByPk($_GET['studyId']);
+			$study = Study::model()->findByPk((int)$_GET['studyId']);
 			$alter_prompt = new Question;
 			$alter_prompt->answerType = "ALTER_PROMPT";
 			$alter_prompt->prompt = $study->alterPrompt;
@@ -576,7 +576,7 @@ class InterviewingController extends Controller
 
 	public function actionAjaxdelete(){
 		if(isset($_GET['Alters'])){
-			$model = Alters::model()->findByPk($_GET['Alters']['id']);
+			$model = Alters::model()->findByPk((int)$_GET['Alters']['id']);
 			if($model){
 				$interviewId = $_GET['interviewId'];
 				$ordering = $model->ordering;

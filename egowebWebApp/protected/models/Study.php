@@ -102,6 +102,7 @@ class Study extends CActiveRecord
 		$i++;
 		if(!$interviewId)
 			return json_encode($pages);
+        #OK FOR SQL INJECTION
 		$ego_qs = q("SELECT * FROM question WHERE studyId = $study->id AND subjectType ='EGO' order by ordering")->queryAll();
 		$prompt = "";
 		$ego_question_list = array();
@@ -144,8 +145,10 @@ class Study extends CActiveRecord
 			'condition'=>"FIND_IN_SET(" . $interviewId . ", interviewId)",
 		);
 		$alters = Alters::model()->findAll($criteria);
+        #OK FOR SQL INJECTION
 		$answers = q("SELECT count(id) FROM answer WHERE interviewId = " . $interviewId . " AND (questionType =  'ALTER' OR questionType = 'ALTER_PAIR') ")->queryScalar();
 		if(count($alters) > 0 && $answers > 0){
+            #OK FOR SQL INJECTION
 			$alter_qs = q("SELECT * FROM question WHERE studyId = $study->id AND subjectType ='ALTER' order by ordering")->queryAll();
 			$prompt = "";
 			$alter_question_list = array();
@@ -178,6 +181,7 @@ class Study extends CActiveRecord
 				    }
 				}
 			}
+            #OK FOR SQL INJECTION
 			$alter_pair_qs = q("SELECT * FROM question WHERE studyId = $study->id AND subjectType ='ALTER_PAIR' order by ordering")->queryAll();
 			$prompt = "";
 			$alter_pair_question_list = array();
@@ -206,6 +210,7 @@ class Study extends CActiveRecord
 					}
 				}
 			}
+            #OK FOR SQL INJECTION
 			$network_qs = q("SELECT * FROM question WHERE studyId = $study->id AND subjectType ='NETWORK' order by ordering")->queryAll();
 			foreach($network_qs as $question){
 			    if($interviewId){
@@ -258,6 +263,7 @@ class Study extends CActiveRecord
 		}
 		if(is_numeric($interviewId)){
 			$i++;
+            #OK FOR SQL INJECTION
 			$result = q("SELECT id, preface,answerReasonExpressionId FROM question WHERE subjectType = 'EGO' AND studyId = $study->id ORDER BY ordering")->queryAll();
 			$egoQuestionIds = array();
 			$egoPrefaces = array();
@@ -268,7 +274,8 @@ class Study extends CActiveRecord
 				$egoQuestionExpressions[$question['id']] = $question['answerReasonExpressionId'];
 			}
 			if(count($egoQuestionIds) > 0)
-				$result = q("SELECT id, questionId, value FROM answer WHERE questionId in (" . implode(',', $egoQuestionIds) . ")")->queryAll();
+                #OK FOR SQL INJECTION
+                $result = q("SELECT id, questionId, value FROM answer WHERE questionId in (" . implode(',', $egoQuestionIds) . ")")->queryAll();
 			else
 				$result = array();
 			$answers = array();
@@ -343,6 +350,7 @@ class Study extends CActiveRecord
 			);
 			$alters = Alters::model()->findAll($criteria);
 			if(count($alters) > 0){
+                #OK FOR SQL INJECTION
 				$result = q("SELECT id, preface, askingStyleList,answerReasonExpressionId FROM question WHERE subjectType = 'ALTER' AND studyId = $study->id ORDER BY ordering")->queryAll();
 				$alterQuestionIds = array();
 				$alterQuestionPrefaces = array();
@@ -355,6 +363,7 @@ class Study extends CActiveRecord
 					$alterAskingStyles[$question['id']] = $question['askingStyleList'];
 				}
 				if(count($alterQuestionIds) > 0)
+                    #OK FOR SQL INJECTION
 					$result = q("SELECT id, questionId, alterId1, value FROM answer WHERE questionId in (" . implode(',', $alterQuestionIds) . ")")->queryAll();
 				else
 					$result = array();
@@ -431,6 +440,7 @@ class Study extends CActiveRecord
 					}
 				}
 
+                #OK FOR SQL INJECTION
 				$result = q("SELECT id, preface, askingStyleList,answerReasonExpressionId, symmetric FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = $study->id ORDER BY ordering")->queryAll();
 				$alterPairQuestionIds = array();
 				$alterPairQuestionPrefaces = array();
@@ -443,6 +453,7 @@ class Study extends CActiveRecord
 					$alterPairSymmetry[$question['id']] = $question['symmetric'];
 				}
 				if(count($alterPairQuestionIds) > 0)
+                    #OK FOR SQL INJECTION
 					$result = q("SELECT id, questionId, alterId1, alterId2, value FROM answer WHERE questionId in (" . implode(',', $alterPairQuestionIds) . ")")->queryAll();
 				else
 					$result = array();
@@ -498,6 +509,7 @@ class Study extends CActiveRecord
 						}
 					}
 				}
+                #OK FOR SQL INJECTION
 				$result = q("SELECT id, preface, answerReasonExpressionId FROM question WHERE subjectType = 'NETWORK' AND studyId = $study->id ORDER BY ordering")->queryAll();
 				$networkQuestionIds = array();
 				$networkPrefaces = array();
@@ -508,6 +520,7 @@ class Study extends CActiveRecord
 					$networkExpressions[$question['id']] = $question['answerReasonExpressionId'];
 				}
 				if(count($networkQuestionIds) > 0)
+                    #OK FOR SQL INJECTION
 					$result = q("SELECT id, questionId, value FROM answer WHERE questionId in (" . implode(',', $networkQuestionIds) . ")")->queryAll();
 				else
 					$result = array();
@@ -561,6 +574,7 @@ class Study extends CActiveRecord
 		if(!$id && isset($this->id))
 			$multi = $this->multiSessionEgoId;
 		else
+            #OK FOR SQL INJECTION
 			$multi = q("SELECT multiSessionEgoId FROM study WHERE id = " . $id)->queryScalar();
 		if($multi)
 			return $multi;
