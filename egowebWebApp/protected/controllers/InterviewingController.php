@@ -450,7 +450,7 @@ class InterviewingController extends Controller
 
 			$studyId = q("SELECT studyId FROM interview WHERE id = :interviewId", array($params))->queryScalar();
 
-			$name_exists = Alters::model()->findByAttributes(array('name'=>$_POST['Alters']['name'], 'interviewId'=>$_POST['Alters']['interviewId']));
+			$name_exists = Alters::model()->findByAttributes(array('name'=>$_POST['Alters']['name'], 'interviewId'=>(int)$_POST['Alters']['interviewId']));
 			$model = new Alters;
 			$model->attributes = $_POST['Alters'];
 			if($name_exists){

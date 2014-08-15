@@ -580,9 +580,9 @@ class DataController extends Controller
 	{
 		if(isset($_GET['interviewId']) && isset($_GET['expressionId']) && isset($_GET['alterId'])){
 			$model = Note::model()->findByAttributes(array(
-				'interviewId' => $_GET['interviewId'],
-				'expressionId' => $_GET['expressionId'],
-				'alterId' => $_GET['alterId']
+				'interviewId' => (int)$_GET['interviewId'],
+				'expressionId' => (int)$_GET['expressionId'],
+				'alterId' => (int)$_GET['alterId']
 			));
 			if(!$model){
 				$model = new Note;
