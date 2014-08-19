@@ -58,7 +58,7 @@ return array(
 		// uncomment the following to use a MySQL database
 		*/
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=egoweb_db',
+			'connectionString' => 'mysql:host=localhost;dbname=egoweb_data',
 			'username' => 'egoweb',
 			'password' => "test1234",
 			//'enableProfiling'=>true,

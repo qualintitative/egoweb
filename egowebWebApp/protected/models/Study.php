@@ -148,9 +148,8 @@ class Study extends CActiveRecord
 		if(count($alters) > 0 && $answers > 0){
 			$alter_qs = q("SELECT * FROM question WHERE studyId = $study->id AND subjectType ='ALTER' order by ordering")->queryAll();
 			$prompt = "";
-			$alter_question_list = array();
-
 			foreach($alter_qs as $question){
+				$alter_question_list = array();
 				$expression = new Expression;
 				foreach($alters as $alter){
 				    if(!$expression->evalExpression($question['answerReasonExpressionId'], $interviewId, $alter->id)){

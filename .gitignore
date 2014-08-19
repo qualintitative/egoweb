@@ -1,4 +1,3 @@
-*.komodoproject
 .DS_Store
 egowebWebApp/protected/runtime/
-egowebApp/protected/assets/
+egowebWepApp/protected/config/main.php

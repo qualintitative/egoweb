@@ -976,3 +976,80 @@ Stack trace:
 #20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
 #21 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CWebApplication->run()
 REQUEST_URI=/data/visualize?expressionId=12658&interviewId=941
+2014/07/29 01:41:15 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('favicon.ico')
+#1 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
+2014/07/29 01:42:14 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1. The SQL statement executed was: SELECT id FROM study WHERE multiSessionEgoId in ().
+2014/07/29 01:42:14 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 1' in /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(454): CDbCommand->queryInternal('fetchAll', Array, Array)
+#1 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/protected/models/Interview.php(171): CDbCommand->queryColumn()
+#2 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/protected/views/interviewing/view.php(212): Interview->interpretTags('Which building ...', '838', NULL, NULL)
+#3 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#4 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#5 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CController.php(869): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#6 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CController.php(782): CController->renderPartial('view', Array, true)
+#7 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/protected/controllers/InterviewingController.php(124): CController->render('view', Array)
+#8 [internal function]: InterviewingController->actionView('254')
+#9 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/actions/CAction.php(108): ReflectionMethod->invokeArgs(Object(InterviewingController), Array)
+#10 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(47): CAction->runWithParamsInternal(Object(InterviewingController), Object(ReflectionMethod), Array)
+#11 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#12 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#13 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#14 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#15 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#16 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#17 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#18 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#19 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('view')
+#20 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('interviewing/vi...')
+#21 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#22 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#23 {main}
+REQUEST_URI=/interviewing/254?interviewId=838&page=2&key=
+---
+2014/07/29 01:42:34 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "study/edit".' in /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('study/edit')
+#1 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/study/edit/254
+---
+2014/07/29 01:42:37 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "study".' in /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('study')
+#1 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/study
+---
+2014/07/29 01:47:06 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "study".' in /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('study')
+#1 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/study
+---
+2014/07/29 01:47:10 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "study/edit".' in /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('study/edit')
+#1 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/study/edit/254
+---
+2014/08/12 23:51:44 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('favicon.ico')
+#1 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/zhangster/Sites/qualintitative/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
