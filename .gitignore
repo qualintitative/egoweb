@@ -16,9 +16,15 @@ Thumbs.db
 ######################
 *.komodoproject
 
+# Yii Files #
+#############
+egowebWebApp/assets/*
+!egowebWebApp/assets/.gitignore
+egowebWebApp/protected/runtime/*
+!egowebWebApp/protected/runtime/.gitignore
+egowebWebApp/protected/data/*.db
+egowebWebApp/themes/classic/views/
+
 # dynamic Egoweb files #
 ########################
-egowebWebApp/protected/runtime/
-egowebApp/protected/assets/
-egowebWebApp/protected/runtime/application.log
 egowebWebApp/protected/config/main.php

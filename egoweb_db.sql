@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `alterList` (
   `ordering` int(11) NOT NULL,
   `interviewerId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=574 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=574 ;
 
 -- --------------------------------------------------------
 
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `alterPrompt` (
   `afterAltersEntered` int(11) NOT NULL,
   `display` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=182 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=182 ;
 
 -- --------------------------------------------------------
 
@@ -133,14 +133,14 @@ CREATE TABLE IF NOT EXISTS `expression` (
 
 CREATE TABLE IF NOT EXISTS `graphs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` text CHARACTER SET utf8mb4 NOT NULL,
+  `name` text CHARACTER SET utf8 NOT NULL,
   `interviewId` int(11) NOT NULL,
   `expressionId` int(11) NOT NULL,
-  `json` text CHARACTER SET utf8mb4 NOT NULL,
-  `nodes` text CHARACTER SET utf8mb4 NOT NULL,
-  `params` text CHARACTER SET utf8mb4 NOT NULL,
+  `json` text CHARACTER SET utf8 NOT NULL,
+  `nodes` text CHARACTER SET utf8 NOT NULL,
+  `params` text CHARACTER SET utf8 NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf32 AUTO_INCREMENT=22 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=22 ;
 
 -- --------------------------------------------------------
 
@@ -167,7 +167,7 @@ CREATE TABLE IF NOT EXISTS `interviewers` (
   `studyId` int(11) NOT NULL,
   `interviewerId` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=51 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=51 ;
 
 -- --------------------------------------------------------
 
@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS `notes` (
   KEY `interviewId` (`interviewId`),
   KEY `expressionId` (`expressionId`),
   KEY `alterId` (`alterId`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf32 AUTO_INCREMENT=50 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=50 ;
 
 -- --------------------------------------------------------
 
@@ -268,7 +268,7 @@ CREATE TABLE IF NOT EXISTS `session` (
   `expire` int(11) DEFAULT NULL,
   `data` longblob,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -313,7 +313,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `lastActivity` datetime NOT NULL,
   `permissions` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=43 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=43 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
