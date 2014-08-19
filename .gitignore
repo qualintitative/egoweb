@@ -1,3 +1,24 @@
+# PHPStorm files #
+##################
+.idea/
+
+# OS generated files #
+######################
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Komodo files #
+######################
+*.komodoproject
+
+# dynamic Egoweb files #
+########################
 egowebWebApp/protected/runtime/
-egowebWepApp/protected/config/main.php
+egowebApp/protected/assets/
+egowebWebApp/protected/runtime/application.log
+egowebWebApp/protected/config/main.php

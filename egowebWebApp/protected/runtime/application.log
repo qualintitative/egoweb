@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 2014/04/24 02:32:43 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'AND subjectType ='EGO' order by ordering' at line 1. The SQL statement executed was: SELECT * FROM question WHERE studyId =  AND subjectType ='EGO' order by ordering.
 2014/04/24 02:32:43 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'AND subjectType ='EGO' order by ordering' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
 Stack trace:
@@ -1053,3 +1054,5 @@ Stack trace:
 #3 {main}
 REQUEST_URI=/favicon.ico
 ---
+=======
+>>>>>>> 095cc732101244f454ba54c10fb94d05fdc149cf
