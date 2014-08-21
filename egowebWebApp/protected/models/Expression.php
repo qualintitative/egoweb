@@ -254,20 +254,22 @@ class Expression extends CActiveRecord
 			return eval($logic);
 		} else if($expression->type == "Compound"){
 			$subExpressions = explode(',', $expression->value);
-			$trues = 0;
+			$trues[$id] = 0;
 			foreach($subExpressions as $subExpression){
 				// prevent infinite loops!
+				$isTrue[$subExpression] = false;
 				if($subExpression == $id)
 					continue;
-				$isTrue = Expression::evalExpression($subExpression, $interviewId, $alterId1, $alterId2);
-				if($expression->operator == "Some" && $isTrue)
+				$sub[$subExpression] = new Expression;
+				$isTrue[$subExpression] = $sub[$subExpression]->evalExpression($subExpression, $interviewId, $alterId1, $alterId2);
+				if($expression->operator == "Some" && $isTrue[$subExpression])
 					return true;
-				if($isTrue)
-					$trues++;
+				if($isTrue[$subExpression])
+					$trues[$id]++;
 			}
-			if($expression->operator == "None" && $trues == 0)
+			if($expression->operator == "None" && $trues[$id] == 0)
 				return true;
-			else if ($expression->operator == "All" && $trues == count($subExpressions))
+			else if ($expression->operator == "All" && $trues[$id] == count($subExpressions))
 				return true;
 		}
 		return false;
