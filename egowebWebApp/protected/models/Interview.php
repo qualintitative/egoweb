@@ -143,10 +143,13 @@ class Interview extends CActiveRecord
 		}
 		$ego_ids = array();
 		foreach ($ego_id_questions as $question){
-			if($question['answerType'] == "MULTIPLE_SELECTION")
-				$ego_ids[] = q("SELECT name FROM questionOption WHERE questionId = " . $question['id'])->queryScalar();
-			else
+			if($question['answerType'] == "MULTIPLE_SELECTION"){
+				$optionId = q("SELECT value FROM answer WHERE interviewId = " . $interview['id']  . " AND questionId = " . $question['id'])->queryScalar();
+				if($optionId)
+					$ego_ids[] = q("SELECT name FROM questionOption WHERE id = " . $optionId)->queryScalar();
+			}else{
 				$ego_ids[] = q("SELECT value FROM answer WHERE interviewId = " . $interview['id']  . " AND questionId = " . $question['id'])->queryScalar();
+			}
 		}
 		if(isset($ego_ids))
 			$egoId = implode("_", $ego_ids);
