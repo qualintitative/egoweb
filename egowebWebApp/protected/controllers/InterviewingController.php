@@ -615,8 +615,18 @@ class InterviewingController extends Controller
 
 	public function actionStudy($id)
 	{
+		$egoIdQ = q("SELECT * from question where studyId = $id and useAlterListField in ('name','email','id')")->queryRow();
+		$restrictions = "";
+		if($egoIdQ){
+			$participants = q("SELECT " . $egoIdQ['useAlterListField'] . " FROM alterList where interviewerId = " . Yii::app()->user->id)->queryColumn();
+			if($participants){
+				$interviewIds = q("SELECT interviewId from answer where questionId = " .$egoIdQ['id'] . " AND value in ( '" . implode("','", $participants) . "' )")->queryColumn();
+				if($interviewIds)
+					$restrictions = ' and id in (' . implode(",", $interviewIds) . ')';
+			}
+		}
 		$criteria=array(
-			'condition'=>'completed > -1 && studyId = '.$id,
+			'condition'=>'completed > -1 && studyId = '.$id . $restrictions,
 			'order'=>'id DESC',
 		);
 		$dataProvider=new CActiveDataProvider('Interview',array(
