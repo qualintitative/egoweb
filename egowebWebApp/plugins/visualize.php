@@ -7,25 +7,23 @@ class visualize extends Plugin
 		'#ccc'=>'gray',
 		'#07f'=>'blue',
 		'#0c0'=>'green',
+		'#F80'=>'orange',
 		'#fa0'=>'yellow',
 		'#f00'=>'red',
 		'#c0f'=>'purple',
 	);
 	public $edgeSizes = array(
-		"1"=>'1',
+		"0.5"=>'0.5',
 		"2"=>'2',
-		"3"=>'3',
 		"4"=>'4',
-		"5"=>'5',
-		"6"=>'6',
-		"7"=>'7',
 		"8"=>'8',
-		"9"=>'9',
-		"10"=>'10',
 	);
 	public $nodeColors = array(
+		'#000'=>'black',
+		'#ccc'=>'gray',
 		'#07f'=>'blue',
 		'#0c0'=>'green',
+		'#F80'=>'orange',
 		'#fa0'=>'yellow',
 		'#f00'=>'red',
 		'#c0f'=>'purple',
@@ -33,20 +31,22 @@ class visualize extends Plugin
 	public $nodeShapes = array(
 		'circle'=>'circle',
 		'star'=>'star',
-		'triangle'=>'triangle',
+		'diamond'=>'diamond',
+		'cross'=>'cross',
+		'equilateral'=>'triangle',
 		'square'=>'square',
 	);
 	public $nodeSizes = array(
-		4=>'1',
-		6=>'2',
-		8=>'3',
-		10=>'4',
-		12=>'5',
-		14=>'6',
-		16=>'7',
-		18=>'8',
-		20=>'9',
-		22=>'10',
+		1=>'1',
+		2=>'2',
+		3=>'3',
+		4=>'4',
+		5=>'5',
+		6=>'6',
+		7=>'7',
+		8=>'8',
+		9=>'9',
+		10=>'10',
 	);
 	/*
 	public $gradient = array(
@@ -175,7 +175,7 @@ class visualize extends Plugin
 	}
 
 	private function getEdgeColor($nodeId1, $nodeId2){
-		$default = "#000";
+		$default = "#ccc";
 		if(isset($this->params['edgeColor'])){
 			$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['edgeColor']['questionId']. " AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2)->queryScalar();
 			$answer = explode(',', $answer);
@@ -188,7 +188,7 @@ class visualize extends Plugin
 	}
 
 	private function getEdgeSize($nodeId1, $nodeId2){
-		$default = 0.5;
+		$default = 1;
 		if(isset($this->params['edgeSize'])){
 			$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['edgeSize']['questionId']. " AND alterId1 = " .$nodeId1. " AND alterId2 = " . $nodeId2)->queryScalar();
 			$answer = explode(',', $answer);
@@ -542,22 +542,41 @@ class visualize extends Plugin
 
 		$currentNode = '';
 		$alters2 = $alters;
+		$snodes = array();
 		foreach($alters as $alter){
+			array_push(
+				$snodes,
+				array(
+					'id'=>$alter['id'],
+					'label'=>$alter['name'] . (isset($alterNotes[$alter['id']]) ? " �" : ""),
+					'x'=>rand(0, 10) / 10,
+					'y'=>rand(0, 10) / 10,
+					"type"=>$this->getNodeShape($alter['id']),
+					"color"=>$this->getNodeColor($alter['id']),
+					"size"=>$this->getNodeSize($alter['id']),
+				)
+			);
 			foreach($alters2 as $alter2){
-
-			if($expression && $expression->evalExpression($expression->id, $this->method, $alter['id'], $alter2['id'])){
-				$currentNode = $alter2['id'];
-				$nodes[$currentNode]['id'] = $currentNode;
-				$nodes[$currentNode]['name'] = $alterNames[$currentNode];
-				$nodes[$currentNode]['adjacencies'][] = array(
-					'nodeTo'=>$alter['id'],
-					'nodeFrom'=>$alter2['id'],
-					'data'=>array(
-						"\$color"=>$this->getEdgeColor($alter['id'], $alter2['id']),
-						"\$lineWidth"=>$this->getEdgeSize($alter['id'], $alter2['id'])
-					),
-				);
-			}
+				if($expression && $expression->evalExpression($expression->id, $this->method, $alter['id'], $alter2['id'])){
+					$currentNode = $alter2['id'];
+					$nodes[$currentNode]['id'] = $currentNode;
+					$nodes[$currentNode]['name'] = $alterNames[$currentNode];
+					$nodes[$currentNode]['adjacencies'][] = array(
+						'nodeTo'=>$alter['id'],
+						'nodeFrom'=>$alter2['id'],
+						'data'=>array(
+							"\$color"=>$this->getEdgeColor($alter['id'], $alter2['id']),
+							"\$lineWidth"=>$this->getEdgeSize($alter['id'], $alter2['id'])
+						),
+					);
+					$edges[] = array(
+						"id" => $alter['id'] . "_" . $alter2['id'],
+						"source" => $alter2['id'],
+						"target" => $alter['id'],
+						"color"=>$this->getEdgeColor($alter['id'], $alter2['id']),
+						"size"=>$this->getEdgeSize($alter['id'], $alter2['id']),
+					);
+				}
 			}
 		}
 		$json = array();
@@ -578,6 +597,7 @@ class visualize extends Plugin
 					)
 				)
 			);
+
 		}
 		if(isset($nodeArray)){
 			$leftOvers = array_diff($alterIds, $nodeArray);
@@ -598,6 +618,12 @@ class visualize extends Plugin
 			}
 			$adjacencies = json_encode($json);
 		}
+
+		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/sigma.min.js');
+		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.renderers.customShapes.min.js');
+		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.renderers.customEdgeShapes/shape-library.js');
+		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.renderers.customEdgeShapes/sigma.renderers.customEdgeShapes.js');
+		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.layout.forceAtlas2.min.js');
 		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/jit.js');
 		Yii::app()->clientScript->registerCssFile(Yii::app()->getBaseUrl().'/css/base.css');
 		?>
@@ -652,7 +678,9 @@ function saveGraph(){
 		alert ("Please enter a graph name");
 	}
 }
-
+function onClick(event) {
+    window.console.log("clicked!");
+}
 function refresh(container){
 	var params = new Object;
 	if(typeof container == "undefined")
@@ -1044,9 +1072,54 @@ function init(json)
 	});
 }
 
+g = {
+	nodes:  <?= json_encode($snodes); ?>,
+	edges:  <?= json_encode($edges); ?>
+};
+sizes = [];
+for(y in g.edges){sizes.push(g.edges[y].size)}
+max_size = Math.max.apply(Math, sizes);
 $(function(){
+	s = new sigma({
+	  graph: g,
+	  renderer: {
+	    // IMPORTANT:
+	    // This works only with the canvas renderer, so the
+	    // renderer type set as "canvas" is necessary here.
+	    container: document.getElementById('infovis'),
+	    type: 'canvas'
+	  },
+	  settings: {
+	    labelThreshold: 1,
+	    minNodeSize: 1,
+	    maxNodeSize: 10,
+	    minEdgeSize: 0.5,
+	    maxEdgeSize: max_size,
+	  }
+	});
+	CustomEdgeShapes.init(s);
+	s.refresh();
+	s.startForceAtlas2({
+		"worker":false,
+		"outboundAttractionDistribution":true,
+		"speed":2000,
+		"gravity": 0.2,
+	    "jitterTolerance": 0,
+	    "strongGravityMode": true,
+	    "barnesHutOptimize": false,
+	    "totalSwinging": 0,
+	    "totalEffectiveTraction": 0,
+	    "complexIntervals":500,
+	    "simpleIntervals": 1000
+	});
+	s.bind('clickNode',function(e){
+		console.log(e);
+	});
+	setTimeout("s.stopForceAtlas2()", 5000);
+/*
 	json = <?= $adjacencies; ?>;
 	init(json);
+*/
 });
 </script>
 		<div id="container">

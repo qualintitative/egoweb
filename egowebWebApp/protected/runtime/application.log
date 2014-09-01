@@ -2219,3 +2219,122 @@ Stack trace:
 REQUEST_URI=/interviewing/study/209?_=1409215396262
 HTTP_REFERER=http://egoweb/interviewing
 ---
+2014/08/29 23:49:24 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('favicon.ico')
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
+2014/08/29 23:50:27 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "js/sigma.js".' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('js/sigma.js')
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/js/sigma.js
+HTTP_REFERER=http://egoweb/data/visualize?expressionId=7740&interviewId=305
+---
+2014/08/29 23:57:43 [error] [php] array_push() expects parameter 1 to be array, null given (/Users/zhangster/Sites/egoweb/egowebWebApp/plugins/visualize.php:554)
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(173): visualize->run()
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/data/visualize.php(95): DataController->widget()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require()
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): DataController->renderInternal()
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): DataController->renderFile()
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(782): DataController->renderPartial()
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/DataController.php(100): DataController->render()
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(49): DataController->actionVisualize()
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): DataController->runAction()
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CAccessControlFilter->filter()
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): DataController->filterAccessControl()
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter()
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): DataController->runActionWithFilters()
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): DataController->run()
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController()
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CWebApplication->run()
+REQUEST_URI=/data/visualize?expressionId=7740&interviewId=305
+2014/08/30 13:40:26 [error] [system.db.CDbCommand] CDbCommand::fetchColumn() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1. The SQL statement executed was: SELECT value FROM answer WHERE questionID = 13168 AND alterId1 = .
+2014/08/30 13:40:26 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(432): CDbCommand->queryInternal('fetchColumn', 0, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/plugins/visualize.php(131): CDbCommand->queryScalar()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/plugins/visualize.php(554): visualize->getNodeShape(NULL)
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/components/Plugin.php(29): visualize->actionIndex()
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(173): Plugin->run()
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/data/visualize.php(95): CBaseController->widget('plugins.visuali...', Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(782): CController->renderPartial('visualize', Array, true)
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/DataController.php(100): CController->render('visualize', Array)
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(49): DataController->actionVisualize()
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('visualize')
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('data/visualize')
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#24 {main}
+REQUEST_URI=/data/visualize?expressionId=7743&interviewId=722&params=%7B%22nodeShape%22%3A%7B%22questionId%22%3A%2213168%22%2C%22options%22%3A%5B%7B%22id%22%3A%2242268%22%2C%22shape%22%3A%22square%22%7D%2C%7B%22id%22%3A%2242269%22%2C%22shape%22%3A%22circle%22%7D%5D%7D%7D
+HTTP_REFERER=http://egoweb/data/visualize?expressionId=7743&interviewId=722
+---
+2014/08/30 13:40:55 [error] [system.db.CDbCommand] CDbCommand::fetchColumn() failed: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1. The SQL statement executed was: SELECT value FROM answer WHERE questionID = 13168 AND alterId1 = .
+2014/08/30 13:40:55 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:541
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php(432): CDbCommand->queryInternal('fetchColumn', 0, Array)
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/plugins/visualize.php(131): CDbCommand->queryScalar()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/plugins/visualize.php(554): visualize->getNodeShape(NULL)
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/components/Plugin.php(29): visualize->actionIndex()
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(173): Plugin->run()
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/data/visualize.php(95): CBaseController->widget('plugins.visuali...', Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require('/Users/zhangste...')
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): CBaseController->renderInternal('/Users/zhangste...', Array, true)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): CBaseController->renderFile('/Users/zhangste...', Array, true)
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(782): CController->renderPartial('visualize', Array, true)
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/DataController.php(100): CController->render('visualize', Array)
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(49): DataController->actionVisualize()
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('visualize')
+#21 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('data/visualize')
+#22 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#23 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#24 {main}
+REQUEST_URI=/data/visualize?expressionId=7743&interviewId=722&params=%7B%22nodeShape%22%3A%7B%22questionId%22%3A%2213168%22%2C%22options%22%3A%5B%7B%22id%22%3A%2242268%22%2C%22shape%22%3A%22square%22%7D%2C%7B%22id%22%3A%2242269%22%2C%22shape%22%3A%22circle%22%7D%5D%7D%2C%22edgeColor%22%3A%7B%22questionId%22%3A%2213165%22%2C%22options%22%3A%5B%7B%22id%22%3A%2242260%22%2C%22color%22%3A%22%2307f%22%7D%2C%7B%22id%22%3A%2242261%22%2C%22color%22%3A%22%23000%22%7D%2C%7B%22id%22%3A%2242262%22%2C%22color%22%3A%22%23000%22%7D%2C%7B%22id%22%3A%2242263%22%2C%22color%22%3A%22%23000%22%7D%5D%7D%7D
+HTTP_REFERER=http://egoweb/data/visualize?expressionId=7743&interviewId=722
+---
+2014/08/30 16:54:14 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "js/plugins".' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('js/plugins')
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/js/plugins/sigma.renderers.customEdgeShapes.js
+HTTP_REFERER=http://egoweb/data/visualize?expressionId=7743&interviewId=722&params=%7B%22nodeColor%22%3A%7B%22questionId%22%3A%22expression_7735%22%2C%22options%22%3A%5B%7B%22id%22%3A%220%22%2C%22color%22%3A%22%2307f%22%7D%2C%7B%22id%22%3A%221%22%2C%22color%22%3A%22%23fa0%22%7D%5D%7D%2C%22nodeShape%22%3A%7B%22questionId%22%3A%2213184%22%2C%22options%22%3A%5B%7B%22id%22%3A%2242315%22%2C%22shape%22%3A%22star%22%7D%2C%7B%22id%22%3A%2242316%22%2C%22shape%22%3A%22square%22%7D%2C%7B%22id%22%3A%2242317%22%2C%22shape%22%3A%22square%22%7D%2C%7B%22id%22%3A%2242318%22%2C%22shape%22%3A%22square%22%7D%2C%7B%22id%22%3A%2242319%22%2C%22shape%22%3A%22square%22%7D%5D%7D%2C%22nodeSize%22%3A%7B%22questionId%22%3A%22degree%22%2C%22options%22%3A%5B%5D%7D%2C%22edgeColor%22%3A%7B%22questionId%22%3A%2213165%22%2C%22options%22%3A%5B%7B%22id%22%3A%2242260%22%2C%22color%22%3A%22%23fa0%22%7D%2C%7B%22id%22%3A%2242261%22%2C%22color%22%3A%22%23000%22%7D%2C%7B%22id%22%3A%2242262%22%2C%22color%22%3A%22%23000%22%7D%2C%7B%22id%22%3A%2242263%22%2C%22color%22%3A%22%23000%22%7D%5D%7D%2C%22edgeSize%22%3A%7B%22questionId%22%3A%2213165%22%2C%22options%22%3A%5B%7B%22id%22%3A%2242260%22%2C%22size%22%3A%225%22%7D%2C%7B%22id%22%3A%2242261%22%2C%22size%22%3A%224%22%7D%2C%7B%22id%22%3A%2242262%22%2C%22size%22%3A%2210%22%7D%2C%7B%22id%22%3A%2242263%22%2C%22size%22%3A%2210%22%7D%5D%7D%7D
+---
+2014/08/30 16:55:54 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "js/plugins".' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('js/plugins')
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/js/plugins/sigma.renderers.customEdgeShape.js
+---
