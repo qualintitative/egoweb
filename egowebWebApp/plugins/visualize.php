@@ -620,6 +620,8 @@ class visualize extends Plugin
 		}
 
 		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/sigma.min.js');
+		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/sigma.notes.js');
+		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.plugins.dragNodes.min.js');
 		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.renderers.customShapes.min.js');
 		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.renderers.customEdgeShapes/shape-library.js');
 		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.renderers.customEdgeShapes/sigma.renderers.customEdgeShapes.js');
@@ -631,31 +633,6 @@ class visualize extends Plugin
 interviewId = <?php echo $this->method; ?>;
 expressionId = <?php echo $this->id; ?>;
 notes = <?php echo json_encode($alterNotes) ?>;
-var labelType, useGradients, nativeTextSupport, animate;
-(function() {
-	var ua = navigator.userAgent,
-		iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
-		typeOfCanvas = typeof HTMLCanvasElement,
-		nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
-		textSupport = nativeCanvasSupport
-		&& (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
-	//I'm setting this based on the fact that ExCanvas provides text support for IE
-	//and that as of today iPhone/iPad current text support is lame
-	labelType = (!nativeCanvasSupport || (textSupport && !iStuff))? 'Native' : 'HTML';
-	nativeTextSupport = labelType == 'Native';
-	useGradients = nativeCanvasSupport;
-	animate = !(iStuff || !nativeCanvasSupport);
-})();
-
-var Log = {
-	elem: false,
-	write: function(text){
-		if (!this.elem)
-			this.elem = document.getElementById('log');
-		this.elem.innerHTML = text;
-		this.elem.style.left = (500 - this.elem.offsetWidth / 2) + 'px';
-	}
-};
 
 function saveNodes()
 {
@@ -678,9 +655,7 @@ function saveGraph(){
 		alert ("Please enter a graph name");
 	}
 }
-function onClick(event) {
-    window.console.log("clicked!");
-}
+
 function refresh(container){
 	var params = new Object;
 	if(typeof container == "undefined")
@@ -753,58 +728,7 @@ function print(){
 	window.open(url);
 }
 
-function saveNote(){
-	var noteContent = $("#Note_notes").val();
-	$.post("/data/savenote", $("#note-form").serialize(), function(data){
-		if(!isNaN(data))
-			$("#" + data + " .name").html($("#" + data + " .name").html() + " <span class='fui-new'></span>");
-		notes[data] = noteContent;
-		saveNodes();
-		var list = [];
-		var node = fd.graph.getNode(data);
-		node.eachAdjacency(function(adj){
-			if(adj.getData('alpha')) list.push(adj.nodeTo.name.replace("<span class='fui-new'></span>",""));
-		});
-		var url = "/data/getnote?interviewId=" + interviewId + "&expressionId=" + expressionId + "&alterId=" + data;
-		$.get(url, function(data){
-			$jit.id('inner-details').innerHTML = data;
-			$jit.id('inner-details').innerHTML = $jit.id('inner-details').innerHTML + "<div class='pull-left col-sm-3'>" +
-			"<label>Connections</label><br>" +
-			list.join("</li><li>") + "</li></ul></div>"
-		});
-	});
 
-}
-
-function deleteNote(){
-	$.post("/data/deletenote", $("#note-form").serialize(), function(data){
-		if(!isNaN(data)){
-			var list = [];
-			var node = fd.graph.getNode(data);
-			node.name = node.name.replace("<span class='fui-new'></span>","");
-			fd.labels.clearLabels(true);
-			$jit.id('inner-details').innerHTML = "";
-			fd.plot();
-
-		}else{
-			delete notes[data];
-			fd.graph.removeNode(data);
-			fd.labels.clearLabels();
-			$jit.id('inner-details').innerHTML = "";
-			graphNotes = 0;
-			for(k in notes){
-				if(k.match(/graphNote/)){
-					noteId = parseInt(k.match(/graphNote-(\d+)/)[1]);
-					if(noteId > graphNotes)
-						graphNotes = noteId;
-				}
-			}
-			fd.plot();
-
-		}
-		saveNodes();
-	});
-}
 
 function init(json)
 {
@@ -1080,22 +1004,22 @@ sizes = [];
 for(y in g.edges){sizes.push(g.edges[y].size)}
 max_size = Math.max.apply(Math, sizes);
 $(function(){
+
+	sigma.renderers.def = sigma.renderers.canvas;
 	s = new sigma({
-	  graph: g,
-	  renderer: {
-	    // IMPORTANT:
-	    // This works only with the canvas renderer, so the
-	    // renderer type set as "canvas" is necessary here.
-	    container: document.getElementById('infovis'),
-	    type: 'canvas'
-	  },
-	  settings: {
-	    labelThreshold: 1,
-	    minNodeSize: 1,
-	    maxNodeSize: 10,
-	    minEdgeSize: 0.5,
-	    maxEdgeSize: max_size,
-	  }
+		graph: g,
+		renderer: {
+			container: document.getElementById('infovis'),
+			type: 'canvas'
+		},
+		settings: {
+			doubleClickEnabled: false,
+			labelThreshold: 1,
+			minNodeSize: 1,
+			maxNodeSize: 10,
+			minEdgeSize: 0.5,
+			maxEdgeSize: max_size,
+		}
 	});
 	CustomEdgeShapes.init(s);
 	s.refresh();
@@ -1104,22 +1028,18 @@ $(function(){
 		"outboundAttractionDistribution":true,
 		"speed":2000,
 		"gravity": 0.2,
-	    "jitterTolerance": 0,
-	    "strongGravityMode": true,
-	    "barnesHutOptimize": false,
-	    "totalSwinging": 0,
-	    "totalEffectiveTraction": 0,
-	    "complexIntervals":500,
-	    "simpleIntervals": 1000
+		"jitterTolerance": 0,
+		"strongGravityMode": true,
+		"barnesHutOptimize": false,
+		"totalSwinging": 0,
+		"totalEffectiveTraction": 0,
+		"complexIntervals":500,
+		"simpleIntervals": 1000
 	});
-	s.bind('clickNode',function(e){
-		console.log(e);
-	});
+
+	initNotes(s);
+	sigma.plugins.dragNodes(s, s.renderers[0]);
 	setTimeout("s.stopForceAtlas2()", 5000);
-/*
-	json = <?= $adjacencies; ?>;
-	init(json);
-*/
 });
 </script>
 		<div id="container">
