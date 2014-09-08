@@ -33,11 +33,11 @@ return array(
 
 	// application components
 	'components'=>array(
-        'user'=>array(
-            // enable cookie-based authentication
-            'allowAutoLogin'=>true,
-            'class'=>'WebUser'
-        ),
+		'user'=>array(
+			// enable cookie-based authentication
+			'allowAutoLogin'=>true,
+			'class'=>'WebUser'
+		),
 		// uncomment the following to enable URLs in path-format
 
 		'urlManager'=>array(
@@ -58,24 +58,18 @@ return array(
 		// uncomment the following to use a MySQL database
 		*/
 		'db'=>array(
-<<<<<<< HEAD:egowebWebApp/protected/config/main.php
-			'connectionString' => 'mysql:host=localhost;dbname=egoweb_data',
-			'username' => 'egoweb',
-			'password' => "test1234",
-=======
 			'connectionString' => 'mysql:host=localhost;dbname=egoweb',
 			'username' => 'egowebuser',
 			'password' => "egowebpass",
->>>>>>> fa9c2b399ddddc82f5f55029ddba6ed35523b2ac:egowebWebApp/protected/config/main.php.bak
 			//'enableProfiling'=>true,
 			'emulatePrepare' => true,
 			'charset' => 'utf8',
 		),
 
 		'session' => array (
-    		'class' => 'system.web.CDbHttpSession',
-    		'connectionID' => 'db',
-    		'sessionTableName' => 'session',
+			'class' => 'system.web.CDbHttpSession',
+			'connectionID' => 'db',
+			'sessionTableName' => 'session',
 		),
 
 		'errorHandler'=>array(
