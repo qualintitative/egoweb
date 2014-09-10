@@ -12,10 +12,6 @@ if(isset($_GET['key']))
 else
 	$key = '';
 }
-	if(isset($_GET['nodes']))
-		$nodes = $_GET['nodes'];
-	else
-		$nodes = "";
 ?>
 <script>
 
@@ -537,11 +533,6 @@ if($rowColor != "" && $question->askingStyleList){
 		<input name="page" type=hidden value=<?php echo $page ?> />
 		<input name="studyId" type=hidden value=<?php echo $studyId ?> />
 
-<?php
-if($networkQuestion){
-	echo "<input id='Graph_nodes' name='nodes' value='$nodes' style='display:none'>";
-}
-?>
 
 <?php $this->endWidget(); ?>
 
@@ -555,7 +546,7 @@ if($networkQuestion){
 
 <div id="buttonRow" style="float:left;padding-bottom:20px;clear:left">
 	<?php if($page != 0 ): ?>
-		<a class="graybutton" href="/interviewing/<?php echo $studyId. "?interviewId=". $interviewId . "&page=". ($page - 1) . $key . ($nodes ? "&nodes=" . urlencode($nodes) : ""); ?>">Back</a>
+		<a class="graybutton" href="/interviewing/<?php echo $studyId. "?interviewId=". $interviewId . "&page=". ($page - 1) . $key; ?>">Back</a>
 	<?php endif; ?>
 	<?php if($completed != -1): ?>
 		<?php if($question->answerType != "CONCLUSION"): ?>

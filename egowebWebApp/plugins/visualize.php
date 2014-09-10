@@ -37,16 +37,16 @@ class visualize extends Plugin
 		'square'=>'square',
 	);
 	public $nodeSizes = array(
-		1=>'1',
-		2=>'2',
-		3=>'3',
-		4=>'4',
-		5=>'5',
-		6=>'6',
-		7=>'7',
-		8=>'8',
-		9=>'9',
-		10=>'10',
+		2=>'1',
+		4=>'2',
+		6=>'3',
+		8=>'4',
+		10=>'5',
+		12=>'6',
+		14=>'7',
+		16=>'8',
+		18=>'9',
+		20=>'10',
 	);
 	/*
 	public $gradient = array(
@@ -96,6 +96,8 @@ class visualize extends Plugin
 					$value = $this->stats->EigenvectorCentrality($nodeId);
 				}
 				$range = $max - $min;
+				if($range == 0)
+					$range = 1;
 				$value = round((($value-$min) / ($range)) * 9);
 				return $this->gradient[$value];
 			}else if(stristr($this->params['nodeColor']['questionId'], "expression")){
@@ -482,8 +484,10 @@ class visualize extends Plugin
 		if(!$this->method || !$this->id)
 			return;
 		$this->params = json_decode($this->params, true);
+		$graph = Graph::model()->findByAttributes(array("interviewId"=>$this->method,"expressionId"=>$this->id));
+		if(!$graph)
+			$graph = new Graph;
 		$adjacencies = array();
-		$nodes = array();
 		$alters = q("SELECT * FROM alters WHERE FIND_IN_SET(".$this->method .", interviewId)")->queryAll();
 		$alterNames = array();
 		$alterIds = array();
@@ -540,17 +544,16 @@ class visualize extends Plugin
 			}
 		}
 
-		$currentNode = '';
 		$alters2 = $alters;
-		$snodes = array();
+		$nodes = array();
 		foreach($alters as $alter){
 			array_push(
-				$snodes,
+				$nodes,
 				array(
 					'id'=>$alter['id'],
 					'label'=>$alter['name'] . (isset($alterNotes[$alter['id']]) ? " �" : ""),
-					'x'=>rand(0, 10) / 10,
-					'y'=>rand(0, 10) / 10,
+					'x'=> rand(0, 10) / 10,
+					'y'=> rand(0, 10) / 10,
 					"type"=>$this->getNodeShape($alter['id']),
 					"color"=>$this->getNodeColor($alter['id']),
 					"size"=>$this->getNodeSize($alter['id']),
@@ -558,17 +561,6 @@ class visualize extends Plugin
 			);
 			foreach($alters2 as $alter2){
 				if($expression && $expression->evalExpression($expression->id, $this->method, $alter['id'], $alter2['id'])){
-					$currentNode = $alter2['id'];
-					$nodes[$currentNode]['id'] = $currentNode;
-					$nodes[$currentNode]['name'] = $alterNames[$currentNode];
-					$nodes[$currentNode]['adjacencies'][] = array(
-						'nodeTo'=>$alter['id'],
-						'nodeFrom'=>$alter2['id'],
-						'data'=>array(
-							"\$color"=>$this->getEdgeColor($alter['id'], $alter2['id']),
-							"\$lineWidth"=>$this->getEdgeSize($alter['id'], $alter2['id'])
-						),
-					);
 					$edges[] = array(
 						"id" => $alter['id'] . "_" . $alter2['id'],
 						"source" => $alter2['id'],
@@ -579,56 +571,40 @@ class visualize extends Plugin
 				}
 			}
 		}
-		$json = array();
-		foreach($nodes as $node){
-			if(!isset($node['id']))
-				continue;
-			$nodeArray[] = $node['id'];
-			array_push(
-				$json,
-				array(
-					'adjacencies'=>$node['adjacencies'],
-					'id'=>$node['id'],
-					'name'=>$node['name'] . (isset($alterNotes[$node['id']]) ? " <span class='fui-new'></span>" : ""),
-					"data"=>array(
-						"\$color"=>$this->getNodeColor($node['id']),
-						"\$type"=>$this->getNodeShape($node['id']),
-						"\$dim"=>$this->getNodeSize($node['id'])
-					)
-				)
-			);
-
-		}
-		if(isset($nodeArray)){
-			$leftOvers = array_diff($alterIds, $nodeArray);
-			foreach ($leftOvers as $node){
-				array_push(
-					$json,
-					array(
-						'adjacencies'=>array(),
-						'id'=>$node,
-						'name'=>$alterNames[$node]  . (isset($alterNotes[$node]) ? " <span class='fui-new'></span>" : ""),
-						"data"=>array(
-							"\$color"=>$this->getNodeColor($node),
-							"\$type"=>$this->getNodeShape($node),
-							"\$dim"=>$this->getNodeSize($node)
-						)
-					)
-				);
-			}
-			$adjacencies = json_encode($json);
-		}
-
 		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/sigma.min.js');
 		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/sigma.notes.js');
 		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.plugins.dragNodes.min.js');
+		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.plugins.dragEvents.js');
 		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.renderers.customShapes.min.js');
 		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.renderers.customEdgeShapes/shape-library.js');
 		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.renderers.customEdgeShapes/sigma.renderers.customEdgeShapes.js');
 		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.layout.forceAtlas2.min.js');
-		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/jit.js');
 		Yii::app()->clientScript->registerCssFile(Yii::app()->getBaseUrl().'/css/base.css');
 		?>
+		<div id="container">
+			<div id="center-container">
+				<div id="infovis"></div>
+			</div>
+			<div id="left-container">
+				<div id="inner-details"></div>
+			</div>
+			<div id="right-container">
+				<button  onclick="print()" class="btn btn-primary print-button">Print Preview</button>
+				<?php
+				$form  =$this->beginWidget('CActiveForm', array(
+					'id'=>'graph-form',
+					'action'=>'/data/savegraph',
+					'htmlOptions'=>array("class"=>"form-horizontal"),
+				));?>
+				<?php echo $form->hiddenField($graph,'id',array('value'=>$graph->id)); ?>
+				<?php echo $form->hiddenField($graph,'interviewId',array('value'=>$this->method)); ?>
+				<?php echo $form->hiddenField($graph,'expressionId',array('value'=>$this->id)); ?>
+				<?php echo $form->hiddenField($graph,'nodes',array('value'=>$graph->nodes)); ?>
+				<?php echo $form->hiddenField($graph,'params',array('value'=>($this->params ? json_encode($this->params) : $graph->params ))); ?>
+				<button class="btn btn-danger print-button" style="margin-top:10px" onclick="redraw(resetParams());return false;">Redraw</button>
+				<?php $this->endWidget(); ?>
+			</div>
+		</div>
 <script>
 interviewId = <?php echo $this->method; ?>;
 expressionId = <?php echo $this->id; ?>;
@@ -637,26 +613,16 @@ notes = <?php echo json_encode($alterNotes) ?>;
 function saveNodes()
 {
 	var nodes = {};
-	for(var k in fd.graph.nodes){
-		if(!k.match(/graphNote/) || (k.match(/graphNote/) && typeof notes[k] != "undefined")){
-			nodes[k] = {x:fd.graph.nodes[k].pos.x, y:fd.graph.nodes[k].pos.y};
-		}
+	for(var k in s.graph.nodes()){
+		nodes[s.graph.nodes()[k].id] = s.graph.nodes()[k];
 	}
 	$("#Graph_nodes").val(JSON.stringify(nodes));
-	$("#nodeList").val(JSON.stringify(nodes));
+	$.post( "/data/savegraph", $('#graph-form').serialize(), function( data ) {
+		console.log("nodes saved");
+	});
 }
 
-function saveGraph(){
-	if($("#Graph_name").val()){
-		refresh();
-		saveNodes();
-		$('#graph-form').submit();
-	}else{
-		alert ("Please enter a graph name");
-	}
-}
-
-function refresh(container){
+function resetParams(container){
 	var params = new Object;
 	if(typeof container == "undefined")
 		container = $('body');
@@ -716,295 +682,35 @@ function refresh(container){
 	return params;
 }
 
-function reload(params){
+function refresh(params){
 	url = "/data/visualize?expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent(JSON.stringify(params));
 	document.location = url;
 }
 
+function redraw(params){
+	url = "/data/deleteGraph?id=" + $("#Graph_id").val();
+	$.get(url, function(data){
+		url = "/data/visualize?expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent(JSON.stringify(params));
+		document.location = url;
+	});
+}
+
 function print(){
-	saveNodes();
-	params = refresh();
-	url = "/data/visualize?print&expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent($("#nodeParams").val()) + "&nodes=" +  encodeURIComponent($("#nodeList").val());
+	url = "/data/visualize?print&expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent($("#Graph_params").val());
 	window.open(url);
 }
 
-
-
-function init(json)
-{
-	graphNotes = 0;
-	// init json
-	if(!json)
-		json = [];
-	else
-		$("#Graph_json").val(JSON.stringify(json));
-
-	// init ForceDirected
-	fd = new $jit.ForceDirected({
-		//id of the visualization container
-		injectInto: 'infovis',
-		//Enable zooming and panning
-		//with scrolling and DnD
-		Navigation: {
-			enable: true,
-			type: 'Native',
-			//Enable panning events only if we're dragging the empty
-			//canvas (and not a node).
-			panning: false,//'avoid nodes',
-			zooming: false //40 //zoom speed. higher is more sensible
-		},
-		// Change node and edge styles such as
-		// color and width.
-		// These properties are also set per node
-		// with dollar prefixed data-properties in the
-		// JSON structure.
-		Node: {
-			overridable: true,
-		},
-		Edge: {
-			overridable: true,
-			color: '#23A4FF',
-			lineWidth: 0.5,
-			epsilon: 2
-		},
-
-		//Add Tips
-		Tips: {
-			enable: true,
-			enableForEdges: true,
-			onShow: function(tip, node) {
-				//count connections
-				var count = 0;
-				node.eachAdjacency(function() { count++; });
-				//display node info in tooltip
-				tip.innerHTML = "<div class=\"tip-title\">" + node.name + "</div>"
-					+ "<div class=\"tip-text\"><b>connections:</b> " + count + "</div>";
-			}
-		},
-		// Add node events
-		Events: {
-			enable: (typeof printView == "undefined" ? true : false),
-			enableForEdges: true,
-			type: 'Native',
-
-			onClick: function(node, eventInfo, e) {
-				if(!node && e.srcElement == document.getElementById("infovis-canvas")){
-					var pos = eventInfo.getPos();
-					if(graphNotes == 0 || typeof notes['graphNote-' + graphNotes] != "undefined"){
-						graphNotes++;
-						fd.graph.addNode({'id':'graphNote-' + graphNotes, 'name':graphNotes, 'data':{$color: "#000",$type: "note",$dim: 12}});
-					}
-					fd.graph.nodes['graphNote-' + graphNotes].getPos().setc(pos.x, pos.y);
-					fd.plot();
-				}
-			},
-			//Change cursor style when hovering a node
-			onMouseEnter: function(node, eventInfo, e) {
-				if(node){
-					if(typeof node.nodeFrom == "undefined") {
-						fd.canvas.getElement().style.cursor = 'move';
-					}else{
-						fd.canvas.getElement().style.cursor = 'crosshair';
-					}
-				}else{
-					fd.canvas.getElement().style.cursor = 'default';
-				}
-			},
-			onMouseMove: function(node, eventInfo, e) {
-				if(node){
-					if(typeof node.nodeFrom == "undefined") {
-						fd.canvas.getElement().style.cursor = 'move';
-					}else{
-						fd.canvas.getElement().style.cursor = 'crosshair';
-					}
-				}else{
-					fd.canvas.getElement().style.cursor = 'default';
-				}
-			},
-			onMouseLeave: function() {
-				fd.canvas.getElement().style.cursor = 'default';
-			},
-			//Update node positions when dragged
-			onDragMove: function(node, eventInfo, e) {
-				if(typeof node.nodeFrom == "undefined") {
-					var pos = eventInfo.getPos();
-					node.pos.setc(pos.x, pos.y);
-					saveNodes();
-					fd.plot();
-				}
-			},
-			//Implement the same handler for touchscreens
-			onTouchMove: function(node, eventInfo, e) {
-				$jit.util.event.stop(e); //stop default touchmove event
-				this.onDragMove(node, eventInfo, e);
-			}
-		},
-
-		//Number of iterations for the FD algorithm
-		iterations: 500,
-		//Edge length
-		levelDistance: 10,
-		// This method is only triggered
-		// on label creation and only for DOM labels (not native canvas ones).
-		onCreateLabel: function(domElement, node){
-			// Create a 'name' and 'close' buttons and add them
-			// to the main node label
-			var nameContainer = document.createElement('span'),
-			closeButton = document.createElement('span'),
-			style = nameContainer.style;
-			nameContainer.className = 'name';
-			nameContainer.innerHTML = node.name;
-			closeButton.className = 'close';
-			closeButton.innerHTML = '';
-			domElement.appendChild(nameContainer);
-			domElement.appendChild(closeButton);
-			style.fontSize = "1em";
-			style.color = "#111";
-			//Fade the node and its connections when
-			//clicking the close button
-			closeButton.onclick = function() {
-				node.setData('alpha', 0, 'end');
-				node.eachAdjacency(function(adj) {
-					adj.setData('alpha', 0, 'end');
-				});
-				fd.fx.animate({
-					modes: ['node-property:alpha',
-					'edge-property:alpha'],
-					duration: 500
-				});
-			};
-			//Toggle a node selection when clicking
-			//its name. This is done by animating some
-			//node styles like its dimension and the color
-			//and lineWidth of its adjacencies.
-			nameContainer.onclick = function() {
-
-				if(typeof printView != "undefined")
-					return;
-
-				//set final styles
-				fd.graph.eachNode(function(n) {
-					if(n.id != node.id) delete n.selected;
-					//n.setData('dim', 5, 'end');
-					/*n.eachAdjacency(function(adj) {
-						adj.setDataset('end', {
-							lineWidth: 0.4,
-							color: '#23a4ff'
-						});
-					});*/
-				});
-				if(!node.selected) {
-					node.selected = true;
-					//node.setData('dim',15, 'end');
-					/*node.eachAdjacency(function(adj) {
-						adj.setDataset('end', {
-							lineWidth: 2,
-							color: '#36acfb'
-						});
-					});*/
-				} else {
-					delete node.selected;
-				}
-				$('.name').css("background-color", "transparent");
-				$('.name').css("color", "#000");
-				$('.name').css("text-shadow", "0px 0px 5px white, 0px 0px 5px white,0px 0px 5px white, 0px 0px 5px white,0px 0px 5px white, 0px 0px 5px white");
-
-				$(this).css("text-shadow", "none");
-				$(this).css("color", "#FFF");
-				$(this).css("background-color", "#555");
-
-				//trigger animation to final styles
-				fd.fx.animate({
-					modes: ['node-property:dim'/*,
-						  'edge-property:lineWidth:color'*/],
-					duration: 500
-				});
-				// Build the right column relations list.
-				// This is done by traversing the clicked node connections.
-				var html = "<b> connections:</b><ul><li>",
-					list = [];
-				node.eachAdjacency(function(adj){
-					if(adj.getData('alpha')) list.push(adj.nodeTo.name.replace("<span class='fui-new'></span>",""));
-				});
-				//append connections information
-				var url = "/data/getnote?interviewId=" + interviewId + "&expressionId=" + expressionId + "&alterId=" + node.id;
-				$.get(url, function(data){
-					$jit.id('inner-details').innerHTML = data;
-					$jit.id('inner-details').innerHTML = $jit.id('inner-details').innerHTML + "<div class='pull-left col-sm-3'>" +
-					"<label>Connections</label><br>" +
-					list.join("</li><li>") + "</li></ul></div>"
-				});
-			};
-		},
-		// Change node styles when DOM labels are placed
-		// or moved.
-		onPlaceLabel: function(domElement, node){
-			var style = domElement.style;
-			var left = parseInt(style.left);
-			var top = parseInt(style.top);
-			var w = domElement.offsetWidth;
-			style.left = (left - w / 2) + 'px';
-			style.top = (top + 6) + 'px';
-			style.display = '';
-		}
-	});
-
-	// load JSON data.
-	fd.loadJSON(json);
-	// compute positions incrementally and animate.
-	fd.computeIncremental({
-		iter: 500,
-		property: 'end',
-		onStep: function(perc){
-			Log.write(perc + '% loaded...');
-		},
-		onComplete: function(){
-			Log.write('done');
-			fd.canvas.scale(0.9,0.9);
-			$('#log').hide();
-			fd.animate({
-				modes: ['linear'],
-				transition: $jit.Trans.Elastic.easeOut,
-				duration: 0,
-				onComplete: function(){
-					// load free floating notes
-					for(k in notes){
-						if(k.match(/graphNote/)){
-							noteId = k.match(/graphNote-(\d+)/)[1];
-							fd.graph.addNode({'id':k, 'name':noteId, 'data':{$color: "#000",$type: "note",$dim: 12}});
-							fd.graph.nodes['graphNote-' + noteId].pos.x = 0 - ($(fd.canvas.getElement()).width() / 2);
-							fd.graph.nodes['graphNote-' + noteId].pos.y = 0 - ($(fd.canvas.getElement()).height() / 2) + graphNotes * 20;
-							graphNotes = parseInt(noteId);
-						}
-					}
-					// loads saved node positions
-					if($('#Graph_nodes').val()){
-						nodes = fd.graph.nodes;
-						nodePositions = JSON.parse($('#Graph_nodes').val());
-						for (k in nodes) {
-							if(typeof nodePositions[k] != "undefined"){
-								nodes[k].pos.x = nodePositions[k].x;
-								nodes[k].pos.y = nodePositions[k].y;
-							}
-						}
-					}
-					fd.plot();
-					saveNodes();
-				}
-			});
-		}
-	});
-}
-
 g = {
-	nodes:  <?= json_encode($snodes); ?>,
+	nodes:  <?= json_encode($nodes); ?>,
 	edges:  <?= json_encode($edges); ?>
 };
 sizes = [];
+for(y in g.nodes){sizes.push(g.nodes[y].size)}
+max_node_size = Math.max.apply(Math, sizes);
+sizes = [];
 for(y in g.edges){sizes.push(g.edges[y].size)}
-max_size = Math.max.apply(Math, sizes);
+max_edge_size = Math.max.apply(Math, sizes);
 $(function(){
-
 	sigma.renderers.def = sigma.renderers.canvas;
 	s = new sigma({
 		graph: g,
@@ -1015,50 +721,42 @@ $(function(){
 		settings: {
 			doubleClickEnabled: false,
 			labelThreshold: 1,
-			minNodeSize: 1,
-			maxNodeSize: 10,
+			minNodeSize: 2,
+			maxNodeSize: max_node_size,
 			minEdgeSize: 0.5,
-			maxEdgeSize: max_size,
+			maxEdgeSize: max_edge_size,
 		}
 	});
 	CustomEdgeShapes.init(s);
-	s.refresh();
-	s.startForceAtlas2({
-		"worker":false,
-		"outboundAttractionDistribution":true,
-		"speed":2000,
-		"gravity": 0.2,
-		"jitterTolerance": 0,
-		"strongGravityMode": true,
-		"barnesHutOptimize": false,
-		"totalSwinging": 0,
-		"totalEffectiveTraction": 0,
-		"complexIntervals":500,
-		"simpleIntervals": 1000
-	});
-
 	initNotes(s);
+	if($("#Graph_nodes").val()){
+		savedNodes = JSON.parse($("#Graph_nodes").val());
+		for(var k in savedNodes){
+			var node = s.graph.nodes(k.toString());
+			console.log(k);
+			node.x = savedNodes[k].x;
+			node.y = savedNodes[k].y;
+		}
+	}else{
+		s.startForceAtlas2({
+			"worker":false,
+			"outboundAttractionDistribution":true,
+			"speed":2000,
+			"gravity": 0.2,
+			"jitterTolerance": 0,
+			"strongGravityMode": true,
+			"barnesHutOptimize": false,
+			"totalSwinging": 0,
+			"totalEffectiveTraction": 0,
+			"complexIntervals":500,
+			"simpleIntervals": 1000
+		});
+		setTimeout("s.stopForceAtlas2(); saveNodes()", 5000);
+	}
+	s.refresh();
 	sigma.plugins.dragNodes(s, s.renderers[0]);
-	setTimeout("s.stopForceAtlas2()", 5000);
 });
 </script>
-		<div id="container">
-			<div id="center-container">
-				<div id="infovis"></div>
-			</div>
-			<div id="left-container">
-				<div id="inner-details">
-				</div>
-			</div>
-			<div id="right-container">
-				<input type="hidden" id="nodeList">
-				<input type="hidden" id="nodeParams" value=<?php echo json_encode($this->params); ?>>
-
-				<button  onclick="print()" class="btn btn-primary print-button">Export Graph</button>
-			</div>
-			<div id="log"></div>
-		</div>
 		<?php
 	}
-
 }

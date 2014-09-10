@@ -10,7 +10,7 @@ function saveNote(){
 	var noteContent = $("#Note_notes").val();
 	$.post("/data/savenote", $("#note-form").serialize(), function(nodeId){
 		var node = s.graph.nodes(nodeId);
-		if(node && !node.label.match("�"))
+		if(node && !node.id.match(/graphNote/) && !node.label.match("�"))
 			node.label = node.label + " �";
 		s.refresh();
 		var url = "/data/getnote?interviewId=" + interviewId + "&expressionId=" + expressionId + "&alterId=" + nodeId;
@@ -50,6 +50,12 @@ function initNotes(s){
 	s.bind('clickNode',function(e){
 		getNote(e.data.node);
 	});
+	var _dragListener = new sigma.events.drag(s.renderers[0]);
+	_dragListener.bind('drop', function(e) {
+	    if(e.data.node){
+		    saveNodes();
+	    }
+	});
 	s.bind('doubleClickStage', function(e) {
 		x = e.data.captor.x;
 		y = e.data.captor.y;
@@ -65,6 +71,7 @@ function initNotes(s){
 				dY: 0,
 				type:'square'
 			});
+			saveNodes();
 		}
 		var node = s.graph.nodes('graphNote-' + graphNotes);
 		node.x = x / 10;
@@ -79,8 +86,8 @@ function initNotes(s){
 				id: 'graphNote-' + noteId,
 				label: noteId.toString(),
 				size: 4,
-				x: 0,
-				y: 0,
+				x: Math.floor((Math.random() * 100) + 1),
+				y: Math.floor((Math.random() * 100) + 1),
 				dX: 0,
 				dY: 0,
 				type:'square'

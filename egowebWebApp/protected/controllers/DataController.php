@@ -62,8 +62,6 @@ class DataController extends Controller
 	{
 		$graphs = array();
 		if(isset($_GET['interviewId'])){
-			if(isset($_GET['graphId'])){
-			}
 			$studyId = q("SELECT studyId FROM interview WHERE id = ".$_GET['interviewId'])->queryScalar();
 			$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$studyId)->queryColumn();
 			$questionIds = implode(",", $questionIds);
@@ -75,10 +73,6 @@ class DataController extends Controller
 				$all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
 			}
 			$alter_pair_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
-
-			if(isset($_GET['expressionId']))
-				$graphs = Graph::model()->findAllByAttributes(array('expressionId'=>$_GET['expressionId'],'interviewId'=>$_GET['interviewId']));
-
 
 			if(isset($_GET['print'])){
 				$this->renderPartial('print',
@@ -514,22 +508,24 @@ class DataController extends Controller
 	public function actionSavegraph()
 	{
 		if($_POST['Graph']){
-			if($_POST['Graph']['id'])
-				$graph = Graph::model()->findByPk($_POST['Graph']['id']);
-			else
+			$graph = Graph::model()->findByAttributes(array("interviewId"=>$_POST['Graph']['interviewId'],"expressionId"=>$_POST['Graph']['expressionId']));
+			if(!$graph)
 				$graph = new Graph;
 			$graph->attributes = $_POST['Graph'];
-			$check = Graph::model()->findByAttributes(array("interviewId"=>$graph->interviewId,"expressionId"=>$graph->expressionId, "name"=>$graph->name));
-			if($graph->isNewRecord && $check){
-				$url =  "graphId=" . $graph->id . "&interviewId=" . $graph->interviewId . "&expressionId=".$graph->expressionId."&params=".urlencode($graph->params);
-				Yii::app()->user->setFlash('error', "Graph name already exists for this expression!");
-				Yii::app()->request->redirect($this->createUrl("/data/visualize?" . $url));
-			}else{
-				if($graph->save()){
-					$url =  "graphId=" . $graph->id . "&interviewId=" . $graph->interviewId . "&expressionId=".$graph->expressionId."&params=".urlencode($graph->params);
-					Yii::app()->request->redirect($this->createUrl("/data/visualize?" . $url));
-				}
+			if($graph->save()){
+				echo "success";
+				//$url =  "graphId=" . $graph->id . "&interviewId=" . $graph->interviewId . "&expressionId=".$graph->expressionId."&params=".urlencode($graph->params);
+				//Yii::app()->request->redirect($this->createUrl("/data/visualize?" . $url));
 			}
+		}
+	}
+
+	public function actionDeletegraph()
+	{
+		if(isset($_GET['id'])){
+			$graph = Graph::model()->findByPk($_GET['id']);
+			if($graph)
+				$graph->delete();
 		}
 	}
 

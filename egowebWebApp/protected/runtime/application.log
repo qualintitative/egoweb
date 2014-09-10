@@ -2346,3 +2346,111 @@ Stack trace:
 #3 {main}
 REQUEST_URI=/favicon.ico
 ---
+2014/09/08 17:00:26 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('favicon.ico')
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
+2014/09/09 14:04:16 [error] [php] Division by zero (/Users/zhangster/Sites/egoweb/egowebWebApp/plugins/visualize.php:99)
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(173): visualize->run()
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/views/data/visualize.php(95): DataController->widget()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(126): require()
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CBaseController.php(95): DataController->renderInternal()
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(869): DataController->renderFile()
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(782): DataController->renderPartial()
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/DataController.php(100): DataController->render()
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(49): DataController->actionVisualize()
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): DataController->runAction()
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CAccessControlFilter->filter()
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): DataController->filterAccessControl()
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter()
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): DataController->runActionWithFilters()
+#16 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): DataController->run()
+#17 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController()
+#18 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#19 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CWebApplication->run()
+REQUEST_URI=/data/visualize?expressionId=12660&interviewId=957&params=%7B%22nodeColor%22%3A%7B%22questionId%22%3A%22eigenvector%22%2C%22options%22%3A%5B%5D%7D%7D
+2014/09/09 14:54:05 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "js/plugins".' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('js/plugins')
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/js/plugins/sigma.plugins.dragEvents.js
+HTTP_REFERER=http://egoweb/data/visualize?expressionId=12658&interviewId=957&params=%7B%22nodeColor%22%3A%7B%22questionId%22%3A%22degree%22%2C%22options%22%3A%5B%5D%7D%2C%22nodeSize%22%3A%7B%22questionId%22%3A%22degree%22%2C%22options%22%3A%5B%5D%7D%7D
+---
+2014/09/09 16:13:25 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The system is unable to find the requested action "test.php".' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php:483
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(270): CController->missingAction('test.php')
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('test.php')
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('data/test.php')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#5 {main}
+REQUEST_URI=/data/test.php
+HTTP_REFERER=http://egoweb/data/visualize?expressionId=12658&interviewId=957&params=%7B%22nodeColor%22%3A%7B%22questionId%22%3A%22degree%22%2C%22options%22%3A%5B%5D%7D%2C%22nodeSize%22%3A%7B%22questionId%22%3A%22degree%22%2C%22options%22%3A%5B%5D%7D%7D
+---
+2014/09/09 16:38:43 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[HY000]: General error: 1364 Field 'name' doesn't have a default value. The SQL statement executed was: INSERT INTO `graphs` (`interviewId`, `expressionId`, `nodes`, `params`) VALUES (:yp0, :yp1, :yp2, :yp3).
+2014/09/09 16:38:43 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[HY000]: General error: 1364 Field 'name' doesn't have a default value' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:357
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1023): CDbCommand->execute()
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(795): CActiveRecord->insert(NULL)
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/DataController.php(521): CActiveRecord->save()
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(49): DataController->actionSavegraph()
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('savegraph')
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('data/savegraph')
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#16 {main}
+REQUEST_URI=/data/savegraph
+HTTP_REFERER=http://egoweb/data/visualize?expressionId=12658&interviewId=957&params=%7B%22nodeColor%22%3A%7B%22questionId%22%3A%22degree%22%2C%22options%22%3A%5B%5D%7D%2C%22nodeSize%22%3A%7B%22questionId%22%3A%22degree%22%2C%22options%22%3A%5B%5D%7D%7D
+---
+2014/09/09 16:39:50 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[HY000]: General error: 1364 Field 'json' doesn't have a default value. The SQL statement executed was: INSERT INTO `graphs` (`interviewId`, `expressionId`, `nodes`, `params`) VALUES (:yp0, :yp1, :yp2, :yp3).
+2014/09/09 16:39:50 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[HY000]: General error: 1364 Field 'json' doesn't have a default value' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:357
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1023): CDbCommand->execute()
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(795): CActiveRecord->insert(NULL)
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/DataController.php(521): CActiveRecord->save()
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(49): DataController->actionSavegraph()
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('savegraph')
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('data/savegraph')
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#16 {main}
+REQUEST_URI=/data/savegraph
+HTTP_REFERER=http://egoweb/data/visualize?expressionId=12658&interviewId=957&params=%7B%22nodeColor%22%3A%7B%22questionId%22%3A%22degree%22%2C%22options%22%3A%5B%5D%7D%2C%22nodeSize%22%3A%7B%22questionId%22%3A%22degree%22%2C%22options%22%3A%5B%5D%7D%7D
+---
+2014/09/09 18:11:59 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'The system is unable to find the requested action "deleteGraph25".' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php:483
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(270): CController->missingAction('deleteGraph25')
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('deleteGraph25')
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('data/deleteGrap...')
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#5 {main}
+REQUEST_URI=/data/deleteGraph25
+HTTP_REFERER=http://egoweb/data/visualize?expressionId=12658&interviewId=957&params=%7B%22nodeSize%22%3A%7B%22questionId%22%3A%22degree%22%2C%22options%22%3A%5B%5D%7D%7D
+---
