@@ -30,6 +30,7 @@ function deleteNote(){
 		}else{
 			delete notes[data];
 			s.graph.dropNode(data);
+			saveNodes();
 			$("#left-container").html("");
 			graphNotes = 0;
 			for(k in notes){
@@ -69,7 +70,7 @@ function initNotes(s){
 				y: y/10,
 				dX: 0,
 				dY: 0,
-				type:'square'
+				type:'arrow'
 			});
 			saveNodes();
 		}
@@ -90,7 +91,7 @@ function initNotes(s){
 				y: Math.floor((Math.random() * 100) + 1),
 				dX: 0,
 				dY: 0,
-				type:'square'
+				type:'arrow'
 			});
 			graphNotes = parseInt(noteId);
 		}
