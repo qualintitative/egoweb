@@ -4,7 +4,7 @@
     position:relative;
 }
 
-#print-view #container, #interviewing #container {
+#print-view #container {
     width: 900px;
 
 }
@@ -26,24 +26,15 @@
 
 #right-container {
 	width:120px;
-
     right:0;
     background-position:center left;
-    border-right:1px solid #ddd;
 }
 
 #right-container h4{
     text-indent:8px;
 }
 
-#center-container {
-    width:640px;
-    height:480px;
-    background-color:#fff;
-    color:#111;
-}
-
-#print-view #center-container, #interviewing #center-container {
+#print-view #center-container {
     width:900px;
     height:675px;
     background-color:#fff;
@@ -54,28 +45,6 @@
     margin: 7px;
 }
 
-#inner-details {
-    font-size:0.8em;
-    list-style:none;
-    margin:15px 0;
-}
-
-#inner-details .col-sm-3 {
-	margin-left:10px;
-}
-
-#inner-details textarea {
-	height:100px;
-}
-#log {
-    position:absolute;
-    top:10px;
-    font-size:1.0em;
-    font-weight:bold;
-    color:#23A4FF;
-}
-
-
 #infovis {
     position:relative;
     width:640px;
@@ -85,7 +54,7 @@
     overflow:hidden;
 }
 
-#print-view #infovis, #interviewing #infovis {
+#print-view #infovis{
     width:900px;
     height:675px;
 }

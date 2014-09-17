@@ -151,8 +151,10 @@ $this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterP
 <?php endif;?>
 
 <?php
+$first = array_slice($questions, 0, 1);
 $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'answer-form',
+	'htmlOptions'=>['class'=>$first[0]->subjectType == "NETWORK" ? 'col-sm-3' : 'col-sm-12'],
 	'enableAjaxValidation'=>true,
 	'action'=>'/interviewing/save/'.$studyId.($key ? "&key=" . $key : ""),
 ));
@@ -161,8 +163,6 @@ $form=$this->beginWidget('CActiveForm', array(
 <?php
 // preload error message if there is one
 $error_id = "";
-
-$networkQuestion = "";
 
 foreach($questions as $question) {
 	if(is_numeric($question->alterId1) && !is_numeric($question->alterId2)){
@@ -288,11 +288,6 @@ foreach($questions as $question) {
 		<div class="orangeText" style="padding: 0 0 20px 20px"><?php echo $phrase; ?></div>
 		<br clear=all>
 	<?php endif; ?>
-
-	<?php
-		if($question->subjectType == "NETWORK" && is_numeric($question->networkRelationshipExprId))
-			$networkQuestion = $question;
-	?>
 
 	<?php
 	// sets row color, which determines formatting of list style questions
@@ -537,9 +532,9 @@ if($rowColor != "" && $question->askingStyleList){
 <?php $this->endWidget(); ?>
 
 <?php
-if($networkQuestion){
-	echo "<div id='interviewing' style='margin-left:20px'>";
-	$this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$networkQuestion->networkRelationshipExprId, 'params'=>$networkQuestion->networkParams));
+if($question->subjectType == "NETWORK" && is_numeric($question->networkRelationshipExprId)){
+	echo "<div id='interviewing' class='col-sm-9 pull-right'>";
+	$this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$question->networkRelationshipExprId, 'params'=>$question->networkParams));
 	echo "</div>";
 }
 ?>

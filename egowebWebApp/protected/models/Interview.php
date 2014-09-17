@@ -182,7 +182,13 @@ class Interview extends CActiveRecord
 		// parse out and replace variables
 		preg_match('#<VAR (.+?) />#ims', $string, $vars);
 		foreach($vars as $var){
-			$question = Question::model()->findByAttributes(array('title'=>$var, 'studyId'=>$studyId));
+			if(preg_match('/:/', $var)){
+				list($sS, $sQ) = explode(":", $var);
+				$sId = q("SELECT id FROM study WHERE name = '".$sS ."'")->queryScalar();
+				$question = Question::model()->findByAttributes(array('title'=>$sQ, 'studyId'=>$sId));
+			}else{
+				$question = Question::model()->findByAttributes(array('title'=>$var, 'studyId'=>$studyId));
+			}
 			if($question){
 				if($interviewId != null){
 					$end = " AND interviewId in (". $interviewId .")";
@@ -216,7 +222,13 @@ class Interview extends CActiveRecord
 		foreach($calcs[1] as $calc){
 			preg_match('/(\w+)/', $calc, $vars);
 			foreach($vars as $var){
-				$question = Question::model()->findByAttributes(array('title'=>$var, 'studyId'=>$studyId));
+				if(preg_match('/:/', $var)){
+					list($sS, $sQ) = explode(":", $var);
+					$sId = q("SELECT id FROM study WHERE name = '".$sS ."'")->queryScalar();
+					$question = Question::model()->findByAttributes(array('title'=>$sQ, 'studyId'=>$sId));
+				}else{
+					$question = Question::model()->findByAttributes(array('title'=>$var, 'studyId'=>$studyId));
+				}
 				if($question){
 					if($interviewId != null){
 						$end = " AND interviewId in (". $interviewId . ")";
@@ -246,7 +258,13 @@ class Interview extends CActiveRecord
 		foreach($counts[1] as $count){
 			list($qTitle, $answer) = preg_split('/\s/', $count);
 			$answer = str_replace ('"', '', $answer);
-			$question = Question::model()->findByAttributes(array('title'=>$qTitle, 'studyId'=>$studyId));
+			if(preg_match('/:/', $qTitle)){
+				list($sS, $sQ) = explode(":", $qTitle);
+				$sId = q("SELECT id FROM study WHERE name = '".$sS ."'")->queryScalar();
+				$question = Question::model()->findByAttributes(array('title'=>$sQ, 'studyId'=>$sId));
+			}else{
+				$question = Question::model()->findByAttributes(array('title'=>$qTitle, 'studyId'=>$studyId));
+			}
 			$criteria=new CDbCriteria;
 			if(!$question)
 				continue;
@@ -277,7 +295,13 @@ class Interview extends CActiveRecord
 		foreach($containers[1] as $contains){
 			list($qTitle, $answer) = preg_split('/\s/', $contains);
 			$answer = str_replace ('"', '', $answer);
-			$question = Question::model()->findByAttributes(array('title'=>$qTitle, 'studyId'=>$studyId));
+			if(preg_match('/:/', $qTitle)){
+				list($sS, $sQ) = explode(":", $qTitle);
+				$sId = q("SELECT id FROM study WHERE name = '".$sS ."'")->queryScalar();
+				$question = Question::model()->findByAttributes(array('title'=>$sQ, 'studyId'=>$sId));
+			}else{
+				$question = Question::model()->findByAttributes(array('title'=>$qTitle, 'studyId'=>$studyId));
+			}
 			$criteria=new CDbCriteria;
 			if(!$question)
 				continue;
@@ -318,7 +342,13 @@ class Interview extends CActiveRecord
 					if(preg_match("#/>#", $exp[$i])){
 						$exp[$i] = Interview::interpretTags($exp[$i]);
 					}else{
-						$question = Question::model()->findByAttributes(array('title'=>$exp[$i], 'studyId'=>$studyId));
+						if(preg_match('/:/', $exp[$i])){
+							list($sS, $sQ) = explode(":", $exp[$i]);
+							$sId = q("SELECT id FROM study WHERE name = '".$sS ."'")->queryScalar();
+							$question = Question::model()->findByAttributes(array('title'=>$sQ, 'studyId'=>$sId));
+						}else{
+							$question = Question::model()->findByAttributes(array('title'=>$exp[$i], 'studyId'=>$studyId));
+						}
 						if(!$question){
 							$exp[$i] = "";
 							continue;

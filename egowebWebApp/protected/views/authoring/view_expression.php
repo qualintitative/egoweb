@@ -37,11 +37,16 @@ if($multi){
 		'order'=>'FIELD(subjectType, "EGO_ID", "EGO","ALTER", "ALTER_PAIR", "NETWORK"), ordering',
 	);
 }
-
+$questions = Question::model()->findAll($criteria);
+$qList = [];
+foreach($questions as $question){
+	$studyName = q("SELECT name FROM study WHERE id = " . $question->studyId)->queryScalar();
+	$qList[$question->id] = $studyName . ":" . $question->title;
+}
 echo CHtml::dropdownlist(
 	'questionId',
 	'',
-	CHtml::listData(Question::model()->findAll($criteria), 'id', 'title'),
+	$qList,
 	array('empty' => 'Choose One')
 );
 
