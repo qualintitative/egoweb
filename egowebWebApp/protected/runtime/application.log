@@ -3031,3 +3031,140 @@ Stack trace:
 #20 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
 #21 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CWebApplication->run()
 REQUEST_URI=/interviewing/233?interviewId=805&page=67
+2014/09/17 13:43:09 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/74e0666e".' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('assets/74e0666e')
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/74e0666e/js/jquery.tooltip-1.2.6.min.js
+HTTP_REFERER=http://egoweb/gii/default/login
+---
+2014/09/17 13:43:14 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/74e0666e".' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('assets/74e0666e')
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/74e0666e/js/jquery.tooltip-1.2.6.min.js
+HTTP_REFERER=http://egoweb/gii/default/login
+---
+2014/09/17 13:43:21 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "assets/74e0666e".' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('assets/74e0666e')
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/assets/74e0666e/js/jquery.tooltip-1.2.6.min.js
+HTTP_REFERER=http://egoweb/gii/default/login
+---
+2014/09/17 15:40:05 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[HY000]: General error: 1364 Field 'name' doesn't have a default value. The SQL statement executed was: INSERT INTO `graphs` (`interviewId`, `expressionId`, `nodes`, `params`) VALUES (:yp0, :yp1, :yp2, :yp3).
+2014/09/17 15:40:05 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[HY000]: General error: 1364 Field 'name' doesn't have a default value' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:357
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1023): CDbCommand->execute()
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(795): CActiveRecord->insert(NULL)
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/DataController.php(515): CActiveRecord->save()
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(49): DataController->actionSavegraph()
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('savegraph')
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('data/savegraph')
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#16 {main}
+REQUEST_URI=/data/savegraph
+HTTP_REFERER=http://egoweb/data/visualize?expressionId=12567&interviewId=856
+---
+2014/09/17 15:40:06 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[HY000]: General error: 1364 Field 'name' doesn't have a default value. The SQL statement executed was: INSERT INTO `graphs` (`interviewId`, `expressionId`, `nodes`, `params`) VALUES (:yp0, :yp1, :yp2, :yp3).
+2014/09/17 15:40:06 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[HY000]: General error: 1364 Field 'name' doesn't have a default value' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:357
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1023): CDbCommand->execute()
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(795): CActiveRecord->insert(NULL)
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/DataController.php(515): CActiveRecord->save()
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(49): DataController->actionSavegraph()
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('savegraph')
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('data/savegraph')
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#16 {main}
+REQUEST_URI=/data/savegraph
+HTTP_REFERER=http://egoweb/data/visualize?expressionId=12567&interviewId=856
+---
+2014/09/17 15:40:55 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[HY000]: General error: 1364 Field 'name' doesn't have a default value. The SQL statement executed was: INSERT INTO `graphs` (`interviewId`, `expressionId`, `nodes`, `params`) VALUES (:yp0, :yp1, :yp2, :yp3).
+2014/09/17 15:40:55 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[HY000]: General error: 1364 Field 'name' doesn't have a default value' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:357
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1023): CDbCommand->execute()
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(795): CActiveRecord->insert(NULL)
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/DataController.php(515): CActiveRecord->save()
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(49): DataController->actionSavegraph()
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('savegraph')
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('data/savegraph')
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#16 {main}
+REQUEST_URI=/data/savegraph
+HTTP_REFERER=http://egoweb/data/visualize?expressionId=12567&interviewId=856
+---
+2014/09/17 15:40:56 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[HY000]: General error: 1364 Field 'name' doesn't have a default value. The SQL statement executed was: INSERT INTO `graphs` (`interviewId`, `expressionId`, `nodes`, `params`) VALUES (:yp0, :yp1, :yp2, :yp3).
+2014/09/17 15:40:56 [error] [exception.CDbException] exception 'CDbException' with message 'CDbCommand failed to execute the SQL statement: SQLSTATE[HY000]: General error: 1364 Field 'name' doesn't have a default value' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbCommand.php:357
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(1023): CDbCommand->execute()
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/ar/CActiveRecord.php(795): CActiveRecord->insert(NULL)
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/controllers/DataController.php(515): CActiveRecord->save()
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/actions/CInlineAction.php(49): DataController->actionSavegraph()
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(308): CInlineAction->runWithParams(Array)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(133): CController->runAction(Object(CInlineAction))
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilter.php(40): CFilterChain->run()
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(1145): CFilter->filter(Object(CFilterChain))
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CInlineFilter.php(58): CController->filterAccessControl(Object(CFilterChain))
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/filters/CFilterChain.php(130): CInlineFilter->filter(Object(CFilterChain))
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(291): CFilterChain->run()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CController.php(265): CController->runActionWithFilters(Object(CInlineAction), Array)
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(282): CController->run('savegraph')
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('data/savegraph')
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#15 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#16 {main}
+REQUEST_URI=/data/savegraph
+HTTP_REFERER=http://egoweb/data/visualize?expressionId=12567&interviewId=856
+---
+2014/09/17 15:40:34 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'egoweb_data.tbl_migration' doesn't exist. The SQL statement executed was: SHOW FULL COLUMNS FROM `tbl_migration`.
+2014/09/17 15:41:33 [error] [exception.CDbException] exception 'CDbException' with message 'CDbTransaction is inactive and cannot perform commit or roll back operations.' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbTransaction.php:84
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/migrations/m140917_223213_graph_update.php(27): CDbTransaction->rollback()
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/cli/commands/MigrateCommand.php(385): m140917_223213_graph_update->up()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/cli/commands/MigrateCommand.php(109): MigrateCommand->migrateUp('m140917_223213_...')
+#3 [internal function]: MigrateCommand->actionUp(Array)
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs(Object(MigrateCommand), Array)
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/console/CConsoleCommandRunner.php(67): CConsoleCommand->run(Array)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/console/CConsoleApplication.php(91): CConsoleCommandRunner->run(Array)
+#7 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CConsoleApplication->processRequest()
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/yiic.php(33): CApplication->run()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/yiic.php(7): require_once('/Users/zhangste...')
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/yiic(4): require_once('/Users/zhangste...')
+#11 {main}
+---
+2014/09/17 15:42:36 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42000]: Syntax error or access violation: 1091 Can't DROP 'name'; check that column/key exists. The SQL statement executed was: ALTER TABLE `graphs` DROP COLUMN `name`.
+2014/09/17 15:44:10 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'egoweb_data.tbl_migration' doesn't exist. The SQL statement executed was: SHOW FULL COLUMNS FROM `tbl_migration`.
