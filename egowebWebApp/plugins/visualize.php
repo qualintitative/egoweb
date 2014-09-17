@@ -2,6 +2,7 @@
 class visualize extends Plugin
 {
 	public $params = "";
+	public $networkTitle = "";
 	public $edgeColors = array(
 		'#000'=>'black',
 		'#ccc'=>'gray',
@@ -514,10 +515,7 @@ class visualize extends Plugin
 			$questionIds = 0;
 
 		if($study->multiSessionEgoId){
-			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
-			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-			$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
-			$studyId = implode(",", $studyIds);
+			$studyId = implode(",", $study->multiStudyIds($interview->id));
 		}else{
 			$studyId = $interview->studyId;
 		}
@@ -583,16 +581,26 @@ class visualize extends Plugin
 		Yii::app()->clientScript->registerCssFile(Yii::app()->getBaseUrl().'/css/base.css');
 		?>
 		<div id="container">
-			<div id="center-container">
-				<div id="infovis"></div>
-			</div>
-			<div id="left-container">
-				<div id="inner-details"></div>
-			</div>
-			<div id="right-container">
-				<button  onclick="print()" class="btn btn-primary print-button">Print Preview</button>
+			<div id="infovis"></div>
+			<div class="col-sm-8 pull-left" id="left-container"></div>
+			<div class="col-sm-4 pull-right" id="right-container">
+				<button  onclick="print(<?=$this->id;?>,<?=$this->method;?>)" class="btn btn-primary print-button">Print Preview</button>
 				<?php
-				$form  =$this->beginWidget('CActiveForm', array(
+				if($this->networkTitle){
+					$interviewIds = Interview::multiInterviewIds($this->method, $study);
+					$interviewIds = array_diff($interviewIds, array($this->method));
+					if(is_array($interviewIds)){
+						echo "<br>Load other graphs:";
+						foreach($interviewIds as $interviewId){
+							$study = Study::model()->findByPk(q("SELECT studyId from interview WHERE id = " . $interviewId)->queryScalar());
+							$networkExprId = q("SELECT networkRelationshipExprId FROM question WHERE title = '" . $this->networkTitle . "' AND studyId = " . $study->id)->queryScalar();
+							$graphId = q("SELECT id FROM graphs WHERE expressionId = " . $networkExprId  . " AND interviewId = " . $interviewId)->queryScalar();
+							if($graphId)
+								echo '<br><a href="#" onclick="print(' . $networkExprId . ','. $interviewId . ')">' . $study->name . '</a>';
+						}
+					}
+				}
+				$form = $this->beginWidget('CActiveForm', array(
 					'id'=>'graph-form',
 					'action'=>'/data/savegraph',
 					'htmlOptions'=>array("class"=>"form-horizontal"),
@@ -692,11 +700,11 @@ function redraw(params){
 	url = "/data/deleteGraph?id=" + $("#Graph_id").val();
 	$.get(url, function(data){
 		url = "/data/visualize?expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent(JSON.stringify(params));
-		document.location = url;
+		document.location = document.location + "&params=" + encodeURIComponent(JSON.stringify(params));
 	});
 }
 
-function print(){
+function print(expressionId, interviewId){
 	url = "/data/visualize?print&expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent($("#Graph_params").val());
 	window.open(url);
 }
@@ -734,9 +742,10 @@ $(function(){
 		savedNodes = JSON.parse($("#Graph_nodes").val());
 		for(var k in savedNodes){
 			var node = s.graph.nodes(k.toString());
-			console.log(k);
-			node.x = savedNodes[k].x;
-			node.y = savedNodes[k].y;
+			if(node){
+				node.x = savedNodes[k].x;
+				node.y = savedNodes[k].y;
+			}
 		}
 	}else{
 		s.startForceAtlas2({

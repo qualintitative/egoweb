@@ -556,15 +556,14 @@ class Study extends CActiveRecord
 		return false;
 	}
 
-	public function isMulti($id = null){
-		if(!$id && isset($this->id))
-			$multi = $this->multiSessionEgoId;
-		else
-			$multi = q("SELECT multiSessionEgoId FROM study WHERE id = " . $id)->queryScalar();
-		if($multi)
-			return $multi;
-		else
-			return false;
+	public function multiStudyIds($interviewId){
+		if($this->multiSessionEgoId){
+			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionID = " . $this->multiSessionEgoId)->queryScalar();
+			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $this->multiSessionEgoId . ")")->queryColumn();
+			$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
+			return $studyIds;
+		}
+		return false;
 	}
 
 	public function replicate($study, $questions, $options, $expressions, $answerLists = array())

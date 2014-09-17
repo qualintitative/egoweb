@@ -91,22 +91,6 @@ class Expression extends CActiveRecord
 	 */
 	public function fetchAlterAnswers($questionId, $interviewId, $multi = false)
 	{
-	/*
-		$alters = array();
-		if($multi){
-			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionId = " . $study->multiSessionEgoId)->queryScalar();
-			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " .$multi . ")")->queryColumn();
-			$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
-			$interviewIds = q("SELECT interviewId FROM answer WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
-
-			foreach($interviewIds as $interviewId){
-				$newBatch = q("SELECT * FROM alters WHERE interviewId =  $interviewId ")->queryAll();
-				if($newBatch)
-					$alters = array_merge($alters, $newBatch);
-			}
-			//$interviewId = implode(",", $interviewIds);
-		}
-		*/
 		$alters = q("SELECT * FROM alters WHERE interviewId =  $interviewId ")->queryAll();
 		$answers = q("SELECT * FROM answer WHERE questionId = ".$questionId . " and interviewId = $interviewId")->queryAll();
 		foreach ($answers as $answer){

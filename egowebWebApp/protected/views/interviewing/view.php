@@ -154,7 +154,7 @@ $this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterP
 $first = array_slice($questions, 0, 1);
 $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'answer-form',
-	'htmlOptions'=>['class'=>$first[0]->subjectType == "NETWORK" ? 'col-sm-3' : 'col-sm-12'],
+	'htmlOptions'=>['class'=>$first[0]->subjectType == "NETWORK" ? 'col-sm-4' : 'col-sm-12'],
 	'enableAjaxValidation'=>true,
 	'action'=>'/interviewing/save/'.$studyId.($key ? "&key=" . $key : ""),
 ));
@@ -533,8 +533,8 @@ if($rowColor != "" && $question->askingStyleList){
 
 <?php
 if($question->subjectType == "NETWORK" && is_numeric($question->networkRelationshipExprId)){
-	echo "<div id='interviewing' class='col-sm-9 pull-right'>";
-	$this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$question->networkRelationshipExprId, 'params'=>$question->networkParams));
+	echo "<div id='interviewing' class='col-sm-8 pull-right'>";
+	$this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$question->networkRelationshipExprId, 'params'=>$question->networkParams, 'networkTitle'=>$question->title));
 	echo "</div>";
 }
 ?>

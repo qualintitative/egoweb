@@ -439,7 +439,6 @@ class AuthoringController extends Controller
 	public function actionExpression($id)
 	{
 		$this->studyId=$id;
-		$multi = false;
 		if(isset($_POST['Expression'])){
 			$model = Expression::model()->findByPk($_POST['Expression']['id']);
 			if(!$model)
@@ -453,12 +452,11 @@ class AuthoringController extends Controller
 
 		$model = new Expression;
 		$criteria=new CDbCriteria;
-		$multi = Study::isMulti($id);
+		$multi = q("SELECT multiSessionEgoId FROM study WHERE id = " . $id)->queryScalar();
 
 			$criteria=array(
 				'condition'=>"studyId = " . $id,
 			);
-
 
 		$dataProvider=new CActiveDataProvider('Expression',array(
 			'criteria'=>$criteria,

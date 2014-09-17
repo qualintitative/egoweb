@@ -156,6 +156,19 @@ class Interview extends CActiveRecord
 		return $egoId;
 	}
 
+	public function multiInterviewIds($interviewId = null, $study = null){
+		$interview = Interview::model()->findByPk($interviewId);
+		if($interview && $study && $study->multiSessionEgoId){
+			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
+			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
+			if($multiIds){
+				$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
+				return $interviewIds;
+			}
+		}
+		return $interviewId;
+	}
+
 	// CORE FUNCTION
 	public function interpretTags($string, $interviewId = null, $alterId1 = null, $alterId2 = null,  $study = null)
 	{
@@ -168,16 +181,9 @@ class Interview extends CActiveRecord
 			$study = Study::model()->findByPk($studyId);
 		}
 
-		if($study->multiSessionEgoId){
-			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
-			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-			if($multiIds){
-				$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
-				$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
-				$interviewId = implode(",", $interviewIds);
-				$studyId = $studyIds;
-			}
-		}
+		$interviewId = Interview::multiInterviewIds($interviewId, $study);
+		if(is_array($interviewId))
+			$interviewId = implode(",", $interviewId);
 
 		// parse out and replace variables
 		preg_match('#<VAR (.+?) />#ims', $string, $vars);
