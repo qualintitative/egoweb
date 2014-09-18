@@ -1,1 +1,0 @@
-ALTER TABLE `egoweb`.`notes` CHANGE COLUMN `alterId` `alterId` VARCHAR(64) NOT NULL ;
