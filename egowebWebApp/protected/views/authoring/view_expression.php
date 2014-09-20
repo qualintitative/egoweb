@@ -38,7 +38,7 @@ if($multi){
 	);
 }
 $questions = Question::model()->findAll($criteria);
-$qList = [];
+$qList = array();
 foreach($questions as $question){
 	$studyName = q("SELECT name FROM study WHERE id = " . $question->studyId)->queryScalar();
 	$qList[$question->id] = $studyName . ":" . $question->title;

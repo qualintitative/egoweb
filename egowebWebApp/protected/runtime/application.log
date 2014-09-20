@@ -3168,3 +3168,67 @@ Stack trace:
 ---
 2014/09/17 15:42:36 [error] [system.db.CDbCommand] CDbCommand::execute() failed: SQLSTATE[42000]: Syntax error or access violation: 1091 Can't DROP 'name'; check that column/key exists. The SQL statement executed was: ALTER TABLE `graphs` DROP COLUMN `name`.
 2014/09/17 15:44:10 [error] [system.db.CDbCommand] CDbCommand::fetchAll() failed: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'egoweb_data.tbl_migration' doesn't exist. The SQL statement executed was: SHOW FULL COLUMNS FROM `tbl_migration`.
+2014/09/17 17:10:52 [error] [exception.CDbException] exception 'CDbException' with message 'CDbConnection failed to open the DB connection: SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: NO)' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbConnection.php:381
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbConnection.php(330): CDbConnection->open()
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbConnection.php(308): CDbConnection->setActive(true)
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CModule.php(387): CDbConnection->init()
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/cli/commands/MigrateCommand.php(442): CModule->getComponent('db')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/cli/commands/MigrateCommand.php(451): MigrateCommand->getDbConnection()
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/cli/commands/MigrateCommand.php(482): MigrateCommand->getMigrationHistory(-1)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/cli/commands/MigrateCommand.php(84): MigrateCommand->getNewMigrations()
+#7 [internal function]: MigrateCommand->actionUp(Array)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs(Object(MigrateCommand), Array)
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/console/CConsoleCommandRunner.php(67): CConsoleCommand->run(Array)
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/console/CConsoleApplication.php(91): CConsoleCommandRunner->run(Array)
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CConsoleApplication->processRequest()
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/yiic.php(33): CApplication->run()
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/yiic.php(7): require_once('/Users/zhangste...')
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/yiic(4): require_once('/Users/zhangste...')
+#15 {main}
+---
+2014/09/17 17:13:33 [error] [php] PDO::__construct(): php_network_getaddresses: getaddrinfo failed: nodename nor servname provided, or not known (/Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbConnection.php:423)
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbConnection.php(330): CDbConnection->open()
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbConnection.php(308): CDbConnection->setActive()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CModule.php(387): CDbConnection->init()
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/cli/commands/MigrateCommand.php(442): CConsoleApplication->getComponent()
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/cli/commands/MigrateCommand.php(451): MigrateCommand->getDbConnection()
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/cli/commands/MigrateCommand.php(482): MigrateCommand->getMigrationHistory()
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/cli/commands/MigrateCommand.php(84): MigrateCommand->getNewMigrations()
+#7 unknown(0): MigrateCommand->actionUp()
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs()
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/console/CConsoleCommandRunner.php(67): MigrateCommand->run()
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/console/CConsoleApplication.php(91): CConsoleCommandRunner->run()
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CConsoleApplication->processRequest()
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/yiic.php(33): CConsoleApplication->run()
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/yiic.php(7): require_once()
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/yiic(4): require_once()
+
+2014/09/17 17:13:46 [error] [exception.CDbException] exception 'CDbException' with message 'CDbConnection failed to open the DB connection: SQLSTATE[HY000] [1044] Access denied for user 'egoweb'@'localhost' to database 'egoweb_ata'' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbConnection.php:381
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbConnection.php(330): CDbConnection->open()
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/db/CDbConnection.php(308): CDbConnection->setActive(true)
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CModule.php(387): CDbConnection->init()
+#3 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/cli/commands/MigrateCommand.php(442): CModule->getComponent('db')
+#4 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/cli/commands/MigrateCommand.php(451): MigrateCommand->getDbConnection()
+#5 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/cli/commands/MigrateCommand.php(482): MigrateCommand->getMigrationHistory(-1)
+#6 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/cli/commands/MigrateCommand.php(84): MigrateCommand->getNewMigrations()
+#7 [internal function]: MigrateCommand->actionUp(Array)
+#8 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/console/CConsoleCommand.php(172): ReflectionMethod->invokeArgs(Object(MigrateCommand), Array)
+#9 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/console/CConsoleCommandRunner.php(67): CConsoleCommand->run(Array)
+#10 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/console/CConsoleApplication.php(91): CConsoleCommandRunner->run(Array)
+#11 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CConsoleApplication->processRequest()
+#12 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/yiic.php(33): CApplication->run()
+#13 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/yiic.php(7): require_once('/Users/zhangste...')
+#14 /Users/zhangster/Sites/egoweb/egowebWebApp/protected/yiic(4): require_once('/Users/zhangste...')
+#15 {main}
+---
+2014/09/19 15:00:56 [error] [exception.CHttpException.404] exception 'CHttpException' with message 'Unable to resolve the request "favicon.ico".' in /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php:286
+Stack trace:
+#0 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/web/CWebApplication.php(141): CWebApplication->runController('favicon.ico')
+#1 /Users/zhangster/Sites/egoweb/egowebWebApp/system/framework/base/CApplication.php(169): CWebApplication->processRequest()
+#2 /Users/zhangster/Sites/egoweb/egowebWebApp/index.php(18): CApplication->run()
+#3 {main}
+REQUEST_URI=/favicon.ico
+---
