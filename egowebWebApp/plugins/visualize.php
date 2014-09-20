@@ -163,7 +163,7 @@ class visualize extends Plugin
 				}
 				$range = $max - $min;
 				$value = round((($value-$min) / ($range)) * 9) + 1;
-				$default = array_keys($this->nodeSizes, $value)[0];
+				$default = current(array_keys($this->nodeSizes, $value));
 			}else{
 				$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeSize']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar();
 				$answer = explode(',', $answer);
