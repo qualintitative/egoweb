@@ -239,7 +239,7 @@ class visualize extends Plugin
 			echo "<option value='" . $centrality . "_nodeColor' $selected>" . ucfirst($centrality) . " Centrality</option>";
 		}
 
-		$questionIds = [];
+		$questionIds = array();
 		foreach($alter_qs as $alter_q){
 			$questionIds[] = $alter_q['id'];
 		}
@@ -492,7 +492,7 @@ class visualize extends Plugin
 		$alters = q("SELECT * FROM alters WHERE FIND_IN_SET(".$this->method .", interviewId)")->queryAll();
 		$alterNames = array();
 		$alterIds = array();
-		$filterIds = [];
+		$filterIds = array();
 		foreach($alters as $alter){
 			$alterIds[] = $alter['id'];
 			$alterNames[$alter['id']] = $alter['name'];
