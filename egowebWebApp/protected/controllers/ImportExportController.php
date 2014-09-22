@@ -4,6 +4,7 @@ class ImportExportController extends Controller
 {
 	public function actionImportstudy()
 	{
+        var_dump($_FILES);
 
 		if(!is_uploaded_file($_FILES['userfile']['tmp_name'])) //checks that file is uploaded
 			die("Error importing study");

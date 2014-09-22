@@ -99,5 +99,6 @@ return array(
 	'params'=>array(
 		// this is used in contact page
 		'adminEmail'=>'info@bluscs.com',
+        'maxUploadFileSize'=>1024*1024*3 // 3MB
 	),
 );
