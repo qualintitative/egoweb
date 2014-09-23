@@ -154,7 +154,7 @@ $this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterP
 $first = array_slice($questions, 0, 1);
 $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'answer-form',
-	'htmlOptions'=>['class'=>$first[0]->subjectType == "NETWORK" ? 'col-sm-4' : 'col-sm-12'],
+	'htmlOptions'=>array('class'=>$first[0]->subjectType == "NETWORK" ? 'col-sm-4' : 'col-sm-12'),
 	'enableAjaxValidation'=>true,
 	'action'=>'/interviewing/save/'.$studyId.($key ? "&key=" . $key : ""),
 ));
