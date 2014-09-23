@@ -12,9 +12,6 @@
 ehthumbs.db
 Thumbs.db
 
-# Komodo files #
-######################
-*.komodoproject
 
 # Yii Files #
 #############
@@ -29,3 +26,4 @@ egowebWebApp/themes/classic/views/
 ########################
 egowebWebApp/protected/config/main.php
 egowebWebApp/protected/config/console.php
+egowebWebApp/protected/runtime/*
