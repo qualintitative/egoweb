@@ -80,6 +80,7 @@ class Question extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('id, active, ordering, studyId', 'numerical', 'integerOnly'=>true),
+			array('title', 'filter', 'filter'=>function($param) {return CHtml::encode(strip_tags($param));}),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, active, title, prompt, preface, citation, subjectType, answerType, askingStyleList, ordering, otherSpecify, noneButton, allButton, pageLevelDontKnowButton, pageLevelRefuseButton, dontKnowButton, refuseButton, allOptionString, uselfExpression, minLimitType, minLiteral, minPrevQues, maxLimitType, maxLiteral, maxPrevQues, minCheckableBoxes, maxCheckableBoxes, withListRange, listRangeString, minListRange, maxListRange, timeUnits, symmetric, keepOnSamePage, studyId, answerReasonExpressionId, networkRelationshipExprId, networkParams, networkNColorQId, networkNSizeQId, networkEColorQId, networkESizeQId, useAlterListField', 'length', 'max'=>4096),
