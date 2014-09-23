@@ -163,7 +163,7 @@ class visualize extends Plugin
 				}
 				$range = $max - $min;
 				$value = round((($value-$min) / ($range)) * 9) + 1;
-				$default = array_keys($this->nodeSizes, $value)[0];
+				$default = current(array_keys($this->nodeSizes, $value));
 			}else{
 				$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeSize']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar();
 				$answer = explode(',', $answer);
@@ -239,7 +239,7 @@ class visualize extends Plugin
 			echo "<option value='" . $centrality . "_nodeColor' $selected>" . ucfirst($centrality) . " Centrality</option>";
 		}
 
-		$questionIds = [];
+		$questionIds = array();
 		foreach($alter_qs as $alter_q){
 			$questionIds[] = $alter_q['id'];
 		}
@@ -492,7 +492,7 @@ class visualize extends Plugin
 		$alters = q("SELECT * FROM alters WHERE FIND_IN_SET(".$this->method .", interviewId)")->queryAll();
 		$alterNames = array();
 		$alterIds = array();
-		$filterIds = [];
+		$filterIds = array();
 		foreach($alters as $alter){
 			$alterIds[] = $alter['id'];
 			$alterNames[$alter['id']] = $alter['name'];

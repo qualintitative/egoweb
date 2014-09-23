@@ -64,7 +64,7 @@ echo $form->hiddenField($model, 'interviewId',array('value'=>$interviewId));
 		$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
 		$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
 		$interviewIds = array_diff($interviewIds, array($interviewId));
-		$alters = [];
+		$alters = array();
 		foreach($interviewIds as $i_id){
 			$aList =  q("SELECT * FROM alters WHERE FIND_IN_SET($i_id, interviewId) AND NOT FIND_IN_SET($interviewId, interviewId)")->queryAll();
 			foreach($aList as $a){

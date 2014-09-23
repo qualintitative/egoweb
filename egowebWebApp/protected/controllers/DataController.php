@@ -39,7 +39,7 @@ class DataController extends Controller
 		$interviews = q("SELECT * FROM interview WHERE studyId = ".$id)->queryAll();
 		$study = Study::model()->findByPk($id);
 		$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$study->id)->queryColumn();
-		$expressions = [];
+		$expressions = array();
 		if(count($questionIds) > 0){
 			$questionIds = implode(",", $questionIds);
 			$criteria = array(
