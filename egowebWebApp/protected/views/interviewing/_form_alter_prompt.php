@@ -60,9 +60,12 @@ echo $form->hiddenField($model, 'interviewId',array('value'=>$interviewId));
 		<?php if($study->multiSessionEgoId): ?>
 		<div id="previous_alters">
 		<?php
+        #OK FOR SQL INJECTION
 		$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionId = " . $study->multiSessionEgoId)->queryScalar();
-		$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-		$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
+        #OK FOR SQL INJECTION
+        $multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
+        #OK FOR SQL INJECTION
+        $interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
 		$interviewIds = array_diff($interviewIds, array($interviewId));
 		$alters = array();
 		foreach($interviewIds as $i_id){

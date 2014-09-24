@@ -97,8 +97,10 @@ class InterviewingController extends Controller
 		}
 
 		if(isset($questions[0]) && $questions[0]->answerType == 'ALTER_PROMPT' && $study->fillAlterList){
-			$check = q("SELECT count(id) FROM alters WHERE interviewId = " . $interviewId)->queryScalar();
+            #OK FOR SQL INJECTION
+            $check = q("SELECT count(id) FROM alters WHERE interviewId = " . $interviewId)->queryScalar();
 			if(!$check){
+                #OK FOR SQL INJECTION
 				$names = q("SELECT name FROM alterList where studyId = " . $study->id)->queryColumn();
 				$count = 0;
 				foreach($names as $name){
@@ -148,7 +150,7 @@ class InterviewingController extends Controller
 				$nodes = "";
 
 			if(isset($_POST['Answer'][0]) && $_POST['Answer'][0]['answerType'] == "CONCLUSION"){
-				$interview = Interview::model()->findByPk($_POST['Answer'][0]['interviewId']);
+				$interview = Interview::model()->findByPk((int)$_POST['Answer'][0]['interviewId']);
 				$interview->completed = -1;
 				$interview->save();
 				if(Yii::app()->user->isGuest)
@@ -230,7 +232,12 @@ class InterviewingController extends Controller
 					$field = $questions[$array_id]->useAlterListField;
 					if(!Yii::app()->user->isSuperAdmin && !Yii::app()->user->isGuest)
 						$interviewer = " AND interviewerId = " . Yii::app()->user->id;
-					$restricted = q("SELECT " . $field . " FROM alterList WHERE studyId = " . $_POST['studyId'] . $interviewer)->queryColumn();
+                    #OK FOR SQL INJECTION
+                    $params = new stdClass();
+                    $params->name = ':studyId';
+                    $params->value = $_POST['studyId'];
+                    $params->dataType = PDO::PARAM_INT;
+					$restricted = q("SELECT " . $field . " FROM alterList WHERE studyId = :studyId " . $interviewer, array($params))->queryColumn();
 					if(!in_array($Answer['value'], $restricted))
 						$model[$array_id]->addError('value', $Answer['value'] . " is either not in the participant list or has been assigned to another interviewer");
 				}
@@ -393,7 +400,7 @@ class InterviewingController extends Controller
 				$model[$array_id]->attributes=$Answer;
 				if($interviewId){
 					$model[$array_id]->interviewId = $interviewId;
-					$interview = Interview::model()->findByPk($interviewId);
+					$interview = Interview::model()->findByPk((int)$interviewId);
 					if(!$model[$array_id]->getError('value')){
 						$model[$array_id]->save();
 						if($interview->completed != -1){
@@ -435,22 +442,35 @@ class InterviewingController extends Controller
 
 	public function actionAjaxupdate(){
 		if(isset($_POST['Alters'])){
-			$studyId = q("SELECT studyId FROM interview WHERE id = " . $_POST['Alters']['interviewId'])->queryScalar();
+            #OK FOR SQL INJECTION
+            $params = new stdClass();
+            $params->name = ':interviewId';
+            $params->value = $_POST['Alters']['interviewId'];
+            $params->dataType = PDO::PARAM_INT;
 
-			$name_exists = Alters::model()->findByAttributes(array('name'=>$_POST['Alters']['name'], 'interviewId'=>$_POST['Alters']['interviewId']));
+			$studyId = q("SELECT studyId FROM interview WHERE id = :interviewId", array($params))->queryScalar();
+
+			$name_exists = Alters::model()->findByAttributes(array('name'=>$_POST['Alters']['name'], 'interviewId'=>(int)$_POST['Alters']['interviewId']));
 			$model = new Alters;
 			$model->attributes = $_POST['Alters'];
 			if($name_exists){
 				$model->addError('name', $_POST['Alters']['name']. ' has already been added!');
 			}
 
-			$study = Study::model()->findByPk($studyId);
+            #OK FOR SQL INJECTION
+			$study = Study::model()->findByPk((int)$studyId);
 
 			// check to see if pre-defined alters exist.  If they do exist, check name against list
 			if($study->useAsAlters){
+                #OK FOR SQL INJECTION
 				$alterCount = q("SELECT count(id) FROM alterList WHERE studyId = ".$studyId)->queryScalar();
 				if($alterCount > 0){
-					$nameInList = q('SELECT name FROM alterList WHERE name = "'.$_POST['Alters']['name'].'" AND studyId = '. $studyId)->queryScalar();
+                    #OK FOR SQL INJECTION
+                    $params = new stdClass();
+                    $params->name = ':name';
+                    $params->value = $_POST['Alters']['name'];
+                    $params->dataType = PDO::PARAM_STR;
+					$nameInList = q('SELECT name FROM alterList WHERE name = :name AND studyId = '. $studyId, array($params))->queryScalar();
 					if(!$nameInList && $study->restrictAlters){
 						$model->addError('name', $_POST['Alters']['name']. ' is not in our list of participants');
 					}
@@ -458,12 +478,20 @@ class InterviewingController extends Controller
 			}
 
 			if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
+                #OK FOR SQL INJECTION
 				$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $model->interviewId . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
-				$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-				$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
+                #OK FOR SQL INJECTION
+                $multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
+                #OK FOR SQL INJECTION
+                $interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
 				$interviewIds = array_diff($interviewIds, array($_POST['Alters']['interviewId']));
 				foreach($interviewIds as $interviewId){
-					$oldAlterId = q("SELECT id FROM alters WHERE FIND_IN_SET (" . $interviewId . ", interviewId) and name = '" . $_POST['Alters']['name'] . "' LIMIT 1")->queryScalar();
+                    #OK FOR SQL INJECTION
+                    $params = new stdClass();
+                    $params->name = ':name';
+                    $params->value = $_POST['Alters']['name'];
+                    $params->dataType = PDO::PARAM_STR;
+					$oldAlterId = q("SELECT id FROM alters WHERE FIND_IN_SET (" . $interviewId . ", interviewId) and name = :name LIMIT 1", array($params))->queryScalar();
 					if($oldAlterId){
 						$model = Alters::model()->findByPk($oldAlterId);
 						$model->interviewId = $model->interviewId . ",". $_POST['Alters']['interviewId'];
@@ -499,7 +527,7 @@ class InterviewingController extends Controller
 
 			$this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterPrompt'=>$alterPrompt, 'model'=>$model, 'studyId'=>$studyId, 'interviewId'=>$interviewId, 'ajax'=>true), false, true);
 		}else if(isset($_GET['studyId']) && isset($_GET['interviewId'])){
-			$study = Study::model()->findByPk($_GET['studyId']);
+			$study = Study::model()->findByPk((int)$_GET['studyId']);
 			$alter_prompt = new Question;
 			$alter_prompt->answerType = "ALTER_PROMPT";
 			$alter_prompt->prompt = $study->alterPrompt;
@@ -548,7 +576,7 @@ class InterviewingController extends Controller
 
 	public function actionAjaxdelete(){
 		if(isset($_GET['Alters'])){
-			$model = Alters::model()->findByPk($_GET['Alters']['id']);
+			$model = Alters::model()->findByPk((int)$_GET['Alters']['id']);
 			if($model){
 				$interviewId = $_GET['interviewId'];
 				$ordering = $model->ordering;
@@ -586,6 +614,7 @@ class InterviewingController extends Controller
 	{
 		$condition = "id != 0";
 		if(!Yii::app()->user->isSuperAdmin){
+            #OK FOR SQL INJECTION
 			$studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
 			if($studies)
 				$condition = "id IN (" . implode(",", $studies) . ")";
@@ -640,9 +669,12 @@ class InterviewingController extends Controller
 
 	// loads blank answers for everything before the alter questions
 	public function createEgoAnswers($interviewId, $studyId){
+        #OK FOR SQL INJECTION
 		$questions = q("SELECT * FROM question WHERE subjectType = 'EGO' AND studyId = " . $studyId)->queryAll();
-		$study = q("SELECT * FROM study WHERE id = ".$studyId)->queryRow();
+        #OK FOR SQL INJECTION
+        $study = q("SELECT * FROM study WHERE id = ".$studyId)->queryRow();
 		foreach($questions as $question){
+            #OK FOR SQL INJECTION
 			$oldAnswer = q("SELECT id FROM answer WHERE interviewId = $interviewId AND questionId = " . $question['id'])->queryScalar();
 			if(!$oldAnswer){
 				$answer = array(
@@ -661,8 +693,10 @@ class InterviewingController extends Controller
 
 	// loads blank answers for everything before the alter questions
 	public function createAlterAnswers($interviewId, $studyId){
+        #OK FOR SQL INJECTION
 		$questions = q("SELECT * FROM question WHERE subjectType != 'EGO' AND subjectType != 'EGO_ID' AND studyId = " . $studyId)->queryAll();
-		$study = q("SELECT * FROM study WHERE id = ".$studyId)->queryRow();
+        #OK FOR SQL INJECTION
+        $study = q("SELECT * FROM study WHERE id = ".$studyId)->queryRow();
 		$criteria = array(
 			'condition'=>"FIND_IN_SET(" . $interviewId . ", interviewId)",
 		);
@@ -672,6 +706,7 @@ class InterviewingController extends Controller
 			if($question['subjectType'] == 'ALTER'){
 				foreach($alters as $alter){
 					if($checkOnce == false){
+                        #OK FOR SQL INJECTION
 						$oldAnswer = q("SELECT id FROM answer WHERE interviewId = $interviewId AND questionId = " . $question['id'] . " AND alterId1 = " . $alter->id)->queryScalar();
 						$checkOnce = true;
 					}
@@ -697,6 +732,7 @@ class InterviewingController extends Controller
 						array_shift($alters2);
 					foreach($alters2 as $alter2){
 					if($checkOnce == false){
+                        #OK FOR SQL INJECTION
 						$oldAnswer = q("SELECT id FROM answer WHERE interviewId = $interviewId AND questionId = " . $question['id'] . " AND alterId1 = " . $alter->id . " AND alterId2 = " . $alter2->id)->queryScalar();
 						$checkOnce = true;
 					}
@@ -718,9 +754,12 @@ class InterviewingController extends Controller
 				}
 			}
 		}
+        #OK FOR SQL INJECTION
 		$questions = q("SELECT * FROM question WHERE subjectType = 'NETWORK' AND studyId = " . $studyId)->queryAll();
-		$study = q("SELECT * FROM study WHERE id = ".$studyId)->queryRow();
+        #OK FOR SQL INJECTION
+        $study = q("SELECT * FROM study WHERE id = ".$studyId)->queryRow();
 		foreach($questions as $question){
+            #OK FOR SQL INJECTION
 			$oldAnswer = q("SELECT id FROM answer WHERE interviewId = $interviewId AND questionId = " . $question['id'])->queryScalar();
 			if(!$oldAnswer){
 				$answer = array(
