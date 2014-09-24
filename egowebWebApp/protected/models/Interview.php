@@ -104,6 +104,27 @@ class Interview extends CActiveRecord
 			return false;
 	}
 
+	// retrieves interview (or create new one) from MMIC prime key
+	public function getInterviewFromPrimekey($studyId, $primekey){
+		$interviewId = q("SELECT interviewId FROM answer WHERE value='$primekey' AND questionType = 'EGO_ID' AND studyId = $studyId")->queryScalar();
+		if($interviewId){
+			return Interview::model()->findByPk($interviewId);
+		}else{
+			$egoQId = q("SELECT id FROM question WHERE studyId = $studyId AND lower(title) = 'mmic_prime_key'")->queryScalar();
+			if(!$egoQId)
+				return false;
+			$interview = new Interview;
+			$interview->studyId = $studyId;
+			$interview->save();
+			$egoId = new Answer;
+			$egoId->interviewId = $interviewId;
+			$egoId->questionId = $egoQId;
+			$egoId->value = $primekey;
+			$egoId->save();
+			return $interview;
+		}
+	}
+
 	public function countAlters($id){
 		$criteria=array(
 			'condition'=>"FIND_IN_SET(" . $id .", interviewId)",

@@ -23,64 +23,76 @@ class ApiController extends Controller
 	// Actions
 	public function actionCreate()
 	{
-		switch($_GET['model'])
-		{
-			// Get an instance of the respective model
-			case 'posts':
-				$model = new Post;
-				break;
-			default:
-				$this->_sendResponse(501,
-					sprintf('Mode <b>create</b> is not implemented for model <b>%s</b>',
-					$_GET['model']) );
-					Yii::app()->end();
+	    $headers = array();
+	    foreach($_SERVER as $key => $value) {
+	        if (substr($key, 0, 5) <> 'HTTP_') {
+	            continue;
+	        }
+	        $header = str_replace(' ', '-', ucwords(str_replace('_', ' ', strtolower(substr($key, 5)))));
+	        $headers[$header] = $value;
+	    }
+
+		if(isset($headers['api_key'])){
+			// do something with api key
 		}
-		// Try to assign POST values to attributes
-		foreach($_POST as $var=>$value) {
-			// Does the model have this attribute? If not raise an error
-			if($model->hasAttribute($var))
-				$model->$var = $value;
-			else
-				$this->_sendResponse(500,
-					sprintf('Parameter <b>%s</b> is not allowed for model <b>%s</b>', $var,
-					$_GET['model']) );
+
+		if(!isset($_POST['survey_id']) || !isset($_POST['user_id'])){
+			$msg = "Missing survey_id and/or user_id parameter";
+			$this->_sendResponse(419, $msg );
 		}
-        200:
-          description: "User successfully logged into survey"
-          redirect_url: <url>
-        418:
-          description: "Invalid survey_id"
-        419:
-          description: "Missing survey_id and/or user_id parameter"
-        420:
-          description: "User already completed survey"
-        421:
-          description: "Invalid api_key"
-		// Try to save the model
-		if($model->save())
-			$this->_sendResponse(200, CJSON::encode($model));
-		else {
-			// Errors occurred
-			$msg = "<h1>Error</h1>";
-			$msg .= sprintf("Couldn't create model <b>%s</b>", $_GET['model']);
-			$msg .= "<ul>";
-			foreach($model->errors as $attribute=>$attr_errors) {
-				$msg .= "<li>Attribute: $attribute</li>";
-				$msg .= "<ul>";
-				foreach($attr_errors as $attr_error)
-					$msg .= "<li>$attr_error</li>";
-				$msg .= "</ul>";
+
+		if($_POST['survey_id'] && $_POST['user_id']){
+			$study = Study::model()->findByAttributes(array('name'=>$_POST['survey_id']));
+			if(!$study){
+				$msg = "Invalid survey_id";
+				$this->_sendResponse(418, $msg );
 			}
-			$msg .= "</ul>";
-			$this->_sendResponse(500, $msg );
+			$interview = Interview::getInterviewFromPrimekey($_POST['survey_id'], $_POST['user_id']);
+			if($interview->completed == -1){
+				$msg = "User already completed survey";
+				$this->_sendResponse(420, $msg );
+			}else{
+				$data = array(
+					'description'=>'User successfully logged into survey',
+					'redirect_url'=>'',
+				);
+				$this->_sendResponse(200, CJSON::encode($data));
+			}
 		}
 	}
 
 	public function actionGet_survey()
 	{
+		if(isset($headers['api_key'])){
+			// do something with api key
+		}
+
+		if(!isset($_GET['survey_id'])){
+			$msg = "Missing survey_id parameter";
+			$this->_sendResponse(419, $msg );
+		}
+
+		if($_GET['survey_id']){
+			$study = Study::model()->findByAttributes(array('name'=>$_GET['survey_id']));
+			if(!$study){
+				$msg = $_GET['survey_id'] . " not found";
+				$this->_sendResponse(404, $msg );
+			}
+			$interview = Interview::getInterviewFromPrimekey($_POST['survey_id'], $_POST['user_id']);
+			$data = array(
+				'description'=>'Survey successfully retrieved',
+				'survey'=>array(
+				),
+			);
+			$this->_sendResponse(200, CJSON::encode($data));
+		}
 	}
+
 	public function actionGet_user()
 	{
+		if(isset($headers['api_key'])){
+			// do something with api key
+		}
 	}
 
 	private function _getStatusCodeMessage($status)
