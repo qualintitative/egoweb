@@ -26,6 +26,7 @@
 				<?php
 				$condition = "id != 0";
 				if(!Yii::app()->user->isSuperAdmin){
+                    #OK FOR SQL INJECTION
 					$studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
 					if($studies)
 						$condition = "id IN (" . implode(",", $studies) . ")";

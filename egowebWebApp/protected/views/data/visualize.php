@@ -69,9 +69,11 @@ echo "<h3 class='margin-top-10'>".CHtml::link("Analysis &nbsp| &nbsp", $this->cr
 		$this->widget('plugins.visualize', array('method'=>'edgesize', 'id'=>$studyId, 'params'=>$params));
 		?>
 	</form>
+    
 	<div class="form-group">
 		<button class="btn btn-info" onclick="refresh(resetParams());return false;">Refresh</button>
 	</div>
+
 	<br><br>
 </div>
 <?php endif; ?>

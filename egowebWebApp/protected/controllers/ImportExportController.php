@@ -281,7 +281,7 @@ class ImportExportController extends Controller
 	public function actionReplicate(){
 		if($_POST['name'] == "" || $_POST['studyId'] == "")
 			die("nothing to replicate");
-		$study = Study::model()->findByPk($_POST['studyId']);
+		$study = Study::model()->findByPk((int)$_POST['studyId']);
 		$study->name = $_POST['name'];
 		$questions = Question::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
 		$options = QuestionOption::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
@@ -301,7 +301,7 @@ class ImportExportController extends Controller
 	public function actionExportstudy(){
 		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
 			die("nothing to export");
-		$study = Study::model()->findByPk($_POST['studyId']);
+		$study = Study::model()->findByPk((int)$_POST['studyId']);
 		$questions = Question::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
 		$expressions = Expression::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
 		$answerLists = AnswerList::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
