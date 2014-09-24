@@ -93,6 +93,29 @@ class ApiController extends Controller
 		if(isset($headers['api_key'])){
 			// do something with api key
 		}
+
+		if(!isset($_GET['user_id'])){
+			$msg = "Missing user_id parameter";
+			$this->_sendResponse(419, $msg );
+		}
+
+		if($_GET['user_id']){
+			$interviews = q("SELECT interviewId FROM answer WHERE value = ''")->queryColumn();
+			if(!$participant){
+				$msg = $_GET['user_id'] . " not found";
+				$this->_sendResponse(404, $msg );
+			}
+			$interview = Interview::getInterviewFromPrimekey($_POST['survey_id'], $_POST['user_id']);
+			$data = array(
+				'description'=>'User successfully retrieved',
+				'user'=>array(
+					'id'=>$_GET['user_id'],
+					'surveys_completed'=>$surveys_completed,
+					'surveys_started'=>$surveys_started,
+				),
+			);
+			$this->_sendResponse(200, CJSON::encode($data));
+		}
 	}
 
 	private function _getStatusCodeMessage($status)

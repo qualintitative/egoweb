@@ -33,7 +33,7 @@ function i($table, $columns){
 function q($sql, $params=null){
 	$cmd = Yii::app()->db->createCommand($sql);
 
-    if(!empty($parms)){
+    if(!empty($params)){
         foreach ($params as $param){
             $cmd->bindParam($param->name, $param->value, $param->dataType);
         }
