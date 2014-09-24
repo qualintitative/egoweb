@@ -81,6 +81,15 @@ class Study extends CActiveRecord
 			return "<deleted>";
 	}
 
+	public function getCompleted(){
+		return Interview::model()->count("studyId=:id AND completed = -1", array("id" => $this->id));
+
+	}
+
+	public function getStarted(){
+		return Interview::model()->count("studyId=:id AND completed != -1", array("id" => $this->id));
+	}
+
 	public function updated($id){
 		if(!$id)
 			return false;

@@ -47,14 +47,17 @@ class ApiController extends Controller
 				$msg = "Invalid survey_id";
 				$this->_sendResponse(418, $msg );
 			}
-			$interview = Interview::getInterviewFromPrimekey($_POST['survey_id'], $_POST['user_id']);
+			$interview = Interview::getInterviewFromPrimekey($study->id, $_POST['user_id']);
 			if($interview->completed == -1){
 				$msg = "User already completed survey";
 				$this->_sendResponse(420, $msg );
 			}else{
 				$data = array(
 					'description'=>'User successfully logged into survey',
-					'redirect_url'=>'',
+					'redirect_url'=>Yii::app()->createUrl(
+									'interviewing/'.$study->id.'?'.
+									'interviewId='.$interview->id.'&'.
+									'page='.$interview->completed)
 				);
 				$this->_sendResponse(200, CJSON::encode($data));
 			}
@@ -78,10 +81,14 @@ class ApiController extends Controller
 				$msg = $_GET['survey_id'] . " not found";
 				$this->_sendResponse(404, $msg );
 			}
-			$interview = Interview::getInterviewFromPrimekey($_POST['survey_id'], $_POST['user_id']);
 			$data = array(
 				'description'=>'Survey successfully retrieved',
 				'survey'=>array(
+					'closed'=> date('m/d/Y', $study->closed_date) ,
+		            'created'=>date('m/d/Y', $study->created_date),
+		            'id'=>$study->name,
+		            'num_completed'=>$study->completed,
+		            'num_started'=>$study->started,
 				),
 			);
 			$this->_sendResponse(200, CJSON::encode($data));
@@ -90,6 +97,9 @@ class ApiController extends Controller
 
 	public function actionGet_user()
 	{
+		$surveys_completed = array();
+		$surveys_started = array();
+
 		if(isset($headers['api_key'])){
 			// do something with api key
 		}
@@ -100,12 +110,20 @@ class ApiController extends Controller
 		}
 
 		if($_GET['user_id']){
-			$interviews = q("SELECT interviewId FROM answer WHERE value = ''")->queryColumn();
-			if(!$participant){
+			$questionIds = q("SELECT id FROM question where lower(title) = 'mmic_prime_key'")->queryColumn();
+			$interviews = Answer::model()->findAllByAttributes(array('value'=> $_GET['user_id'], 'questionId'=>$questionIds));
+			if(!$interviews){
 				$msg = $_GET['user_id'] . " not found";
 				$this->_sendResponse(404, $msg );
 			}
-			$interview = Interview::getInterviewFromPrimekey($_POST['survey_id'], $_POST['user_id']);
+			foreach($interviews as $intv){
+				$interview = Interview::model()->findByPk($intv->interviewId);
+				$study = Study::model()->findByPk($intv->studyId);
+				if($interview->complete_date)
+					$surveys_completed[] = $study->name . ":" . date('m/d/Y',$interview->complete_date);
+				else
+					$surveys_started[] = $study->name . ":" . date('m/d/Y',$interview->start_date);
+			}
 			$data = array(
 				'description'=>'User successfully retrieved',
 				'user'=>array(

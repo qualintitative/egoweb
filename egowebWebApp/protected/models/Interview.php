@@ -116,9 +116,14 @@ class Interview extends CActiveRecord
 				return false;
 			$interview = new Interview;
 			$interview->studyId = $studyId;
+			$interview->start_date = time();
+			$interview->completed = 1;
 			$interview->save();
 			$egoId = new Answer;
-			$egoId->interviewId = $interviewId;
+			$egoId->interviewId = $interview->id;
+			$egoId->studyId = $studyId;
+			$egoId->questionType = "EGO_ID";
+			$egoId->answerType = "TEXTUAL";
 			$egoId->questionId = $egoQId;
 			$egoId->value = $primekey;
 			$egoId->save();
