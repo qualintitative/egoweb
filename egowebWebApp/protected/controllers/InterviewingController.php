@@ -652,6 +652,8 @@ class InterviewingController extends Controller
 				$interviewIds = q("SELECT interviewId from answer where questionId = " .$egoIdQ['id'] . " AND value in ( '" . implode("','", $participants) . "' )")->queryColumn();
 				if($interviewIds)
 					$restrictions = ' and id in (' . implode(",", $interviewIds) . ')';
+				else
+					$restrictions = ' and id = -1';
 			}
 		}
 		$criteria=array(
