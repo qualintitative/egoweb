@@ -15,7 +15,6 @@ function saveNote(){
 		s.refresh();
 		var url = "/data/getnote?interviewId=" + interviewId + "&expressionId=" + expressionId + "&alterId=" + nodeId;
 		$.get(url, function(data){
-			notes[graphNotes] = noteContent;
 			$("#left-container").html(data);
 		});
 	});

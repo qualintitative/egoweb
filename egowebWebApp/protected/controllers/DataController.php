@@ -581,7 +581,7 @@ class DataController extends Controller
 			$model = Note::model()->findByAttributes(array(
 				'interviewId' => (int)$_GET['interviewId'],
 				'expressionId' => (int)$_GET['expressionId'],
-				'alterId' => (int)$_GET['alterId']
+				'alterId' => $_GET['alterId']
 			));
 			if(!$model){
 				$model = new Note;

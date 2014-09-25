@@ -522,7 +522,7 @@ class visualize extends Plugin
         $notes = Note::model()->findAllByAttributes(array("interviewId"=>$this->method, "expressionId"=>$this->id));
         $alterNotes = array();
         foreach($notes as $note){
-            $alterNotes[$note->alterId] = $note;
+            $alterNotes[$note->alterId] = $note->notes;
         }
 
         $interview = Interview::model()->findByPK($this->method);
