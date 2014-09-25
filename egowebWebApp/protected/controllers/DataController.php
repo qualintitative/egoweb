@@ -88,7 +88,9 @@ class DataController extends Controller
                 $all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
             }
             #OK FOR SQL INJECTION
-            $alter_pair_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
+            $alter_pair_expressions = array();
+            if($all_expression_ids)
+            	$alter_pair_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
 
             if(isset($_GET['print'])){
                 $this->renderPartial('print',
