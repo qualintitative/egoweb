@@ -76,6 +76,8 @@ class DataController extends Controller
             $params->dataType = PDO::PARAM_INT;
 
             $studyId = q("SELECT studyId FROM interview WHERE id = :id",array($params))->queryScalar();
+            $params->value = $studyId;
+
             #OK FOR SQL INJECTION
             $questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = :id",array($params))->queryColumn();
             $questionIds = implode(",", $questionIds);
@@ -88,9 +90,7 @@ class DataController extends Controller
                 $all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
             }
             #OK FOR SQL INJECTION
-            $alter_pair_expressions = array();
-            if($all_expression_ids)
-            	$alter_pair_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
+            $alter_pair_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
 
             if(isset($_GET['print'])){
                 $this->renderPartial('print',
