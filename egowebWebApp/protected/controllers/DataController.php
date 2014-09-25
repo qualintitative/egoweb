@@ -606,8 +606,8 @@ class DataController extends Controller
 			$note->attributes = $_POST['Note'];
 			if(!$note->save())
 				print_r($note->errors);
-			if($new)
-				echo $note->alterId;
+
+			echo $note->alterId;
 		}
 	}
 
