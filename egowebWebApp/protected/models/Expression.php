@@ -105,7 +105,7 @@ class Expression extends CActiveRecord
         $params2->value = $questionId;
         $params2->dataType = PDO::PARAM_INT;
 
-        $answers = q("SELECT * FROM answer WHERE questionId = :$questionId and interviewId = :interviewId",array($params2, $params))->queryAll();
+        $answers = q("SELECT * FROM answer WHERE questionId = :questionId and interviewId = :interviewId",array($params2, $params))->queryAll();
         foreach ($answers as $answer){
             if($answer['questionType'] == "ALTER"){
                 $array_id = $answer['questionId'] . '-' . $answer['alterId1'];

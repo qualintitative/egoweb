@@ -80,16 +80,19 @@ class DataController extends Controller
 
             #OK FOR SQL INJECTION
             $questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = :id",array($params))->queryColumn();
+
             $questionIds = implode(",", $questionIds);
             if(!$questionIds)
                 $questionIds = 0;
             $alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId = :id AND questionId in (" . $questionIds . ")",array($params))->queryColumn();
+
             $all_expression_ids = $alter_pair_expression_ids;
             foreach($alter_pair_expression_ids as $id){
                 #OK FOR SQL INJECTION
                 $all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
             }
             #OK FOR SQL INJECTION
+
             $alter_pair_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
 
             if(isset($_GET['print'])){
