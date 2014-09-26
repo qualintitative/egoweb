@@ -592,7 +592,7 @@ class visualize extends Plugin
         }
         Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/sigma.min.js');
         Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/sigma.notes.js');
-        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.plugins.dragNodes.min.js');
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.plugins.dragNodes.js');
         Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.plugins.dragEvents.js');
         Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.renderers.customEdgeShapes/shape-library.js');
         Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.renderers.customEdgeShapes/sigma.renderers.customEdgeShapes.js');
@@ -757,7 +757,9 @@ $(function(){
 			minNodeSize: 2,
 			maxNodeSize: max_node_size,
 			minEdgeSize: 0.5,
-			maxEdgeSize: max_edge_size
+			maxEdgeSize: max_edge_size,
+			zoomingRatio: 1.0,
+			sideMargin: 2
 		}
 	});
 	CustomEdgeShapes.init(s);
