@@ -33,11 +33,11 @@ return array(
 
 	// application components
 	'components'=>array(
-        'user'=>array(
-            // enable cookie-based authentication
-            'allowAutoLogin'=>true,
-            'class'=>'WebUser'
-        ),
+		'user'=>array(
+			// enable cookie-based authentication
+			'allowAutoLogin'=>true,
+			'class'=>'WebUser'
+		),
 		// uncomment the following to enable URLs in path-format
 
 		'urlManager'=>array(
@@ -67,9 +67,9 @@ return array(
 		),
 
 		'session' => array (
-    		'class' => 'system.web.CDbHttpSession',
-    		'connectionID' => 'db',
-    		'sessionTableName' => 'session',
+			'class' => 'system.web.CDbHttpSession',
+			'connectionID' => 'db',
+			'sessionTableName' => 'session',
 		),
 
 		'errorHandler'=>array(
@@ -99,5 +99,6 @@ return array(
 	'params'=>array(
 		// this is used in contact page
 		'adminEmail'=>'info@bluscs.com',
+        'maxUploadFileSize'=>1024*1024*3 // 3MB
 	),
 );

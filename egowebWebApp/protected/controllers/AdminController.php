@@ -47,7 +47,7 @@ class AdminController extends Controller
 
 		if(isset($_POST['User'])){
 			if($_POST['User']['id']){
-				$model =  User::model()->findByPk($_POST['User']['id']);
+				$model =  User::model()->findByPk((int)$_POST['User']['id']);
 				$model->attributes=$_POST['User'];
 			}else{
 				$model =  new User;
@@ -103,7 +103,7 @@ class AdminController extends Controller
 	 */
 	public function actionUserEdit(){
 		if(isset($_GET['userId']))
-			$model = User::model()->findByPk($_GET['userId']);
+			$model = User::model()->findByPk((int)$_GET['userId']);
 		else
 			$model = new User;
 		$this->renderPartial('_form_user', array('user'=>$model, 'ajax'=>true), false, false);
@@ -111,7 +111,7 @@ class AdminController extends Controller
 
 	public function actionUserDelete(){
 		if(isset($_GET['userId'])){
-			$model = User::model()->findByPk($_GET['userId']);
+			$model = User::model()->findByPk((int)$_GET['userId']);
 			$model->delete();
 		}
 		$dataProvider=new CActiveDataProvider('User',array(
@@ -168,7 +168,7 @@ class AdminController extends Controller
 		if(!isset($_GET['id']))
 			$this->redirect($this->createUrl('user/forgot'));
 		list($id,$hash)=preg_split('/:/',$_GET['id']);
-		$model=User::model()->findByPk($id);
+		$model=User::model()->findByPk((int)$id);
 		if($model&&User::model()->hashPassword($model->password,'miranda')==$hash){
 			$model->password='';
 			if(isset($_POST['User']))

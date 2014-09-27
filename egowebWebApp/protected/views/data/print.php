@@ -17,7 +17,7 @@
 }
 </style>
 <?php
-$interviewId = ''; $expressionId = 0; $params = ""; $graphId= "";
+$interviewId = ''; $expressionId = 0; $params = "";
 if(isset($_GET['interviewId']) && $_GET['interviewId'])
 	$interviewId = $_GET['interviewId'];
 
@@ -26,31 +26,18 @@ if(isset($_GET['expressionId']) && $_GET['expressionId'])
 
 if(isset($_GET['params']) && $_GET['params'])
 	$params = $_GET['params'];
-if(isset($_GET['graphId']) && $_GET['graphId'])
-	$graphId = $_GET['graphId'];
 ?>
 <script>
-params = [];
 expressionId = <?= $expressionId ?>;
 interviewId = <?= $interviewId ?>;
-<?php
-foreach($graphs as $graph){
-	echo "params[" . $graph->id . "] = '" . $graph->params . "';";
-}
-?>
+
 function getAdjacencies(newExpressionId){
 	url = "/data/visualize?expressionId=" + newExpressionId + "&interviewId=" + interviewId;
 	document.location = url;
 }
-function getGraph(graphId){
-	if(graphId){
-		url = "/data/visualize?expressionId=" + expressionId + "&interviewId=" + interviewId + "&graphId=" + graphId + "&params=" + encodeURIComponent(params[graphId]);
-		document.location = url;
-	}
-}
+
 printView = true;
 </script>
-<input type="hidden" id="Graph_nodes" value='<?= $_GET['nodes']; ?>'>
 <div id="print-view" style="width:960px">
 <?php if($expressionId): ?>
 <div class="col-sm-12 pull-left">

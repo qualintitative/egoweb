@@ -235,6 +235,7 @@ $(function(){
 				<?php echo $form->textField($alterList,'email', array('style'=>'width:100px')); ?>
 				<?php echo $form->error($alterList,'email'); ?>
 				<?php
+                #OK FOR SQL INJECTION
 				$interviewerIds = q("SELECT interviewerId FROM interviewers WHERE studyId = " . $model->id)->queryColumn();
 				$interviewers = array();
 				foreach($interviewerIds as $interviewerId){
