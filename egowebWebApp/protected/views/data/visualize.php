@@ -55,11 +55,11 @@ echo "<h3 class='margin-top-10'>".CHtml::link("Analysis &nbsp| &nbsp", $this->cr
 
 
 <?php if($expressionId): ?>
-<div class="col-sm-9 pull-right">
+<div class="col-sm-8 pull-right">
 <?php $this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$expressionId, 'params'=>$params)); ?>
 </div>
 
-<div id="visualize-bar" class="col-sm-3 pull-left">
+<div id="visualize-bar" class="col-sm-4 pull-left">
 	<form class="form-horizontal">
 		<?php
 		$this->widget('plugins.visualize', array('method'=>'nodecolor', 'id'=>$studyId, 'params'=>$params));
@@ -69,7 +69,7 @@ echo "<h3 class='margin-top-10'>".CHtml::link("Analysis &nbsp| &nbsp", $this->cr
 		$this->widget('plugins.visualize', array('method'=>'edgesize', 'id'=>$studyId, 'params'=>$params));
 		?>
 	</form>
-    
+
 	<div class="form-group">
 		<button class="btn btn-info" onclick="refresh(resetParams());return false;">Refresh</button>
 	</div>

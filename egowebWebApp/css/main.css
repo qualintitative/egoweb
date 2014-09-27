@@ -7,8 +7,12 @@ body
 	padding: 0;
 	color: #555;
 	font: normal 10pt Arial,Helvetica,sans-serif;
-	background: #EFEFEF;
+	background: #fff;
 	overflow-y: scroll;
+}
+
+#content{
+	background-color: #fff;
 }
 
 .ui-accordion .ui-accordion-content {
@@ -366,15 +370,6 @@ html, body{
     border:0;
 }
 
-body{
-    background:#77777a;
-}
-
-fieldset{
-	border:0;
-	padding:0;
-	margin:0;
-}
 
 .graybutton{
 	background:url('/images/gray.png');
@@ -489,7 +484,7 @@ td{
 	z-index:1;
 	display:none;
 	margin-top:-30px;
-	margin-left:-40px;
+	margin-left:40px;
 	background:#fff;
 	position:absolute;
 	max-height:400px;

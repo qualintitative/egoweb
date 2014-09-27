@@ -57,26 +57,26 @@ function initNotes(s){
 		    saveNodes();
 	    }
 	});
+
 	s.bind('doubleClickStage', function(e) {
 		x = e.data.captor.x;
 		y = e.data.captor.y;
+
 		if(graphNotes == 0 || typeof notes['graphNote-' + graphNotes] != "undefined"){
 			graphNotes++;
 			s.graph.addNode({
 				id: 'graphNote-' + graphNotes,
 				label: graphNotes.toString(),
 				size: 4,
-				x: x/10,
-				y: y/10,
-				dX: 0,
-				dY: 0,
+
 				type:'arrow'
 			});
 			saveNodes();
 		}
 		var node = s.graph.nodes('graphNote-' + graphNotes);
-		node.x = x / 10;
-		node.y = y / 10;
+
+		node.x = x / 10 ;
+		node.y = y / 10 ;
 		s.refresh();
 	});
 

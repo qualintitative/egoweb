@@ -96,11 +96,7 @@ $(function(){
 });
 </script>
 
-<div id="navigation">
-	<div id="navbox">
-		<ul></ul>
-	</div>
-</div>
+
 
 <?php // Alter List Box for Alter Prompt Page ?>
 <?php  if(isset($questions[0]) && $questions[0]->answerType == "ALTER_PROMPT"): ?>
@@ -523,6 +519,12 @@ if($rowColor != "" && $question->askingStyleList){
 ?>		</div>
 		<br style="clear:left">
 	<?php endif; ?>
+	<?php
+	if($question->subjectType == "NETWORK")
+		$networkQuestion = $question;
+	else
+		$networkQuestion = "";
+	?>
 <?php endforeach; ?>
 
 		<input name="page" type=hidden value=<?php echo $page ?> />
@@ -532,9 +534,9 @@ if($rowColor != "" && $question->askingStyleList){
 <?php $this->endWidget(); ?>
 
 <?php
-if($question->subjectType == "NETWORK" && is_numeric($question->networkRelationshipExprId)){
+if($networkQuestion  && is_numeric($networkQuestion->networkRelationshipExprId)){
 	echo "<div id='interviewing' class='col-sm-8 pull-right'>";
-	$this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$question->networkRelationshipExprId, 'params'=>$question->networkParams, 'networkTitle'=>$question->title));
+	$this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$networkQuestion->networkRelationshipExprId, 'params'=>$networkQuestion->networkParams, 'networkTitle'=>$networkQuestion->title));
 	echo "</div>";
 }
 ?>
