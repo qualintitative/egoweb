@@ -609,8 +609,8 @@ class visualize extends Plugin
                 <?php
                 if($this->networkTitle){
                     $interviewIds = Interview::multiInterviewIds($this->method, $study);
-                    $interviewIds = array_diff($interviewIds, array($this->method));
                     if(is_array($interviewIds)){
+	                    $interviewIds = array_diff($interviewIds, array($this->method));
                         echo "<br>Load other graphs:";
                         foreach($interviewIds as $interviewId){
                             #OK FOR SQL INJECTION
