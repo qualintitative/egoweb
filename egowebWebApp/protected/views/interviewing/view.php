@@ -530,7 +530,6 @@ if($rowColor != "" && $question->askingStyleList){
 		<input name="page" type=hidden value=<?php echo $page ?> />
 		<input name="studyId" type=hidden value=<?php echo $studyId ?> />
 
-
 <?php $this->endWidget(); ?>
 
 <?php
