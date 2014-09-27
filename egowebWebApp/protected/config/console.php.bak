@@ -12,7 +12,12 @@ return array(
 	// application components
 	'components'=>array(
 		'db'=>array(
-			'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
+			'connectionString' => 'mysql:host=localhost;dbname=egoweb_data',
+			'username' => 'egoweb',
+			'password' => "test1234",
+			//'enableProfiling'=>true,
+			'emulatePrepare' => true,
+			'charset' => 'utf8',
 		),
 		// uncomment the following to use a MySQL database
 		/*

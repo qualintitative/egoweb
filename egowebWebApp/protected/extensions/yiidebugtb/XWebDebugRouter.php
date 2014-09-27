@@ -83,14 +83,14 @@ class arrayDumper {
 		self::$_output  = '';
 		self::$_objects = array();
 		self::$_depth   = $depth;
-		
+
 		self::dumpInternal($var, 0);
-		
+
 		if ($highlight) {
 			$result        = highlight_string("<?php\n" . self::$_output, true);
 			self::$_output = preg_replace('/&lt;\\?php<br \\/>/', '', $result, 1);
 		}
-		
+
 		return self::$_output;
 	}
 
@@ -128,13 +128,13 @@ class arrayDumper {
 					$keys           = array_keys($var);
 					$spaces         = str_repeat(' ', $level * 2);
 					self::$_output .= $spaces . '';
-					
+
 					foreach($keys as $key) {
 						self::$_output .= ($level == 0 ? '' : "\n") . $spaces . "  $key: ";
 						self::$_output .= self::dumpInternal($var[$key], $level + 1);
 						self::$_output .= ($level == 0 ? "\n" : '');
 					}
-					
+
 					self::$_output .= "";
 				}
 				break;
@@ -151,18 +151,18 @@ class arrayDumper {
 					$members   = (array)$var;
 					$keys      = array_keys($members);
 					$spaces    = str_repeat(' ', $level * 2);
-					
+
 					self::$_output .= "$className ID:#$id";//\n".$spaces.'(';
-					
+
 					foreach ($keys as $key) {
 						$keyDisplay     = strtr(trim($key), array("\0" => '->'));
 						self::$_output .= "\n" . $spaces . "  $keyDisplay: ";
 						self::$_output .= self::dumpInternal($members[$key], $level + 1);
 					}
-					
+
 					self::$_output .= "\n" . $spaces . ')';
 				}
-				
+
 				break;
 			default:
 				self::$_output .= "\n" . $spaces . '~' . $var;
@@ -200,7 +200,7 @@ class yiiDebugClass {
 	public static function render($items) {
 		$result = '';
 		$odd    = true;
-		
+
 		foreach ($items as $item) {
 			list($message, $level, $category, $timestamp) = $item;
 			$message = CHtml::encode($message);
@@ -231,14 +231,14 @@ class yiiDebugClass {
 class yiiDebugDB extends yiiDebugClass {
 	public static function getInfo($data, $config = null) {
 		parent::getInfo($data);
-		
+
 		$result = array();
 		$result['panelTitle'] = 'Database Queries';
-		
+
 		$count  = 0;
 		$cached = 0;
 		$items  = array();
-		
+
 		foreach ($data as $row) {
 			if (substr($row[2], 0, 9) == 'system.db') {
 				$items[] = $row;
@@ -248,7 +248,7 @@ class yiiDebugDB extends yiiDebugClass {
 					if (strpos($row[0], 'Querying SQL') !== false) {
 						$count++;
 					}
-					
+
 					if (strpos($row[0], 'Query result found in cache') !== false) {
 						$cached++;
 					}
@@ -260,13 +260,13 @@ class yiiDebugDB extends yiiDebugClass {
 		if (count($items) > 0) {
 			$result['content'] = yiiDebugTrace::render($items);
 		}
-		
+
 		$result['title'] = 'DB Query: ' . $count;
-		
+
 		if ($cached > 0) {
 			$result['title'] .= " ($cached found in cache)";
 		}
-		
+
 		return $result;
 	}
 }
@@ -274,12 +274,12 @@ class yiiDebugDB extends yiiDebugClass {
 class yiiDebugTrace extends yiiDebugClass {
 	public static function getInfo($data, $config = null) {
 		parent::getInfo($data);
-		
+
 		$result               = array();
 		$result['title']      = 'App Log';
 		$result['panelTitle'] = 'Application Log';
 		$items                = array();
-		
+
 		foreach ($data as $row) {
 			if (substr($row[2], 0, 9) != 'system.db')
 			$items[] = $row;
@@ -296,7 +296,7 @@ class yiiDebugTrace extends yiiDebugClass {
 class yiiDebugTime extends yiiDebugClass {
 	public static function getInfo($data, $config = null) {
 		parent::getInfo($data);
-		
+
 		$result          = array();
 		$result['title'] = 'Time: ' . (round(Yii::getLogger()->getExecutionTime(), 3));
 
@@ -307,7 +307,7 @@ class yiiDebugTime extends yiiDebugClass {
 class yiiDebugMem extends yiiDebugClass {
 	public static function getInfo($data, $config = null) {
 		parent::getInfo($data);
-		
+
 		$result          = array();
 		//round it for two digits after point
 		$result['title'] = 'Memory: ' . (round(Yii::getLogger()->getMemoryUsage() / 1024, 2)) . 'Kb';
@@ -344,47 +344,47 @@ class yiiDebugConfig extends yiiDebugClass {
 		if (isset($_SESSION)) {
 			$phpSession = array();
 			$sessKeyLen = null;
-			
+
 			foreach ($_SESSION as $key => $value) {
 				if (is_null($sessKeyLen)) {
 					$values['PHP']['Key'] = substr($key, 1, strpos($key, '_') - 1);
 					$sessKeyLen           = strlen($values['PHP']['Key']) + 1;
 				}
-				
+
 				$phpSession[substr($key, $sessKeyLen)] = $value;
 			}
-			
+
 			$values['PHP']['Data'] = $phpSession;
 		}
-		
+
 		if (isset($_COOKIE)) {
 			$values['Cookie'] = $_COOKIE;
 		}
-		
+
 		$values['Yii'] = Yii::app()->session;
-		
+
 		return $values;
 	}
 
 	public static function globalsAsArray() {
 		$values = array();
-		
+
 		foreach (array('server', 'files', 'env') as $name) {
 			if (!isset($GLOBALS['_' . strtoupper($name)])) {
 				continue;
 			}
 
 			$values[$name] = array();
-			
+
 			foreach ($GLOBALS['_' . strtoupper($name)] as $key => $value) {
 				$values[$name][$key] = $value;
 			}
-			
+
 			ksort($values[$name]);
 		}
-		
+
 		ksort($values);
-		
+
 		return $values;
 	}
 
@@ -407,17 +407,17 @@ class yiiDebugConfig extends yiiDebugClass {
 
 	public static function requestAsArray() {
 		$values = array();
-		
+
 		if (isset($_GET)) {
 			$values['Get'] = $_GET;
 		}
-		
+
 		if (isset($_POST)) {
 			$values['Post'] = $_POST;
 		}
-		
+
 		$values['Yii'] = Yii::app()->request;
-		
+
 		return $values;
 	}
 
@@ -438,7 +438,7 @@ class yiiDebugConfig extends yiiDebugClass {
 
 	public static function getInfo($data, $config = null) {
 		parent::getInfo($data, $config);
-		
+
 		$result               = array();
 		$result['title']      = 'Yii ver: '.(Yii::getVersion());
 		$result['headinfo']   = self::getHeadInfo();
@@ -466,11 +466,11 @@ class XWebDebugRouter extends CLogRoute {
 
 	public function collectLogs($logger, $processLogs = false) {
 		$logs = $logger->getLogs($this->levels, $this->categories);
-		
+
 		if (empty($logs)) {
 			$logs = array();
 		}
-		
+
 		$this->processLogs($logs);
 	}
 
@@ -480,7 +480,7 @@ class XWebDebugRouter extends CLogRoute {
 
 		$ip      = $app->request->getUserHostAddress();
 		$allowed = false;
-		
+
 		foreach($this->allowedIPs as $pattern) {
 			// if found any char other than [0-9] and dot, treat pattern as a regexp
 			if (preg_match('/[^0-9:\.]/', $pattern)) {
@@ -498,7 +498,7 @@ class XWebDebugRouter extends CLogRoute {
 		if (!$allowed) {
 			return;
 		}
-		
+
 		foreach (explode(',', $this->config) as $value) {
 			$value          = trim($value);
 			$config[$value] = true;
@@ -508,18 +508,18 @@ class XWebDebugRouter extends CLogRoute {
 		if (!($app instanceof CWebApplication) || $app->getRequest()->getIsAjaxRequest()) {
 			return;
 		}
-		
+
 		//Checking for an DEBUG mode of running app
 		if (isset($config['runInDebug']) && (!DEFINED('YII_DEBUG') || YII_DEBUG == false)) {
 			return;
 		}
-		
+
 		//admin check
 		if(isset($app->user->isAdmin) && !$app->user->isAdmin)
 			return;
-		
+
 		$items = array();
-		
+
 		$items[] = yiiDebugConfig::getInfo($logs, $config);
 		$items[] = yiiDebugMem::getInfo($logs);
 		$items[] = yiiDebugTime::getInfo($logs);

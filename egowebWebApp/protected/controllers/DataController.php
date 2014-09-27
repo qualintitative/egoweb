@@ -33,76 +33,91 @@ class DataController extends Controller
 		);
 	}
 
-	public function actionStudy($id)
-	{
+    public function actionStudy($id)
+    {
+        #OK FOR SQL INJECTION
+        $params = new stdClass();
+        $params->name = ':id';
+        $params->value = $id;
+        $params->dataType = PDO::PARAM_INT;
 
-		$interviews = q("SELECT * FROM interview WHERE studyId = ".$id)->queryAll();
-		$study = Study::model()->findByPk($id);
-		$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$study->id)->queryColumn();
-		$expressions = [];
-		if(count($questionIds) > 0){
-			$questionIds = implode(",", $questionIds);
-			$criteria = array(
-			'condition'=>"studyId = " . $study->id ." AND questionId in ($questionIds)",
-			);
-			$expressions = CHtml::listData(
-			    	Expression::model()->findAll($criteria),
-			    	'id',
-			    	function($post) {return CHtml::encode(substr($post->name,0,40));}
-			    );
-		}
-		$this->render('study', array(
-			'study'=>$study,
-			'interviews'=>$interviews,
-			'expressions'=>$expressions,
-		));
-	}
+        $interviews = q("SELECT * FROM interview WHERE studyId = :id",array($params))->queryAll();
+        #OK FOR SQL INJECTION
+        $study = Study::model()->findByPk((int)$id);
+        #OK FOR SQL INJECTION
+        $questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = :id",array($params))->queryColumn();
+        $expressions = array();
+        if(count($questionIds) > 0){
+            $questionIds = implode(",", $questionIds);
+            $criteria = array(
+                'condition'=>"studyId = " . $study->id ." AND questionId in ($questionIds)",
+            );
+            $expressions = CHtml::listData(
+                Expression::model()->findAll($criteria),
+                'id',
+                function($post) {return CHtml::encode(substr($post->name,0,40));}
+            );
+        }
+        $this->render('study', array(
+            'study'=>$study,
+            'interviews'=>$interviews,
+            'expressions'=>$expressions,
+        ));
+    }
 
-	public function actionVisualize()
-	{
-		$graphs = array();
-		if(isset($_GET['interviewId'])){
-			if(isset($_GET['graphId'])){
-			}
-			$studyId = q("SELECT studyId FROM interview WHERE id = ".$_GET['interviewId'])->queryScalar();
-			$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$studyId)->queryColumn();
-			$questionIds = implode(",", $questionIds);
-			if(!$questionIds)
-				$questionIds = 0;
-			$alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId = " . $studyId . " AND questionId in (" . $questionIds . ")")->queryColumn();
-			$all_expression_ids = $alter_pair_expression_ids;
-			foreach($alter_pair_expression_ids as $id){
-				$all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
-			}
-			$alter_pair_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
+    public function actionVisualize()
+    {
+        $graphs = array();
+        if(isset($_GET['interviewId'])){
+            #OK FOR SQL INJECTION
+            $params = new stdClass();
+            $params->name = ':id';
+            $params->value = $_GET['interviewId'];
+            $params->dataType = PDO::PARAM_INT;
 
-			if(isset($_GET['expressionId']))
-				$graphs = Graph::model()->findAllByAttributes(array('expressionId'=>$_GET['expressionId'],'interviewId'=>$_GET['interviewId']));
+            $studyId = q("SELECT studyId FROM interview WHERE id = :id",array($params))->queryScalar();
+            $params->value = $studyId;
 
+            #OK FOR SQL INJECTION
+            $questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = :id",array($params))->queryColumn();
 
-			if(isset($_GET['print'])){
-				$this->renderPartial('print',
-					array(
-						'graphs'=>$graphs,
-						'studyId'=>$studyId,
-						'alter_pair_expressions'=> $alter_pair_expressions,
-						'interviewId'=>$_GET['interviewId'],
-					), false, true
-				);
-			}else{
-				$this->render('visualize',
-					array(
-						'graphs'=>$graphs,
-						'studyId'=>$studyId,
-						'alter_pair_expressions'=> $alter_pair_expressions,
-						'interviewId'=>$_GET['interviewId'],
-					)
-				);
+            $questionIds = implode(",", $questionIds);
+            if(!$questionIds)
+                $questionIds = 0;
+            $alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId = :id AND questionId in (" . $questionIds . ")",array($params))->queryColumn();
 
-			}
+            $all_expression_ids = $alter_pair_expression_ids;
+            foreach($alter_pair_expression_ids as $id){
+                #OK FOR SQL INJECTION
+                $all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
+            }
+            #OK FOR SQL INJECTION
 
-		}
-	}
+            $alter_pair_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
+
+            if(isset($_GET['print'])){
+                $this->renderPartial('print',
+                    array(
+                        'graphs'=>$graphs,
+                        'studyId'=>$studyId,
+                        'alter_pair_expressions'=> $alter_pair_expressions,
+                        'interviewId'=>$_GET['interviewId'],
+                    ), false, true
+                );
+            }else{
+                $this->render('visualize',
+                    array(
+                        'graphs'=>$graphs,
+                        'studyId'=>$studyId,
+                        'alter_pair_expressions'=> $alter_pair_expressions,
+                        'interviewId'=>$_GET['interviewId'],
+                    )
+                );
+
+            }
+
+        }
+    }
 
 
 	public function actionIndex()
@@ -124,8 +139,10 @@ class DataController extends Controller
 		else
 			$expressionId = $study->adjacencyExpressionId;
 
-		$study = Study::model()->findByPk($_POST['studyId']);
-		$optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
+        #OK FOR SQL INJECTION
+		$study = Study::model()->findByPk((int)$_POST['studyId']);
+        #OK FOR SQL INJECTION
+        $optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
 
 		// create an array with option ID as key
 		$options = array();
@@ -133,9 +150,12 @@ class DataController extends Controller
 			$options[$option['id']] = $option['value'];
 		}
 		// fetch questions
+        #OK FOR SQL INJECTION
 		$ego_id_questions = q("SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId = " . $study->id . " ORDER BY ordering")->queryAll();
-		$ego_questions = q("SELECT * FROM question WHERE subjectType = 'EGO' AND studyId = " . $study->id . " ORDER BY ordering")->queryAll();
-		$alter_questions = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND studyId = " . $study->id . " ORDER BY ordering")->queryAll();
+        #OK FOR SQL INJECTION
+        $ego_questions = q("SELECT * FROM question WHERE subjectType = 'EGO' AND studyId = " . $study->id . " ORDER BY ordering")->queryAll();
+        #OK FOR SQL INJECTION
+        $alter_questions = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND studyId = " . $study->id . " ORDER BY ordering")->queryAll();
 
 		// start generating export file
 		header("Content-Type: application/octet-stream");
@@ -177,6 +197,7 @@ class DataController extends Controller
 			if(!isset($_POST['export'][$interview->id]))
 				continue;
 
+            #OK FOR SQL INJECTION
 			$alters = q("SELECT * FROM alters WHERE interviewId = " . $interview->id)->queryAll();
 			if(!$alters){
 				$alters = array('0'=>array('id'=>null));
@@ -195,14 +216,17 @@ class DataController extends Controller
 				$answers[] = $interview->id;
 				$ego_ids = array();
 				foreach ($ego_id_questions as $question){
+                    #OK FOR SQL INJECTION
 					$ego_ids[] = q("SELECT value FROM answer WHERE interviewId = " . $interview->id  . " AND questionId = " . $question['id'])->queryScalar();
 				}
 				$answers[] = implode("_", $ego_ids);
 				foreach($ego_ids as $ego_id)
 					$answers[] = $ego_id;
 				foreach ($ego_questions as $question){
+                    #OK FOR SQL INJECTION
 					$answer = q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'])->queryScalar();
-					$skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'])->queryScalar();
+                    #OK FOR SQL INJECTION
+                    $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'])->queryScalar();
 					if($answer && $skipReason == "NONE"){
 						if($question['answerType'] == "SELECTION"){
 							if(isset($options[$answer]))
@@ -236,8 +260,10 @@ class DataController extends Controller
 					$answers[] = $alter['name'];
 					foreach ($alter_questions as $question){
 						$expression = new Expression;
+                        #OK FOR SQL INJECTION
 						$answer = q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'])->queryScalar();
-						$skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'])->queryScalar();
+                        #OK FOR SQL INJECTION
+                        $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'])->queryScalar();
 						if($answer && $skipReason == "NONE"){
 							if($question['answerType'] == "SELECTION"){
 								$answers[] = $options[$answer];
@@ -296,7 +322,8 @@ class DataController extends Controller
 		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
 			die("nothing to export");
 
-		$study = Study::model()->findByPk($_POST['studyId']);
+		$study = Study::model()->findByPk((int)$_POST['studyId']);
+        #OK FOR SQL INJECTION
 		$optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
 
 		// create an array with option ID as key
@@ -305,8 +332,10 @@ class DataController extends Controller
 			$options[$option['id']] = $option['value'];
 		}
 
+        #OK FOR SQL INJECTION
 		$alter_pair_questions = q("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = " . $study->id . " ORDER BY ordering")->queryAll();
-		$alterCount = q("SELECT count(id) FROM `alterList` WHERE studyId = " . $study->id)->queryScalar();
+        #OK FOR SQL INJECTION
+        $alterCount = q("SELECT count(id) FROM `alterList` WHERE studyId = " . $study->id)->queryScalar();
 		if($alterCount > 0)
 			$idNumber = "Id";
 		else
@@ -332,6 +361,7 @@ class DataController extends Controller
 		foreach ($interviews as $interview){
 			if(!isset($_POST['export'][$interview->id]))
 				continue;
+            #OK FOR SQL INJECTION
 			$alters = q("SELECT * FROM alters WHERE interviewId = " . $interview->id)->queryAll();
 			$i = 1;
 			$alterNum = array();
@@ -344,8 +374,10 @@ class DataController extends Controller
 				array_shift($alters2);
 				foreach ($alters2 as $alter2){
 					$answers = array();
+                    #OK FOR SQL INJECTION
 					$realId1 = q("SELECT id FROM alterList WHERE studyId = " . $study->id . " AND name = '" . addslashes($alter['name']) . "'")->queryScalar();
-					$realId2 = q("SELECT id FROM alterList WHERE studyId = " . $study->id . " AND name = '" . addslashes($alter2['name']) . "'")->queryScalar();
+                    #OK FOR SQL INJECTION
+                    $realId2 = q("SELECT id FROM alterList WHERE studyId = " . $study->id . " AND name = '" . addslashes($alter2['name']) . "'")->queryScalar();
 					$answers[] = $interview->id;
 					$answers[] = Interview::getEgoId($interview->id);
 					if(is_numeric($realId1))
@@ -359,8 +391,10 @@ class DataController extends Controller
 						$answers[] = $alterNum[$alter2['id']];
 					$answers[] = $alter2['name'];
 					foreach ($alter_pair_questions as $question){
+                        #OK FOR SQL INJECTION
 						$answer = q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'] . " AND alterId2 = " . $alter2['id'])->queryScalar();
-						$skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'] . " AND alterId2 = " . $alter2['id'])->queryScalar();
+                        #OK FOR SQL INJECTION
+                        $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'] . " AND alterId2 = " . $alter2['id'])->queryScalar();
 						if($answer && $skipReason == "NONE"){
 							if($question['answerType'] == "SELECTION"){
 								$answers[] = $options[$answer];
@@ -404,7 +438,9 @@ class DataController extends Controller
 		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
 			die("nothing to export");
 
-		$study = Study::model()->findByPk($_POST['studyId']);
+        #OK FOR SQL INJECTION
+		$study = Study::model()->findByPk((int)$_POST['studyId']);
+        #OK FOR SQL INJECTION
 		$optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
 
 		// create an array with option ID as key
@@ -424,6 +460,7 @@ class DataController extends Controller
 		$headers[] = "RESPONSE";
 		echo implode(',', $headers) . "\n";
 
+        #OK FOR SQL INJECTION
 		$other_qs = q("SELECT * FROM question WHERE otherSpecify = 1 AND studyId = ".$study->id)->queryAll();
 		$interviews = Interview::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
 
@@ -435,6 +472,7 @@ class DataController extends Controller
 				if($question['subjectType'] == "ALTER"){
 					$alters = Alters::model()->findAllByAttributes(array('interviewId'=>$interview->id));
 					foreach($alters as $alter){
+                        #OK FOR SQL INJECTION
 						$response = q("SELECT otherSpecifyText FROM answer WHERE questionId = " . $question['id'] . " AND interviewId = " . $interview->id . "AND alterId1 = " . $alter->id)->queryScalar();
 						$responses = array();
 						foreach(preg_split('/;;/', $response) as $other){
@@ -454,6 +492,7 @@ class DataController extends Controller
 						flush();
 					}
 				}else{
+                    #OK FOR SQL INJECTION
 					$response = q("SELECT otherSpecifyText FROM answer WHERE questionId = " . $question['id'] . " AND interviewId = " . $interview->id)->queryScalar();
 					$responses = array();
 					foreach(preg_split('/;;/', $response) as $other){
@@ -482,7 +521,8 @@ class DataController extends Controller
 		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
 			die("nothing to export");
 
-		$study = Study::model()->findByPk($_POST['studyId']);
+		$study = Study::model()->findByPk((int)$_POST['studyId']);
+        #OK FOR SQL INJECTION
 		$alters = q("SELECT * FROM alterList WHERE studyId = " . $study->id)->queryAll();
 
 		// start generating export file
@@ -511,25 +551,27 @@ class DataController extends Controller
 		Yii::app()->end();
 	}
 
-	public function actionSavegraph()
+    public function actionSavegraph()
+    {
+        if($_POST['Graph']){
+            $graph = Graph::model()->findByAttributes(array("interviewId"=>$_POST['Graph']['interviewId'],"expressionId"=>$_POST['Graph']['expressionId']));
+            if(!$graph)
+                $graph = new Graph;
+            $graph->attributes = $_POST['Graph'];
+            if($graph->save()){
+                echo "success";
+                //$url =  "graphId=" . $graph->id . "&interviewId=" . $graph->interviewId . "&expressionId=".$graph->expressionId."&params=".urlencode($graph->params);
+                //Yii::app()->request->redirect($this->createUrl("/data/visualize?" . $url));
+            }
+        }
+    }
+
+	public function actionDeletegraph()
 	{
-		if($_POST['Graph']){
-			if($_POST['Graph']['id'])
-				$graph = Graph::model()->findByPk($_POST['Graph']['id']);
-			else
-				$graph = new Graph;
-			$graph->attributes = $_POST['Graph'];
-			$check = Graph::model()->findByAttributes(array("interviewId"=>$graph->interviewId,"expressionId"=>$graph->expressionId, "name"=>$graph->name));
-			if($graph->isNewRecord && $check){
-				$url =  "graphId=" . $graph->id . "&interviewId=" . $graph->interviewId . "&expressionId=".$graph->expressionId."&params=".urlencode($graph->params);
-				Yii::app()->user->setFlash('error', "Graph name already exists for this expression!");
-				Yii::app()->request->redirect($this->createUrl("/data/visualize?" . $url));
-			}else{
-				if($graph->save()){
-					$url =  "graphId=" . $graph->id . "&interviewId=" . $graph->interviewId . "&expressionId=".$graph->expressionId."&params=".urlencode($graph->params);
-					Yii::app()->request->redirect($this->createUrl("/data/visualize?" . $url));
-				}
-			}
+		if(isset($_GET['id'])){
+			$graph = Graph::model()->findByPk($_GET['id']);
+			if($graph)
+				$graph->delete();
 		}
 	}
 
@@ -537,8 +579,8 @@ class DataController extends Controller
 	{
 		if(isset($_GET['interviewId']) && isset($_GET['expressionId']) && isset($_GET['alterId'])){
 			$model = Note::model()->findByAttributes(array(
-				'interviewId' => $_GET['interviewId'],
-				'expressionId' => $_GET['expressionId'],
+				'interviewId' => (int)$_GET['interviewId'],
+				'expressionId' => (int)$_GET['expressionId'],
 				'alterId' => $_GET['alterId']
 			));
 			if(!$model){
@@ -556,7 +598,7 @@ class DataController extends Controller
 		if(isset($_POST['Note'])){
 			$new = false;
 			if($_POST['Note']['id']){
-				$note = Note::model()->findByPk($_POST['Note']['id']);
+				$note = Note::model()->findByPk((int)$_POST['Note']['id']);
 			}else{
 				$note = new Note;
 				$new = true;
@@ -564,8 +606,8 @@ class DataController extends Controller
 			$note->attributes = $_POST['Note'];
 			if(!$note->save())
 				print_r($note->errors);
-			if($new)
-				echo $note->alterId;
+
+			echo $note->alterId;
 		}
 	}
 
@@ -573,7 +615,7 @@ class DataController extends Controller
 	{
 		if(isset($_POST['Note'])){
 
-			$note = Note::model()->findByPk($_POST['Note']['id']);
+			$note = Note::model()->findByPk((int)$_POST['Note']['id']);
 			$alterId = $note->alterId;
 			if($note){
 				$note->delete();
@@ -587,7 +629,7 @@ class DataController extends Controller
 			return false;
 		foreach($_POST['export'] as $interviewId=>$selected){
 			if($selected){
-				$model = Interview::model()->findByPk($interviewId);
+				$model = Interview::model()->findByPk((int)$interviewId);
 				if($model){
 					$answers = Answer::model()->findAllByAttributes(array("interviewId"=>$interviewId));
 					foreach($answers as $answer)

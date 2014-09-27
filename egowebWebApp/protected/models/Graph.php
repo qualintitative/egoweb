@@ -7,7 +7,6 @@
  * @property integer $id
  * @property integer $interviewId
  * @property integer $expressionId
- * @property string $json
  * @property string $nodes
  */
 class Graph extends CActiveRecord
@@ -38,12 +37,12 @@ class Graph extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('interviewId, expressionId, json, name, nodes', 'required'),
+			array('interviewId, expressionId, nodes', 'required'),
 			array('interviewId, expressionId', 'numerical', 'integerOnly'=>true),
 			array('params', 'default', "value"=>''),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, interviewId, expressionId, json, nodes', 'safe', 'on'=>'search'),
+			array('id, interviewId, expressionId, nodes', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -67,7 +66,6 @@ class Graph extends CActiveRecord
 			'id' => 'ID',
 			'interviewId' => 'Interview',
 			'expressionId' => 'Expression',
-			'json' => 'Json',
 			'nodes' => 'Nodes',
 		);
 	}
@@ -86,7 +84,6 @@ class Graph extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('interviewId',$this->interviewId);
 		$criteria->compare('expressionId',$this->expressionId);
-		$criteria->compare('json',$this->json,true);
 		$criteria->compare('nodes',$this->nodes,true);
 
 		return new CActiveDataProvider($this, array(

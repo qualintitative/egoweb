@@ -26,8 +26,10 @@ echo CHtml::hiddenField("form", "_form_expression_text");
 
 $criteria=new CDbCriteria;
 if($multi){
+    #OK FOR SQL INJECTION
 	$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " .$multi . ")")->queryColumn();
-	$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
+    #OK FOR SQL INJECTION
+    $studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
 	$criteria=array(
 		'condition'=>"studyId in (" . implode(",", $studyIds) . ")",
 	);
@@ -37,11 +39,16 @@ if($multi){
 		'order'=>'FIELD(subjectType, "EGO_ID", "EGO","ALTER", "ALTER_PAIR", "NETWORK"), ordering',
 	);
 }
-
+$questions = Question::model()->findAll($criteria);
+$qList = array();
+foreach($questions as $question){
+	$studyName = q("SELECT name FROM study WHERE id = " . $question->studyId)->queryScalar();
+	$qList[$question->id] = $studyName . ":" . $question->title;
+}
 echo CHtml::dropdownlist(
 	'questionId',
 	'',
-	CHtml::listData(Question::model()->findAll($criteria), 'id', 'title'),
+	$qList,
 	array('empty' => 'Choose One')
 );
 

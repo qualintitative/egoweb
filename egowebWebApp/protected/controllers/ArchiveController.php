@@ -34,6 +34,7 @@ class ArchiveController extends Controller
 
 		$condition = "id != 0";
 		if(!Yii::app()->user->isSuperAdmin){
+            #OK FOR SQL INJECTION
 			$studies = q("SELECT studyId FROM interviewers WHERE active = 1 AND interviewerId = " . Yii::app()->user->id)->queryColumn();
 			if($studies)
 				$condition = "id IN (" . implode(",", $studies) . ") AND active = 0";
@@ -66,14 +67,14 @@ class ArchiveController extends Controller
 
 	public function actionDelete($id)
 	{
-		$study = Study::model()->findByPk($id);
+		$study = Study::model()->findByPk((int)$id);
 		$study->delete();
 		Yii::app()->request->redirect("/archive");
 	}
 
 	public function actionRestore($id)
 	{
-		$study = Study::model()->findByPk($id);
+		$study = Study::model()->findByPk((int)$id);
 		$study->active = 1;
 		$study->save();
 		Yii::app()->request->redirect("/authoring/edit/" . $study->id);

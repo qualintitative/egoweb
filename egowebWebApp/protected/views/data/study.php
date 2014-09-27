@@ -23,13 +23,13 @@ function deleteInterviews(){
 	}
 }
 </script>
-
+Network Statistics
 <?php echo CHtml::dropdownlist(
     'adjacencyExpressionId',
     "",
     $expressions,
     array(
-    	'empty' => 'Choose One',
+    	'empty' => '(none)',
 		'onchange' => '$("#expressionId").val($(this).val())'
     )
 );

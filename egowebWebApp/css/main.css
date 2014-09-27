@@ -142,7 +142,7 @@ input[type=radio]{
 }
 
 .nicEdit-main {
-	font-family: Oswald Light;
+	font-family: Arial;
 	font-size:18px;
 }
 
@@ -358,10 +358,6 @@ textarea {
     margin:0;
     padding:0;
 }
-@font-face {
-  font-family: 'Oswald Light';
-  src: url('/css/Oswald-Light.ttf') format('truetype');
-}
 
 html, body{
     height:100%;
@@ -520,7 +516,7 @@ td{
 
 .titlelink {
 	float:left;
-	font-family:Oswald Light;
+	font-family:Arial;
 	font-size:20px;
     display:block;
 	padding:15px 0;
@@ -528,7 +524,7 @@ td{
 }
 .title {
 	float:left;
-	font-family:Oswald Light;
+	font-family:Arial;
 	font-size:20px;
 	color:#707070;
     display:block;
@@ -567,13 +563,13 @@ td{
 }
 
 .headingText{
- 	font-family:Oswald Light;
+ 	font-family:Arial;
 	font-size:18px;
 }
 .questionText{
 	background:url("/images/arrow.png") no-repeat;
 	float:left;
- 	font-family:Oswald Light;
+ 	font-family:Arial;
 	font-size:18px;
 	padding:0 20px 20px 20px;
 	width:100%;
