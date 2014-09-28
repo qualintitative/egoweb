@@ -599,9 +599,7 @@ class visualize extends Plugin
         Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.renderers.customShapes/shape-library.js');
         Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.renderers.customShapes/sigma.renderers.customShapes.js');
         Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.layout.forceAtlas2.min.js');
-        Yii::app()->clientScript->registerCssFile(Yii::app()->getBaseUrl().'/css/base.css');
         ?>
-        <div id="container">
             <div id="infovis"></div>
             <div class="col-sm-8 pull-left" id="left-container"></div>
             <div class="col-sm-4 pull-right" id="right-container">
@@ -637,7 +635,6 @@ class visualize extends Plugin
                 <button class="btn btn-danger print-button" style="margin-top:10px" onclick="redraw(resetParams());return false;">Redraw</button>
                 <?php $this->endWidget(); ?>
             </div>
-        </div>
         <script>
             interviewId = <?php echo $this->method; ?>;
             expressionId = <?php echo $this->id; ?>;

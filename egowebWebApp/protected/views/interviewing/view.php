@@ -1,4 +1,4 @@
-<?php
+	<?php
 /* @var $this InterviewingController */
 /* @var $model[$array_id] Answer */
 $this->pageTitle = $study->name;
@@ -121,7 +121,7 @@ $this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterP
 
 <?php if(isset($questions[0])): ?>
 	<?php if(in_array($questions[0]->answerType, $prompts)): ?>
-		<div class="questionText" <?php if($questions[0]->answerType == "ALTER_PROMPT"){ echo " style='width:600px';"; } ?>>
+		<div class="questionText <?php if($questions[0]->answerType == "ALTER_PROMPT"){ echo "col-sm-9"; } ?>">
 		<?php echo Interview::interpretTags($questions[0]->prompt, $interviewId); ?>
 		<?php if($questions[0]->answerType == "PREFACE" && file_exists(Yii::app()->basePath."/../audio/".$studyId . "/PREFACE/" . $questions[0]->id . ".mp3")):?>
 			<script>
@@ -150,7 +150,7 @@ $this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterP
 $first = array_slice($questions, 0, 1);
 $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'answer-form',
-	'htmlOptions'=>array('class'=>$first[0]->subjectType == "NETWORK" ? 'col-sm-4' : 'col-sm-12'),
+	'htmlOptions'=>array('class'=>$first[0]->subjectType == "NETWORK" ? 'col-sm-6' : 'col-sm-12'),
 	'enableAjaxValidation'=>true,
 	'action'=>'/interviewing/save/'.$studyId.($key ? "&key=" . $key : ""),
 ));
@@ -534,7 +534,7 @@ if($rowColor != "" && $question->askingStyleList){
 
 <?php
 if($networkQuestion  && is_numeric($networkQuestion->networkRelationshipExprId)){
-	echo "<div id='interviewing' class='col-sm-8 pull-right'>";
+	echo "<div id='interviewing' class='col-sm-6 pull-right'>";
 	$this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$networkQuestion->networkRelationshipExprId, 'params'=>$networkQuestion->networkParams, 'networkTitle'=>$networkQuestion->title));
 	echo "</div>";
 }
