@@ -35,7 +35,19 @@ $this->breadcrumbs=array(
 		<?php echo $form->passwordField($model,'password'); ?>
 		<?php echo $form->error($model,'password'); ?>
 	</div>
-
+        
+        <?php if($model->scenario == 'captchaRequired'): ?>
+            <div class="row">
+                <?php echo CHtml::activeLabelEx($model,'verifyCode'); ?>
+                <div>
+                <?php $this->widget('CCaptcha'); ?>
+                <?php echo CHtml::activeTextField($model,'verifyCode'); ?>
+                </div>
+                <div class="hint">Please enter the letters as they are shown in the image above.
+                <br/>Letters are not case-sensitive.</div>
+            </div>
+        <?php endif; ?>
+        
 	<div class="row rememberMe">
 		<?php echo $form->checkBox($model,'rememberMe'); ?>
 		<?php echo $form->label($model,'rememberMe'); ?>

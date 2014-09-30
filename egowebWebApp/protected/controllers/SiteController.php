@@ -2,6 +2,8 @@
 
 class SiteController extends Controller
 {
+        public $counter;
+
 	/**
 	 * Declares class-based actions.
 	 */
@@ -51,7 +53,7 @@ class SiteController extends Controller
 	 */
 	public function actionLogin()
 	{
-		$model=new LoginForm;
+		$model = $this->captchaRequired()? new LoginForm('captchaRequired') : new LoginForm;
 
 		// if it is ajax validation request
 		if(isset($_POST['ajax']) && $_POST['ajax']==='login-form')
@@ -66,8 +68,13 @@ class SiteController extends Controller
 			$model->attributes=$_POST['LoginForm'];
 			// validate user input and redirect to the previous page if valid
 			if($model->validate() && $model->login())
-				$this->redirect(Yii::app()->createUrl("admin"));
-		}
+   				$this->redirect(Yii::app()->createUrl("admin"));
+                        else
+                        {
+                            // Otherwise, increment the login attempt counter for captcha
+                            $this->counter = Yii::app()->session->itemAt('captchaRequired') + 1;
+                            Yii::app()->session->add('captchaRequired',$this->counter);
+                        }		}
 		// display the login form
 		$this->render('login',array('model'=>$model));
 	}
@@ -80,4 +87,11 @@ class SiteController extends Controller
 		Yii::app()->user->logout();
 		$this->redirect(Yii::app()->homeUrl);
 	}
+
+        private function captchaRequired()
+        {           
+            // Captcha is required if the login attempt count is equal to or greater than the maximum allowed.
+            return Yii::app()->session->itemAt('captchaRequired') >= Yii::app()->params['maxLoginAttempts'];
+        }
+        
 }
