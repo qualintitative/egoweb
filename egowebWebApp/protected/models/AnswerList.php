@@ -41,6 +41,7 @@ class AnswerList extends CActiveRecord
 		return array(
 			array('id, active, listName, studyId, listOptionNames', 'length', 'max'=>1024),
 			array('id, active, studyId', 'numerical', 'integerOnly'=>true),
+			array('listName', 'filter', 'filter'=>function($param) {return CHtml::encode(strip_tags($param));}),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, active, listName, studyId, listOptionNames', 'safe', 'on'=>'search'),
