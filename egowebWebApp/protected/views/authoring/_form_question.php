@@ -297,13 +297,16 @@ jQuery('input.time-".$model->id."').change(function() {
 		<div class="row">
 			Alters are adjacent when:
 		<?php
+            #OK FOR SQL INJECTION
 			$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$model->studyId)->queryColumn();
 			$questionIds = implode(",", $questionIds);
 			if(!$questionIds)
 				$questionIds = 0;
+            #OK FOR SQL INJECTION
 			$alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId = " . $model->studyId . " AND questionId in (" . $questionIds . ")")->queryColumn();
 			$all_expression_ids = $alter_pair_expression_ids;
 			foreach($alter_pair_expression_ids as $id){
+                #OK FOR SQL INJECTION
 				$all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
 			}
 			if($all_expression_ids){

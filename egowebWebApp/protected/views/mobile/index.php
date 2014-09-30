@@ -1,11 +1,11 @@
 <h1>Installing the iOS App</h1>
-Latest Build: <b>6/17/2014</b>
+Latest Build: <b>8/27/2014</b>
 <br>
 <b>Your device need to be on our list of registered devices to run this app.</b>
 <br><br>
 <ul>
 
-<li>Download the <a href="/EgoWeb_Mobile_Dev.mobileprovision">provision file</a></li>
+<li>Download the <a href="/egowebmobile.mobileprovision">provision file</a></li>
 
 <li>Download the <a href="/EgoWebMobile.ipa">app</a></li>
 

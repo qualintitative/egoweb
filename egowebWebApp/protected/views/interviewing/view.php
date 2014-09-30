@@ -1,4 +1,4 @@
-<?php
+	<?php
 /* @var $this InterviewingController */
 /* @var $model[$array_id] Answer */
 $this->pageTitle = $study->name;
@@ -12,10 +12,6 @@ if(isset($_GET['key']))
 else
 	$key = '';
 }
-	if(isset($_GET['nodes']))
-		$nodes = $_GET['nodes'];
-	else
-		$nodes = "";
 ?>
 <script>
 
@@ -100,11 +96,7 @@ $(function(){
 });
 </script>
 
-<div id="navigation">
-	<div id="navbox">
-		<ul></ul>
-	</div>
-</div>
+
 
 <?php // Alter List Box for Alter Prompt Page ?>
 <?php  if(isset($questions[0]) && $questions[0]->answerType == "ALTER_PROMPT"): ?>
@@ -129,7 +121,7 @@ $this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterP
 
 <?php if(isset($questions[0])): ?>
 	<?php if(in_array($questions[0]->answerType, $prompts)): ?>
-		<div class="questionText" <?php if($questions[0]->answerType == "ALTER_PROMPT"){ echo " style='width:600px';"; } ?>>
+		<div class="questionText <?php if($questions[0]->answerType == "ALTER_PROMPT"){ echo "col-sm-9"; } ?>">
 		<?php echo Interview::interpretTags($questions[0]->prompt, $interviewId); ?>
 		<?php if($questions[0]->answerType == "PREFACE" && file_exists(Yii::app()->basePath."/../audio/".$studyId . "/PREFACE/" . $questions[0]->id . ".mp3")):?>
 			<script>
@@ -155,8 +147,10 @@ $this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterP
 <?php endif;?>
 
 <?php
+$first = array_slice($questions, 0, 1);
 $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'answer-form',
+	'htmlOptions'=>array('class'=>$first[0]->subjectType == "NETWORK" ? 'col-sm-6' : 'col-sm-12'),
 	'enableAjaxValidation'=>true,
 	'action'=>'/interviewing/save/'.$studyId.($key ? "&key=" . $key : ""),
 ));
@@ -165,8 +159,6 @@ $form=$this->beginWidget('CActiveForm', array(
 <?php
 // preload error message if there is one
 $error_id = "";
-
-$networkQuestion = "";
 
 foreach($questions as $question) {
 	if(is_numeric($question->alterId1) && !is_numeric($question->alterId2)){
@@ -292,11 +284,6 @@ foreach($questions as $question) {
 		<div class="orangeText" style="padding: 0 0 20px 20px"><?php echo $phrase; ?></div>
 		<br clear=all>
 	<?php endif; ?>
-
-	<?php
-		if($question->subjectType == "NETWORK" && is_numeric($question->networkRelationshipExprId))
-			$networkQuestion = $question;
-	?>
 
 	<?php
 	// sets row color, which determines formatting of list style questions
@@ -532,30 +519,30 @@ if($rowColor != "" && $question->askingStyleList){
 ?>		</div>
 		<br style="clear:left">
 	<?php endif; ?>
+	<?php
+	if($question->subjectType == "NETWORK")
+		$networkQuestion = $question;
+	else
+		$networkQuestion = "";
+	?>
 <?php endforeach; ?>
 
 		<input name="page" type=hidden value=<?php echo $page ?> />
 		<input name="studyId" type=hidden value=<?php echo $studyId ?> />
 
-<?php
-if($networkQuestion){
-	echo "<input id='Graph_nodes' name='nodes' value='$nodes' style='display:none'>";
-}
-?>
-
 <?php $this->endWidget(); ?>
 
 <?php
-if($networkQuestion){
-	echo "<div id='interviewing' style='margin-left:20px'>";
-	$this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$networkQuestion->networkRelationshipExprId, 'params'=>$networkQuestion->networkParams));
+if($networkQuestion  && is_numeric($networkQuestion->networkRelationshipExprId)){
+	echo "<div id='interviewing' class='col-sm-6 pull-right'>";
+	$this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$networkQuestion->networkRelationshipExprId, 'params'=>$networkQuestion->networkParams, 'networkTitle'=>$networkQuestion->title));
 	echo "</div>";
 }
 ?>
 
 <div id="buttonRow" style="float:left;padding-bottom:20px;clear:left">
 	<?php if($page != 0 ): ?>
-		<a class="graybutton" href="/interviewing/<?php echo $studyId. "?interviewId=". $interviewId . "&page=". ($page - 1) . $key . ($nodes ? "&nodes=" . urlencode($nodes) : ""); ?>">Back</a>
+		<a class="graybutton" href="/interviewing/<?php echo $studyId. "?interviewId=". $interviewId . "&page=". ($page - 1) . $key; ?>">Back</a>
 	<?php endif; ?>
 	<?php if($completed != -1): ?>
 		<?php if($question->answerType != "CONCLUSION"): ?>

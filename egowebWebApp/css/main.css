@@ -7,8 +7,12 @@ body
 	padding: 0;
 	color: #555;
 	font: normal 10pt Arial,Helvetica,sans-serif;
-	background: #EFEFEF;
+	background: #fff;
 	overflow-y: scroll;
+}
+
+#content{
+	background-color: #fff;
 }
 
 .ui-accordion .ui-accordion-content {
@@ -142,7 +146,7 @@ input[type=radio]{
 }
 
 .nicEdit-main {
-	font-family: Oswald Light;
+	font-family: Arial;
 	font-size:18px;
 }
 
@@ -358,10 +362,6 @@ textarea {
     margin:0;
     padding:0;
 }
-@font-face {
-  font-family: 'Oswald Light';
-  src: url('/css/Oswald-Light.ttf') format('truetype');
-}
 
 html, body{
     height:100%;
@@ -370,15 +370,6 @@ html, body{
     border:0;
 }
 
-body{
-    background:#77777a;
-}
-
-fieldset{
-	border:0;
-	padding:0;
-	margin:0;
-}
 
 .graybutton{
 	background:url('/images/gray.png');
@@ -486,14 +477,14 @@ td{
 
 #menubar{
 	background:url('/images/menubar.png');
-	height:36px;
+	height:40px;
 }
 
 #navigation{
 	z-index:1;
 	display:none;
 	margin-top:-30px;
-	margin-left:-40px;
+	margin-left:40px;
 	background:#fff;
 	position:absolute;
 	max-height:400px;
@@ -520,7 +511,7 @@ td{
 
 .titlelink {
 	float:left;
-	font-family:Oswald Light;
+	font-family:Arial;
 	font-size:20px;
     display:block;
 	padding:15px 0;
@@ -528,7 +519,7 @@ td{
 }
 .title {
 	float:left;
-	font-family:Oswald Light;
+	font-family:Arial;
 	font-size:20px;
 	color:#707070;
     display:block;
@@ -567,16 +558,15 @@ td{
 }
 
 .headingText{
- 	font-family:Oswald Light;
+ 	font-family:Arial;
 	font-size:18px;
 }
 .questionText{
 	background:url("/images/arrow.png") no-repeat;
 	float:left;
- 	font-family:Oswald Light;
+ 	font-family:Arial;
 	font-size:18px;
 	padding:0 20px 20px 20px;
-	width:100%;
 }
 
 .multiSelect{
@@ -806,4 +796,18 @@ label.prompt , .grid-view label {
 
 .grid-view label {
 	width:85%;
+}
+
+#infovis {
+    position:relative;
+    width:100%;
+    height:480px;
+    margin:auto;
+    background-color: #fff;
+    overflow:hidden;
+}
+
+#print-view #infovis{
+    width:900px;
+    height:675px;
 }

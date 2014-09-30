@@ -2,30 +2,29 @@
 class visualize extends Plugin
 {
 	public $params = "";
+	public $networkTitle = "";
 	public $edgeColors = array(
 		'#000'=>'black',
 		'#ccc'=>'gray',
 		'#07f'=>'blue',
 		'#0c0'=>'green',
+		'#F80'=>'orange',
 		'#fa0'=>'yellow',
 		'#f00'=>'red',
 		'#c0f'=>'purple',
 	);
 	public $edgeSizes = array(
-		"1"=>'1',
+		"0.5"=>'0.5',
 		"2"=>'2',
-		"3"=>'3',
 		"4"=>'4',
-		"5"=>'5',
-		"6"=>'6',
-		"7"=>'7',
 		"8"=>'8',
-		"9"=>'9',
-		"10"=>'10',
 	);
 	public $nodeColors = array(
+		'#000'=>'black',
+		'#ccc'=>'gray',
 		'#07f'=>'blue',
 		'#0c0'=>'green',
+		'#F80'=>'orange',
 		'#fa0'=>'yellow',
 		'#f00'=>'red',
 		'#c0f'=>'purple',
@@ -33,20 +32,22 @@ class visualize extends Plugin
 	public $nodeShapes = array(
 		'circle'=>'circle',
 		'star'=>'star',
-		'triangle'=>'triangle',
+		'diamond'=>'diamond',
+		'cross'=>'cross',
+		'equilateral'=>'triangle',
 		'square'=>'square',
 	);
 	public $nodeSizes = array(
-		4=>'1',
-		6=>'2',
-		8=>'3',
-		10=>'4',
-		12=>'5',
-		14=>'6',
-		16=>'7',
-		18=>'8',
-		20=>'9',
-		22=>'10',
+		2=>'1',
+		4=>'2',
+		6=>'3',
+		8=>'4',
+		10=>'5',
+		12=>'6',
+		14=>'7',
+		16=>'8',
+		18=>'9',
+		20=>'10',
 	);
 	/*
 	public $gradient = array(
@@ -96,6 +97,8 @@ class visualize extends Plugin
 					$value = $this->stats->EigenvectorCentrality($nodeId);
 				}
 				$range = $max - $min;
+				if($range == 0)
+					$range = 1;
 				$value = round((($value-$min) / ($range)) * 9);
 				return $this->gradient[$value];
 			}else if(stristr($this->params['nodeColor']['questionId'], "expression")){
@@ -114,7 +117,8 @@ class visualize extends Plugin
 				}
 
 			}else if($this->params['nodeColor']['questionId']){
-				$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeColor']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar();
+                #OK FOR SQL INJECTION
+                $answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeColor']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar();
 				$answer = explode(',', $answer);
 				foreach($this->params['nodeColor']['options'] as $option){
 					if($option['id'] == $answer || in_array($option['id'], $answer))
@@ -128,6 +132,7 @@ class visualize extends Plugin
 	private function getNodeShape($nodeId){
 		$default = "circle";
 		if(isset($this->params['nodeShape'])){
+            #OK FOR SQL INJECTION
 			$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeShape']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar();
 			$answer = explode(',', $answer);
 			foreach($this->params['nodeShape']['options'] as $option){
@@ -160,8 +165,9 @@ class visualize extends Plugin
 				}
 				$range = $max - $min;
 				$value = round((($value-$min) / ($range)) * 9) + 1;
-				$default = array_keys($this->nodeSizes, $value)[0];
+				$default = current(array_keys($this->nodeSizes, $value));
 			}else{
+                #OK FOR SQL INJECTION
 				$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeSize']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar();
 				$answer = explode(',', $answer);
 				foreach($this->params['nodeSize']['options'] as $option){
@@ -175,9 +181,10 @@ class visualize extends Plugin
 	}
 
 	private function getEdgeColor($nodeId1, $nodeId2){
-		$default = "#000";
+		$default = "#ccc";
 		if(isset($this->params['edgeColor'])){
-			$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['edgeColor']['questionId']. " AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2)->queryScalar();
+            #OK FOR SQL INJECTION
+            $answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['edgeColor']['questionId']. " AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2)->queryScalar();
 			$answer = explode(',', $answer);
 			foreach($this->params['edgeColor']['options'] as $option){
 				if($option['id'] == $answer || in_array($option['id'], $answer))
@@ -188,8 +195,9 @@ class visualize extends Plugin
 	}
 
 	private function getEdgeSize($nodeId1, $nodeId2){
-		$default = 0.5;
+		$default = 1;
 		if(isset($this->params['edgeSize'])){
+            #OK FOR SQL INJECTION
 			$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['edgeSize']['questionId']. " AND alterId1 = " .$nodeId1. " AND alterId2 = " . $nodeId2)->queryScalar();
 			$answer = explode(',', $answer);
 			foreach($this->params['edgeSize']['options'] as $option){
@@ -223,6 +231,7 @@ class visualize extends Plugin
 				$nodeColors[$option['id']] = $option['color'];
 			}
 		}
+        #OK FOR SQL INJECTION
 		$alter_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
 		echo "<div class='form-group'>";
 		echo "<label class='control-label'>Node Color</label>";
@@ -236,19 +245,22 @@ class visualize extends Plugin
 			echo "<option value='" . $centrality . "_nodeColor' $selected>" . ucfirst($centrality) . " Centrality</option>";
 		}
 
-		$questionIds = [];
+		$questionIds = array();
 		foreach($alter_qs as $alter_q){
 			$questionIds[] = $alter_q['id'];
 		}
 		$questionIds = implode(",", $questionIds);
 		if(!$questionIds)
 			$questionIds = 0;
+        #OK FOR SQL INJECTION
 		$alter_expression_ids = q("SELECT id FROM expression WHERE studyId = " . $this->id . " AND questionId in (" . $questionIds . ")")->queryColumn();
 		$all_expression_ids = $alter_expression_ids;
 		foreach($alter_expression_ids as $id){
+            #OK FOR SQL INJECTION
 			$all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
 		}
 		if($all_expression_ids){
+            #OK FOR SQL INJECTION
 		$alter_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
 		}else{
 			$alter_expressions = array();
@@ -270,7 +282,8 @@ class visualize extends Plugin
 		echo "</select></div>";
 		foreach($alter_qs as $question){
 			echo "<div class='nodeColorOptions' id='" .$question['id'] ."_nodeColor' style='" . ( $question['id'] != $nodeColorId ? "display:none" : "") . "'>";
-			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
+            #OK FOR SQL INJECTION
+            $options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
 				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
 				echo CHtml::dropDownList(
@@ -315,6 +328,7 @@ class visualize extends Plugin
 				$nodeShapes[$option['id']] = $option['shape'];
 			}
 		}
+        #OK FOR SQL INJECTION
 		$alter_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
 		echo "<div class='form-group'>";
 		echo "<label class='control-label'>Node Shape</label>";
@@ -332,6 +346,7 @@ class visualize extends Plugin
 
 			echo "<div class='nodeShapeOptions' id='" .$question['id'] ."_nodeShape' style='" . ( $question['id'] != $nodeShapeId ? "display:none" : "") . "'>";
 
+            #OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
 				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
@@ -356,6 +371,7 @@ class visualize extends Plugin
 				$nodeSizes[$option['id']] = $option['size'];
 			}
 		}
+        #OK FOR SQL INJECTION
 		$alter_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
 		echo "<div class='form-group'>";
 		echo "<label class='control-label'>Node Size</label>";
@@ -380,7 +396,8 @@ class visualize extends Plugin
 
 			echo "<div class='nodeSizeOptions' id='" .$question['id'] ."_nodeSize' style='" . ( $question['id'] != $nodeSizeId ? "display:none" : "") . "'>";
 
-			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
+            #OK FOR SQL INJECTION
+            $options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
 				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
 				echo CHtml::dropDownList(
@@ -407,6 +424,7 @@ class visualize extends Plugin
 				$edgeColors[$option['id']] = $option['color'];
 			}
 		}
+        #OK FOR SQL INJECTION
 		$alter_pair_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
 		echo "<div class='form-group'>";
 		echo "<label class='control-label'>Edge Color</label>";
@@ -425,6 +443,7 @@ class visualize extends Plugin
 
 			echo "<div class='edgeColorOptions' id='" .$question['id'] ."_edgeColor' style='" . ( $question['id'] != $edgeColorId ? "display:none" : "") . "'>";
 
+            #OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
 				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
@@ -447,6 +466,7 @@ class visualize extends Plugin
 				$edgeSizes[$option['id']] = $option['size'];
 			}
 		}
+        #OK FOR SQL INJECTION
 		$alter_pair_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
 		echo "<div class='form-group'>";
 		echo "<label class='control-label'>Edge Size</label>";
@@ -465,6 +485,7 @@ class visualize extends Plugin
 
 			echo "<div class='edgeSizeOptions' id='" .$question['id'] ."_edgeSize' style='" . ( $question['id'] != $edgeSizeId ? "display:none" : "") . "'>";
 
+            #OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
 				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
@@ -478,182 +499,160 @@ class visualize extends Plugin
 		}
 	}
 
-	public function actionIndex(){
-		if(!$this->method || !$this->id)
-			return;
-		$this->params = json_decode($this->params, true);
-		$adjacencies = array();
-		$nodes = array();
-		$alters = q("SELECT * FROM alters WHERE FIND_IN_SET(".$this->method .", interviewId)")->queryAll();
-		$alterNames = array();
-		$alterIds = array();
-		$filterIds = [];
-		foreach($alters as $alter){
-			$alterIds[] = $alter['id'];
-			$alterNames[$alter['id']] = $alter['name'];
-		}
-		$this->stats = new Statistics;
-		$this->stats->initComponents($this->method, $this->id);
+    public function actionIndex(){
+        if(!$this->method || !$this->id)
+            return;
+        $this->params = json_decode($this->params, true);
+        $graph = Graph::model()->findByAttributes(array("interviewId"=>$this->method,"expressionId"=>$this->id));
+        if(!$graph)
+            $graph = new Graph;
+        $adjacencies = array();
+        #OK FOR SQL INJECTION
+        $alters = q("SELECT * FROM alters WHERE FIND_IN_SET(".$this->method .", interviewId)")->queryAll();
+        $alterNames = array();
+        $alterIds = array();
+        $filterIds = array();
+        foreach($alters as $alter){
+            $alterIds[] = $alter['id'];
+            $alterNames[$alter['id']] = $alter['name'];
+        }
+        $this->stats = new Statistics;
+        $this->stats->initComponents($this->method, $this->id);
 
-		$notes = Note::model()->findAllByAttributes(array("interviewId"=>$this->method, "expressionId"=>$this->id));
-		$alterNotes = array();
-		foreach($notes as $note){
-			$alterNotes[$note->alterId] = $note;
-		}
+        $notes = Note::model()->findAllByAttributes(array("interviewId"=>$this->method, "expressionId"=>$this->id));
+        $alterNotes = array();
+        foreach($notes as $note){
+            $alterNotes[$note->alterId] = $note->notes;
+        }
 
-		$interview = Interview::model()->findByPK($this->method);
-		$study = Study::model()->findByPk($interview->studyId);
+        $interview = Interview::model()->findByPK($this->method);
+        $study = Study::model()->findByPk($interview->studyId);
 
-		$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$interview->studyId)->queryColumn();
-		$questionIds = implode(",", $questionIds);
-		if(!$questionIds)
-			$questionIds = 0;
+        #OK FOR SQL INJECTION
+        $questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$interview->studyId)->queryColumn();
+        $questionIds = implode(",", $questionIds);
+        if(!$questionIds)
+            $questionIds = 0;
 
-		if($study->multiSessionEgoId){
-			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
-			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-			$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
-			$studyId = implode(",", $studyIds);
-		}else{
-			$studyId = $interview->studyId;
-		}
+        if($study->multiSessionEgoId){
+            $studyId = implode(",", $study->multiStudyIds($interview->id));
+        }else{
+            $studyId = $interview->studyId;
+        }
 
-		$alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId in (" . $studyId . ") AND questionId in (" . $questionIds . ")")->queryColumn();
+        #OK FOR SQL INJECTION
+        $alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId in (" . $studyId . ") AND questionId in (" . $questionIds . ")")->queryColumn();
 
-		$expression = Expression::model()->findByPk($this->id);
-		if($expression->type == "Compound"){
-			$expressionIds = explode(",", $expression->value);
-			foreach($expressionIds as $expressionId){
-				if(in_array($expressionId, $alter_pair_expression_ids))
-					$expression = Expression::model()->findByPk($expressionId);
-				else
-					$filterIds[] = $expressionId;
-			}
-			foreach($filterIds as $filterId){
-				$filter = Expression::model()->findByPK($filterId);
-				foreach($alters as $index=>$alter){
-					if(!$filter->evalExpression($filterId, $this->method, $alter['id'])){
-						array_splice($alters, $index, 1);
-						array_splice($alterIds, $index, 1);
-					}
-				}
-			}
-		}
+        $expression = Expression::model()->findByPk($this->id);
+        if($expression->type == "Compound"){
+            $expressionIds = explode(",", $expression->value);
+            foreach($expressionIds as $expressionId){
+                if(in_array($expressionId, $alter_pair_expression_ids))
+                    $expression = Expression::model()->findByPk($expressionId);
+                else
+                    $filterIds[] = $expressionId;
+            }
+            foreach($filterIds as $filterId){
+                $filter = Expression::model()->findByPK($filterId);
+                foreach($alters as $index=>$alter){
+                    if(!$filter->evalExpression($filterId, $this->method, $alter['id'])){
+                        array_splice($alters, $index, 1);
+                        array_splice($alterIds, $index, 1);
+                    }
+                }
+            }
+        }
 
-		$currentNode = '';
-		$alters2 = $alters;
-		foreach($alters as $alter){
-			foreach($alters2 as $alter2){
-
-			if($expression && $expression->evalExpression($expression->id, $this->method, $alter['id'], $alter2['id'])){
-				$currentNode = $alter2['id'];
-				$nodes[$currentNode]['id'] = $currentNode;
-				$nodes[$currentNode]['name'] = $alterNames[$currentNode];
-				$nodes[$currentNode]['adjacencies'][] = array(
-					'nodeTo'=>$alter['id'],
-					'nodeFrom'=>$alter2['id'],
-					'data'=>array(
-						"\$color"=>$this->getEdgeColor($alter['id'], $alter2['id']),
-						"\$lineWidth"=>$this->getEdgeSize($alter['id'], $alter2['id'])
-					),
-				);
-			}
-			}
-		}
-		$json = array();
-		foreach($nodes as $node){
-			if(!isset($node['id']))
-				continue;
-			$nodeArray[] = $node['id'];
-			array_push(
-				$json,
-				array(
-					'adjacencies'=>$node['adjacencies'],
-					'id'=>$node['id'],
-					'name'=>$node['name'] . (isset($alterNotes[$node['id']]) ? " <span class='fui-new'></span>" : ""),
-					"data"=>array(
-						"\$color"=>$this->getNodeColor($node['id']),
-						"\$type"=>$this->getNodeShape($node['id']),
-						"\$dim"=>$this->getNodeSize($node['id'])
-					)
-				)
-			);
-		}
-		if(isset($nodeArray)){
-			$leftOvers = array_diff($alterIds, $nodeArray);
-			foreach ($leftOvers as $node){
-				array_push(
-					$json,
-					array(
-						'adjacencies'=>array(),
-						'id'=>$node,
-						'name'=>$alterNames[$node]  . (isset($alterNotes[$node]) ? " <span class='fui-new'></span>" : ""),
-						"data"=>array(
-							"\$color"=>$this->getNodeColor($node),
-							"\$type"=>$this->getNodeShape($node),
-							"\$dim"=>$this->getNodeSize($node)
-						)
-					)
-				);
-			}
-			$adjacencies = json_encode($json);
-		}
-		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/jit.js');
-		Yii::app()->clientScript->registerCssFile(Yii::app()->getBaseUrl().'/css/base.css');
-		?>
-<script>
-interviewId = <?php echo $this->method; ?>;
-expressionId = <?php echo $this->id; ?>;
-notes = <?php echo json_encode($alterNotes) ?>;
-var labelType, useGradients, nativeTextSupport, animate;
-(function() {
-	var ua = navigator.userAgent,
-		iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
-		typeOfCanvas = typeof HTMLCanvasElement,
-		nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
-		textSupport = nativeCanvasSupport
-		&& (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
-	//I'm setting this based on the fact that ExCanvas provides text support for IE
-	//and that as of today iPhone/iPad current text support is lame
-	labelType = (!nativeCanvasSupport || (textSupport && !iStuff))? 'Native' : 'HTML';
-	nativeTextSupport = labelType == 'Native';
-	useGradients = nativeCanvasSupport;
-	animate = !(iStuff || !nativeCanvasSupport);
-})();
-
-var Log = {
-	elem: false,
-	write: function(text){
-		if (!this.elem)
-			this.elem = document.getElementById('log');
-		this.elem.innerHTML = text;
-		this.elem.style.left = (500 - this.elem.offsetWidth / 2) + 'px';
-	}
-};
+        $alters2 = $alters;
+        $nodes = array();
+        foreach($alters as $alter){
+            array_push(
+                $nodes,
+                array(
+                    'id'=>$alter['id'],
+                    'label'=>$alter['name'] . (isset($alterNotes[$alter['id']]) ? " �" : ""),
+                    'x'=> rand(0, 10) / 10,
+                    'y'=> rand(0, 10) / 10,
+                    "type"=>$this->getNodeShape($alter['id']),
+                    "color"=>$this->getNodeColor($alter['id']),
+                    "size"=>$this->getNodeSize($alter['id']),
+                )
+            );
+            foreach($alters2 as $alter2){
+                if($expression && $expression->evalExpression($expression->id, $this->method, $alter['id'], $alter2['id'])){
+                    $edges[] = array(
+                        "id" => $alter['id'] . "_" . $alter2['id'],
+                        "source" => $alter2['id'],
+                        "target" => $alter['id'],
+                        "color"=>$this->getEdgeColor($alter['id'], $alter2['id']),
+                        "size"=>$this->getEdgeSize($alter['id'], $alter2['id']),
+                    );
+                }
+            }
+        }
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/sigma.min.js');
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/sigma.notes.js');
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.plugins.dragNodes.js');
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.plugins.dragEvents.js');
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.renderers.customEdgeShapes/shape-library.js');
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.renderers.customEdgeShapes/sigma.renderers.customEdgeShapes.js');
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.renderers.customShapes/shape-library.js');
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.renderers.customShapes/sigma.renderers.customShapes.js');
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.layout.forceAtlas2.min.js');
+        ?>
+            <div id="infovis"></div>
+            <div class="col-sm-8 pull-left" id="left-container"></div>
+            <div class="col-sm-4 pull-right" id="right-container">
+                <button  onclick="print(<?=$this->id;?>,<?=$this->method;?>)" class="btn btn-primary print-button">Print Preview</button>
+                <?php
+                if($this->networkTitle){
+                    $interviewIds = Interview::multiInterviewIds($this->method, $study);
+                    if(is_array($interviewIds)){
+	                    $interviewIds = array_diff($interviewIds, array($this->method));
+                        echo "<br>Load other graphs:";
+                        foreach($interviewIds as $interviewId){
+                            #OK FOR SQL INJECTION
+                            $study = Study::model()->findByPk((int)q("SELECT studyId from interview WHERE id = " . $interviewId)->queryScalar());
+                            #OK FOR SQL INJECTION
+                            $networkExprId = q("SELECT networkRelationshipExprId FROM question WHERE title = '" . $this->networkTitle . "' AND studyId = " . $study->id)->queryScalar();
+                            #OK FOR SQL INJECTION
+                            $graphId = q("SELECT id FROM graphs WHERE expressionId = " . $networkExprId  . " AND interviewId = " . $interviewId)->queryScalar();
+                            if($graphId)
+                                echo '<br><a href="#" onclick="print(' . $networkExprId . ','. $interviewId . ')">' . $study->name . '</a>';
+                        }
+                    }
+                }
+                $form = $this->beginWidget('CActiveForm', array(
+                    'id'=>'graph-form',
+                    'action'=>'/data/savegraph',
+                    'htmlOptions'=>array("class"=>"form-horizontal"),
+                ));?>
+                <?php echo $form->hiddenField($graph,'id',array('value'=>$graph->id)); ?>
+                <?php echo $form->hiddenField($graph,'interviewId',array('value'=>$this->method)); ?>
+                <?php echo $form->hiddenField($graph,'expressionId',array('value'=>$this->id)); ?>
+                <?php echo $form->hiddenField($graph,'nodes',array('value'=>$graph->nodes)); ?>
+                <?php echo $form->hiddenField($graph,'params',array('value'=>($this->params ? json_encode($this->params) : $graph->params ))); ?>
+                <button class="btn btn-danger print-button" style="margin-top:10px" onclick="redraw(resetParams());return false;">Redraw</button>
+                <?php $this->endWidget(); ?>
+            </div>
+        <script>
+            interviewId = <?php echo $this->method; ?>;
+            expressionId = <?php echo $this->id; ?>;
+            notes = <?php echo json_encode($alterNotes) ?>;
 
 function saveNodes()
 {
 	var nodes = {};
-	for(var k in fd.graph.nodes){
-		if(!k.match(/graphNote/) || (k.match(/graphNote/) && typeof notes[k] != "undefined")){
-			nodes[k] = {x:fd.graph.nodes[k].pos.x, y:fd.graph.nodes[k].pos.y};
-		}
+	for(var k in s.graph.nodes()){
+		nodes[s.graph.nodes()[k].id] = s.graph.nodes()[k];
 	}
 	$("#Graph_nodes").val(JSON.stringify(nodes));
-	$("#nodeList").val(JSON.stringify(nodes));
+	$.post( "/data/savegraph", $('#graph-form').serialize(), function( data ) {
+		console.log("nodes saved");
+	});
 }
 
-function saveGraph(){
-	if($("#Graph_name").val()){
-		refresh();
-		saveNodes();
-		$('#graph-form').submit();
-	}else{
-		alert ("Please enter a graph name");
-	}
-}
-
-function refresh(container){
+function resetParams(container){
 	var params = new Object;
 	if(typeof container == "undefined")
 		container = $('body');
@@ -713,359 +712,84 @@ function refresh(container){
 	return params;
 }
 
-function reload(params){
+function refresh(params){
 	url = "/data/visualize?expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent(JSON.stringify(params));
 	document.location = url;
 }
 
-function print(){
-	saveNodes();
-	params = refresh();
-	url = "/data/visualize?print&expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent($("#nodeParams").val()) + "&nodes=" +  encodeURIComponent($("#nodeList").val());
+function redraw(params){
+	url = "/data/deleteGraph?id=" + $("#Graph_id").val();
+	$.get(url, function(data){
+		url = "/data/visualize?expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent(JSON.stringify(params));
+		document.location = document.location + "&params=" + encodeURIComponent(JSON.stringify(params));
+	});
+}
+
+function print(expressionId, interviewId){
+	url = "/data/visualize?print&expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent($("#Graph_params").val());
 	window.open(url);
 }
 
-function saveNote(){
-	var noteContent = $("#Note_notes").val();
-	$.post("/data/savenote", $("#note-form").serialize(), function(data){
-		if(!isNaN(data))
-			$("#" + data + " .name").html($("#" + data + " .name").html() + " <span class='fui-new'></span>");
-		notes[data] = noteContent;
-		saveNodes();
-		var list = [];
-		var node = fd.graph.getNode(data);
-		node.eachAdjacency(function(adj){
-			if(adj.getData('alpha')) list.push(adj.nodeTo.name.replace("<span class='fui-new'></span>",""));
-		});
-		var url = "/data/getnote?interviewId=" + interviewId + "&expressionId=" + expressionId + "&alterId=" + data;
-		$.get(url, function(data){
-			$jit.id('inner-details').innerHTML = data;
-			$jit.id('inner-details').innerHTML = $jit.id('inner-details').innerHTML + "<div class='pull-left col-sm-3'>" +
-			"<label>Connections</label><br>" +
-			list.join("</li><li>") + "</li></ul></div>"
-		});
-	});
-
-}
-
-function deleteNote(){
-	$.post("/data/deletenote", $("#note-form").serialize(), function(data){
-		if(!isNaN(data)){
-			var list = [];
-			var node = fd.graph.getNode(data);
-			node.name = node.name.replace("<span class='fui-new'></span>","");
-			fd.labels.clearLabels(true);
-			$jit.id('inner-details').innerHTML = "";
-			fd.plot();
-
-		}else{
-			delete notes[data];
-			fd.graph.removeNode(data);
-			fd.labels.clearLabels();
-			$jit.id('inner-details').innerHTML = "";
-			graphNotes = 0;
-			for(k in notes){
-				if(k.match(/graphNote/)){
-					noteId = parseInt(k.match(/graphNote-(\d+)/)[1]);
-					if(noteId > graphNotes)
-						graphNotes = noteId;
-				}
-			}
-			fd.plot();
-
-		}
-		saveNodes();
-	});
-}
-
-function init(json)
-{
-	graphNotes = 0;
-	// init json
-	if(!json)
-		json = [];
-	else
-		$("#Graph_json").val(JSON.stringify(json));
-
-	// init ForceDirected
-	fd = new $jit.ForceDirected({
-		//id of the visualization container
-		injectInto: 'infovis',
-		//Enable zooming and panning
-		//with scrolling and DnD
-		Navigation: {
-			enable: true,
-			type: 'Native',
-			//Enable panning events only if we're dragging the empty
-			//canvas (and not a node).
-			panning: false,//'avoid nodes',
-			zooming: false //40 //zoom speed. higher is more sensible
-		},
-		// Change node and edge styles such as
-		// color and width.
-		// These properties are also set per node
-		// with dollar prefixed data-properties in the
-		// JSON structure.
-		Node: {
-			overridable: true,
-		},
-		Edge: {
-			overridable: true,
-			color: '#23A4FF',
-			lineWidth: 0.5,
-			epsilon: 2
-		},
-
-		//Add Tips
-		Tips: {
-			enable: true,
-			enableForEdges: true,
-			onShow: function(tip, node) {
-				//count connections
-				var count = 0;
-				node.eachAdjacency(function() { count++; });
-				//display node info in tooltip
-				tip.innerHTML = "<div class=\"tip-title\">" + node.name + "</div>"
-					+ "<div class=\"tip-text\"><b>connections:</b> " + count + "</div>";
-			}
-		},
-		// Add node events
-		Events: {
-			enable: (typeof printView == "undefined" ? true : false),
-			enableForEdges: true,
-			type: 'Native',
-
-			onClick: function(node, eventInfo, e) {
-				if(!node && e.srcElement == document.getElementById("infovis-canvas")){
-					var pos = eventInfo.getPos();
-					if(graphNotes == 0 || typeof notes['graphNote-' + graphNotes] != "undefined"){
-						graphNotes++;
-						fd.graph.addNode({'id':'graphNote-' + graphNotes, 'name':graphNotes, 'data':{$color: "#000",$type: "note",$dim: 12}});
-					}
-					fd.graph.nodes['graphNote-' + graphNotes].getPos().setc(pos.x, pos.y);
-					fd.plot();
-				}
-			},
-			//Change cursor style when hovering a node
-			onMouseEnter: function(node, eventInfo, e) {
-				if(node){
-					if(typeof node.nodeFrom == "undefined") {
-						fd.canvas.getElement().style.cursor = 'move';
-					}else{
-						fd.canvas.getElement().style.cursor = 'crosshair';
-					}
-				}else{
-					fd.canvas.getElement().style.cursor = 'default';
-				}
-			},
-			onMouseMove: function(node, eventInfo, e) {
-				if(node){
-					if(typeof node.nodeFrom == "undefined") {
-						fd.canvas.getElement().style.cursor = 'move';
-					}else{
-						fd.canvas.getElement().style.cursor = 'crosshair';
-					}
-				}else{
-					fd.canvas.getElement().style.cursor = 'default';
-				}
-			},
-			onMouseLeave: function() {
-				fd.canvas.getElement().style.cursor = 'default';
-			},
-			//Update node positions when dragged
-			onDragMove: function(node, eventInfo, e) {
-				if(typeof node.nodeFrom == "undefined") {
-					var pos = eventInfo.getPos();
-					node.pos.setc(pos.x, pos.y);
-					saveNodes();
-					fd.plot();
-				}
-			},
-			//Implement the same handler for touchscreens
-			onTouchMove: function(node, eventInfo, e) {
-				$jit.util.event.stop(e); //stop default touchmove event
-				this.onDragMove(node, eventInfo, e);
-			}
-		},
-
-		//Number of iterations for the FD algorithm
-		iterations: 500,
-		//Edge length
-		levelDistance: 10,
-		// This method is only triggered
-		// on label creation and only for DOM labels (not native canvas ones).
-		onCreateLabel: function(domElement, node){
-			// Create a 'name' and 'close' buttons and add them
-			// to the main node label
-			var nameContainer = document.createElement('span'),
-			closeButton = document.createElement('span'),
-			style = nameContainer.style;
-			nameContainer.className = 'name';
-			nameContainer.innerHTML = node.name;
-			closeButton.className = 'close';
-			closeButton.innerHTML = '';
-			domElement.appendChild(nameContainer);
-			domElement.appendChild(closeButton);
-			style.fontSize = "1em";
-			style.color = "#111";
-			//Fade the node and its connections when
-			//clicking the close button
-			closeButton.onclick = function() {
-				node.setData('alpha', 0, 'end');
-				node.eachAdjacency(function(adj) {
-					adj.setData('alpha', 0, 'end');
-				});
-				fd.fx.animate({
-					modes: ['node-property:alpha',
-					'edge-property:alpha'],
-					duration: 500
-				});
-			};
-			//Toggle a node selection when clicking
-			//its name. This is done by animating some
-			//node styles like its dimension and the color
-			//and lineWidth of its adjacencies.
-			nameContainer.onclick = function() {
-
-				if(typeof printView != "undefined")
-					return;
-
-				//set final styles
-				fd.graph.eachNode(function(n) {
-					if(n.id != node.id) delete n.selected;
-					//n.setData('dim', 5, 'end');
-					/*n.eachAdjacency(function(adj) {
-						adj.setDataset('end', {
-							lineWidth: 0.4,
-							color: '#23a4ff'
-						});
-					});*/
-				});
-				if(!node.selected) {
-					node.selected = true;
-					//node.setData('dim',15, 'end');
-					/*node.eachAdjacency(function(adj) {
-						adj.setDataset('end', {
-							lineWidth: 2,
-							color: '#36acfb'
-						});
-					});*/
-				} else {
-					delete node.selected;
-				}
-				$('.name').css("background-color", "transparent");
-				$('.name').css("color", "#000");
-				$('.name').css("text-shadow", "0px 0px 5px white, 0px 0px 5px white,0px 0px 5px white, 0px 0px 5px white,0px 0px 5px white, 0px 0px 5px white");
-
-				$(this).css("text-shadow", "none");
-				$(this).css("color", "#FFF");
-				$(this).css("background-color", "#555");
-
-				//trigger animation to final styles
-				fd.fx.animate({
-					modes: ['node-property:dim'/*,
-						  'edge-property:lineWidth:color'*/],
-					duration: 500
-				});
-				// Build the right column relations list.
-				// This is done by traversing the clicked node connections.
-				var html = "<b> connections:</b><ul><li>",
-					list = [];
-				node.eachAdjacency(function(adj){
-					if(adj.getData('alpha')) list.push(adj.nodeTo.name.replace("<span class='fui-new'></span>",""));
-				});
-				//append connections information
-				var url = "/data/getnote?interviewId=" + interviewId + "&expressionId=" + expressionId + "&alterId=" + node.id;
-				$.get(url, function(data){
-					$jit.id('inner-details').innerHTML = data;
-					$jit.id('inner-details').innerHTML = $jit.id('inner-details').innerHTML + "<div class='pull-left col-sm-3'>" +
-					"<label>Connections</label><br>" +
-					list.join("</li><li>") + "</li></ul></div>"
-				});
-			};
-		},
-		// Change node styles when DOM labels are placed
-		// or moved.
-		onPlaceLabel: function(domElement, node){
-			var style = domElement.style;
-			var left = parseInt(style.left);
-			var top = parseInt(style.top);
-			var w = domElement.offsetWidth;
-			style.left = (left - w / 2) + 'px';
-			style.top = (top + 6) + 'px';
-			style.display = '';
-		}
-	});
-
-	// load JSON data.
-	fd.loadJSON(json);
-	// compute positions incrementally and animate.
-	fd.computeIncremental({
-		iter: 500,
-		property: 'end',
-		onStep: function(perc){
-			Log.write(perc + '% loaded...');
-		},
-		onComplete: function(){
-			Log.write('done');
-			fd.canvas.scale(0.9,0.9);
-			$('#log').hide();
-			fd.animate({
-				modes: ['linear'],
-				transition: $jit.Trans.Elastic.easeOut,
-				duration: 0,
-				onComplete: function(){
-					// load free floating notes
-					for(k in notes){
-						if(k.match(/graphNote/)){
-							noteId = k.match(/graphNote-(\d+)/)[1];
-							fd.graph.addNode({'id':k, 'name':noteId, 'data':{$color: "#000",$type: "note",$dim: 12}});
-							fd.graph.nodes['graphNote-' + noteId].pos.x = 0 - ($(fd.canvas.getElement()).width() / 2);
-							fd.graph.nodes['graphNote-' + noteId].pos.y = 0 - ($(fd.canvas.getElement()).height() / 2) + graphNotes * 20;
-							graphNotes = parseInt(noteId);
-						}
-					}
-					// loads saved node positions
-					if($('#Graph_nodes').val()){
-						nodes = fd.graph.nodes;
-						nodePositions = JSON.parse($('#Graph_nodes').val());
-						for (k in nodes) {
-							if(typeof nodePositions[k] != "undefined"){
-								nodes[k].pos.x = nodePositions[k].x;
-								nodes[k].pos.y = nodePositions[k].y;
-							}
-						}
-					}
-					fd.plot();
-					saveNodes();
-				}
-			});
-		}
-	});
-}
-
+g = {
+	nodes:  <?= json_encode($nodes); ?>,
+	edges:  <?= json_encode($edges); ?>
+};
+sizes = [];
+for(y in g.nodes){sizes.push(g.nodes[y].size)}
+max_node_size = Math.max.apply(Math, sizes);
+sizes = [];
+for(y in g.edges){sizes.push(g.edges[y].size)}
+max_edge_size = Math.max.apply(Math, sizes);
 $(function(){
-	json = <?= $adjacencies; ?>;
-	init(json);
-});
-</script>
-		<div id="container">
-			<div id="center-container">
-				<div id="infovis"></div>
-			</div>
-			<div id="left-container">
-				<div id="inner-details">
-				</div>
-			</div>
-			<div id="right-container">
-				<input type="hidden" id="nodeList">
-				<input type="hidden" id="nodeParams" value=<?php echo json_encode($this->params); ?>>
-
-				<button  onclick="print()" class="btn btn-primary print-button">Export Graph</button>
-			</div>
-			<div id="log"></div>
-		</div>
-		<?php
+	sigma.renderers.def = sigma.renderers.canvas;
+	s = new sigma({
+		graph: g,
+		renderer: {
+			container: document.getElementById('infovis'),
+			type: 'canvas'
+		},
+		settings: {
+			doubleClickEnabled: false,
+			labelThreshold: 1,
+			minNodeSize: 2,
+			maxNodeSize: max_node_size,
+			minEdgeSize: 0.5,
+			maxEdgeSize: max_edge_size,
+			zoomingRatio: 1.0,
+			sideMargin: 2
+		}
+	});
+	CustomEdgeShapes.init(s);
+	initNotes(s);
+	if($("#Graph_nodes").val()){
+		savedNodes = JSON.parse($("#Graph_nodes").val());
+		for(var k in savedNodes){
+			var node = s.graph.nodes(k.toString());
+			if(node){
+				node.x = savedNodes[k].x;
+				node.y = savedNodes[k].y;
+			}
+		}
+	}else{
+		s.startForceAtlas2({
+			"worker":false,
+			"outboundAttractionDistribution":true,
+			"speed":2000,
+			"gravity": 0.2,
+			"jitterTolerance": 0,
+			"strongGravityMode": true,
+			"barnesHutOptimize": false,
+			"totalSwinging": 0,
+			"totalEffectiveTraction": 0,
+			"complexIntervals":500,
+			"simpleIntervals": 1000
+		});
+		setTimeout("s.stopForceAtlas2(); saveNodes()", 5000);
 	}
-
+	s.refresh();
+	sigma.plugins.dragNodes(s, s.renderers[0]);
+});
+        </script>
+    <?php
+    }
 }

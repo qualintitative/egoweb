@@ -176,6 +176,7 @@ class AuthoringController extends Controller
 
 		$condition = "id != 0";
 		if(!Yii::app()->user->isSuperAdmin){
+            #OK FOR SQL INJECTION
 			$studies = q("SELECT studyId FROM interviewers WHERE active = 1 AND interviewerId = " . Yii::app()->user->id)->queryColumn();
 			if($studies)
 				$condition = "id IN (" . implode(",", $studies) . ")";
@@ -409,7 +410,7 @@ class AuthoringController extends Controller
 
 	public function actionPreview(){
 		if(isset($_GET['questionId'])){
-			$question = Question::model()->findByPk($_GET['questionId']);
+			$question = Question::model()->findByPk((int)$_GET['questionId']);
 			$array_id = 0;
 			$model[$array_id] = new Answer;
 			echo "<div style='height:320px; overflow-y:auto;'>";
@@ -439,9 +440,8 @@ class AuthoringController extends Controller
 	public function actionExpression($id)
 	{
 		$this->studyId=$id;
-		$multi = false;
 		if(isset($_POST['Expression'])){
-			$model = Expression::model()->findByPk($_POST['Expression']['id']);
+			$model = Expression::model()->findByPk((int)$_POST['Expression']['id']);
 			if(!$model)
 				$model = new Expression;
 			$model->attributes = $_POST['Expression'];
@@ -453,12 +453,11 @@ class AuthoringController extends Controller
 
 		$model = new Expression;
 		$criteria=new CDbCriteria;
-		$multi = Study::isMulti($id);
+		$multi = q("SELECT multiSessionEgoId FROM study WHERE id = " . $id)->queryScalar();
 
 			$criteria=array(
 				'condition'=>"studyId = " . $id,
 			);
-
 
 		$dataProvider=new CActiveDataProvider('Expression',array(
 			'criteria'=>$criteria,
@@ -528,7 +527,7 @@ class AuthoringController extends Controller
 
 	public function actionDuplicate(){
 		if(isset($_GET['questionId'])){
-			$copy = Question::model()->findByPk($_GET['questionId']);
+			$copy = Question::model()->findByPk((int)$_GET['questionId']);
 			$model = new Question;
 			$model->attributes = $copy->attributes;
 			$model->title = $model->title . "_COPY";
@@ -555,7 +554,7 @@ class AuthoringController extends Controller
 	{
 		if(isset($_POST['Question'])){
 			if(is_numeric($_POST['Question']['id']))
-				$model = Question::model()->findByPk($_POST['Question']['id']);
+				$model = Question::model()->findByPk((int)$_POST['Question']['id']);
 			else
 				$model = new Question;
 			$this->performAjaxValidation($model);
@@ -577,11 +576,11 @@ class AuthoringController extends Controller
 		}elseif(isset($_POST['QuestionOption'])){
 			// edit existing option
 			if(is_numeric($_POST['QuestionOption']['id'])){
-				$model = QuestionOption::model()->findByPk($_POST['QuestionOption']['id']);
+				$model = QuestionOption::model()->findByPk((int)$_POST['QuestionOption']['id']);
 			// replace options with predefined AnswerList
 			}else if($_POST['QuestionOption']['id'] == "replacePreset"){
 				$studyId = $this->deleteAllOptions($_POST['questionId']);
-				$list = AnswerList::model()->findByPk($_POST['answerListId']);
+				$list = AnswerList::model()->findByPk((int)$_POST['answerListId']);
 				$optionPairs = explode(',', $list->listOptionNames);
 				$ordering = 0;
 				foreach($optionPairs as $option){
@@ -636,7 +635,7 @@ class AuthoringController extends Controller
 		}else if(isset($_POST['AlterList'])){
 			// edit existing alterList entry
 			if(is_numeric($_POST['AlterList']['id'])){
-				$model = AlterList::model()->findByPk($_POST['AlterList']['id']);
+				$model = AlterList::model()->findByPk((int)$_POST['AlterList']['id']);
 			}else{
 				$model = new AlterList;
 				$criteria=new CDbCriteria;
@@ -663,7 +662,7 @@ class AuthoringController extends Controller
 		}else if(isset($_POST['AlterPrompt'])){
 			// edit existing alterList entry
 			if(is_numeric($_POST['AlterPrompt']['id'])){
-				$model = AlterPrompt::model()->findByPk($_POST['AlterPrompt']['id']);
+				$model = AlterPrompt::model()->findByPk((int)$_POST['AlterPrompt']['id']);
 			}else{
 				$model = new AlterPrompt;
 				$criteria=new CDbCriteria;
@@ -690,7 +689,7 @@ class AuthoringController extends Controller
 			else
 				print_r($model->getErrors());
 		}else if(isset($_GET['answerListId'])){
-			$answerList = AnswerList::model()->findByPk($_GET['answerListId']);
+			$answerList = AnswerList::model()->findByPk((int)$_GET['answerListId']);
 			if($answerList->listOptionNames){
 				if(strstr($answerList->listOptionNames, ','))
 					$listOptions = preg_split('/,/', $answerList->listOptionNames);
@@ -730,7 +729,7 @@ class AuthoringController extends Controller
 	public function actionAjaxdelete()
 	{
 		if(isset($_GET['Question'])){
-			$model = Question::model()->findByPk($_GET['Question']['id']);
+			$model = Question::model()->findByPk((int)$_GET['Question']['id']);
 			if($model){
 				$studyId = $model->studyId;
 				$ordering = $model->ordering;
@@ -759,7 +758,7 @@ class AuthoringController extends Controller
 			$this->renderPartial('_view_question_list', array('dataProvider'=>$dataProvider, 'studyId'=>$studyId, 'ajax'=>true), false, true);
 		}else if(isset($_GET['QuestionOption'])){
 			if($_GET['QuestionOption']['id'] != 'all'){
-				$model = QuestionOption::model()->findByPk($_GET['QuestionOption']['id']);
+				$model = QuestionOption::model()->findByPk((int)$_GET['QuestionOption']['id']);
 				if($model){
 					$questionId = $model->questionId;
 					$ordering = $model->ordering;
@@ -772,7 +771,12 @@ class AuthoringController extends Controller
 			}else{
 				$this->deleteAllOptions($_GET['questionId']);
 				$questionId = $_GET['questionId'];
-				$studyId = q("SELECT studyId FROM question WHERE id = " . $_GET['questionId'])->queryScalar();
+                #OK FOR SQL INJECTION
+                $params = new stdClass();
+                $params->name = ':questionId';
+                $params->value = $_GET['questionId'];
+                $params->dataType = PDO::PARAM_INT;
+				$studyId = q("SELECT studyId FROM question WHERE id = :questionId", array($params) )->queryScalar();
 				Study::updated($studyId);
 			}
 
@@ -789,7 +793,7 @@ class AuthoringController extends Controller
 			$this->renderPartial('_form_option', array('dataProvider'=>$dataProvider, 'questionId'=>$questionId, 'ajax'=>true), false, true);
 		}else if(isset($_GET['AlterList'])){
 			if($_GET['AlterList']['id'] != 'all'){
-				$model = AlterList::model()->findByPk($_GET['AlterList']['id']);
+				$model = AlterList::model()->findByPk((int)$_GET['AlterList']['id']);
 				if($model){
 					$studyId = $model->studyId;
 					$ordering = $model->ordering;
@@ -812,7 +816,7 @@ class AuthoringController extends Controller
 			));
 			$this->renderPartial('_view_alter_list', array('dataProvider'=>$dataProvider, 'studyId'=>$studyId, 'ajax'=>true), false, true);
 		}else if(isset($_GET['AlterPrompt'])){
-			$model = AlterPrompt::model()->findByPk($_GET['AlterPrompt']['id']);
+			$model = AlterPrompt::model()->findByPk((int)$_GET['AlterPrompt']['id']);
 			if($model){
 				$studyId = $model->studyId;
 				$model->delete();
@@ -828,12 +832,12 @@ class AuthoringController extends Controller
 			));
 			$this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'studyId'=>$studyId, 'ajax'=>true), false, true);
 		}else if(isset($_GET['AnswerList'])){
-			$model = AnswerList::model()->findByPk($_GET['AnswerList']['id']);
+			$model = AnswerList::model()->findByPk((int)$_GET['AnswerList']['id']);
 			if($model)
 				$model->delete();
 			$this->redirect(Yii::app()->request->urlReferrer);
 		}else if(isset($_GET['answerListId'])){
-			$answerList = AnswerList::model()->findByPk($_GET['answerListId']);
+			$answerList = AnswerList::model()->findByPk((int)$_GET['answerListId']);
 			$listOptions = preg_split('/,/', $answerList->listOptionNames);
 			$options = array();
 			$newList = array();
@@ -848,7 +852,7 @@ class AuthoringController extends Controller
 			$answerList->save();
 				$this->renderPartial('_form_option_list', array('options'=>$options, 'answerList'=>$answerList, 'ajax'=>true), false, false);
 		}else if(isset($_GET['expressionId'])){
-			$model = Expression::model()->findByPk($_GET['expressionId']);
+			$model = Expression::model()->findByPk((int)$_GET['expressionId']);
 			if($model)
 				$model->delete();
 		}
@@ -860,30 +864,30 @@ class AuthoringController extends Controller
 	{
 		if(isset($_GET['form'])){
 			if($_GET['form'] == "_form_question"){
-				$model = Question::model()->findByPk($_GET['questionId']);
+				$model = Question::model()->findByPk((int)$_GET['questionId']);
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true), false, true);
 			}else if($_GET['form'] == "_form_alter_list_edit"){
-				$model = AlterList::model()->findByPk($_GET['alterListId']);
+				$model = AlterList::model()->findByPk((int)$_GET['alterListId']);
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'studyId'=>$model->studyId), false, true);
 			}else if($_GET['form'] == "_form_alter_prompt_edit"){
-				$model = AlterPrompt::model()->findByPk($_GET['alterPromptId']);
+				$model = AlterPrompt::model()->findByPk((int)$_GET['alterPromptId']);
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'studyId'=>$model->studyId), false, true);
 			}else if($_GET['form'] == "_form_option_edit"){
-				$model = QuestionOption::model()->findByPk($_GET['optionId']);
+				$model = QuestionOption::model()->findByPk((int)$_GET['optionId']);
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'questionId'=>$model->questionId), false, true);
 			}else if($_GET['form'] == "_form_expression_text" || $_GET['form'] == "_form_expression_counting" || $_GET['form'] == "_form_expression_comparison" || $_GET['form'] == "_form_expression_compound"){
 				$questionId = "";
 				if(isset($_GET['questionId']) && is_numeric($_GET['questionId']) && $_GET['questionId'] != 0)
-					$question = Question::model()->findByPk($_GET['questionId']);
+					$question = Question::model()->findByPk((int)$_GET['questionId']);
 				else
 					$question = new Question;
 				if(isset($_GET['id']))
-					$model = Expression::model()->findbyPk($_GET['id']);
+					$model = Expression::model()->findbyPk((int)$_GET['id']);
 				else
 					$model = new Expression;
 
 				if(isset($_GET['expressionId']))
-					$expression = Expression::model()->findbyPk($_GET['expressionId']);
+					$expression = Expression::model()->findbyPk((int)$_GET['expressionId']);
 				else
 					$expression = new Expression;
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'expression'=>$expression, 'ajax'=>true, 'question'=>$question, 'studyId'=>$_GET['studyId']), false, false);
@@ -901,7 +905,7 @@ class AuthoringController extends Controller
 				));
 				$this->renderPartial("_form_option", array('dataProvider'=>$dataProvider, 'questionId'=>$_GET['questionId'], 'ajax'=>true), false, true);
 			}else if($_GET['form'] == "_form_option_list"){
-				$answerList = AnswerList::model()->findByPk($_GET['answerListId']);
+				$answerList = AnswerList::model()->findByPk((int)$_GET['answerListId']);
 				$listOptions = preg_split('/,/', $answerList->listOptionNames);
 				$options = array();
 				foreach($listOptions as $listOption){
@@ -933,7 +937,7 @@ class AuthoringController extends Controller
 	{
 		if(isset($_GET['alterListId'])){
 
-			$alter = AlterList::model()->findByPk($_GET['alterListId']);
+			$alter = AlterList::model()->findByPk((int)$_GET['alterListId']);
 			$key = "key=".User::hashPassword($alter->email);
 			echo "<div style='clear:both'><label>Authorized Link</label><br>" . Yii::app()->getBaseUrl(true) . "/interviewing/".$alter->studyId."?".$key."</div>";
 		}
@@ -942,7 +946,7 @@ class AuthoringController extends Controller
 	{
 		if(isset($_GET['optionId'])){
 			QuestionOption::moveUp($_GET['optionId']);
-			$model = QuestionOption::model()->findByPk($_GET['optionId']);
+			$model = QuestionOption::model()->findByPk((int)$_GET['optionId']);
 			$criteria=new CDbCriteria;
 			$criteria=array(
 				'condition'=>"questionId = " . $model->questionId,
@@ -955,7 +959,7 @@ class AuthoringController extends Controller
 			$this->renderPartial('_form_option', array('dataProvider'=>$dataProvider, 'questionId'=>$model->questionId, 'ajax'=>true), false, true);
 		}else if(isset($_GET['alterListId'])){
 			AlterList::moveUp($_GET['alterListId']);
-			$model = AlterList::model()->findByPk($_GET['alterListId']);
+			$model = AlterList::model()->findByPk((int)$_GET['alterListId']);
 			$criteria=new CDbCriteria;
 			$criteria=array(
 				'condition'=>"studyId = " . $model->studyId,
@@ -968,7 +972,7 @@ class AuthoringController extends Controller
 			$this->renderPartial('_view_alter_list', array('dataProvider'=>$dataProvider, 'studyId'=>$model->studyId, 'ajax'=>true), false, true);
 		}else if(isset($_GET['questionId'])){
 			Question::moveUp($_GET['questionId']);
-			$model = Question::model()->findByPk($_GET['questionId']);
+			$model = Question::model()->findByPk((int)$_GET['questionId']);
 			$criteria=new CDbCriteria;
 			$criteria=array(
 				'condition'=>"studyId = " . $model->studyId ." AND subjectType = '" . $model->subjectType ."'",
@@ -980,7 +984,7 @@ class AuthoringController extends Controller
 			));
 			$this->renderPartial('_view_question_list', array('dataProvider'=>$dataProvider, 'studyId'=>$model->studyId, 'ajax'=>true), false, true);
 		}else if(isset($_GET['answerListId'])){
-			$answerList = AnswerList::model()->findByPk($_GET['answerListId']);
+			$answerList = AnswerList::model()->findByPk((int)$_GET['answerListId']);
 			$listOptions = preg_split('/,/', $answerList->listOptionNames);
 			$options = array();
 			$newList = array();

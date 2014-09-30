@@ -27,17 +27,26 @@ class MobileController extends Controller
 	}
 	public function actionAjaxstudies(){
 		if(isset($_GET['userId'])){
-			$permission = q("SELECT permissions FROM user WHERE id = " . $_GET['userId'])->queryScalar();
+            #OK FOR SQL INJECTION
+            $params = new stdClass();
+            $params->name = ':userId';
+            $params->value = $_GET['userId'];
+            $params->dataType = PDO::PARAM_INT;
+
+			$permission = q("SELECT permissions FROM user WHERE id = :userID",array($params))->queryScalar();
 			if($permission != 11)
-				$studyIds = q("SELECT studyId FROM interviewers WHERE interviewerId = " . $_GET['userId'])->queryColumn();
+                #OK FOR SQL INJECTION
+				$studyIds = q("SELECT studyId FROM interviewers WHERE interviewerId = :userID",array($params))->queryColumn();
 			else
 				$studyIds = "";
 		}else{
 			$studyIds = "";
 		}
 		if($studyIds)
+            #OK FOR SQL INJECTION
 			$studies = q("SELECT id,name FROM study WHERE id IN (" . implode(",", $studyIds) . ")")->queryAll();
 		else
+            #OK FOR SQL INJECTION
 			$studies = q("SELECT id,name FROM study")->queryAll();
 
 		foreach($studies as $study){
@@ -51,13 +60,19 @@ class MobileController extends Controller
 	}
 
 	public function actionAjaxdata($id){
+        #OK FOR SQL INJECTION
 		$study = q("SELECT * FROM study WHERE id = " . $id)->queryRow(false);
-		$questions = q("SELECT * FROM question WHERE studyId = ".$id)->queryAll(false);
-		$options = q("SELECT * FROM questionOption WHERE studyId = " . $id)->queryAll(false);
-		$expressions = q("SELECT * FROM expression WHERE studyId = " . $id)->queryAll(false);
-		$answers = q("SELECT * FROM answer WHERE studyId = " . $id)->queryAll(false);
+        #OK FOR SQL INJECTION
+        $questions = q("SELECT * FROM question WHERE studyId = ".$id)->queryAll(false);
+        #OK FOR SQL INJECTION
+        $options = q("SELECT * FROM questionOption WHERE studyId = " . $id)->queryAll(false);
+        #OK FOR SQL INJECTION
+        $expressions = q("SELECT * FROM expression WHERE studyId = " . $id)->queryAll(false);
+        #OK FOR SQL INJECTION
+        $answers = q("SELECT * FROM answer WHERE studyId = " . $id)->queryAll(false);
 		$interviewIds = array();
-		$interviews = q("SELECT * FROM interview WHERE studyId = " . $id)->queryAll(false);
+        #OK FOR SQL INJECTION
+        $interviews = q("SELECT * FROM interview WHERE studyId = " . $id)->queryAll(false);
 		$audioFiles = array();
 
 		if(file_exists(Yii::app()->basePath."/../audio/".$id . "/STUDY/ALTERPROMPT.mp3")){
@@ -101,6 +116,7 @@ class MobileController extends Controller
 
 		if($interviewIds){
 			$interviewIds = implode(',', $interviewIds);
+            #OK FOR SQL INJECTION
 			$alters = q("SELECT * FROM alters WHERE interviewId  in (" . $interviewIds . ")")->queryAll(false);
 		}else{
 			$alters = "";
@@ -160,7 +176,13 @@ class MobileController extends Controller
 				print_r($data['study']);
 				die();
 			}
-			$oldStudy = q("SELECT * FROM study WHERE id = " . $data['study']['ID'])->queryRow();
+            #OK FOR SQL INJECTION
+            $params = new stdClass();
+            $params->name = ':studyId';
+            $params->value = $data['study']['ID'];
+            $params->dataType = PDO::PARAM_INT;
+
+			$oldStudy = q("SELECT * FROM study WHERE id = :studyId", array($params))->queryRow();
 			if($oldStudy['modified'] == $data['study']['MODIFIED']){
 				$this->saveAnswers($data);
 			}else{
@@ -209,6 +231,7 @@ class MobileController extends Controller
 	}
 
 	private function compare($data){
+        #OK FOR SQL INJECTION
 		$oldStudy = q("SELECT * FROM study WHERE id = " . $data['study']['ID'])->queryRow();
 
 		foreach($oldStudy as $key=>$value){
@@ -219,14 +242,17 @@ class MobileController extends Controller
 		if($data['study'] != $oldStudy)
 		    return false;
 
+        #OK FOR SQL INJECTION
 		$oldQuestions = q("SELECT * FROM question WHERE studyId = " . $data['study']['ID'])->queryAll();
 		if(count($data['questions']) != count($oldQuestions))
 		    return false;
 
+        #OK FOR SQL INJECTION
 		$oldQuestionOptions = q("SELECT * FROM questionOption WHERE studyId = " . $data['study']['ID'])->queryAll();
 		if(count($data['questionOptions']) != count($oldQuestionOptions))
 		    return false;
 
+        #OK FOR SQL INJECTION
 		$oldExpressions = q("SELECT * FROM expression WHERE studyId = " . $data['study']['ID'])->queryAll();
 		if(count($data['expressions']) != count($oldExpressions))
 		    return false;

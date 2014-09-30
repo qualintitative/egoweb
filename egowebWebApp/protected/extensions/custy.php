@@ -24,8 +24,22 @@ function i($table, $columns){
 	return Yii::app()->db->createCommand()->insert($table,$columns);
 }
 
-function q($sql){
-	return Yii::app()->db->createCommand($sql);
+/**
+ * @param $sql
+ * @param array $params. Each element is an array with 3 attributes: name, value, & dataType.
+ * See the section marked "Binding Parameters" here: http://www.yiiframework.com/doc/guide/1.1/en/database.dao
+ * @return mixed
+ */
+function q($sql, $params=null){
+	$cmd = Yii::app()->db->createCommand($sql);
+
+    if(!empty($params)){
+        foreach ($params as $param){
+            $cmd->bindParam($param->name, $param->value, $param->dataType);
+        }
+    }
+
+    return $cmd;
 }
 
 function d($table, $conditions){

@@ -1,5 +1,5 @@
 <?php
-$interviewId = ''; $expressionId = 0; $params = ""; $graphId= "";
+$interviewId = ''; $expressionId = 0; $params = "";
 if(isset($_GET['interviewId']) && $_GET['interviewId'])
 	$interviewId = $_GET['interviewId'];
 
@@ -8,61 +8,27 @@ if(isset($_GET['expressionId']) && $_GET['expressionId'])
 
 if(isset($_GET['params']) && $_GET['params'])
 	$params = $_GET['params'];
-if(isset($_GET['graphId']) && $_GET['graphId'])
-	$graphId = $_GET['graphId'];
+
 ?>
 <script>
 params = [];
 expressionId = <?= $expressionId ?>;
 interviewId = <?= $interviewId ?>;
-<?php
-foreach($graphs as $graph){
-	echo "params[" . $graph->id . "] = '" . $graph->params . "';";
-}
-?>
 function getAdjacencies(newExpressionId){
 	url = "/data/visualize?expressionId=" + newExpressionId + "&interviewId=" + interviewId;
 	document.location = url;
-}
-function getGraph(graphId){
-	if(graphId){
-		url = "/data/visualize?expressionId=" + expressionId + "&interviewId=" + interviewId + "&graphId=" + graphId + "&params=" + encodeURIComponent(params[graphId]);
-		document.location = url;
-	}
 }
 </script>
 <?php
 $flashMessages = Yii::app()->user->getFlashes();
 if ($flashMessages) {
-    foreach($flashMessages as $key => $message) {
-        echo '<div class="center halfsize flash-' . $key . '">' . $message . "</div><br><br>\n";
-    }
+	foreach($flashMessages as $key => $message) {
+		echo '<div class="center halfsize flash-' . $key . '">' . $message . "</div><br><br>\n";
+	}
 }
 
 echo "<h3 class='margin-top-10'>".CHtml::link("Analysis &nbsp| &nbsp", $this->createUrl("/data/study/".$studyId)) . "<small>" .Study::getName($studyId) . " &nbsp| &nbsp" . Interview::getEgoId($interviewId)."</small></h3>";
 ?>
-
-	<?php if($expressionId): ?>
-	<div id="load-bar" class="col-sm-3 pull-right">
-		<form  class="form-horizontal" role="form">
-			<div class="form-group">
-		<?php
-		echo CHtml::dropDownList(
-			'loadGraph',
-			$graphId,
-			CHtml::listData($graphs,'id','name'),
-			array(
-				'empty' => 'Load saved graphs',
-				'onchange'=>'js:getGraph($("option:selected", this).val(),'.$interviewId .')',
-				'class'=>'form-control'
-			)
-		);
-		?>
-			</div>
-		</form>
-	</div>
-	<?php endif; ?>
-
 	<div id="expression-bar" class="col-sm-3 pull-left">
 		<form  class="form-horizontal" role="form">
 			<div class="form-group">
@@ -88,14 +54,12 @@ echo "<h3 class='margin-top-10'>".CHtml::link("Analysis &nbsp| &nbsp", $this->cr
 	</div>
 
 
-
-
 <?php if($expressionId): ?>
-<div class="col-sm-9 pull-right">
+<div class="col-sm-8 pull-right">
 <?php $this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$expressionId, 'params'=>$params)); ?>
 </div>
 
-<div id="visualize-bar" class="col-sm-3 pull-left">
+<div id="visualize-bar" class="col-sm-4 pull-left">
 	<form class="form-horizontal">
 		<?php
 		$this->widget('plugins.visualize', array('method'=>'nodecolor', 'id'=>$studyId, 'params'=>$params));
@@ -105,31 +69,11 @@ echo "<h3 class='margin-top-10'>".CHtml::link("Analysis &nbsp| &nbsp", $this->cr
 		$this->widget('plugins.visualize', array('method'=>'edgesize', 'id'=>$studyId, 'params'=>$params));
 		?>
 	</form>
-	<?php
-	if(isset($_GET['graphId']) && $_GET['graphId'])
-		$graph = Graph::model()->findByPk($_GET['graphId']);
-	else
-		$graph = new Graph;
-	$form  =$this->beginWidget('CActiveForm', array(
-		'id'=>'graph-form',
-		'action'=>'/data/savegraph',
-		'htmlOptions'=>array("class"=>"form-horizontal"),
-	));?>
-		<?php echo $form->hiddenField($graph,'id',array('value'=>$graph->id)); ?>
-		<?php echo $form->hiddenField($graph,'interviewId',array('value'=>$interviewId)); ?>
-		<?php echo $form->hiddenField($graph,'expressionId',array('value'=>$expressionId)); ?>
-		<?php echo $form->hiddenField($graph,'json',array('value'=>$graph->json)); ?>
-		<?php echo $form->hiddenField($graph,'nodes',array('value'=>$graph->nodes)); ?>
-		<?php echo $form->hiddenField($graph,'params',array('value'=>$params)); ?>
-		<div class="form-group">
-			<label>Graph Name</label>
-			<?php echo $form->textField($graph,'name',array('value'=>$graph->name, 'class'=>'form-control', 'placeholder'=>'graph name')); ?>
-		</div>
-		<div class="form-group">
-			<button class="btn btn-primary" onclick="saveGraph();return false;">Save</button>
-			<button class="btn btn-info" onclick="reload(refresh());return false;">Refresh</button>
-		</div>
-	<?php $this->endWidget(); ?>
+
+	<div class="form-group">
+		<button class="btn btn-info" onclick="refresh(resetParams());return false;">Refresh</button>
+	</div>
+
 	<br><br>
 </div>
 <?php endif; ?>

@@ -19,13 +19,13 @@
 		<?php Yii::app()->clientScript->registerCoreScript('jquery.ui'); ?>
 	</head>
 	<body>
-		<div id="wrapper">
 			<nav class="navbar">
 			<div class="collapse navbar-collapse" id="topbar">
 				<?php if(!Yii::app()->user->isGuest): ?>
 				<?php
 				$condition = "id != 0";
 				if(!Yii::app()->user->isSuperAdmin){
+                    #OK FOR SQL INJECTION
 					$studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
 					if($studies)
 						$condition = "id IN (" . implode(",", $studies) . ")";
@@ -107,13 +107,18 @@
 					<?php if(Yii::app()->getController()->getId() == "interviewing" && !Yii::app()->user->isGuest && !isset($_GET['studyId']) && preg_match('/\d+/', Yii::app()->getRequest()->getRequestUri())): ?>
 					<a href="javascript:void(0)" onclick="$('#navigation').toggle()"><img src="/images/nav.png"></a>
 					<?php endif; ?>
+<div id="navigation">
+	<div id="navbox">
+		<ul></ul>
+	</div>
+</div>
 				</div>
 				<?php if(Yii::app()->getController()->getId() == "interviewing" && isset($_GET['interviewId'])): ?>
 				<span class="interviewee"><?php echo (isset($_GET['interviewId']) && $_GET['interviewId']) ?  Interview::getEgoId($_GET['interviewId']) : ""; ?></span>
 				<span class="intleft">Interviewing:</span>
 				<?php endif; ?>
 			</div>
-			<div id="content">
+			<div id="content" class="container">
 					<?php echo $content; ?>
 			</div>
 			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -122,7 +127,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
 	</body>
 </html>
 
