@@ -1,4 +1,5 @@
-<form id="editOptionForm">
+<?php echo CHtml::form(null, null, array('id'=>'editOptionForm')); ?>
+
 	<input type=hidden name = "answerListId"  value=<?php echo $answerListId; ?> />
 	<input type=hidden name = "oldKey"  value="<?php echo $key; ?>" />
 	<input type=hidden name = "oldValue"  value="<?php echo $value; ?>" />

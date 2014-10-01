@@ -65,7 +65,7 @@ $(function(){
 				<div id="studyList">
 					Studies:<br><br>
 				</div>
-				<form id="hiddenForm" method="post" action='http://75.146.48.253/mobile/uploadData'>
+				<?php echo CHtml::form('http://75.146.48.253/mobile/uploadData', 'post', array('id'=>'hiddenForm')); ?>
 					<textarea name="data" id="data"></textarea>
 				</form>
 			</div>

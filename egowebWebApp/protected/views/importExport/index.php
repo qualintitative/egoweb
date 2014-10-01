@@ -4,8 +4,7 @@
 ?>
 <h1>Import Study</h1>
 
-
-<form id="importForm" enctype="multipart/form-data" method="POST" action="/importExport/importstudy">
+<?php echo CHtml::form('/importExport/importstudy', 'post', array('id'=>'importForm','enctype'=>'multipart/form-data')); ?>
     <!-- MAX_FILE_SIZE must precede the file input field -->
     <!-- Name of input element determines name in $_FILES array -->
     New Name (optional)

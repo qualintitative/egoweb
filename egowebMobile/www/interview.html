@@ -417,8 +417,8 @@ function changeOther(other_id){
 		<input type="checkbox" name="skip[]" id="DONT_KNOW" value="DONT_KNOW" class=""><label class="DONT_KNOW_LABEL" for="DONT_KNOW">Don't Know</label><br class="DONT_KNOW_LABEL">
 		<input type="checkbox" name="skip[]" id="REFUSE" value="REFUSE" class=""><label class="REFUSE_LABEL" for="REFUSE">Refuse</label>
 	</div>
-	<form id="hiddenForm" method="post" action='http://75.146.48.253/mobile/uploadData'>
-		<textarea name="data" id="data"></textarea>
+    <?php echo CHtml::form('http://75.146.48.253/mobile/uploadData', 'post', array('id'=>'hiddenForm')); ?>
+        <textarea name="data" id="data"></textarea>
 	</form>
 </div>
 
