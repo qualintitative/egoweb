@@ -811,3 +811,19 @@ label.prompt , .grid-view label {
     width:900px;
     height:675px;
 }
+
+#fullscreenModal .modal-dialog{
+	margin: 0;
+	width: 100%;
+	height: 100%;
+}
+
+#fullscreenModal .modal-header{
+	border-bottom: 0;
+}
+
+#fullscreen {
+	margin: auto;
+	width:900px;
+	height:675px;
+}

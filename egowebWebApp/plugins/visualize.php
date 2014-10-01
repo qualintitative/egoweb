@@ -590,6 +590,7 @@ class visualize extends Plugin
                 }
             }
         }
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/modal.js');
         Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/sigma.min.js');
         Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/sigma.notes.js');
         Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.plugins.dragNodes.js');
@@ -603,7 +604,8 @@ class visualize extends Plugin
             <div id="infovis"></div>
             <div class="col-sm-8 pull-left" id="left-container"></div>
             <div class="col-sm-4 pull-right" id="right-container">
-                <button  onclick="print(<?=$this->id;?>,<?=$this->method;?>)" class="btn btn-primary print-button">Print Preview</button>
+                <button  onclick="fullscreen()" class="btn btn-info print-button">Fullscreen</button>
+                <button  onclick="print(<?=$this->id;?>,<?=$this->method;?>)" class="btn btn-primary print-button" style="margin-top:10px">Print Preview</button>
                 <?php
                 if($this->networkTitle){
                     $interviewIds = Interview::multiInterviewIds($this->method, $study);
@@ -635,6 +637,19 @@ class visualize extends Plugin
                 <button class="btn btn-danger print-button" style="margin-top:10px" onclick="redraw(resetParams());return false;">Redraw</button>
                 <?php $this->endWidget(); ?>
             </div>
+			<div class="modal fade" id="fullscreenModal" tabindex="-2" role="dialog" aria-labelledby="fullscreenModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+							<h4 class="modal-title">&nbsp;</h4>
+						</div>
+						<div class="modal-body">
+							<div id="fullscreen"></div>
+						</div>
+					</div>
+				</div>
+			</div>
         <script>
             interviewId = <?php echo $this->method; ?>;
             expressionId = <?php echo $this->id; ?>;
@@ -730,6 +745,41 @@ function print(expressionId, interviewId){
 	window.open(url);
 }
 
+function fullscreen(){
+
+    $('#fullscreenModal').modal();
+    setTimeout(function(){
+	t = new sigma({
+		graph: g,
+		renderer: {
+			container: document.getElementById('fullscreen'),
+			type: 'canvas'
+		},
+		settings: {
+			doubleClickEnabled: false,
+			labelThreshold: 1,
+			minNodeSize: 2,
+			maxNodeSize: max_node_size,
+			minEdgeSize: 0.5,
+			maxEdgeSize: max_edge_size,
+			zoomingRatio: 1.0,
+			sideMargin: 2
+		}
+	});
+		var savedNodes = JSON.parse($("#Graph_nodes").val());
+		for(var k in savedNodes){
+			var node = t.graph.nodes(k.toString());
+			if(node){
+				node.x = savedNodes[k].x;
+				node.y = savedNodes[k].y;
+			}
+		}
+	t.refresh();
+
+	}, 500);
+}
+
+
 g = {
 	nodes:  <?= json_encode($nodes); ?>,
 	edges:  <?= json_encode($edges); ?>
@@ -741,6 +791,10 @@ sizes = [];
 for(y in g.edges){sizes.push(g.edges[y].size)}
 max_edge_size = Math.max.apply(Math, sizes);
 $(function(){
+
+$('#fullscreenModal').on('hidden', function(){
+    $('#fullscreenModal .inner').remove();
+});
 	sigma.renderers.def = sigma.renderers.canvas;
 	s = new sigma({
 		graph: g,
