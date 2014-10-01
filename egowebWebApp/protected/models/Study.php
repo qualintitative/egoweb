@@ -48,6 +48,7 @@ class Study extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('name', 'required'),
+			array('name', 'filter', 'filter'=>function($param) {return CHtml::encode(strip_tags($param));}),
 			array('active', 'numerical', 'integerOnly'=>true),
 			array('id, active, name, introduction, egoIdPrompt, alterPrompt, conclusion, minAlters, maxAlters, adjacencyExpressionId, multiSessionEgoId', 'length', 'max'=>2048),
 			// The following rule is used by search().

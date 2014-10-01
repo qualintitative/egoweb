@@ -48,7 +48,8 @@ class Expression extends CActiveRecord
 		return array(
 			array('id, active, name, type, operator, value, resultForUnanswered, studyId, questionId', 'length', 'max'=>255),
 			array('id, active, studyId', 'numerical', 'integerOnly'=>true),
-            array('name', 'required','on'=>'insert'),
+                        array('name', 'required','on'=>'insert'),
+			array('name', 'filter', 'filter'=>function($param) {return CHtml::encode(strip_tags($param));}),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, active, name, type, operator, value, resultForUnanswered, studyId, questionId', 'safe', 'on'=>'search'),
