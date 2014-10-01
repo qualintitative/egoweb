@@ -30,7 +30,7 @@ if ($flashMessages) {
 echo "<h3 class='margin-top-10'>".CHtml::link("Analysis &nbsp| &nbsp", $this->createUrl("/data/study/".$studyId)) . "<small>" .Study::getName($studyId) . " &nbsp| &nbsp" . Interview::getEgoId($interviewId)."</small></h3>";
 ?>
     <div id="expression-bar" class="col-sm-3 pull-left">
-        <?php echo CHtml::form(null, null;wq, array('class'=>'form-horizontal','role'=>'form')); ?>
+        <?php echo CHtml::form(null, null, array('class'=>'form-horizontal','role'=>'form')); ?>
             <div class="form-group">
                 <label class="control-label">Adjacency</label>
                 <?php
