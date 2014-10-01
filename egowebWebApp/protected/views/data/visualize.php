@@ -30,7 +30,7 @@ if ($flashMessages) {
 echo "<h3 class='margin-top-10'>".CHtml::link("Analysis &nbsp| &nbsp", $this->createUrl("/data/study/".$studyId)) . "<small>" .Study::getName($studyId) . " &nbsp| &nbsp" . Interview::getEgoId($interviewId)."</small></h3>";
 ?>
     <div id="expression-bar" class="col-sm-3 pull-left">
-        <form  class="form-horizontal" role="form">
+        <?php echo CHtml::form(null, null;wq, array('class'=>'form-horizontal','role'=>'form')); ?>
             <div class="form-group">
                 <label class="control-label">Adjacency</label>
                 <?php
@@ -60,7 +60,7 @@ echo "<h3 class='margin-top-10'>".CHtml::link("Analysis &nbsp| &nbsp", $this->cr
     </div>
 
     <div id="visualize-bar" class="col-sm-4 pull-left">
-        <form class="form-horizontal">
+        <?php echo CHtml::form(null, null, array('class'=>'form-horizontal')); ?>
             <?php
             $this->widget('plugins.visualize', array('method'=>'nodecolor', 'id'=>$studyId, 'params'=>$params));
             $this->widget('plugins.visualize', array('method'=>'nodeshape', 'id'=>$studyId, 'params'=>$params));
