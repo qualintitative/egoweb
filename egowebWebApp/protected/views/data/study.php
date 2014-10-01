@@ -46,20 +46,20 @@ Network Statistics
 <a href="javascript:void(0)" onclick="$('input[type=checkbox]').prop('checked', true)">Select All</a> ::
 <a href="javascript:void(0)" onclick="$('input[type=checkbox]').prop('checked', false)">De-select All</a>
 
-<form id="analysis" method='post'>
 <?php
-echo CHtml::hiddenField('expressionId', $study->adjacencyExpressionId);
-echo CHtml::hiddenField('studyId', $study->id);
-foreach($interviews as $interview){
-	if($interview['completed'] == -1)
-		$completed = "<span style='color:#0B0'>COMPLETED</span>";
-	else
-		$completed = "INCOMPLETE";
-	echo "<div class='multiRow' style='width:200px;text-align:left'>".CHtml::checkbox('export[' .$interview['id'].']'). " " . Interview::getEgoId($interview['id'])."</div>";
-	echo "<div class='multiRow' style='width:120px'>".$completed."</div>";
-	echo "<div class='multiRow'>".CHtml::button('Review',array('submit'=>$this->createUrl('/interviewing/'.$study->id.'?interviewId='.$interview['id'])))."</div>";
-	echo "<div class='multiRow'>".CHtml::button('Visualize',array('submit'=>$this->createUrl('/data/visualize?expressionId=&interviewId='.$interview['id'])))."</div>";
-	echo "<br style='clear:both'>";
-}
+    echo CHtml::form('', 'post', array('id'=>'analysis'));
+    echo CHtml::hiddenField('expressionId', $study->adjacencyExpressionId);
+    echo CHtml::hiddenField('studyId', $study->id);
+    foreach($interviews as $interview){
+        if($interview['completed'] == -1)
+            $completed = "<span style='color:#0B0'>COMPLETED</span>";
+        else
+            $completed = "INCOMPLETE";
+        echo "<div class='multiRow' style='width:200px;text-align:left'>".CHtml::checkbox('export[' .$interview['id'].']'). " " . Interview::getEgoId($interview['id'])."</div>";
+        echo "<div class='multiRow' style='width:120px'>".$completed."</div>";
+        echo "<div class='multiRow'>".CHtml::button('Review',array('submit'=>$this->createUrl('/interviewing/'.$study->id.'?interviewId='.$interview['id'])))."</div>";
+        echo "<div class='multiRow'>".CHtml::button('Visualize',array('submit'=>$this->createUrl('/data/visualize?expressionId=&interviewId='.$interview['id'])))."</div>";
+        echo "<br style='clear:both'>";
+    }
 ?>
 </form>
