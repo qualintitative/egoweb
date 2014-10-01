@@ -258,8 +258,9 @@ $(function(){
 			<div id="edit-alterList" style="margin-bottom:15px;"></div>
 		</div>
 		<div style="float:left; width:400px; clear:left">
-<form enctype="multipart/form-data" method="POST" action="/authoring/importlist">
-    <!-- MAX_FILE_SIZE must precede the file input field -->
+
+<?php echo CHtml::form('/authoring/importlist', 'post', array('enctype'=>'multipart/form-data')) ?>
+            <!-- MAX_FILE_SIZE must precede the file input field -->
     <!-- Name of input element determines name in $_FILES array -->
      <input name="userfile" type="file" />
     <input type="hidden" name="studyId" value="<?= $model->id; ?>" />
