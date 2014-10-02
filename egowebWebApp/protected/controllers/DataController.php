@@ -91,14 +91,19 @@ class DataController extends Controller
                 $questionIds = 0;
             $alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId = :id AND questionId in (" . $questionIds . ")",array($params))->queryColumn();
 
-            $all_expression_ids = $alter_pair_expression_ids;
-            foreach($alter_pair_expression_ids as $id){
-                #OK FOR SQL INJECTION
-                $all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
+            if (count($alter_pair_expression_ids) < 1 ) {
+                echo "NO ALTER PAIR EXPRESSION IDS FOUND FOR QUESTION IDS ".(string)$questionIds;
+                $alter_pair_expressions = array();
             }
-            #OK FOR SQL INJECTION
-
-            $alter_pair_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
+            else{
+                $all_expression_ids = $alter_pair_expression_ids;
+                foreach($alter_pair_expression_ids as $id){
+                    #OK FOR SQL INJECTION
+                    $all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
+                }
+                #OK FOR SQL INJECTION
+                $alter_pair_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
+            }
 
             if(isset($_GET['print'])){
                 $this->renderPartial('print',
