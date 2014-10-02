@@ -72,11 +72,16 @@ class DataController extends Controller
             #OK FOR SQL INJECTION
             $params = new stdClass();
             $params->name = ':id';
-            $params->value = $_GET['interviewId'];
+            $params->value = $_GET["interviewId"];
             $params->dataType = PDO::PARAM_INT;
 
             $studyId = q("SELECT studyId FROM interview WHERE id = :id",array($params))->queryScalar();
             $params->value = $studyId;
+
+            if( !$studyId ){
+                echo "No studyId found for interviewId = ".$_GET['interviewId'];
+                return;
+            }
 
             #OK FOR SQL INJECTION
             $questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = :id",array($params))->queryColumn();
