@@ -26,17 +26,17 @@ class MobileController extends Controller
 		$this->render('import');
 	}
 	public function actionAjaxstudies(){
-		if(isset($_GET['userId'])){
+		if(isset($_POST['userId'])){
             #OK FOR SQL INJECTION
             $params = new stdClass();
             $params->name = ':userId';
-            $params->value = $_GET['userId'];
+            $params->value = $_POST['userId'];
             $params->dataType = PDO::PARAM_INT;
 
-			$permission = q("SELECT permissions FROM user WHERE id = :userID",array($params))->queryScalar();
+			$permission = q("SELECT permissions FROM user WHERE id = :userId",array($params))->queryScalar();
 			if($permission != 11)
                 #OK FOR SQL INJECTION
-				$studyIds = q("SELECT studyId FROM interviewers WHERE interviewerId = :userID",array($params))->queryColumn();
+				$studyIds = q("SELECT studyId FROM interviewers WHERE interviewerId = :userId",array($params))->queryColumn();
 			else
 				$studyIds = "";
 		}else{
@@ -74,6 +74,15 @@ class MobileController extends Controller
         #OK FOR SQL INJECTION
         $interviews = q("SELECT * FROM interview WHERE studyId = " . $id)->queryAll(false);
 		$audioFiles = array();
+
+		$columns = array();
+		$columns['study'] = Yii::app()->db->schema->getTable("study")->getColumnNames();
+		$columns['question'] = Yii::app()->db->schema->getTable("question")->getColumnNames();
+		$columns['questionOption'] = Yii::app()->db->schema->getTable("questionOption")->getColumnNames();
+		$columns['expression'] = Yii::app()->db->schema->getTable("expression")->getColumnNames();
+		$columns['answer'] = Yii::app()->db->schema->getTable("answer")->getColumnNames();
+		$columns['alters'] = Yii::app()->db->schema->getTable("alters")->getColumnNames();
+		$columns['interview'] = Yii::app()->db->schema->getTable("interview")->getColumnNames();
 
 		if(file_exists(Yii::app()->basePath."/../audio/".$id . "/STUDY/ALTERPROMPT.mp3")){
 			$audioFiles[] = array(
@@ -130,6 +139,7 @@ class MobileController extends Controller
 			'interviews'=>$interviews,
 			'alters'=>$alters,
 			'audioFiles'=>$audioFiles,
+			'columns'=>$columns,
 		);
 		if (isset($_SERVER['HTTP_ORIGIN'])) {
 		    header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");

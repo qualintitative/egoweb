@@ -115,7 +115,9 @@ function save(id, page){
 				newIntId,
 				1,
 				studyId,
-				0
+				0,
+				Date.now(),
+				''
 			]
 			db.catalog.getTable('interview').insertRow(interview);
 
@@ -151,7 +153,9 @@ function save(id, page){
 				interviewId,
 				1,
 				studyId,
-				-1
+				-1,
+				interview[4],
+				Date.now()
 			]
 			db.catalog.getTable('interview').updateRow(interview);
 			db.commit();
@@ -415,7 +419,9 @@ function save(id, page){
 					interviewId,
 					1,
 					studyId,
-					completed
+					completed,
+					interview[4],
+					interview[5]
 				]
 				db.catalog.getTable('interview').updateRow(interview);
 			}

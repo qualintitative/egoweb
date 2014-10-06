@@ -1,8 +1,8 @@
 function getStudyList(server){
 	url = 'http://' + server.ADDRESS + '/mobile/ajaxstudies';
-	if(typeof userId != "undefined")
-		url = url + "?userId=" + userId;
-	$.get(url,function(data){
+	//if(typeof userId != "undefined")
+	//	url = url + "?userId=" + userId;
+	$.post(url, { userId:  userId } ,function(data){
 		div = $('#' + server.ID);
 		div.html('');
 		$('#status').html('');
@@ -53,27 +53,7 @@ function importStudy(address, id){
 
 		var study = {
 			tableName: "study",
-			columns: 	[
-				"id",
-				"active",
-				"name",
-				"introduction",
-				"egoIdPrompt",
-				"alterPrompt",
-				"conclusion",
-				"minAlters",
-				"maxAlters",
-				"adjacencyExpressionId",
-				"valueRefusal",
-				"valueDontKnow",
-				"valueLogicalSkip",
-				"valueNotYetAnswered",
-				"modified",
-				"multiSessionEgoId",
-				"useAsAlters",
-				"restrictAlters",
-				"fillAlterList"
-			],
+			columns: data['columns']['study'],
 			primaryKey: [ "id" ],
 		};
 
@@ -112,51 +92,8 @@ function importStudy(address, id){
 
 		var question = {
 			tableName: "question",
-			columns: 	[
-				"id",
-				"active",
-				"title",
-				"prompt",
-				"preface",
-				"citation",
-				"subjectType",
-				"answerType",
-				"askingStyleList",
-				"ordering",
-				"otherSpecify",
-				"noneButton",
-				"allButton",
-				"pageLevelDontKnowButton",
-				"pageLevelRefuseButton",
-				"dontKnowButton",
-				"refuseButton",
-				"allOptionString",
-				"uselfExpression",
-				"minLimitType",
-				"minLiteral",
-				"minPrevQues",
-				"maxLimitType",
-				"maxLiteral",
-				"maxPrevQues",
-				"minCheckableBoxes",
-				"maxCheckableBoxes",
-				"withListRange",
-				"listRangeString",
-				"minListRange",
-				"maxListRange",
-				"timeUnits",
-				"symmetric",
-				"keepOnSamePage",
-				"studyId",
-				"answerReasonExpressionId",
-				"networkRelationshipExprId",
-				"networkNShapeQId",
-				"networkNColorQId",
-				"networkNSizeQId",
-				"networkEColorQId",
-				"networkESizeQId",
-				"useAlterListField",
-			],
+			columns: data['columns']['question'],
+			primaryKey: [ "id" ]
 		};
 
 		if($.inArray('QUESTION', tableNames) == -1)
@@ -170,15 +107,8 @@ function importStudy(address, id){
 		}
 		var questionOption = {
 		    tableName: "questionOption",
-		    columns: 	[
-		    	"id",
-		    	"active",
-		    	"studyId",
-		    	"questionId",
-		    	"name",
-		    	"value",
-		    	"ordering"
-		    ],
+			columns: data['columns']['questionOption'],
+			primaryKey: [ "id" ]
 		};
 
 		if($.inArray('QUESTIONOPTION', tableNames) == -1)
@@ -191,17 +121,8 @@ function importStudy(address, id){
 		}
 		var expression = {
 			tableName: "expression",
-			columns: 	[
-				"id",
-				"active",
-				"name",
-				"type",
-				"operator",
-				"value",
-				"resultForUnanswered",
-				"studyId",
-				"questionId"
-			],
+			columns: data['columns']['expression'],
+			primaryKey: [ "id" ]
 		};
 
 if($.inArray('EXPRESSION', tableNames) == -1)
@@ -213,20 +134,7 @@ for (k in data.expressions){
 }
 var answer = {
 	tableName: "answer",
-	columns: 	[
-				"id",
-				"active",
-				"questionId",
-				"interviewId",
-				"alterId1",
-				"alterId2",
-				"value",
-				"otherSpecifyText",
-				"skipReason",
-				"studyId",
-				"questionType",
-				"answerType"
-				],
+	columns: data['columns']['answer'],
 	primaryKey: [ "id" ]
 };
 if($.inArray('ANSWER', tableNames) == -1)
@@ -234,14 +142,7 @@ if($.inArray('ANSWER', tableNames) == -1)
 
 var alters = {
 	tableName: "alters",
-	columns: 	[
-				"id",
-				"active",
-				"ordering",
-				"name",
-				"interviewId",
-				"alterListId"
-				],
+	columns: data['columns']['alters'],
 	primaryKey: [ "id" ]
 };
 if($.inArray('ALTERS', tableNames) == -1)
@@ -249,12 +150,7 @@ if($.inArray('ALTERS', tableNames) == -1)
 
 var interview = {
 	tableName: "interview",
-	columns: 	[
-				"id",
-				"active",
-				"studyId",
-				"completed"
-				],
+	columns: data['columns']['interview'],
 	primaryKey: [ "id" ]
 };
 if($.inArray('INTERVIEW',tableNames) == -1)
