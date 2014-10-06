@@ -35,6 +35,7 @@ if(!isset($key) || !$key){
             $("select").prop('disabled', true);
             $(".orangebutton").prop('disabled', false);
             $(".graybutton").prop('disabled', false);
+            $("#graph-form > input").prop('disabled', false);
         }
         $('.pageLevel').change(function(){
             var selected = $(this);
