@@ -102,9 +102,13 @@ class AdminController extends Controller
 	 * @return void
 	 */
 	public function actionUserEdit(){
-		if(isset($_GET['userId']))
+		if(isset($_GET['userId'])){
+            if( !is_numeric($_GET['userId']) ){
+                throw new CHttpException(500,"Invalid userId specified ".$_GET['userId']." !");
+            }
 			$model = User::model()->findByPk((int)$_GET['userId']);
-		else
+        }
+        else
 			$model = new User;
 		$this->renderPartial('_form_user', array('user'=>$model, 'ajax'=>true), false, false);
 	}
