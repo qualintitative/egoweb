@@ -864,15 +864,27 @@ class AuthoringController extends Controller
 	{
 		if(isset($_GET['form'])){
 			if($_GET['form'] == "_form_question"){
+                if( !is_numeric($_GET['questionId']) ){
+                    throw new CHttpException(500,"Invalid questionId specified ".$_GET['questionId']." !");
+                }
 				$model = Question::model()->findByPk((int)$_GET['questionId']);
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true), false, true);
 			}else if($_GET['form'] == "_form_alter_list_edit"){
+                if( !is_numeric($_GET['alterListId']) ){
+                    throw new CHttpException(500,"Invalid alterListId specified ".$_GET['alterListId']." !");
+                }
 				$model = AlterList::model()->findByPk((int)$_GET['alterListId']);
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'studyId'=>$model->studyId), false, true);
 			}else if($_GET['form'] == "_form_alter_prompt_edit"){
+                if( !is_numeric($_GET['alterListId']) ){
+                    throw new CHttpException(500,"Invalid alterPromptId specified ".$_GET['alterPromptId']." !");
+                }
 				$model = AlterPrompt::model()->findByPk((int)$_GET['alterPromptId']);
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'studyId'=>$model->studyId), false, true);
 			}else if($_GET['form'] == "_form_option_edit"){
+                if( !is_numeric($_GET['optionId']) ){
+                    throw new CHttpException(500,"Invalid optionId specified ".$_GET['optionId']." !");
+                }
 				$model = QuestionOption::model()->findByPk((int)$_GET['optionId']);
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'questionId'=>$model->questionId), false, true);
 			}else if($_GET['form'] == "_form_expression_text" || $_GET['form'] == "_form_expression_counting" || $_GET['form'] == "_form_expression_comparison" || $_GET['form'] == "_form_expression_compound"){
