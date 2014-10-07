@@ -172,6 +172,7 @@ class MobileController extends Controller
 	}
 
 	public function actionUploadData(){
+			header("Access-Control-Allow-Origin: *");
 		$errorMsg = "";
 		if(count($_POST)){
 			header("Access-Control-Allow-Origin: *");
