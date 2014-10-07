@@ -55,7 +55,7 @@ class InterviewingController extends Controller
 		$study = Study::model()->findByPk($id);
 		$currentPage = 0;
 		if(isset($_GET['page']))
-			$currentPage = $_GET['page'];
+			$currentPage = CHtml::encode(strip_tags($_GET['page']));
 
 		if(isset($_GET['interviewId'])){
 			$interviewId = $_GET['interviewId'];
