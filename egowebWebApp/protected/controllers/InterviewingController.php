@@ -58,12 +58,12 @@ class InterviewingController extends Controller
 			$currentPage = CHtml::encode(strip_tags($_GET['page']));
 
 		if(isset($_GET['interviewId'])){
-			$interviewId = $_GET['interviewId'];
+			$interviewId = CHtml::encode(strip_tags($_GET['interviewId']));
 			$questions = Study::buildQuestions($study, $currentPage, $interviewId);
 			if(!$questions){
 				$this->redirect(Yii::app()->createUrl(
 					'interviewing/'.$id.'?'.
-					'interviewId='.$_GET['interviewId'].'&'.
+					'interviewId='.$interviewId.'&'.
 					'page=0'
 				));
 			}
