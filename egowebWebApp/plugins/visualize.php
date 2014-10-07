@@ -604,7 +604,7 @@ class visualize extends Plugin
             <div id="infovis"></div>
             <div class="col-sm-8 pull-left" id="left-container"></div>
             <div class="col-sm-4 pull-right" id="right-container">
-                <button  onclick="fullscreen()" class="btn btn-info print-button">Fullscreen</button>
+                <button  onclick="fullscreen()" class="btn btn-info print-button" disabled id="fullscreenButton">Fullscreen</button>
                 <button  onclick="print(<?=$this->id;?>,<?=$this->method;?>)" class="btn btn-primary print-button" style="margin-top:10px">Print Preview</button>
                 <?php
                 if($this->networkTitle){
@@ -824,6 +824,7 @@ $('#fullscreenModal').on('hidden', function(){
 				node.y = savedNodes[k].y;
 			}
 		}
+		$('#fullscreenButton').prop('disabled', false);
 	}else{
 		s.startForceAtlas2({
 			"worker":false,
@@ -838,7 +839,7 @@ $('#fullscreenModal').on('hidden', function(){
 			"complexIntervals":500,
 			"simpleIntervals": 1000
 		});
-		setTimeout("s.stopForceAtlas2(); saveNodes()", 5000);
+		setTimeout("s.stopForceAtlas2(); saveNodes(); $('#fullscreenButton').prop('disabled', false);", 5000);
 	}
 	s.refresh();
 	sigma.plugins.dragNodes(s, s.renderers[0]);
