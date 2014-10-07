@@ -93,7 +93,7 @@ class InterviewingController extends Controller
 			$interviewId = '';
 
             if( count($questions) < 1 ){
-                echo "<strong>No questions found for interview $id !</strong>";
+                throw new CHttpException(500,"No questions found for interview $id !");
                 return;
             }
 
