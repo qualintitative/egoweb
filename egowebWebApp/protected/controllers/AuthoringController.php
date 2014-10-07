@@ -890,7 +890,7 @@ class AuthoringController extends Controller
 					$expression = Expression::model()->findbyPk((int)$_GET['expressionId']);
 				else
 					$expression = new Expression;
-				$this->renderPartial($_GET['form'], array('model'=>$model, 'expression'=>$expression, 'ajax'=>true, 'question'=>$question, 'studyId'=>$_GET['studyId']), false, false);
+				$this->renderPartial($_GET['form'], array('model'=>$model, 'expression'=>$expression, 'ajax'=>true, 'question'=>$question, 'studyId'=>(int)$_GET['studyId']), false, false);
 			}else if($_GET['form'] == "_form_option"){
 
 				$criteria=new CDbCriteria;
