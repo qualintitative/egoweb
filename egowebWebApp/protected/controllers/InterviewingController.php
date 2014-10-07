@@ -87,9 +87,16 @@ class InterviewingController extends Controller
 						$model[$array_id]->value = "";
 				}
 			}
-		}else{
+		}
+        else{
 			$questions = Study::buildQuestions($study, $currentPage);
 			$interviewId = '';
+
+            if( count($questions) < 1 ){
+                echo "<strong>No questions found for interview $id !</strong>";
+                return;
+            }
+
 			foreach($questions as $question){
 				$array_id = $question->id;
 				$model[$array_id] = new Answer;
