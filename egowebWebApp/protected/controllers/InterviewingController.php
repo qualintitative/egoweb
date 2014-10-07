@@ -52,18 +52,18 @@ class InterviewingController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$study = Study::model()->findByPk($id);
+		$study = Study::model()->findByPk((int)$id);
 		$currentPage = 0;
 		if(isset($_GET['page']))
-			$currentPage = $_GET['page'];
+			$currentPage = CHtml::encode(strip_tags($_GET['page']));
 
 		if(isset($_GET['interviewId'])){
-			$interviewId = $_GET['interviewId'];
+			$interviewId = CHtml::encode(strip_tags($_GET['interviewId']));
 			$questions = Study::buildQuestions($study, $currentPage, $interviewId);
 			if(!$questions){
 				$this->redirect(Yii::app()->createUrl(
 					'interviewing/'.$id.'?'.
-					'interviewId='.$_GET['interviewId'].'&'.
+					'interviewId='.$interviewId.'&'.
 					'page=0'
 				));
 			}
@@ -87,9 +87,16 @@ class InterviewingController extends Controller
 						$model[$array_id]->value = "";
 				}
 			}
-		}else{
+		}
+        else{
 			$questions = Study::buildQuestions($study, $currentPage);
 			$interviewId = '';
+
+            if( count($questions) < 1 ){
+                throw new CHttpException(500,"No questions found for interview $id !");
+                return;
+            }
+
 			foreach($questions as $question){
 				$array_id = $question->id;
 				$model[$array_id] = new Answer;
@@ -403,13 +410,13 @@ class InterviewingController extends Controller
 					$interview = Interview::model()->findByPk((int)$interviewId);
 					if(!$model[$array_id]->getError('value')){
 						$model[$array_id]->save();
-						if($interview->completed != -1){
-							$interview->completed = $_POST['page'] + 1;
+						if($interview->completed != -1 && is_numeric($_POST['page'])){
+							$interview->completed = (int)$_POST['page'] + 1;
 							$interview->save();
 						}
 					}else{
-						if($interview->completed != -1){
-							$interview->completed = $_POST['page'];
+						if($interview->completed != -1 && is_numeric($_POST['page'])){
+							$interview->completed = (int)$_POST['page'];
 							$interview->save();
 						}
 						$errors++;
@@ -417,7 +424,7 @@ class InterviewingController extends Controller
 				}
 			}
 			if($errors == 0) {
-				$page = $_POST['page'] + 1;
+				$page = (int)$_POST['page'] + 1;
 				$this->redirect(Yii::app()->createUrl(
 					'interviewing/'.$_POST['studyId'].'?'.
 					'interviewId='.$interviewId.'&'.
@@ -591,7 +598,7 @@ class InterviewingController extends Controller
 				Alters::sortOrder($ordering, $interviewId);
 			}
 			$criteria=new CDbCriteria;
-			$alterPrompt = AlterPrompt::getPrompt($_GET['studyId'], Interview::countAlters($interviewId));
+			$alterPrompt = AlterPrompt::getPrompt((int)$_GET['studyId'], Interview::countAlters($interviewId));
 
 			$criteria=array(
 				'condition'=>"FIND_IN_SET(" . $interviewId . ", interviewId)",
@@ -787,7 +794,7 @@ class InterviewingController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		$model=Answer::model()->findByPk($id);
+		$model=Answer::model()->findByPk((int)$id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
