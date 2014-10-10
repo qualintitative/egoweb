@@ -119,7 +119,12 @@ function save(id, page){
 				Math.round(Date.now()/1000),
 				''
 			]
-			db.catalog.getTable('interview').insertRow(interview);
+			try{
+				db.catalog.getTable('interview').insertRow(interview);
+			}catch(e){
+				interview = interview.slice(0, 4);
+				db.catalog.getTable('interview').insertRow(interview);
+			}
 
 			for(k in ego_questions){
 				var a_id = ego_questions[k].ID;
@@ -158,7 +163,12 @@ function save(id, page){
 				interview[4],
 				Math.round(Date.now()/1000)
 			]
-			db.catalog.getTable('interview').updateRow(interview);
+			try{
+				db.catalog.getTable('interview').updateRow(interview);
+			}catch(e){
+				interview = interview.slice(0, 4);
+				db.catalog.getTable('interview').updateRow(interview);
+			}
 			db.commit();
 			window.open("interview.html",'_self');
 		}
@@ -425,7 +435,12 @@ function save(id, page){
 					interview[4],
 					interview[5]
 				]
-				db.catalog.getTable('interview').updateRow(interview);
+				try{
+					db.catalog.getTable('interview').updateRow(interview);
+				}catch(e){
+					interview = interview.slice(0, 4);
+					db.catalog.getTable('interview').updateRow(interview);
+				}
 			}
 			db.commit();
 		}

@@ -1,33 +1,34 @@
 <!DOCTYPE html>
 <!--
-	Licensed to the Apache Software Foundation (ASF) under one
-	or more contributor license agreements.  See the NOTICE file
-	distributed with this work for additional information
-	regarding copyright ownership.  The ASF licenses this file
-	to you under the Apache License, Version 2.0 (the
-	"License"); you may not use this file except in compliance
-	with the License.  You may obtain a copy of the License at
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
 
-	http://www.apache.org/licenses/LICENSE-2.0
+    http://www.apache.org/licenses/LICENSE-2.0
 
-	Unless required by applicable law or agreed to in writing,
-	software distributed under the License is distributed on an
-	"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-	 KIND, either express or implied.  See the License for the
-	specific language governing permissions and limitations
-	under the License.
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
 -->
 <html>
-	<head>
-		<meta charset="utf-8" />
-		<meta name="format-detection" content="telephone=no" />
-		<!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
-		<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-		<link rel="stylesheet" type="text/css" href="css/index.css" />
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
 		<link rel="stylesheet" type="text/css" href="css/mobile.css" media="screen, projection" />
-		<title>EgoWeb Mobile</title>
-	</head>
-	<body>
+        <title>Hello World</title>
+    </head>
+    <body>
 		<div id="ready"></div>
 
 		<div id="topbar">
@@ -55,71 +56,19 @@
 					</p>
 			</div></a>
 		</div>
-		<script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
 		<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
-		<script type="text/javascript">
-			app.initialize();
-
-
-	function download(){
-		window.requestFileSystem(
-			LocalFileSystem.TEMPORARY, 0,
-			function onFileSystemSuccess(entry) {
-				entry.root.getDirectory(
-					"egowebaudio",
-					{create: true, exclusive: false},
-					function onGetDirectorySuccess(fileSystem){
-						entry.root.getFile(
-							"egowebaudio/29076.mp3",
-							{create: true, exclusive: false},
-							function gotFileEntry(fileEntry){
-								var sPath = fileEntry.toNativeURL();
-								var fileTransfer = new FileTransfer();
-								fileEntry.remove();
-fileTransfer.onprogress = function(progressEvent) {
-    if (progressEvent.lengthComputable) {
-      $("#ready").html(progressEvent.loaded / progressEvent.total * 100);
-    }
-};
-								fileTransfer.download(
-									encodeURI("http://rand.bluscs.com/audio/39/EGO/29076.mp3"),
-									sPath,
-									function (theFile) {
-										alert("download complete: " + theFile.toNativeURL());
-										$("#ready").html(theFile.toNativeURL());
-									},
-									function (error) {
-										console.log("download error source " + error.source);
-										console.log("download error target " + error.target);
-										console.log("upload error code: " + error.code);
-									}
-								);
-							},
-							fail
-						);
-					},
-					fail
-				);
-			},
-			fail
-		);
-
-	}
-
-	function showLink(url){
-		alert(url);
-		var divEl = document.getElementById("ready");
-		var aElem = document.createElement("a");
-		aElem.setAttribute("target", "_blank");
-		aElem.setAttribute("href", url);
-		aElem.appendChild(document.createTextNode("Ready! Click To Open."))
-		divEl.appendChild(aElem);
-
-	}
-
-	function fail(evt) {
-		alert(evt.target.error.code);
-	}
-		</script>
-	</body>
+		<script type="text/javascript" src="js/painlessfs.js"></script>
+        <script>
+            document.addEventListener("deviceready", onDeviceReady, false);
+            
+            // PhoneGap is loaded and it is now safe to make calls PhoneGap methods
+            //
+            function onDeviceReady() {
+                $('.admin').html('');
+                console.log("hi");
+            }
+            </script>
+    </body>
 </html>

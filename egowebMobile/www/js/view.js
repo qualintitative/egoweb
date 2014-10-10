@@ -523,7 +523,7 @@ function view(id, interviewId, page)
 function audioFileExists(path, div){
 	if(typeof LocalFileSystem == "undefined")
 		return false;
-    window.requestFileSystem(LocalFileSystem.TEMPORARY, 0, function(fileSystem){
+    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem){
         fileSystem.root.getFile(path, { create: false },
         function fileExists(file){
         	div.html(div.html() + '<a class="play-sound" onclick=\'playSound("' + file.toNativeURL() + '")\' href="#"><span class="fui-volume"></span></a>')

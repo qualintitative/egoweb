@@ -24,7 +24,7 @@ THE SOFTWARE.
 */
 
 try{
-	var tmp = LocalFileSystem.TEMPORARY;
+	var tmp = LocalFileSystem.PERSISTENT;
 }
 catch(e){
 
@@ -212,7 +212,7 @@ var fileSystemSingleton = {
 
 
 		window.requestFileSystem(
-			LocalFileSystem.TEMPORARY,
+			cordova.file.dataDirectory,
 			0,
 			function(fileSystem){
 				fileSystemSingleton.fileSystem = fileSystem;
@@ -264,7 +264,7 @@ var fileSystemSingleton = {
 
 
 		window.requestFileSystem(
-			LocalFileSystem.TEMPORARY,
+			LocalFileSystem.PERSISTENT,
 			0,
 			function(fileSystem){
 				fileSystemSingleton.fileSystem = fileSystem;
@@ -512,7 +512,7 @@ var ParallelAgregator = function(count, success, fail, bucket)
   }
 }
 
-/**
+/
 
 //TEST CODE:
 var start=	function(){
@@ -549,5 +549,5 @@ var start=	function(){
 
 }
 document.addEventListener('deviceready', start, false);
-*/
+
 

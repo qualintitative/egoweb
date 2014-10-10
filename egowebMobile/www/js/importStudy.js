@@ -78,6 +78,7 @@ function importStudy(address, id){
 		displayAudioLoad();
 		if(totalAudioFiles > 0){
 			var a = new DirManager();
+			console.log(a);
 			a.create_r('egowebaudio/' + data.study[0] + "/EGO", console.log('created successfully'));
 			a.create_r('egowebaudio/' + data.study[0] + "/ALTER", console.log('created successfully'));
 			a.create_r('egowebaudio/' + data.study[0] + "/ALTER_PAIR", console.log('created successfully'));
@@ -86,6 +87,7 @@ function importStudy(address, id){
 			a.create_r('egowebaudio/' + data.study[0] + "/PREFACE", console.log('created successfully'));
 			var b = new FileManager();
 			for(var j in data.audioFiles){
+				console.log(j);
 				b.download_file(data.audioFiles[j].url,'egowebaudio/' + data.study[0] + '/' + data.audioFiles[j].type + '/', data.audioFiles[j].id + ".mp3", function(){loadedAudioFiles++;displayAudioLoad()});
 			}
 		}
@@ -157,7 +159,7 @@ if($.inArray('INTERVIEW',tableNames) == -1)
 	db.catalog.createTable(interview);
 
 db.commit();
-	$('#status').html($('#status').html()+"DONE!");
+	//$('#status').html($('#status').html()+"DONE!");
 	getStudyList(server);
 
 });
@@ -168,7 +170,7 @@ function displayAudioLoad() {
 		if(loadedAudioFiles == totalAudioFiles){
 			$('#status').html("Done!");
 			setTimeout(function(){
-				$('#status').html("");
+				//$('#status').html("");
    		  	}, 1000);
 		}
 }
