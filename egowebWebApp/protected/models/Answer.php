@@ -89,6 +89,33 @@ class Answer extends CActiveRecord
 		);
 	}
 
+	public function beforeSave() {
+
+				$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
+
+        if ($this->value!="")
+					$this->value = utf8_encode(Yii::app()->getSecurityManager()->encrypt($this->value, $eKey));
+
+        if ($this->otherSpecifyText!="") 			
+					$this->otherSpecifyText = utf8_encode(Yii::app()->getSecurityManager()->encrypt($this->otherSpecifyText, $eKey));
+
+        return parent::beforeSave();
+  }
+
+  protected function afterFind() {
+  	
+  			$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
+	
+        if ($this->value!="")
+        	 $this->value = Yii::app()->getSecurityManager()->decrypt(utf8_decode($this->value), $eKey);								
+			
+        if ($this->otherSpecifyText!="") 		
+         $this->otherSpecifyText = Yii::app()->getSecurityManager()->decrypt(utf8_decode($this->otherSpecifyText), $eKey);
+
+        return parent::afterFind();
+  }
+
+
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.

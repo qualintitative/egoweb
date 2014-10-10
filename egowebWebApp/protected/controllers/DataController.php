@@ -144,6 +144,8 @@ class DataController extends Controller
 		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
 			die("nothing to export");
 
+		$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
+
 		if(isset($_POST['expressionId']))
 			$expressionId = $_POST['expressionId'];
 		else
@@ -216,6 +218,11 @@ class DataController extends Controller
 					continue;
 			}
 
+			foreach($alters as &$alter){
+				if($alter['name']!="")
+					$alter['name'] = Yii::app()->getSecurityManager()->decrypt(utf8_decode($alter['name']), $eKey);;
+			}	
+
 			if($expressionId){
 				$stats = new Statistics;
 				$stats->initComponents($interview->id, $expressionId);
@@ -229,6 +236,10 @@ class DataController extends Controller
                     #OK FOR SQL INJECTION
 					$ego_ids[] = q("SELECT value FROM answer WHERE interviewId = " . $interview->id  . " AND questionId = " . $question['id'])->queryScalar();
 				}
+				foreach($ego_ids as &$ego_id){
+					if ($ego_id!="")
+						$ego_id = Yii::app()->getSecurityManager()->decrypt(utf8_decode($ego_id), $eKey);
+				}				
 				$answers[] = implode("_", $ego_ids);
 				foreach($ego_ids as $ego_id)
 					$answers[] = $ego_id;
@@ -335,6 +346,7 @@ class DataController extends Controller
 		$study = Study::model()->findByPk((int)$_POST['studyId']);
         #OK FOR SQL INJECTION
 		$optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
+		$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
 
 		// create an array with option ID as key
 		$options = array();
@@ -373,6 +385,10 @@ class DataController extends Controller
 				continue;
             #OK FOR SQL INJECTION
 			$alters = q("SELECT * FROM alters WHERE interviewId = " . $interview->id)->queryAll();
+			foreach($alters as &$alter){
+				if($alter['name']!="")
+					$alter['name'] = Yii::app()->getSecurityManager()->decrypt(utf8_decode($alter['name']), $eKey);;
+			}			
 			$i = 1;
 			$alterNum = array();
 			foreach($alters as $alter){
@@ -448,7 +464,8 @@ class DataController extends Controller
 		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
 			die("nothing to export");
 
-        #OK FOR SQL INJECTION
+		$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
+
 		$study = Study::model()->findByPk((int)$_POST['studyId']);
         #OK FOR SQL INJECTION
 		$optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
@@ -496,8 +513,12 @@ class DataController extends Controller
 						$answer[] = $interview->id;
 						$answer[] = Interview::getRespondant($interview->id);
 						$answer[] = $question['title'];
-						$answer[] = $alter->name;
-						$answer[] = $response;
+						if($alter->name!="")
+						         $answer[] = Yii::app()->getSecurityManager()->decrypt(utf8_decode($alter->name), $eKey);						
+						//$answer[] = $alter->name;
+						if($response!="")
+						         $answer[] = Yii::app()->getSecurityManager()->decrypt(utf8_decode($response), $eKey);												
+						//$answer[] = $response;
 						echo implode(',', $answer) . "\n";
 						flush();
 					}
@@ -517,7 +538,9 @@ class DataController extends Controller
 					$answer[] = Interview::getRespondant($interview->id);
 					$answer[] = $question['title'];
 					$answer[] = "";
-					$answer[] = $response;
+						if($response!="")
+						         $answer[] = Yii::app()->getSecurityManager()->decrypt(utf8_decode($response), $eKey);																	
+					//$answer[] = $response;
 					echo implode(',', $answer) . "\n";
 					flush();
 				}
@@ -531,6 +554,7 @@ class DataController extends Controller
 		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
 			die("nothing to export");
 
+		$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
 		$study = Study::model()->findByPk((int)$_POST['studyId']);
         #OK FOR SQL INJECTION
 		$alters = q("SELECT * FROM alterList WHERE studyId = " . $study->id)->queryAll();
@@ -553,7 +577,13 @@ class DataController extends Controller
 			$key = "key=".User::hashPassword($alter['email']);
 			$row[] = $study->id;
 			$row[] = $alter['id'];
+			if($alter['name']!="")
+				$row[] = Yii::app()->getSecurityManager()->decrypt(utf8_decode($alter['name']), $eKey);
+			else
 			$row[] = $alter['name'];
+			if($alter['email']!="")
+				$row[] = Yii::app()->getSecurityManager()->decrypt(utf8_decode($alter['email']), $eKey);
+			else
 			$row[] = $alter['email'];
 			$row[] =  Yii::app()->getBaseUrl(true) . "/interviewing/".$study->id."?".$key;
 			echo implode(',', $row) . "\n";

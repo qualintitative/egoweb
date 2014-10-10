@@ -133,4 +133,25 @@ class Alters extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+	
+	public function beforeSave(){
+
+			$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
+
+			if($this->name!="")
+			  $this->name = utf8_encode(Yii::app()->getSecurityManager()->encrypt($this->name, $eKey));
+			
+		return parent::beforeSave();
+	}
+	
+  protected function afterFind() {
+
+			$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
+
+			if($this->name!="")
+         $this->name = Yii::app()->getSecurityManager()->decrypt(utf8_decode($this->name), $eKey);
+
+ 				return parent::afterFind();
+  }	
+	
 }

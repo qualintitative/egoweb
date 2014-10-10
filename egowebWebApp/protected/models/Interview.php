@@ -189,6 +189,12 @@ class Interview extends CActiveRecord
                 #OK FOR SQL INJECTION
                 $ego_ids[] = q("SELECT value FROM answer WHERE interviewId = " . $interview['id']  . " AND questionId = " . $question['id'])->queryScalar();
             }
+		if(isset($ego_ids))
+			//need to decrypt egoid before returning it
+		$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
+		foreach ($ego_ids as &$eid){
+				if($eid!="" && !(is_numeric($eid)))
+					$eid=Yii::app()->getSecurityManager()->decrypt(utf8_decode($eid), $eKey);
         }
         if(isset($ego_ids))
             $egoId = implode("_", $ego_ids);

@@ -123,4 +123,35 @@ class AlterList extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+	
+	public function beforeSave(){
+
+			$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
+
+			echo 'eKey = '.$eKey.'<br />';
+
+			if($this->name!="")
+			  $this->name = utf8_encode(Yii::app()->getSecurityManager()->encrypt($this->name, $eKey));
+			if($this->email!="")
+			  $this->email = utf8_encode(Yii::app()->getSecurityManager()->encrypt($this->email, $eKey));
+			
+			return parent::beforeSave();
+
+	}	
+	
+  protected function afterFind() {
+
+			$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
+
+			echo 'eKey = '.$eKey.'<br />';
+
+			if($this->name!="")
+         $this->name = Yii::app()->getSecurityManager()->decrypt(utf8_decode($this->name), $eKey);
+        
+			if($this->email!="")
+         $this->email = Yii::app()->getSecurityManager()->decrypt(utf8_decode($this->email), $eKey);
+
+ 				return parent::afterFind();
+  }	
+	
 }
