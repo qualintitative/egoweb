@@ -613,12 +613,14 @@ class visualize extends Plugin
 	                    $interviewIds = array_diff($interviewIds, array($this->method));
                         echo "<br>Load other graphs:";
                         foreach($interviewIds as $interviewId){
+                        	$graphId = "";
                             #OK FOR SQL INJECTION
                             $study = Study::model()->findByPk((int)q("SELECT studyId from interview WHERE id = " . $interviewId)->queryScalar());
                             #OK FOR SQL INJECTION
                             $networkExprId = q("SELECT networkRelationshipExprId FROM question WHERE title = '" . $this->networkTitle . "' AND studyId = " . $study->id)->queryScalar();
                             #OK FOR SQL INJECTION
-                            $graphId = q("SELECT id FROM graphs WHERE expressionId = " . $networkExprId  . " AND interviewId = " . $interviewId)->queryScalar();
+                            if($networkExprId)
+                            	$graphId = q("SELECT id FROM graphs WHERE expressionId = " . $networkExprId  . " AND interviewId = " . $interviewId)->queryScalar();
                             if($graphId)
                                 echo '<br><a href="#" onclick="print(' . $networkExprId . ','. $interviewId . ')">' . $study->name . '</a>';
                         }
