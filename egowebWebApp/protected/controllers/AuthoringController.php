@@ -876,7 +876,7 @@ class AuthoringController extends Controller
 				$model = AlterList::model()->findByPk((int)$_GET['alterListId']);
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'studyId'=>$model->studyId), false, true);
 			}else if($_GET['form'] == "_form_alter_prompt_edit"){
-                if( !is_numeric($_GET['alterListId']) ){
+                if( !is_numeric($_GET['alterPromptId']) ){
                     throw new CHttpException(500,"Invalid alterPromptId specified ".$_GET['alterPromptId']." !");
                 }
 				$model = AlterPrompt::model()->findByPk((int)$_GET['alterPromptId']);
@@ -916,6 +916,19 @@ class AuthoringController extends Controller
 					'pagination'=>false,
 				));
 				$this->renderPartial("_form_option", array('dataProvider'=>$dataProvider, 'questionId'=>$_GET['questionId'], 'ajax'=>true), false, true);
+			}else if($_GET['form'] == "_form_legend"){
+
+				$criteria=new CDbCriteria;
+				$criteria=array(
+					'condition'=>"questionId = " . $_GET['questionId'],
+					'order'=>'ordering',
+				);
+
+				$dataProvider=new CActiveDataProvider('Legend',array(
+					'criteria'=>$criteria,
+					'pagination'=>false,
+				));
+				$this->renderPartial("_form_legend", array('dataProvider'=>$dataProvider, 'ajax'=>true), false, true);
 			}else if($_GET['form'] == "_form_option_list"){
 				$answerList = AnswerList::model()->findByPk((int)$_GET['answerListId']);
 				$listOptions = preg_split('/,/', $answerList->listOptionNames);

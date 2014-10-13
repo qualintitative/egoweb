@@ -482,6 +482,14 @@ function refresh(container){
 		CHtml::encode('Duplicate'),
 		array("submit"=>CController::createUrl('duplicate', array('questionId'=>$model->id)))
 	);
+
+	if($model->subjectType == "NETWORK"){
+		echo CHtml::ajaxButton (CHtml::encode('Legend'),
+			CController::createUrl('ajaxload', array('questionId'=>$model->id, 'form'=>'_form_legend')),
+			array('update' => '#data-'.$model->id),
+			array('id' => uniqid(), 'live'=>false)
+		);
+	}
 ?>
 <?php endif; ?>
 
