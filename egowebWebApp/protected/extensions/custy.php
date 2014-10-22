@@ -96,6 +96,10 @@ function decrypt( $encrypted ){
  * @return string
  */
 function encrypt( $decrypted ){
+    if( strlen(trim( $decrypted )) < 1  ){
+        return $decrypted;
+    }
+
     $eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
     $encrypted = base64_encode(Yii::app()->getSecurityManager()->encrypt( $decrypted, $eKey ) );
 
