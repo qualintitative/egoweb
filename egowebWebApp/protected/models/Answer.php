@@ -89,31 +89,26 @@ class Answer extends CActiveRecord
 		);
 	}
 
-	public function beforeSave() {
-
-				$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
-
-        if ($this->value!="")
-					$this->value = utf8_encode(Yii::app()->getSecurityManager()->encrypt($this->value, $eKey));
-
-        if ($this->otherSpecifyText!="") 			
-					$this->otherSpecifyText = utf8_encode(Yii::app()->getSecurityManager()->encrypt($this->otherSpecifyText, $eKey));
+    /**
+     * Encrypts "value" and "otherSpecifyText" attributes before they're saved.
+     * @return bool|void
+     */
+    public function beforeSave() {
+		$this->value = encrypt( $this->value );
+        $this->otherSpecifyText = encrypt( $this->otherSpecifyText );
 
         return parent::beforeSave();
-  }
+    }
 
-  protected function afterFind() {
-  	
-  			$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
-	
-        if ($this->value!="")
-        	 $this->value = Yii::app()->getSecurityManager()->decrypt(utf8_decode($this->value), $eKey);								
-			
-        if ($this->otherSpecifyText!="") 		
-         $this->otherSpecifyText = Yii::app()->getSecurityManager()->decrypt(utf8_decode($this->otherSpecifyText), $eKey);
+    /**
+     * Decrypts "value" and "otherSpecifyText" attributes after they're found.
+     */
+    protected function afterFind() {
+        $this->value = decrypt( $this->value );
+        $this->otherSpecifyText = decrypt ($this->otherSpecifyText );
 
         return parent::afterFind();
-  }
+    }
 
 
 	/**

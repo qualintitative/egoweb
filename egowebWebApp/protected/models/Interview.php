@@ -182,20 +182,19 @@ class Interview extends CActiveRecord
             if($question['answerType'] == "MULTIPLE_SELECTION"){
                 #OK FOR SQL INJECTION
                 $optionId = q("SELECT value FROM answer WHERE interviewId = " . $interview['id']  . " AND questionId = " . $question['id'])->queryScalar();
-                if($optionId)
+                if($optionId){
+                    $optionId = decrypt($optionId);
                     #OK FOR SQL INJECTION
                     $ego_ids[] = q("SELECT name FROM questionOption WHERE id = " . $optionId)->queryScalar();
+                }
             }else{
                 #OK FOR SQL INJECTION
                 $ego_ids[] = q("SELECT value FROM answer WHERE interviewId = " . $interview['id']  . " AND questionId = " . $question['id'])->queryScalar();
             }
         }
-		if(isset($ego_ids))
-			//need to decrypt egoid before returning it
-		$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
+
 		foreach ($ego_ids as &$eid){
-				if($eid!="" && !(is_numeric($eid)))
-					$eid=Yii::app()->getSecurityManager()->decrypt(utf8_decode($eid), $eKey);
+            $eid=decrypt($eid);
         }
         if(isset($ego_ids))
             $egoId = implode("_", $ego_ids);
