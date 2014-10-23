@@ -15,7 +15,8 @@ class UserIdentity extends CUserIdentity
 	 */
 	public function authenticate()
 	{
-		$user=User::model()->findByAttributes(array('email'=>$this->username));
+        $user = $this->getUserByEmail( $this->username );
+
 		if($user===null)
 			$this->errorCode=self::ERROR_USERNAME_INVALID;
 		else if(!$user->validatePassword($this->password))
@@ -28,6 +29,22 @@ class UserIdentity extends CUserIdentity
 		}
 		return $this->errorCode==self::ERROR_NONE;
 	}
+
+    /**
+     * @param $email
+     * @return User matching email if found or null otherwise
+     */
+    private function getUserByEmail( $email ){
+        $users = User::model()->findAll();
+
+        foreach( $users as $user ){
+            if( $user->email == $email){
+                return $user;
+            }
+        }
+
+        return null;
+    }
 
 	/**
 	 * @return integer the ID of the user record
