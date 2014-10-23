@@ -246,9 +246,8 @@ class InterviewingController extends Controller
                     $params->dataType = PDO::PARAM_INT;
 					$restricted = q("SELECT " . $field . " FROM alterList WHERE studyId = :studyId " . $interviewer, array($params))->queryColumn();
 					//have to decrypt the names from the AlterList table before checking against
-					$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
 					foreach ($restricted as &$dname){
-						$dname = Yii::app()->getSecurityManager()->decrypt(utf8_decode($dname), $eKey);
+						$dname = decrypt($dname);
 						unset($dname);
 					}
 					
@@ -689,7 +688,6 @@ class InterviewingController extends Controller
 		$questions = q("SELECT * FROM question WHERE subjectType = 'EGO' AND studyId = " . $studyId)->queryAll();
         #OK FOR SQL INJECTION
         $study = q("SELECT * FROM study WHERE id = ".$studyId)->queryRow();
-		$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
 		foreach($questions as $question){
             #OK FOR SQL INJECTION
 			$oldAnswer = q("SELECT id FROM answer WHERE interviewId = $interviewId AND questionId = " . $question['id'])->queryScalar();
@@ -698,7 +696,7 @@ class InterviewingController extends Controller
 					'questionId' => $question['id'],
 					'interviewId'=>$interviewId,
 					//try encrypting here					
-					'value'=>utf8_encode(Yii::app()->getSecurityManager()->encrypt($study['valueNotYetAnswered'], $eKey)),
+					'value'=>encrypt($study['valueNotYetAnswered']),
 				  //'value'=>$study['valueNotYetAnswered'],
 					'skipReason'=>'NONE',
 					'studyId'=>$study['id'],
@@ -716,7 +714,6 @@ class InterviewingController extends Controller
 		$questions = q("SELECT * FROM question WHERE subjectType != 'EGO' AND subjectType != 'EGO_ID' AND studyId = " . $studyId)->queryAll();
         #OK FOR SQL INJECTION
         $study = q("SELECT * FROM study WHERE id = ".$studyId)->queryRow();
-		$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();		
 		$criteria = array(
 			'condition'=>"FIND_IN_SET(" . $interviewId . ", interviewId)",
 		);
@@ -734,7 +731,7 @@ class InterviewingController extends Controller
 						$answer = array(
 						    'questionId' => $question['id'],
 						    'interviewId'=>$interviewId,
-								'value'=>utf8_encode(Yii::app()->getSecurityManager()->encrypt($study['valueNotYetAnswered'], $eKey)),						    
+							'value'=>encrypt($study['valueNotYetAnswered']),
 						    //'value'=>$study['valueNotYetAnswered'],
 						    'skipReason'=>'NONE',
 						    'studyId'=>$study['id'],
@@ -761,7 +758,7 @@ class InterviewingController extends Controller
 							$answer = array(
 							    'questionId' => $question['id'],
 							    'interviewId'=>$interviewId,
-							    'value'=>utf8_encode(Yii::app()->getSecurityManager()->encrypt($study['valueNotYetAnswered'], $eKey)),
+							    'value'=>encrypt($study['valueNotYetAnswered']),
 							    //'value'=>$study['valueNotYetAnswered'],
 							    'skipReason'=>'NONE',
 							    'studyId'=>$study['id'],
@@ -787,7 +784,7 @@ class InterviewingController extends Controller
 				$answer = array(
 					'questionId' => $question['id'],
 					'interviewId'=>$interviewId,
-					'value'=>utf8_encode(Yii::app()->getSecurityManager()->encrypt($study['valueNotYetAnswered'], $eKey)),
+					'value'=>encrypt($study['valueNotYetAnswered']),
 					//'value'=>$study['valueNotYetAnswered'],
 					'skipReason'=>'NONE',
 					'studyId'=>$study['id'],
