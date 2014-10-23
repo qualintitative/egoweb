@@ -389,8 +389,8 @@ class Study extends CActiveRecord
 						if($alterQuestionExpressions[$questionId] && !$expression->evalExpression($alterQuestionExpressions[$questionId], $interviewId, $alter->id)){
 
 							$data = array(
-								'value'=>utf8_encode(Yii::app()->getSecurityManager()->encrypt($study['valueLogicalSkip'], $eKey)),
-								//'value'=>$study->valueLogicalSkip,
+								//'value'=>utf8_encode(Yii::app()->getSecurityManager()->encrypt($study['valueLogicalSkip'], $eKey)),
+								'value'=>$study->valueLogicalSkip,
 							);
 							if(isset($answers[$question->id.'-'.$alter->id]['id']))
 								u('answer', $data, "id = " . $answers[$question->id.'-'.$alter->id]['id']);
@@ -783,17 +783,7 @@ class Study extends CActiveRecord
 		if(trim($this->introduction) == "<br>")
 			$this->introduction = "";
 
-		/**
-		 * Encrypts sensitive data in model before it is saved
-		 */
-			$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
-
-			if($this->name!="")
-			  $this->name = utf8_encode(Yii::app()->getSecurityManager()->encrypt($this->name, $eKey));
-			
-		return parent::beforeSave();
-
-		/*return true;*/
+		return true;
 	}
 
 	/**
@@ -819,19 +809,6 @@ class Study extends CActiveRecord
 			'multiSessionEgoId' => "Multi-session"
 		);
 	}
-
-  protected function afterFind() {
-		/**
-		 * Decrypts sensitive data in model once it is found
-		 */
-			$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
-
-			if($this->name!="")
-         $this->name = Yii::app()->getSecurityManager()->decrypt(utf8_decode($this->name), $eKey);
-        
- 				return parent::afterFind();
-  }
-
 
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
