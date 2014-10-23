@@ -123,35 +123,26 @@ class AlterList extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
-	
-	public function beforeSave(){
 
-			$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
+    /**
+     * Encrypts "name" and "email" attributes before they're saved.
+     * @return bool|void
+     */
+    public function beforeSave() {
+        $this->name = encrypt( $this->name );
+        $this->email = encrypt( $this->email );
 
-			echo 'eKey = '.$eKey.'<br />';
+        return parent::beforeSave();
+    }
 
-			if($this->name!="")
-			  $this->name = utf8_encode(Yii::app()->getSecurityManager()->encrypt($this->name, $eKey));
-			if($this->email!="")
-			  $this->email = utf8_encode(Yii::app()->getSecurityManager()->encrypt($this->email, $eKey));
-			
-			return parent::beforeSave();
+    /**
+     * Decrypts "name" and "email" attributes after they're found.
+     */
+    protected function afterFind() {
+        $this->name = decrypt( $this->name );
+        $this->email = decrypt($this->email );
 
-	}	
-	
-  protected function afterFind() {
-
-			$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
-
-			echo 'eKey = '.$eKey.'<br />';
-
-			if($this->name!="")
-         $this->name = Yii::app()->getSecurityManager()->decrypt(utf8_decode($this->name), $eKey);
-        
-			if($this->email!="")
-         $this->email = Yii::app()->getSecurityManager()->decrypt(utf8_decode($this->email), $eKey);
-
- 				return parent::afterFind();
-  }	
+        return parent::afterFind();
+    }
 	
 }
