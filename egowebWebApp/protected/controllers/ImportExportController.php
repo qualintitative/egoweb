@@ -1,5 +1,4 @@
- <?php
-
+<?php
 class ImportExportController extends Controller
 {
 	public function actionImportstudy()
@@ -13,6 +12,10 @@ class ImportExportController extends Controller
 		$newQuestionIds = array();
 		$newOptionIds = array();
 		$newExpressionIds = array();
+		$newInterviewIds = array();
+		$newAnswerIds = array();
+		$newAlterIds = array();
+
 		foreach($study->attributes() as $key=>$value){
 			if($key!="key" && $key != "id")
 				$newStudy->$key = $value;
@@ -197,8 +200,9 @@ class ImportExportController extends Controller
 					if($key!="key" && $key != "id")
 						$newInterview->$key = $value;
 				}
+				$newInterview->studyId = $newStudy->id;
 				if(!$newInterview->save())
-					print_r($newInterview->getErrors());
+					print_r($newInterview->errors);
 
 				if(count($interview->alters->alter) != 0){
 					foreach($interview->alters->alter as $alter){
@@ -239,16 +243,17 @@ class ImportExportController extends Controller
 								$answerType = $value;
 						}
 
-						if($answerType == "MULTIPLE_SELECTION" || $answerType == "SELECTION"){
+						if($answerType == "MULTIPLE_SELECTION" && !in_array($answer->value, array($newStudy->valueRefusal,$newStudy->valueDontKnow,$newStudy->valueLogicalSkip,$newStudy->valueNotYetAnswered))){
 							$values = explode(',', $answer->value);
 							foreach($values as &$value){
+								print_r($newOptionIds[$value]);
+								die();
 								if(isset($newOptionIds[$value]))
 									$value = $newOptionIds[$value];
 							}
-							$answer->value = implode(',', $values);
+							$newAnswer->value = implode(',', $values);
 						}
 
-						$newAnswer->value = $answer->value;
 						$newAnswer->studyId = $newStudy->id;
 						$newAnswer->interviewId = $newInterview->id;
 
@@ -301,15 +306,32 @@ class ImportExportController extends Controller
 	public function actionExportstudy(){
 		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
 			die("nothing to export");
+
 		$study = Study::model()->findByPk((int)$_POST['studyId']);
 		$questions = Question::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
 		$expressions = Expression::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
 		$answerLists = AnswerList::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
+		$alterLists = AlterList::model()->findAllByAttributes(array("studyId"=>$_POST['studyId']));
 		$study->introduction = htmlspecialchars (trim(preg_replace('/\s+|&nbsp;/', ' ', $study->introduction)), ENT_QUOTES, "UTF-8", false);
 		$study->egoIdPrompt = htmlspecialchars (trim(preg_replace('/\s+|&nbsp;/', ' ', $study->egoIdPrompt)), ENT_QUOTES, "UTF-8", false);
 		$study->alterPrompt = htmlspecialchars (trim(preg_replace('/\s+|&nbsp;/', ' ', $study->alterPrompt)), ENT_QUOTES, "UTF-8", false);
 		$study->alterPrompt = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $study->alterPrompt)), ENT_QUOTES, "UTF-8", false);
 		$study->conclusion = htmlspecialchars (trim(preg_replace('/\s+|&nbsp;/', ' ', $study->conclusion)), ENT_QUOTES, "UTF-8", false);
+
+		if(isset($_POST['includeResponses']) && $_POST['includeResponses']){
+			$interviews = Interview::model()->findAllByAttributes(array("studyId"=>$_POST['studyId']));
+			foreach($interviews as $result){
+				$interview[$result->id] = $result;
+				$answer = Answer::model()->findAllByAttributes(array("interviewId"=>$result->id));
+				$answers[$result->id] = $answer;
+				$alter = Alters::model()->findAllByAttributes(array("interviewId"=>$result->id));
+				$alters[$result->id] = $alter;
+				$graph = Graph::model()->findAllByAttributes(array("interviewId"=>$result->id));
+				$graphs[$result->id] = $graph;
+				$note = Note::model()->findAllByAttributes(array("interviewId"=>$result->id));
+				$notes[$result->id] = $note;
+			}
+		}
 
 		header("Content-type: text/xml; charset=utf-8");
 		header("Content-Disposition: attachment; filename=".$study->name.".study");
@@ -388,6 +410,46 @@ EOT;
 			}
 			echo "
 	</answerLists>";
+		}
+		if(isset($_POST['includeResponses']) && $_POST['includeResponses']){
+			echo "
+	<interviews>";
+			foreach($interviews as $interview){
+				echo <<<EOT
+
+		<interview id="{$interview->id}" studyId="{$interview->studyId}" completed="{$interview->completed}" start_date="{$interview->start_date}" complete_date="{$interview->complete_date}">
+EOT;
+				if(isset($answers[$interview->id])){
+					echo "
+			<answers>";
+					foreach($answers[$interview->id] as $answer){
+						echo <<<EOT
+
+				<answer id="{$answer->id}" questionId="{$answer->questionId}" interviewId="{$answer->interviewId}" alterId1="{$answer->alterId1}" alterId2="{$answer->alterId2}" value="{$answer->value}" otherSpecifyText="{$answer->otherSpecifyText}" skipReason="{$answer->skipReason}" questionType="{$answer->questionType}" answerType="{$answer->answerType}" />
+EOT;
+					}
+					echo "
+			</answers>";
+				}
+
+				if(isset($alters[$interview->id])){
+					echo "
+			<alters>";
+					foreach($alters[$interview->id] as $alter){
+						echo <<<EOT
+
+				<alter id="{$alter->id}" name="{$alter->name}" interviewId="{$alter->interviewId} ordering="{$alter->ordering}" alterListId="{$alter->alterListId}" />
+EOT;
+					}
+					echo "
+			</alters>";
+				}
+
+			echo "
+		</interview>";
+			}
+			echo "
+	</interviews>";
 		}
 		echo "
 </study>";

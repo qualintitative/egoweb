@@ -485,7 +485,7 @@ function refresh(container){
 
 	if($model->subjectType == "NETWORK"){
 		echo CHtml::ajaxButton (CHtml::encode('Legend'),
-			CController::createUrl('ajaxload', array('questionId'=>$model->id, 'form'=>'_form_legend')),
+			CController::createUrl('ajaxload', array('questionId'=>$model->id, 'form'=>'_form_legend', 'studyId'=>$model->studyId)),
 			array('update' => '#data-'.$model->id),
 			array('id' => uniqid(), 'live'=>false)
 		);

@@ -176,7 +176,7 @@ class AuthoringController extends Controller
 
 		$condition = "id != 0";
 		if(!Yii::app()->user->isSuperAdmin){
-            #OK FOR SQL INJECTION
+			#OK FOR SQL INJECTION
 			$studies = q("SELECT studyId FROM interviewers WHERE active = 1 AND interviewerId = " . Yii::app()->user->id)->queryColumn();
 			if($studies)
 				$condition = "id IN (" . implode(",", $studies) . ")";
@@ -572,6 +572,28 @@ class AuthoringController extends Controller
 				print_r($model->getErrors());
 				die();
 			}
+		}elseif(isset($_POST['Legend'])){
+			$model = Legend::model()->findByPk((int)$_POST['Legend']['id']);
+			if(!$model){
+				$model = new Legend;
+				$criteria=new CDbCriteria;
+				$criteria->select='count(ordering) AS ordering';
+				$row = Legend::model()->find($criteria);
+				$model->ordering = $row['ordering'];
+			}
+			$model->attributes = $_POST['Legend'];
+			if(!$model->save())
+				throw new CHttpException(500, print_r($model->errors));
+			$criteria=new CDbCriteria;
+			$criteria=array(
+				'condition'=>"questionId = " . $model->questionId,
+				'order'=>'ordering',
+			);
+			$dataProvider=new CActiveDataProvider('Legend',array(
+				'criteria'=>$criteria,
+				'pagination'=>false,
+			));
+			$this->renderPartial('_form_legend', array('dataProvider'=>$dataProvider, 'studyId'=> $model->studyId, 'questionId'=>$model->questionId, 'ajax'=>true), false, true);
 
 		}elseif(isset($_POST['QuestionOption'])){
 			// edit existing option
@@ -771,11 +793,11 @@ class AuthoringController extends Controller
 			}else{
 				$this->deleteAllOptions($_GET['questionId']);
 				$questionId = $_GET['questionId'];
-                #OK FOR SQL INJECTION
-                $params = new stdClass();
-                $params->name = ':questionId';
-                $params->value = $_GET['questionId'];
-                $params->dataType = PDO::PARAM_INT;
+				#OK FOR SQL INJECTION
+				$params = new stdClass();
+				$params->name = ':questionId';
+				$params->value = $_GET['questionId'];
+				$params->dataType = PDO::PARAM_INT;
 				$studyId = q("SELECT studyId FROM question WHERE id = :questionId", array($params) )->queryScalar();
 				Study::updated($studyId);
 			}
@@ -791,6 +813,33 @@ class AuthoringController extends Controller
 			));
 
 			$this->renderPartial('_form_option', array('dataProvider'=>$dataProvider, 'questionId'=>$questionId, 'ajax'=>true), false, true);
+
+		}else if(isset($_GET['Legend'])){
+			if($_GET['Legend']['id'] != 'all'){
+				$model = Legend::model()->findByPk((int)$_GET['Legend']['id']);
+				if($model){
+					$questionId = $model->questionId;
+					$ordering = $model->ordering;
+					$studyId = $model->studyId;
+					$model->delete();
+					Legend::sortOrder($ordering, $questionId);
+				}
+			}else{
+				$this->deleteAllLegend($_GET['questionId']);
+			}
+
+			$criteria=new CDbCriteria;
+			$criteria=array(
+				'condition'=>"questionId = " . $_GET['questionId'],
+				'order'=>'ordering',
+			);
+			$dataProvider=new CActiveDataProvider('Legend',array(
+				'criteria'=>$criteria,
+				'pagination'=>false,
+			));
+
+			$this->renderPartial('_form_legend', array('dataProvider'=>$dataProvider, 'questionId'=>$_GET['questionId'],  'studyId'=>$studyId, 'ajax'=>true), false, true);
+
 		}else if(isset($_GET['AlterList'])){
 			if($_GET['AlterList']['id'] != 'all'){
 				$model = AlterList::model()->findByPk((int)$_GET['AlterList']['id']);
@@ -864,29 +913,35 @@ class AuthoringController extends Controller
 	{
 		if(isset($_GET['form'])){
 			if($_GET['form'] == "_form_question"){
-                if( !is_numeric($_GET['questionId']) ){
-                    throw new CHttpException(500,"Invalid questionId specified ".$_GET['questionId']." !");
-                }
+				if( !is_numeric($_GET['questionId']) ){
+					throw new CHttpException(500,"Invalid questionId specified ".$_GET['questionId']." !");
+				}
 				$model = Question::model()->findByPk((int)$_GET['questionId']);
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true), false, true);
 			}else if($_GET['form'] == "_form_alter_list_edit"){
-                if( !is_numeric($_GET['alterListId']) ){
-                    throw new CHttpException(500,"Invalid alterListId specified ".$_GET['alterListId']." !");
-                }
+				if( !is_numeric($_GET['alterListId']) ){
+					throw new CHttpException(500,"Invalid alterListId specified ".$_GET['alterListId']." !");
+				}
 				$model = AlterList::model()->findByPk((int)$_GET['alterListId']);
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'studyId'=>$model->studyId), false, true);
 			}else if($_GET['form'] == "_form_alter_prompt_edit"){
-                if( !is_numeric($_GET['alterPromptId']) ){
-                    throw new CHttpException(500,"Invalid alterPromptId specified ".$_GET['alterPromptId']." !");
-                }
+				if( !is_numeric($_GET['alterPromptId']) ){
+					throw new CHttpException(500,"Invalid alterPromptId specified ".$_GET['alterPromptId']." !");
+				}
 				$model = AlterPrompt::model()->findByPk((int)$_GET['alterPromptId']);
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'studyId'=>$model->studyId), false, true);
 			}else if($_GET['form'] == "_form_option_edit"){
-                if( !is_numeric($_GET['optionId']) ){
-                    throw new CHttpException(500,"Invalid optionId specified ".$_GET['optionId']." !");
-                }
+				if( !is_numeric($_GET['optionId']) ){
+					throw new CHttpException(500,"Invalid optionId specified ".$_GET['optionId']." !");
+				}
 				$model = QuestionOption::model()->findByPk((int)$_GET['optionId']);
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'questionId'=>$model->questionId), false, true);
+			}else if($_GET['form'] == "_form_legend_edit"){
+				if(isset($_GET['legendId']))
+					$model = Legend::model()->findByPk((int)$_GET['legendId']);
+				if(!$model)
+					$model = new Legend;
+				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'questionId'=>$_GET['questionId'], 'studyId'=>$_GET['studyId']), false, true);
 			}else if($_GET['form'] == "_form_expression_text" || $_GET['form'] == "_form_expression_counting" || $_GET['form'] == "_form_expression_comparison" || $_GET['form'] == "_form_expression_compound"){
 				$questionId = "";
 				if(isset($_GET['questionId']) && is_numeric($_GET['questionId']) && $_GET['questionId'] != 0)
@@ -923,12 +978,13 @@ class AuthoringController extends Controller
 					'condition'=>"questionId = " . $_GET['questionId'],
 					'order'=>'ordering',
 				);
+				$studyId = q("SELECT studyId FROM question WHERE id = " . $_GET['questionId'])->queryScalar();
 
 				$dataProvider=new CActiveDataProvider('Legend',array(
 					'criteria'=>$criteria,
 					'pagination'=>false,
 				));
-				$this->renderPartial("_form_legend", array('dataProvider'=>$dataProvider, 'ajax'=>true), false, true);
+				$this->renderPartial("_form_legend", array('dataProvider'=>$dataProvider, 'studyId'=>$studyId, 'questionId'=> $_GET['questionId'], 'ajax'=>true), false, true);
 			}else if($_GET['form'] == "_form_option_list"){
 				$answerList = AnswerList::model()->findByPk((int)$_GET['answerListId']);
 				$listOptions = preg_split('/,/', $answerList->listOptionNames);
@@ -982,6 +1038,19 @@ class AuthoringController extends Controller
 				'pagination'=>false,
 			));
 			$this->renderPartial('_form_option', array('dataProvider'=>$dataProvider, 'questionId'=>$model->questionId, 'ajax'=>true), false, true);
+		}else if(isset($_GET['legendId'])){
+			Legend::moveUp($_GET['legendId']);
+			$model = Legend::model()->findByPk((int)$_GET['legendId']);
+			$criteria=new CDbCriteria;
+			$criteria=array(
+				'condition'=>"questionId = " . $model->questionId,
+				'order'=>'ordering',
+			);
+			$dataProvider=new CActiveDataProvider('Legend',array(
+				'criteria'=>$criteria,
+				'pagination'=>false,
+			));
+			$this->renderPartial('_form_legend', array('dataProvider'=>$dataProvider, 'questionId'=>$model->questionId,  'studyId'=>$model->studyId, 'ajax'=>true), false, true);
 		}else if(isset($_GET['alterListId'])){
 			AlterList::moveUp($_GET['alterListId']);
 			$model = AlterList::model()->findByPk((int)$_GET['alterListId']);

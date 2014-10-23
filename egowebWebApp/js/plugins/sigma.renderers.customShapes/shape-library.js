@@ -70,7 +70,7 @@
   register("diamond",genericDrawShape(drawDiamond),genericDrawBorder(drawDiamond));
 
   var drawCross = function(node,x,y,size,context) {
-    var lineWeight = (node.cross && node.cross.lineWeight) || 5;
+    var lineWeight = (node.cross && node.cross.lineWeight) || 2;
     context.moveTo(x-size, y-lineWeight);
     context.lineTo(x-size, y+lineWeight);
     context.lineTo(x-lineWeight, y+lineWeight);
@@ -155,6 +155,16 @@
   }
   register("arrow",genericDrawShape(arrowShape),genericDrawBorder(arrowShape));
 
+// line shape for legend (david zhang)
+  var lineShape = function(node,x,y,size,context) {
+    var lineWeight =  10;
+    context.moveTo(x-lineWeight, y-size);
+    context.lineTo(x-lineWeight, y+size);
+    context.lineTo(x+lineWeight, y+size);
+    context.lineTo(x+lineWeight, y-size);
+
+  }
+  register("line",genericDrawShape(lineShape),genericDrawBorder(lineShape));
   /**
    * Exporting
    * ----------

@@ -31,7 +31,7 @@ echo CHtml::textField('name');
 $criteria=new CDbCriteria;
 $criteria->order = 'name';
 echo CHtml::dropdownlist('studyId', '', CHtml::listData(Study::model()->findAll($criteria), 'id', 'name'));
-echo CHtml::submitButton( 'Replicate'); 
+echo CHtml::submitButton( 'Replicate');
 $this->endWidget(); ?>
 <br clear=all>
 <br clear=all>
@@ -45,20 +45,24 @@ $form=$this->beginWidget('CActiveForm', array(
 ));
 $criteria=new CDbCriteria;
 $criteria->order = 'name';
+
 echo CHtml::dropdownlist('studyId', '', CHtml::listData(Study::model()->findAll($criteria), 'id', 'name'));
-echo CHtml::submitButton( 'Export'); 
+echo "Include Responses ";
+echo CHtml::checkBox('includeResponses',false,array());
+echo CHtml::submitButton( 'Export');
 $this->endWidget(); ?>
 
 <script type="text/javascript">
 //On import study form submit
+/*
 $( "#importForm" ).submit(function( event) {
     var userfile = document.getElementById('userfile').files[0];
 
-    if(userfile && userfile.size < <?php echo 'MAX = ' + Yii::app()->params['maxUploadFileSize']; ?> ) { //This size is in bytes.
+    if(userfile && userfile.size < <?php Yii::app()->params['maxUploadFileSize']; ?> ) { //This size is in bytes.
 
         var res_field = document.getElementById('userfile').value;
         var extension = res_field.substr(res_field.lastIndexOf('.') + 1).toLowerCase();
-        var allowedExtensions = ['xml'];
+        var allowedExtensions = ['study'];
         event.preventDefault();
         if (res_field.length > 0)
         {
@@ -79,5 +83,5 @@ $( "#importForm" ).submit(function( event) {
         alert("Upload file cannot exceed <?php echo number_format(Yii::app()->params['maxUploadFileSize'] / 1048576, 1) . ' MB'; ?>");
         return false;
     }
-});
+});*/
 </script>

@@ -28,7 +28,7 @@ class InterviewingController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('view', 'save', 'autocomplete', 'ajaxupdate', 'ajaxdelete'),
+				'actions'=>array('view', 'save', 'autocomplete', 'ajaxupdate', 'ajaxdelete', 'ajaxlegend'),
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -544,7 +544,8 @@ class InterviewingController extends Controller
 		}
 	}
 
-	function actionAutocomplete() {
+	function actionAutocomplete()
+	{
 		if (Yii::app()->request->isAjaxRequest && isset($_GET['term'])) {
 			$self = ''; $filter = "";
 			if(isset($_GET['self']))
@@ -581,7 +582,8 @@ class InterviewingController extends Controller
 		}
 	}
 
-	public function actionAjaxdelete(){
+	public function actionAjaxdelete()
+	{
 		if(isset($_GET['Alters'])){
 			$model = Alters::model()->findByPk((int)$_GET['Alters']['id']);
 			if($model){
@@ -611,6 +613,25 @@ class InterviewingController extends Controller
 
 			$alter = new Alters;
 			$this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'model'=>$alter,'alterPrompt'=>$alterPrompt, 'studyId'=>$_GET['studyId'], 'interviewId'=>$interviewId, 'ajax'=>true), false, true);
+		}
+	}
+
+	// creates legend json object for display on graph
+	public function actionAjaxlegend()
+	{
+		if(isset($_GET['questionId'])){
+			$legends = Legend::model()->findAllByAttributes(array("questionId"=>$_GET['questionId']));
+			if($legends){
+				foreach($legends as $legend){
+					$json[] = array(
+						"shape"=>$legend->shape,
+						"label"=>$legend->label,
+						"color"=>$legend->color,
+						"size"=>$legend->size,
+					);
+				}
+				echo CJSON::encode($json);
+			}
 		}
 	}
 
