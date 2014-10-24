@@ -47,8 +47,9 @@ $criteria=new CDbCriteria;
 $criteria->order = 'name';
 
 echo CHtml::dropdownlist('studyId', '', CHtml::listData(Study::model()->findAll($criteria), 'id', 'name'));
-echo "Include Responses ";
+echo "<br><br>";
 echo CHtml::checkBox('includeResponses',false,array());
+echo " Include Responses<br><br>";
 echo CHtml::submitButton( 'Export');
 $this->endWidget(); ?>
 

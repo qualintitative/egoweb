@@ -220,8 +220,6 @@ class ImportExportController extends Controller
 							print_r($newAlter->getErrors());
 							die();
 						}else{
-							//echo "$thisAlterId : " . $newAlter->id;
-							//die();
 							$newAlterIds[intval($thisAlterId)] = $newAlter->id;
 						}
 					}
@@ -248,8 +246,8 @@ class ImportExportController extends Controller
 							foreach($values as &$value){
 								print_r($newOptionIds[$value]);
 								die();
-								if(isset($newOptionIds[$value]))
-									$value = $newOptionIds[$value];
+								if(isset($newOptionIds[intval($value)]))
+									$value = $newOptionIds[intval($value)];
 							}
 							$newAnswer->value = implode(',', $values);
 						}

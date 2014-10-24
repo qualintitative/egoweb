@@ -164,6 +164,8 @@ class visualize extends Plugin
 					$value = $this->stats->EigenvectorCentrality($nodeId);
 				}
 				$range = $max - $min;
+				if($range == 0)
+					$range = 1;
 				$value = round((($value-$min) / ($range)) * 9) + 1;
 				$default = current(array_keys($this->nodeSizes, $value));
 			}else{
