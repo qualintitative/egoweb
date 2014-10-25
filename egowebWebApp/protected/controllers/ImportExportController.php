@@ -197,12 +197,16 @@ class ImportExportController extends Controller
 				$newInterview = new Interview;
 				$newInterview->studyId = $newStudy->id;
 				foreach($interview->attributes() as $key=>$value){
+					if($key == "id")
+						$oldInterviewId = $value;
 					if($key!="key" && $key != "id")
 						$newInterview->$key = $value;
 				}
 				$newInterview->studyId = $newStudy->id;
 				if(!$newInterview->save())
 					print_r($newInterview->errors);
+				else
+					$newInterviewIds[intval($oldInterviewId)] = $newInterview->id;
 
 				if(count($interview->alters->alter) != 0){
 					foreach($interview->alters->alter as $alter){
@@ -213,7 +217,9 @@ class ImportExportController extends Controller
 							if($key!="key" && $key != "id")
 								$newAlter->$key = $value;
 						}
-						$newAlter->interviewId = $newInterview->id;
+						if(!preg_match("/,/", $newAlter->interviewId))
+							$newAlter->interviewId = $newInterview->id;
+
 						$newAlter->ordering=1;
 
 						if(!$newAlter->save()){
@@ -233,19 +239,17 @@ class ImportExportController extends Controller
 								$newAnswer->$key = $value;
 							if($key == "questionId")
 								$newAnswer->questionId = $newQuestionIds[intval($value)];
-							if($key == "alterId1" && is_numeric($value))
+							if($key == "alterId1" && isset($newAlterIds[intval($value)]))
 								$newAnswer->alterId1 = $newAlterIds[intval($value)];
-							if($key == "alterId2" && is_numeric($value))
+							if($key == "alterId2" && isset($newAlterIds[intval($value)]))
 								$newAnswer->alterId2 = $newAlterIds[intval($value)];
 							if($key == "answerType")
 								$answerType = $value;
 						}
 
-						if($answerType == "MULTIPLE_SELECTION" && !in_array($answer->value, array($newStudy->valueRefusal,$newStudy->valueDontKnow,$newStudy->valueLogicalSkip,$newStudy->valueNotYetAnswered))){
-							$values = explode(',', $answer->value);
+						if($answerType == "MULTIPLE_SELECTION" && !in_array($newAnswer->value, array($newStudy->valueRefusal,$newStudy->valueDontKnow,$newStudy->valueLogicalSkip,$newStudy->valueNotYetAnswered))){
+							$values = explode(',', $newAnswer->value);
 							foreach($values as &$value){
-								print_r($newOptionIds[$value]);
-								die();
 								if(isset($newOptionIds[intval($value)]))
 									$value = $newOptionIds[intval($value)];
 							}
@@ -261,6 +265,19 @@ class ImportExportController extends Controller
 						}
 					}
 				}
+			}
+		}
+
+		foreach($newAlterIds as $oldId=>$newId){
+			$alter = Alters::model()->findByPk($newId);
+			if(preg_match("/,/", $alter->interviewId)){
+				$values = explode(',', $alter->interviewId);
+				foreach($values as &$value){
+					if(isset($newInterviewIds[intval($value)]))
+						$value = $newInterviewIds[intval($value)];
+				}
+				$alter->interviewId = implode(',', $values);
+				$alter->save();
 			}
 		}
 
@@ -322,7 +339,7 @@ class ImportExportController extends Controller
 				$interview[$result->id] = $result;
 				$answer = Answer::model()->findAllByAttributes(array("interviewId"=>$result->id));
 				$answers[$result->id] = $answer;
-				$alter = Alters::model()->findAllByAttributes(array("interviewId"=>$result->id));
+				$alter = q("SELECT * FROM alters WHERE FIND_IN_SET($result->id, interviewId)")->queryAll();
 				$alters[$result->id] = $alter;
 				$graph = Graph::model()->findAllByAttributes(array("interviewId"=>$result->id));
 				$graphs[$result->id] = $graph;
@@ -436,7 +453,7 @@ EOT;
 					foreach($alters[$interview->id] as $alter){
 						echo <<<EOT
 
-				<alter id="{$alter->id}" name="{$alter->name}" interviewId="{$alter->interviewId} ordering="{$alter->ordering}" alterListId="{$alter->alterListId}" />
+				<alter id="{$alter['id']}" name="{$alter['name']}" interviewId="{$alter['interviewId']}" ordering="{$alter['ordering']}" alterListId="{$alter['alterListId']}" />
 EOT;
 					}
 					echo "
