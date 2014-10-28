@@ -154,7 +154,9 @@ class Question extends CActiveRecord
 	}
 
 	public function getTitle($id){
-		return Question::model()->findByPk($id)->title;
+		$question = Question::model()->findByPk($id);
+		$study = Study::model()->findByPk($question->studyId);
+		return $study->name . ":" . $question->title;
 	}
 
 	public function sortOrder($ordering, $studyId)
