@@ -30,8 +30,27 @@ class m141021_013819_encrypt_questionOption extends CDbMigration
 
 	public function down()
 	{
-		echo "m141021_013819_encrypt_questionOption does not support migration down.\n";
-		return false;
+        $transaction=$this->getDbConnection()->beginTransaction();
+
+        try
+        {
+            $cmd = $this->getDbConnection()->createCommand( "SELECT * FROM questionOption");
+            $rows = $cmd->queryAll();
+
+            foreach( $rows as $row ){
+                if( strlen(trim($row["name"])) > 0 ){
+                    $decrypted = decrypt($row["name"]);
+                    $this->update( 'questionOption', array( 'name'=>$decrypted ), 'id='.$row["id"] );
+                }
+            }
+            $transaction->commit();
+        }
+        catch(Exception $e)
+        {
+            echo "Exception: ".$e->getMessage()."\n";
+            $transaction->rollback();
+            return false;
+        }
 	}
 
 	/*

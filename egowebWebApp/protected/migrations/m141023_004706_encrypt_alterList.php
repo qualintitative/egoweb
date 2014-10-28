@@ -40,8 +40,36 @@ class m141023_004706_encrypt_alterList extends CDbMigration
 
 	public function down()
 	{
-		echo "m141023_004706_encrypt_alterList does not support migration down.\n";
-		return false;
+        $transaction=$this->getDbConnection()->beginTransaction();
+
+        try
+        {
+            $cmd = $this->getDbConnection()->createCommand( "SELECT * FROM alterList");
+            $rows = $cmd->queryAll();
+
+            foreach( $rows as $row ){
+                $changeArray = array();
+
+                if( strlen(trim($row["name"])) > 0 ){
+                    $changeArray['name'] = decrypt($row["name"]);
+                }
+
+                if( strlen(trim($row["email"])) > 0 ){
+                    $changeArray['email'] = decrypt($row["email"]);
+                }
+
+                if( count($changeArray) > 0 ){
+                    $this->update( 'alterList', $changeArray, 'id='.$row["id"] );
+                }
+            }
+            $transaction->commit();
+        }
+        catch(Exception $e)
+        {
+            echo "Exception: ".$e->getMessage()."\n";
+            $transaction->rollback();
+            return false;
+        }
 	}
 
 	/*

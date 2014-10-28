@@ -31,8 +31,27 @@ class m141023_005646_encrypt_notes extends CDbMigration
 
 	public function down()
 	{
-		echo "m141023_005646_encrypt_notes does not support migration down.\n";
-		return false;
+        $transaction=$this->getDbConnection()->beginTransaction();
+
+        try
+        {
+            $cmd = $this->getDbConnection()->createCommand( "SELECT * FROM notes");
+            $rows = $cmd->queryAll();
+
+            foreach( $rows as $row ){
+                if( strlen( trim( $row["notes"] ) ) > 0 ){
+                    $decrypted = decrypt( $row["notes"] );
+                    $this->update( 'notes', array( 'notes'=>$decrypted ), 'id='.$row["id"] );
+                }
+            }
+            $transaction->commit();
+        }
+        catch(Exception $e)
+        {
+            echo "Exception: ".$e->getMessage()."\n";
+            $transaction->rollback();
+            return false;
+        }
 	}
 
 	/*
