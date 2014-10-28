@@ -75,4 +75,35 @@ function short($string, $max=60){
 	}
 	return $string;
 }
+
+/**
+ * @param $encrypted
+ * @return mixed
+ */
+function decrypt( $encrypted ){
+    if( strlen(trim( $encrypted )) < 1  ){
+        return $encrypted;
+    }
+
+    $eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
+    $decrypted = Yii::app()->getSecurityManager()->decrypt(base64_decode( $encrypted), $eKey );
+
+    return $decrypted;
+}
+
+/**
+ * @param $decrypted
+ * @return string
+ */
+function encrypt( $decrypted ){
+    if( strlen(trim( $decrypted )) < 1  ){
+        return $decrypted;
+    }
+
+    $eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
+    $encrypted = base64_encode(Yii::app()->getSecurityManager()->encrypt( $decrypted, $eKey ) );
+
+    return $encrypted;
+}
+
 ?>

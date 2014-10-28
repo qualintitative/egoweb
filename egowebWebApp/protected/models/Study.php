@@ -250,6 +250,7 @@ class Study extends CActiveRecord
 	 * @return array pages of questions
 	 */
 	public function buildQuestions($study, $pageNumber = null, $interviewId = null){
+		$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
 		$page = array();
 		$i = 0;
 		if($study->introduction != ""){
@@ -388,6 +389,7 @@ class Study extends CActiveRecord
 						if($alterQuestionExpressions[$questionId] && !$expression->evalExpression($alterQuestionExpressions[$questionId], $interviewId, $alter->id)){
 
 							$data = array(
+								//'value'=>utf8_encode(Yii::app()->getSecurityManager()->encrypt($study['valueLogicalSkip'], $eKey)),
 								'value'=>$study->valueLogicalSkip,
 							);
 							if(isset($answers[$question->id.'-'.$alter->id]['id']))
@@ -780,6 +782,7 @@ class Study extends CActiveRecord
 	public function beforeSave(){
 		if(trim($this->introduction) == "<br>")
 			$this->introduction = "";
+
 		return true;
 	}
 
@@ -806,9 +809,6 @@ class Study extends CActiveRecord
 			'multiSessionEgoId' => "Multi-session"
 		);
 	}
-
-
-
 
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.

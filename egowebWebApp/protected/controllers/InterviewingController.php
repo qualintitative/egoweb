@@ -245,6 +245,12 @@ class InterviewingController extends Controller
                     $params->value = $_POST['studyId'];
                     $params->dataType = PDO::PARAM_INT;
 					$restricted = q("SELECT " . $field . " FROM alterList WHERE studyId = :studyId " . $interviewer, array($params))->queryColumn();
+					//have to decrypt the names from the AlterList table before checking against
+					foreach ($restricted as &$dname){
+						$dname = decrypt($dname);
+						unset($dname);
+					}
+					
 					if(!in_array($Answer['value'], $restricted))
 						$model[$array_id]->addError('value', $Answer['value'] . " is either not in the participant list or has been assigned to another interviewer");
 				}
@@ -710,7 +716,9 @@ class InterviewingController extends Controller
 				$answer = array(
 					'questionId' => $question['id'],
 					'interviewId'=>$interviewId,
-					'value'=>$study['valueNotYetAnswered'],
+					//try encrypting here					
+					'value'=>encrypt($study['valueNotYetAnswered']),
+				  //'value'=>$study['valueNotYetAnswered'],
 					'skipReason'=>'NONE',
 					'studyId'=>$study['id'],
 					'questionType'=>$question['subjectType'],
@@ -744,7 +752,8 @@ class InterviewingController extends Controller
 						$answer = array(
 						    'questionId' => $question['id'],
 						    'interviewId'=>$interviewId,
-						    'value'=>$study['valueNotYetAnswered'],
+							'value'=>encrypt($study['valueNotYetAnswered']),
+						    //'value'=>$study['valueNotYetAnswered'],
 						    'skipReason'=>'NONE',
 						    'studyId'=>$study['id'],
 						    'alterId1'=>$alter->id,
@@ -770,7 +779,8 @@ class InterviewingController extends Controller
 							$answer = array(
 							    'questionId' => $question['id'],
 							    'interviewId'=>$interviewId,
-							    'value'=>$study['valueNotYetAnswered'],
+							    'value'=>encrypt($study['valueNotYetAnswered']),
+							    //'value'=>$study['valueNotYetAnswered'],
 							    'skipReason'=>'NONE',
 							    'studyId'=>$study['id'],
 							    'alterId1'=>$alter->id,
@@ -795,7 +805,8 @@ class InterviewingController extends Controller
 				$answer = array(
 					'questionId' => $question['id'],
 					'interviewId'=>$interviewId,
-					'value'=>$study['valueNotYetAnswered'],
+					'value'=>encrypt($study['valueNotYetAnswered']),
+					//'value'=>$study['valueNotYetAnswered'],
 					'skipReason'=>'NONE',
 					'studyId'=>$study['id'],
 					'questionType'=>$question['subjectType'],

@@ -94,6 +94,11 @@ return array(
 		),
         'request'=>array(
             'enableCsrfValidation'=>true,
+        ),
+
+        'securityManager'=>array(
+            'cryptAlgorithm' => 'blowfish',
+            'encryptionKey' => 'One morning I shot an elephant in my pajamas. How he got in my pajamas I dunno.',
         )
 	),
 
@@ -105,5 +110,5 @@ return array(
 		// The max login attempt before showing captcha
 		'maxLoginAttempts'=>3,
         'maxUploadFileSize'=>1024*1024*3 // 3MB
-	),
+	)
 );

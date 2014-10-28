@@ -123,4 +123,26 @@ class AlterList extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+    /**
+     * Encrypts "name" and "email" attributes before they're saved.
+     * @return bool|void
+     */
+    public function beforeSave() {
+        $this->name = encrypt( $this->name );
+        $this->email = encrypt( $this->email );
+
+        return parent::beforeSave();
+    }
+
+    /**
+     * Decrypts "name" and "email" attributes after they're found.
+     */
+    protected function afterFind() {
+        $this->name = decrypt( $this->name );
+        $this->email = decrypt($this->email );
+
+        return parent::afterFind();
+    }
+	
 }

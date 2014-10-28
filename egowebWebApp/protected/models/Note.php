@@ -92,4 +92,21 @@ class Note extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+    /**
+     * Decrypts "notes" attribute after it's found.
+     */
+    protected function afterFind() {
+        $this->notes = decrypt( $this->notes );
+        return parent::afterFind();
+    }
+
+    /**
+     * Encrypts "notes" attribute before it's saved.
+     * @return bool|void
+     */
+    protected function beforeSave() {
+        $this->notes = encrypt( $this->notes );
+        return parent::afterSave();
+    }
 }

@@ -89,6 +89,28 @@ class Answer extends CActiveRecord
 		);
 	}
 
+    /**
+     * Encrypts "value" and "otherSpecifyText" attributes before they're saved.
+     * @return bool|void
+     */
+    public function beforeSave() {
+		$this->value = encrypt( $this->value );
+        $this->otherSpecifyText = encrypt( $this->otherSpecifyText );
+
+        return parent::beforeSave();
+    }
+
+    /**
+     * Decrypts "value" and "otherSpecifyText" attributes after they're found.
+     */
+    protected function afterFind() {
+        $this->value = decrypt( $this->value );
+        $this->otherSpecifyText = decrypt ($this->otherSpecifyText );
+
+        return parent::afterFind();
+    }
+
+
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
