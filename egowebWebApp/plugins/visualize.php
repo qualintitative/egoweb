@@ -572,7 +572,7 @@ class visualize extends Plugin
 				$nodes,
 				array(
 					'id'=>$alter['id'],
-					'label'=>$alter['name'] . (isset($alterNotes[$alter['id']]) ? " �" : ""),
+					'label'=>decrypt($alter['name']) . (isset($alterNotes[$alter['id']]) ? " �" : ""),
 					'x'=> rand(0, 10) / 10,
 					'y'=> rand(0, 10) / 10,
 					"type"=>$this->getNodeShape($alter['id']),
