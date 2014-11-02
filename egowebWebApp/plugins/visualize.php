@@ -516,7 +516,7 @@ class visualize extends Plugin
 		$filterIds = array();
 		foreach($alters as $alter){
 			$alterIds[] = $alter['id'];
-			$alterNames[$alter['id']] = $alter['name'];
+			$alterNames[$alter['id']] = decrypt($alter['name']);
 		}
 		$this->stats = new Statistics;
 		$this->stats->initComponents($this->method, $this->id);
