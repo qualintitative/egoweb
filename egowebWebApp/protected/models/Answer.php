@@ -104,8 +104,10 @@ class Answer extends CActiveRecord
      * Decrypts "value" and "otherSpecifyText" attributes after they're found.
      */
     protected function afterFind() {
-        $this->value = decrypt( $this->value );
-        $this->otherSpecifyText = decrypt ($this->otherSpecifyText );
+	    if(strlen($this->value) >= 8)
+        	$this->value = decrypt( $this->value );
+	    if(strlen($this->otherSpecifyText) >= 8)
+        	$this->otherSpecifyText = decrypt ($this->otherSpecifyText );
 
         return parent::afterFind();
     }
