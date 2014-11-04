@@ -836,7 +836,7 @@ function fullscreen(){
 			}
 		}
 	t.refresh();
-
+	initNotes(t);
 	}, 500);
 }
 

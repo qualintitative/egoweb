@@ -113,7 +113,7 @@ class Expression extends CActiveRecord
                 $this->answers[$array_id] = $answer['value'];
             }else if($answer['questionType'] == "ALTER_PAIR"){
                 $array_id = $answer['questionId'] . '-' . $answer['alterId1'] . 'and' . $answer['alterId2'] ;
-                $this->answers[$array_id] = $answer['value'];
+                $this->answers[$array_id] = decrypt($answer['value']);
             }
         }
     }
@@ -203,7 +203,7 @@ class Expression extends CActiveRecord
 					$answer = "";
 			}else{
                 #OK FOR SQL INJECTION
-				$answer = q("SELECT value FROM answer WHERE questionId = $questionId AND interviewId in ($interviewId)")->queryScalar();
+				$answer = decrypt(q("SELECT value FROM answer WHERE questionId = $questionId AND interviewId in ($interviewId)")->queryScalar());
 			}
 		}
 

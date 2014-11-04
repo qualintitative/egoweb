@@ -89,28 +89,30 @@ class Answer extends CActiveRecord
 		);
 	}
 
-    /**
-     * Encrypts "value" and "otherSpecifyText" attributes before they're saved.
-     * @return bool|void
-     */
-    public function beforeSave() {
-		$this->value = encrypt( $this->value );
-        $this->otherSpecifyText = encrypt( $this->otherSpecifyText );
+	/**
+	 * Encrypts "value" and "otherSpecifyText" attributes before they're saved.
+	 * @return bool|void
+	 */
+	public function beforeSave() {
+		if($this->value)
+			$this->value = encrypt( $this->value );
+		if($this->otherSpecifyText)
+			$this->otherSpecifyText = encrypt( $this->otherSpecifyText );
 
-        return parent::beforeSave();
-    }
+		return parent::beforeSave();
+	}
 
-    /**
-     * Decrypts "value" and "otherSpecifyText" attributes after they're found.
-     */
-    protected function afterFind() {
-	    if(strlen($this->value) >= 8)
-        	$this->value = decrypt( $this->value );
-	    if(strlen($this->otherSpecifyText) >= 8)
-        	$this->otherSpecifyText = decrypt ($this->otherSpecifyText );
+	/**
+	 * Decrypts "value" and "otherSpecifyText" attributes after they're found.
+	 */
+	protected function afterFind() {
+		if(strlen($this->value) >= 8)
+			$this->value = decrypt( $this->value );
+		if(strlen($this->otherSpecifyText) >= 8)
+			$this->otherSpecifyText = decrypt ($this->otherSpecifyText );
 
-        return parent::afterFind();
-    }
+		return parent::afterFind();
+	}
 
 
 	/**
