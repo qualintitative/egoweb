@@ -287,7 +287,7 @@ class visualize extends Plugin
 			#OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
-				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
+				echo "<label style='width:200px;float:left'>". decrypt($option['name']) . "</label>";
 				echo CHtml::dropDownList(
 						$option['id'],
 						(isset($nodeColors[$option['id']]) ? $nodeColors[$option['id']] : ''),
@@ -351,7 +351,7 @@ class visualize extends Plugin
 			#OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
-				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
+				echo "<label style='width:200px;float:left'>". decrypt($option['name']) . "</label>";
 				echo CHtml::dropDownList(
 						$option['id'],
 						(isset($nodeShapes[$option['id']]) ? $nodeShapes[$option['id']] : ''),
@@ -401,7 +401,7 @@ class visualize extends Plugin
 			#OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
-				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
+				echo "<label style='width:200px;float:left'>". decrypt($option['name']) . "</label>";
 				echo CHtml::dropDownList(
 						$option['id'],
 						(isset($nodeSizes[$option['id']]) ? $nodeSizes[$option['id']] : ''),
@@ -448,7 +448,7 @@ class visualize extends Plugin
 			#OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
-				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
+				echo "<label style='width:200px;float:left'>". decrypt($option['name']) . "</label>";
 				echo CHtml::dropDownList(
 						$option['id'],
 						(isset($edgeColors[$option['id']]) ? $edgeColors[$option['id']] : ''),
@@ -490,7 +490,7 @@ class visualize extends Plugin
 			#OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
-				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
+				echo "<label style='width:200px;float:left'>". decrypt($option['name']) . "</label>";
 				echo CHtml::dropDownList(
 						$option['id'],
 						(isset($edgeSizes[$option['id']]) ? $edgeSizes[$option['id']] : ''),
@@ -620,9 +620,11 @@ class visualize extends Plugin
 		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.layout.forceAtlas2.min.js');
 		?>
 			<div id="infovis"></div>
-			<div class="col-sm-8 pull-left" id="left-container"></div>
-			<div class="col-sm-4 pull-right" id="right-container">
+			<div class="col-sm-4 pull-left" id="left-container"></div>
+			<div class="col-sm-4" id="legend">
 				<canvas id="legend"></canvas>
+			</div>
+			<div class="col-sm-4 pull-right" id="right-container">
 				<button  onclick="fullscreen()" class="btn btn-info print-button" disabled id="fullscreenButton">Fullscreen</button>
 				<button  onclick="print(<?=$this->id;?>,<?=$this->method;?>)" class="btn btn-primary print-button" style="margin-top:10px">Print Preview</button>
 				<?php
@@ -807,7 +809,9 @@ function drawLegend(){
 }
 
 function fullscreen(){
-
+	elem = document.getElementById("visualizePlugin");
+	elem.webkitRequestFullscreen();
+/*
 	$('#fullscreenModal').modal();
 	setTimeout(function(){
 	t = new sigma({
@@ -838,6 +842,7 @@ function fullscreen(){
 	t.refresh();
 	initNotes(t);
 	}, 500);
+	*/
 }
 
 // transfer graph data from php to javascript
