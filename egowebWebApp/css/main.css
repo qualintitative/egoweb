@@ -812,18 +812,15 @@ label.prompt , .grid-view label {
     height:675px;
 }
 
-#fullscreenModal .modal-dialog{
-	margin: 0;
-	width: 100%;
-	height: 100%;
-}
+div:-webkit-full-screen {
 
-#fullscreenModal .modal-header{
-	border-bottom: 0;
 }
+div:-moz-full-screen {
 
-#fullscreen {
-	margin: auto;
-	width:900px;
-	height:675px;
+}
+div:-ms-fullscreen {
+
+}
+div:fullscreen {
+
 }

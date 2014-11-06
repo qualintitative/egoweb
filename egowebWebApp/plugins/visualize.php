@@ -620,10 +620,10 @@ class visualize extends Plugin
 		Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/plugins/sigma.layout.forceAtlas2.min.js');
 		?>
 			<div id="infovis"></div>
-			<div class="col-sm-4 pull-left" id="left-container"></div>
-			<div class="col-sm-4" id="legend">
+			<div class="col-sm-4 pull-left" id="legend">
 				<canvas id="legend"></canvas>
 			</div>
+			<div class="col-sm-4" id="left-container"></div>
 			<div class="col-sm-4 pull-right" id="right-container">
 				<button  onclick="fullscreen()" class="btn btn-info print-button" disabled id="fullscreenButton">Fullscreen</button>
 				<button  onclick="print(<?=$this->id;?>,<?=$this->method;?>)" class="btn btn-primary print-button" style="margin-top:10px">Print Preview</button>
@@ -810,39 +810,15 @@ function drawLegend(){
 
 function fullscreen(){
 	elem = document.getElementById("visualizePlugin");
-	elem.webkitRequestFullscreen();
-/*
-	$('#fullscreenModal').modal();
-	setTimeout(function(){
-	t = new sigma({
-		graph: g,
-		renderer: {
-			container: document.getElementById('fullscreen'),
-			type: 'canvas'
-		},
-		settings: {
-			doubleClickEnabled: false,
-			labelThreshold: 1,
-			minNodeSize: 2,
-			maxNodeSize: max_node_size,
-			minEdgeSize: 0.5,
-			maxEdgeSize: max_edge_size,
-			zoomingRatio: 1.0,
-			sideMargin: 2
-		}
-	});
-		var savedNodes = JSON.parse($("#Graph_nodes").val());
-		for(var k in savedNodes){
-			var node = t.graph.nodes(k.toString());
-			if(node){
-				node.x = savedNodes[k].x;
-				node.y = savedNodes[k].y;
-			}
-		}
-	t.refresh();
-	initNotes(t);
-	}, 500);
-	*/
+	if (elem.requestFullscreen) {
+		elem.requestFullscreen();
+	} else if (elem.msRequestFullscreen) {
+		elem.msRequestFullscreen();
+	} else if (elem.mozRequestFullScreen) {
+		elem.mozRequestFullScreen();
+	} else if (elem.webkitRequestFullscreen) {
+		elem.webkitRequestFullscreen();
+	}
 }
 
 // transfer graph data from php to javascript
