@@ -42,7 +42,7 @@ class QuestionOption extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('studyId, questionId, name, value, ordering', 'length', 'max'=>255),
-			array('id, active, studyId, questionId, ordering', 'numerical', 'integerOnly'=>true),
+			array('id, studyId, questionId, ordering', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, active, studyId, questionId, name, value, ordering', 'safe', 'on'=>'search'),
@@ -141,6 +141,6 @@ class QuestionOption extends CActiveRecord
      */
     protected function beforeSave() {
         $this->name = encrypt( $this->name );
-        return parent::afterSave();
+        return parent::beforeSave();
     }
 }

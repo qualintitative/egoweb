@@ -640,7 +640,8 @@ class AuthoringController extends Controller
 			if(!in_array($_POST['QuestionOption']['id'], array("replacePreset", "replaceOther"))){
 				$this->performAjaxValidation($model);
 				$model->attributes=$_POST['QuestionOption'];
-				$model->save();
+				if(!$model->save())
+					throw new CHttpException(500, print_r($model->errors));
 				$questionId = $model->questionId;
 			}
 			$criteria=new CDbCriteria;
