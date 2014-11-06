@@ -181,13 +181,11 @@ class Interview extends CActiveRecord
         foreach ($ego_id_questions as $question){
             if($question['answerType'] == "MULTIPLE_SELECTION"){
                 #OK FOR SQL INJECTION
-                $optionId = q("SELECT value FROM answer WHERE interviewId = " . $interview['id']  . " AND questionId = " . $question['id'])->queryScalar();
+                $optionId = decrypt(q("SELECT value FROM answer WHERE interviewId = " . $interview['id']  . " AND questionId = " . $question['id'])->queryScalar());
+
                 if($optionId){
-                    $optionId = decrypt($optionId);
+                   // $optionId = decrypt($optionId);
                     #OK FOR SQL INJECTION
-                    echo $optionId;
-                    die();
-                    if($optionId)
 	                    $ego_ids[] = q("SELECT name FROM questionOption WHERE id = " . $optionId)->queryScalar();
                 }
             }else{
