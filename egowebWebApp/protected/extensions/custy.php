@@ -81,7 +81,7 @@ function short($string, $max=60){
  * @return mixed
  */
 function decrypt( $encrypted ){
-    if( strlen(trim( $encrypted )) < 1  ){
+    if( strlen(trim( $encrypted )) < 8  ){
         return $encrypted;
     }
 

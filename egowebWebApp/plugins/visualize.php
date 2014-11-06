@@ -118,7 +118,7 @@ class visualize extends Plugin
 
 			}else if($this->params['nodeColor']['questionId']){
 				#OK FOR SQL INJECTION
-				$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeColor']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar();
+				$answer = decrypt(q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeColor']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar());
 				$answer = explode(',', $answer);
 				foreach($this->params['nodeColor']['options'] as $option){
 					if($option['id'] == $answer || in_array($option['id'], $answer))
@@ -133,7 +133,7 @@ class visualize extends Plugin
 		$default = "circle";
 		if(isset($this->params['nodeShape'])){
 			#OK FOR SQL INJECTION
-			$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeShape']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar();
+			$answer = decrypt(q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeShape']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar());
 			$answer = explode(',', $answer);
 			foreach($this->params['nodeShape']['options'] as $option){
 				if($option['id'] == $answer || in_array($option['id'], $answer))
@@ -186,7 +186,7 @@ class visualize extends Plugin
 		$default = "#ccc";
 		if(isset($this->params['edgeColor'])){
 			#OK FOR SQL INJECTION
-			$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['edgeColor']['questionId']. " AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2)->queryScalar();
+			$answer = decrypt(q("SELECT value FROM answer WHERE questionID = ".$this->params['edgeColor']['questionId']. " AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2)->queryScalar());
 			$answer = explode(',', $answer);
 			foreach($this->params['edgeColor']['options'] as $option){
 				if($option['id'] == $answer || in_array($option['id'], $answer))
@@ -200,7 +200,7 @@ class visualize extends Plugin
 		$default = 1;
 		if(isset($this->params['edgeSize'])){
 			#OK FOR SQL INJECTION
-			$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['edgeSize']['questionId']. " AND alterId1 = " .$nodeId1. " AND alterId2 = " . $nodeId2)->queryScalar();
+			$answer = decrypt(q("SELECT value FROM answer WHERE questionID = ".$this->params['edgeSize']['questionId']. " AND alterId1 = " .$nodeId1. " AND alterId2 = " . $nodeId2)->queryScalar());
 			$answer = explode(',', $answer);
 			foreach($this->params['edgeSize']['options'] as $option){
 				if($option['id'] == $answer || in_array($option['id'], $answer))
