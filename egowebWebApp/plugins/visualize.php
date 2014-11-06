@@ -170,7 +170,7 @@ class visualize extends Plugin
 				$default = current(array_keys($this->nodeSizes, $value));
 			}else{
 				#OK FOR SQL INJECTION
-				$answer = q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeSize']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar();
+				$answer = decrypt(q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeSize']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar());
 				$answer = explode(',', $answer);
 				foreach($this->params['nodeSize']['options'] as $option){
 					if($option['id'] == $answer || in_array($option['id'], $answer))
