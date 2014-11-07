@@ -183,8 +183,8 @@ class Interview extends CActiveRecord
                 #OK FOR SQL INJECTION
                 $optionId = decrypt(q("SELECT value FROM answer WHERE interviewId = " . $interview['id']  . " AND questionId = " . $question['id'])->queryScalar());
 
-                if($optionId){
-                   // $optionId = decrypt($optionId);
+                if($optionId && is_numeric($optionId)){
+                    //$optionId = decrypt($optionId);
                     #OK FOR SQL INJECTION
 	                    $ego_ids[] = q("SELECT name FROM questionOption WHERE id = " . $optionId)->queryScalar();
                 }
