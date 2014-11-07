@@ -110,7 +110,7 @@ class Expression extends CActiveRecord
         foreach ($answers as $answer){
             if($answer['questionType'] == "ALTER"){
                 $array_id = $answer['questionId'] . '-' . $answer['alterId1'];
-                $this->answers[$array_id] = $answer['value'];
+                $this->answers[$array_id] = decrypt($answer['value']);
             }else if($answer['questionType'] == "ALTER_PAIR"){
                 $array_id = $answer['questionId'] . '-' . $answer['alterId1'] . 'and' . $answer['alterId2'] ;
                 $this->answers[$array_id] = decrypt($answer['value']);
