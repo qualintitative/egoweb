@@ -207,7 +207,7 @@ class Interview extends CActiveRecord
 		$interview = Interview::model()->findByPk((int)$interviewId);
 		if($interview && $study && $study->multiSessionEgoId){
             #OK FOR SQL INJECTION
-			$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
+			$egoValue = decrypt(q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionID = " . $study->multiSessionEgoId)->queryScalar());
             #OK FOR SQL INJECTION
             $multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
 			if($multiIds){
@@ -243,10 +243,11 @@ class Interview extends CActiveRecord
             $interviewId = implode(",", $interviewId);
 
         // parse out and replace variables
-        preg_match('#<VAR (.+?) />#ims', $string, $vars);
-        foreach($vars as $var){
+        preg_match_all('#<VAR (.+?) />#ims', $string, $vars);
+        foreach($vars[1] as $var){
             if(preg_match('/:/', $var)){
                 list($sS, $sQ) = explode(":", $var);
+
                 #OK FOR SQL INJECTION
                 $sId = q("SELECT id FROM study WHERE name = '".$sS ."'")->queryScalar();
                 $question = Question::model()->findByAttributes(array('title'=>$sQ, 'studyId'=>$sId));
