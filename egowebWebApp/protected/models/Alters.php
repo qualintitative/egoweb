@@ -148,6 +148,6 @@ class Alters extends CActiveRecord
      */
     protected function beforeSave() {
         $this->name = encrypt( $this->name );
-        return parent::afterSave();
+        return parent::beforeSave();
     }
 }
