@@ -108,10 +108,10 @@ class Expression extends CActiveRecord
 
         $answers = q("SELECT * FROM answer WHERE questionId = :questionId and interviewId = :interviewId",array($params2, $params))->queryAll();
         foreach ($answers as $answer){
-            if($answer['questionType'] == "ALTER" && $answer['value']){
+            if($answer['questionType'] == "ALTER" && strlen($answer['value']) >= 8){
                 $array_id = $answer['questionId'] . '-' . $answer['alterId1'];
                 $this->answers[$array_id] = decrypt($answer['value']);
-            }else if($answer['questionType'] == "ALTER_PAIR" && $answer['value']){
+            }else if($answer['questionType'] == "ALTER_PAIR" && strlen($answer['value']) >= 8){
                 $array_id = $answer['questionId'] . '-' . $answer['alterId1'] . 'and' . $answer['alterId2'] ;
                 $this->answers[$array_id] = decrypt($answer['value']);
             }
