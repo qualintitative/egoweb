@@ -1,0 +1,231 @@
+--- 
+HEADERS: 
+  api_key: <string>
+basePath: /api
+host: egoweb
+paths: 
+  /survey:
+    post:
+      STATUS: COMPLETE - NEED TO RENAME PATH
+      parameters: 
+        survey_id: <string>
+        user_id: <string>
+      responses: 
+        200:
+          description: "User successfully logged into survey"
+          body:
+            application/json:
+              redirect_url: { "type": "string" }
+        418: 
+          description: "Invalid survey_id"
+        419: 
+          description: "Missing survey_id and/or user_id parameter"
+        420: 
+          description: "User already completed survey"
+        421: 
+          description: "Invalid api_key"
+    get:
+      STATUS: COMPLETE - NEED TO RENAME PATH, ADD NAME FIELD, ADD STATUS FIELD, AND FIELDS ARRAY
+      parameters: 
+        survey_id: <string>
+      responses: 
+        200: 
+          description: "Survey successfully retrieved"
+          body:
+            application/json:
+              schema: |
+                { "$schema": "http://json-schema.org/schema",
+                  "type": "object",
+                  "description": "A survey",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "name": { "type": "string" },
+                    "closed": { "type": "timestamp" },
+                    "created": { "type": "timestamp" },
+                    "num_completed": { "type": "int" },
+                    "num_started": { "type": "int" },
+                    "status": { "type": "string" },
+                    "fields": { "type": "array" }
+                               [
+                                 - "<name1>:<type1>",
+                                 - "<name2>:<type2>"
+                                 - ....
+                               ]
+                  }
+        404: 
+          description: "<survey_id> not found."
+        419: 
+          description: "Missing survey_id parameter"
+        421: 
+          description: "Invalid api_key"
+    put:
+      STATUS: NOT STARTED
+      parameters:
+        survey_id: <string>
+        status: <string>
+      responses:
+        200:
+          description: "Survey status successfully modified"
+          body:
+            application/json:
+              redirect_url: <url>
+        418:
+          description: "Invalid survey_id"
+        419:
+          description: "Missing survey_id and/or status parameter"
+        420:
+          description: "Invalid status"
+        421:
+          description: "Invalid api_key"
+
+  /user:
+    get:
+      STATUS: COMPLETE - NEED TO RENAME PATH & ADD STATUS FIELD
+      parameters: 
+        user_id: <string>
+      responses: 
+        200: 
+          description: "User successfully retrieved"
+          body:
+            application/json:
+              schema: |
+                { "$schema": "http://json-schema.org/schema",
+                  "type": "object",
+                  "description": "A survey user",
+                  "properties": {
+                    "id": { "type": "string" },
+                    "status": { "type": "string" },
+                    "surveys_completed": { "type": "array" }
+                    [
+                      - "<survey_id1>:<completed_date1>",
+                      - "<survey_id2>:<completed_date2>"
+                    ],
+                    "surveys_started": { "type": "array" }
+                    [
+                      - "<survey_id1>:<start_date1>",
+                      - "<survey_id2>:<start_date2>"
+                    ]
+                  }
+        404: 
+          description: "<user_id> not found."
+        419: 
+          description: "Missing user_id parameter"
+        421: 
+          description: "Invalid api_key"
+
+  /survey_user:
+     get:
+       STATUS: NOT STARTED
+       parameters:
+         user_id: <string>
+         survey_id: <string>
+       responses:
+         200:
+           description: "User successfully retrieved"
+           body:
+             application/json:
+               schema: |
+                 { "$schema": "http://json-schema.org/schema",
+                   "type": "object",
+                   "description": "A survey user",
+                   "properties": {
+                     "id": { "type": "string" },
+                     "fields": { "type": "array" }
+                     [
+                       - "<name1>:<value1>",
+                       - "<name2>:<value2>"
+                       - ....
+                     ]
+                   }
+         404:
+           description: "<user_id> or <survey_id> not found."
+         419:
+           description: "Missing <user_id> or <survey_id> parameter"
+         421:
+           description: "Invalid api_key"
+     post:
+      STATUS: NOT STARTED
+      parameters:
+        user_id: <string>
+        survey_id: <string>
+        "fields": { "type": "array" }
+                    [
+                      - "<name1>:<value1>"
+                      - "<name2>:<value2>"
+                      - ....
+                    ]
+      responses:
+        200:
+          description: "User successfully retrieved"
+          body:
+            application/json:
+              success: { "type": "string" }
+        404:
+          description: "<user_id> or <survey_id> not found."
+        419:
+          description: "Missing <user_id> or <survey_id> parameter"
+        420:
+          description: "Invalid field or value"
+        421:
+          description: "Invalid api_key"
+
+  /users:
+    get:
+      STATUS: NOT STARTED
+      parameters: 
+        survey_id: <string>
+      responses: 
+        200:
+         body:
+           application/json:
+             schema: |
+               [ "type": "array",
+                 "description": "An array of survey users",
+                 [
+                   {
+                     "properties": {
+                       "id": { "type": "string" },
+                       "status": { "type": "string" },
+                       "surveys_completed": { "type": "array" }
+                       [
+                         - "<survey_id1>:<completed_date1>",
+                         - "<survey_id2>:<completed_date2>"
+                       ],
+                       "surveys_started": { "type": "array" }
+                       [
+                         - "<survey_id1>:<start_date1>",
+                         - "<survey_id2>:<start_date2>"
+                       ]
+                     },
+                     {},...
+                 ]
+               ]
+        404:
+          description: "<survey_id> not found."
+        419:
+          description: "Missing survey_id parameter"
+        421:
+          description: "Invalid api_key"
+
+  /surveys:
+    get:
+      STATUS: NOT STARTED
+      responses:
+       200:
+         description: "Surveys successfully retrieved"
+         surveys:
+         [
+           survey1:
+           {
+             id: <string>
+             name: <name>
+             closed: <date_string>
+             created: <date_string>
+             num_completed: <int>
+             num_started: <int>
+             status: <string>
+           },
+           survey2:{..}
+          ]
+       421:
+         description: "Invalid api_key"
