@@ -810,13 +810,13 @@ function drawLegend(){
 
 function fullscreen(){
 	elem = document.getElementById("visualizePlugin");
-	if (elem.requestFullscreen) {
+	if (typeof elem.requestFullscreen != "undefined") {
 		elem.requestFullscreen();
-	} else if (elem.msRequestFullscreen) {
+	} else if (typeof elem.msRequestFullscreen != "undefined") {
 		elem.msRequestFullscreen();
-	} else if (elem.mozRequestFullScreen) {
+	} else if (typeof elem.mozRequestFullScreen != "undefined") {
 		elem.mozRequestFullScreen();
-	} else if (elem.webkitRequestFullscreen) {
+	} else if (typeof elem.webkitRequestFullscreen != "undefined") {
 		elem.webkitRequestFullscreen();
 	}
 }
