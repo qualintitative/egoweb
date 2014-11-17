@@ -535,7 +535,7 @@ $('.".$array_id."-skipReason').click(function(event){
 
 <?php
 if($networkQuestion  && is_numeric($networkQuestion->networkRelationshipExprId)){
-    echo "<div id='interviewing' class='col-sm-6 pull-right'>";
+    echo "<div id='visualizePlugin' class='col-sm-6 pull-right'>";
     $this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$networkQuestion->networkRelationshipExprId, 'params'=>$networkQuestion->networkParams, 'networkTitle'=>$networkQuestion->title));
     echo "</div>";
 }

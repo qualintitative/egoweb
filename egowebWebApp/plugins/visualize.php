@@ -810,7 +810,9 @@ function drawLegend(){
 
 function fullscreen(){
 	elem = document.getElementById("visualizePlugin");
-	if (typeof elem.msRequestFullscreen != "undefined") {
+	if (typeof elem.requestFullscreen != "undefined") {
+		elem.requestFullscreen();
+	} else if (typeof elem.msRequestFullscreen != "undefined") {
 		elem.msRequestFullscreen();
 	} else if (typeof elem.mozRequestFullScreen != "undefined") {
 		elem.mozRequestFullScreen();
