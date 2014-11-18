@@ -196,7 +196,7 @@ class ApiController extends Controller
 		{
 			// send the body
             if( $content_type == 'application/json' ){
-                if( $status != 200 || $status != 201 ){
+                if( $status != 200 && $status != 201 ){
                     $body = array( 'error'=> $body );
                 }
                 echo json_encode( $body );
