@@ -783,6 +783,8 @@ class Study extends CActiveRecord
 		if(trim($this->introduction) == "<br>")
 			$this->introduction = "";
 
+        $this->created_date = date('U');
+
 		return true;
 	}
 

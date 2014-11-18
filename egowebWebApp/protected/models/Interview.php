@@ -471,4 +471,23 @@ class Interview extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+    public function behaviors()
+    {
+        return array(
+            'timestamp' => array(
+                'class' => TimestampBehavior::className(),
+                'attributes' => array(
+                    ActiveRecord::EVENT_BEFORE_INSERT => 'start_date'
+                ),
+                // unix timestamp
+                'value' => function() { return date('U'); }
+            )
+        );
+    }
+
+    public function beforeSave(){
+        $this->start_date = date('U');
+        return parent::beforeSave();
+    }
 }
