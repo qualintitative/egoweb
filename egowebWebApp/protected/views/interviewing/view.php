@@ -368,44 +368,6 @@ foreach($questions as $question) {
         if($question->refuseButton)
             $skipList['REFUSE'] = ($question->askingStyleList) ? "": "Refuse";
 
-        Yii::app()->clientScript->registerScript('floatingNav', "
-$(function() {
-var nav = $('.floatingNav');
-if(nav.length != 0)
-	floatTop();
-
-function floatTop(){
-	// Stick the #nav to the top of the window
-	var navHomeY = nav.offset().top;
-	var isFixed = false;
-	var w = $(window);
-	w.scroll(function() {
-		var scrollTop = w.scrollTop();
-		var shouldBeFixed = scrollTop > navHomeY;
-		if (shouldBeFixed && !isFixed) {
-			$('#navigation').hide();
-			$('.question').css({marginTop:nav.height()+36});
-			nav.css({
-				position: 'fixed',
-				top: 0,
-				//left: nav.offset().left,
-				width: nav.width()
-			});
-			isFixed = true;
-		}
-		else if (!shouldBeFixed && isFixed)
-		{
-			$('.question').css({marginTop:0});
-			nav.css({
-				position: 'static'
-			});
-			isFixed = false;
-		}
-	});
-}
-});
-
-");
         Yii::app()->clientScript->registerScript('focus-'.$array_id, "
 jQuery(document).ready(function(){
 	$('#Answer_".$array_id."_value').focus();
