@@ -134,10 +134,12 @@ class AdminController extends Controller
 	{
 		if(Yii::app()->user->isSuperAdmin){
 			if(isset($_GET['email'])){
-				$model=User::model()->findByAttributes(array('email'=>$_GET['email']));
-				if($model){
-					echo "Password Reset Link for ". $model->name . "<br>" . Yii::app()->getBaseUrl(true).$this->createUrl('admin/resetpass').'/'.$model->id.':'.
-					User::model()->hashPassword($model->password,'miranda');
+				$users = User::model()->findAll();
+				foreach($users as $user){
+					if($user->email == $_GET['email']){
+						echo "Password Reset Link for ". $user->name . "<br>" . Yii::app()->getBaseUrl(true).$this->createUrl('admin/resetpass').'/'.$user->id.':'.
+						User::model()->hashPassword($user->password,'miranda');
+					}
 				}
 			}
 		}
