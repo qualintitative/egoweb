@@ -36,7 +36,7 @@ class ApiController extends Controller
         }
     }
 
-	// Actions
+	// Survey Actions
 	public function actionSurvey()
 	{
         $this->checkAPIheader();
@@ -57,8 +57,6 @@ class ApiController extends Controller
     }
 
     private function createSurvey(){
-
-
 		if(!isset($_POST['survey_id']) || !isset($_POST['user_id'])){
 			$msg = "Missing survey_id and/or user_id parameter";
 			$this->_sendResponse( 419, $msg );
@@ -118,37 +116,53 @@ class ApiController extends Controller
 		}
 	}
 
-	public function actionGet_user()
+    // User Actions
+    public function actionUser()
+    {
+        $this->checkAPIheader();
+
+        $method = $_SERVER['REQUEST_METHOD'];
+
+        switch ($method) {
+            case 'GET':
+                $this->getUser();
+                break;
+            default:
+                $this->_sendResponse( 405 );
+                break;
+        }
+    }
+
+    /**
+     * @todo verify value attribute is being used to query correctly
+     */
+    public function getUser()
 	{
-		$surveys_completed = array();
-		$surveys_started = array();
-
-		if(isset($headers['api_key'])){
-			// do something with api key
-		}
-
-		if(!isset($_GET['user_id'])){
+		if( !isset( $_GET['user_id'] ) ){
 			$msg = "Missing user_id parameter";
 			$this->_sendResponse( 419, $msg );
 		}
+		else{
+            $surveys_completed = array();
+            $surveys_started = array();
 
-		if($_GET['user_id']){
-			$questionIds = q("SELECT id FROM question where lower(title) = 'mmic_prime_key'")->queryColumn();
-			$interviews = Answer::model()->findAllByAttributes(array('value'=> $_GET['user_id'], 'questionId'=>$questionIds));
-			if(!$interviews){
+			$questionIds = q( "SELECT id FROM question where lower(title) = 'mmic_prime_key'" )->queryColumn();
+            $interviews = Answer::model()->findAllByAttributes( array(  'value'=>encrypt( $_GET['user_id'] ),
+                                                                        'questionId'=>$questionIds ) );
+
+            if( !$interviews ){
 				$msg = $_GET['user_id'] . " not found";
 				$this->_sendResponse(404, $msg );
 			}
-			foreach($interviews as $intv){
-				$interview = Interview::model()->findByPk($intv->interviewId);
-				$study = Study::model()->findByPk($intv->studyId);
+			foreach( $interviews as $intv ){
+				$interview = Interview::model()->findByPk( $intv->interviewId );
+				$study = Study::model()->findByPk( $intv->studyId );
 				if($interview->complete_date)
-					$surveys_completed[] = $study->name . ":" . date('m/d/Y',$interview->complete_date);
+					$surveys_completed[$study->id] = date( 'm/d/Y',$interview->complete_date );
 				else
-					$surveys_started[] = $study->name . ":" . date('m/d/Y',$interview->start_date);
+					$surveys_started[$study->id] = date( 'm/d/Y',$interview->start_date );
 			}
 			$data = array(
-				'description'=>'User successfully retrieved',
 				'user'=>array(
 					'id'=>$_GET['user_id'],
 					'surveys_completed'=>$surveys_completed,
