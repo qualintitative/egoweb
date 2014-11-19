@@ -133,9 +133,6 @@ class ApiController extends Controller
         }
     }
 
-    /**
-     * @todo verify value attribute is being used to query correctly
-     */
     public function getUser()
 	{
 		if( !isset( $_GET['user_id'] ) ){
@@ -143,25 +140,30 @@ class ApiController extends Controller
 			$this->_sendResponse( 419, $msg );
 		}
 		else{
+			$questionIds = q( "SELECT id FROM question where lower(title) = 'mmic_prime_key'" )->queryColumn();
+            $interviews = Answer::model()->findAllByAttributes( array( 'questionId'=>$questionIds ) );
+
             $surveys_completed = array();
             $surveys_started = array();
+            $userFound = false;
 
-			$questionIds = q( "SELECT id FROM question where lower(title) = 'mmic_prime_key'" )->queryColumn();
-            $interviews = Answer::model()->findAllByAttributes( array(  'value'=>encrypt( $_GET['user_id'] ),
-                                                                        'questionId'=>$questionIds ) );
-
-            if( !$interviews ){
-				$msg = $_GET['user_id'] . " not found";
-				$this->_sendResponse(404, $msg );
-			}
 			foreach( $interviews as $intv ){
-				$interview = Interview::model()->findByPk( $intv->interviewId );
-				$study = Study::model()->findByPk( $intv->studyId );
-				if($interview->complete_date)
-					$surveys_completed[$study->id] = date( 'm/d/Y',$interview->complete_date );
-				else
-					$surveys_started[$study->id] = date( 'm/d/Y',$interview->start_date );
+                if( $intv->value == $_GET['user_id'] ){
+                    $userFound = true;
+				    $interview = Interview::model()->findByPk( $intv->interviewId );
+                    $study = Study::model()->findByPk( $intv->studyId );
+                    if( $interview->complete_date )
+                        $surveys_completed[$study->id] = date( 'm/d/Y',$interview->complete_date );
+                    if( $interview->start_date )
+                        $surveys_started[$study->id] = date( 'm/d/Y',$interview->start_date );
+                }
 			}
+
+            if( !$userFound ){
+                $msg = $_GET['user_id'] . " not found";
+                $this->_sendResponse(404, $msg );
+            }
+
 			$data = array(
 				'user'=>array(
 					'id'=>$_GET['user_id'],
