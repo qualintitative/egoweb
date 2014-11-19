@@ -100,15 +100,14 @@ class ApiController extends Controller
 				$this->_sendResponse( 404, $msg );
 			}
 			$data = array(
-				'description'=>'Survey successfully retrieved',
-				'survey'=>array(
-					'closed'=> $study->closed_date ? date('m/d/Y', $study->closed_date) : null,
-		            'created'=> $study->created_date ? date('m/d/Y', $study->created_date) : null,
-		            'id'=>$study->id,
-		            'num_completed'=>$study->completed,
-		            'num_started'=>$study->started,
-				),
-			);
+                        'survey'=>array(
+                            'closed'=> $study->closed_date ? date('m/d/Y', $study->closed_date) : null,
+                            'created'=> $study->created_date ? date('m/d/Y', $study->created_date) : null,
+                            'id'=>$study->id,
+                            'num_completed'=>$study->completed,
+                            'num_started'=>$study->started,
+                        ),
+			        );
 			$this->_sendResponse( 200, $data );
 		}
 	}
