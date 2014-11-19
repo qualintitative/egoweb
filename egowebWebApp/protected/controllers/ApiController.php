@@ -57,32 +57,35 @@ class ApiController extends Controller
     }
 
     private function createSurvey(){
-		if(!isset($_POST['survey_id']) || !isset($_POST['user_id'])){
+		if( !isset($_POST['survey_id']) || !isset($_POST['user_id'] ) ){
 			$msg = "Missing survey_id and/or user_id parameter";
-			$this->_sendResponse( 419, $msg );
+			return $this->_sendResponse( 419, $msg );
 		}
 
-		if($_POST['survey_id'] && $_POST['user_id']){
-			$study = Study::model()->findByAttributes(array('name'=>$_POST['survey_id']));
-			if(!$study){
-				$msg = "Invalid survey_id";
-				$this->_sendResponse( 418, $msg );
-			}
-			$interview = Interview::getInterviewFromPrimekey($study->id, $_POST['user_id']);
-			if($interview->completed == -1){
-				$msg = "User already completed survey";
-				$this->_sendResponse( 420, $msg );
-			}else{
-				$data = array(
-					'description'=>'User successfully logged into survey',
-					'redirect_url'=>Yii::app()->createUrl(
-									'interviewing/'.$study->id.'?'.
-									'interviewId='.$interview->id.'&'.
-									'page='.$interview->completed)
-				);
-				$this->_sendResponse( 201, $data );
-			}
-		}
+        $study = Study::model()->findByPk( (int)$_POST['survey_id'] );
+        if( !$study ){
+            $msg = "Invalid survey_id";
+            return $this->_sendResponse( 418, $msg );
+        }
+
+        $interview = Interview::getInterviewFromPrimekey( $study->id, $_POST['user_id'] );
+
+        if( !$interview ){
+            $msg = "Unable to find user_id and/or survey_id combination";
+            return $this->_sendResponse( 404, $msg );
+        }
+        else if( $interview->completed == -1 ){
+            $msg = "User already completed survey";
+            return $this->_sendResponse( 420, $msg );
+        }
+        else{
+            $data = array(
+                            'redirect_url'=>Yii::app()->createUrl(  'interviewing/'.$study->id.'?'.
+                                                                    'interviewId='.$interview->id.'&'.
+                                                                    'page='.$interview->completed )
+                    );
+            return $this->_sendResponse( 201, $data );
+        }
 	}
 
     /**
