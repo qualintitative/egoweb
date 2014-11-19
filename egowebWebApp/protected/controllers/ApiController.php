@@ -87,6 +87,9 @@ class ApiController extends Controller
 		}
 	}
 
+    /**
+     * @todo fill in 'fields' response attribute
+     */
     private function getSurvey()
 	{
 		if( !isset( $_GET['survey_id'] ) ){
@@ -101,11 +104,14 @@ class ApiController extends Controller
 			}
 			$data = array(
                         'survey'=>array(
+                            'id'=>$study->id,
+                            'name'=>$study->name,
                             'closed'=> $study->closed_date ? date('m/d/Y', $study->closed_date) : null,
                             'created'=> $study->created_date ? date('m/d/Y', $study->created_date) : null,
-                            'id'=>$study->id,
                             'num_completed'=>$study->completed,
                             'num_started'=>$study->started,
+                            'status'=>$study->status,
+                            'fields'=>array()
                         ),
 			        );
 			$this->_sendResponse( 200, $data );
