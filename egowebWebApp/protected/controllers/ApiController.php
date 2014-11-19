@@ -89,15 +89,14 @@ class ApiController extends Controller
 
     private function getSurvey()
 	{
-		if(!isset($_GET['survey_id'])){
+		if( !isset( $_GET['survey_id'] ) ){
 			$msg = "Missing survey_id parameter";
 			$this->_sendResponse( 419, $msg );
 		}
-
-		if($_GET['survey_id']){
+		else{
 			$study = Study::model()->findByPK((int)$_GET['survey_id']);
 			if(!$study){
-				$msg = $_GET['survey_id'] . " not found";
+				$msg = "Survey: ".$_GET['survey_id'] . " not found";
 				$this->_sendResponse( 404, $msg );
 			}
 			$data = array(
