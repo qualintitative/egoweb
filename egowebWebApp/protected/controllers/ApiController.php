@@ -26,13 +26,11 @@ class ApiController extends Controller
         }
 
         if( !isset( $headers['api-key'] ) ){
-            $this->_sendResponse( 422, "Missing API Key" );
-            exit();
+            return $this->_sendResponse( 422, "Missing API Key" );
         }
 
         if( $headers['api-key'] != Yii::app()->params['apiKey'] ){
-            $this->_sendResponse( 421, "Invalid API Key" );
-            exit();
+            return $this->_sendResponse( 421, "Invalid API Key" );
         }
     }
 
@@ -98,28 +96,27 @@ class ApiController extends Controller
 	{
 		if( !isset( $_GET['survey_id'] ) ){
 			$msg = "Missing survey_id parameter";
-			$this->_sendResponse( 419, $msg );
+			return $this->_sendResponse( 419, $msg );
 		}
-		else{
-			$study = Study::model()->findByPK((int)$_GET['survey_id']);
-			if(!$study){
-				$msg = "Survey: ".$_GET['survey_id'] . " not found";
-				$this->_sendResponse( 404, $msg );
-			}
-			$data = array(
-                        'survey'=>array(
-                            'id'=>$study->id,
-                            'name'=>$study->name,
-                            'closed'=> $study->closed_date ? date('m/d/Y', $study->closed_date) : null,
-                            'created'=> $study->created_date ? date('m/d/Y', $study->created_date) : null,
-                            'num_completed'=>$study->completed,
-                            'num_started'=>$study->started,
-                            'status'=>$study->status,
-                            'fields'=>array()
-                        ),
-			        );
-			$this->_sendResponse( 200, $data );
-		}
+
+        $study = Study::model()->findByPK((int)$_GET['survey_id']);
+        if(!$study){
+            $msg = "Survey: ".$_GET['survey_id'] . " not found";
+            $this->_sendResponse( 404, $msg );
+        }
+        $data = array(
+                    'survey'=>array(
+                        'id'=>$study->id,
+                        'name'=>$study->name,
+                        'closed'=> $study->closed_date ? date('m/d/Y', $study->closed_date) : null,
+                        'created'=> $study->created_date ? date('m/d/Y', $study->created_date) : null,
+                        'num_completed'=>$study->completed,
+                        'num_started'=>$study->started,
+                        'status'=>$study->status,
+                        'fields'=>array()
+                    ),
+                );
+        return $this->_sendResponse( 200, $data );
 	}
 
     private function editSurvey()
@@ -173,42 +170,43 @@ class ApiController extends Controller
 	{
 		if( !isset( $_GET['user_id'] ) ){
 			$msg = "Missing user_id parameter";
-			$this->_sendResponse( 419, $msg );
+			return $this->_sendResponse( 419, $msg );
 		}
-		else{
-			$questionIds = q( "SELECT id FROM question where lower(title) = 'mmic_prime_key'" )->queryColumn();
-            $interviews = Answer::model()->findAllByAttributes( array( 'questionId'=>$questionIds ) );
 
-            $surveys_completed = array();
-            $surveys_started = array();
-            $userFound = false;
+        $questionIds = q( "SELECT id FROM question where lower(title) = 'mmic_prime_key'" )->queryColumn();
+        $interviews = Answer::model()->findAllByAttributes( array( 'questionId'=>$questionIds ) );
 
-			foreach( $interviews as $intv ){
-                if( $intv->value == $_GET['user_id'] ){
-                    $userFound = true;
-				    $interview = Interview::model()->findByPk( $intv->interviewId );
-                    $study = Study::model()->findByPk( $intv->studyId );
-                    if( $interview->complete_date )
-                        $surveys_completed[$study->id] = date( 'm/d/Y',$interview->complete_date );
-                    if( $interview->start_date )
-                        $surveys_started[$study->id] = date( 'm/d/Y',$interview->start_date );
-                }
-			}
+        $surveys_completed = array();
+        $surveys_started = array();
+        $userFound = false;
 
-            if( !$userFound ){
-                $msg = $_GET['user_id'] . " not found";
-                $this->_sendResponse(404, $msg );
+        foreach( $interviews as $intv ){
+            if( $intv->value == $_GET['user_id'] ){
+                $userFound = true;
+                $interview = Interview::model()->findByPk( $intv->interviewId );
+                $study = Study::model()->findByPk( $intv->studyId );
+                if( $interview->complete_date )
+                    $surveys_completed[$study->id] = date( 'm/d/Y',$interview->complete_date );
+                if( $interview->start_date )
+                    $surveys_started[$study->id] = date( 'm/d/Y',$interview->start_date );
             }
+        }
 
-			$data = array(
-				'user'=>array(
-					'id'=>$_GET['user_id'],
-					'surveys_completed'=>$surveys_completed,
-					'surveys_started'=>$surveys_started,
-				),
-			);
-			$this->_sendResponse( 200, $data );
-		}
+        if( !$userFound ){
+            $msg = $_GET['user_id'] . " not found";
+            return $this->_sendResponse(404, $msg );
+        }
+
+        $data = array(
+            'user'=>array(
+                'id'=>$_GET['user_id'],
+                'surveys_completed'=>$surveys_completed,
+                'surveys_started'=>$surveys_started,
+            ),
+        );
+        
+        return $this->_sendResponse( 200, $data );
+
 	}
 
     /**
