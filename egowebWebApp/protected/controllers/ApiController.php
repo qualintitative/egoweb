@@ -50,6 +50,9 @@ class ApiController extends Controller
             case 'POST':
                 $this->createSurvey();
                 break;
+            case 'PUT':
+                $this->editSurvey();
+                break;
             default:
                 $this->_sendResponse( 405 );
                 break;
@@ -118,6 +121,36 @@ class ApiController extends Controller
 			$this->_sendResponse( 200, $data );
 		}
 	}
+
+    private function editSurvey()
+    {
+        parse_str(file_get_contents('php://input'), $put_vars);
+
+        if( !isset( $put_vars['survey_id'] ) ){
+            $msg = "Missing survey_id parameter";
+            return $this->_sendResponse( 419, $msg );
+        }
+
+        if( !isset( $put_vars['status'] ) ){
+            $msg = "Missing status parameter";
+            return $this->_sendResponse( 419, $msg );
+        }
+
+        $study = Study::model()->findByPK((int)$put_vars['survey_id']);
+        if(!$study){
+            $msg = "Survey: ".$put_vars['survey_id'] . " not found";
+            return $this->_sendResponse( 404, $msg );
+        }
+
+        $study->status = $put_vars['status'];
+        $saved = $study->save();
+
+        if( !$saved ){
+            return $this->_sendResponse( 500, 'Unable to to update survey.' );
+        }
+
+        return $this->_sendResponse( 200, 'Success' );
+    }
 
     // User Actions
     public function actionUser()
