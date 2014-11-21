@@ -328,12 +328,13 @@ foreach($questions as $question) {
         if($question->refuseButton)
             $skipList['REFUSE'] =  "Refuse";
 
-        if(count($questions > 1) && $counter == 0 && $question->askingStyleList){
+        $options = QuestionOption::model()->findAllByAttributes(array('questionId'=>$question->id), $params=array('order'=>'ordering'));
+        if(count($questions )  > 1 && $counter == 0 && $question->askingStyleList){
             $columns = 1;
             $maxwidth = 180;
+
             echo "<div class='multiRow' style='width:180px;margin: 0 0 20px 20px'>&nbsp;</div>";
             if($question->answerType == "MULTIPLE_SELECTION"){
-                $options = QuestionOption::model()->findAllByAttributes(array('questionId'=>$question->id), $params=array('order'=>'ordering'));
                 $columns = count($options) + count($skipList);
             }
             if($question->answerType == "TEXTUAL" || $question->answerType == "NUMERICAL"){
@@ -448,7 +449,6 @@ $('.".$array_id."-skipReason').click(function(event){
                     $maxwidth = intval(620 / $columns);
                 if($maxwidth > 180)
                     $maxwidth = 180;
-
                 echo "<br clear=all><div class='multiRow palette-sun-flower' style='width:180px; text-align:left'>Set All</div><div class='multiRow palette-sun-flower' style='width:".$maxwidth."px'>".CHtml::checkBoxList(
                         'multiselect-pageLevel',
                         '',
