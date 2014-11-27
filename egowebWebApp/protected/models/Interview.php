@@ -105,30 +105,42 @@ class Interview extends CActiveRecord
 			return false;
 	}
 
-	// retrieves interview (or create new one) from MMIC prime key
-	public function getInterviewFromPrimekey($studyId, $primekey){
-		$interviewId = q("SELECT interviewId FROM answer WHERE value='$primekey' AND questionType = 'EGO_ID' AND studyId = $studyId")->queryScalar();
-		if($interviewId){
-			return Interview::model()->findByPk($interviewId);
-		}else{
-			$egoQId = q("SELECT id FROM question WHERE studyId = $studyId AND lower(title) = 'mmic_prime_key'")->queryScalar();
-			if(!$egoQId)
-				return false;
-			$interview = new Interview;
-			$interview->studyId = $studyId;
-			$interview->start_date = time();
-			$interview->completed = 1;
-			$interview->save();
-			$egoId = new Answer;
-			$egoId->interviewId = $interview->id;
-			$egoId->studyId = $studyId;
-			$egoId->questionType = "EGO_ID";
-			$egoId->answerType = "TEXTUAL";
-			$egoId->questionId = $egoQId;
-			$egoId->value = $primekey;
-			$egoId->save();
-			return $interview;
-		}
+    /**
+     * retrieves interview (or create new one) from MMIC prime key
+     * @param $studyId
+     * @param $primekey
+     * @return array|bool|CActiveRecord|Interview|mixed|null
+     */
+    public function getInterviewFromPrimekey( $studyId, $primekey ){
+        $answers = Answer::model()->findAllByAttributes( array( 'questionType' => 'EGO_ID',
+                                                                'studyId' => $studyId ) );
+
+        foreach( $answers as $answer ){
+            if( $answer->value == $primekey ){
+                return Interview::model()->findByPk( $answer->interviewId );
+            }
+        }
+
+        $egoQId = q("SELECT id FROM question WHERE studyId = $studyId AND lower(title) = 'mmic_prime_key'")->queryScalar();
+
+        if( !$egoQId )
+            return false;
+
+        $interview = new Interview;
+        $interview->studyId = $studyId;
+        $interview->start_date = time();
+        $interview->completed = 1;
+        $interview->save();
+        $egoId = new Answer;
+        $egoId->interviewId = $interview->id;
+        $egoId->studyId = $studyId;
+        $egoId->questionType = "EGO_ID";
+        $egoId->answerType = "TEXTUAL";
+        $egoId->questionId = $egoQId;
+        $egoId->value = $primekey;
+        $egoId->save();
+        return $interview;
+
 	}
 
 	public function countAlters($id){
@@ -471,4 +483,9 @@ class Interview extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+    public function beforeSave(){
+        $this->start_date = date('U');
+        return parent::beforeSave();
+    }
 }

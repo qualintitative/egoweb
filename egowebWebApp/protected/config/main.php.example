@@ -109,6 +109,7 @@ return array(
 		'adminEmail'=>'info@bluscs.com',
 		// The max login attempt before showing captcha
 		'maxLoginAttempts'=>3,
-        'maxUploadFileSize'=>1024*1024*3 // 3MB
+        'maxUploadFileSize'=>1024*1024*3, // 3MB
+        'apiKey' => 'API_KEY'
 	)
 );
