@@ -119,7 +119,11 @@ function importStudy(address, id){
 		for (k in data.options){
 			data.options[k][0] = parseInt(data.options[k][0]);
 			data.options[k][2] = newId;
-			db.catalog.getTable('questionOption').insertRow(data.options[k]);
+			try{
+				db.catalog.getTable('questionOption').insertRow(data.options[k]);
+			}catch(err){
+				console.log(data.options[k]);
+			}
 		}
 		var expression = {
 			tableName: "expression",

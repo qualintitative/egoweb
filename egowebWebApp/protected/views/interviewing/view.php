@@ -148,13 +148,15 @@ if(!isset($key) || !$key){
 <?php endif;?>
 
 <?php
-$first = array_slice($questions, 0, 1);
-$form=$this->beginWidget('CActiveForm', array(
-    'id'=>'answer-form',
-    'htmlOptions'=>array('class'=>$first[0]->subjectType == "NETWORK" ? 'col-sm-6' : 'col-sm-12'),
-    'enableAjaxValidation'=>true,
-    'action'=>'/interviewing/save/'.$studyId.($key ? "&key=" . $key : ""),
-));
+foreach($questions as $first) {
+	$form=$this->beginWidget('CActiveForm', array(
+	    'id'=>'answer-form',
+	    'htmlOptions'=>array('class'=>$first->subjectType == "NETWORK" ? 'col-sm-6' : 'col-sm-12'),
+	    'enableAjaxValidation'=>true,
+	    'action'=>'/interviewing/save/'.$studyId.($key ? "&key=" . $key : ""),
+	));
+	break;
+}
 ?>
 
 <?php

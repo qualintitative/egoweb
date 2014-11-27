@@ -1,5 +1,5 @@
 <?php
-ini_set('memory_limit','1024M');
+ini_set('memory_limit','4096M');
 error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
 // change the following paths if necessary
 $yii=dirname(__FILE__).'/system/framework/yii.php';

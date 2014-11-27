@@ -12,6 +12,7 @@
  */
 
 // fix for fcgi
+
 defined('STDIN') or define('STDIN', fopen('php://stdin', 'r'));
 
 defined('YII_DEBUG') or define('YII_DEBUG',true);
@@ -29,5 +30,6 @@ else
 $env=@getenv('YII_CONSOLE_COMMANDS');
 if(!empty($env))
 	$app->commandRunner->addCommands($env);
+ini_set('memory_limit','4096M');
 
 $app->run();

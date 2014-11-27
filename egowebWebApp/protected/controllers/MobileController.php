@@ -27,15 +27,15 @@ class MobileController extends Controller
 	}
 	public function actionAjaxstudies(){
 		if(isset($_POST['userId'])){
-            #OK FOR SQL INJECTION
-            $params = new stdClass();
-            $params->name = ':userId';
-            $params->value = $_POST['userId'];
-            $params->dataType = PDO::PARAM_INT;
+			#OK FOR SQL INJECTION
+			$params = new stdClass();
+			$params->name = ':userId';
+			$params->value = $_POST['userId'];
+			$params->dataType = PDO::PARAM_INT;
 
 			$permission = q("SELECT permissions FROM user WHERE id = :userId",array($params))->queryScalar();
 			if($permission != 11)
-                #OK FOR SQL INJECTION
+				#OK FOR SQL INJECTION
 				$studyIds = q("SELECT studyId FROM interviewers WHERE interviewerId = :userId",array($params))->queryColumn();
 			else
 				$studyIds = "";
@@ -43,10 +43,10 @@ class MobileController extends Controller
 			$studyIds = "";
 		}
 		if($studyIds)
-            #OK FOR SQL INJECTION
+			#OK FOR SQL INJECTION
 			$studies = q("SELECT id,name FROM study WHERE id IN (" . implode(",", $studyIds) . ")")->queryAll();
 		else
-            #OK FOR SQL INJECTION
+			#OK FOR SQL INJECTION
 			$studies = q("SELECT id,name FROM study")->queryAll();
 
 		foreach($studies as $study){
@@ -60,25 +60,31 @@ class MobileController extends Controller
 	}
 
 	public function actionAjaxdata($id){
-        #OK FOR SQL INJECTION
+		#OK FOR SQL INJECTION
 		$study = q("SELECT * FROM study WHERE id = " . $id)->queryRow(false);
-        #OK FOR SQL INJECTION
-        $questions = q("SELECT * FROM question WHERE studyId = ".$id)->queryAll(false);
-        #OK FOR SQL INJECTION
-        $options = q("SELECT * FROM questionOption WHERE studyId = " . $id)->queryAll(false);
+		#OK FOR SQL INJECTION
+		$questions = q("SELECT * FROM question WHERE studyId = ".$id)->queryAll(false);
+		#OK FOR SQL INJECTION
+		$options = q("SELECT * FROM questionOption WHERE studyId = " . $id)->queryAll(false);
 
-        foreach($options as &$option){
+		foreach($options as &$option){
 			if(strlen($option[4]) >= 8)
 				$option[4] = decrypt($option[4]);
 		}
 
-        #OK FOR SQL INJECTION
-        $expressions = q("SELECT * FROM expression WHERE studyId = " . $id)->queryAll(false);
-        #OK FOR SQL INJECTION
-        $answers = q("SELECT * FROM answer WHERE studyId = " . $id)->queryAll(false);
+		#OK FOR SQL INJECTION
+		$expressions = q("SELECT * FROM expression WHERE studyId = " . $id)->queryAll(false);
+		#OK FOR SQL INJECTION
+		$answers = q("SELECT * FROM answer WHERE studyId = " . $id)->queryAll(false);
+
+		foreach($answers as &$answer){
+			if(strlen($answer[6]) >= 8)
+				$answer[6] = decrypt($answer[6]);
+		}
+
 		$interviewIds = array();
-        #OK FOR SQL INJECTION
-        $interviews = q("SELECT * FROM interview WHERE studyId = " . $id)->queryAll(false);
+		#OK FOR SQL INJECTION
+		$interviews = q("SELECT * FROM interview WHERE studyId = " . $id)->queryAll(false);
 		$audioFiles = array();
 
 		$columns = array();
@@ -131,8 +137,12 @@ class MobileController extends Controller
 
 		if($interviewIds){
 			$interviewIds = implode(',', $interviewIds);
-            #OK FOR SQL INJECTION
+			#OK FOR SQL INJECTION
 			$alters = q("SELECT * FROM alters WHERE interviewId  in (" . $interviewIds . ")")->queryAll(false);
+			foreach($alters as &$alter){
+				if(strlen($alter[3]) >= 8)
+					$alter[3] = decrypt($alter[3]);
+			}
 		}else{
 			$alters = "";
 		}
@@ -150,7 +160,7 @@ class MobileController extends Controller
 		if (isset($_SERVER['HTTP_ORIGIN'])) {
 		header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
 		header('Access-Control-Allow-Credentials: true');
-		header('Access-Control-Max-Age: 86400');    // cache for 1 day
+		header('Access-Control-Max-Age: 86400');	// cache for 1 day
 		}
 		echo json_encode($data);
 		Yii::app()->end();
@@ -159,7 +169,7 @@ class MobileController extends Controller
 	public function actionAuthenticate(){
 		header("Access-Control-Allow-Origin: *");
 		header('Access-Control-Allow-Credentials: true');
-		header('Access-Control-Max-Age: 86400');    // cache for 1 day
+		header('Access-Control-Max-Age: 86400');	// cache for 1 day
 
 		if(isset($_POST['LoginForm']))
 		{
@@ -194,11 +204,11 @@ class MobileController extends Controller
 				header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
 				die();
 			}
-            #OK FOR SQL INJECTION
-            $params = new stdClass();
-            $params->name = ':studyId';
-            $params->value = $data['study']['ID'];
-            $params->dataType = PDO::PARAM_INT;
+			#OK FOR SQL INJECTION
+			$params = new stdClass();
+			$params->name = ':studyId';
+			$params->value = $data['study']['ID'];
+			$params->dataType = PDO::PARAM_INT;
 
 			$oldStudy = q("SELECT * FROM study WHERE id = :studyId", array($params))->queryRow();
 			if($oldStudy['modified'] == $data['study']['MODIFIED']){
@@ -249,7 +259,7 @@ class MobileController extends Controller
 	}
 
 	private function compare($data){
-        #OK FOR SQL INJECTION
+		#OK FOR SQL INJECTION
 		$oldStudy = q("SELECT * FROM study WHERE id = " . $data['study']['ID'])->queryRow();
 
 		foreach($oldStudy as $key=>$value){
@@ -260,17 +270,17 @@ class MobileController extends Controller
 		if($data['study'] != $oldStudy)
 		return false;
 
-        #OK FOR SQL INJECTION
+		#OK FOR SQL INJECTION
 		$oldQuestions = q("SELECT * FROM question WHERE studyId = " . $data['study']['ID'])->queryAll();
 		if(count($data['questions']) != count($oldQuestions))
 		return false;
 
-        #OK FOR SQL INJECTION
+		#OK FOR SQL INJECTION
 		$oldQuestionOptions = q("SELECT * FROM questionOption WHERE studyId = " . $data['study']['ID'])->queryAll();
 		if(count($data['questionOptions']) != count($oldQuestionOptions))
 		return false;
 
-        #OK FOR SQL INJECTION
+		#OK FOR SQL INJECTION
 		$oldExpressions = q("SELECT * FROM expression WHERE studyId = " . $data['study']['ID'])->queryAll();
 		if(count($data['expressions']) != count($oldExpressions))
 		return false;
