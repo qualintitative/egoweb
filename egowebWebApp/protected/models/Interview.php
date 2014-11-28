@@ -129,7 +129,7 @@ class Interview extends CActiveRecord
         $interview = new Interview;
         $interview->studyId = $studyId;
         $interview->start_date = time();
-        $interview->completed = 1;
+        $interview->completed = 0;
         $interview->save();
         $egoId = new Answer;
         $egoId->interviewId = $interview->id;

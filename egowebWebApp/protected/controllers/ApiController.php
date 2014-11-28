@@ -12,208 +12,338 @@ class ApiController extends Controller
 	 */
 	public function filters()
 	{
-	    return array();
+		return array();
 	}
 
-    private function checkAPIheader(){
-        $headers = array();
-        foreach( $_SERVER as $key => $value ) {
-            if (substr($key, 0, 5) <> 'HTTP_') {
-                continue;
-            }
-            $header = str_replace( ' ', '-', str_replace( '_', ' ', strtolower( substr( $key, 5 ) ) ) );
-            $headers[$header] = $value;
-        }
+	private function checkAPIheader(){
+		$headers = array();
+		foreach( $_SERVER as $key => $value ) {
+			if (substr($key, 0, 5) <> 'HTTP_') {
+				continue;
+			}
+			$header = str_replace( ' ', '-', str_replace( '_', ' ', strtolower( substr( $key, 5 ) ) ) );
+			$headers[$header] = $value;
+		}
 
-        if( !isset( $headers['api-key'] ) ){
-            return $this->_sendResponse( 422, "Missing API Key" );
-        }
+		if( !isset( $headers['api-key'] ) ){
+			return $this->_sendResponse( 422, "Missing API Key" );
+		}
 
-        if( $headers['api-key'] != Yii::app()->params['apiKey'] ){
-            return $this->_sendResponse( 421, "Invalid API Key" );
-        }
-    }
+		if( $headers['api-key'] != Yii::app()->params['apiKey'] ){
+			return $this->_sendResponse( 421, "Invalid API Key" );
+		}
+	}
 
 	// Survey Actions
 	public function actionSurvey()
 	{
-        $this->checkAPIheader();
+		//$this->checkAPIheader();
 
-        $method = $_SERVER['REQUEST_METHOD'];
+		$method = $_SERVER['REQUEST_METHOD'];
 
-        switch ($method) {
-            case 'GET':
-                $this->getSurvey();
-                break;
-            case 'POST':
-                $this->createSurvey();
-                break;
-            case 'PUT':
-                $this->editSurvey();
-                break;
-            default:
-                $this->_sendResponse( 405 );
-                break;
-        }
-    }
+		switch ($method) {
+			case 'GET':
+				$this->getSurvey();
+				break;
+			case 'POST':
+				$this->createSurvey();
+				break;
+			case 'PUT':
+				$this->editSurvey();
+				break;
+			default:
+				$this->_sendResponse( 405 );
+				break;
+		}
+	}
 
-    private function createSurvey(){
+	private function createSurvey(){
 		if( !isset($_POST['survey_id']) || !isset($_POST['user_id'] ) ){
 			$msg = "Missing survey_id and/or user_id parameter";
 			return $this->_sendResponse( 419, $msg );
 		}
 
-        $study = Study::model()->findByPk( (int)$_POST['survey_id'] );
-        if( !$study ){
-            $msg = "Invalid survey_id";
-            return $this->_sendResponse( 418, $msg );
-        }
+		$study = Study::model()->findByPk( (int)$_POST['survey_id'] );
+		if( !$study ){
+			$msg = "Invalid survey_id";
+			return $this->_sendResponse( 418, $msg );
+		}
 
-        $interview = Interview::getInterviewFromPrimekey( $study->id, $_POST['user_id'] );
+		$interview = Interview::getInterviewFromPrimekey( $study->id, $_POST['user_id'] );
 
-        if( !$interview ){
-            $msg = "Unable to find user_id and/or survey_id combination";
-            return $this->_sendResponse( 404, $msg );
-        }
-        else if( $interview->completed == -1 ){
-            $msg = "User already completed survey";
-            return $this->_sendResponse( 420, $msg );
-        }
-        else{
-            $data = array(
-                            'redirect_url'=>Yii::app()->createUrl(  'interviewing/'.$study->id.'?'.
-                                                                    'interviewId='.$interview->id.'&'.
-                                                                    'page='.$interview->completed )
-                    );
-            return $this->_sendResponse( 201, $data );
-        }
+		if( !$interview ){
+			$msg = "Unable to find user_id and/or survey_id combination";
+			return $this->_sendResponse( 404, $msg );
+		}
+		else if( $interview->completed == -1 ){
+			$msg = "User already completed survey";
+			return $this->_sendResponse( 420, $msg );
+		}
+		else{
+			$data = array(
+							'redirect_url'=>Yii::app()->getBaseUrl(true)  .  "/interviewing/".$study->id."?".
+																	"interviewId=".$interview->id."&".
+																	"page=".$interview->completed
+					);
+			return $this->_sendResponse( 201, $data );
+		}
 	}
 
-    /**
-     * @todo fill in 'fields' response attribute
-     */
-    private function getSurvey()
+	/**
+	 * @todo fill in 'fields' response attribute
+	 */
+	private function getSurvey()
 	{
 		if( !isset( $_GET['survey_id'] ) ){
 			$msg = "Missing survey_id parameter";
 			return $this->_sendResponse( 419, $msg );
 		}
 
-        $study = Study::model()->findByPK((int)$_GET['survey_id']);
-        if(!$study){
-            $msg = "Survey: ".$_GET['survey_id'] . " not found";
-            $this->_sendResponse( 404, $msg );
-        }
-        $data = array(
-                    'survey'=>array(
-                        'id'=>$study->id,
-                        'name'=>$study->name,
-                        'closed'=> $study->closed_date ? date('m/d/Y', $study->closed_date) : null,
-                        'created'=> $study->created_date ? date('m/d/Y', $study->created_date) : null,
-                        'num_completed'=>$study->completed,
-                        'num_started'=>$study->started,
-                        'status'=>$study->status,
-                        'fields'=>array()
-                    ),
-                );
-        return $this->_sendResponse( 200, $data );
+		$study = Study::model()->findByPK((int)$_GET['survey_id']);
+		if(!$study){
+			$msg = "Survey: ".$_GET['survey_id'] . " not found";
+			$this->_sendResponse( 404, $msg );
+		}
+
+		$questions = q("SELECT * FROM question WHERE studyId = ".$_GET['survey_id'])->queryAll(false);
+
+		$data = array(
+					'survey'=>array(
+						'id'=>$study->id,
+						'name'=>$study->name,
+						'closed'=> $study->closed_date ? date('m/d/Y', $study->closed_date) : null,
+						'created'=> $study->created_date ? date('m/d/Y', $study->created_date) : null,
+						'num_completed'=>$study->completed,
+						'num_started'=>$study->started,
+						'status'=>$study->status,
+						'fields'=>$questions
+					),
+				);
+		return $this->_sendResponse( 200, $data );
 	}
 
-    private function editSurvey()
-    {
-        parse_str(file_get_contents('php://input'), $put_vars);
-
-        if( !isset( $put_vars['survey_id'] ) ){
-            $msg = "Missing survey_id parameter";
-            return $this->_sendResponse( 419, $msg );
-        }
-
-        if( !isset( $put_vars['status'] ) ){
-            $msg = "Missing status parameter";
-            return $this->_sendResponse( 419, $msg );
-        }
-
-        $study = Study::model()->findByPK((int)$put_vars['survey_id']);
-        if(!$study){
-            $msg = "Survey: ".$put_vars['survey_id'] . " not found";
-            return $this->_sendResponse( 404, $msg );
-        }
-
-        $study->status = $put_vars['status'];
-        $saved = $study->save();
-
-        if( !$saved ){
-            return $this->_sendResponse( 500, 'Unable to to update survey.' );
-        }
-
-        return $this->_sendResponse( 200, 'Success' );
-    }
-
-    // User Actions
-    public function actionUser()
-    {
-        $this->checkAPIheader();
-
-        $method = $_SERVER['REQUEST_METHOD'];
-
-        switch ($method) {
-            case 'GET':
-                $this->getUser();
-                break;
-            default:
-                $this->_sendResponse( 405 );
-                break;
-        }
-    }
-
-    public function getUser()
+	private function editSurvey()
 	{
-		if( !isset( $_GET['user_id'] ) ){
+		parse_str(file_get_contents('php://input'), $put_vars);
+
+		if( !isset( $put_vars['survey_id'] ) ){
+			$msg = "Missing survey_id parameter";
+			return $this->_sendResponse( 419, $msg );
+		}
+
+		if( !isset( $put_vars['status'] ) ){
+			$msg = "Missing status parameter";
+			return $this->_sendResponse( 419, $msg );
+		}
+
+		$study = Study::model()->findByPK((int)$put_vars['survey_id']);
+		if(!$study){
+			$msg = "Survey: ".$put_vars['survey_id'] . " not found";
+			return $this->_sendResponse( 404, $msg );
+		}
+
+		$study->status = $put_vars['status'];
+		$saved = $study->save();
+
+		if( !$saved ){
+			return $this->_sendResponse( 500, 'Unable to to update survey.' );
+		}
+
+		return $this->_sendResponse( 200, 'Success' );
+	}
+
+	// User Actions
+	public function actionUser()
+	{
+		$this->checkAPIheader();
+
+		$method = $_SERVER['REQUEST_METHOD'];
+
+		switch ($method) {
+			case 'GET':
+				$this->getUser();
+				break;
+			default:
+				$this->_sendResponse( 405 );
+				break;
+		}
+	}
+
+	private function getUser()
+	{
+		if(!isset($_GET['user_id'])){
 			$msg = "Missing user_id parameter";
 			return $this->_sendResponse( 419, $msg );
 		}
 
-        $questionIds = q( "SELECT id FROM question where lower(title) = 'mmic_prime_key'" )->queryColumn();
-        $interviews = Answer::model()->findAllByAttributes( array( 'questionId'=>$questionIds ) );
+		$questionIds = q( "SELECT id FROM question where lower(title) = 'mmic_prime_key'" )->queryColumn();
+		$interviews = Answer::model()->findAllByAttributes( array( 'questionId'=>$questionIds ) );
 
-        $surveys_completed = array();
-        $surveys_started = array();
-        $userFound = false;
+		$surveys_completed = array();
+		$surveys_started = array();
+		$userFound = false;
 
-        foreach( $interviews as $intv ){
-            if( $intv->value == $_GET['user_id'] ){
-                $userFound = true;
-                $interview = Interview::model()->findByPk( $intv->interviewId );
-                $study = Study::model()->findByPk( $intv->studyId );
-                if( $interview->complete_date )
-                    $surveys_completed[$study->id] = date( 'm/d/Y',$interview->complete_date );
-                if( $interview->start_date )
-                    $surveys_started[$study->id] = date( 'm/d/Y',$interview->start_date );
-            }
-        }
+		foreach( $interviews as $intv ){
+			if( $intv->value == $_GET['user_id'] ){
+				$userFound = true;
+				$interview = Interview::model()->findByPk( $intv->interviewId );
+				$study = Study::model()->findByPk( $intv->studyId );
+				if( $interview->complete_date )
+					$surveys_completed[$study->id] = date( 'm/d/Y',$interview->complete_date );
+				if( $interview->start_date )
+					$surveys_started[$study->id] = date( 'm/d/Y',$interview->start_date );
+			}
+		}
 
-        if( !$userFound ){
-            $msg = $_GET['user_id'] . " not found";
-            return $this->_sendResponse(404, $msg );
-        }
+		if( !$userFound ){
+			$msg = $_GET['user_id'] . " not found";
+			return $this->_sendResponse(404, $msg );
+		}
 
-        $data = array(
-            'user'=>array(
-                'id'=>$_GET['user_id'],
-                'surveys_completed'=>$surveys_completed,
-                'surveys_started'=>$surveys_started,
-            ),
-        );
-        
-        return $this->_sendResponse( 200, $data );
+		$data = array(
+			'user'=>array(
+				'id'=>$_GET['user_id'],
+				'surveys_completed'=>$surveys_completed,
+				'surveys_started'=>$surveys_started,
+			),
+		);
+
+		return $this->_sendResponse( 200, $data );
 
 	}
 
-    /**
-     * @param $status
-     * @return string
-     */
-    private function _getStatusCodeMessage( $status )
+	public function actionSurvey_user()
+	{
+		$this->checkAPIheader();
+
+		$method = $_SERVER['REQUEST_METHOD'];
+
+		switch ($method) {
+			case 'GET':
+				$this->getSurveyUser();
+				break;
+			default:
+				$this->_sendResponse( 405 );
+				break;
+		}
+	}
+
+
+	private function getSurveyUser()
+	{
+		if(!isset($_GET['user_id'] ) || !isset($_GET['survey_id'])){
+			$msg = "Missing user_id or survey_id parameter";
+			return $this->_sendResponse( 419, $msg );
+		}
+
+		$questionId = q( "SELECT id FROM question where studyId = {$_GET['survey_id']} AND lower(title) = 'mmic_prime_key'")->queryScalar();
+
+		if(!$questionId){
+			$msg = "Study not found";
+			return $this->_sendResponse( 419, $msg );
+		}
+
+		$interview = Answer::model()->findByAttributes( array( 'questionId'=>$questionId) );
+
+		if(!$interview){
+			$msg = "Interview not found";
+			return $this->_sendResponse( 419, $msg );
+		}
+
+		$responses = Answer::model()->findAllByAttributes( array( 'interviewId'=>$interview->interviewId) );
+		$questions = Question::model()->findAllByAttributes(array('studyId'=>$interview->studyId));
+		$alters = Alters::model()->findAllByAttributes( array( 'interviewId'=>$interview->interviewId) );
+		$answers = array();
+		$fields = array();
+
+		foreach($responses as $response){
+			if($response->questionType == "ALTER"){
+				$answers[$response->questionId . "-" . $response->alterId1] = $response->value;
+			}else if($response->questionType == "ALTER_PAIR"){
+				$answers[$response->questionId . "-" . $response->alterId1 . "and" . $response->alterId2] = $response->value;
+			}else{
+				$answers[$response->questionId] = $response->value;
+			}
+		}
+
+
+		foreach($questions as $question) {
+			if($question->subjectType == "ALTER"){
+				foreach($alters as $alter){
+					if(isset($answers[$question->id . "-" . $alter->id]))
+						$fields[$question->title.":".$alter->name] = $answers[$question->id . "-" . $alter->id];
+				}
+			}else if($question->subjectType == "ALTER_PAIR"){
+				foreach($alters as $alter){
+					foreach($alters as $alter2){
+						if(isset($answers[$question->id . "-" . $alter->id . "and" . $alter2->id]))
+							$fields[$question->title.":".$alter->name . " and " . $alter2->name] = $answers[$question->id . "-" . $alter->id . "and" . $alter2->id];
+					}
+				}
+			}else{
+				$fields[$question->title] =  $answers[$question->id];
+			}
+		}
+
+		$data = array(
+			'user'=>array(
+				'id'=>$_GET['user_id'],
+				'fields'=>$fields,
+			),
+		);
+
+		return $this->_sendResponse( 200, $data );
+
+	}
+
+	public function actionSurveys()
+	{
+		$this->checkAPIheader();
+
+		$method = $_SERVER['REQUEST_METHOD'];
+
+		switch ($method) {
+			case 'GET':
+				$this->getSurveys();
+				break;
+			default:
+				$this->_sendResponse( 405 );
+				break;
+		}
+	}
+
+	private function getSurveys()
+	{
+		$studyIds = q( "SELECT studyId FROM question where lower(title) = 'mmic_prime_key'")->queryColumn();
+
+		if(count($studyIds) == 0){
+			$msg = "No MMIC surveys found";
+			return $this->_sendResponse( 419, $msg );
+		}
+
+		$studies = Study::model()->findAllByAttributes( array( 'id'=>$studyIds ) );
+		$data = array();
+
+		foreach($studies as $study){
+			$data[] = array(
+				'id'=>$study->id,
+				'name'=>$study->name,
+				'closed'=> $study->closed_date ? date('m/d/Y', $study->closed_date) : null,
+				'created'=> $study->created_date ? date('m/d/Y', $study->created_date) : null,
+				'num_completed'=>$study->completed,
+				'num_started'=>$study->started,
+				'status'=>$study->status
+			);
+		}
+		return $this->_sendResponse( 200, $data );
+
+	}
+
+	/**
+	 * @param $status
+	 * @return string
+	 */
+	private function _getStatusCodeMessage( $status )
 	{
 		// these could be stored in a .ini file and loaded
 		// via parse_ini_file()... however, this will suffice
@@ -225,19 +355,19 @@ class ApiController extends Controller
 			402 => 'Payment Required',
 			403 => 'Forbidden',
 			404 => 'Not Found',
-            405 => 'Method Not Allowed',
+			405 => 'Method Not Allowed',
 			500 => 'Internal Server Error',
 			501 => 'Not Implemented',
 		);
 		return ( isset( $codes[$status] ) ) ? $codes[$status] : '';
 	}
 
-    /**
-     * @param int $status
-     * @param string $body
-     * @param string $content_type
-     */
-    private function _sendResponse( $status = 200, $body = '', $content_type = 'application/json' )
+	/**
+	 * @param int $status
+	 * @param string $body
+	 * @param string $content_type
+	 */
+	private function _sendResponse( $status = 200, $body = '', $content_type = 'application/json' )
 	{
 		// set the status
 		$status_header = 'HTTP/1.1 ' . $status . ' ' . $this->_getStatusCodeMessage($status);
@@ -249,15 +379,15 @@ class ApiController extends Controller
 		if($body != '')
 		{
 			// send the body
-            if( $content_type == 'application/json' ){
-                if( $status != 200 && $status != 201 ){
-                    $body = array( 'error'=> $body );
-                }
-                echo json_encode( $body );
-            }
-            else{
-                echo $body;
-            }
+			if( $content_type == 'application/json' ){
+				if( $status != 200 && $status != 201 ){
+					$body = array( 'error'=> $body );
+				}
+				echo json_encode( $body );
+			}
+			else{
+				echo $body;
+			}
 		}
 		// we need to create the body if none is passed
 		else
@@ -290,21 +420,21 @@ class ApiController extends Controller
 
 			// this should be templated in a real-world solution
 			$body = '
-                        <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-                        <html>
-                        <head>
-                            <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-                            <title>' . $status . ' ' . $this->_getStatusCodeMessage($status) . '</title>
-                        </head>
-                        <body>
-                            <h1>' . $this->_getStatusCodeMessage($status) . '</h1>
-                            <p>' . $message . '</p>
-                            <hr />
-                            <address>' . $signature . '</address>
-                        </body>
-                        </html>';
+						<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+						<html>
+						<head>
+							<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+							<title>' . $status . ' ' . $this->_getStatusCodeMessage($status) . '</title>
+						</head>
+						<body>
+							<h1>' . $this->_getStatusCodeMessage($status) . '</h1>
+							<p>' . $message . '</p>
+							<hr />
+							<address>' . $signature . '</address>
+						</body>
+						</html>';
 
-            echo $body;
+			echo $body;
 		}
 		Yii::app()->end();
 	}
