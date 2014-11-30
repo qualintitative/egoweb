@@ -406,13 +406,12 @@ input, select{
 	font-weight:bold;
 }
 .question{
-    height:240px;
-
+	padding:0 0 20px 20px;
 }
 
 .question.ALTER, .question.ALTER_PAIR{
+    height:240px;
 	overflow-y:scroll;
-	padding:0 0 20px 20px;
 }
 .orangebutton{
 	background:url('/images/orange.png');
