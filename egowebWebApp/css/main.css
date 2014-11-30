@@ -407,7 +407,11 @@ input, select{
 }
 .question{
     height:240px;
-    overflow-y:scroll;
+
+}
+
+.question.ALTER, .question.ALTER_PAIR{
+	overflow-y:scroll;
 	padding:0 0 20px 20px;
 }
 .orangebutton{
