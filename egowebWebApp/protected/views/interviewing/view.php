@@ -4,156 +4,156 @@
 $this->pageTitle = $study->name;
 $completed = 0;
 if($interviewId)
-    $completed = Interview::model()->findByPk($interviewId)->completed;
+	$completed = Interview::model()->findByPk($interviewId)->completed;
 $prompts = array('INTRODUCTION', 'PREFACE', 'ALTER_PROMPT', 'CONCLUSION');
 if(!isset($key) || !$key){
-    if(isset($_GET['key']))
-        $key = $_GET['key'];
-    else
-        $key = '';
+	if(isset($_GET['key']))
+		$key = $_GET['key'];
+	else
+		$key = '';
 }
 ?>
 <script>
 
-    function toggleOther(option){
-        console.log(option);
-        option.toggle();
-    }
+	function toggleOther(option){
+		console.log(option);
+		option.toggle();
+	}
 
-    function changeOther(other_id){
-        otherText = [];
-        $('.' + array_id + '_other').each(function(index){
-            if($(this).is(":visible"))
-                otherText.push($(this).attr('id')+":"+$(this).val());
-        });
-        $('#Answer_' + other_id + '_otherSpecifyText').val(otherText.join(';;'));
-    }
+	function changeOther(other_id){
+		otherText = [];
+		$('.' + array_id + '_other').each(function(index){
+			if($(this).is(":visible"))
+				otherText.push($(this).attr('id')+":"+$(this).val());
+		});
+		$('#Answer_' + other_id + '_otherSpecifyText').val(otherText.join(';;'));
+	}
 
-    $(function(){
-        if(<?php echo $completed; ?> == -1){
-            $("input").prop('disabled', true);
-            $("select").prop('disabled', true);
-            $(".orangebutton").prop('disabled', false);
-            $(".graybutton").prop('disabled', false);
-            $("#graph-form").find("input").prop('disabled', false);
-        }
-        $('.pageLevel').change(function(){
-            var selected = $(this);
-            if($(this).is(":checked")){
-                $( "input[class*='-skipReason']").prop("checked", false);
-                $( "input[class*='multiselect-']").prop("checked", false);
-                $( "input[value='" + selected.val() + "']").each(function(index){
-                    if(!$(this).hasClass("pageLevel") && (($(this).attr('class').match(/multiselect-(.*)/) && $(this).attr('class').match(/multiselect-(.*)/).length > 1) || ($(this).attr('class').match(/(.*)-skipReason/) && $(this).attr('class').match(/(.*)-skipReason/).length > 1))){
-                        if($(this).attr('class').match(/multiselect-(.*)/))
-                            var multi = $(this).attr('class').match(/multiselect-(.*)/)[1];
-                        else
-                            var multi = $(this).attr('class').match(/(.*)-skipReason/)[1];
-                        var realVal = $("#Answer_" + multi + "_value");
-                        var values = realVal.val().split(',');
-                        var skipVal = $("#Answer_" + multi + "_skipReason" ).val();
-                        if(realVal.val() == "" && $("#Answer_" + multi + "_skipReason" ).val() == "NONE"){
-                            $(this).prop("checked", true);
-                            realVal.val(selected.val());
-                            if(selected.val() == "DONT_KNOW" || selected.val() == "REFUSE"){
-                                $("#Answer_" + multi + "_skipReason" ).val(selected.val());
-                                realVal.val("");
-                            }
-                        }else{
-                            if(skipVal == "NONE"){
-                                for(var k in values){
-                                    $(".multiselect-" +  multi + "[value='" + values[k] + "']").prop("checked", true);
-                                }
-                            }else{
-                                $("." +  multi + "-skipReason[value='" + skipVal + "']").prop("checked", true);
-                            }
-                        }
-                    }
-                });
-            }else{
-                $( "input[value='" + selected.val() + "']").each(function(index){
-                    if(($(this).attr('class').match(/multiselect-(.*)/) && $(this).attr('class').match(/multiselect-(.*)/).length > 1) || ($(this).attr('class').match(/(.*)-skipReason/) && $(this).attr('class').match(/(.*)-skipReason/).length > 1)){
-                        if($(this).attr('class').match(/multiselect-(.*)/)){
-                            var multi = $(this).attr('class').match(/multiselect-(.*)/)[1];
-                            var realVal = $("#Answer_" + multi + "_value");
-                            var values = realVal.val().split(',');
-                            for(var k in values){
-                                if(values[k] == selected.val()){
-                                    $(this).prop("checked", false);
-                                    realVal.val('');
-                                }
-                            }
-                        }else{
-                            var multi = $(this).attr('class').match(/(.*)-skipReason/)[1];
-                            var skipVal = $("#Answer_" + multi + "_skipReason");
-                            if(selected.val() == skipVal.val()){
-                                $(this).prop("checked", false);
-                                $("#Answer_" + multi + "_skipReason" ).val("NONE");
-                            }
-                        }
-                    }
-                });
-            }
-        })
-    });
+	$(function(){
+		if(<?php echo $completed; ?> == -1){
+			$("input").prop('disabled', true);
+			$("select").prop('disabled', true);
+			$(".orangebutton").prop('disabled', false);
+			$(".graybutton").prop('disabled', false);
+			$("#graph-form").find("input").prop('disabled', false);
+		}
+		$('.pageLevel').change(function(){
+			var selected = $(this);
+			if($(this).is(":checked")){
+				$( "input[class*='-skipReason']").prop("checked", false);
+				$( "input[class*='multiselect-']").prop("checked", false);
+				$( "input[value='" + selected.val() + "']").each(function(index){
+					if(!$(this).hasClass("pageLevel") && (($(this).attr('class').match(/multiselect-(.*)/) && $(this).attr('class').match(/multiselect-(.*)/).length > 1) || ($(this).attr('class').match(/(.*)-skipReason/) && $(this).attr('class').match(/(.*)-skipReason/).length > 1))){
+						if($(this).attr('class').match(/multiselect-(.*)/))
+							var multi = $(this).attr('class').match(/multiselect-(.*)/)[1];
+						else
+							var multi = $(this).attr('class').match(/(.*)-skipReason/)[1];
+						var realVal = $("#Answer_" + multi + "_value");
+						var values = realVal.val().split(',');
+						var skipVal = $("#Answer_" + multi + "_skipReason" ).val();
+						if(realVal.val() == "" && $("#Answer_" + multi + "_skipReason" ).val() == "NONE"){
+							$(this).prop("checked", true);
+							realVal.val(selected.val());
+							if(selected.val() == "DONT_KNOW" || selected.val() == "REFUSE"){
+								$("#Answer_" + multi + "_skipReason" ).val(selected.val());
+								realVal.val("");
+							}
+						}else{
+							if(skipVal == "NONE"){
+								for(var k in values){
+									$(".multiselect-" +  multi + "[value='" + values[k] + "']").prop("checked", true);
+								}
+							}else{
+								$("." +  multi + "-skipReason[value='" + skipVal + "']").prop("checked", true);
+							}
+						}
+					}
+				});
+			}else{
+				$( "input[value='" + selected.val() + "']").each(function(index){
+					if(($(this).attr('class').match(/multiselect-(.*)/) && $(this).attr('class').match(/multiselect-(.*)/).length > 1) || ($(this).attr('class').match(/(.*)-skipReason/) && $(this).attr('class').match(/(.*)-skipReason/).length > 1)){
+						if($(this).attr('class').match(/multiselect-(.*)/)){
+							var multi = $(this).attr('class').match(/multiselect-(.*)/)[1];
+							var realVal = $("#Answer_" + multi + "_value");
+							var values = realVal.val().split(',');
+							for(var k in values){
+								if(values[k] == selected.val()){
+									$(this).prop("checked", false);
+									realVal.val('');
+								}
+							}
+						}else{
+							var multi = $(this).attr('class').match(/(.*)-skipReason/)[1];
+							var skipVal = $("#Answer_" + multi + "_skipReason");
+							if(selected.val() == skipVal.val()){
+								$(this).prop("checked", false);
+								$("#Answer_" + multi + "_skipReason" ).val("NONE");
+							}
+						}
+					}
+				});
+			}
+		})
+	});
 </script>
 
 
 
 <?php // Alter List Box for Alter Prompt Page ?>
 <?php  if(isset($questions[0]) && $questions[0]->answerType == "ALTER_PROMPT"): ?>
-    <div id="alterListBox">
-        <?php
-        // fetch variable alter prompt
-        $alterPrompt = AlterPrompt::getPrompt($studyId, Interview::countAlters($interviewId));
-        // fetch alter list
-        $criteria=array(
-            'condition'=>"FIND_IN_SET(" . $interviewId . ", interviewId)",
-            'order'=>'ordering',
-        );
-        $dataProvider=new CActiveDataProvider('Alters',array(
-            'criteria'=>$criteria,
-            'pagination'=>false,
-        ));
-        $alter = new Alters;
-        $this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterPrompt'=>$alterPrompt, 'model'=>$alter, 'studyId'=>$studyId, 'interviewId'=>$interviewId, 'ajax'=>true), false, false);
-        ?>
-    </div>
+	<div id="alterListBox">
+		<?php
+		// fetch variable alter prompt
+		$alterPrompt = AlterPrompt::getPrompt($studyId, Interview::countAlters($interviewId));
+		// fetch alter list
+		$criteria=array(
+			'condition'=>"FIND_IN_SET(" . $interviewId . ", interviewId)",
+			'order'=>'ordering',
+		);
+		$dataProvider=new CActiveDataProvider('Alters',array(
+			'criteria'=>$criteria,
+			'pagination'=>false,
+		));
+		$alter = new Alters;
+		$this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterPrompt'=>$alterPrompt, 'model'=>$alter, 'studyId'=>$studyId, 'interviewId'=>$interviewId, 'ajax'=>true), false, false);
+		?>
+	</div>
 <?php endif; ?>
 
 <?php if(isset($questions[0])): ?>
-    <?php if(in_array($questions[0]->answerType, $prompts)): ?>
-        <div class="questionText <?php if($questions[0]->answerType == "ALTER_PROMPT"){ echo "col-sm-9"; } ?>">
-            <?php echo Interview::interpretTags($questions[0]->prompt, $interviewId); ?>
-            <?php if($questions[0]->answerType == "PREFACE" && file_exists(Yii::app()->basePath."/../audio/".$studyId . "/PREFACE/" . $questions[0]->id . ".mp3")):?>
-                <script>
-                    var promptAudio_<?=$questions[0]->id;?> = loadAudio("/audio/<?= $studyId . "/PREFACE/" . $questions[0]->id . ".mp3"; ?>");
-                </script>
-                <a class="play-sound" onclick='playSound("/audio/<?= $studyId . "/PREFACE/" . $questions[0]->id . ".mp3" ?>")' href="#"><span class="fui-volume"></span></a>
-            <?php endif; ?>
-            <?php if($questions[0]->answerType == "ALTER_PROMPT" && file_exists(Yii::app()->basePath."/../audio/".$studyId . "/STUDY/ALTERPROMPT.mp3")):?>
-                <script>
-                    var promptAudio_<?=$questions[0]->id;?> = loadAudio("/audio/<?= $studyId . "/STUDY/ALTERPROMPT.mp3"; ?>");
-                </script>
-                <a class="play-sound" onclick='playSound("/audio/<?= $studyId . "/STUDY/ALTERPROMPT.mp3" ?>")' href="#"><span class="fui-volume"></span></a>
-            <?php endif; ?>
+	<?php if(in_array($questions[0]->answerType, $prompts)): ?>
+		<div class="questionText <?php if($questions[0]->answerType == "ALTER_PROMPT"){ echo "col-sm-9"; } ?>">
+			<?php echo Interview::interpretTags($questions[0]->prompt, $interviewId); ?>
+			<?php if($questions[0]->answerType == "PREFACE" && file_exists(Yii::app()->basePath."/../audio/".$studyId . "/PREFACE/" . $questions[0]->id . ".mp3")):?>
+				<script>
+					var promptAudio_<?=$questions[0]->id;?> = loadAudio("/audio/<?= $studyId . "/PREFACE/" . $questions[0]->id . ".mp3"; ?>");
+				</script>
+				<a class="play-sound" onclick='playSound("/audio/<?= $studyId . "/PREFACE/" . $questions[0]->id . ".mp3" ?>")' href="#"><span class="fui-volume"></span></a>
+			<?php endif; ?>
+			<?php if($questions[0]->answerType == "ALTER_PROMPT" && file_exists(Yii::app()->basePath."/../audio/".$studyId . "/STUDY/ALTERPROMPT.mp3")):?>
+				<script>
+					var promptAudio_<?=$questions[0]->id;?> = loadAudio("/audio/<?= $studyId . "/STUDY/ALTERPROMPT.mp3"; ?>");
+				</script>
+				<a class="play-sound" onclick='playSound("/audio/<?= $studyId . "/STUDY/ALTERPROMPT.mp3" ?>")' href="#"><span class="fui-volume"></span></a>
+			<?php endif; ?>
 
-        </div>
-        <div class="question">
-    <?php endif; ?>
-    <?php if($questions[0]->answerType == 'ALTER_PROMPT'): ?>
-        <div id="alterPrompt" class="orangeText" style="width:500px"></div>
-        <div id="alterFormBox"></div>
-        </div>
-    <?php endif;?>
+		</div>
+		<div class="question">
+	<?php endif; ?>
+	<?php if($questions[0]->answerType == 'ALTER_PROMPT'): ?>
+		<div id="alterPrompt" class="orangeText" style="width:500px"></div>
+		<div id="alterFormBox"></div>
+		</div>
+	<?php endif;?>
 <?php endif;?>
 
 <?php
 foreach($questions as $first) {
 	$form=$this->beginWidget('CActiveForm', array(
-	    'id'=>'answer-form',
-	    'htmlOptions'=>array('class'=>$first->subjectType == "NETWORK" ? 'col-sm-6' : 'col-sm-12'),
-	    'enableAjaxValidation'=>true,
-	    'action'=>'/interviewing/save/'.$studyId.($key ? "&key=" . $key : ""),
+		'id'=>'answer-form',
+		'htmlOptions'=>array('class'=>$first->subjectType == "NETWORK" ? 'col-sm-6' : 'col-sm-12'),
+		'enableAjaxValidation'=>true,
+		'action'=>'/interviewing/save/'.$studyId.($key ? "&key=" . $key : ""),
 	));
 	break;
 }
@@ -164,71 +164,71 @@ foreach($questions as $first) {
 $error_id = "";
 
 foreach($questions as $question) {
-    if(is_numeric($question->alterId1) && !is_numeric($question->alterId2)){
-        $array_id = $question->id . "-" . $question->alterId1;
-    }else if(is_numeric($question->alterId1) && is_numeric($question->alterId2)){
-        $array_id = $question->id . "-" . $question->alterId1 . "and" . $question->alterId2;
-    }else{
-        $array_id = $question->id;
-    }
-    if(!isset($model[$array_id]))
-        $model[$array_id] = new Answer;
-    if($model[$array_id]->getError('value')){
-        $error_id = $array_id;
-        break;
-    }
+	if(is_numeric($question->alterId1) && !is_numeric($question->alterId2)){
+		$array_id = $question->id . "-" . $question->alterId1;
+	}else if(is_numeric($question->alterId1) && is_numeric($question->alterId2)){
+		$array_id = $question->id . "-" . $question->alterId1 . "and" . $question->alterId2;
+	}else{
+		$array_id = $question->id;
+	}
+	if(!isset($model[$array_id]))
+		$model[$array_id] = new Answer;
+	if($model[$array_id]->getError('value')){
+		$error_id = $array_id;
+		break;
+	}
 }
 ?>
 <?php $counter = 0; $phrase = ""; ?>
 <?php foreach($questions as $question): ?>
 
-    <?php if(!Yii::app()->user->isGuest && $counter == 0): ?>
-        <?php echo $question->title . "<br style='clear:left'><br style='clear:left'>"; ?>
-    <?php endif; ?>
+	<?php if(!Yii::app()->user->isGuest && $counter == 0): ?>
+		<?php echo $question->title . "<br style='clear:left'><br style='clear:left'>"; ?>
+	<?php endif; ?>
 
-    <?php
-    if(count($questions > 1) && $counter == 0 && $question->askingStyleList)
-        echo "<div class='floatingNav' style='background:#fff'>";
-    ?>
+	<?php
+	if(count($questions > 1) && $counter == 0 && $question->askingStyleList)
+		echo "<div class='floatingNav' style='background:#fff'>";
+	?>
 
-    <?php
-    // display error
-    if($counter == 0 && $error_id !== ""){
-        echo $form->errorSummary($model[$error_id]);
-    }
-    ?>
+	<?php
+	// display error
+	if($counter == 0 && $error_id !== ""){
+		echo $form->errorSummary($model[$error_id]);
+	}
+	?>
 
-    <?php if($counter == 0 && !in_array($question->answerType, $prompts)): ?>
-        <div class="questionText">
-            <?php
-            if ($question->subjectType == "EGO_ID")
-                echo Study::model()->findByPk($studyId)->egoIdPrompt;
-            else
-                echo Interview::interpretTags($question->prompt, $interviewId , $question->alterId1, $question->alterId2);
-            ?>
-            <?php if(file_exists(Yii::app()->basePath."/../audio/".$question->studyId . "/" . $question->subjectType . "/" . $question->id . ".mp3")):?>
-                <script>
-                    var promptAudio_<?=$question->id;?> = loadAudio("/audio/<?= $question->studyId . "/" . $question->subjectType . "/" . $question->id . ".mp3"; ?>");
-                </script>
-                <a class="play-sound" onclick='playSound("/audio/<?= $question->studyId . "/" . $question->subjectType . "/" . $question->id . ".mp3" ?>")' href="#"><span class="fui-volume"></span></a>
-            <?php endif; ?>
-        </div>
-        <br style="clear:left">
+	<?php if($counter == 0 && !in_array($question->answerType, $prompts)): ?>
+		<div class="questionText">
+			<?php
+			if ($question->subjectType == "EGO_ID")
+				echo Study::model()->findByPk($studyId)->egoIdPrompt;
+			else
+				echo Interview::interpretTags($question->prompt, $interviewId , $question->alterId1, $question->alterId2);
+			?>
+			<?php if(file_exists(Yii::app()->basePath."/../audio/".$question->studyId . "/" . $question->subjectType . "/" . $question->id . ".mp3")):?>
+				<script>
+					var promptAudio_<?=$question->id;?> = loadAudio("/audio/<?= $question->studyId . "/" . $question->subjectType . "/" . $question->id . ".mp3"; ?>");
+				</script>
+				<a class="play-sound" onclick='playSound("/audio/<?= $question->studyId . "/" . $question->subjectType . "/" . $question->id . ".mp3" ?>")' href="#"><span class="fui-volume"></span></a>
+			<?php endif; ?>
+		</div>
+		<br style="clear:left">
 
-        <?php if ($question->answerType == "MULTIPLE_SELECTION"): ?>
-            <?php
-            $phrase = "Please select ";
-            if($question->minCheckableBoxes != "" && $question->maxCheckableBoxes != "" && $question->minCheckableBoxes == $question->maxCheckableBoxes)
-                $phrase .= $question->maxCheckableBoxes;
-            else if($question->minCheckableBoxes != "" && $question->maxCheckableBoxes != "" && $question->minCheckableBoxes != $question->maxCheckableBoxes)
-                $phrase .= $question->minCheckableBoxes . " to " . $question->maxCheckableBoxes;
-            else if ($question->minCheckableBoxes == "" && $question->maxCheckableBoxes != "")
-                $phrase .= " up to " . $question->maxCheckableBoxes ;
-            else if ($question->minCheckableBoxes != "" && $question->maxCheckableBoxes == "")
-                $phrase .= " at least " . $question->minCheckableBoxes ;
+		<?php if ($question->answerType == "MULTIPLE_SELECTION"): ?>
+			<?php
+			$phrase = "Please select ";
+			if($question->minCheckableBoxes != "" && $question->maxCheckableBoxes != "" && $question->minCheckableBoxes == $question->maxCheckableBoxes)
+				$phrase .= $question->maxCheckableBoxes;
+			else if($question->minCheckableBoxes != "" && $question->maxCheckableBoxes != "" && $question->minCheckableBoxes != $question->maxCheckableBoxes)
+				$phrase .= $question->minCheckableBoxes . " to " . $question->maxCheckableBoxes;
+			else if ($question->minCheckableBoxes == "" && $question->maxCheckableBoxes != "")
+				$phrase .= " up to " . $question->maxCheckableBoxes ;
+			else if ($question->minCheckableBoxes != "" && $question->maxCheckableBoxes == "")
+				$phrase .= " at least " . $question->minCheckableBoxes ;
 
-            if($question->maxCheckableBoxes == 1)
-    			$phrase .= " response";
+			if($question->maxCheckableBoxes == 1)
+				$phrase .= " response";
 			else
 				$phrase .= " responses";
 			if($question->askingStyleList && !$question->withListRange)
