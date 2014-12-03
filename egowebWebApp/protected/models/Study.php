@@ -418,6 +418,17 @@ class Study extends CActiveRecord
 											u('answer', $data, "id = " . $answers[$qId.'-'.$alter->id]['id']);
 										continue;
 									}
+									if($alterPrefaces[$qId] != ""){
+										if($i == $pageNumber){
+											$preface = new Question;
+											$preface->id = $qId;
+											$preface->answerType = "PREFACE";
+											$preface->prompt = $alterPrefaces[$questionId];
+											$page[$i] = array('0'=>$preface);
+											return $page[$i];
+										}
+										$i++;
+									}
 									if($i == $pageNumber){
 										$alter_question =  Question::model()->findByPk($qId);
 
