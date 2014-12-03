@@ -8,7 +8,11 @@ class MobileController extends Controller
 
 	public function actionIndex()
 	{
-		$this->render('index');
+		$filename = "EgoWebMobile.ipa";
+		$date = date ("F d Y", filemtime($filename));
+		$this->render('index', array(
+			'date'=>$date
+		));
 	}
 
 	public function actionCheck(){

@@ -512,7 +512,7 @@ var ParallelAgregator = function(count, success, fail, bucket)
   }
 }
 
-/
+
 
 //TEST CODE:
 var start=	function(){

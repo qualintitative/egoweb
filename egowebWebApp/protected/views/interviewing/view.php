@@ -331,9 +331,9 @@ foreach($questions as $question) {
 			$skipList['REFUSE'] =  "Refuse";
 
 		$options = QuestionOption::model()->findAllByAttributes(array('questionId'=>$question->id), $params=array('order'=>'ordering'));
+		$maxwidth = 180;
 		if(count($questions )  > 1 && $counter == 0 && $question->askingStyleList){
 			$columns = 1;
-			$maxwidth = 180;
 
 			echo "<div class='multiRow' style='width:180px;margin: 0 0 20px 20px'>&nbsp;</div>";
 			if($question->answerType == "MULTIPLE_SELECTION"){

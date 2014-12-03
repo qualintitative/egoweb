@@ -366,12 +366,32 @@ class Study extends CActiveRecord
 				$alterQuestionPrefaces = array();
 				$alterAskingStyles = array();
 				$alterQuestionExpressions = array();
+				$prevQuestionId = false;
+				$NonListQIds = array();
+				$NonListQs = array();
+				$allNonListQIds = array();
 				foreach($result as $question){
 					$alterQuestionIds[] = $question['id'];
 					$alterPrefaces[$question['id']] = $question['preface'];
 					$alterQuestionExpressions[$question['id']] = $question['answerReasonExpressionId'];
 					$alterAskingStyles[$question['id']] = $question['askingStyleList'];
+					if($prevQuestionId && !$alterAskingStyles[$prevQuestionId]){
+						if(!$alterAskingStyles[$question['id']] && $alterPrefaces[$question['id']] == ""){
+							if(count($NonListQIds) == 0){
+								$NonListQIds[] = $prevQuestionId;
+								$allNonListQIds[] = $prevQuestionId;
+							}
+							$NonListQIds[] = $question['id'];
+							$allNonListQIds[] = $question['id'];
+						}else{
+							if(count($NonListQIds) > 1)
+								$NonListQs[$NonListQIds[0]] = $NonListQIds;
+							$NonListQIds = array();
+						}
+					}
+					$prevQuestionId = $question['id'];
 				}
+				print_r($allNonListQIds);
 				if(count($alterQuestionIds) > 0)
                     #OK FOR SQL INJECTION
 					$result = q("SELECT id, questionId, alterId1, value FROM answer WHERE questionId in (" . implode(',', $alterQuestionIds) . ")")->queryAll();
@@ -381,9 +401,31 @@ class Study extends CActiveRecord
 				foreach($result as $answer){
 				    $answers[$answer['questionId'].'-'.$answer['alterId1']] = $answer;
 				}
+
+
+
 				foreach ($alterQuestionIds as $questionId){
 					$alter_question_list = array();
 					$expression = new Expression;
+					if(in_array($questionId, $allNonListQIds)){
+						if(isset($NonListQs[$questionId])){
+							foreach($alters as $alter){
+								foreach($NonListQs[$questionId] as $qId){
+							    	if($i == $pageNumber){
+							    		$alter_question =  Question::model()->findByPk($qId);
+							    		$alter_question->prompt = str_replace('$$', $alter->name, $alter_question->prompt);
+							    		$alter_question->alterId1 = $alter->id;
+							    		$page[$i] = array($alter_question->id.'-'.$alter->id=>$alter_question);
+							    		return $page[$i];
+							    	}else {
+							    		$i++;
+							    	}
+								}
+							}
+						}else{
+							continue;
+						}
+					}
 					$question = Question::model()->findByPk($questionId);
 					foreach($alters as $alter){
 						if($alterQuestionExpressions[$questionId] && !$expression->evalExpression($alterQuestionExpressions[$questionId], $interviewId, $alter->id)){

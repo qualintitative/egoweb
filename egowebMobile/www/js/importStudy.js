@@ -118,6 +118,7 @@ function importStudy(address, id){
 
 		for (k in data.options){
 			data.options[k][0] = parseInt(data.options[k][0]);
+			data.options[k][6] = parseInt(data.options[k][6]);
 			data.options[k][2] = newId;
 			try{
 				db.catalog.getTable('questionOption').insertRow(data.options[k]);

@@ -1,5 +1,5 @@
 <h1>Installing the iOS App</h1>
-Latest Build: <b>8/27/2014</b>
+Latest Build: <b><?= $date ?></b>
 <br>
 <b>Your device need to be on our list of registered devices to run this app.</b>
 <br><br>
