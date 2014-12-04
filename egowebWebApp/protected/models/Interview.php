@@ -219,12 +219,19 @@ class Interview extends CActiveRecord
 		$interview = Interview::model()->findByPk((int)$interviewId);
 		if($interview && $study && $study->multiSessionEgoId){
             #OK FOR SQL INJECTION
-			$egoValue = decrypt(q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionID = " . $study->multiSessionEgoId)->queryScalar());
+			$egoValue = decrypt(q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $study->multiSessionEgoId)->queryScalar());
             #OK FOR SQL INJECTION
             $multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
 			if($multiIds){
+				$answers = Answer::model()->findAllByAttributes(array('questionId'=>$multiIds));
+				$interviewIds = array();
+				foreach($answers as $answer){
+					if($answer->value == $egoValue){
+						$interviewIds[] = $answer->interviewId;
+					}
+				}
                 #OK FOR SQL INJECTION
-				$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
+				$interviewIds = array_unique($interviewIds);
 				return $interviewIds;
 			}
 		}
@@ -251,6 +258,7 @@ class Interview extends CActiveRecord
         }
 
         $interviewId = Interview::multiInterviewIds($interviewId, $study);
+
         if(is_array($interviewId))
             $interviewId = implode(",", $interviewId);
 
@@ -266,6 +274,7 @@ class Interview extends CActiveRecord
             }else{
                 $question = Question::model()->findByAttributes(array('title'=>$var, 'studyId'=>$studyId));
             }
+
             if($question){
                 if($interviewId != null){
                     $end = " AND interviewId in (". $interviewId .")";
@@ -460,7 +469,7 @@ class Interview extends CActiveRecord
                 }
             }
         }
-        return $string;
+        return nl2br($string);
     }
 
 	/**
