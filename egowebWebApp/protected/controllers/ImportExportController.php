@@ -338,8 +338,14 @@ class ImportExportController extends Controller
 			foreach($interviews as $result){
 				$interview[$result->id] = $result;
 				$answer = Answer::model()->findAllByAttributes(array("interviewId"=>$result->id));
+				foreach($answer as &$a){
+					$a->value = decrypt($a->value);
+				}
 				$answers[$result->id] = $answer;
 				$alter = q("SELECT * FROM alters WHERE FIND_IN_SET($result->id, interviewId)")->queryAll();
+				foreach($alter as &$a){
+					$a['name'] = decrypt($a['name']);
+				}
 				$alters[$result->id] = $alter;
 				$graph = Graph::model()->findAllByAttributes(array("interviewId"=>$result->id));
 				$graphs[$result->id] = $graph;
@@ -385,7 +391,7 @@ EOT;
 					);
 
 					foreach($options as $option){
-						$option->name = htmlspecialchars($option->name, ENT_QUOTES, "UTF-8", false);
+						$option->name = htmlspecialchars(decrypt($option->name), ENT_QUOTES, "UTF-8", false);
 						echo <<<EOT
 
 			<option id="{$option->id}" name="{$option->name}" value="{$option->value}" ordering="{$option->ordering}"/>
