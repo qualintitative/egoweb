@@ -36,6 +36,12 @@ $this->endWidget(); ?>
 <br clear=all>
 <br clear=all>
 <h1>Export Study</h1>
+<script>
+function getInterviews(dropdown){
+	$.get('/importExport/ajaxinterviews/' + dropdown.val(), function(data){$('#interviews').html(data);});
+}
+
+</script>
 <?php
 // export study
 $form=$this->beginWidget('CActiveForm', array(
@@ -46,10 +52,22 @@ $form=$this->beginWidget('CActiveForm', array(
 $criteria=new CDbCriteria;
 $criteria->order = 'name';
 
-echo CHtml::dropdownlist('studyId', '', CHtml::listData(Study::model()->findAll($criteria), 'id', 'name'));
+echo CHtml::dropdownlist(
+	'studyId',
+	'',
+	CHtml::listData(Study::model()->findAll($criteria),'id', 'name'),
+	                array(
+                        'empty' => 'Select',
+                        'onchange'=>"js:getInterviews(\$(this))",
+                        'class'=>'form-control'
+                    )
+
+);
 echo "<br><br>";
-echo CHtml::checkBox('includeResponses',false,array());
 echo " Include Responses<br><br>";
+?>
+<div id="interviews"></div>
+<?php
 echo CHtml::submitButton( 'Export');
 $this->endWidget(); ?>
 

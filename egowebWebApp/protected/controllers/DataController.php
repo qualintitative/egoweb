@@ -159,6 +159,7 @@ class DataController extends Controller
 		foreach ($optionsRaw as $option){
 			$options[$option['id']] = $option['value'];
 		}
+
 		// fetch questions
         #OK FOR SQL INJECTION
 		$ego_id_questions = q("SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId = " . $study->id . " ORDER BY ordering")->queryAll();
@@ -217,9 +218,9 @@ class DataController extends Controller
 			}
 
 			foreach($alters as &$alter){
-				if($alter['name']!="")
+				if(isset($alter['name']) && $alter['name']!="")
 					$alter['name'] = decrypt($alter['name']);
-			}	
+			}
 
 			if($expressionId){
 				$stats = new Statistics;
@@ -237,13 +238,15 @@ class DataController extends Controller
 				foreach($ego_ids as &$ego_id){
 					if ($ego_id!="")
 						$ego_id = decrypt($ego_id);
-				}				
+				}
 				$answers[] = implode("_", $ego_ids);
 				foreach($ego_ids as $ego_id)
 					$answers[] = $ego_id;
 				foreach ($ego_questions as $question){
                     #OK FOR SQL INJECTION
 					$answer = q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'])->queryScalar();
+					if($answer)
+						$answer = decrypt($answer);
                     #OK FOR SQL INJECTION
                     $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'])->queryScalar();
 					if($answer && $skipReason == "NONE"){
@@ -281,6 +284,8 @@ class DataController extends Controller
 						$expression = new Expression;
                         #OK FOR SQL INJECTION
 						$answer = q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'])->queryScalar();
+						if(strlen($answer) >= 8)
+							$answer = decrypt($answer);
                         #OK FOR SQL INJECTION
                         $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'])->queryScalar();
 						if($answer && $skipReason == "NONE"){
@@ -348,7 +353,7 @@ class DataController extends Controller
 		// create an array with option ID as key
 		$options = array();
 		foreach ($optionsRaw as $option){
-			$options[$option['id']] = $option['value'];
+			$options[$option['id']] = decrypt($option['value']);
 		}
 
         #OK FOR SQL INJECTION
@@ -382,10 +387,11 @@ class DataController extends Controller
 				continue;
             #OK FOR SQL INJECTION
 			$alters = q("SELECT * FROM alters WHERE interviewId = " . $interview->id)->queryAll();
+			$alterNames = AlterList::model()->findAllByAttributes(array('interviewId'=>$interview->id));
 			foreach($alters as &$alter){
 				if($alter['name']!="")
 					$alter['name'] = decrypt($alter['name']);
-			}			
+			}
 			$i = 1;
 			$alterNum = array();
 			foreach($alters as $alter){
@@ -403,9 +409,9 @@ class DataController extends Controller
                     $realId2 = q("SELECT id FROM alterList WHERE studyId = " . $study->id . " AND name = '" . addslashes($alter2['name']) . "'")->queryScalar();
 					$answers[] = $interview->id;
 					$answers[] = Interview::getEgoId($interview->id);
-					if(is_numeric($realId1))
-						$answers[] = $realId1;
-					else
+					//if(is_numeric($realId1))
+					//	$answers[] = $realId1;
+					//else
 						$answers[] = $alterNum[$alter['id']];
 					$answers[] = $alter['name'];
 					if(is_numeric($realId2))
@@ -415,7 +421,7 @@ class DataController extends Controller
 					$answers[] = $alter2['name'];
 					foreach ($alter_pair_questions as $question){
                         #OK FOR SQL INJECTION
-						$answer = q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'] . " AND alterId2 = " . $alter2['id'])->queryScalar();
+						$answer = decrypt(q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'] . " AND alterId2 = " . $alter2['id'])->queryScalar());
                         #OK FOR SQL INJECTION
                         $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'] . " AND alterId2 = " . $alter2['id'])->queryScalar();
 						if($answer && $skipReason == "NONE"){

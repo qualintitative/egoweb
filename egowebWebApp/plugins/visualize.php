@@ -412,7 +412,7 @@ class visualize extends Plugin
 		}
 
 		foreach($centralities as $centrality){
-			echo "<div class='nodeSizeOptions' id='" .$centrality ."_nodeSize' style='" . ($centrality != $nodeColorId ? "display:none" : "") . "'>";
+			echo "<div class='nodeSizeOptions' id='" .$centrality ."_nodeSize' style='" . ($centrality != $nodeSizeId ? "display:none" : "") . "'>";
 			echo "</div>";
 		}
 	}
@@ -593,18 +593,19 @@ class visualize extends Plugin
 			}
 		}
 
-		if($this->networkTitle)
-			$questionId = q("SELECT id FROM question WHERE studyId = " . $interview->studyId . " AND title = '" . $this->networkTitle . "'")->queryScalar();
-		$result = Legend::model()->findAllByAttributes(array("questionId"=>$questionId));
 		$legends = array();
-		if($result){
-			foreach($result as $legend){
-				$legends[] = array(
-					"shape"=>$legend->shape,
-					"label"=>$legend->label,
-					"color"=>$legend->color,
-					"size"=>$legend->size,
-				);
+		if($this->networkTitle){
+			$questionId = q("SELECT id FROM question WHERE studyId = " . $interview->studyId . " AND title = '" . $this->networkTitle . "'")->queryScalar();
+			$result = Legend::model()->findAllByAttributes(array("questionId"=>$questionId));
+			if($result){
+				foreach($result as $legend){
+					$legends[] = array(
+						"shape"=>$legend->shape,
+						"label"=>$legend->label,
+						"color"=>$legend->color,
+						"size"=>$legend->size,
+					);
+				}
 			}
 		}
 

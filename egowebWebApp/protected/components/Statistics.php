@@ -213,7 +213,17 @@ class Statistics extends CComponent {
 				array_shift($path);
 				array_pop($path);
 				foreach($path as $node){
-					$between[$node] = $between[$node] + 1;
+
+					if(!isset($between[$node])){
+						$between[$node] = 1;
+					}else{
+											try{
+
+						$between[$node] = $between[$node] + 1;
+						}catch (Exception $e){
+						print_r($between);
+						}
+					}
 				}
 			}
 			foreach($between as $index=>$value){
