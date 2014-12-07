@@ -406,12 +406,12 @@ class Study extends CActiveRecord
 					$expression = new Expression;
 					if(in_array($questionId, $allNonListQIds)){
 						if(isset($NonListQs[$questionId])){
+							$preface = new Question;
 							foreach($alters as $alter){
 								foreach($NonListQs[$questionId] as $qId){
 									if($alterQuestionExpressions[$qId] && !$expression->evalExpression($alterQuestionExpressions[$qId], $interviewId, $alter->id)){
 
 										$data = array(
-											//'value'=>utf8_encode(Yii::app()->getSecurityManager()->encrypt($study['valueLogicalSkip'], $eKey)),
 											'value'=>$study->valueLogicalSkip,
 										);
 										if(isset($answers[$qId.'-'.$alter->id]['id']))
@@ -419,8 +419,7 @@ class Study extends CActiveRecord
 										continue;
 									}
 									if($alterPrefaces[$qId] != ""){
-										if($i == $pageNumber){
-											$preface = new Question;
+										if($i == $pageNumber && $preface->id != $qId){
 											$preface->id = $qId;
 											$preface->answerType = "PREFACE";
 											$preface->prompt = $alterPrefaces[$questionId];
@@ -431,8 +430,6 @@ class Study extends CActiveRecord
 									}
 									if($i == $pageNumber){
 										$alter_question =  Question::model()->findByPk($qId);
-
-
 										$alter_question->prompt = str_replace('$$', $alter->name, $alter_question->prompt);
 										$alter_question->alterId1 = $alter->id;
 										$page[$i] = array($alter_question->id.'-'.$alter->id=>$alter_question);
