@@ -260,8 +260,10 @@ class ImportExportController extends Controller
 
 								if(!$merge){
 
-									if($key == "questionId")
+									if($key == "questionId"){
 										$newAnswer->questionId = $newQuestionIds[intval($value)];
+										$oldQId = intval($value);
+									}
 
 									if($key == "answerType")
 										$answerType = $value;
@@ -285,8 +287,14 @@ class ImportExportController extends Controller
 						$newAnswer->studyId = $newStudy->id;
 						$newAnswer->interviewId = $newInterview->id;
 
+						if(!isset($newQuestionIds[$oldQId]) || !$newQuestionIds[$oldQId])
+							continue;
+
 						if(!$newAnswer->save()){
-							print_r($newAnswer->getErrors());
+							echo $oldQId . "<br>";
+							echo $newQuestionIds[$oldQId]."<br>";
+							print_r($newQuestionIds);
+							print_r($newAnswer);
 							die();
 						}
 					}

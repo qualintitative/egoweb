@@ -403,14 +403,13 @@ class Study extends CActiveRecord
 
 				foreach ($alterQuestionIds as $questionId){
 					$alter_question_list = array();
-					$expression = new Expression;
 					if(in_array($questionId, $allNonListQIds)){
 						if(isset($NonListQs[$questionId])){
 							$preface = new Question;
 							foreach($alters as $alter){
 								foreach($NonListQs[$questionId] as $qId){
-									if($alterQuestionExpressions[$qId] && !$expression->evalExpression($alterQuestionExpressions[$qId], $interviewId, $alter->id)){
-
+									$expression = new Expression;
+									if(!$expression->evalExpression($alterQuestionExpressions[$qId], $interviewId, $alter->id)){
 										$data = array(
 											'value'=>$study->valueLogicalSkip,
 										);

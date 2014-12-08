@@ -229,6 +229,8 @@ class Expression extends CActiveRecord
 			$options = explode(',', $expression->value);
 			$trues = 0;
 			foreach($selectedOptions as $selectedOption){
+				if(!$selectedOption)
+					continue;
 				if($expression->operator == "Some" && in_array($selectedOption, $options))
 					return true;
 				if($expression->operator == "None" && in_array($selectedOption, $options))
