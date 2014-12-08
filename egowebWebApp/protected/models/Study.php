@@ -160,36 +160,87 @@ class Study extends CActiveRecord
 		if(count($alters) > 0 && $answers > 0){
 			#OK FOR SQL INJECTION
 			$alter_qs = q("SELECT * FROM question WHERE studyId = $study->id AND subjectType ='ALTER' order by ordering")->queryAll();
+			$prevQuestionId = false;
+			$prevQuestionStyle = false;
+			$NonListQIds = array();
+			$NonListQs = array();
+			$allNonListQIds = array();
+			foreach($alter_qs as $question){
+					if($prevQuestionId && !$prevQuestionStyle){
+						if(!$question['askingStyleList'] && $question['preface'] == ""){
+							if(count($NonListQIds) == 0){
+								$NonListQIds[] = $prevQuestionId;
+								$allNonListQIds[] = $prevQuestionId;
+							}
+							$NonListQIds[] = $question['id'];
+							$allNonListQIds[] = $question['id'];
+						}else{
+							if(count($NonListQIds) > 1)
+								$NonListQs[$NonListQIds[0]] = $NonListQIds;
+							$NonListQIds = array();
+						}
+					}
+					$alter_questions[$question['id']] = $question;
+					$prevQuestionId = $question['id'];
+					$prevQuestionStyle = $question['askingStyleList'];
+
+			}
 			$prompt = "";
 			foreach($alter_qs as $question){
-				$alter_question_list = array();
-				$expression = new Expression;
-				foreach($alters as $alter){
-					if(!$expression->evalExpression($question['answerReasonExpressionId'], $interviewId, $alter->id)){
+				if(in_array($question['id'], $allNonListQIds)){
+
+					if(isset($NonListQs[$question['id']])){
+
+						$preface = new Question;
+						foreach($alters as $alter){
+							foreach($NonListQs[$question['id']] as $qId){
+								$expression = new Expression;
+								if(!$expression->evalExpression($alter_questions[$qId]['answerReasonExpressionId'], $interviewId, $alter->id))
+									continue;
+								if($alter_questions[$qId]['preface'] != "" && !$preface->id){
+									$pages[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
+									$preface->id = $qId;
+									$i++;
+								}
+								$pages[$i] = Study::checkPage($i, $pageNumber, $alter_questions[$qId]['title'] . " - " . $alter->name);
+								$i++;
+							}
+						}
+					}else{
 						continue;
 					}
-					if($question['askingStyleList']){
-						$alter_question_list=$question;
-					}else{
-						if($question['preface'] != ""){
-							$pages[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
+				}else{
+
+					$alter_question_list = array();
+					$expression = new Expression;
+					foreach($alters as $alter){
+						if(!$expression->evalExpression($question['answerReasonExpressionId'], $interviewId, $alter->id)){
+							continue;
+						}
+						if($question['askingStyleList']){
+							$alter_question_list=$question;
+						}else{
+							if($question['preface'] != ""){
+								$pages[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
+								$i++;
+							}
+							$pages[$i] = Study::checkPage($i, $pageNumber, $question['title'] . " - " . $alter->name);
 							$i++;
 						}
-						$pages[$i] = Study::checkPage($i, $pageNumber, $question['title'] . " - " . $alter->name);
-						$i++;
 					}
-				}
-				if($question['askingStyleList']){
-					if(count($alter_question_list) > 0){
-						if($question['preface'] != ""){
-							$pages[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
+					if($question['askingStyleList']){
+						if(count($alter_question_list) > 0){
+							if($question['preface'] != ""){
+								$pages[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
+								$i++;
+							}
+							$pages[$i] = Study::checkPage($i, $pageNumber, $question['title']);
 							$i++;
 						}
-						$pages[$i] = Study::checkPage($i, $pageNumber, $question['title']);
-						$i++;
 					}
 				}
 			}
+
 			#OK FOR SQL INJECTION
 			$alter_pair_qs = q("SELECT * FROM question WHERE studyId = $study->id AND subjectType ='ALTER_PAIR' order by ordering")->queryAll();
 			$prompt = "";
@@ -417,11 +468,11 @@ class Study extends CActiveRecord
 											u('answer', $data, "id = " . $answers[$qId.'-'.$alter->id]['id']);
 										continue;
 									}
-									if($alterPrefaces[$qId] != ""){
-										if($i == $pageNumber && $preface->id != $qId){
-											$preface->id = $qId;
+									if($alterPrefaces[$qId] != "" && !$preface->id){
+										$preface->id = $qId;
+										if($i == $pageNumber ){
 											$preface->answerType = "PREFACE";
-											$preface->prompt = $alterPrefaces[$questionId];
+											$preface->prompt = $alterPrefaces[$qId];
 											$page[$i] = array('0'=>$preface);
 											return $page[$i];
 										}
@@ -441,71 +492,74 @@ class Study extends CActiveRecord
 						}else{
 							continue;
 						}
-					}
-					$question = Question::model()->findByPk($questionId);
-					foreach($alters as $alter){
-						if($alterQuestionExpressions[$questionId] && !$expression->evalExpression($alterQuestionExpressions[$questionId], $interviewId, $alter->id)){
+					}else{
 
-							$data = array(
-								//'value'=>utf8_encode(Yii::app()->getSecurityManager()->encrypt($study['valueLogicalSkip'], $eKey)),
-								'value'=>$study->valueLogicalSkip,
-							);
-							if(isset($answers[$question->id.'-'.$alter->id]['id']))
-								u('answer', $data, "id = " . $answers[$question->id.'-'.$alter->id]['id']);
-							continue;
-						}
-						if($alterAskingStyles[$questionId]){
-							$alter_question = new Question;
-							$alter_question->attributes = $question->attributes;
-							$alter_question->prompt = str_replace('$$', $alter->name, $alter_question->prompt);
-							$alter_question->alterId1 = $alter->id;
-							$alter_question_list[$questionId.'-'.$alter->id]=$alter_question;
-						}else{
-							if($alterPrefaces[$questionId] != ""){
-								if($i == $pageNumber){
-									$preface = new Question;
-									$preface->id = $questionId;
-									$preface->answerType = "PREFACE";
-									$preface->prompt = $alterPrefaces[$questionId];
-									$page[$i] = array('0'=>$preface);
+						$expression = new Expression;
+						$question = Question::model()->findByPk($questionId);
+						foreach($alters as $alter){
+							if($alterQuestionExpressions[$questionId] && !$expression->evalExpression($alterQuestionExpressions[$questionId], $interviewId, $alter->id)){
 
-									return $page[$i];
-								}
-								$alterPrefaces[$questionId] = "";
-								$i++;
+								$data = array(
+									//'value'=>utf8_encode(Yii::app()->getSecurityManager()->encrypt($study['valueLogicalSkip'], $eKey)),
+									'value'=>$study->valueLogicalSkip,
+								);
+								if(isset($answers[$question->id.'-'.$alter->id]['id']))
+									u('answer', $data, "id = " . $answers[$question->id.'-'.$alter->id]['id']);
+								continue;
 							}
-							if($i == $pageNumber){
+							if($alterAskingStyles[$questionId]){
 								$alter_question = new Question;
 								$alter_question->attributes = $question->attributes;
 								$alter_question->prompt = str_replace('$$', $alter->name, $alter_question->prompt);
 								$alter_question->alterId1 = $alter->id;
-								$page[$i] = array($question->id.'-'.$alter->id=>$alter_question);
-								return $page[$i];
-							}else {
-								$i++;
+								$alter_question_list[$questionId.'-'.$alter->id]=$alter_question;
+							}else{
+								if($alterPrefaces[$questionId] != ""){
+									if($i == $pageNumber){
+										$preface = new Question;
+										$preface->id = $questionId;
+										$preface->answerType = "PREFACE";
+										$preface->prompt = $alterPrefaces[$questionId];
+										$page[$i] = array('0'=>$preface);
+
+										return $page[$i];
+									}
+									$alterPrefaces[$questionId] = "";
+									$i++;
+								}
+								if($i == $pageNumber){
+									$alter_question = new Question;
+									$alter_question->attributes = $question->attributes;
+									$alter_question->prompt = str_replace('$$', $alter->name, $alter_question->prompt);
+									$alter_question->alterId1 = $alter->id;
+									$page[$i] = array($question->id.'-'.$alter->id=>$alter_question);
+									return $page[$i];
+								}else {
+									$i++;
+								}
 							}
 						}
-					}
-					if($alterAskingStyles[$questionId]){
-						if(count($alter_question_list) > 0){
-							if($alterPrefaces[$questionId] != ""){
+						if($alterAskingStyles[$questionId]){
+							if(count($alter_question_list) > 0){
+								if($alterPrefaces[$questionId] != ""){
+									if($i == $pageNumber){
+										$preface = new Question;
+										$preface->id = $questionId;
+										$preface->answerType = "PREFACE";
+										$preface->prompt = $alterPrefaces[$questionId];
+										$page[$i] = array('0'=>$preface);
+										return $page[$i];
+									}
+									$i++;
+								}
 								if($i == $pageNumber){
-									$preface = new Question;
-									$preface->id = $questionId;
-									$preface->answerType = "PREFACE";
-									$preface->prompt = $alterPrefaces[$questionId];
-									$page[$i] = array('0'=>$preface);
+									$page[$i] = $alter_question_list;
 									return $page[$i];
 								}
 								$i++;
 							}
-							if($i == $pageNumber){
-								$page[$i] = $alter_question_list;
-								return $page[$i];
-							}
-							$i++;
-						}
 
+						}
 					}
 				}
 
