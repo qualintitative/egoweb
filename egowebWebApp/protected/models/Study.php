@@ -336,7 +336,7 @@ class Study extends CActiveRecord
 			}
 			if(count($egoQuestionIds) > 0)
 				#OK FOR SQL INJECTION
-				$result = q("SELECT id, questionId, value FROM answer WHERE questionId in (" . implode(',', $egoQuestionIds) . ")")->queryAll();
+				$result = q("SELECT id, questionId, value FROM answer WHERE interviewId = $interviewId AND questionId in (" . implode(',', $egoQuestionIds) . ")")->queryAll();
 			else
 				$result = array();
 			$answers = array();
@@ -348,11 +348,11 @@ class Study extends CActiveRecord
 			foreach ($egoQuestionIds as $questionId){
 				$expression = new Expression;
 				if(!$expression->evalExpression($egoQuestionExpressions[$questionId], $interviewId)){
-					$data = array(
-						'value'=>$study->valueLogicalSkip,
-					);
-					if(isset($answers[$questionId]['id']))
-						u('answer', $data, "id = " . $answers[$questionId]['id']);
+					if(isset($answers[$questionId]['id'])){
+						$skip = Answer::model()->findByPk($answers[$questionId]['id']);
+						$skip->value = $study->valueLogicalSkip;
+						$skip->save();
+					}
 					continue;
 				}
 				$question = Question::model()->findByPk($questionId);
@@ -444,7 +444,7 @@ class Study extends CActiveRecord
 				}
 				if(count($alterQuestionIds) > 0)
 					#OK FOR SQL INJECTION
-					$result = q("SELECT id, questionId, alterId1, value FROM answer WHERE questionId in (" . implode(',', $alterQuestionIds) . ")")->queryAll();
+					$result = q("SELECT id, questionId, alterId1, value FROM answer WHERE interviewId = $interviewId  AND questionId in (" . implode(',', $alterQuestionIds) . ")")->queryAll();
 				else
 					$result = array();
 				$answers = array();
@@ -577,7 +577,7 @@ class Study extends CActiveRecord
 				}
 				if(count($alterPairQuestionIds) > 0)
 					#OK FOR SQL INJECTION
-					$result = q("SELECT id, questionId, alterId1, alterId2, value FROM answer WHERE questionId in (" . implode(',', $alterPairQuestionIds) . ")")->queryAll();
+					$result = q("SELECT id, questionId, alterId1, alterId2, value FROM answer WHERE interviewId = $interviewId AND questionId in (" . implode(',', $alterPairQuestionIds) . ")")->queryAll();
 				else
 					$result = array();
 				$answers = array();

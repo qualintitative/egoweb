@@ -388,7 +388,7 @@ class ImportExportController extends Controller
 				$answers[$result->id] = $answer;
 				$alter = q("SELECT * FROM alters WHERE FIND_IN_SET($result->id, interviewId)")->queryAll();
 				foreach($alter as &$a){
-					$a['name'] = decrypt($a['name']);
+					//$a['name'] = decrypt($a['name']);
 				}
 				$alters[$result->id] = $alter;
 				$graph = Graph::model()->findAllByAttributes(array("interviewId"=>$result->id));
