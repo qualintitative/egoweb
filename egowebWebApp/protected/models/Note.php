@@ -107,6 +107,6 @@ class Note extends CActiveRecord
      */
     protected function beforeSave() {
         $this->notes = encrypt( $this->notes );
-        return parent::afterSave();
+        return parent::beforeSave();
     }
 }
