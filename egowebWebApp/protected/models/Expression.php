@@ -130,7 +130,6 @@ class Expression extends CActiveRecord
 		if(!$expression)
 			return true;
 
-
 		$study = Study::model()->findByPk($expression->studyId);
 		if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
 			if(!stristr($interviewId, ",")){

@@ -560,6 +560,9 @@ class InterviewingController extends Controller
 			if(isset($_GET['interviewId']) && $_GET['interviewId']){
 				$sql = "SELECT " . $_GET['field'] .  " FROM alters WHERE interviewId = " . $_GET['interviewId'];
 				$names = Yii::app()->db->createCommand($sql)->queryColumn();
+				foreach($names as &$name){
+					$name = decrypt($name);
+				}
 				$names = addslashes(implode("' , '", $names));
 			}else{
 				if(!Yii::app()->user->isSuperAdmin && !Yii::app()->user->isGuest)
@@ -581,7 +584,7 @@ class InterviewingController extends Controller
 					'label' => $model->$_GET['field'],
 					'value' => $model->$_GET['field'],
 					'id' => $model->id,
-					'field' => $model->email,
+					'field' => $model->$_GET['field'],
 				);
 
 			echo CJSON::encode($result);
