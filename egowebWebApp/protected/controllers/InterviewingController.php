@@ -563,7 +563,6 @@ class InterviewingController extends Controller
 				foreach($names as &$name){
 					$name = decrypt($name);
 				}
-				$names = addslashes(implode("' , '", $names));
 			}else{
 				if(!Yii::app()->user->isSuperAdmin && !Yii::app()->user->isGuest)
 					$filter = " AND interviewerId = " . Yii::app()->user->id;
