@@ -577,15 +577,21 @@ class InterviewingController extends Controller
 				" AND " . $_GET['field']. " NOT IN ('" . $names . "')" . $filter,
 				'order'=>'ordering',
 			);
-			$models = AlterList::model()->findAll($criteria);
+			$models = AlterList::model()->findAllByAttributes(array('studyId'=>$_GET['studyId']));
 			$result = array();
-			foreach ($models as $model)
-				$result[] = array(
-					'label' => $model->$_GET['field'],
-					'value' => $model->$_GET['field'],
-					'id' => $model->id,
-					'field' => $model->$_GET['field'],
-				);
+			foreach ($models as $model){
+				if(stristr($model->$_GET['field'], $_GET['term'])){
+					if($model->$_GET['field'] == $self || in_array($model->$_GET['field'],$names))
+						continue;
+					$result[] = array(
+						'label' => $model->$_GET['field'],
+						'value' => $model->$_GET['field'],
+						'id' => $model->id,
+						'field' => $model->$_GET['field'],
+					);
+				}
+			}
+
 
 			echo CJSON::encode($result);
 		}
