@@ -508,7 +508,7 @@ class Study extends CActiveRecord
 							if($alterAskingStyles[$questionId]){
 								$alter_question = new Question;
 								$alter_question->attributes = $question->attributes;
-								$alter_question->prompt = str_replace('$$', $alter->name, $alter_question->prompt);
+								$alter_question->prompt = str_replace('$$', "_________", $alter_question->prompt);
 								$alter_question->alterId1 = $alter->id;
 								$alter_question_list[$questionId.'-'.$alter->id]=$alter_question;
 							}else{
