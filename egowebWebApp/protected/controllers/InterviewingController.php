@@ -250,7 +250,7 @@ class InterviewingController extends Controller
 						$dname = decrypt($dname);
 						unset($dname);
 					}
-					
+
 					if(!in_array($Answer['value'], $restricted))
 						$model[$array_id]->addError('value', $Answer['value'] . " is either not in the participant list or has been assigned to another interviewer");
 				}
@@ -716,7 +716,7 @@ class InterviewingController extends Controller
 				$answer = array(
 					'questionId' => $question['id'],
 					'interviewId'=>$interviewId,
-					//try encrypting here					
+					//try encrypting here
 					'value'=>encrypt($study['valueNotYetAnswered']),
 				  //'value'=>$study['valueNotYetAnswered'],
 					'skipReason'=>'NONE',

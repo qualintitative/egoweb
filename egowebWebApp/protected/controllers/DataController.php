@@ -147,7 +147,7 @@ class DataController extends Controller
 		if(isset($_POST['expressionId']))
 			$expressionId = $_POST['expressionId'];
 		else
-			$expressionId = $study->adjacencyExpressionId;
+			$expressionId = '';
 
         #OK FOR SQL INJECTION
 		$study = Study::model()->findByPk((int)$_POST['studyId']);
@@ -215,6 +215,10 @@ class DataController extends Controller
 			}else{
 				if(isset($_POST['noAlters']) && $_POST['noAlters'] == 1)
 					continue;
+				if($expressionId){
+					$stats = new Statistics;
+					$stats->initComponents($interview->id, $expressionId);
+				}
 			}
 
 			foreach($alters as &$alter){
@@ -222,10 +226,7 @@ class DataController extends Controller
 					$alter['name'] = decrypt($alter['name']);
 			}
 
-			if($expressionId){
-				$stats = new Statistics;
-				$stats->initComponents($interview->id, $expressionId);
-			}
+
 
 			foreach ($alters as $alter){
 				$answers = array();
@@ -318,7 +319,7 @@ class DataController extends Controller
 						}
 					}
 				}
-				if($expressionId){
+				if($expressionId && isset($stats)){
 					$answers[] = $stats->getDensity();
 					$answers[] = $stats->maxDegree();
 					$answers[] = $stats->maxBetweenness();

@@ -461,11 +461,11 @@ class Study extends CActiveRecord
 								foreach($NonListQs[$questionId] as $qId){
 									$expression = new Expression;
 									if(!$expression->evalExpression($alterQuestionExpressions[$qId], $interviewId, $alter->id)){
-										$data = array(
-											'value'=>$study->valueLogicalSkip,
-										);
-										if(isset($answers[$qId.'-'.$alter->id]['id']))
-											u('answer', $data, "id = " . $answers[$qId.'-'.$alter->id]['id']);
+										if(isset($answers[$qId.'-'.$alter->id]['id'])){
+											$skip = Answer::model()->findByPk($answers[$qId.'-'.$alter->id]['id']);
+											$skip->value = $study->valueLogicalSkip;
+											$skip->save();
+										}
 										continue;
 									}
 									if($alterPrefaces[$qId] != "" && !$preface->id){
@@ -498,13 +498,11 @@ class Study extends CActiveRecord
 						$question = Question::model()->findByPk($questionId);
 						foreach($alters as $alter){
 							if($alterQuestionExpressions[$questionId] && !$expression->evalExpression($alterQuestionExpressions[$questionId], $interviewId, $alter->id)){
-
-								$data = array(
-									//'value'=>utf8_encode(Yii::app()->getSecurityManager()->encrypt($study['valueLogicalSkip'], $eKey)),
-									'value'=>$study->valueLogicalSkip,
-								);
-								if(isset($answers[$question->id.'-'.$alter->id]['id']))
-									u('answer', $data, "id = " . $answers[$question->id.'-'.$alter->id]['id']);
+								if(isset($answers[$question->id.'-'.$alter->id]['id'])){
+									$skip = Answer::model()->findByPk($answers[$question->id.'-'.$alter->id]['id']);
+									$skip->value = $study->valueLogicalSkip;
+									$skip->save();
+								}
 								continue;
 							}
 							if($alterAskingStyles[$questionId]){
@@ -596,11 +594,11 @@ class Study extends CActiveRecord
 							if($alter->id == $alter2->id)
 								continue;
 							if($alterPairQuestionExpressions[$questionId] && !$expression->evalExpression($alterPairQuestionExpressions[$questionId], $interviewId, $alter->id, $alter2->id)){
-								$data = array(
-									'value'=>$study->valueLogicalSkip,
-								);
-								if(isset($answers[$question->id.'-'.$alter->id.'and'.$alter2->id]))
-									u('answer', $data, "id = " . $answers[$question->id.'-'.$alter->id.'and'.$alter2->id]['id']);
+								if(isset($answers[$question->id.'-'.$alter->id.'and'.$alter2->id])){
+									$skip = Answer::model()->findByPk($answers[$question->id.'-'.$alter->id.'and'.$alter2->id]);
+									$skip->value = $study->valueLogicalSkip;
+									$skip->save();
+								}
 								continue;
 							}
 							$alter_pair_question = new Question;
@@ -657,11 +655,11 @@ class Study extends CActiveRecord
 							$answers[$questionId]['value'] = $study->valueNotYetAnswered;
 						$expression = new Expression;
 						if(!$expression->evalExpression($networkExpressions[$questionId], $interviewId)){
-							$data = array(
-								'value'=>$study->valueLogicalSkip,
-							);
-							if(isset($answers[$questionId]['id']))
-								u('answer', $data, "id = " . $answers[$questionId]['id']);
+							if(isset($answers[$questionId]['id'])){
+									$skip = Answer::model()->findByPk($answers[$questionId]['id']);
+									$skip->value = $study->valueLogicalSkip;
+									$skip->save();
+							}
 							continue;
 						}
 					}

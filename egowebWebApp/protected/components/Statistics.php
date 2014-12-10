@@ -30,6 +30,8 @@ class Statistics extends CComponent {
 			'condition'=>"FIND_IN_SET(" . $interviewId . ", interviewId)",
 		);
 		$alters = Alters::model()->findAll($criteria);
+		if(count($alters) == 0)
+			return false;
 		$this->alters = $alters;
 		$alters2 = $alters;
 		$expression = new Expression;
