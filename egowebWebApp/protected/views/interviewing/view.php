@@ -400,10 +400,10 @@ $('.".$array_id."-skipReason').click(function(event){
 });
 ");
 
-		if(count($questions > 1) && $counter == 0 && $question->askingStyleList)
+		if(count($questions) > 1 && $counter == 0 && $question->askingStyleList)
 			echo "</div><br style='clear:both'>";
 		if($counter == 0 )
-			echo "<div class='question ". $question->subjectType ."'>";
+			echo "<div class='question ". ($question->askingStyleList ? $question->subjectType : "") ."'>";
 		if($model[$array_id]->getError('value')){
 			$rowColor = "error";
 		}
