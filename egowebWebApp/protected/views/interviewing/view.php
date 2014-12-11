@@ -188,7 +188,7 @@ foreach($questions as $question) {
 	<?php endif; ?>
 
 	<?php
-	if(count($questions > 1) && $counter == 0 && $question->askingStyleList)
+	if($counter == 0 && $question->askingStyleList)
 		echo "<div class='floatingNav' style='background:#fff'>";
 	?>
 
@@ -332,7 +332,7 @@ foreach($questions as $question) {
 			$skipList['REFUSE'] =  "Refuse";
 
 		$options = QuestionOption::model()->findAllByAttributes(array('questionId'=>$question->id), $params=array('order'=>'ordering'));
-		if(count($questions )  > 1 && $counter == 0 && $question->askingStyleList){
+		if($counter == 0 && $question->askingStyleList){
 			$columns = 1;
 			$maxwidth = 180;
 
@@ -400,7 +400,7 @@ $('.".$array_id."-skipReason').click(function(event){
 });
 ");
 
-		if(count($questions) > 1 && $counter == 0 && $question->askingStyleList)
+		if($counter == 0 && $question->askingStyleList)
 			echo "</div><br style='clear:both'>";
 		if($counter == 0 )
 			echo "<div class='question ". ($question->askingStyleList ? $question->subjectType : "") ."'>";
