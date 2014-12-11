@@ -556,7 +556,7 @@ class InterviewingController extends Controller
 			$self = ''; $filter = "";
 			if(isset($_GET['self']))
 				$self = $_GET['self'];
-			$names = "";
+			$names = array();
 			if(isset($_GET['interviewId']) && $_GET['interviewId']){
 				$sql = "SELECT " . $_GET['field'] .  " FROM alters WHERE interviewId = " . $_GET['interviewId'];
 				$names = Yii::app()->db->createCommand($sql)->queryColumn();
