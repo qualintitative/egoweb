@@ -241,8 +241,8 @@ class DataController extends Controller
 						$ego_id = decrypt($ego_id);
 				}
 				$answers[] = implode("_", $ego_ids);
-				foreach($ego_ids as $ego_id)
-					$answers[] = $ego_id;
+				foreach($ego_ids as $eid)
+					$answers[] = $eid;
 				foreach ($ego_questions as $question){
                     #OK FOR SQL INJECTION
 					$answer = q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'])->queryScalar();
