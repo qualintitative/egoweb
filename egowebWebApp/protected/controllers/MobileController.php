@@ -312,6 +312,7 @@ class MobileController extends Controller
 			$newAlter->name = $alter['NAME'];
 			$newAlter->interviewId = $newInterviewIds[$alter['INTERVIEWID']];
 			$newAlter->ordering=1;
+
 			if(!$newAlter->save()){
 				$errors++;
 				print_r($newAlter->getErrors());
@@ -319,7 +320,6 @@ class MobileController extends Controller
 			}else{
 				$newAlterIds[$alter['ID']] = $newAlter->id;
 			}
-			$newAlter->save();
 		}
 		}
 		foreach($data['answers'] as $answer){
