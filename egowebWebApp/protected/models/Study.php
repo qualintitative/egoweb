@@ -116,13 +116,13 @@ class Study extends CActiveRecord
 			if($question->subjectType == "EGO_ID")
 				$ego_id_questions[$question->id] = $question;
 			else if($question->subjectType == "EGO")
-				$egoQuestions[] = $question;
+				$egoQuestions[$question->ordering] = $question;
 			else if($question->subjectType == "ALTER")
-				$alterQuestions[] = $question;
+				$alterQuestions[$question->ordering] = $question;
 			else if($question->subjectType == "ALTER_PAIR")
-				$alterPairQuestions[] = $question;
+				$alterPairQuestions[$question->ordering] = $question;
 			else if($question->subjectType == "NETWORK")
-				$networkQuestions[] = $question;
+				$networkQuestions[$question->ordering] = $question;
 		}
 
 		foreach($expressionList as $expression){
@@ -321,13 +321,13 @@ class Study extends CActiveRecord
 			if($question->subjectType == "EGO_ID")
 				$ego_id_questions[$question->id] = $question;
 			else if($question->subjectType == "EGO")
-				$egoQuestions[] = $question;
+				$egoQuestions[$question->ordering] = $question;
 			else if($question->subjectType == "ALTER")
-				$alterQuestions[] = $question;
+				$alterQuestions[$question->ordering] = $question;
 			else if($question->subjectType == "ALTER_PAIR")
-				$alterPairQuestions[] = $question;
+				$alterPairQuestions[$question->ordering] = $question;
 			else if($question->subjectType == "NETWORK")
-				$networkQuestions[] = $question;
+				$networkQuestions[$question->ordering] = $question;
 		}
 
 		foreach($expressionList as $expression){
