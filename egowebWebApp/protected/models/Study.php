@@ -104,7 +104,7 @@ class Study extends CActiveRecord
 	public function nav($study, $pageNumber, $interviewId = null, $answers = null){
 
 		$expressionList = Expression::model()->findAllByAttributes(array('studyId'=>$study->id));
-		$questionList = Question::model()->findAllByAttributes(array('studyId'=>$study->id));
+		$questionList = Question::model()->findAllByAttributes(array('studyId'=>$study->id),array('order'=>'ordering'));
 		$egoQuestions = array();
 		$alterQuestions = array();
 		$alterPairQuestions = array();
@@ -309,7 +309,7 @@ class Study extends CActiveRecord
 	public function buildQuestions($study, $pageNumber = null, $interviewId = null, $answers = null){
 
 		$expressionList = Expression::model()->findAllByAttributes(array('studyId'=>$study->id));
-		$questionList = Question::model()->findAllByAttributes(array('studyId'=>$study->id));
+		$questionList = Question::model()->findAllByAttributes(array('studyId'=>$study->id),array('order'=>'ordering'));
 		$egoQuestions = array();
 		$alterQuestions = array();
 		$alterPairQuestions = array();
@@ -358,7 +358,6 @@ class Study extends CActiveRecord
 			$ego_question_list = array();
 			$prompt = "";
 			foreach ($egoQuestions as $question){
-				//$expression = new Expression;
 				if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($question->answerReasonExpressionId, $interviewId, null, null, $answers)){
 					if(isset($answers[$question->id]) && $answers[$question->id]->value != $study->valueLogicalSkip){
 						$answers[$question->id]->value = $study->valueLogicalSkip;
