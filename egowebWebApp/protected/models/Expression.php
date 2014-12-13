@@ -20,6 +20,9 @@ class Expression extends CActiveRecord
 {
 
 	public $answers = array();
+	public $study = null;
+	public $question = null;
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * @param string $className active record class name.
@@ -123,14 +126,21 @@ class Expression extends CActiveRecord
 	 * Show logic for the expressions. determines whether or not to display a question
 	 * returns either true/false or a number for the Counting expressions
 	 */
-	public function evalExpression($id, $interviewId, $alterId1 = null, $alterId2 = null)
+	public function evalExpression($id, $interviewId, $alterId1 = null, $alterId2 = null, $answers = null)
 	{
-		$expression = Expression::model()->findByPk($id);
+		if(isset($this->id))
+			$expression = $this;
+		else
+			$expression = Expression::model()->findByPk($id);
 
 		if(!$expression)
 			return true;
 
-		$study = Study::model()->findByPk($expression->studyId);
+		if(isset($this->study))
+			$study = $this->study;
+		else
+			$study = Study::model()->findByPk($expression->studyId);
+
 		if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
 			if(!stristr($interviewId, ",")){
                 #OK FOR SQL INJECTION
@@ -145,9 +155,9 @@ class Expression extends CActiveRecord
 
 		if(is_numeric($expression->questionId)){
             #OK FOR SQL INJECTION
-			$row = q("SELECT id,subjectType,title FROM question WHERE id = ". $expression->questionId)->queryRow();
-			$subjectType = $row['subjectType'];
-			$questionId = $row['id'];
+			//$row = q("SELECT id,subjectType,title FROM question WHERE id = ". $expression->questionId)->queryRow();
+			$subjectType = $this->question->subjectType;
+			$questionId = $this->question->id;
 		}else{
 			$questionId = "";
 			$subjectType = "";
@@ -163,6 +173,7 @@ class Expression extends CActiveRecord
 
 		if(is_numeric($questionId)){
 			if($subjectType == 'ALTER_PAIR'){
+				/*
 				if(!$this->answers){
 					if(strstr($interviewId, ",")){
 						foreach(explode(",", $interviewId) as $id){
@@ -175,13 +186,14 @@ class Expression extends CActiveRecord
 					}else{
 						$this->fetchAlterAnswers($questionId, $interviewId);
 					}
-				}
+				}*/
 				$array_id = $questionId . '-' .  $alterId1 . "and" . $alterId2;
-				if(isset($this->answers[$array_id]))
-					$answer = $this->answers[$array_id];
+				if(isset($answers[$array_id]))
+					$answer = $answers[$array_id]->value;
 				else
 					$answer = "";
 			}else if($subjectType == 'ALTER'){
+				/*
 				if(!$this->answers){
 					if(strstr($interviewId, ",")){
 						foreach(explode(",", $interviewId) as $id){
@@ -194,15 +206,16 @@ class Expression extends CActiveRecord
 					}else{
 						$this->fetchAlterAnswers($questionId, $interviewId);
 					}
-				}
+				}*/
 				$array_id = $questionId . '-' .  $alterId1;
-				if(isset($this->answers[$array_id]))
-					$answer = $this->answers[$array_id];
+				if(isset($answers[$array_id]))
+					$answer = $answers[$array_id]->value;
 				else
 					$answer = "";
 			}else{
+				$answer = $answers[$questionId]->value;
                 #OK FOR SQL INJECTION
-				$answer = decrypt(q("SELECT value FROM answer WHERE questionId = $questionId AND interviewId in ($interviewId)")->queryScalar());
+				//$answer = decrypt(q("SELECT value FROM answer WHERE questionId = $questionId AND interviewId in ($interviewId)")->queryScalar());
 			}
 		}
 
@@ -257,7 +270,7 @@ class Expression extends CActiveRecord
 			return ($times * $count);
 		} else if($expression->type == "Comparison"){
 			list($value, $expressionId) =  preg_split('/:/', $expression->value);
-			$result = Expression::evalExpression($expressionId, $interviewId, $alterId1, $alterId2);
+			$result = Expression::evalExpression($expressionId, $interviewId, $alterId1, $alterId2, $answers);
 			$logic = "return " . $result . " " . $comparers[$expression->operator] . " " . $value . ";";
 			return eval($logic);
 		} else if($expression->type == "Compound"){
@@ -269,7 +282,7 @@ class Expression extends CActiveRecord
 				if($subExpression == $id)
 					continue;
 				$sub[$subExpression] = new Expression;
-				$isTrue[$subExpression] = $sub[$subExpression]->evalExpression($subExpression, $interviewId, $alterId1, $alterId2);
+				$isTrue[$subExpression] = $sub[$subExpression]->evalExpression($subExpression, $interviewId, $alterId1, $alterId2,$answers);
 				if($expression->operator == "Some" && $isTrue[$subExpression])
 					return true;
 				if($isTrue[$subExpression])

@@ -59,7 +59,16 @@ class InterviewingController extends Controller
 
 		if(isset($_GET['interviewId'])){
 			$interviewId = CHtml::encode(strip_tags($_GET['interviewId']));
-			$questions = Study::buildQuestions($study, $currentPage, $interviewId);
+			$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+			foreach($answerList as $answer){
+				if($answer->alterId1 && $answer->alterId2)
+					$answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
+				else if ($answer->alterId1 && !$answer->alterId2)
+					$answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
+				else
+					$answers[$answer->questionId] = $answer;
+			}
+			$questions = Study::buildQuestions($study, $currentPage, $interviewId, $answers);
 			if(!$questions){
 				$this->redirect(Yii::app()->createUrl(
 					'interviewing/'.$id.'?'.
@@ -67,28 +76,30 @@ class InterviewingController extends Controller
 					'page=0'
 				));
 			}
-
 			// loads answers into array model
 			foreach($questions as $question){
 				if(is_numeric($question->alterId1) && !is_numeric($question->alterId2)){
 					$array_id = $question->id . '-' . $question->alterId1;
-					$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId,'questionId'=>$question->id, 'alterId1'=>$question->alterId1));
+					//$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId,'questionId'=>$question->id, 'alterId1'=>$question->alterId1));
 				}else if(is_numeric($question->alterId1) && is_numeric($question->alterId2)){
 					$array_id = $question->id . '-' . $question->alterId1 . 'and' . $question->alterId2;
-					$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId,'questionId'=>$question->id, 'alterId1'=>$question->alterId1,'alterId2'=>$question->alterId2));
+					//$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId,'questionId'=>$question->id, 'alterId1'=>$question->alterId1,'alterId2'=>$question->alterId2));
 				}else{
 					$array_id = $question->id;
-					$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId,'questionId'=>$question->id));
+					//$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId,'questionId'=>$question->id));
 				}
-				if(!$model[$array_id]){
-					$model[$array_id] = new Answer;
-				}else{
+				//echo $array_id.":".isset($answers[$array_id])."<br>";
+
+				if(isset($answers[$array_id])){
+					$model[$array_id] = $answers[$array_id];
 					if($model[$array_id]->value == $study->valueNotYetAnswered)
 						$model[$array_id]->value = "";
+				}else{
+					$model[$array_id] = new Answer;
 				}
+
 			}
-		}
-        else{
+		}else{
 			$questions = Study::buildQuestions($study, $currentPage);
 			$interviewId = '';
 
@@ -121,7 +132,7 @@ class InterviewingController extends Controller
 			}
 		}
 
-		$qNav = Study::nav($study, $currentPage, $interviewId);
+		$qNav = Study::nav($study, $currentPage, $interviewId , $answers);
 		$this->render('view',array(
 			'studyId'=>$id,
 			'questions'=>$questions,
@@ -166,13 +177,23 @@ class InterviewingController extends Controller
 					$this->redirect(Yii::app()->createUrl('admin/'));
 			}
 
+			$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+			foreach($answerList as $answer){
+				if($answer->alterId1 && $answer->alterId2)
+					$answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
+				else if ($answer->alterId1 && ! $answer->alterId2)
+					$answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
+				else
+					$answers[$answer->questionId] = $answer;
+			}
+
 			foreach($_POST['Answer'] as $Answer){
 
 				if(!isset($interviewId) || !$interviewId)
 					$interviewId = $Answer['interviewId'];
 
 				if(!isset($questions))
-					$questions = Study::buildQuestions($study, $_POST['page'], $interviewId);
+					$questions = Study::buildQuestions($study, $_POST['page'], $interviewId, null, null, $answers);
 
 				if($Answer['questionType'] == "EGO_ID" && $Answer['value'] != "" && !$interviewId){
 					if(Yii::app()->user->isGuest){
@@ -221,16 +242,19 @@ class InterviewingController extends Controller
 				else
 					$array_id = $Answer['questionId'];
 
+/*
 				if(isset($array_id) && $questions[$array_id] && !isset($model[$array_id])){
 					if($questions[$array_id]->subjectType == "ALTER")
-						$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId, 'questionId'=>$questions[$array_id]->id, 'alterId1'=>$questions[$array_id]->alterId1));
+						$model[$array_id] = $answers[$array_id]; //Answer::model()->findByAttributes(array('interviewId'=>$interviewId, 'questionId'=>$questions[$array_id]->id, 'alterId1'=>$questions[$array_id]->alterId1));
 					else if($questions[$array_id]->subjectType == "ALTER_PAIR")
 						$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId, 'questionId'=>$questions[$array_id]->id, 'alterId1'=>$questions[$array_id]->alterId1, 'alterId2'=>$questions[$array_id]->alterId2));
 					else
 						$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId, 'questionId'=>$questions[$array_id]->id));
 				}
-
-				if(!$model[$array_id])
+*/
+				if(isset($answers[$array_id]))
+					$model[$array_id] = $answers[$array_id];
+				else
 					$model[$array_id] = new Answer;
 
 
@@ -437,7 +461,11 @@ class InterviewingController extends Controller
 					'page='.$page.'&key=' . $key . $nodes
 				));
 			}else{
-				$qNav =  Study::nav($study, $_POST['page'], $interviewId);
+				foreach($model as &$a){
+					if($a->value)
+						$a->value = decrypt($a->value);
+				}
+				$qNav =  Study::nav($study, $_POST['page'], $interviewId, $answers);
 				$this->render('view',array(
 					'studyId'=>$_POST['studyId'],
 					'questions'=>$questions,

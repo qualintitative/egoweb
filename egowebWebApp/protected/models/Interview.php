@@ -73,29 +73,6 @@ class Interview extends CActiveRecord
 		);
 	}
 
-	// CORE FUNCTION
-	public function getLastUnanswered($id){
-		$model = Interview::model()->findByPk($id);
-		$study = Study::model()->findByPk($model->studyId);
-		$pages = Study::buildQuestions($model, null, $id);
-		for($i=0; $i < count($pages); $i++){
-			foreach($pages[$i] as $question){
-				if($question->answerType == "ALTER_PROMPT"){
-					if(count(Alters::model()->findAllByAttributes(array('interviewId'=>$id))) < $study->minAlters)
-						return $i;
-				}else if($question->answerType != "ALTER_PROMPT"){
-					if($question->subjectType != "ALTER" && $question->subjectType != "ALTER_PAIR")
-						$answer = Answer::model()->findByAttributes(array('studyId'=>$question->studyId, 'interviewId'=>$id, 'questionId'=>$question->id));
-					else
-						$answer = Answer::model()->findByAttributes(array('studyId'=>$question->studyId, 'interviewId'=>$id, 'questionId'=>$question->id, 'alterId1'=>$question->alterId1, 'alterId2'=>$question->alterId2));
-					if(!$answer)
-						return $i;
-				}
-			}
-		}
-	}
-
-
 	public function getInterviewFromEmail($studyId, $email){
         #OK FOR SQL INJECTION
 		$interviewId = q("SELECT interviewId FROM answer WHERE value='$email' AND questionType = 'EGO_ID' AND studyId = $studyId")->queryScalar();
