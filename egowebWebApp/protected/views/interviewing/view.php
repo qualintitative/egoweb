@@ -104,7 +104,7 @@ if(!isset($key) || !$key){
 	<div id="alterListBox">
 		<?php
 		// fetch variable alter prompt
-		$alterPrompt = AlterPrompt::getPrompt($studyId, Interview::countAlters($interviewId));
+		$alterPrompt = AlterPrompt::getPrompt($study->id, Interview::countAlters($interviewId));
 		// fetch alter list
 		$criteria=array(
 			'condition'=>"FIND_IN_SET(" . $interviewId . ", interviewId)",
@@ -115,7 +115,7 @@ if(!isset($key) || !$key){
 			'pagination'=>false,
 		));
 		$alter = new Alters;
-		$this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterPrompt'=>$alterPrompt, 'model'=>$alter, 'studyId'=>$studyId, 'interviewId'=>$interviewId, 'ajax'=>true), false, false);
+		$this->renderPartial('_view_alter', array('dataProvider'=>$dataProvider, 'alterPrompt'=>$alterPrompt, 'model'=>$alter, 'studyId'=>$study->id, 'interviewId'=>$interviewId, 'ajax'=>true), false, false);
 		?>
 	</div>
 <?php endif; ?>
@@ -124,17 +124,17 @@ if(!isset($key) || !$key){
 	<?php if(in_array($questions[0]->answerType, $prompts)): ?>
 		<div class="questionText <?php if($questions[0]->answerType == "ALTER_PROMPT"){ echo "col-sm-9"; } ?>">
 			<?php echo Interview::interpretTags($questions[0]->prompt, $interviewId); ?>
-			<?php if($questions[0]->answerType == "PREFACE" && file_exists(Yii::app()->basePath."/../audio/".$studyId . "/PREFACE/" . $questions[0]->id . ".mp3")):?>
+			<?php if($questions[0]->answerType == "PREFACE" && file_exists(Yii::app()->basePath."/../audio/".$study->id . "/PREFACE/" . $questions[0]->id . ".mp3")):?>
 				<script>
-					var promptAudio_<?=$questions[0]->id;?> = loadAudio("/audio/<?= $studyId . "/PREFACE/" . $questions[0]->id . ".mp3"; ?>");
+					var promptAudio_<?=$questions[0]->id;?> = loadAudio("/audio/<?= $study->id . "/PREFACE/" . $questions[0]->id . ".mp3"; ?>");
 				</script>
-				<a class="play-sound" onclick='playSound("/audio/<?= $studyId . "/PREFACE/" . $questions[0]->id . ".mp3" ?>")' href="#"><span class="fui-volume"></span></a>
+				<a class="play-sound" onclick='playSound("/audio/<?= $study->id . "/PREFACE/" . $questions[0]->id . ".mp3" ?>")' href="#"><span class="fui-volume"></span></a>
 			<?php endif; ?>
-			<?php if($questions[0]->answerType == "ALTER_PROMPT" && file_exists(Yii::app()->basePath."/../audio/".$studyId . "/STUDY/ALTERPROMPT.mp3")):?>
+			<?php if($questions[0]->answerType == "ALTER_PROMPT" && file_exists(Yii::app()->basePath."/../audio/".$study->id . "/STUDY/ALTERPROMPT.mp3")):?>
 				<script>
-					var promptAudio_<?=$questions[0]->id;?> = loadAudio("/audio/<?= $studyId . "/STUDY/ALTERPROMPT.mp3"; ?>");
+					var promptAudio_<?=$questions[0]->id;?> = loadAudio("/audio/<?= $study->id . "/STUDY/ALTERPROMPT.mp3"; ?>");
 				</script>
-				<a class="play-sound" onclick='playSound("/audio/<?= $studyId . "/STUDY/ALTERPROMPT.mp3" ?>")' href="#"><span class="fui-volume"></span></a>
+				<a class="play-sound" onclick='playSound("/audio/<?= $study->id . "/STUDY/ALTERPROMPT.mp3" ?>")' href="#"><span class="fui-volume"></span></a>
 			<?php endif; ?>
 
 		</div>
@@ -153,7 +153,7 @@ foreach($questions as $first) {
 		'id'=>'answer-form',
 		'htmlOptions'=>array('class'=>$first->subjectType == "NETWORK" ? 'col-sm-6' : 'col-sm-12'),
 		'enableAjaxValidation'=>true,
-		'action'=>'/interviewing/save/'.$studyId.($key ? "&key=" . $key : ""),
+		'action'=>'/interviewing/save/'.$study->id.($key ? "&key=" . $key : ""),
 	));
 	break;
 }
@@ -203,7 +203,7 @@ foreach($questions as $question) {
 		<div class="questionText">
 			<?php
 			if ($question->subjectType == "EGO_ID")
-				echo Study::model()->findByPk($studyId)->egoIdPrompt;
+				echo Study::model()->findByPk($study->id)->egoIdPrompt;
 			else
 				echo Interview::interpretTags($question->prompt, $interviewId , $question->alterId1, $question->alterId2);
 			?>
@@ -323,7 +323,7 @@ foreach($questions as $question) {
 		echo $form->hiddenField($model, '[0]'.'studyId',array('value'=>$question->studyId));
 		echo $form->hiddenField($model, '[0]'.'answerType',array('value'=>$question->answerType));
 		echo $form->hiddenField($model, '[0]'.'interviewId',array('value'=>$interviewId));
-		echo CHtml::hiddenField('minAlters', Study::model()->findByPk($studyId)->minAlters);
+		echo CHtml::hiddenField('minAlters', Study::model()->findByPk($study->id)->minAlters);
 	}else{
 		$skipList = array();
 		if($question->dontKnowButton)
@@ -494,7 +494,7 @@ $('.".$array_id."-skipReason').click(function(event){
 <?php endforeach; ?>
 
 <input name="page" type=hidden value=<?php echo $page ?> />
-<input name="studyId" type=hidden value=<?php echo $studyId ?> />
+<input name="studyId" type=hidden value=<?php echo $study->id ?> />
 
 <?php $this->endWidget(); ?>
 
@@ -508,7 +508,7 @@ if($networkQuestion  && is_numeric($networkQuestion->networkRelationshipExprId))
 
 <div id="buttonRow" style="float:left;padding-bottom:20px;clear:left">
 	<?php if($page != 0 ): ?>
-		<a class="graybutton" href="/interviewing/<?php echo $studyId. "?interviewId=". $interviewId . "&page=". ($page - 1) . $key; ?>">Back</a>
+		<a class="graybutton" href="/interviewing/<?php echo $study->id. "?interviewId=". $interviewId . "&page=". ($page - 1) . $key; ?>">Back</a>
 	<?php endif; ?>
 	<?php if($completed != -1): ?>
 		<?php if($question->answerType != "CONCLUSION"): ?>
@@ -518,7 +518,7 @@ if($networkQuestion  && is_numeric($networkQuestion->networkRelationshipExprId))
 		<?php endif; ?>
 	<?php else: ?>
 		<?php if($question->answerType != "CONCLUSION"): ?>
-			<a class="orangebutton" href="/interviewing/<?php echo $studyId. "?interviewId=". $interviewId . "&page=". ($page + 1) . $key; ?>">Next</a>
+			<a class="orangebutton" href="/interviewing/<?php echo $study->id. "?interviewId=". $interviewId . "&page=". ($page + 1) . $key; ?>">Next</a>
 		<?php endif; ?>
 	<?php endif; ?>
 </div>
@@ -528,7 +528,7 @@ if($networkQuestion  && is_numeric($networkQuestion->networkRelationshipExprId))
 		nav = <?= $qNav ?>;
 		console.log(nav);
 		for(k in nav){
-			$('#navbox ul').append("<li><a href='/interviewing/<?php echo $studyId. "?interviewId=". $interviewId . "&page="; ?>" + k + "'>" + k + ". " + nav[k] + "</a></li>");
+			$('#navbox ul').append("<li><a href='/interviewing/<?php echo $study->id. "?interviewId=". $interviewId . "&page="; ?>" + k + "'>" + k + ". " + nav[k] + "</a></li>");
 		}
 	});
 </script>

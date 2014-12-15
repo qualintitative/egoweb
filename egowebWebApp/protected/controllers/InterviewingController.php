@@ -52,7 +52,10 @@ class InterviewingController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$study = Study::model()->findByPk((int)$id);
+		if($id == 0 && isset($_GET['study']))
+			$study = Study::model()->findByAttributes(array('name'=>$_GET['study']));
+		else
+			$study = Study::model()->findByPk((int)$id);
 		$currentPage = 0;
 		if(isset($_GET['page']))
 			$currentPage = CHtml::encode(strip_tags($_GET['page']));
@@ -80,15 +83,11 @@ class InterviewingController extends Controller
 			foreach($questions as $question){
 				if(is_numeric($question->alterId1) && !is_numeric($question->alterId2)){
 					$array_id = $question->id . '-' . $question->alterId1;
-					//$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId,'questionId'=>$question->id, 'alterId1'=>$question->alterId1));
 				}else if(is_numeric($question->alterId1) && is_numeric($question->alterId2)){
 					$array_id = $question->id . '-' . $question->alterId1 . 'and' . $question->alterId2;
-					//$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId,'questionId'=>$question->id, 'alterId1'=>$question->alterId1,'alterId2'=>$question->alterId2));
 				}else{
 					$array_id = $question->id;
-					//$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId,'questionId'=>$question->id));
 				}
-				//echo $array_id.":".isset($answers[$array_id])."<br>";
 
 				if(isset($answers[$array_id])){
 					$model[$array_id] = $answers[$array_id];
@@ -111,6 +110,8 @@ class InterviewingController extends Controller
 			foreach($questions as $question){
 				$array_id = $question->id;
 				$model[$array_id] = new Answer;
+				if(isset($_GET[$question->title]))
+					$model[$array_id]->value = $_GET[$question->title];
 			}
 		}
 
@@ -134,7 +135,6 @@ class InterviewingController extends Controller
 
 		$qNav = Study::nav($study, $currentPage, $interviewId , $answers);
 		$this->render('view',array(
-			'studyId'=>$id,
 			'questions'=>$questions,
 			'page'=>$currentPage,
 			'model'=>$model,
@@ -150,6 +150,7 @@ class InterviewingController extends Controller
 	 * @param integer $id the ID of the study
 	 */
 	public function actionSave($id){
+
 
 		if(isset($_POST['Answer']))
 		{
@@ -217,14 +218,14 @@ class InterviewingController extends Controller
 							$interview = Interview::getInterviewFromEmail($_POST['studyId'],$email);
 							if($interview){
 								$this->redirect(Yii::app()->createUrl(
-									'interviewing/'.$_POST['studyId'].'?'.
+									'interviewing/'.$study->id.'?'.
 									'interviewId='.$interview->id.'&'.
 									'page='.($interview->completed).'&key=' . $key
 								));
 							}
 						}
 						$interview = new Interview;
-						$interview->studyId = $_POST['studyId'];
+						$interview->studyId = $study->id;
 						if($interview->save()){
 							$interviewId = $interview->id;
 							$this->createEgoAnswers($interviewId, $id);
@@ -242,16 +243,6 @@ class InterviewingController extends Controller
 				else
 					$array_id = $Answer['questionId'];
 
-/*
-				if(isset($array_id) && $questions[$array_id] && !isset($model[$array_id])){
-					if($questions[$array_id]->subjectType == "ALTER")
-						$model[$array_id] = $answers[$array_id]; //Answer::model()->findByAttributes(array('interviewId'=>$interviewId, 'questionId'=>$questions[$array_id]->id, 'alterId1'=>$questions[$array_id]->alterId1));
-					else if($questions[$array_id]->subjectType == "ALTER_PAIR")
-						$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId, 'questionId'=>$questions[$array_id]->id, 'alterId1'=>$questions[$array_id]->alterId1, 'alterId2'=>$questions[$array_id]->alterId2));
-					else
-						$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId, 'questionId'=>$questions[$array_id]->id));
-				}
-*/
 				if(isset($answers[$array_id]))
 					$model[$array_id] = $answers[$array_id];
 				else
@@ -312,7 +303,7 @@ class InterviewingController extends Controller
 					}else{
 						$this->createAlterAnswers($Answer['interviewId'], $_POST['studyId']);
 						$this->redirect(Yii::app()->createUrl(
-							'interviewing/'.$_POST['studyId'].'?'.
+							'interviewing/'.$study->id.'?'.
 							'interviewId='.$Answer['interviewId'].'&'.
 							'page='.($_POST['page']+1).'&key=' . $key
 						));
@@ -322,7 +313,7 @@ class InterviewingController extends Controller
 				if($Answer['questionType'] == "INTRODUCTION" || $Answer['questionType'] == "PREFACE"){
 					// no Answer to save, go to next page
 						$this->redirect(Yii::app()->createUrl(
-							'interviewing/'.$_POST['studyId'].'?'.
+							'interviewing/'.$study->id.'?'.
 							'interviewId='.$Answer['interviewId'].'&'.
 							'page='.($_POST['page']+1).'&key=' . $key
 						));
@@ -456,7 +447,7 @@ class InterviewingController extends Controller
 			if($errors == 0) {
 				$page = (int)$_POST['page'] + 1;
 				$this->redirect(Yii::app()->createUrl(
-					'interviewing/'.$_POST['studyId'].'?'.
+					'interviewing/'.$study->id.'?'.
 					'interviewId='.$interviewId.'&'.
 					'page='.$page.'&key=' . $key . $nodes
 				));
@@ -467,7 +458,6 @@ class InterviewingController extends Controller
 				}
 				$qNav =  Study::nav($study, $_POST['page'], $interviewId, $answers);
 				$this->render('view',array(
-					'studyId'=>$_POST['studyId'],
 					'questions'=>$questions,
 					'page'=>$_POST['page'],
 					'study'=>$study,
