@@ -14,6 +14,7 @@ if(!isset($key) || !$key){
 }
 ?>
 <script>
+	getVariables = <?php echo (count($_GET) > 0 ? json_encode($_GET) : '{}'); ?>;
 
 	function toggleOther(option){
 		console.log(option);
@@ -30,6 +31,11 @@ if(!isset($key) || !$key){
 	}
 
 	$(function(){
+		$("input[id*='question_']").each(function(index){
+			if($.inArray($(this).val(),getVariables))
+				$("[name='Answer[" + $(this).attr('questionId') + "][value]']").prop( "readonly", "readonly" );
+		});
+
 		if(<?php echo $completed; ?> == -1){
 			$("input").prop('disabled', true);
 			$("select").prop('disabled', true);
@@ -184,7 +190,11 @@ foreach($questions as $question) {
 <?php foreach($questions as $question): ?>
 
 	<?php if(!Yii::app()->user->isGuest && $counter == 0): ?>
-		<?php echo $question->title . "<br style='clear:left'><br style='clear:left'>"; ?>
+		<?php if($question->subjectType == "EGO_ID"): ?>
+			<?php echo "EGO_ID <br style='clear:left'><br style='clear:left'>"; ?>
+		<?php else: ?>
+			<?php echo $question->title . "<br style='clear:left'><br style='clear:left'>"; ?>
+		<?php endif; ?>
 	<?php endif; ?>
 
 	<?php
@@ -313,6 +323,9 @@ foreach($questions as $question) {
 	$panel = strtolower($question->answerType);
 	if($model[$array_id]->skipReason == "")
 		$model[$array_id]->skipReason = "NONE";
+
+	if($counter == 0)
+		echo "<input type='hidden' id='question_$question->id' value='$question->title' questionId='$question->id'>";
 
 	// either set empty values for prompt / preface page, or display the question
 	if(in_array($question->answerType, $prompts)){
@@ -526,7 +539,6 @@ if($networkQuestion  && is_numeric($networkQuestion->networkRelationshipExprId))
 <script>
 	$(function(){
 		nav = <?= $qNav ?>;
-		console.log(nav);
 		for(k in nav){
 			$('#navbox ul').append("<li><a href='/interviewing/<?php echo $study->id. "?interviewId=". $interviewId . "&page="; ?>" + k + "'>" + k + ". " + nav[k] + "</a></li>");
 		}
