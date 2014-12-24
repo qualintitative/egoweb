@@ -227,7 +227,7 @@ class Study extends CActiveRecord
 				}else{
 					$alter_question_list = array();
 					foreach($alters as $alter){
-						if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($q->answerReasonExpressionId, $interviewId, $alter->id, null, $answers))
+						if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($question->answerReasonExpressionId, $interviewId, $alter->id, null, $answers))
 							continue;
 						if($question->askingStyleList){
 							$alter_question_list = $question;
