@@ -152,10 +152,7 @@ class Expression extends CActiveRecord
 				$interviewId = implode(",", $interviewIds);
 			}
 		}
-
 		if(is_numeric($expression->questionId)){
-            #OK FOR SQL INJECTION
-			//$row = q("SELECT id,subjectType,title FROM question WHERE id = ". $expression->questionId)->queryRow();
 			$subjectType = $this->question->subjectType;
 			$questionId = $this->question->id;
 		}else{

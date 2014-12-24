@@ -545,7 +545,21 @@ class visualize extends Plugin
 		#OK FOR SQL INJECTION
 		$alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId in (" . $studyId . ") AND questionId in (" . $questionIds . ")")->queryColumn();
 
+			$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interview->id));
+			$answers = array();
+			foreach($answerList as $answer){
+				if($answer->alterId1 && $answer->alterId2)
+					$answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
+				else if ($answer->alterId1 && !$answer->alterId2)
+					$answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
+				else
+					$answers[$answer->questionId] = $answer;
+			}
+
 		$expression = Expression::model()->findByPk($this->id);
+		if($expression->questionId)
+			$expression->question = Question::model()->findByPk($expression->questionId);
+
 		if($expression->type == "Compound"){
 			$expressionIds = explode(",", $expression->value);
 			foreach($expressionIds as $expressionId){
@@ -581,7 +595,9 @@ class visualize extends Plugin
 				)
 			);
 			foreach($alters2 as $alter2){
-				if($expression && $expression->evalExpression($expression->id, $this->method, $alter['id'], $alter2['id'])){
+				if($alter2['id'] == $alter['id'])
+					continue;
+				if($expression && $expression->evalExpression($expression->id, $this->method, $alter['id'], $alter2['id'], $answers)){
 					$edges[] = array(
 						"id" => $alter['id'] . "_" . $alter2['id'],
 						"source" => $alter2['id'],
