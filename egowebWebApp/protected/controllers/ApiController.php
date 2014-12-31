@@ -26,11 +26,11 @@ class ApiController extends Controller
         }
 
         if( !isset( $headers['api-key'] ) ){
-            return $this->_sendResponse( 422, "Missing API Key" );
+            return $this->sendResponse( 422, "Missing API Key" );
         }
 
         if( $headers['api-key'] != Yii::app()->params['apiKey'] ){
-            return $this->_sendResponse( 421, "Invalid API Key" );
+            return $this->sendResponse( 421, "Invalid API Key" );
         }
     }
 
@@ -52,7 +52,7 @@ class ApiController extends Controller
                 $this->editSurvey();
                 break;
             default:
-                $this->_sendResponse( 405 );
+                $this->sendResponse( 405 );
                 break;
         }
     }
@@ -60,24 +60,24 @@ class ApiController extends Controller
     private function createSurvey(){
 		if( !isset($_POST['survey_id']) || !isset($_POST['user_id'] ) ){
 			$msg = "Missing survey_id and/or user_id parameter";
-			return $this->_sendResponse( 419, $msg );
+			return $this->sendResponse( 419, $msg );
 		}
 
         $study = Study::model()->findByPk( (int)$_POST['survey_id'] );
         if( !$study ){
             $msg = "Invalid survey_id";
-            return $this->_sendResponse( 418, $msg );
+            return $this->sendResponse( 418, $msg );
         }
 
         $interview = Interview::getInterviewFromPrimekey( $study->id, $_POST['user_id'] );
 
         if( !$interview ){
             $msg = "Unable to find user_id and/or survey_id combination";
-            return $this->_sendResponse( 404, $msg );
+            return $this->sendResponse( 404, $msg );
         }
         else if( $interview->completed == -1 ){
             $msg = "User already completed survey";
-            return $this->_sendResponse( 420, $msg );
+            return $this->sendResponse( 420, $msg );
         }
         else{
             $data = array(
@@ -85,7 +85,7 @@ class ApiController extends Controller
                                                                     'interviewId='.$interview->id.'&'.
                                                                     'page='.$interview->completed )
                     );
-            return $this->_sendResponse( 201, $data );
+            return $this->sendResponse( 201, $data );
         }
 	}
 
@@ -96,13 +96,13 @@ class ApiController extends Controller
 	{
 		if( !isset( $_GET['survey_id'] ) ){
 			$msg = "Missing survey_id parameter";
-			return $this->_sendResponse( 419, $msg );
+			return $this->sendResponse( 419, $msg );
 		}
 
         $study = Study::model()->findByPK((int)$_GET['survey_id']);
         if(!$study){
             $msg = "Survey: ".$_GET['survey_id'] . " not found";
-            $this->_sendResponse( 404, $msg );
+            $this->sendResponse( 404, $msg );
         }
         $data = array(
                     'survey'=>array(
@@ -116,7 +116,7 @@ class ApiController extends Controller
                         'fields'=>array()
                     ),
                 );
-        return $this->_sendResponse( 200, $data );
+        return $this->sendResponse( 200, $data );
 	}
 
     private function editSurvey()
@@ -125,28 +125,28 @@ class ApiController extends Controller
 
         if( !isset( $put_vars['survey_id'] ) ){
             $msg = "Missing survey_id parameter";
-            return $this->_sendResponse( 419, $msg );
+            return $this->sendResponse( 419, $msg );
         }
 
         if( !isset( $put_vars['status'] ) ){
             $msg = "Missing status parameter";
-            return $this->_sendResponse( 419, $msg );
+            return $this->sendResponse( 419, $msg );
         }
 
         $study = Study::model()->findByPK((int)$put_vars['survey_id']);
         if(!$study){
             $msg = "Survey: ".$put_vars['survey_id'] . " not found";
-            return $this->_sendResponse( 404, $msg );
+            return $this->sendResponse( 404, $msg );
         }
 
         $study->status = $put_vars['status'];
         $saved = $study->save();
 
         if( !$saved ){
-            return $this->_sendResponse( 500, 'Unable to to update survey.' );
+            return $this->sendResponse( 500, 'Unable to to update survey.' );
         }
 
-        return $this->_sendResponse( 200, 'Success' );
+        return $this->sendResponse( 200, 'Success' );
     }
 
     // User Actions
@@ -161,7 +161,7 @@ class ApiController extends Controller
                 $this->getUser();
                 break;
             default:
-                $this->_sendResponse( 405 );
+                $this->sendResponse( 405 );
                 break;
         }
     }
@@ -170,7 +170,7 @@ class ApiController extends Controller
 	{
 		if( !isset( $_GET['user_id'] ) ){
 			$msg = "Missing user_id parameter";
-			return $this->_sendResponse( 419, $msg );
+			return $this->sendResponse( 419, $msg );
 		}
 
         $questionIds = q( "SELECT id FROM question where lower(title) = 'mmic_prime_key'" )->queryColumn();
@@ -194,7 +194,7 @@ class ApiController extends Controller
 
         if( !$userFound ){
             $msg = $_GET['user_id'] . " not found";
-            return $this->_sendResponse(404, $msg );
+            return $this->sendResponse(404, $msg );
         }
 
         $data = array(
@@ -205,7 +205,7 @@ class ApiController extends Controller
             ),
         );
         
-        return $this->_sendResponse( 200, $data );
+        return $this->sendResponse( 200, $data );
 
 	}
 
@@ -213,7 +213,7 @@ class ApiController extends Controller
      * @param $status
      * @return string
      */
-    private function _getStatusCodeMessage( $status )
+    private static function _getStatusCodeMessage( $status )
 	{
 		// these could be stored in a .ini file and loaded
 		// via parse_ini_file()... however, this will suffice
@@ -237,10 +237,10 @@ class ApiController extends Controller
      * @param string $body
      * @param string $content_type
      */
-    private function _sendResponse( $status = 200, $body = '', $content_type = 'application/json' )
+    public static function sendResponse( $status = 200, $body = '', $content_type = 'application/json' )
 	{
 		// set the status
-		$status_header = 'HTTP/1.1 ' . $status . ' ' . $this->_getStatusCodeMessage($status);
+		$status_header = 'HTTP/1.1 ' . $status . ' ' . self::_getStatusCodeMessage($status);
 		header($status_header);
 		// and the content type
 		header('Content-type: ' . $content_type);
@@ -294,10 +294,10 @@ class ApiController extends Controller
                         <html>
                         <head>
                             <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-                            <title>' . $status . ' ' . $this->_getStatusCodeMessage($status) . '</title>
+                            <title>' . $status . ' ' . self::_getStatusCodeMessage($status) . '</title>
                         </head>
                         <body>
-                            <h1>' . $this->_getStatusCodeMessage($status) . '</h1>
+                            <h1>' . self::_getStatusCodeMessage($status) . '</h1>
                             <p>' . $message . '</p>
                             <hr />
                             <address>' . $signature . '</address>
