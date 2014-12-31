@@ -170,7 +170,7 @@ class SurveyController extends Controller {
 
         $data = http_build_query( array( 'password' => $p, 'payload' => $content ) );
 
-        return $data;
+        return 'http://'.$_SERVER['HTTP_HOST'].'/survey?'.$data;
     }
 
     /**
