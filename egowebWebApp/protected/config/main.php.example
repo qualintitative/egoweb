@@ -17,6 +17,7 @@ return array(
 		'application.models.*',
 		'application.components.*',
 		'application.extensions.yiidebugtb.*',
+		'application.controllers.*'
 	),
 
 	'modules'=>array(
@@ -110,6 +111,9 @@ return array(
 		// The max login attempt before showing captcha
 		'maxLoginAttempts'=>3,
         'maxUploadFileSize'=>1024*1024*3, // 3MB
-        'apiKey' => 'API_KEY'
+        'apiKey' => 'API_KEY',
+        'surveyPrivateKey' => "file:///path/to/private/key/private.pem",
+        'surveyPublicKey' => "file:///path/to/public/key/public.pem",
+        'surveyEncryptionPassword' => 'private key encryption password'
 	)
 );
