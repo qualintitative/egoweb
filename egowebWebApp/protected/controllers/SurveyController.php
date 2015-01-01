@@ -6,6 +6,8 @@
  * Time: 5:42 PM
  */
 
+Yii::import('ext.httpclient.*');
+
 class SurveyController extends Controller {
     private $privateKey;
     private $publicKey;
@@ -39,6 +41,38 @@ class SurveyController extends Controller {
         }
 
         return $this->receive( $_REQUEST['payload'], $_REQUEST['password'] );
+    }
+
+    /**
+     * Redirect with POST data.
+     *
+     * @param string $url URL.
+     * @param array $post_data POST data. Example: array('foo' => 'var', 'id' => 123)
+     * @param array $headers Optional. Extra headers to send.
+     * @return string
+     */
+    public function redirectPost($url, array $data, array $headers = null) {
+        $params = array(
+            'http' => array(
+                'method' => 'POST',
+                'content' => http_build_query($data)
+            )
+        );
+        if (!is_null($headers)) {
+            $params['http']['header'] = '';
+            foreach ($headers as $k => $v) {
+                $params['http']['header'] .= "$k: $v\n";
+            }
+        }
+        $ctx = stream_context_create($params);
+        $fp = @fopen($url, 'rb', false, $ctx);
+        if ($fp) {
+            return @stream_get_contents($fp);
+        } else {
+            // Error
+            return ApiController::sendResponse( 500, 'Unable to access survey' );
+            exit();
+        }
     }
 
     public function actionGetLink(){
@@ -81,18 +115,36 @@ class SurveyController extends Controller {
         }
 
         if( !array_key_exists ( 'action', $decoded ) ){
-            return ApiController::sendResponse( 422, 'No action key in payload' );
+            return ApiController::sendResponse( 422, 'No action in payload' );
         }
 
-        if( !array_key_exists ( 'email', $decoded ) ){
-            return ApiController::sendResponse( 422, 'No email key in payload' );
+        if( ( $decoded['action'] != 'login' ) && ( ( $decoded['action'] != 'passthrough' ) )  ){
+            return ApiController::sendResponse( 422, 'Invalid action in payload' );
         }
 
-        if( !array_key_exists ( 'password', $decoded ) ){
-            return ApiController::sendResponse( 422, 'No password key in payload' );
+        if( ( $decoded['action'] == 'login' ) ) {
+            if( !array_key_exists ( 'email', $decoded ) ){
+                return ApiController::sendResponse( 422, 'No email in payload' );
+            }
+
+            if( !array_key_exists ( 'password', $decoded ) ){
+                return ApiController::sendResponse( 422, 'No password in payload' );
+            }
+
+            return $this->handleLogin( $decoded['email'], $decoded['password'] );
         }
 
-        return $this->handleLogin( $decoded['email'], $decoded['password'] );
+        if( ( $decoded['action'] == 'passthrough' ) ) {
+            if( !array_key_exists ( 'user_id', $decoded ) ){
+                return ApiController::sendResponse( 422, 'No user_id in payload' );
+            }
+
+            if( !array_key_exists ( 'survey_id', $decoded ) ){
+                return ApiController::sendResponse( 422, 'No survey_id in payload' );
+            }
+
+            return $this->handlePassthrough( $decoded['user_id'], $decoded['survey_id'] );
+        }
     }
 
     /**
@@ -104,8 +156,27 @@ class SurveyController extends Controller {
         $login->username = $email;
         $login->password = $password;
         if( $login->validate() && $login->login() ){
-            $this->redirect( $this->createUrl('/admin') );
+            $this->redirect( $this->createUrl('/') );
         }
+    }
+
+    /**
+     * @param $userId
+     * @param $surveyId
+     */
+    private function handlePassthrough( $userId, $surveyId ){
+        $response = $this->redirectPost(   'http://'.$_SERVER['HTTP_HOST'].'/api/survey',
+                                            array('user_id'=>$userId, 'survey_id'=>$surveyId ),
+                                            array( 'api_key'=>Yii::app()->params['apiKey'] ));
+
+        $decoded = json_decode( $response );
+
+        if (!($decoded)){
+            return ApiController::sendResponse( 500, 'Invalid survey response' );
+        }elseif( !array_key_exists ( 'redirect_url', $decoded )){
+            return ApiController::sendResponse( 500, 'Invalid survey redirect' );
+        }
+        $this->redirect( $this->createUrl($decoded->redirect_url) );
     }
 
     /**
