@@ -12,9 +12,9 @@ return array(
 	// application components
 	'components'=>array(
 		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=egoweb_data',
-			'username' => 'egoweb',
-			'password' => "test1234",
+			'connectionString' => 'mysql:host=localhost;dbname=egoweb',
+			'username' => 'egowebuser',
+			'password' => "egowebpass",
 			//'enableProfiling'=>true,
 			'emulatePrepare' => true,
 			'charset' => 'utf8',
