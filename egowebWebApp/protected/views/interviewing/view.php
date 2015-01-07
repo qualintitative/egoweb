@@ -32,7 +32,7 @@ if(!isset($key) || !$key){
 
 	$(function(){
 		$("input[id*='question_']").each(function(index){
-			if($(this).val() && $.inArray($(this).val(),getVariables))
+			if($.inArray($(this).val(),getVariables) != -1)
 				$("[name='Answer[" + $(this).attr('questionId') + "][value]']").prop( "readonly", "readonly" );
 		});
 
