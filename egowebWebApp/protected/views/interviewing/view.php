@@ -38,6 +38,23 @@ if(!isset($key) || !$key){
 			}
 		});
 
+		$(document).keydown(function(e) {
+			if(e.keyCode == 13)
+				$('#answer-form').submit();
+			if (e.keyCode == 39){
+				e.preventDefault();
+			}
+			if (e.keyCode == 37){
+				e.preventDefault();
+			}
+			if (e.keyCode == 38){
+				e.preventDefault();
+			}
+			if (e.keyCode == 40){
+				e.preventDefault();
+			}
+		});
+
 		if(<?php echo $completed; ?> == -1){
 			$("input").prop('disabled', true);
 			$("select").prop('disabled', true);

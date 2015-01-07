@@ -107,6 +107,11 @@ class ImportExportController extends Controller
 				$newQuestion->save();
 			}
 
+			if($newStudy->multiSessionEgoId != 0 && isset($newQuestionIds[intval($newStudy->multiSessionEgoId)])){
+				$newStudy->multiSessionEgoId = $newQuestionIds[intval($newStudy->multiSessionEgoId)];
+				$newStudy->save();
+			}
+
 			if(count($study->expressions) != 0){
 				foreach($study->expressions->expression as $expression){
 					$newExpression = new Expression;

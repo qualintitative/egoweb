@@ -146,6 +146,8 @@ class Study extends CActiveRecord
 			if($interviewId){
 				if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($question->answerReasonExpressionId, $interviewId, null, null, $answers))
 					continue;
+				if($answers[$question->id]->value == $study->valueNotYetAnswered)
+					continue;
 			}
 			if(($question->askingStyleList != 1 || $prompt != trim(preg_replace('/<\/*[^>]*>/', '', $question['prompt']))) && count($ego_question_list) > 0){
 				$page[$i] = Study::checkPage($i, $pageNumber, $ego_question_list->title);
@@ -212,6 +214,8 @@ class Study extends CActiveRecord
 							foreach($NonListQs[$question->id] as $q){
 								if(isset($expressions[$q->answerReasonExpressionId]) && !$expressions[$q->answerReasonExpressionId]->evalExpression($q->answerReasonExpressionId, $interviewId, $alter->id, null, $answers))
 									continue;
+								if($answers[$q->id . "-" . $alter->id]->value == $study->valueNotYetAnswered)
+									continue;
 								if($q->preface != "" && !$preface->id){
 									$page[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
 									$preface->id = $q->id;
@@ -228,6 +232,8 @@ class Study extends CActiveRecord
 					$alter_question_list = array();
 					foreach($alters as $alter){
 						if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($question->answerReasonExpressionId, $interviewId, $alter->id, null, $answers))
+							continue;
+						if($answers[$question->id . "-" . $alter->id]->value == $study->valueNotYetAnswered)
 							continue;
 						if($question->askingStyleList){
 							$alter_question_list = $question;
@@ -266,6 +272,8 @@ class Study extends CActiveRecord
 							continue;
 						if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($question->answerReasonExpressionId, $interviewId, $alter->id, $alter2->id, $answers))
 							continue;
+						if($answers[$question->id . "-" . $alter->id . "and" . $alter2->id]->value == $study->valueNotYetAnswered)
+							continue;
 						$alter_pair_question_list = $question;
 					}
 					if(count($alter_pair_question_list) > 0){
@@ -282,6 +290,8 @@ class Study extends CActiveRecord
 			foreach($networkQuestions as $question){
 				if($interviewId){
 					if(isset($expressions[$question->id]) && !$expressions[$question->id]->evalExpression($question->answerReasonExpressionId, $interviewId,null,null, $answers))
+						continue;
+					if($answers[$question->id]->value == $study->valueNotYetAnswered)
 						continue;
 				}
 				if($question->preface != ""){
