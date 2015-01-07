@@ -39,8 +39,12 @@ if(!isset($key) || !$key){
 		});
 
 		$(document).keydown(function(e) {
-			if(e.keyCode == 13)
-				$('#answer-form').submit();
+			if(e.keyCode == 13){
+				if($("#alterFormBox").length != 0 && $("#alterFormBox").html() != "")
+					$('.alterSubmit').submit();
+				else
+					$('#answer-form').submit();
+			}
 			if (e.keyCode == 39){
 				e.preventDefault();
 			}
@@ -458,7 +462,6 @@ $('.".$array_id."-skipReason').click(function(event){
 		}
 
 		echo $form->hiddenField($model[$array_id], '['.$array_id.']'.'skipReason',array('value'=>$model[$array_id]->skipReason, 'class'=>"skipReasonValue"));
-
 		echo $form->hiddenField($model[$array_id], '['.$array_id.']'. 'questionId',array('value'=>$question->id));
 		echo $form->hiddenField($model[$array_id], '['.$array_id.']'. 'questionType',array('value'=>$question->subjectType));
 		echo $form->hiddenField($model[$array_id], '['.$array_id.']'.'studyId',array('value'=>$question->studyId));

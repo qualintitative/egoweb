@@ -47,7 +47,7 @@ echo $form->hiddenField($model, 'interviewId',array('value'=>$interviewId));
 		echo CHtml::ajaxSubmitButton ("+ Add",
 			CController::createUrl('ajaxupdate'),
 			array('success'=>'js:function(data){$("#alterListBox").html(data);$("#Alters_name").val("");$(".flash-error").hide()}'),
-			array('id'=>uniqid(), 'live'=>false, 'class'=>"orangebutton"));
+			array('id'=>uniqid(), 'live'=>false, 'class'=>"orangebutton alterSubmit"));
 
 		$this->endWidget();
 		?>
