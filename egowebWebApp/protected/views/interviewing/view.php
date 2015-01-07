@@ -32,8 +32,10 @@ if(!isset($key) || !$key){
 
 	$(function(){
 		$("input[id*='question_']").each(function(index){
-			if($.inArray($(this).val(),getVariables) != -1)
+			if($.inArray($(this).val(),Object.keys(getVariables)) != -1){
+				$("[name='Answer[" + $(this).attr('questionId') + "][value]']").val(getVariables[$(this).val()]);
 				$("[name='Answer[" + $(this).attr('questionId') + "][value]']").prop( "readonly", "readonly" );
+			}
 		});
 
 		if(<?php echo $completed; ?> == -1){
