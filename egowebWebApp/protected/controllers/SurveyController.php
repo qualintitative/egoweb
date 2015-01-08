@@ -163,7 +163,10 @@ class SurveyController extends Controller {
         $login->username = $email;
         $login->password = $password;
         if( $login->validate() && $login->login() ){
-            $this->redirect( $this->createUrl('/admin') );
+            if(Yii::app()->user->isGuest)
+                $this->redirect(Yii::app()->createUrl(''));
+            else
+                $this->redirect(Yii::app()->createUrl('admin/'));
         }
     }
 
