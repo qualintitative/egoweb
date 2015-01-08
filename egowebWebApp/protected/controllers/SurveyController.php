@@ -75,6 +75,9 @@ class SurveyController extends Controller {
         }
     }
 
+    /**
+     *
+     */
     public function actionGetLink(){
         $input = file_get_contents('php://input');
 
@@ -156,7 +159,7 @@ class SurveyController extends Controller {
         $login->username = $email;
         $login->password = $password;
         if( $login->validate() && $login->login() ){
-            $this->redirect( $this->createUrl('/') );
+            $this->redirect( $this->createUrl('/admin') );
         }
     }
 
@@ -236,7 +239,7 @@ class SurveyController extends Controller {
         $password = pack('H*', $this->mt_rand_str(64));
 
         $plain = json_encode( $payload );
-        $content = $this->encrypt( $plain,$password );
+        $content = $this->encrypt( $plain, $password );
         $p = base64_encode( $this->asymEncrypt( $password ) );
 
         $data = http_build_query( array( 'password' => $p, 'payload' => $content ) );
