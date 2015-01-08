@@ -125,6 +125,10 @@ class SurveyController extends Controller {
             return ApiController::sendResponse( 422, 'Invalid action in payload' );
         }
 
+        if( array_key_exists ( 'redirect', $decoded ) ){
+            Yii::app()->session['redirect'] = $decoded['redirect'];
+        }
+
         if( ( $decoded['action'] == 'login' ) ) {
             if( !array_key_exists ( 'email', $decoded ) ){
                 return ApiController::sendResponse( 422, 'No email in payload' );

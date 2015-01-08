@@ -160,7 +160,10 @@ class InterviewingController extends Controller
 				$interview = Interview::model()->findByPk((int)$_POST['Answer'][0]['interviewId']);
 				$interview->completed = -1;
 				$interview->save();
-				if(Yii::app()->user->isGuest)
+
+                if(Yii::app()->session->hasProperty('redirect'))
+                    $this->redirect(Yii::app()->session['redirect']);
+				else if(Yii::app()->user->isGuest)
 					$this->redirect(Yii::app()->createUrl(''));
 				else
 					$this->redirect(Yii::app()->createUrl('admin/'));
