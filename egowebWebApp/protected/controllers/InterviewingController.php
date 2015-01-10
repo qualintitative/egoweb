@@ -618,8 +618,8 @@ class InterviewingController extends Controller
 	{
 		if(isset($_GET['Alters'])){
 			$model = Alters::model()->findByPk((int)$_GET['Alters']['id']);
+			$interviewId = $_GET['interviewId'];
 			if($model){
-				$interviewId = $_GET['interviewId'];
 				$ordering = $model->ordering;
 				if(strstr($model->interviewId, ",")){
 					$interviewIds = explode(",", $model->interviewId);

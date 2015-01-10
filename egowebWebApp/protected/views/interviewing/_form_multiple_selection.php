@@ -52,24 +52,46 @@ if($rowColor != "" && $question->askingStyleList){
 		$name = Alters::getName($question->alterId2);
 	else
 		$name = $question->citation;
-	echo "<br clear=all><div class='multiRow ".$rowColor."' style='width:180px; text-align:left'>".$name."</div><div class='multiRow ".$rowColor."' style='width:".$maxwidth."px'>".CHtml::checkBoxList(
+	echo "<br clear=all><div counter='$counter' class='multiRow ".$rowColor."'><label style='width:180px; text-align:left'>".$name."</label>".CHtml::checkBoxList(
 			'multiselect-'.$array_id,
 			$selected,
 			CHtml::listData($options, 'id', ''),
 			array(
-				'class'=>'multiselect-'.$array_id,
+				'template'=>'{input}',
+				'class'=>'answerInput multiselect-'.$array_id,
 				'container'=>'',
-				'separator'=>"</div><div class='multiRow ".$rowColor."'  style='width:".$maxwidth."px'>",
+				'separator'=>"",
+				'style'=>"margin-left:" . intval($maxwidth * .4) ."px; width:" . intval($maxwidth * .6) ."px",
 			)
-		) . "</div>";
+		);
+
+		if(count($skipList) != 0){
+			echo CHtml::checkBoxList(
+				$array_id."_skip",
+				array($model[$array_id]->skipReason),
+				$skipList,
+				array('class'=>$array_id.'-skipReason',
+					'container'=>'',
+					'separator'=>"",
+					'template'=>'{input}',
+					'style'=>"margin-left:" . intval($maxwidth * .4) ."px; width:" . intval($maxwidth * .6) ."px",
+				)
+			);
+		}
+		echo "</div>";
 }else{
 	echo CHtml::checkBoxList(
 	    'multiselect-'.$array_id,
 	    $selected,
 	    CHtml::listData($options, 'id', function($data){
 	    	return $data->name .(file_exists(Yii::app()->basePath."/../audio/".$data->studyId . "/OPTION/" . $data->id . ".mp3") ? '<script>var optionAudio_' . $data->id . ' = loadAudio("/audio/' . $data->studyId  . "/OPTION/"  . $data->id . '.mp3");</script>'. "<a class=\"playSound\" onclick=\"playSound('/audio/" . $data->studyId  . "/OPTION/"  . $data->id . ".mp3')\" href=\"#\"><span class=\"fui-volume play-sound\"></span></a>": "");}),
-	    array('class'=>'multiselect-'.$array_id)
+	    array('class'=>'answerInput multiselect-'.$array_id)
 	);
+		if(count($skipList) != 0){
+				echo "<div clear=all>".
+					CHtml::checkBoxList($array_id."_skip", array($model[$array_id]->skipReason), $skipList, array('class'=>$array_id.'-skipReason'))
+					."</div>";
+		}
 	echo "<br>";
 }
 

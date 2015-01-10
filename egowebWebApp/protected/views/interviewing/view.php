@@ -31,6 +31,8 @@ if(!isset($key) || !$key){
 	}
 
 	$(function(){
+		if($(".answerInput").length > 0)
+			$(".answerInput")[0].focus();
 		$("input[id*='question_']").each(function(index){
 			if($.inArray($(this).val(),Object.keys(getVariables)) != -1){
 				$("[name='Answer[" + $(this).attr('questionId') + "][value]']").val(getVariables[$(this).val()]);
@@ -47,15 +49,28 @@ if(!isset($key) || !$key){
 			}
 			if (e.keyCode == 39){
 				e.preventDefault();
+				$("input:focus").next().focus();
 			}
 			if (e.keyCode == 37){
 				e.preventDefault();
+				$("input:focus").prev().focus();
 			}
 			if (e.keyCode == 38){
 				e.preventDefault();
+				var counter = $("input:focus").parent().attr("counter");
+				var index = $("input:focus").index();
+				if(counter > 0)
+					counter--;
+				$("[counter='" + counter + "']").children()[index].focus();
 			}
 			if (e.keyCode == 40){
 				e.preventDefault();
+				var counter = $("input:focus").parent().attr("counter");
+				var index = $("input:focus").index();
+				counter++;
+				if($("[counter='" + counter + "']").length == 0)
+					counter--;
+				$("[counter='" + counter + "']").children()[index].focus();
 			}
 		});
 
@@ -444,22 +459,7 @@ $('.".$array_id."-skipReason').click(function(event){
 			$rowColor = "error";
 		}
 
-		$this->renderPartial('_form_'.$panel, array(/*'skipList'=>$skipList,*/'rowColor'=>$rowColor, 'question'=>$question, 'interviewId'=>$interviewId, 'form'=>$form, 'array_id'=>$array_id, 'model'=>$model, 'ajax'=>true), false, false);
-
-		if(count($skipList) != 0){
-			if($rowColor != "" && $question->askingStyleList){
-				echo "<div class='multiRow ".$rowColor."' style='width:".$maxwidth."px'>".CHtml::checkBoxList(
-						$array_id."_skip",
-						array($model[$array_id]->skipReason),
-						$skipList,
-						array('class'=>$array_id.'-skipReason', 'container'=>'', 'separator'=>"</div><div class='multiRow ".$rowColor."' style='width:".$maxwidth."px'>")
-					) . "</div>";
-			}else{
-				echo "<div clear=all>".
-					CHtml::checkBoxList($array_id."_skip", array($model[$array_id]->skipReason), $skipList, array('class'=>$array_id.'-skipReason'))
-					."</div>";
-			}
-		}
+		$this->renderPartial('_form_'.$panel, array('counter'=>$counter, 'skipList'=>$skipList,'rowColor'=>$rowColor, 'question'=>$question, 'interviewId'=>$interviewId, 'form'=>$form, 'array_id'=>$array_id, 'model'=>$model, 'ajax'=>true), false, false);
 
 		echo $form->hiddenField($model[$array_id], '['.$array_id.']'.'skipReason',array('value'=>$model[$array_id]->skipReason, 'class'=>"skipReasonValue"));
 		echo $form->hiddenField($model[$array_id], '['.$array_id.']'. 'questionId',array('value'=>$question->id));
@@ -487,12 +487,31 @@ $('.".$array_id."-skipReason').click(function(event){
 					$maxwidth = intval(620 / $columns);
 				if($maxwidth > 180)
 					$maxwidth = 180;
-				echo "<br clear=all><div class='multiRow palette-sun-flower' style='width:180px; text-align:left'>Set All</div><div class='multiRow palette-sun-flower' style='width:".$maxwidth."px'>".CHtml::checkBoxList(
+				echo "<br clear=all><div counter=$counter class='multiRow palette-sun-flower' style='width:100%; text-align:left'><label style='width:180px'>Set All</label>".CHtml::checkBoxList(
 						'multiselect-pageLevel',
 						'',
 						CHtml::listData($options, 'id', ''),
-						array('class'=>'multiselect pageLevel', 'container'=>'', 'separator'=>"</div><div class='multiRow palette-sun-flower'  style='width:".$maxwidth."px'>")
-					) . "</div>";
+						array('class'=>'multiselect pageLevel',
+						'container'=>'',
+						'separator'=>"",
+						'template'=>'{input}',
+						'style'=>"margin-left:" . intval($maxwidth * .4) ."px; width:" . intval($maxwidth * .6) ."px",
+						)
+					);
+					if(count($skipList) != 0){
+							echo CHtml::checkBoxList(
+							"pageLevel_skip",
+							array($model[$array_id]->skipReason),
+							$skipList,
+							array('class'=>'skipReason pageLevel',
+							'container'=>'',
+							'separator'=>"",
+							'template'=>'{input}',
+							'style'=>"margin-left:" . intval($maxwidth * .4) ."px; width:" . intval($maxwidth * .6) ."px",
+						)
+						);
+					}
+				echo "</div>";
 			}else{
 				echo CHtml::checkBoxList(
 					'multiselect-pageLevel',
@@ -501,21 +520,14 @@ $('.".$array_id."-skipReason').click(function(event){
 					array('class'=>'multiselect pageLevel')
 				);
 				echo "<br>";
-			}
 			if(count($skipList) != 0){
-				if($rowColor != "" && $question->askingStyleList){
-					echo "<div class='multiRow palette-sun-flower' style='width:".$maxwidth."px'>".CHtml::checkBoxList(
-							"pageLevel_skip",
-							array($model[$array_id]->skipReason),
-							$skipList,
-							array('class'=>'skipReason pageLevel', 'container'=>'', 'separator'=>"</div><div class='multiRow palette-sun-flower' style='width:".$maxwidth."px'>")
-						) . "</div>";
-				}else{
+
 					echo "<div clear=all>".
 						CHtml::checkBoxList("pageLevel_skip pageLevel", array($model[$array_id]->skipReason), $skipList, array('class'=>'skipReason pageLevel'))
 						."</div>";
-				}
 			}
+			}
+
 		}
 		?>		</div>
 		<br style="clear:left">

@@ -30,6 +30,7 @@ if($question->subjectType == "EGO_ID" && $question->useAlterListField != ""){
 			})
 		}',
 		'options' => array(
+			'class'=>'answerInput',
 			'minLength' => 1,
 			'select' => "js:function(event, ui) {
 				$('#Answer_".$array_id." _value').val(ui.item.name);
@@ -49,7 +50,7 @@ if($question->subjectType == "EGO_ID" && $question->useAlterListField != ""){
 		echo "<div class='multiRow ".$rowColor."'>" . $form->textField($model[$array_id], '['.$array_id.']'.'value',array('class'=>$array_id)) . "</div>";
 		echo "<br clear=all>";
 	}else{
-		echo $form->textField($model[$array_id], '['.$array_id.']'.'value',array('class'=>$array_id)) . "<br style='clear:both'>";
+		echo $form->textField($model[$array_id], '['.$array_id.']'.'value',array('class'=>$array_id . " answerInput")) . "<br style='clear:both'>";
 	}
 }
 

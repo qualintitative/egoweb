@@ -1,8 +1,5 @@
-<?php 
+<?php
 Yii::app()->clientScript->registerScript('focus-'.$array_id, "
-jQuery(document).ready(function(){
-	$('#Answer_".$array_id."_value').focus();
-});
 $('#Answer_".$array_id."_value').change(function(){
 	if($('#Answer_".$array_id."_value').val() != ''){
 		$('.".$array_id."-skipReason').prop('checked', false);
@@ -21,7 +18,7 @@ if($rowColor != "" && $question->askingStyleList){
 	echo "<div class='multiRow ".$rowColor."'>" . $form->textField($model[$array_id], '['.$array_id.']'.'value',array('class'=>$array_id));
 	echo "</div>";
 }else{
-	echo $form->textField($model[$array_id], '['.$array_id.']value',array('style'=>'width:100px'));
+	echo $form->textField($model[$array_id], '['.$array_id.']value',array('class'=>'answerInput','style'=>'width:100px'));
 	echo "<br style='clear:both'>";
 }
 ?>

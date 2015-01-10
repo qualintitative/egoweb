@@ -1,1 +1,1 @@
-    		<?php echo $form->textArea($model[$array_id],'['.$array_id.']'.'value',array('rows'=>6, 'cols'=>50)); ?>
+    		<?php echo $form->textArea($model[$array_id],'['.$array_id.']'.'value',array('rows'=>6, 'cols'=>50, 'class'=>'answerInput')); ?>
