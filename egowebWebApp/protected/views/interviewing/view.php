@@ -58,19 +58,40 @@ if(!isset($key) || !$key){
 			if (e.keyCode == 38){
 				e.preventDefault();
 				var counter = $("input:focus").parent().attr("counter");
-				var index = $("input:focus").index();
-				if(counter > 0)
-					counter--;
-				$("[counter='" + counter + "']").children()[index].focus();
+				if(typeof counter != "undefined"){
+					var index = $("input:focus").index();
+					if(counter > 0)
+						counter--;
+					$("[counter='" + counter + "']").children()[index].focus();
+				}else{
+					$(".answerInput").each(function(i){
+					if($(this).is(":focus"))
+						index = i;
+					});					console.log(index);
+					if(index > 0)
+						index--;
+					$(".answerInput")[index].focus();
+				}
 			}
 			if (e.keyCode == 40){
 				e.preventDefault();
 				var counter = $("input:focus").parent().attr("counter");
-				var index = $("input:focus").index();
-				counter++;
-				if($("[counter='" + counter + "']").length == 0)
-					counter--;
-				$("[counter='" + counter + "']").children()[index].focus();
+				if(typeof counter != "undefined"){
+					var index = $("input:focus").index();
+					counter++;
+					if($("[counter='" + counter + "']").length == 0)
+						counter--;
+					$("[counter='" + counter + "']").children()[index].focus();
+				}else{
+					$(".answerInput").each(function(i){
+					if($(this).is(":focus"))
+						index = i;
+					});
+					console.log(index);
+					if(typeof $(".answerInput")[index+1] != "undefined")
+						index++;
+					$(".answerInput")[index].focus();
+				}
 			}
 		});
 

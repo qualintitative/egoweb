@@ -89,7 +89,7 @@ if($rowColor != "" && $question->askingStyleList){
 	);
 		if(count($skipList) != 0){
 				echo "<div clear=all>".
-					CHtml::checkBoxList($array_id."_skip", array($model[$array_id]->skipReason), $skipList, array('class'=>$array_id.'-skipReason'))
+					CHtml::checkBoxList($array_id."_skip", array($model[$array_id]->skipReason), $skipList, array('class'=>"answerInput " .$array_id.'-skipReason'))
 					."</div>";
 		}
 	echo "<br>";
