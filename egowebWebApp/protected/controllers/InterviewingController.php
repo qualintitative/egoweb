@@ -455,7 +455,7 @@ class InterviewingController extends Controller
 				));
 			}else{
 				foreach($model as &$a){
-					if($a->value)
+					if(strlen($a->value) >= 8)
 						$a->value = decrypt($a->value);
 				}
 				$qNav =  Study::nav($study, $_POST['page'], $interviewId, $answers);
