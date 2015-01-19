@@ -1017,7 +1017,7 @@ EOT;
 			$text .= "
 </study>";
 
-		$file = fopen(Yii::app()->params['exportFilePath'] . $study->name . "-" . Interview::getEgoId($id) . ".study", "w") or die("Unable to open file!");
+		$file = fopen(Yii::app()->params['exportFilePath'] . Interview::getEgoId($id) . ".study", "w") or die("Unable to open file!");
 		fwrite($file, $text);
 		fclose($file);
 	}
