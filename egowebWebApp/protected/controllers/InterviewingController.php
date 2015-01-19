@@ -172,6 +172,8 @@ class InterviewingController extends Controller
 				$interview = Interview::model()->findByPk((int)$_POST['Answer'][0]['interviewId']);
 				$interview->completed = -1;
 				$interview->save();
+				if(isset(Yii::app()->params['exportFilePath']) && Yii::app()->params['exportFilePath'])
+					$this->exportInterview($interview->id);
 				if(Yii::app()->user->isGuest)
 					$this->redirect(Yii::app()->createUrl(''));
 				else
@@ -869,5 +871,154 @@ class InterviewingController extends Controller
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
+	}
+
+	/**
+	 * Exports study to file (added for LIM)
+	 * @param $id ID of interview to be exported
+	 */
+	protected function exportInterview($id)
+	{
+
+		$result = Interview::model()->findByPk($id);
+		$study = Study::model()->findByPk($result->studyId);
+		$questions = Question::model()->findAllByAttributes(array('studyId'=>$study->id));
+		$expressions = Expression::model()->findAllByAttributes(array('studyId'=>$study->id));
+		$answerLists = AnswerList::model()->findAllByAttributes(array('studyId'=>$study->id));
+		$alterLists = AlterList::model()->findAllByAttributes(array("studyId"=>$study->id));
+		$study->introduction = htmlspecialchars (trim(preg_replace('/\s+|&nbsp;/', ' ', $study->introduction)), ENT_QUOTES, "UTF-8", false);
+		$study->egoIdPrompt = htmlspecialchars (trim(preg_replace('/\s+|&nbsp;/', ' ', $study->egoIdPrompt)), ENT_QUOTES, "UTF-8", false);
+		$study->alterPrompt = htmlspecialchars (trim(preg_replace('/\s+|&nbsp;/', ' ', $study->alterPrompt)), ENT_QUOTES, "UTF-8", false);
+		$study->alterPrompt = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $study->alterPrompt)), ENT_QUOTES, "UTF-8", false);
+		$study->conclusion = htmlspecialchars (trim(preg_replace('/\s+|&nbsp;/', ' ', $study->conclusion)), ENT_QUOTES, "UTF-8", false);
+
+		$interview = $result;
+		$answer = Answer::model()->findAllByAttributes(array("interviewId"=>$id));
+		$answers[$result->id] = $answer;
+		$criteria = array(
+			'condition'=>"FIND_IN_SET(" . $id . ", interviewId)",
+		);
+		$alter = Alters::model()->findAll($criteria);
+		$alters[$result->id] = $alter;
+		$graph = Graph::model()->findAllByAttributes(array("interviewId"=>$id));
+		$graphs[$result->id] = $graph;
+		$note = Note::model()->findAllByAttributes(array("interviewId"=>$id));
+		$notes[$result->id] = $note;
+
+		$text .=  <<<EOT
+<?xml version="1.0" encoding="UTF-8"?>
+<study id="{$study->id}" name="{$study->name}" minAlters="{$study->minAlters}" maxAlters="{$study->maxAlters}" valueDontKnow="{$study->valueDontKnow}" valueLogicalSkip="{$study->valueLogicalSkip}" valueNotYetAnswered="{$study->valueNotYetAnswered}" valueRefusal="{$study->valueRefusal}" adjacencyExpressionId="{$study->adjacencyExpressionId}" modified="{$study->modified}" multiSessionEgoId="{$study->multiSessionEgoId}" useAsAlters="{$study->useAsAlters}" restrictAlters="{$study->restrictAlters}" fillAlterList="{$study->fillAlterList}">
+	<introduction>{$study->introduction}</introduction>
+	<egoIdPrompt>{$study->egoIdPrompt}</egoIdPrompt>
+	<alterPrompt>{$study->alterPrompt}</alterPrompt>
+	<conclusion>{$study->conclusion}</conclusion>
+EOT;
+
+		if(count($questions) > 0){
+			$text .=  '
+	<questions>';
+			foreach($questions as $question){
+				$question->title = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $question->title)), ENT_QUOTES, "UTF-8", false);
+				$question->preface = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $question->preface)), ENT_QUOTES, "UTF-8", false);
+				$question->prompt = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $question->prompt)), ENT_QUOTES, "UTF-8", false);
+				$question->citation = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $question->citation)), ENT_QUOTES, "UTF-8", false);
+				$question->networkParams = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $question->networkParams)), ENT_QUOTES, "UTF-8", false);
+
+			$text .= <<<EOT
+
+		<question id="{$question->id}" title="{$question->title}" answerType="{$question->answerType}" subjectType="{$question->subjectType}" askingStyleList="{$question->askingStyleList}" ordering="{$question->ordering}" answerReasonExpressionId="{$question->answerReasonExpressionId}" otherSpecify="{$question->otherSpecify}" noneButton="{$question->noneButton}" allButton="{$question->allButton}" pageLevelDontKnowButton="{$question->pageLevelDontKnowButton}" pageLevelRefuseButton="{$question->pageLevelRefuseButton}" dontKnowButton="{$question->dontKnowButton}" networkRelationshipExprId="{$question->networkRelationshipExprId}" networkParams="{$question->networkParams}" networkNColorQId="{$question->networkNColorQId}" networkNSizeQId="{$question->networkNSizeQId}" networkEColorQId="{$question->networkEColorQId}" networkESizeQId="{$question->networkESizeQId}" refuseButton="{$question->refuseButton}" allOptionString="{$question->allOptionString}" minLimitType="{$question->minLimitType}" minLiteral="{$question->minLiteral}" minPrevQues="{$question->minPrevQues}" maxLimitType="{$question->maxLimitType}" maxLiteral="{$question->maxLiteral}" maxPrevQues="{$question->maxPrevQues}" minCheckableBoxes="{$question->minCheckableBoxes}" maxCheckableBoxes="{$question->maxCheckableBoxes}" withListRange="{$question->withListRange}" listRangeString="{$question->listRangeString}" minListRange="{$question->minListRange}" maxListRange="{$question->maxListRange}" timeUnits="{$question->timeUnits}" symmetric="{$question->symmetric}" keepOnSamePage="{$question->keepOnSamePage}">
+			<preface>{$question->preface}</preface>
+			<prompt>{$question->prompt}</prompt>
+			<citation>{$question->citation}</citation>
+EOT;
+				if($question->answerType == "SELECTION" || $question->answerType == "MULTIPLE_SELECTION"){
+					$options = QuestionOption::model()->findAllByAttributes(
+						array("studyId"=>$_POST['studyId'], "questionId"=>$question->id)
+					);
+
+					foreach($options as $option){
+						$option->name = htmlspecialchars($option->name, ENT_QUOTES, "UTF-8", false);
+			$text .= <<<EOT
+
+			<option id="{$option->id}" name="{$option->name}" value="{$option->value}" ordering="{$option->ordering}"/>
+EOT;
+					}
+				}
+			$text .= "
+		</question>";
+			}
+			$text .= "
+	</questions>";
+		}
+		if(count($expressions) > 0){
+			$text .= "
+	<expressions>";
+			foreach($expressions as $expression){
+				$expression->name = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $expression->name)), ENT_QUOTES, "UTF-8", false);
+
+			$text .= <<<EOT
+
+		<expression id="{$expression->id}" name="{$expression->name}" questionId="{$expression->questionId}" resultForUnanswered="{$expression->resultForUnanswered}" type="{$expression->type}" operator="{$expression->operator}">
+			<value>{$expression->value}</value>
+		</expression>
+EOT;
+			}
+			$text .= "
+	</expressions>";
+		}
+		if(count($expressions) > 0){
+			$text .= "
+	<answerLists>";
+			foreach($answerLists as $answerList){
+			$text .= <<<EOT
+
+		<answerList id="{$answerList->id}" listName="{$answerList->listName}" listOptionNames="{$answerList->listOptionNames}"/>
+EOT;
+			}
+			$text .= "
+	</answerLists>";
+		}
+			$text .= "
+	<interviews>";
+			$text .= <<<EOT
+
+		<interview id="{$interview->id}" studyId="{$interview->studyId}" completed="{$interview->completed}" start_date="{$interview->start_date}" complete_date="{$interview->complete_date}">
+EOT;
+				if(isset($answers[$interview->id])){
+			$text .= "
+			<answers>";
+					foreach($answers[$interview->id] as $answer){
+			$text .= <<<EOT
+
+				<answer id="{$answer->id}" questionId="{$answer->questionId}" interviewId="{$answer->interviewId}" alterId1="{$answer->alterId1}" alterId2="{$answer->alterId2}" value="{$answer->value}" otherSpecifyText="{$answer->otherSpecifyText}" skipReason="{$answer->skipReason}" questionType="{$answer->questionType}" answerType="{$answer->answerType}" />
+EOT;
+					}
+			$text .= "
+			</answers>";
+				}
+
+				if(isset($alters[$interview->id])){
+			$text .= "
+			<alters>";
+					foreach($alters[$interview->id] as $alter){
+			$text .= <<<EOT
+
+				<alter id="{$alter->id}" name="{$alter->name}" interviewId="{$alter->interviewId}" ordering="{$alter->ordering}" alterListId="{$alter->alterListId}" />
+EOT;
+					}
+			$text .= "
+			</alters>";
+				}
+
+			$text .= "
+		</interview>";
+			$text .= "
+	</interviews>";
+			$text .= "
+</study>";
+
+		$file = fopen(Yii::app()->params['exportFilePath'] . $study->name . "-" . Interview::getEgoId($id) . ".study", "w") or die("Unable to open file!");
+		fwrite($file, $text);
+		fclose($file);
 	}
 }
