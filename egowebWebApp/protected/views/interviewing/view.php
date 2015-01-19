@@ -108,7 +108,7 @@ if(!isset($key) || !$key){
 				$( "input[class*='-skipReason']").prop("checked", false);
 				$( "input[class*='multiselect-']").prop("checked", false);
 				$( "input[value='" + selected.val() + "']").each(function(index){
-					if(!$(this).hasClass("pageLevel") && (($(this).attr('class').match(/multiselect-(.*)/) && $(this).attr('class').match(/multiselect-(.*)/).length > 1) || ($(this).attr('class').match(/(.*)-skipReason/) && $(this).attr('class').match(/(.*)-skipReason/).length > 1))){
+					if(!$(this).hasClass("pageLevel") && $(this).attr('class') && (($(this).attr('class').match(/multiselect-(.*)/) && $(this).attr('class').match(/multiselect-(.*)/).length > 1) || ($(this).attr('class').match(/(.*)-skipReason/) && $(this).attr('class').match(/(.*)-skipReason/).length > 1))){
 						if($(this).attr('class').match(/multiselect-(.*)/))
 							var multi = $(this).attr('class').match(/multiselect-(.*)/)[1];
 						else
@@ -136,7 +136,7 @@ if(!isset($key) || !$key){
 				});
 			}else{
 				$( "input[value='" + selected.val() + "']").each(function(index){
-					if(($(this).attr('class').match(/multiselect-(.*)/) && $(this).attr('class').match(/multiselect-(.*)/).length > 1) || ($(this).attr('class').match(/(.*)-skipReason/) && $(this).attr('class').match(/(.*)-skipReason/).length > 1)){
+					if($(this).attr('class') && ($(this).attr('class').match(/multiselect-(.*)/) && $(this).attr('class').match(/multiselect-(.*)/).length > 1) || ($(this).attr('class').match(/(.*)-skipReason/) && $(this).attr('class').match(/(.*)-skipReason/).length > 1)){
 						if($(this).attr('class').match(/multiselect-(.*)/)){
 							var multi = $(this).attr('class').match(/multiselect-(.*)/)[1];
 							var realVal = $("#Answer_" + multi + "_value");
