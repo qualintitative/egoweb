@@ -110,6 +110,8 @@ return array(
 		// The max login attempt before showing captcha
 		'maxLoginAttempts'=>3,
         'maxUploadFileSize'=>1024*1024*3, // 3MB
-        'apiKey' => 'API_KEY'
+        'apiKey' => 'API_KEY',
+        // file path for study export
+        'exportFilePath' => '',
 	)
 );
