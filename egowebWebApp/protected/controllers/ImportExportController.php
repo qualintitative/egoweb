@@ -45,6 +45,16 @@ class ImportExportController extends Controller
 				die();
 			}
 
+			foreach($study->alterPrompts->alterPrompt as $alterPrompt){
+				$newAlterPrompt = new AlterPrompt;
+				$newAlterPrompt->studyId = $newStudy->id;
+				foreach($alterPrompt->attributes() as $key=>$value){
+					if($key != "id")
+						$newQuestion->$key = $value;
+				}
+				$newAlterPrompt->save();
+			}
+
 			foreach($study->questions->question as $question){
 				$newQuestion = new Question;
 				$newQuestion->studyId = $newStudy->id;
@@ -288,7 +298,6 @@ class ImportExportController extends Controller
 
 						}
 
-
 						$newAnswer->studyId = $newStudy->id;
 						$newAnswer->interviewId = $newInterview->id;
 
@@ -361,12 +370,12 @@ class ImportExportController extends Controller
 	{
 		$study = Study::model()->findByPk($id);
 		$interviews = Interview::model()->findAllByAttributes(array('studyId'=>$id));
-        $this->renderPartial('_interviews',
-            array(
-	            'study'=>$study,
-                'interviews'=>$interviews,
-            ), false, true
-        );
+		$this->renderPartial('_interviews',
+			array(
+				'study'=>$study,
+				'interviews'=>$interviews,
+			), false, true
+		);
 	}
 
 	public function actionExportstudy(){
@@ -374,155 +383,11 @@ class ImportExportController extends Controller
 			die("nothing to export");
 
 		$study = Study::model()->findByPk((int)$_POST['studyId']);
-		$questions = Question::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
-		$expressions = Expression::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
-		$answerLists = AnswerList::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
-		$alterLists = AlterList::model()->findAllByAttributes(array("studyId"=>$_POST['studyId']));
-		$study->introduction = htmlspecialchars (trim(preg_replace('/\s+|&nbsp;/', ' ', $study->introduction)), ENT_QUOTES, "UTF-8", false);
-		$study->egoIdPrompt = htmlspecialchars (trim(preg_replace('/\s+|&nbsp;/', ' ', $study->egoIdPrompt)), ENT_QUOTES, "UTF-8", false);
-		$study->alterPrompt = htmlspecialchars (trim(preg_replace('/\s+|&nbsp;/', ' ', $study->alterPrompt)), ENT_QUOTES, "UTF-8", false);
-		$study->alterPrompt = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $study->alterPrompt)), ENT_QUOTES, "UTF-8", false);
-		$study->conclusion = htmlspecialchars (trim(preg_replace('/\s+|&nbsp;/', ' ', $study->conclusion)), ENT_QUOTES, "UTF-8", false);
-
-
-		if(isset($_POST['export']) && count($_POST['export']) > 0){
-			$interviews = Interview::model()->findAllByAttributes(array("id"=>$_POST['export']));
-			foreach($interviews as $result){
-				$interview[$result->id] = $result;
-				$answer = Answer::model()->findAllByAttributes(array("interviewId"=>$result->id));
-				$answers[$result->id] = $answer;
-				$alter = q("SELECT * FROM alters WHERE FIND_IN_SET($result->id, interviewId)")->queryAll();
-				foreach($alter as &$a){
-					$a['name'] = decrypt($a['name']);
-				}
-				$alters[$result->id] = $alter;
-				$graph = Graph::model()->findAllByAttributes(array("interviewId"=>$result->id));
-				$graphs[$result->id] = $graph;
-				$note = Note::model()->findAllByAttributes(array("interviewId"=>$result->id));
-				$notes[$result->id] = $note;
-			}
-		}
 
 		header("Content-type: text/xml; charset=utf-8");
 		header("Content-Disposition: attachment; filename=".$study->name.".study");
 		header("Content-Type: application/force-download");
-		echo '<?xml version="1.0" encoding="UTF-8"?>
 
-';
-		echo <<<EOT
-<study id="{$study->id}" name="{$study->name}" minAlters="{$study->minAlters}" maxAlters="{$study->maxAlters}" valueDontKnow="{$study->valueDontKnow}" valueLogicalSkip="{$study->valueLogicalSkip}" valueNotYetAnswered="{$study->valueNotYetAnswered}" valueRefusal="{$study->valueRefusal}" adjacencyExpressionId="{$study->adjacencyExpressionId}" modified="{$study->modified}" multiSessionEgoId="{$study->multiSessionEgoId}" useAsAlters="{$study->useAsAlters}" restrictAlters="{$study->restrictAlters}" fillAlterList="{$study->fillAlterList}">
-	<introduction>{$study->introduction}</introduction>
-	<egoIdPrompt>{$study->egoIdPrompt}</egoIdPrompt>
-	<alterPrompt>{$study->alterPrompt}</alterPrompt>
-	<conclusion>{$study->conclusion}</conclusion>
-EOT;
-
-		if(count($questions) > 0){
-			echo '
-	<questions>';
-			foreach($questions as $question){
-				$question->title = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $question->title)), ENT_QUOTES, "UTF-8", false);
-				$question->preface = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $question->preface)), ENT_QUOTES, "UTF-8", false);
-				$question->prompt = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $question->prompt)), ENT_QUOTES, "UTF-8", false);
-				$question->citation = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $question->citation)), ENT_QUOTES, "UTF-8", false);
-				$question->networkParams = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $question->networkParams)), ENT_QUOTES, "UTF-8", false);
-
-				echo <<<EOT
-
-		<question id="{$question->id}" title="{$question->title}" answerType="{$question->answerType}" subjectType="{$question->subjectType}" askingStyleList="{$question->askingStyleList}" ordering="{$question->ordering}" answerReasonExpressionId="{$question->answerReasonExpressionId}" otherSpecify="{$question->otherSpecify}" noneButton="{$question->noneButton}" allButton="{$question->allButton}" pageLevelDontKnowButton="{$question->pageLevelDontKnowButton}" pageLevelRefuseButton="{$question->pageLevelRefuseButton}" dontKnowButton="{$question->dontKnowButton}" networkRelationshipExprId="{$question->networkRelationshipExprId}" networkParams="{$question->networkParams}" networkNColorQId="{$question->networkNColorQId}" networkNSizeQId="{$question->networkNSizeQId}" networkEColorQId="{$question->networkEColorQId}" networkESizeQId="{$question->networkESizeQId}" refuseButton="{$question->refuseButton}" allOptionString="{$question->allOptionString}" minLimitType="{$question->minLimitType}" minLiteral="{$question->minLiteral}" minPrevQues="{$question->minPrevQues}" maxLimitType="{$question->maxLimitType}" maxLiteral="{$question->maxLiteral}" maxPrevQues="{$question->maxPrevQues}" minCheckableBoxes="{$question->minCheckableBoxes}" maxCheckableBoxes="{$question->maxCheckableBoxes}" withListRange="{$question->withListRange}" listRangeString="{$question->listRangeString}" minListRange="{$question->minListRange}" maxListRange="{$question->maxListRange}" timeUnits="{$question->timeUnits}" symmetric="{$question->symmetric}" keepOnSamePage="{$question->keepOnSamePage}">
-			<preface>{$question->preface}</preface>
-			<prompt>{$question->prompt}</prompt>
-			<citation>{$question->citation}</citation>
-EOT;
-				if($question->answerType == "SELECTION" || $question->answerType == "MULTIPLE_SELECTION"){
-					$options = QuestionOption::model()->findAllByAttributes(
-						array("studyId"=>$_POST['studyId'], "questionId"=>$question->id)
-					);
-
-					foreach($options as $option){
-						$option->name = htmlspecialchars($option->name, ENT_QUOTES, "UTF-8", false);
-						echo <<<EOT
-
-			<option id="{$option->id}" name="{$option->name}" value="{$option->value}" ordering="{$option->ordering}"/>
-EOT;
-					}
-				}
-				echo "
-		</question>";
-			}
-			echo "
-	</questions>";
-		}
-		if(count($expressions) > 0){
-			echo "
-	<expressions>";
-			foreach($expressions as $expression){
-				$expression->name = htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $expression->name)), ENT_QUOTES, "UTF-8", false);
-
-				echo <<<EOT
-
-		<expression id="{$expression->id}" name="{$expression->name}" questionId="{$expression->questionId}" resultForUnanswered="{$expression->resultForUnanswered}" type="{$expression->type}" operator="{$expression->operator}">
-			<value>{$expression->value}</value>
-		</expression>
-EOT;
-			}
-			echo "
-	</expressions>";
-		}
-		if(count($expressions) > 0){
-			echo "
-	<answerLists>";
-			foreach($answerLists as $answerList){
-				echo <<<EOT
-
-		<answerList id="{$answerList->id}" listName="{$answerList->listName}" listOptionNames="{$answerList->listOptionNames}"/>
-EOT;
-			}
-			echo "
-	</answerLists>";
-		}
-		if(isset($_POST['export']) && count($_POST['export']) > 0){
-			echo "
-	<interviews>";
-			foreach($interviews as $interview){
-				echo <<<EOT
-
-		<interview id="{$interview->id}" studyId="{$interview->studyId}" completed="{$interview->completed}" start_date="{$interview->start_date}" complete_date="{$interview->complete_date}">
-EOT;
-				if(isset($answers[$interview->id])){
-					echo "
-			<answers>";
-					foreach($answers[$interview->id] as $answer){
-						echo <<<EOT
-
-				<answer id="{$answer->id}" questionId="{$answer->questionId}" interviewId="{$answer->interviewId}" alterId1="{$answer->alterId1}" alterId2="{$answer->alterId2}" value="{$answer->value}" otherSpecifyText="{$answer->otherSpecifyText}" skipReason="{$answer->skipReason}" questionType="{$answer->questionType}" answerType="{$answer->answerType}" />
-EOT;
-					}
-					echo "
-			</answers>";
-				}
-
-				if(isset($alters[$interview->id])){
-					echo "
-			<alters>";
-					foreach($alters[$interview->id] as $alter){
-						echo <<<EOT
-
-				<alter id="{$alter['id']}" name="{$alter['name']}" interviewId="{$alter['interviewId']}" ordering="{$alter['ordering']}" alterListId="{$alter['alterListId']}" />
-EOT;
-					}
-					echo "
-			</alters>";
-				}
-
-			echo "
-		</interview>";
-			}
-			echo "
-	</interviews>";
-		}
-		echo "
-</study>";
+		echo $study->export($_POST['export']);
 	}
-
 }

@@ -14,7 +14,9 @@ function seoString($string) {
 	return $string;
 }
 
-
+function sanitizeXml($string){
+	return htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $string)), ENT_QUOTES, "UTF-8", false);
+}
 
 function sortByOrder($a, $b) {
     return $a['meta']['order'] - $b['meta']['order'];

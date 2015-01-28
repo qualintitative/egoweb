@@ -818,6 +818,168 @@ class Study extends CActiveRecord
 		return $data;
 	}
 
+	public function export($interviewIds = array()){
+
+		$questions = Question::model()->findAllByAttributes(array('studyId'=>$this->id));
+		$expressions = Expression::model()->findAllByAttributes(array('studyId'=>$this->id));
+		$answerLists = AnswerList::model()->findAllByAttributes(array('studyId'=>$this->id));
+		$alterLists = AlterList::model()->findAllByAttributes(array("studyId"=>$this->id));
+		$alterPrompts = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$this->id));
+
+		$this->introduction = sanitizeXml($this->introduction);
+		$this->egoIdPrompt = sanitizeXml($this->egoIdPrompt);
+		$this->alterPrompt = sanitizeXml($this->alterPrompt);
+		$this->alterPrompt = sanitizeXml($this->alterPrompt);
+		$this->conclusion = sanitizeXml($this->conclusion);
+
+		if(count($interviewIds) > 0){
+			$interviews = Interview::model()->findAllByAttributes(array("id"=>$interviewIds));
+			foreach($interviews as $result){
+				$interview[$result->id] = $result;
+				$answer = Answer::model()->findAllByAttributes(array("interviewId"=>$result->id));
+				$answers[$result->id] = $answer;
+				$criteria = array(
+					'condition'=>"FIND_IN_SET(" . $result->id . ", interviewId)",
+				);
+				$alter = Alters::model()->findAll($criteria);
+				$alters[$result->id] = $alter;
+				$graph = Graph::model()->findAllByAttributes(array("interviewId"=>$result->id));
+				$graphs[$result->id] = $graph;
+				$note = Note::model()->findAllByAttributes(array("interviewId"=>$result->id));
+				$notes[$result->id] = $note;
+			}
+		}
+		$text = <<<EOT
+<?xml version="1.0" encoding="UTF-8"?>
+<study id="{$this->id}" name="{$this->name}" minAlters="{$this->minAlters}" maxAlters="{$this->maxAlters}" valueDontKnow="{$this->valueDontKnow}" valueLogicalSkip="{$this->valueLogicalSkip}" valueNotYetAnswered="{$this->valueNotYetAnswered}" valueRefusal="{$this->valueRefusal}" adjacencyExpressionId="{$this->adjacencyExpressionId}" modified="{$this->modified}" multiSessionEgoId="{$this->multiSessionEgoId}" useAsAlters="{$this->useAsAlters}" restrictAlters="{$this->restrictAlters}" fillAlterList="{$this->fillAlterList}">
+	<introduction>{$this->introduction}</introduction>
+	<egoIdPrompt>{$this->egoIdPrompt}</egoIdPrompt>
+	<alterPrompt>{$this->alterPrompt}</alterPrompt>
+	<conclusion>{$this->conclusion}</conclusion>
+EOT;
+		if(count($alterPrompts) > 0){
+			$text .= '
+	<alterPrompts>';
+			foreach($alterPrompts as $alterPrompt){
+				$alterPrompt->display = sanitizeXml($alterPrompt->display);
+						$text .= <<<EOT
+
+			<alterPrompt id="{$alterPrompt->id}" studyId="{$alterPrompt->studyId}" afterAltersEntered="{$alterPrompt->afterAltersEntered}" display="{$alterPrompt->display}"/>
+EOT;
+			}
+			$text .= "
+	</alterPrompts>";
+		}
+
+		if(count($questions) > 0){
+			$text .= '
+	<questions>';
+			foreach($questions as $question){
+				$question->title = sanitizeXml($question->title);
+				$question->preface = sanitizeXml($question->preface);
+				$question->prompt = sanitizeXml($question->prompt);
+				$question->citation = sanitizeXml($question->citation);
+				$question->networkParams = sanitizeXml($question->networkParams);
+				$text .= <<<EOT
+
+		<question id="{$question->id}" title="{$question->title}" answerType="{$question->answerType}" subjectType="{$question->subjectType}" askingStyleList="{$question->askingStyleList}" ordering="{$question->ordering}" answerReasonExpressionId="{$question->answerReasonExpressionId}" otherSpecify="{$question->otherSpecify}" noneButton="{$question->noneButton}" allButton="{$question->allButton}" pageLevelDontKnowButton="{$question->pageLevelDontKnowButton}" pageLevelRefuseButton="{$question->pageLevelRefuseButton}" dontKnowButton="{$question->dontKnowButton}" networkRelationshipExprId="{$question->networkRelationshipExprId}" networkParams="{$question->networkParams}" networkNColorQId="{$question->networkNColorQId}" networkNSizeQId="{$question->networkNSizeQId}" networkEColorQId="{$question->networkEColorQId}" networkESizeQId="{$question->networkESizeQId}" refuseButton="{$question->refuseButton}" allOptionString="{$question->allOptionString}" minLimitType="{$question->minLimitType}" minLiteral="{$question->minLiteral}" minPrevQues="{$question->minPrevQues}" maxLimitType="{$question->maxLimitType}" maxLiteral="{$question->maxLiteral}" maxPrevQues="{$question->maxPrevQues}" minCheckableBoxes="{$question->minCheckableBoxes}" maxCheckableBoxes="{$question->maxCheckableBoxes}" withListRange="{$question->withListRange}" listRangeString="{$question->listRangeString}" minListRange="{$question->minListRange}" maxListRange="{$question->maxListRange}" timeUnits="{$question->timeUnits}" symmetric="{$question->symmetric}" keepOnSamePage="{$question->keepOnSamePage}">
+			<preface>{$question->preface}</preface>
+			<prompt>{$question->prompt}</prompt>
+			<citation>{$question->citation}</citation>
+EOT;
+				if($question->answerType == "SELECTION" || $question->answerType == "MULTIPLE_SELECTION"){
+					$options = QuestionOption::model()->findAllByAttributes(
+						array("studyId"=>$_POST['studyId'], "questionId"=>$question->id)
+					);
+
+					foreach($options as $option){
+						$option->name = sanitizeXml($option->name);
+						$text .= <<<EOT
+
+			<option id="{$option->id}" name="{$option->name}" value="{$option->value}" ordering="{$option->ordering}"/>
+EOT;
+					}
+				}
+				$text .= "
+		</question>";
+			}
+			$text .= "
+	</questions>";
+		}
+		if(count($expressions) > 0){
+			$text .= "
+	<expressions>";
+			foreach($expressions as $expression){
+				$expression->name = sanitizeXml($expression->name);
+
+				$text .= <<<EOT
+
+		<expression id="{$expression->id}" name="{$expression->name}" questionId="{$expression->questionId}" resultForUnanswered="{$expression->resultForUnanswered}" type="{$expression->type}" operator="{$expression->operator}">
+			<value>{$expression->value}</value>
+		</expression>
+EOT;
+			}
+			$text .= "
+	</expressions>";
+		}
+		if(count($answerLists) > 0){
+			$text .= "
+	<answerLists>";
+			foreach($answerLists as $answerList){
+				$text .= <<<EOT
+
+		<answerList id="{$answerList->id}" listName="{$answerList->listName}" listOptionNames="{$answerList->listOptionNames}"/>
+EOT;
+			}
+			$text .= "
+	</answerLists>";
+		}
+		if(count($interviewIds) > 0){
+			$text .= "
+	<interviews>";
+			foreach($interviews as $interview){
+				$text .= <<<EOT
+
+		<interview id="{$interview->id}" studyId="{$interview->studyId}" completed="{$interview->completed}" start_date="{$interview->start_date}" complete_date="{$interview->complete_date}">
+EOT;
+				if(isset($answers[$interview->id])){
+					$text .= "
+			<answers>";
+					foreach($answers[$interview->id] as $answer){
+						$text .= <<<EOT
+
+				<answer id="{$answer->id}" questionId="{$answer->questionId}" interviewId="{$answer->interviewId}" alterId1="{$answer->alterId1}" alterId2="{$answer->alterId2}" value="{$answer->value}" otherSpecifyText="{$answer->otherSpecifyText}" skipReason="{$answer->skipReason}" questionType="{$answer->questionType}" answerType="{$answer->answerType}" />
+EOT;
+					}
+					$text .= "
+			</answers>";
+				}
+
+				if(isset($alters[$interview->id])){
+					$text .= "
+			<alters>";
+					foreach($alters[$interview->id] as $alter){
+						$text .= <<<EOT
+
+				<alter id="{$alter->id}" name="{$alter->name}" interviewId="{$alter->interviewId}" ordering="{$alter->ordering}" alterListId="{$alter->alterListId}" />
+EOT;
+					}
+					$text .= "
+			</alters>";
+				}
+
+			$text .= "
+		</interview>";
+			}
+			$text .= "
+	</interviews>";
+		}
+		$text .= "
+</study>";
+
+		return $text;
+	}
+
 	public function beforeDelete(){
 		$expressions = Expression::model()->findAllByAttributes(array("studyId"=>$this->id));
 		foreach($expressions as $expression){
