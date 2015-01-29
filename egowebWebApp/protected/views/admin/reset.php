@@ -16,7 +16,7 @@
 
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'reset-form',
-	'enableClientValidation'=>true,
+	'enableClientValidation'=>false,
 	'clientOptions'=>array(
 		'validateOnSubmit'=>true,
 	),

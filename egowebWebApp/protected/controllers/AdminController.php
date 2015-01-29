@@ -147,8 +147,12 @@ class AdminController extends Controller
 
 	public function actionForgot(){
 		if(isset($_POST['email'])&&$_POST['email']!=''){
-			$email=$_POST['email'];
-			$model=User::model()->findByAttributes(array('email'=>$email));
+			$email = $_POST['email'];
+			$users = User::model()->findAll();
+			foreach($users as $user){
+				if($user->email == $email)
+					$model = $user;
+			}
 			if($model){
 				$subject='=?UTF-8?B?'.base64_encode(Yii::app()->name." - Reset Password").'?=';
 				$headers="From: ".Yii::app()->params['adminEmail']."\r\n".
@@ -174,8 +178,8 @@ class AdminController extends Controller
 		if(!isset($_GET['id']))
 			$this->redirect($this->createUrl('user/forgot'));
 		list($id,$hash)=preg_split('/:/',$_GET['id']);
-		$model=User::model()->findByPk((int)$id);
-		if($model&&User::model()->hashPassword($model->password,'miranda')==$hash){
+		$model = User::model()->findByPk($id);
+		if($model && User::model()->hashPassword($model->password,'miranda')==$hash){
 			$model->password='';
 			if(isset($_POST['User']))
 			{
@@ -191,6 +195,8 @@ class AdminController extends Controller
 					if($login->validate() && $login->login()){
 						$this->redirect($this->createUrl('/admin'));
 					}
+				}else{
+					throw new CHttpException(500, print_r($model->errors));
 				}
 			}
 			$this->render('reset',array(

@@ -47,11 +47,11 @@ class ImportExportController extends Controller
 
 			foreach($study->alterPrompts->alterPrompt as $alterPrompt){
 				$newAlterPrompt = new AlterPrompt;
-				$newAlterPrompt->studyId = $newStudy->id;
 				foreach($alterPrompt->attributes() as $key=>$value){
 					if($key != "id")
-						$newQuestion->$key = $value;
+						$newAlterPrompt->$key = $value;
 				}
+				$newAlterPrompt->studyId = $newStudy->id;
 				$newAlterPrompt->save();
 			}
 
