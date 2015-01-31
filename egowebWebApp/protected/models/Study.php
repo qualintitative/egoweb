@@ -459,6 +459,7 @@ class Study extends CActiveRecord
 							$preface = new Question;
 							foreach($alters as $alter){
 								foreach($NonListQs[$question->id] as $q){
+
 									if($q->answerReasonExpressionId && !$expressions[$q->answerReasonExpressionId]->evalExpression($q->answerReasonExpressionId, $interviewId, $alter->id, null, $answers)){
 										if(isset($answers[$q->id.'-'.$alter->id]) && $answers[$q->id.'-'.$alter->id]->value != $study->valueLogicalSkip){
 											$answers[$q->id.'-'.$alter->id]->value = $study->valueLogicalSkip;
@@ -466,6 +467,7 @@ class Study extends CActiveRecord
 										}
 										continue;
 									}
+
 									if($q->preface != "" && !$preface->id){
 										$preface->id = $q->id;
 										if($i == $pageNumber ){

@@ -180,23 +180,28 @@ class InterviewingController extends Controller
 					$this->redirect(Yii::app()->createUrl('admin/'));
 			}
 
-			$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewId));
-			foreach($answerList as $answer){
-				if($answer->alterId1 && $answer->alterId2)
-					$answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
-				else if ($answer->alterId1 && ! $answer->alterId2)
-					$answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
-				else
-					$answers[$answer->questionId] = $answer;
-			}
+
+
 
 			foreach($_POST['Answer'] as $Answer){
 
 				if(!isset($interviewId) || !$interviewId)
 					$interviewId = $Answer['interviewId'];
 
+				if(!isset($answerList)){
+					$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+					foreach($answerList as $answer){
+						if($answer->alterId1 && $answer->alterId2)
+							$answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
+						else if ($answer->alterId1 && ! $answer->alterId2)
+							$answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
+						else
+							$answers[$answer->questionId] = $answer;
+					}
+				}
+
 				if(!isset($questions))
-					$questions = Study::buildQuestions($study, $_POST['page'], $interviewId, null, null, $answers);
+					$questions = Study::buildQuestions($study, $_POST['page'], $interviewId, $answers);
 
 				if($Answer['questionType'] == "EGO_ID" && $Answer['value'] != "" && !$interviewId){
 					if(Yii::app()->user->isGuest){
@@ -402,10 +407,12 @@ class InterviewingController extends Controller
 					if($max != "")
 						$numberErrors = $numberErrors + 2;
 
+
 					$checkedBoxes = count(explode(',',$Answer['value']));
 
-					if (($Answer['value'] == "" || $checkedBoxes < $min || $checkedBoxes > $max) && $Answer['skipReason'] == "NONE")
+					if (($Answer['value'] == "" || $Answer['value'] < 0 || $checkedBoxes < $min || $checkedBoxes > $max) && $Answer['skipReason'] == "NONE")
 						$showError = true;
+
 
 					$s='';
 					if($max != 1)
