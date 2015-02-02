@@ -56,7 +56,12 @@ class Study extends CActiveRecord
 			array('id, active, name, introduction, egoIdPrompt, alterPrompt, conclusion, minAlters, maxAlters, adjacencyExpressionId, valueRefusal, valueDontKnow, valueLogicalSkip, valueNotYetAnswered', 'safe', 'on'=>'search'),
 			array('modified','default',
 				'value'=>new CDbExpression('NOW()'),
-				'setOnEmpty'=>true,'on'=>'insert'),
+				'setOnEmpty'=>true,'on'=>'insert'
+			),
+			array('userId','default',
+				'value'=>Yii::app()->user->id,
+				'setOnEmpty'=>true,'on'=>'insert'
+			),
 			array('multiSessionEgoId, useAsAlters, restrictAlters, fillAlterList','default',
 				'value'=>0,
 			'setOnEmpty'=>true),
