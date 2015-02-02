@@ -5,13 +5,32 @@
 ?>
 
 <?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/modal.js'); ?>
-<script src="/js/nicEdit.js"></script>
 <script>
 $(function(){
-	nIntroduction = new nicEditor({buttonList : ['xhtml','fontSize','bold','italic','underline','strikeThrough','subscript','superscript','indent','outdent','hr','removeformat']}).panelInstance('Study_introduction');
-	nEgoIdPrompt = new nicEditor({buttonList : ['xhtml','fontSize','bold','italic','underline','strikeThrough','subscript','superscript','indent','outdent','hr','removeformat']}).panelInstance('Study_egoIdPrompt');
-	nAlterPrompt = new nicEditor({buttonList : ['xhtml','fontSize','bold','italic','underline','strikeThrough','subscript','superscript','indent','outdent','hr','removeformat']}).panelInstance('Study_alterPrompt');
-	nConclusion = new nicEditor({buttonList : ['xhtml','fontSize','bold','italic','underline','strikeThrough','subscript','superscript','indent','outdent','hr','removeformat']}).panelInstance('Study_conclusion');
+	$('#Study_introduction').summernote({
+		height:200,
+		onChange: function(contents, $editable) {
+			$('#Study_introduction').val(contents);
+		}
+	});
+	$('#Study_egoIdPrompt').summernote({
+		height:200,
+		onChange: function(contents, $editable) {
+			$('#Study_egoIdPrompt').val(contents);
+		}
+	});
+	$('#Study_alterPrompt').summernote({
+		height:200,
+		onChange: function(contents, $editable) {
+			$('#Study_alterPrompt').val(contents);
+		}
+	});
+	$('#Study_conclusion').summernote({
+		height:200,
+		onChange: function(contents, $editable) {
+			$('#Study_conclusion').val(contents);
+		}
+	});
 });
 </script>
 <div class="form">

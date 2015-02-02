@@ -526,13 +526,6 @@ $(function(){
 		});
 	}
 */
-$('#preface<?php echo $model->id;?>').summernote({
-	height:200,
-  onChange: function(contents, $editable) {
-    console.log('onChange:', contents, $editable);
-    $('#preface<?php echo $model->id;?>').val(contents);
-  }
-});
 $('#prompt<?php echo $model->id;?>').summernote({
 		height:200,
   onChange: function(contents, $editable) {
@@ -540,6 +533,19 @@ $('#prompt<?php echo $model->id;?>').summernote({
     $('#prompt<?php echo $model->id;?>').val(contents);
   }
 });
-
+$('#preface<?php echo $model->id;?>').summernote({
+	height:200,
+  onChange: function(contents, $editable) {
+    console.log('onChange:', contents, $editable);
+    $('#preface<?php echo $model->id;?>').val(contents);
+  }
+});
+$('#citation<?php echo $model->id;?>').summernote({
+		height:200,
+  onChange: function(contents, $editable) {
+    console.log('onChange:', contents, $editable);
+    $('#citation<?php echo $model->id;?>').val(contents);
+  }
+});
 });
 </script>
