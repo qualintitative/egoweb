@@ -14,10 +14,10 @@
 		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/summernote-bs3.css" />
 		<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
 		<?php Yii::app()->clientScript->registerCssFile(Yii::app()->clientScript->getCoreScriptUrl().'/jui/css/base/jquery-ui.css'); ?>
-		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/indexof.js'); ?>
-		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/bootstrap.min.js'); ?>
 		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/jquery.min.js'); ?>
 		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/jquery-ui.min.js'); ?>
+		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/indexof.js'); ?>
+		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/bootstrap.min.js'); ?>
 		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/summernote.js'); ?>
 		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/egoweb.js'); ?>
 	</head>
