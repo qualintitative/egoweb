@@ -57,7 +57,7 @@
 									<?php endforeach; ?>
 								</ul>
 							</li>
-							<?php if(Yii::app()->user->isSuperAdmin): ?>
+							<?php if(Yii::app()->user->isAdmin): ?>
 							<li><a href="/authoring">Authoring</a>
 								<ul>
 									<?php foreach($studies as $data): ?>
@@ -78,6 +78,8 @@
 							</li>
 							<li><a href="/archive">Archive</a></li>
 							<li><a href="/importExport">Import & Export Studies</a></li>
+							<?php endif; ?>
+							<?php if(Yii::app()->user->isSuperAdmin): ?>
 							<li><a href="/admin/user">User Admin</a>
 							<?php endif; ?>
 							<li><a href="/mobile">Mobile</a>
