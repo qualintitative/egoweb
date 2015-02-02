@@ -18,6 +18,7 @@
 		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/bootstrap.min.js'); ?>
 		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/summernote.js'); ?>
 		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/egoweb.js'); ?>
+		<?php Yii::app()->clientScript->registerCoreScript('jquery'); ?>
 		<?php Yii::app()->clientScript->registerCoreScript('jquery.ui'); ?>
 	</head>
 	<body>
