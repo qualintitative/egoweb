@@ -1,5 +1,7 @@
 <h1><?php echo $model->subjectType; ?> Questions</h1>
-<script src="/js/nicEdit.js"></script>
+
+<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/summernote.js'); ?>
+
 <script>
 
 function changeAType(answerSelect) {

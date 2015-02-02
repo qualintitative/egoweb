@@ -21,7 +21,8 @@ $form = $this->beginWidget('CActiveForm', array(
 	'permissions',
 		array(
 			1=>"interviewer",
-			11=>"admin"
+			5=>"admin",
+			11=>"super admin"
 		),
 
 	array('empty' => 'Select Permission')

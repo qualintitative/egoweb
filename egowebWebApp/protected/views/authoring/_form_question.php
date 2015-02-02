@@ -3,7 +3,7 @@
 /* @var $model Question */
 /* @var $form CActiveForm */
 ?>
-<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/modal.js'); ?>
+
 <?php
 $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'question-form',
@@ -497,6 +497,7 @@ function refresh(container){
 
 <script>
 $(function(){
+	/*
 	nPrompt = new nicEditor({buttonList : ['xhtml','fontSize','bold','italic','underline','strikeThrough','subscript','superscript','indent','outdent','hr','removeformat']}).panelInstance('prompt<?php echo $model->id; ?>');
 	nPreface = new nicEditor({buttonList : ['xhtml','fontSize','bold','italic','underline','strikeThrough','subscript','superscript','indent','outdent','hr','removeformat']}).panelInstance('preface<?php echo $model->id; ?>');
 	nCitation = new nicEditor({buttonList : ['xhtml','fontSize','bold','italic','underline','strikeThrough','subscript','superscript','indent','outdent','hr','removeformat']}).panelInstance('citation<?php echo $model->id; ?>');
@@ -524,6 +525,21 @@ $(function(){
 
 		});
 	}
+*/
+$('#preface<?php echo $model->id;?>').summernote({
+	height:200,
+  onChange: function(contents, $editable) {
+    console.log('onChange:', contents, $editable);
+    $('#preface<?php echo $model->id;?>').val(contents);
+  }
+});
+$('#prompt<?php echo $model->id;?>').summernote({
+		height:200,
+  onChange: function(contents, $editable) {
+    console.log('onChange:', contents, $editable);
+    $('#prompt<?php echo $model->id;?>').val(contents);
+  }
+});
 
 });
 </script>

@@ -912,12 +912,15 @@ class AuthoringController extends Controller
 	*/
 	public function actionAjaxload()
 	{
+				Yii::app()->clientScript->scriptMap['jquery.js'] = false;
+				Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
 		if(isset($_GET['form'])){
 			if($_GET['form'] == "_form_question"){
 				if( !is_numeric($_GET['questionId']) ){
 					throw new CHttpException(500,"Invalid questionId specified ".$_GET['questionId']." !");
 				}
 				$model = Question::model()->findByPk((int)$_GET['questionId']);
+
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true), false, true);
 			}else if($_GET['form'] == "_form_alter_list_edit"){
 				if( !is_numeric($_GET['alterListId']) ){
@@ -936,6 +939,7 @@ class AuthoringController extends Controller
 					throw new CHttpException(500,"Invalid optionId specified ".$_GET['optionId']." !");
 				}
 				$model = QuestionOption::model()->findByPk((int)$_GET['optionId']);
+
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'questionId'=>$model->questionId), false, true);
 			}else if($_GET['form'] == "_form_legend_edit"){
 				if(isset($_GET['legendId']))
@@ -971,6 +975,8 @@ class AuthoringController extends Controller
 					'criteria'=>$criteria,
 					'pagination'=>false,
 				));
+				Yii::app()->clientScript->scriptMap['jquery.js'] = false;
+				Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
 				$this->renderPartial("_form_option", array('dataProvider'=>$dataProvider, 'questionId'=>$_GET['questionId'], 'ajax'=>true), false, true);
 			}else if($_GET['form'] == "_form_legend"){
 
