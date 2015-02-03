@@ -57,7 +57,7 @@ class ImportExportController extends Controller
 					}
 					$newAlterPrompt->studyId = $newStudy->id;
 					if(!$newAlterPrompt->save())
-						echo "Alter prompt: " . print_r($newAlterPrompt->errors);
+						echo "Alter prompt: $newAlterPrompt->afterAltersEntered :" . print_r($newAlterPrompt->errors);
 				}
 			}
 
