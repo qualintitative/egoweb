@@ -349,12 +349,12 @@ class DataController extends Controller
 
 		$study = Study::model()->findByPk((int)$_POST['studyId']);
         #OK FOR SQL INJECTION
-		$optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
-
+		//$optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
+		$optionsRaw = QuestionOption::model()->findAllByAttributes(array('studyId'=>$study->id));
 		// create an array with option ID as key
 		$options = array();
 		foreach ($optionsRaw as $option){
-			$options[$option['id']] = decrypt($option['value']);
+			$options[$option->id] = $option->value;
 		}
 
         #OK FOR SQL INJECTION
@@ -388,7 +388,7 @@ class DataController extends Controller
 				continue;
             #OK FOR SQL INJECTION
 			$alters = q("SELECT * FROM alters WHERE interviewId = " . $interview->id)->queryAll();
-			$alterNames = AlterList::model()->findAllByAttributes(array('interviewId'=>$interview->id));
+			//$alterNames = AlterList::model()->findAllByAttributes(array('interviewId'=>$interview->id));
 			foreach($alters as &$alter){
 				if($alter['name']!="")
 					$alter['name'] = decrypt($alter['name']);

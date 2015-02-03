@@ -674,7 +674,7 @@ class Study extends CActiveRecord
 		$newStudy->id = null;
 
 		if(!$newStudy->save())
-			return false;
+			throw new CHttpException(500,  "Study: " .  print_r($newStudy->errors)); //return false;
 
 		foreach($questions as $question){
 			$newQuestion = new Question;
@@ -682,7 +682,7 @@ class Study extends CActiveRecord
 			$newQuestion->id = null;
 			$newQuestion->studyId = $newStudy->id;
 			if(!$newQuestion->save())
-				return false;
+				throw new CHttpException(500,  "Question: " . print_r($newQuestion->errors)); //return false;
 			if($newStudy->multiSessionEgoId == $question->id){
 				$newStudy->multiSessionEgoId = $newQuestion->id;
 				$newStudy->save();
@@ -718,7 +718,7 @@ class Study extends CActiveRecord
 			if(isset($newQuestionIds[$option->questionId]))
 				 $newOption->questionId = $newQuestionIds[$option->questionId];
 			if(!$newOption->save())
-				return false;
+				throw new CHttpException(500,  "Option: " . print_r($newOption->errors)); //return false;
 			else
 				$newOptionIds[$option->id] = $newOption->id;
 		}
@@ -728,10 +728,12 @@ class Study extends CActiveRecord
 			$newExpression->attributes = $expression->attributes;
 			$newExpression->id = null;
 			$newExpression->studyId = $newStudy->id;
+			if(!$newExpression->name)
+				continue;
 			if($newExpression->questionId != "" &&  $newExpression->questionId  != 0 && isset($newQuestionIds[$expression->questionId]))
 				$newExpression->questionId = $newQuestionIds[$expression->questionId];
 			if(!$newExpression->save())
-				return false;
+				throw new CHttpException(500,  "Expression: " . print_r($newExpression->errors)); //return false;
 			else
 				$newExpressionIds[$expression->id] = $newExpression->id;
 		}
@@ -747,7 +749,7 @@ class Study extends CActiveRecord
 			$newExpression = Expression::model()->findByPk($newExpressionIds[$expression->id]);
 
 			if(!$newExpression)
-				die('error fetching expression id:' . $expression->id . $newExpressionIds[$expression->id]);
+				continue;
 
 			// replace answerReasonExpressionId for newly uploaded questions with correct expression ids
 			$questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id,'answerReasonExpressionId'=>$oldExpressionId));
@@ -812,7 +814,7 @@ class Study extends CActiveRecord
 			$newAnswerList->id = null;
 			$newAnswerList->studyId = $newStudy->id;
 			if(!$newAnswerList->save())
-				return false;
+				throw new CHttpException(500, "AnswerList: " . print_r($newAnswerList->errors)); //return false;
 		}
 
 		$data = array(

@@ -978,8 +978,7 @@ class AuthoringController extends Controller
 					'criteria'=>$criteria,
 					'pagination'=>false,
 				));
-				Yii::app()->clientScript->scriptMap['jquery.js'] = false;
-				Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
+
 				$this->renderPartial("_form_option", array('dataProvider'=>$dataProvider, 'questionId'=>$_GET['questionId'], 'ajax'=>true), false, true);
 			}else if($_GET['form'] == "_form_legend"){
 
