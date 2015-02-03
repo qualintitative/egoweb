@@ -127,20 +127,4 @@ class QuestionOption extends CActiveRecord
 		));
 	}
 
-    /**
-     * Decrypts "name" attribute after it's found.
-     */
-    protected function afterFind() {
-        $this->name = decrypt( $this->name );
-        return parent::afterFind();
-    }
-
-    /**
-     * Encrypts "name" attribute before it's saved.
-     * @return bool|void
-     */
-    protected function beforeSave() {
-        $this->name = encrypt( $this->name );
-        return parent::beforeSave();
-    }
 }
