@@ -915,8 +915,8 @@ class AuthoringController extends Controller
 	*/
 	public function actionAjaxload()
 	{
-				Yii::app()->clientScript->scriptMap['jquery.js'] = false;
-				Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
+		Yii::app()->clientScript->scriptMap['jquery.js'] = false;
+		Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
 		if(isset($_GET['form'])){
 			if($_GET['form'] == "_form_question"){
 				if( !is_numeric($_GET['questionId']) ){
@@ -1034,6 +1034,8 @@ class AuthoringController extends Controller
 	}
 	public function actionAjaxmoveup()
 	{
+		Yii::app()->clientScript->scriptMap['jquery.js'] = false;
+		Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
 		if(isset($_GET['optionId'])){
 			QuestionOption::moveUp($_GET['optionId']);
 			$model = QuestionOption::model()->findByPk((int)$_GET['optionId']);
