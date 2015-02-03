@@ -499,18 +499,27 @@ function refresh(container){
 $(function(){
 	$('#prompt<?php echo $model->id;?>').summernote({
 		height:200,
+		onImageUpload: function(files, editor, welEditable) {
+			uploadImage(files[0], editor, welEditable);
+		},
 		onChange: function(contents, $editable) {
 			$('#prompt<?php echo $model->id;?>').val(contents);
 		}
 	});
 	$('#preface<?php echo $model->id;?>').summernote({
 		height:200,
+		onImageUpload: function(files, editor, welEditable) {
+			uploadImage(files[0], editor, welEditable);
+		},
 		onChange: function(contents, $editable) {
 			$('#preface<?php echo $model->id;?>').val(contents);
 		}
 	});
 	$('#citation<?php echo $model->id;?>').summernote({
 		height:200,
+		onImageUpload: function(files, editor, welEditable) {
+			uploadImage(files[0], editor, welEditable);
+		},
 		onChange: function(contents, $editable) {
 			$('#citation<?php echo $model->id;?>').val(contents);
 		}

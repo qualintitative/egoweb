@@ -87,3 +87,20 @@ function loadAudio(uri)
     audio.src = uri;
     return audio;
 }
+
+function uploadImage(file, editor, welEditable) {
+	data = new FormData();
+	data.append("file", file);
+	data.append("YII_CSRF_TOKEN", $("[name*='YII_CSRF_TOKEN']").val());
+	$.ajax({
+		data: data,
+		type: "POST",
+		url: "/authoring/image",
+		cache: false,
+		contentType: false,
+		processData: false,
+		success: function(url) {
+			editor.insertImage(welEditable, url);
+		}
+	});
+}

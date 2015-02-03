@@ -9,24 +9,36 @@
 $(function(){
 	$('#Study_introduction').summernote({
 		height:200,
+		onImageUpload: function(files, editor, welEditable) {
+			uploadImage(files[0], editor, welEditable);
+		},
 		onChange: function(contents, $editable) {
 			$('#Study_introduction').val(contents);
 		}
 	});
 	$('#Study_egoIdPrompt').summernote({
 		height:200,
+		onImageUpload: function(files, editor, welEditable) {
+			uploadImage(files[0], editor, welEditable);
+		},
 		onChange: function(contents, $editable) {
 			$('#Study_egoIdPrompt').val(contents);
 		}
 	});
 	$('#Study_alterPrompt').summernote({
 		height:200,
+		onImageUpload: function(files, editor, welEditable) {
+			uploadImage(files[0], editor, welEditable);
+		},
 		onChange: function(contents, $editable) {
 			$('#Study_alterPrompt').val(contents);
 		}
 	});
 	$('#Study_conclusion').summernote({
 		height:200,
+		onImageUpload: function(files, editor, welEditable) {
+			uploadImage(files[0], editor, welEditable);
+		},
 		onChange: function(contents, $editable) {
 			$('#Study_conclusion').val(contents);
 		}
