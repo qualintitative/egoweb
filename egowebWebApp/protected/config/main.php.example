@@ -98,7 +98,7 @@ return array(
 
         'securityManager'=>array(
             'cryptAlgorithm' => 'blowfish',
-            'encryptionKey' => 'One morning I shot an elephant in my pajamas. How he got in my pajamas I dunno.',
+            'encryptionKey' => 'One morning I shot an elephant in my pajamas.',
         )
 	),
 

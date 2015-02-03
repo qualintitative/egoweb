@@ -63,6 +63,8 @@ class ImportExportController extends Controller
 				foreach($question->attributes() as $key=>$value){
 					if($key == "id")
 						$oldId = intval($value);
+					if($key == "ordering")
+						$value = intval($value);
 					if($key!="key" && $key != "id" && $key != "networkNShapeQId")
 						$newQuestion->$key = $value;
 				}
@@ -80,7 +82,7 @@ class ImportExportController extends Controller
 					}
 				}
 				if(!$newQuestion->save())
-					print_r($newQuestion->getErrors());
+					echo "Question: " . print_r($newQuestion->getErrors());
 				else
 					$newQuestionIds[$oldId] = $newQuestion->id;
 
@@ -92,11 +94,13 @@ class ImportExportController extends Controller
 						foreach($option->attributes() as $optionkey=>$val){
 							if($optionkey == "id")
 								$oldOptionId = intval($val);
+							if($optionkey == "ordering")
+								$val = intval($val);
 							if($optionkey!="key" && $optionkey != "id")
 								$newOption->$optionkey = $val;
 						}
 						if(!$newOption->save())
-							print_r($newOption->getErrors());
+							echo "Option: " . print_r($newOption->getErrors());
 						else
 							$newOptionIds[$oldOptionId] = $newOption->id;
 					}
@@ -131,6 +135,8 @@ class ImportExportController extends Controller
 					foreach($expression->attributes() as $key=>$value){
 						if($key == "id")
 							$oldExpressionId = intval($value);
+						if($key == "ordering")
+							$value = intval($value);
 						if($key!="key" && $key != "id")
 							$newExpression->$key = $value;
 					}
@@ -141,7 +147,7 @@ class ImportExportController extends Controller
 
 					$newExpression->value = $expression->value;
 					if(!$newExpression->save())
-						print_r($newExpression->getErrors());
+						echo "Expression: " . print_r($newExpression->getErrors());
 					else
 						$newExpressionIds[$oldExpressionId] = $newExpression->id;
 				}
@@ -255,7 +261,7 @@ class ImportExportController extends Controller
 						$newAlter->ordering=1;
 
 						if(!$newAlter->save()){
-							print_r($newAlter->getErrors());
+							"Alter: " . print_r($newAlter->getErrors());
 							die();
 						}else{
 							$newAlterIds[intval($thisAlterId)] = $newAlter->id;
@@ -340,7 +346,7 @@ class ImportExportController extends Controller
 						$newAnswerList->$key = $value;
 				}
 				if(!$newAnswerList->save())
-					print_r($newAnswerList->getErrors());
+					echo "AnswerList: " .  print_r($newAnswerList->getErrors());
 			}
 		}
 
