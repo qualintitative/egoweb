@@ -45,15 +45,19 @@ class ImportExportController extends Controller
 				die();
 			}
 
-			if(count($study->alterPrompts->alterPrompt) != 0){
+			if($study->alterPrompts->alterPrompt){
+
 				foreach($study->alterPrompts->alterPrompt as $alterPrompt){
 					$newAlterPrompt = new AlterPrompt;
 					foreach($alterPrompt->attributes() as $key=>$value){
 						if($key != "id")
 							$newAlterPrompt->$key = $value;
+						if($key == "afterAltersEntered")
+							$value = intval($value);
 					}
 					$newAlterPrompt->studyId = $newStudy->id;
-					$newAlterPrompt->save();
+					if(!$newAlterPrompt->save())
+						echo "Alter prompt: " . print_r($newAlterPrompt->errors);
 				}
 			}
 
