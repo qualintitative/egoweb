@@ -3,7 +3,7 @@
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @link http://www.yiiframework.com/
- * @copyright 2008-2010 Yii Software LLC
+ * @copyright Copyright &copy; 2008-2010 Yii Software LLC
  * @license http://www.yiiframework.com/license/
  * @since 1.1.1
  */
@@ -36,7 +36,7 @@
 
 	/**
 	 * yiiactiveform set function.
-	 * @param options map settings for the active form plugin. Please see {@link CActiveForm::options} for available options.
+	 * @param options map settings for the active form plugin. Please see {@link CActiveForm::options} for availablel options.
 	 */
 	$.fn.yiiactiveform = function (options) {
 		return this.each(function () {
@@ -58,8 +58,7 @@
 					successCssClass: settings.successCssClass,
 					beforeValidateAttribute: settings.beforeValidateAttribute,
 					afterValidateAttribute: settings.afterValidateAttribute,
-					validatingCssClass: settings.validatingCssClass,
-					errorCallback: settings.errorCallback
+					validatingCssClass: settings.validatingCssClass
 				}, this);
 			});
 			$form.data('settings', settings);
@@ -103,7 +102,7 @@
 							if (attribute.afterValidateAttribute !== undefined) {
 								attribute.afterValidateAttribute($form, attribute, data, hasError);
 							}
-						},settings.errorCallback);
+						});
 					}
 				}, attribute.validationDelay);
 			};
@@ -162,7 +161,7 @@
 								}
 							}
 							settings.submitting = false;
-						},settings.errorCallback);
+						});
 					} else {
 						settings.submitting = false;
 					}
@@ -203,8 +202,8 @@
 					/*
 					 * If the form is submited (non ajax) with errors, labels and input gets the class 'error'
 					 */
-					$form.find('label, :input').each(function () {
-						$(this).removeClass(settings.errorCss);
+					$form.find('label, input').each(function () {
+						$(this).removeClass('error');
 					});
 					$('#' + settings.summaryID).hide().find('ul').html('');
 					//.. set to initial focus on reset
@@ -248,9 +247,7 @@
 		attribute.status = 1;
 		var $error, $container,
 			hasError = false,
-			$el = form.find('#' + attribute.inputID),
-			errorCss = form.data('settings').errorCss;
-
+			$el = form.find('#' + attribute.inputID);
 		if ($el.length) {
 			hasError = messages !== null && $.isArray(messages[attribute.id]) && messages[attribute.id].length > 0;
 			$error = form.find('#' + attribute.errorID);
@@ -261,9 +258,6 @@
 				attribute.errorCssClass + ' ' +
 				attribute.successCssClass
 			);
-			$container.find('label, :input').each(function () {
-				$(this).removeClass(errorCss);
-			});
 
 			if (hasError) {
 				$error.html(messages[attribute.id][0]);
@@ -292,14 +286,8 @@
 			return;
 		}
 		if (messages) {
-			var summaryAttributes = [];
-			for (var i in settings.attributes) {
-				if (settings.attributes[i].summary) {
-					summaryAttributes.push(settings.attributes[i].id);
-				}
-			}
 			$.each(settings.attributes, function () {
-				if ($.inArray(this.id, summaryAttributes) !== -1 && $.isArray(messages[this.id])) {
+				if ($.isArray(messages[this.id])) {
 					$.each(messages[this.id], function (j, message) {
 						content = content + '<li>' + message + '</li>';
 					});
@@ -355,11 +343,11 @@
 		}
 
 		$.ajax({
-			url: settings.validationUrl,
-			type: $form.attr('method'),
-			data: $form.serialize() + extData,
-			dataType: 'json',
-			success: function (data) {
+			url : settings.validationUrl,
+			type : $form.attr('method'),
+			data : $form.serialize() + extData,
+			dataType : 'json',
+			success : function (data) {
 				if (data !== null && typeof data === 'object') {
 					$.each(settings.attributes, function () {
 						if (!this.enableAjaxValidation) {
@@ -371,7 +359,7 @@
 					successCallback(messages);
 				}
 			},
-			error: function () {
+			error : function () {
 				if (errorCallback !== undefined) {
 					errorCallback();
 				}
@@ -393,48 +381,46 @@
 		ajaxVar: 'ajax',
 		validationUrl: undefined,
 		validationDelay: 200,
-		validateOnSubmit: false,
-		validateOnChange: true,
-		validateOnType: false,
-		hideErrorMessage: false,
-		inputContainer: undefined,
-		errorCss: 'error',
-		errorCssClass: 'error',
-		successCssClass: 'success',
-		validatingCssClass: 'validating',
-		summaryID: undefined,
+		validateOnSubmit : false,
+		validateOnChange : true,
+		validateOnType : false,
+		hideErrorMessage : false,
+		inputContainer : undefined,
+		errorCssClass : 'error',
+		successCssClass : 'success',
+		validatingCssClass : 'validating',
+		summaryID : undefined,
 		timer: undefined,
-		beforeValidateAttribute: undefined, // function (form, attribute) | boolean
+		beforeValidateAttribute: undefined, // function (form, attribute) : boolean
 		afterValidateAttribute: undefined,  // function (form, attribute, data, hasError)
-		beforeValidate: undefined, // function (form) | boolean
-		afterValidate: undefined,  // function (form, data, hasError) | boolean
-		focus: undefined,  // jquery selector that indicates which element to receive input focus initially
+		beforeValidate: undefined, // function (form) : boolean
+		afterValidate: undefined,  // function (form, data, hasError) : boolean
 		/**
 		 * list of attributes to be validated. Each array element is of the following structure:
 		 * {
-		 *     id: 'ModelClass_attribute', // the unique attribute ID
-		 *     model: 'ModelClass', // the model class name
-		 *     name: 'name', // attribute name
-		 *     inputID: 'input-tag-id',
-		 *     errorID: 'error-tag-id',
-		 *     value: undefined,
-		 *     status: 0,  // 0: empty, not entered before,  1: validated, 2: pending validation, 3: validating
+		 *     id : 'ModelClass_attribute', // the unique attribute ID
+		 *     model : 'ModelClass', // the model class name
+		 *     name : 'name', // attribute name
+		 *     inputID : 'input-tag-id',
+		 *     errorID : 'error-tag-id',
+		 *     value : undefined,
+		 *     status : 0,  // 0: empty, not entered before,  1: validated, 2: pending validation, 3: validating
+		 *     focus : undefined,  // jquery selector that indicates which element to receive input focus initially
 		 *     validationDelay: 200,
-		 *     validateOnChange: true,
-		 *     validateOnType: false,
-		 *     hideErrorMessage: false,
-		 *     inputContainer: undefined,
-		 *     errorCssClass: 'error',
-		 *     successCssClass: 'success',
-		 *     validatingCssClass: 'validating',
-		 *     enableAjaxValidation: true,
-		 *     enableClientValidation: true,
-		 *     clientValidation: undefined, // function (value, messages, attribute) | client-side validation
-		 *     beforeValidateAttribute: undefined, // function (form, attribute) | boolean
+		 *     validateOnChange : true,
+		 *     validateOnType : false,
+		 *     hideErrorMessage : false,
+		 *     inputContainer : undefined,
+		 *     errorCssClass : 'error',
+		 *     successCssClass : 'success',
+		 *     validatingCssClass : 'validating',
+		 *     enableAjaxValidation : true,
+		 *     enableClientValidation : true,
+		 *     clientValidation : undefined, // function (value, messages, attribute) : client-side validation
+		 *     beforeValidateAttribute: undefined, // function (form, attribute) : boolean
 		 *     afterValidateAttribute: undefined,  // function (form, attribute, data, hasError)
 		 * }
 		 */
-		attributes: [],
-		errorCallback: undefined
+		attributes : []
 	};
 })(jQuery);

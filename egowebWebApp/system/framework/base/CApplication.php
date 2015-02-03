@@ -4,7 +4,7 @@
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @link http://www.yiiframework.com/
- * @copyright 2008-2013 Yii Software LLC
+ * @copyright Copyright &copy; 2008-2011 Yii Software LLC
  * @license http://www.yiiframework.com/license/
  */
 
@@ -42,7 +42,7 @@
  * CApplication will undergo the following lifecycles when processing a user request:
  * <ol>
  * <li>load application configuration;</li>
- * <li>set up error handling;</li>
+ * <li>set up class autoloader and error handling;</li>
  * <li>load static application components;</li>
  * <li>{@link onBeginRequest}: preprocess the user request;</li>
  * <li>{@link processRequest}: process the user request;</li>
@@ -97,10 +97,6 @@ abstract class CApplication extends CModule
 	 * the language that the messages and view files are in. Defaults to 'en_us' (US English).
 	 */
 	public $sourceLanguage='en_us';
-	/**
-	 * @var string the class used to get locale data. Defaults to 'CLocale'.
-	 */
-	public $localeClass='CLocale';
 
 	private $_id;
 	private $_basePath;
@@ -144,18 +140,7 @@ abstract class CApplication extends CModule
 			$this->setBasePath('protected');
 		Yii::setPathOfAlias('application',$this->getBasePath());
 		Yii::setPathOfAlias('webroot',dirname($_SERVER['SCRIPT_FILENAME']));
-		if(isset($config['extensionPath']))
-		{
-			$this->setExtensionPath($config['extensionPath']);
-			unset($config['extensionPath']);
-		}
-		else
-			Yii::setPathOfAlias('ext',$this->getBasePath().DIRECTORY_SEPARATOR.'extensions');
-		if(isset($config['aliases']))
-		{
-			$this->setAliases($config['aliases']);
-			unset($config['aliases']);
-		}
+		Yii::setPathOfAlias('ext',$this->getBasePath().DIRECTORY_SEPARATOR.'extensions');
 
 		$this->preinit();
 
@@ -307,7 +292,6 @@ abstract class CApplication extends CModule
 	/**
 	 * Sets the root directory that holds all third-party extensions.
 	 * @param string $path the directory that contains all third-party extensions.
-	 * @throws CException if the directory does not exist
 	 */
 	public function setExtensionPath($path)
 	{
@@ -399,11 +383,11 @@ abstract class CApplication extends CModule
 	/**
 	 * Returns the locale instance.
 	 * @param string $localeID the locale ID (e.g. en_US). If null, the {@link getLanguage application language ID} will be used.
-	 * @return an instance of CLocale
+	 * @return CLocale the locale instance
 	 */
 	public function getLocale($localeID=null)
 	{
-		return call_user_func_array(array($this->localeClass, 'getInstance'),array($localeID===null?$this->getLanguage():$localeID));
+		return CLocale::getInstance($localeID===null?$this->getLanguage():$localeID);
 	}
 
 	/**
@@ -413,10 +397,7 @@ abstract class CApplication extends CModule
 	 */
 	public function getLocaleDataPath()
 	{
-		$vars=get_class_vars($this->localeClass);
-		if(empty($vars['dataPath']))
-			return Yii::getPathOfAlias('system.i18n.data');
-		return $vars['dataPath'];
+		return CLocale::$dataPath===null ? Yii::getPathOfAlias('system.i18n.data') : CLocale::$dataPath;
 	}
 
 	/**
@@ -426,8 +407,7 @@ abstract class CApplication extends CModule
 	 */
 	public function setLocaleDataPath($value)
 	{
-		$property=new ReflectionProperty($this->localeClass,'dataPath');
-		$property->setValue($value);
+		CLocale::$dataPath=$value;
 	}
 
 	/**
@@ -945,7 +925,7 @@ abstract class CApplication extends CModule
 	}
 
 	/**
-	 * Initializes the error handlers.
+	 * Initializes the class autoloader and error handlers.
 	 */
 	protected function initSystemHandlers()
 	{

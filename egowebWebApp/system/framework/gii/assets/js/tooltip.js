@@ -4,7 +4,6 @@
  * https://github.com/jquerytools/jquerytools/commit/4f3f3f14e83b0ff276a795e9f45400930904adff#src/tooltip/tooltip.js
  * 2. Original `$.fn.tooltip` has been changed to `$.fn.tooltip2` to prevent conflict between jQuery UI Tooltip and
  * jQuery Tools Tooltip.
- * 3. Fixed compatibility for jQuery 1.9+ (.browser is deprecated)
  *
  * @license 
  * jQuery Tools @VERSION Tooltip - UI essentials
@@ -76,7 +75,7 @@
 		fade: [
 			function(done) {
 				var conf = this.getConf();
-				if (navigator.userAgent.match(/MSIE/i) === null || conf.fadeIE) {
+				if (!$.browser.msie || conf.fadeIE) {
 					this.getTip().fadeTo(conf.fadeInSpeed, conf.opacity, done);
 				}
 				else {
@@ -86,7 +85,7 @@
 			},
 			function(done) {
 				var conf = this.getConf();
-				if (navigator.userAgent.match(/MSIE/i) === null || conf.fadeIE) {
+				if (!$.browser.msie || conf.fadeIE) {
 					this.getTip().fadeOut(conf.fadeOutSpeed, done);
 				}
 				else {

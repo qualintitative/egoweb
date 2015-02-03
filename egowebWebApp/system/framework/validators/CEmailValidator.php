@@ -4,7 +4,7 @@
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @link http://www.yiiframework.com/
- * @copyright 2008-2013 Yii Software LLC
+ * @copyright Copyright &copy; 2008-2011 Yii Software LLC
  * @license http://www.yiiframework.com/license/
  */
 
@@ -37,14 +37,12 @@ class CEmailValidator extends CValidator
 	 * @var boolean whether to check the MX record for the email address.
 	 * Defaults to false. To enable it, you need to make sure the PHP function 'checkdnsrr'
 	 * exists in your PHP installation.
-	 * Please note that this check may fail due to temporary problems even if email is deliverable.
 	 */
 	public $checkMX=false;
 	/**
 	 * @var boolean whether to check port 25 for the email address.
 	 * Defaults to false. To enable it, ensure that the PHP functions 'dns_get_record' and
 	 * 'fsockopen' are available in your PHP installation.
-	 * Please note that this check may fail due to temporary problems even if email is deliverable.
 	 */
 	public $checkPort=false;
 	/**
@@ -68,7 +66,8 @@ class CEmailValidator extends CValidator
 	protected function validateAttribute($object,$attribute)
 	{
 		$value=$object->$attribute;
-
+		if($this->allowEmpty && $this->isEmpty($value))
+			return;
 		if(!$this->validateValue($value))
 		{
 			$message=$this->message!==null?$this->message:Yii::t('yii','{attribute} is not a valid email address.');
@@ -86,10 +85,7 @@ class CEmailValidator extends CValidator
 	 */
 	public function validateValue($value)
 	{
-		if($this->allowEmpty && $this->isEmpty($value))
-			return true;
-
-		if(is_string($value) && $this->validateIDN)
+		if($this->validateIDN)
 			$value=$this->encodeIDN($value);
 		// make sure string length is limited to avoid DOS attacks
 		$valid=is_string($value) && strlen($value)<=254 && (preg_match($this->pattern,$value) || $this->allowName && preg_match($this->fullPattern,$value));
@@ -157,7 +153,7 @@ if(".($this->allowEmpty ? "jQuery.trim(value)!='' && " : '').$condition.") {
 		usort($records,array($this,'mxSort'));
 		foreach($records as $record)
 		{
-			$handle=@fsockopen($record['target'],25);
+			$handle=fsockopen($record['target'],25);
 			if($handle!==false)
 			{
 				fclose($handle);
@@ -177,28 +173,21 @@ if(".($this->allowEmpty ? "jQuery.trim(value)!='' && " : '').$condition.") {
 	 */
 	protected function mxSort($a, $b)
 	{
-		return $a['pri']-$b['pri'];
+		if($a['pri']==$b['pri'])
+			return 0;
+		return ($a['pri']<$b['pri'])?-1:1;
 	}
 
 	/**
 	 * Converts given IDN to the punycode.
-	 * @param string $value IDN to be converted.
+	 * @param $value IDN to be converted.
 	 * @return string resulting punycode.
 	 * @since 1.1.13
 	 */
 	private function encodeIDN($value)
 	{
-		if(preg_match_all('/^(.*)@(.*)$/',$value,$matches))
-		{
-			if(function_exists('idn_to_ascii'))
-				$value=$matches[1][0].'@'.idn_to_ascii($matches[2][0]);
-			else
-			{
-				require_once(Yii::getPathOfAlias('system.vendors.Net_IDNA2.Net').DIRECTORY_SEPARATOR.'IDNA2.php');
-				$idna=new Net_IDNA2();
-				$value=$matches[1][0].'@'.@$idna->encode($matches[2][0]);
-			}
-		}
-		return $value;
+		require_once(Yii::getPathOfAlias('system.vendors.idna_convert').DIRECTORY_SEPARATOR.'idna_convert.class.php');
+		$idnaConvert=new idna_convert();
+		return $idnaConvert->encode($value);
 	}
 }

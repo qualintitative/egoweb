@@ -4,7 +4,7 @@
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @link http://www.yiiframework.com/
- * @copyright 2008-2013 Yii Software LLC
+ * @copyright Copyright &copy; 2008-2011 Yii Software LLC
  * @license http://www.yiiframework.com/license/
  */
 
@@ -25,23 +25,22 @@ class CGettextPoFile extends CGettextFile
 	 */
 	public function load($file,$context)
 	{
-		$pattern='/(msgctxt\s+"(.*?(?<!\\\\))")?\s+'
-			.'msgid\s+((?:".*(?<!\\\\)"\s*)+)\s+'
-			.'msgstr\s+((?:".*(?<!\\\\)"\s*)+)/';
-		$matches=array();
-		$n=preg_match_all($pattern,file_get_contents($file),$matches);
-
-		$messages=array();
-		for($i=0; $i<$n; $i++)
-		{
-			if($matches[2][$i]===$context)
-			{
-				$id=$this->decode($matches[3][$i]);
-				$message=$this->decode($matches[4][$i]);
-				$messages[$id]=$message;
-			}
-		}
-		return $messages;
+		$pattern='/(msgctxt\s+"(.*?(?<!\\\\))")?'
+			. '\s+msgid\s+"(.*?(?<!\\\\))"'
+			. '\s+msgstr\s+"(.*?(?<!\\\\))"/';
+		$content=file_get_contents($file);
+        $n=preg_match_all($pattern,$content,$matches);
+        $messages=array();
+        for($i=0;$i<$n;++$i)
+        {
+        	if($matches[2][$i]===$context)
+        	{
+	        	$id=$this->decode($matches[3][$i]);
+	        	$message=$this->decode($matches[4][$i]);
+	        	$messages[$id]=$message;
+	        }
+        }
+        return $messages;
 	}
 
 	/**
@@ -74,11 +73,7 @@ class CGettextPoFile extends CGettextFile
 	 */
 	protected function encode($string)
 	{
-		return str_replace(
-			array('"',"\n","\t","\r"),
-			array('\\"',"\\n",'\\t','\\r'),
-			$string
-		);
+		return str_replace(array('"', "\n", "\t", "\r"),array('\\"', "\\n", '\\t', '\\r'),$string);
 	}
 
 	/**
@@ -88,11 +83,6 @@ class CGettextPoFile extends CGettextFile
 	 */
 	protected function decode($string)
 	{
-		$string=preg_replace(
-			array('/"\s+"/','/\\\\n/','/\\\\r/','/\\\\t/','/\\\\"/'),
-			array('',"\n","\r","\t",'"'),
-			$string
-		);
-		return substr(rtrim($string),1,-1);
+		return str_replace(array('\\"', "\\n", '\\t', '\\r'),array('"', "\n", "\t", "\r"),$string);
 	}
 }

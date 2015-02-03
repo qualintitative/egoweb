@@ -1,4 +1,4 @@
-/*! http://mths.be/punycode v1.2.0 by @mathias */
+/*! http://mths.be/punycode by @mathias */
 ;(function(root) {
 
 	/**
@@ -29,13 +29,12 @@
 	delimiter = '-', // '\x2D'
 
 	/** Regular expressions */
-	regexPunycode = /^xn--/,
 	regexNonASCII = /[^ -~]/, // unprintable ASCII chars + non-ASCII chars
-	regexSeparators = /\x2E|\u3002|\uFF0E|\uFF61/g, // RFC 3490 separators
+	regexPunycode = /^xn--/,
 
 	/** Error messages */
 	errors = {
-		'overflow': 'Overflow: input needs wider integers to process',
+		'overflow': 'Overflow: input needs wider integers to process.',
 		'not-basic': 'Illegal input >= 0x80 (not a basic code point)',
 		'invalid-input': 'Invalid input'
 	},
@@ -86,7 +85,8 @@
 	 * function.
 	 */
 	function mapDomain(string, fn) {
-		return map(string.split(regexSeparators), fn).join('.');
+		var glue = '.';
+		return map(string.split(glue), fn).join(glue);
 	}
 
 	/**
@@ -198,7 +198,7 @@
 	}
 
 	/**
-	 * Converts a basic code point to lowercase if `flag` is falsy, or to
+	 * Converts a basic code point to lowercase is `flag` is falsy, or to
 	 * uppercase if `flag` is truthy. The code point is unchanged if it's
 	 * caseless. The behavior is undefined if `codePoint` is not a basic code
 	 * point.
@@ -470,7 +470,7 @@
 		 * @memberOf punycode
 		 * @type String
 		 */
-		'version': '1.2.0',
+		'version': '1.1.1',
 		/**
 		 * An object of methods to convert from JavaScript's internal character
 		 * representation (UCS-2) to decimal Unicode code points, and back.

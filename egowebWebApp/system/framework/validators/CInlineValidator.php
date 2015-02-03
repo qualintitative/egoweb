@@ -4,7 +4,7 @@
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @link http://www.yiiframework.com/
- * @copyright 2008-2013 Yii Software LLC
+ * @copyright Copyright &copy; 2008-2011 Yii Software LLC
  * @license http://www.yiiframework.com/license/
  */
 
@@ -56,11 +56,9 @@ class CInlineValidator extends CValidator
 	 * the method that returns the client validation code and can look like:
 	 * <pre>
 	 * <?php
-	 *   public function clientValidate123($attribute,$params)
+	 *   public function clientValidate123($attribute)
 	 *   {
-	 *      if(!isset($params['message']))
-	 *         $params['message']='Value should be 123';
-	 *      $js = "if(value != '123') { messages.push($params['message']); }";
+	 *      $js = "if(value != '123') { messages.push('Value should be 123'); }";
 	 *      return $js;
 	 *   }
 	 * ?>
@@ -76,7 +74,7 @@ class CInlineValidator extends CValidator
 		if($this->clientValidate!==null)
 		{
 			$method=$this->clientValidate;
-			return $object->$method($attribute,$this->params);
+			return $object->$method($attribute);
 		}
 	}
 }

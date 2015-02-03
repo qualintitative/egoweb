@@ -4,7 +4,7 @@
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @link http://www.yiiframework.com/
- * @copyright 2008-2013 Yii Software LLC
+ * @copyright Copyright &copy; 2008-2011 Yii Software LLC
  * @license http://www.yiiframework.com/license/
  */
 
@@ -23,11 +23,9 @@ class CMysqlSchema extends CDbSchema
 	 */
 	public $columnTypes=array(
 		'pk' => 'int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY',
-		'bigpk' => 'bigint(20) NOT NULL AUTO_INCREMENT PRIMARY KEY',
 		'string' => 'varchar(255)',
 		'text' => 'text',
 		'integer' => 'int(11)',
-		'bigint' => 'bigint(20)',
 		'float' => 'float',
 		'decimal' => 'decimal',
 		'datetime' => 'datetime',
@@ -79,29 +77,22 @@ class CMysqlSchema extends CDbSchema
 	/**
 	 * Resets the sequence value of a table's primary key.
 	 * The sequence will be reset such that the primary key of the next new row inserted
-	 * will have the specified value or max value of a primary key plus one (i.e. sequence trimming).
+	 * will have the specified value or 1.
 	 * @param CDbTableSchema $table the table schema whose primary key sequence will be reset
-	 * @param integer|null $value the value for the primary key of the next new row inserted.
-	 * If this is not set, the next new row's primary key will have the max value of a primary
-	 * key plus one (i.e. sequence trimming).
+	 * @param mixed $value the value for the primary key of the next new row inserted. If this is not set,
+	 * the next new row's primary key will have a value 1.
 	 * @since 1.1
 	 */
 	public function resetSequence($table,$value=null)
 	{
-		if($table->sequenceName===null)
-			return;
-		if($value!==null)
-			$value=(int)$value;
-		else
+		if($table->sequenceName!==null)
 		{
-			$value=(int)$this->getDbConnection()
-				->createCommand("SELECT MAX(`{$table->primaryKey}`) FROM {$table->rawName}")
-				->queryScalar();
-			$value++;
+			if($value===null)
+				$value=$this->getDbConnection()->createCommand("SELECT MAX(`{$table->primaryKey}`) FROM {$table->rawName}")->queryScalar()+1;
+			else
+				$value=(int)$value;
+			$this->getDbConnection()->createCommand("ALTER TABLE {$table->rawName} AUTO_INCREMENT=$value")->execute();
 		}
-		$this->getDbConnection()
-			->createCommand("ALTER TABLE {$table->rawName} AUTO_INCREMENT=$value")
-			->execute();
 	}
 
 	/**
@@ -205,8 +196,7 @@ class CMysqlSchema extends CDbSchema
 		$c->isForeignKey=false;
 		$c->init($column['Type'],$column['Default']);
 		$c->autoIncrement=strpos(strtolower($column['Extra']),'auto_increment')!==false;
-		if(isset($column['Comment']))
-			$c->comment=$column['Comment'];
+		$c->comment=$column['Comment'];
 
 		return $c;
 	}
@@ -281,7 +271,6 @@ class CMysqlSchema extends CDbSchema
 	 * @param string $table the table whose column is to be renamed. The name will be properly quoted by the method.
 	 * @param string $name the old name of the column. The name will be properly quoted by the method.
 	 * @param string $newName the new name of the column. The name will be properly quoted by the method.
-	 * @throws CDbException if specified column is not found in given table
 	 * @return string the SQL statement for renaming a DB column.
 	 * @since 1.1.6
 	 */
@@ -341,23 +330,5 @@ class CMysqlSchema extends CDbSchema
 	{
 		return 'ALTER TABLE ' . $this->quoteTableName($table) . ' DROP PRIMARY KEY';
 
-	}
-	
-	/**
-	 * Builds a SQL statement for adding a primary key constraint to a table.
-	 * @param string $name not used in the MySQL syntax, the primary key is always called PRIMARY and is reserved.
-	 * @param string $table the table that the primary key constraint will be added to.
-	 * @param string|array $columns comma separated string or array of columns that the primary key will consist of.
-	 * @return string the SQL statement for adding a primary key constraint to an existing table.
-	 * @since 1.1.14
-	 */
-	public function addPrimaryKey($name,$table,$columns)
-	{
-		if(is_string($columns))
-			$columns=preg_split('/\s*,\s*/',$columns,-1,PREG_SPLIT_NO_EMPTY);
-		foreach($columns as $i=>$col)
-			$columns[$i]=$this->quoteColumnName($col);
-		return 'ALTER TABLE ' . $this->quoteTableName($table) . ' ADD PRIMARY KEY ('
-			. implode(', ', $columns). ' )';
 	}
 }

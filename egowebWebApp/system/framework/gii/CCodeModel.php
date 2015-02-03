@@ -4,7 +4,7 @@
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @link http://www.yiiframework.com/
- * @copyright 2008-2013 Yii Software LLC
+ * @copyright Copyright &copy; 2008-2011 Yii Software LLC
  * @license http://www.yiiframework.com/license/
  */
 
@@ -275,7 +275,7 @@ abstract class CCodeModel extends CFormModel
 
 	/**
 	 * @return string the directory that contains the template files.
-	 * @throws CHttpException if {@link templates} is empty or template selection is invalid
+	 * @throw CException if {@link templates} is empty or template selection is invalid
 	 */
 	public function getTemplatePath()
 	{
@@ -291,7 +291,6 @@ abstract class CCodeModel extends CFormModel
 
 	/**
 	 * @param CCodeFile $file whether the code file should be saved
-	 * @return bool whether the confirmation is found in {@link answers} with appropriate {@link operation}
 	 */
 	public function confirmed($file)
 	{
@@ -304,7 +303,6 @@ abstract class CCodeModel extends CFormModel
 	 * This method is manly used in {@link generate} to generate code.
 	 * @param string $templateFile the code template file path
 	 * @param array $_params_ a set of parameters to be extracted and made available in the code template
-	 * @throws CException is template file does not exist
 	 * @return string the generated code
 	 */
 	public function render($templateFile,$_params_=null)
@@ -411,7 +409,6 @@ abstract class CCodeModel extends CFormModel
 			'/(c)hild$/i' => '\1hildren',
 			'/(h)uman$/i' => '\1umans',
 			'/(m)an$/i' => '\1en',
-			'/(s)taff$/i' => '\1taff',
 			'/(t)ooth$/i' => '\1eeth',
 			'/(p)erson$/i' => '\1eople',
 			'/([m|l])ouse$/i' => '\1ice',

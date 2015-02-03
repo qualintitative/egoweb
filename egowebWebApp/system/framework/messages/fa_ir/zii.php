@@ -33,5 +33,4 @@ return array (
   'Update' => 'به روز رسانی',
   'View' => 'مشاهده',
   '{class} must specify "model" and "attribute" or "name" property values.' => '{class} می بایست مقادیر  "model" و  "attribute"  یا "name" را مشخص کرده باشد.',
-  'Home' => 'صفحه اول',
 );

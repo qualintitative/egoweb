@@ -4,7 +4,7 @@
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @link http://www.yiiframework.com/
- * @copyright 2008-2013 Yii Software LLC
+ * @copyright Copyright &copy; 2008-2011 Yii Software LLC
  * @license http://www.yiiframework.com/license/
  */
 
@@ -38,7 +38,6 @@
  *
  * @property string $commandPath The directory that contains the command classes. Defaults to 'protected/commands'.
  * @property CConsoleCommandRunner $commandRunner The command runner.
- * @property CConsoleCommand $command The currently active command.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @package system.console
@@ -75,7 +74,7 @@ class CConsoleApplication extends CApplication
 	protected function init()
 	{
 		parent::init();
-		if(empty($_SERVER['argv']))
+		if(!isset($_SERVER['argv'])) // || strncasecmp(php_sapi_name(),'cli',3))
 			die('This script must be run from the command line.');
 		$this->_runner=$this->createCommandRunner();
 		$this->_runner->commands=$this->commandMap;
@@ -175,26 +174,5 @@ class CConsoleApplication extends CApplication
 	public function getCommandRunner()
 	{
 		return $this->_runner;
-	}
-
-	/**
-	 * Returns the currently running command.
-	 * This is shortcut method for {@link CConsoleCommandRunner::getCommand()}.
-	 * @return CConsoleCommand|null the currently active command.
-	 * @since 1.1.14
-	 */
-	public function getCommand()
-	{
-		return $this->getCommandRunner()->getCommand();
-	}
-
-	/**
-	 * This is shortcut method for {@link CConsoleCommandRunner::setCommand()}.
-	 * @param CConsoleCommand $value the currently active command.
-	 * @since 1.1.14
-	 */
-	public function setCommand($value)
-	{
-		$this->getCommandRunner()->setCommand($value);
 	}
 }

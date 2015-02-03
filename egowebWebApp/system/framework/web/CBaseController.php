@@ -4,7 +4,7 @@
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @link http://www.yiiframework.com/
- * @copyright 2008-2013 Yii Software LLC
+ * @copyright Copyright &copy; 2008-2011 Yii Software LLC
  * @license http://www.yiiframework.com/license/
  */
 
@@ -163,16 +163,8 @@ abstract class CBaseController extends CComponent
 		{
 			ob_start();
 			ob_implicit_flush(false);
-			try
-			{
-				$widget=$this->createWidget($className,$properties);
-				$widget->run();
-			}
-			catch(Exception $e)
-			{
-				ob_end_clean();
-				throw $e;
-			}
+			$widget=$this->createWidget($className,$properties);
+			$widget->run();
 			return ob_get_clean();
 		}
 		else

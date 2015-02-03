@@ -4,7 +4,7 @@
  *
  * @author Da:Sourcerer <webmaster@dasourcerer.net>
  * @link http://www.yiiframework.com/
- * @copyright 2008-2013 Yii Software LLC
+ * @copyright Copyright &copy; 2008-2012 Yii Software LLC
  * @license http://www.yiiframework.com/license/
  */
 
@@ -19,41 +19,32 @@
 class CHttpCacheFilter extends CFilter
 {
 	/**
-	 * @var string|integer Timestamp for the last modification date.
-	 * Must be either a string parsable by {@link http://php.net/strtotime strtotime()}
-	 * or an integer representing a unix timestamp.
+	 * Timestamp for the last modification date. Must be either a string parsable by
+	 * {@link http://php.net/strtotime strtotime()} or an integer representing a unix timestamp.
+	 * @var string|integer
 	 */
 	public $lastModified;
 	/**
-	 * @var string|callback PHP Expression for the last modification date.
-	 * If set, this takes precedence over {@link lastModified}.
-	 *
-	 * The PHP expression will be evaluated using {@link evaluateExpression}.
-	 *
-	 * A PHP expression can be any PHP code that has a value. To learn more about what an expression is,
-	 * please refer to the {@link http://www.php.net/manual/en/language.expressions.php php manual}.
+	 * Expression for the last modification date. If set, this takes precedence over {@link lastModified}.
+	 * @var string|callback
 	 */
 	public $lastModifiedExpression;
 	/**
-	 * @var mixed Seed for the ETag.
-	 * Can be anything that passes through {@link http://php.net/serialize serialize()}.
+	 * Seed for the ETag. Can be anything that passes through {@link http://php.net/serialize serialize()}.
+	 * @var mixed
 	 */
 	public $etagSeed;
 	/**
-	 * @var string|callback Expression for the ETag seed.
-	 * If set, this takes precedence over {@link etagSeed}.
-	 *
-	 * The PHP expression will be evaluated using {@link evaluateExpression}.
-	 *
-	 * A PHP expression can be any PHP code that has a value. To learn more about what an expression is,
-	 * please refer to the {@link http://www.php.net/manual/en/language.expressions.php php manual}.
+	 * Expression for the ETag seed. If set, this takes precedence over {@link etagSeed}.
+	 * @var string|callback
 	 */
 	public $etagSeedExpression;
 	/**
-	 * @var string Http cache control headers. Set this to an empty string in order to keep this
+	 * Http cache control headers. Set this to an empty string in order to keep this
 	 * header from being sent entirely.
+	 * @var string
 	 */
-	public $cacheControl='max-age=3600, public';
+	public $cacheControl = 'max-age=3600, public';
 
 	/**
 	 * Performs the pre-action filtering.
@@ -180,8 +171,7 @@ class CHttpCacheFilter extends CFilter
 	 */
 	protected function send304Header()
 	{
-		$httpVersion=Yii::app()->request->getHttpVersion();
-		header("HTTP/$httpVersion 304 Not Modified");
+		header('HTTP/1.1 304 Not Modified');
 	}
 
 	/**
@@ -205,6 +195,6 @@ class CHttpCacheFilter extends CFilter
 	 */
 	protected function generateEtag($seed)
 	{
-		return '"'.base64_encode(sha1(serialize($seed),true)).'"';
+		return '"'.base64_encode(sha1(serialize($seed), true)).'"';
 	}
 }

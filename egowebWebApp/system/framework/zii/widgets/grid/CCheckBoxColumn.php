@@ -4,7 +4,7 @@
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @link http://www.yiiframework.com/
- * @copyright 2008-2013 Yii Software LLC
+ * @copyright Copyright &copy; 2008-2011 Yii Software LLC
  * @license http://www.yiiframework.com/license/
  */
 
@@ -39,47 +39,25 @@ class CCheckBoxColumn extends CGridColumn
 	public $name;
 	/**
 	 * @var string a PHP expression that will be evaluated for every data cell and whose result will be rendered
-	 * in each data cell as the checkbox value. In this expression, you can use the following variables:
-	 * <ul>
-	 *   <li><code>$row</code> the row number (zero-based)</li>
-	 *   <li><code>$data</code> the data model for the row</li>
-	 *   <li><code>$this</code> the column object</li>
-	 * </ul>
-	 * The PHP expression will be evaluated using {@link evaluateExpression}.
-	 *
-	 * A PHP expression can be any PHP code that has a value. To learn more about what an expression is,
-	 * please refer to the {@link http://www.php.net/manual/en/language.expressions.php php manual}.
+	 * in each data cell as the checkbox value. In this expression, the variable
+	 * <code>$row</code> the row number (zero-based); <code>$data</code> the data model for the row;
+	 * and <code>$this</code> the column object.
 	 */
 	public $value;
 	/**
 	 * @var string a PHP expression that will be evaluated for every data cell and whose result will
-	 * determine if checkbox for each data cell is checked. In this expression, you can use the following variables:
-	 * <ul>
-	 *   <li><code>$row</code> the row number (zero-based)</li>
-	 *   <li><code>$data</code> the data model for the row</li>
-	 *   <li><code>$this</code> the column object</li>
-	 * </ul>
-	 * The PHP expression will be evaluated using {@link evaluateExpression}.
-	 *
-	 * A PHP expression can be any PHP code that has a value. To learn more about what an expression is,
-	 * please refer to the {@link http://www.php.net/manual/en/language.expressions.php php manual}.
+	 * determine if checkbox for each data cell is checked. In this expression, the variable
+	 * <code>$row</code> the row number (zero-based); <code>$data</code> the data model for the row;
+	 * and <code>$this</code> the column object.
 	 * @since 1.1.4
 	 */
 	public $checked;
 	/**
 	 * @var string a PHP expression that will be evaluated for every data cell and whose result will
-	 * determine if checkbox for each data cell is disabled. In this expression, you can use the following variables:
-	 * <ul>
-	 *   <li><code>$row</code> the row number (zero-based)</li>
-	 *   <li><code>$data</code> the data model for the row</li>
-	 *   <li><code>$this</code> the column object</li>
-	 * </ul>
-	 * The PHP expression will be evaluated using {@link evaluateExpression}.
-	 *
-	 * A PHP expression can be any PHP code that has a value. To learn more about what an expression is,
-	 * please refer to the {@link http://www.php.net/manual/en/language.expressions.php php manual}.
-	 *
-	 * Note that expression result will overwrite value set with <code>checkBoxHtmlOptions['disabled']</code>.
+	 * determine if checkbox for each data cell is disabled. In this expression, the variable
+	 * <code>$row</code> the row number (zero-based); <code>$data</code> the data model for the row;
+	 * and <code>$this</code> the column object. Note that expression result will
+	 * overwrite value set with <code>checkBoxHtmlOptions['disabled']</code>.
 	 * @since 1.1.13
 	 */
 	public $disabled;
@@ -109,7 +87,7 @@ class CCheckBoxColumn extends CGridColumn
 	 * <li>null - {@link CGridView::selectableRows} is used to control how many checkboxes can be checked.
 	 * Checking a checkbox will also select the row.</li>
 	 * </ul>
-	 * You may also call the JavaScript function <code>$(gridID).yiiGridView('getChecked', columnID)</code>
+	 * You may also call the JavaScript function <code>$(gridID).yiiGridView.('getChecked', columnID)</code>
 	 * to retrieve the key values of the checked rows.
 	 * @since 1.1.6
 	 */
@@ -187,39 +165,43 @@ EOD;
 	}
 
 	/**
-	 * Returns the header cell content.
+	 * Renders the header cell content.
 	 * This method will render a checkbox in the header when {@link selectableRows} is greater than 1
 	 * or in case {@link selectableRows} is null when {@link CGridView::selectableRows} is greater than 1.
-	 * @return string the header cell content.
-	 * @since 1.1.16
 	 */
-	public function getHeaderCellContent()
+	protected function renderHeaderCellContent()
 	{
 		if(trim($this->headerTemplate)==='')
-			return $this->grid->blankDisplay;
+		{
+			echo $this->grid->blankDisplay;
+			return;
+		}
 
+		$item = '';
 		if($this->selectableRows===null && $this->grid->selectableRows>1)
-			$item=CHtml::checkBox($this->id.'_all',false,array('class'=>'select-on-check-all'));
+			$item = CHtml::checkBox($this->id.'_all',false,array('class'=>'select-on-check-all'));
 		elseif($this->selectableRows>1)
-			$item=CHtml::checkBox($this->id.'_all',false);
+			$item = CHtml::checkBox($this->id.'_all',false);
 		else
-			$item=parent::getHeaderCellContent();
+		{
+			ob_start();
+			parent::renderHeaderCellContent();
+			$item = ob_get_clean();
+		}
 
-		return strtr($this->headerTemplate,array(
+		echo strtr($this->headerTemplate,array(
 			'{item}'=>$item,
 		));
 	}
 
 	/**
-	 * Returns the data cell content.
+	 * Renders the data cell content.
 	 * This method renders a checkbox in the data cell.
 	 * @param integer $row the row number (zero-based)
-	 * @return string the data cell content.
-	 * @since 1.1.16
+	 * @param mixed $data the data associated with the row
 	 */
-	public function getDataCellContent($row)
+	protected function renderDataCellContent($row,$data)
 	{
-		$data=$this->grid->dataProvider->data[$row];
 		if($this->value!==null)
 			$value=$this->evaluateExpression($this->value,array('data'=>$data,'row'=>$row));
 		elseif($this->name!==null)
@@ -239,6 +221,6 @@ EOD;
 		unset($options['name']);
 		$options['value']=$value;
 		$options['id']=$this->id.'_'.$row;
-		return CHtml::checkBox($name,$checked,$options);
+		echo CHtml::checkBox($name,$checked,$options);
 	}
 }

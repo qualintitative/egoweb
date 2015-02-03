@@ -4,7 +4,7 @@
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @link http://www.yiiframework.com/
- * @copyright 2008-2013 Yii Software LLC
+ * @copyright Copyright &copy; 2008-2011 Yii Software LLC
  * @license http://www.yiiframework.com/license/
  */
 
@@ -54,8 +54,6 @@
  *   should be varied with the user session.</li>
  * <li>{@link varyByExpression}: this specifies whether the cached content
  *   should be varied with the result of the specified PHP expression.</li>
- * <li>{@link varyByLanguage}: this specifies whether the cached content
- *   should by varied with the user's language. Available since 1.1.14.</li>
  * </ul>
  * For more advanced variation, override {@link getBaseCacheKey()} method.
  *
@@ -109,20 +107,8 @@ class COutputCache extends CFilterWidget
 	 * function foo($cache) { ... }
 	 * </pre>
 	 * where $cache refers to the output cache component.
-	 *
-	 * The PHP expression will be evaluated using {@link evaluateExpression}.
-	 *
-	 * A PHP expression can be any PHP code that has a value. To learn more about what an expression is,
-	 * please refer to the {@link http://www.php.net/manual/en/language.expressions.php php manual}.
 	 */
 	public $varyByExpression;
-	/**
-	 * @var boolean whether the content being cached should be differentiated according to user's language.
-	 * A language is retrieved via Yii::app()->language.
-	 * Defaults to false.
-	 * @since 1.1.14
-	 */
-	public $varyByLanguage=false;
 	/**
 	 * @var array list of request types (e.g. GET, POST) for which the cache should be enabled only.
 	 * Defaults to null, meaning all request types.
@@ -271,7 +257,7 @@ class COutputCache extends CFilterWidget
 	/**
 	 * Calculates the cache key.
 	 * The key is calculated based on {@link getBaseCacheKey} and other factors, including
-	 * {@link varyByRoute}, {@link varyByParam}, {@link varyBySession} and {@link varyByLanguage}.
+	 * {@link varyByRoute}, {@link varyByParam} and {@link varyBySession}.
 	 * @return string cache key
 	 */
 	protected function getCacheKey()
@@ -310,10 +296,6 @@ class COutputCache extends CFilterWidget
 
 			if($this->varyByExpression!==null)
 				$key.=$this->evaluateExpression($this->varyByExpression);
-			$key.='.';
-
-			if($this->varyByLanguage)
-				$key.=Yii::app()->language;
 			$key.='.';
 
 			return $this->_key=$key;

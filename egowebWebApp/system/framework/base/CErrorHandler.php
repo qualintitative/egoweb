@@ -4,7 +4,7 @@
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @link http://www.yiiframework.com/
- * @copyright 2008-2013 Yii Software LLC
+ * @copyright Copyright &copy; 2008-2011 Yii Software LLC
  * @license http://www.yiiframework.com/license/
  */
 
@@ -48,7 +48,6 @@ Yii::import('CHtml',true);
  * {@link CApplication::getErrorHandler()}.
  *
  * @property array $error The error details. Null if there is no error.
- * @property Exception|null $exception exception instance. Null if there is no exception.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @package system.base
@@ -83,7 +82,6 @@ class CErrorHandler extends CApplicationComponent
 	public $errorAction;
 
 	private $_error;
-	private $_exception;
 
 	/**
 	 * Handles the exception/error event.
@@ -153,15 +151,6 @@ class CErrorHandler extends CApplicationComponent
 	}
 
 	/**
-	 * Returns the instance of the exception that is currently being handled.
-	 * @return Exception|null exception instance. Null if there is no exception.
-	 */
-	public function getException()
-	{
-		return $this->_exception;
-	}
-
-	/**
 	 * Handles the exception.
 	 * @param Exception $exception the exception captured
 	 */
@@ -197,7 +186,6 @@ class CErrorHandler extends CApplicationComponent
 				unset($trace[$i]['object']);
 			}
 
-			$this->_exception=$exception;
 			$this->_error=$data=array(
 				'code'=>($exception instanceof CHttpException)?$exception->statusCode:500,
 				'type'=>get_class($exception),
@@ -210,12 +198,17 @@ class CErrorHandler extends CApplicationComponent
 			);
 
 			if(!headers_sent())
-			{
-				$httpVersion=Yii::app()->request->getHttpVersion();
-				header("HTTP/$httpVersion {$data['code']} ".$this->getHttpHeader($data['code'], get_class($exception)));
-			}
+				header("HTTP/1.0 {$data['code']} ".$this->getHttpHeader($data['code'], get_class($exception)));
 
-			$this->renderException();
+			if($exception instanceof CHttpException || !YII_DEBUG)
+				$this->render('error',$data);
+			else
+			{
+				if($this->isAjaxRequest())
+					$app->displayException($exception);
+				else
+					$this->render('exception',$data);
+			}
 		}
 		else
 			$app->displayException($exception);
@@ -277,8 +270,7 @@ class CErrorHandler extends CApplicationComponent
 				default:
 					$type = 'PHP error';
 			}
-			$this->_exception=null;
-			$this->_error=array(
+			$this->_error=$data=array(
 				'code'=>500,
 				'type'=>$type,
 				'message'=>$event->message,
@@ -288,12 +280,13 @@ class CErrorHandler extends CApplicationComponent
 				'traces'=>$trace,
 			);
 			if(!headers_sent())
-			{
-				$httpVersion=Yii::app()->request->getHttpVersion();
-				header("HTTP/$httpVersion 500 Internal Server Error");
-			}
-
-			$this->renderError();
+				header("HTTP/1.0 500 Internal Server Error");
+			if($this->isAjaxRequest())
+				$app->displayError($event->code,$event->message,$event->file,$event->line);
+			elseif(YII_DEBUG)
+				$this->render('exception',$data);
+			else
+				$this->render('error',$data);
 		}
 		else
 			$app->displayError($event->code,$event->message,$event->file,$event->line);
@@ -334,47 +327,15 @@ class CErrorHandler extends CApplicationComponent
 	 */
 	protected function render($view,$data)
 	{
-		$data['version']=$this->getVersionInfo();
-		$data['time']=time();
-		$data['admin']=$this->adminInfo;
-		include($this->getViewFile($view,$data['code']));
-	}
-
-	/**
-	 * Renders the exception information.
-	 * This method will display information from current {@link error} value.
-	 */
-	protected function renderException()
-	{
-		$exception=$this->getException();
-		if($exception instanceof CHttpException || !YII_DEBUG)
-			$this->renderError();
-		else
-		{
-			if($this->isAjaxRequest())
-				Yii::app()->displayException($exception);
-			else
-				$this->render('exception',$this->getError());
-		}
-	}
-
-	/**
-	 * Renders the current error information.
-	 * This method will display information from current {@link error} value.
-	 */
-	protected function renderError()
-	{
-		if($this->errorAction!==null)
+		if($view==='error' && $this->errorAction!==null)
 			Yii::app()->runController($this->errorAction);
 		else
 		{
-			$data=$this->getError();
-			if($this->isAjaxRequest())
-				Yii::app()->displayError($data['code'],$data['message'],$data['file'],$data['line']);
-			elseif(YII_DEBUG)
-				$this->render('exception',$data);
-			else
-				$this->render('error',$data);
+			// additional information to be passed to view
+			$data['version']=$this->getVersionInfo();
+			$data['time']=time();
+			$data['admin']=$this->adminInfo;
+			include($this->getViewFile($view,$data['code']));
 		}
 	}
 
