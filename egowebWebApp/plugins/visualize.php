@@ -287,7 +287,7 @@ class visualize extends Plugin
 			#OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
-				echo "<label style='width:200px;float:left'>". decrypt($option['name']) . "</label>";
+				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
 				echo CHtml::dropDownList(
 						$option['id'],
 						(isset($nodeColors[$option['id']]) ? $nodeColors[$option['id']] : ''),
@@ -351,7 +351,7 @@ class visualize extends Plugin
 			#OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
-				echo "<label style='width:200px;float:left'>". decrypt($option['name']) . "</label>";
+				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
 				echo CHtml::dropDownList(
 						$option['id'],
 						(isset($nodeShapes[$option['id']]) ? $nodeShapes[$option['id']] : ''),
@@ -401,7 +401,7 @@ class visualize extends Plugin
 			#OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
-				echo "<label style='width:200px;float:left'>". decrypt($option['name']) . "</label>";
+				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
 				echo CHtml::dropDownList(
 						$option['id'],
 						(isset($nodeSizes[$option['id']]) ? $nodeSizes[$option['id']] : ''),
@@ -448,7 +448,7 @@ class visualize extends Plugin
 			#OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
-				echo "<label style='width:200px;float:left'>". decrypt($option['name']) . "</label>";
+				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
 				echo CHtml::dropDownList(
 						$option['id'],
 						(isset($edgeColors[$option['id']]) ? $edgeColors[$option['id']] : ''),
@@ -490,7 +490,7 @@ class visualize extends Plugin
 			#OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
-				echo "<label style='width:200px;float:left'>". decrypt($option['name']) . "</label>";
+				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
 				echo CHtml::dropDownList(
 						$option['id'],
 						(isset($edgeSizes[$option['id']]) ? $edgeSizes[$option['id']] : ''),
