@@ -180,11 +180,11 @@ class AuthoringController extends Controller
 			$studies = array();
 			if(Yii::app()->user->isAdmin){
 				$studies = q("SELECT id FROM study WHERE userId = " . Yii::app()->user->id)->queryColumn();
-				$addedStudies = q("SELECT studyId FROM interviewers WHERE AND interviewerId = " . Yii::app()->user->id)->queryColumn();
+				$addedStudies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
 				if(count($addedStudies) > 0)
 					$studies = array_merge($studies, $addedStudies);
 			}else{
-				$studies = q("SELECT studyId FROM interviewers WHERE AND interviewerId = " . Yii::app()->user->id)->queryColumn();
+				$studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
 			}
 			if($studies)
 				$condition = "id IN (" . implode(",", $studies) . ")";
