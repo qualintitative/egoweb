@@ -16,3 +16,17 @@ Latest Build: <b><?= $date ?></b>
 <li>Click on "Install" to the right of EgoWeb Mobile, then click on "Done" on top of the page to download and install the App on your device.</li>
 
 </ul>
+
+
+<h1>Installing the Android App</h1>
+Latest Build: <b><?= $android_date ?></b>
+<br>
+<ul>
+
+<li>Download the <a href="/egowebmobile.apk">apk file</a></li>
+
+<li>Enabled Installation from unknown sources in Settings -> Security –> Unknown Sources</li>
+
+<li>In your downloads folder, select the apk file.  You will be given an option to install.</li>
+
+</ul>

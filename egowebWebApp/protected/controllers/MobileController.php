@@ -10,8 +10,12 @@ class MobileController extends Controller
 	{
 		$filename = "EgoWebMobile.ipa";
 		$date = date ("F d Y", filemtime($filename));
+		$filename = "EgoWebMobile.apk";
+		$android_date = date ("F d Y", filemtime($filename));
+
 		$this->render('index', array(
-			'date'=>$date
+			'date'=>$date,
+			'android_date'=>$android_date
 		));
 	}
 
