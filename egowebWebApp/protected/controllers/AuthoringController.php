@@ -177,10 +177,15 @@ class AuthoringController extends Controller
 		$condition = "id != 0";
 		if(!Yii::app()->user->isSuperAdmin){
 			#OK FOR SQL INJECTION
-			if(Yii::app()->user->isAdmin)
+			$studies = array();
+			if(Yii::app()->user->isAdmin){
 				$studies = q("SELECT id FROM study WHERE userId = " . Yii::app()->user->id)->queryColumn();
-			else
+				$addedStudies = q("SELECT studyId FROM interviewers WHERE active = 1 AND interviewerId = " . Yii::app()->user->id)->queryColumn();
+				if(count($addedStudies) > 0)
+					$studies = array_merge($studies, $addedStudies);
+			}else{
 				$studies = q("SELECT studyId FROM interviewers WHERE active = 1 AND interviewerId = " . Yii::app()->user->id)->queryColumn();
+			}
 			if($studies)
 				$condition = "id IN (" . implode(",", $studies) . ")";
 			else
@@ -485,7 +490,7 @@ class AuthoringController extends Controller
 		));
 	}
 
-	public function actionAddInterviewer()
+	public function actionAddUser()
 	{
 		if(isset($_POST['Interviewer'])){
 			$model = new Interviewer;
