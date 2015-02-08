@@ -345,15 +345,16 @@ class InterviewingController extends Controller
 							$model[$array_id]->addError('value', 'Please enter 0 to 59 for the MM');
 							$errors++;
 						}
-					}else{
-						$model[$array_id]->addError('value', 'Please enter the time of day');
-						$errors++;
 					}
 					if(count($date) > 0){
 						if(intval($date[2]) < 1 || intval($date[2]) > 31){
 							$model[$array_id]->addError('value', 'Please enter a different number for the day of month');
 							$errors++;
 						}
+					}
+					if(count($date) == 0 && count($time) == 0){
+							$model[$array_id]->addError('value', 'Please fill in values for time');
+							$errors++;
 					}
 				}
 				// Custom validators
