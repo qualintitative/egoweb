@@ -6,7 +6,7 @@ body
 	margin: 0;
 	padding: 0;
 	color: #555;
-	font: normal 10pt Arial,Helvetica,sans-serif;
+	font: 15px Arial,Helvetica,sans-serif;
 	background: #fff;
 	overflow-y: scroll;
 }
@@ -480,6 +480,7 @@ td{
 }
 
 #menubar{
+	font-size: 12px;
 	background:url('/images/menubar.png');
 	height:40px;
 }
@@ -568,8 +569,6 @@ td{
 .questionText{
 	background:url("/images/arrow.png") no-repeat;
 	float:left;
- 	font-family:Arial;
-	font-size:18px;
 	padding:0 20px 20px 20px;
 }
 

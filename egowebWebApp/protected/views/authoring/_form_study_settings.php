@@ -4,7 +4,6 @@
 /* @var $form CActiveForm */
 ?>
 
-<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/modal.js'); ?>
 <script>
 $(function(){
 	$('#Study_introduction').summernote({
