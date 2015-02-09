@@ -124,6 +124,8 @@ class ImportExportController extends Controller
 					$newQuestion->networkEColorQId = $newQuestionIds[$newQuestion->networkEColorQId];
 				if($newQuestion->networkESizeQId != 0)
 					$newQuestion->networkESizeQId = $newQuestionIds[$newQuestion->networkESizeQId];
+				if(is_numeric($newQuestion->listRangeString) && isset($newOptionIds[intval($newQuestion->listRangeString)]))
+					$newQuestion->listRangeString = $newOptionIds[intval($newQuestion->listRangeString)];
 				$newQuestion->save();
 			}
 

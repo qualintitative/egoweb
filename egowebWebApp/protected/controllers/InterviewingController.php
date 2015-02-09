@@ -290,13 +290,13 @@ class InterviewingController extends Controller
 						$errorMsg = "";
 						if($questions[$array_id]->minListRange && $questions[$array_id]->maxListRange){
 							if($questions[$array_id]->minListRange != $questions[$array_id]->maxListRange)
-								$errorMsg = $questions[$array_id]->minListRange . " - " . $questions[$array_id]->maxListRange;
+								$errorMsg .= $questions[$array_id]->minListRange . " - " . $questions[$array_id]->maxListRange;
 							else
-								$errorMsg = "just ". $questions[$array_id]->minListRange;
+								$errorMsg .= "just ". $questions[$array_id]->minListRange;
 						}else if(!$questions[$array_id]->minListRange && !$questions[$array_id]->maxListRange){
-								$errorMsg = "up to ".$questions[$array_id]->maxListRange;
+								$errorMsg .= "up to ".$questions[$array_id]->maxListRange;
 						}else{
-								$errorMsg = "at least ".$questions[$array_id]->minListRange;
+								$errorMsg .= "at least ".$questions[$array_id]->minListRange;
 						}
 						$model[$array_id]->addError('value', "Please select " . $errorMsg . " response(s).");
 					}
