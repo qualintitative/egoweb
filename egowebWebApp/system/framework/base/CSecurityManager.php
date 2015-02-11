@@ -516,7 +516,7 @@ class CSecurityManager extends CApplicationComponent
 	{
 		return $this->_mbstring ? mb_substr($string,$start,$length,'8bit') : substr($string,$start,$length);
 	}
-    
+
 	/**
 	 * Checks if a key is valid for {@link cryptAlgorithm}.
 	 * @param string $key the key to check
@@ -548,7 +548,7 @@ class CSecurityManager extends CApplicationComponent
 		else
 			throw new CException(Yii::t('yii','Encryption key should be a string.'));
 	}
-    
+
 	/**
 	 * Decrypts legacy ciphertext which was produced by the old, broken implementation of encrypt().
 	 * @deprecated use only to convert data encrypted prior to 1.1.16

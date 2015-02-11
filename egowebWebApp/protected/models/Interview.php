@@ -179,15 +179,14 @@ class Interview extends CActiveRecord
                 }
             }else{
                 #OK FOR SQL INJECTION
-                $ego_ids[] = q("SELECT value FROM answer WHERE interviewId = " . $interview['id']  . " AND questionId = " . $question['id'])->queryScalar();
+
+                $ego_ids[] = decrypt(q("SELECT value FROM answer WHERE interviewId = " . $interview['id']  . " AND questionId = " . $question['id'])->queryScalar());
             }
         }
 
-		foreach ($ego_ids as &$eid){
-            $eid=decrypt($eid);
-        }
         if(isset($ego_ids))
             $egoId = implode("_", $ego_ids);
+
         return $egoId;
     }
 

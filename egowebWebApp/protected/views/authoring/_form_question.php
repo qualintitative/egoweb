@@ -38,7 +38,8 @@ jQuery(document).ready(function(){
 		jQuery('.panel-<?php echo $model->id; ?>#NETWORK').show();
 	if('<?php echo $model->askingStyleList; ?>' == true)
 		jQuery('.panel-<?php echo $model->id; ?>#ALTER_STYLE').show();
-
+	if('<?php echo $model->answerType; ?>' == 'TIME_SPAN' || '<?php echo $model->answerType; ?>' == 'DATE')
+		jQuery('.panel-<?php echo $model->id; ?>#TIME_SPAN').show();
 });
 </script>
 <?php

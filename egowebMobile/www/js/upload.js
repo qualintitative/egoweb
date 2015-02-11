@@ -62,11 +62,13 @@ function upload(studyId){
         crossDomain: true,
 		data:$('#hiddenForm').serialize(),
 		success:function(data){
+			if(data == "Upload completed.  No Errors Found"){
+				justUploaded.push(studyId);
+				$('#uploader-' + studyId).hide();
+				deleteInterviews(studyId);
+				$("#uploader-" + studyId).prop('disabled', false);
+			}
 			$('#status').html(data);
-			justUploaded.push(studyId);
-			$('#uploader-' + studyId).hide();
-			deleteInterviews(studyId);
-			$("#uploader-" + studyId).prop('disabled', false);
 		},
 		error:function(xhr, ajaxOptions, thrownError){
 			$('#status').html('Error: ' + xhr.status);
