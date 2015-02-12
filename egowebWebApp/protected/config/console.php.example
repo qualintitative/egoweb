@@ -19,16 +19,7 @@ return array(
 			'emulatePrepare' => true,
 			'charset' => 'utf8',
 		),
-		// uncomment the following to use a MySQL database
-		/*
-		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=testdrive',
-			'emulatePrepare' => true,
-			'username' => 'root',
-			'password' => '',
-			'charset' => 'utf8',
-		),
-		*/
+
 		'log'=>array(
 			'class'=>'CLogRouter',
 			'routes'=>array(
@@ -38,9 +29,10 @@ return array(
 				),
 			),
 		),
-        'securityManager'=>array(
-            'cryptAlgorithm' => 'blowfish',
-            'encryptionKey' => 'One morning I shot an elephant in my pajamas. How he got in my pajamas I dunno.',
-        )
+
+		'securityManager'=>array(
+			'cryptAlgorithm' => 'blowfish',
+			'encryptionKey' => 'One morning I shot an elephant in my pajamas.',
+		)
 	),
 );
