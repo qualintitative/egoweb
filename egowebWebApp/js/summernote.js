@@ -8,6 +8,100 @@
  *
  * Date: 2014-11-29T05:20Z
  */
+
+function parseEgowebTags(e){
+	var varMatch = e.match(/<VAR[^\/]+[^>]+\/>/gm);
+	if(varMatch){
+		varSnips = [];
+		for(k in varMatch)
+			varSnips.push(varMatch[k]);
+		for(i = 0; i < varSnips.length;i++){
+			e = e.replace(varSnips[i],"<img id='var_" +i+"' src='/images/var.png'>");
+		}
+	}
+	var calcMatch = e.match(/<CALC[^\/]+[^>]+\/>/gm);
+	if(calcMatch){
+		calcSnips = [];
+		for(k in calcMatch)
+			calcSnips.push(calcMatch[k]);
+		for(i = 0; i < calcSnips.length;i++){
+			e = e.replace(calcSnips[i],"<img id='calc_" +i+"' src='/images/calc.png'>");
+		}
+	}
+	var countMatch = e.match(/<COUNT[^\/]+[^>]+\/>/gm);
+	if(countMatch){
+		countSnips = [];
+		for(k in countMatch)
+			countSnips.push(countMatch[k]);
+		for(i = 0; i < countSnips.length;i++){
+			e = e.replace(countSnips[i],"<img id='count_" +i+"' src='/images/count.png'>");
+		}
+	}
+	var containsMatch = e.match(/<CONTAINS[^\/]+[^>]+\/>/gm);
+	if(containsMatch){
+		containsSnips = [];
+		for(k in containsMatch)
+			containsSnips.push(containsMatch[k]);
+		for(i = 0; i < containsSnips.length;i++){
+			e = e.replace(containsSnips[i],"<img id='contains_" +i+"' src='/images/contains.png'>");
+		}
+	}
+	var ifMatch = e.match(/<IF((.|\n)*)\/>/gm);
+	if(ifMatch){
+		ifSnips = [];
+		for(k in ifMatch)
+			ifSnips.push(ifMatch[k]);
+		for(i = 0; i < ifSnips.length;i++){
+			e = e.replace(ifSnips[i],"<img id='if_" +i+"' src='/images/if.png'>");
+		}
+	}
+	return e;
+}
+
+function rebuildEgowebTags(withCode){
+			if(typeof ifSnips != "undefined"){
+				for(i = 0; i < ifSnips.length;i++){
+					withCode = withCode.replace("<img id=\"if_" +i+"\" src=\"/images/if.png\">", ifSnips[i]);
+				}
+			}
+			if(typeof calcSnips != "undefined"){
+				for(i = 0; i < calcSnips.length;i++){
+					if(withCode.match("<img id=\"calc_" +i+"\" src=\"/images/calc.png\">"))
+						withCode = withCode.replace("<img id=\"calc_" +i+"\" src=\"/images/calc.png\">", calcSnips[i]);
+					if(withCode.match("<img id='calc_" +i+"' src='/images/calc.png'>"))
+						withCode = withCode.replace("<img id='calc_" +i+"' src='/images/calc.png'>", calcSnips[i]);
+				}
+			}
+
+			if(typeof varSnips != "undefined"){
+				for(i = 0; i < varSnips.length;i++){
+					if(withCode.match("<img id=\"var_" +i+"\" src=\"/images/var.png\">"))
+						withCode = withCode.replace("<img id=\"var_" +i+"\" src=\"/images/var.png\">", varSnips[i]);
+					if(withCode.match("<img id='var_" +i+"' src='/images/var.png'>"))
+						withCode = withCode.replace("<img id='var_" +i+"' src='/images/var.png'>", varSnips[i]);
+				}
+			}
+
+			if(typeof countSnips != "undefined"){
+				for(i = 0; i < countSnips.length;i++){
+					if(withCode.match("<img id=\"count_" +i+"\" src=\"/images/count.png\">"))
+						withCode = withCode.replace("<img id=\"count_" +i+"\" src=\"/images/count.png\">", countSnips[i]);
+					if(withCode.match("<img id='count_" +i+"' src='/images/count.png'>"))
+						withCode = withCode.replace("<img id='count_" +i+"' src='/images/count.png'>", countSnips[i]);
+				}
+			}
+
+			if(typeof containsSnips != "undefined"){
+				for(i = 0; i < containsSnips.length;i++){
+					if(withCode.match("<img id=\"contains_" +i+"\" src=\"/images/contains.png\">"))
+						withCode = withCode.replace("<img id=\"contains_" +i+"\" src=\"/images/contains.png\">", containsSnips[i]);
+					if(withCode.match("<img id='contains_" +i+"' src='/images/contains.png'>"))
+						withCode = withCode.replace("<img id='contains_" +i+"' src='/images/contains.png'>", containsSnips[i]);
+				}
+			}
+			return withCode;
+}
+
 (function (factory) {
   /* global define */
   if (typeof define === 'function' && define.amd) {
@@ -1192,7 +1286,7 @@
       NBSP_CHAR: NBSP_CHAR,
       ZERO_WIDTH_NBSP_CHAR: ZERO_WIDTH_NBSP_CHAR,
       blank: blankHTML,
-      emptyPara: '<p>' + blankHTML + '</p>',
+      emptyPara: '',
       isEditable: isEditable,
       isControlSizing: isControlSizing,
       buildLayoutInfo: buildLayoutInfo,
@@ -3800,7 +3894,6 @@
         $codable = layoutInfo.codable(),
         $popover = layoutInfo.popover(),
         $handle = layoutInfo.handle();
-
         var options = $editor.data('options');
 
         var cmEditor, server;
@@ -3809,7 +3902,7 @@
 
         var isCodeview = $editor.hasClass('codeview');
         if (isCodeview) {
-          $codable.val(dom.html($editable, true));
+          $codable.val(rebuildEgowebTags(dom.html($editable, true)));
           $codable.height($editable.height());
           toolbar.deactivate($toolbar);
           popover.hide($popover);
@@ -3841,7 +3934,9 @@
             cmEditor.toTextArea();
           }
 
-          $editable.html(dom.value($codable) || dom.emptyPara);
+          $editable.html(parseEgowebTags(dom.value($codable)) || dom.emptyPara);
+		$("textarea", $editor.parent()).val(rebuildEgowebTags($("textarea", $editor.parent()).code()));
+
           $editable.height(options.height ? $codable.height() : 'auto');
 
           toolbar.activate($toolbar);
@@ -5073,7 +5168,8 @@
         $editable.attr('data-placeholder', options.placeholder);
       }
 
-      $editable.html(dom.html($holder));
+	// david's egoweb tag hack
+	$editable.html(parseEgowebTags(dom.html($holder)));
 
       //031. create codable
       $('<textarea class="note-codable"></textarea>').prependTo($editor);
@@ -5300,9 +5396,8 @@
         // Textarea: auto filling the code before form submit.
         if (dom.isTextarea($holder[0])) {
           $holder.closest('form').submit(function () {
-            var contents = $holder.code();
+            var contents = rebuildEgowebTags($holder.code());
             $holder.val(contents);
-
             // callback on submit
             if (options.onsubmit) {
               options.onsubmit(contents);

@@ -466,6 +466,9 @@ function refresh(container){
 		$model->isNewRecord ? 'Create' : 'Save',
 		CController::createUrl('ajaxupdate?_'.uniqid()),
 		array(
+			'beforeSend'=>'js:function(){
+				$("#prompt' .$model->id . '").val(rebuildEgowebTags($("#prompt' .$model->id . '").code()));
+			}',
 			'success' => 'js:function(data){data=data.split(";;;");console.log(data);$("#' . $model->id .' > h3").html($("#' . $model->id .' > h3").html().replace(data[0], data[1]));$(".optionLink").click(function(e){clickOption[$(this).parent().parent().attr("id")] = true;});$("#' . $model->id .' > h3").click();}',
 ),
 		array('id'=>uniqid(), 'live'=>false));
@@ -513,7 +516,7 @@ $(function(){
 			uploadImage(files[0], editor, welEditable);
 		},
 		onChange: function(contents, $editable) {
-			$('#prompt<?php echo $model->id;?>').val(contents);
+			$('#prompt<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
 		}
 	});
 	$('#preface<?php echo $model->id;?>').summernote({
@@ -522,7 +525,7 @@ $(function(){
 			uploadImage(files[0], editor, welEditable);
 		},
 		onChange: function(contents, $editable) {
-			$('#preface<?php echo $model->id;?>').val(contents);
+			$('#preface<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
 		}
 	});
 	$('#citation<?php echo $model->id;?>').summernote({
@@ -531,7 +534,7 @@ $(function(){
 			uploadImage(files[0], editor, welEditable);
 		},
 		onChange: function(contents, $editable) {
-			$('#citation<?php echo $model->id;?>').val(contents);
+			$('#citation<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
 		}
 	});
 });

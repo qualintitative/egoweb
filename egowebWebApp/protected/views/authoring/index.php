@@ -38,3 +38,9 @@
 	<?php echo CHtml::link(CHtml::encode($data->name), array('edit', 'id'=>$data->id))."<br>"; ?>
 	<?php endforeach; ?>
 </div>
+
+<?php
+	$vars = array();
+ preg_match_all('#<VAR (.+?)\s*>*<*/V*A*R*>#ims', "<VAR aaa='vvv'></var>", $vars);
+ print_r($vars);
+	?>
