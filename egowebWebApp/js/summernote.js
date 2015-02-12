@@ -3935,12 +3935,13 @@ function rebuildEgowebTags(withCode){
           }
 
           $editable.html(parseEgowebTags(dom.value($codable)) || dom.emptyPara);
-		$("textarea", $editor.parent()).val(rebuildEgowebTags($("textarea", $editor.parent()).code()));
+		  $(this).parent().prev().val(rebuildEgowebTags($(this).parent().prev().code()));
 
           $editable.height(options.height ? $codable.height() : 'auto');
 
           toolbar.activate($toolbar);
           $editable.focus();
+
         }
 
         toolbar.updateCodeview(layoutInfo.toolbar(), isCodeview);

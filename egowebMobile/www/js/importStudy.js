@@ -50,7 +50,7 @@ $.ajax({
     url: url,
     type: "GET",
     timeout: 30000,
-    dataType: 'jsonp',
+	crossDomain: true,
     success: function(data) {
         // show text reply as-is (debug)
 
