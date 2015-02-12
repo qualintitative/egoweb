@@ -23,7 +23,7 @@ Latest Build: <b><?= $android_date ?></b>
 <br>
 <ul>
 
-<li>Download the <a href="/egowebmobile.apk">apk file</a></li>
+<li>Download the <a href="/EgoWebMobile.apk">apk file</a></li>
 
 <li>Enabled Installation from unknown sources in Settings -> Security –> Unknown Sources</li>
 
