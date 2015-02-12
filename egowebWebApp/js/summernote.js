@@ -1286,7 +1286,7 @@ function rebuildEgowebTags(withCode){
       NBSP_CHAR: NBSP_CHAR,
       ZERO_WIDTH_NBSP_CHAR: ZERO_WIDTH_NBSP_CHAR,
       blank: blankHTML,
-      emptyPara: '',
+      emptyPara: ' ',
       isEditable: isEditable,
       isControlSizing: isControlSizing,
       buildLayoutInfo: buildLayoutInfo,
