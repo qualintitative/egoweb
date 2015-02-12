@@ -466,10 +466,8 @@ function refresh(container){
 		$model->isNewRecord ? 'Create' : 'Save',
 		CController::createUrl('ajaxupdate?_'.uniqid()),
 		array(
-			'beforeSend'=>'js:function(){
-			}',
 			'success' => 'js:function(data){data=data.split(";;;");console.log(data);$("#' . $model->id .' > h3").html($("#' . $model->id .' > h3").html().replace(data[0], data[1]));$(".optionLink").click(function(e){clickOption[$(this).parent().parent().attr("id")] = true;});$("#' . $model->id .' > h3").click();}',
-),
+		),
 		array('id'=>uniqid(), 'live'=>false));
 	?>
 <?php else: ?>
@@ -515,7 +513,6 @@ $(function(){
 			uploadImage(files[0], editor, welEditable);
 		},
 		onChange: function(contents, $editable) {
-			console.log("prompt:" + contents);
 			$('#prompt<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
 		}
 	});
@@ -525,7 +522,6 @@ $(function(){
 			uploadImage(files[0], editor, welEditable);
 		},
 		onChange: function(contents, $editable) {
-			console.log("preface:" + contents);
 			$('#preface<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
 		}
 	});
@@ -535,7 +531,6 @@ $(function(){
 			uploadImage(files[0], editor, welEditable);
 		},
 		onChange: function(contents, $editable) {
-			console.log("citation:" + contents);
 			$('#citation<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
 		}
 	});
