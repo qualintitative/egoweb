@@ -75,11 +75,6 @@ class MobileController extends Controller
 		#OK FOR SQL INJECTION
 		$options = q("SELECT * FROM questionOption WHERE studyId = " . $id)->queryAll(false);
 
-		foreach($options as &$option){
-			if(strlen($option[4]) >= 8)
-				$option[4] = decrypt($option[4]);
-		}
-
 		#OK FOR SQL INJECTION
 		$expressions = q("SELECT * FROM expression WHERE studyId = " . $id)->queryAll(false);
 		#OK FOR SQL INJECTION
@@ -165,11 +160,9 @@ class MobileController extends Controller
 			'audioFiles'=>$audioFiles,
 			'columns'=>$columns,
 		);
-		if (isset($_SERVER['HTTP_ORIGIN'])) {
-		header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+		header("Access-Control-Allow-Origin: *");
 		header('Access-Control-Allow-Credentials: true');
 		header('Access-Control-Max-Age: 86400');	// cache for 1 day
-		}
 		echo json_encode($data);
 		Yii::app()->end();
 	}

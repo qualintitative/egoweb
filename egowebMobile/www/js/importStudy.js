@@ -46,8 +46,24 @@ function importStudy(address, id){
 		tableNames.push(db.catalog.getAllTables()[i].tableName);
 	}
 	console.log(tableNames);
+$.ajax({
+    url: url,
+    type: "GET",
+    timeout: 30000,
+    dataType: 'jsonp',
+    success: function(data) {
+        // show text reply as-is (debug)
 
-	$.get(url,function(data){
+        // show xml field values (debug)
+        //alert( $(data).find("title").text() );
+
+        // loop JSON array (debug)
+        //var str="";
+        //$.each(data.items, function(i,item) {
+        //  str += item.title + "\n";
+        //});
+        //alert(str);
+
 		data = JSON.parse(data);
 		console.log(data);
 
@@ -167,6 +183,7 @@ db.commit();
 	//$('#status').html($('#status').html()+"DONE!");
 	getStudyList(server);
 
+}
 });
 }
 
