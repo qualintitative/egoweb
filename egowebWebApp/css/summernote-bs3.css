@@ -327,7 +327,7 @@
   border: 0;
 }
 .note-editor p {
-  margin: 0 0 10px;
+  margin: 0 0 15px;
 }
 .note-editor .lead {
   margin-bottom: 20px;
@@ -545,10 +545,10 @@
   .note-editor .dl-horizontal dd:after {
     content: " ";
     /* 1 */
-  
+
     display: table;
     /* 2 */
-  
+
   }
   .note-editor .dl-horizontal dd:after {
     clear: both;
@@ -557,10 +557,10 @@
   .note-editor .dl-horizontal dd:after {
     content: " ";
     /* 1 */
-  
+
     display: table;
     /* 2 */
-  
+
   }
   .note-editor .dl-horizontal dd:after {
     clear: both;

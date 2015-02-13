@@ -7,39 +7,87 @@
 <script>
 $(function(){
 	$('#Study_introduction').summernote({
+		toolbar:noteBar,
 		height:200,
 		onImageUpload: function(files, editor, welEditable) {
 			uploadImage(files[0], editor, welEditable);
 		},
 		onChange: function(contents, $editable) {
 			$('#Study_introduction').val(contents);
+		},
+		onpaste: function(e) {
+			var thisNote = $(this);
+			var updatePastedText = function(someNote){
+				var original = someNote.code();
+				var cleaned = CleanPastedHTML(original);
+				someNote.code('').html(cleaned);
+			};
+			setTimeout(function () {
+				updatePastedText(thisNote);
+			}, 10);
 		}
 	});
 	$('#Study_egoIdPrompt').summernote({
+		toolbar:noteBar,
 		height:200,
 		onImageUpload: function(files, editor, welEditable) {
 			uploadImage(files[0], editor, welEditable);
 		},
 		onChange: function(contents, $editable) {
 			$('#Study_egoIdPrompt').val(contents);
+		},
+		onpaste: function(e) {
+			var thisNote = $(this);
+			var updatePastedText = function(someNote){
+				var original = someNote.code();
+				var cleaned = CleanPastedHTML(original);
+				someNote.code('').html(cleaned);
+			};
+			setTimeout(function () {
+				updatePastedText(thisNote);
+			}, 10);
 		}
 	});
 	$('#Study_alterPrompt').summernote({
+		toolbar:noteBar,
 		height:200,
 		onImageUpload: function(files, editor, welEditable) {
 			uploadImage(files[0], editor, welEditable);
 		},
 		onChange: function(contents, $editable) {
 			$('#Study_alterPrompt').val(contents);
+		},
+		onpaste: function(e) {
+			var thisNote = $(this);
+			var updatePastedText = function(someNote){
+				var original = someNote.code();
+				var cleaned = CleanPastedHTML(original);
+				someNote.code('').html(cleaned);
+			};
+			setTimeout(function () {
+				updatePastedText(thisNote);
+			}, 10);
 		}
 	});
 	$('#Study_conclusion').summernote({
+		toolbar:noteBar,
 		height:200,
 		onImageUpload: function(files, editor, welEditable) {
 			uploadImage(files[0], editor, welEditable);
 		},
 		onChange: function(contents, $editable) {
 			$('#Study_conclusion').val(contents);
+		},
+		onpaste: function(e) {
+			var thisNote = $(this);
+			var updatePastedText = function(someNote){
+				var original = someNote.code();
+				var cleaned = CleanPastedHTML(original);
+				someNote.code('').html(cleaned);
+			};
+			setTimeout(function () {
+				updatePastedText(thisNote);
+			}, 10);
 		}
 	});
 });
@@ -245,7 +293,7 @@ $(function(){
 				<?php echo $form->textField($alterList,'email', array('style'=>'width:100px')); ?>
 				<?php echo $form->error($alterList,'email'); ?>
 				<?php
-                #OK FOR SQL INJECTION
+				#OK FOR SQL INJECTION
 				$interviewerIds = q("SELECT interviewerId FROM interviewers WHERE studyId = " . $model->id)->queryColumn();
 				$interviewers = array();
 				foreach($interviewerIds as $interviewerId){
@@ -270,12 +318,12 @@ $(function(){
 		<div style="float:left; width:400px; clear:left">
 
 <?php echo CHtml::form('/authoring/importlist', 'post', array('id'=>'importListForm', 'enctype'=>'multipart/form-data')) ?>
-    <!-- MAX_FILE_SIZE must precede the file input field -->
-    <!-- Name of input element determines name in $_FILES array -->
-    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo 'MAX = ' + Yii::app()->params['maxUploadFileSize']; ?>" />
-    <input name="userfile" type="file" />
-    <input type="hidden" name="studyId" value="<?= $model->id; ?>" />
-    <input class="btn btn-primary" type="submit" value="Import Participant List" />
+	<!-- MAX_FILE_SIZE must precede the file input field -->
+	<!-- Name of input element determines name in $_FILES array -->
+	<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo 'MAX = ' + Yii::app()->params['maxUploadFileSize']; ?>" />
+	<input name="userfile" type="file" />
+	<input type="hidden" name="studyId" value="<?= $model->id; ?>" />
+	<input class="btn btn-primary" type="submit" value="Import Participant List" />
 </form>
 	</div>
 		<div id="alterPrompt" >
@@ -316,35 +364,35 @@ $(function(){
 			<div id="edit-alterPrompt" style="margin-top:15px;float:left;clear:both;"></div>
 		</div>
 	</div>
-    <script type="text/javascript">
-        //On import study form submit
-        $( "#importListForm" ).submit(function( event) {
-            var userfile = document.getElementById('userfile').files[0];
+	<script type="text/javascript">
+		//On import study form submit
+		$( "#importListForm" ).submit(function( event) {
+			var userfile = document.getElementById('userfile').files[0];
 
-            if(userfile && userfile.size < <?php echo 'MAX = ' + Yii::app()->params['maxUploadFileSize']; ?> ) { //This size is in bytes.
+			if(userfile && userfile.size < <?php echo 'MAX = ' + Yii::app()->params['maxUploadFileSize']; ?> ) { //This size is in bytes.
 
-                var res_field = document.getElementById('userfile').value;
-                var extension = res_field.substr(res_field.lastIndexOf('.') + 1).toLowerCase();
-                var allowedExtensions = ['csv'];
-                event.preventDefault();
-                if (res_field.length > 0)
-                {
-                    if( allowedExtensions.indexOf(extension) === -1 )
-                    {
-                        event.preventDefault();
-                        alert('Invalid file Format. Only ' + allowedExtensions.join(', ') + ' allowed.');
-                        return false;
-                    }
-                }
-                else{
-                    //Submit form
-                    $("#importListForm").submit();
-                }
-            } else {
-                //Prevent default and display error
-                event.preventDefault();
-                alert("Upload file cannot exceed <?php echo number_format(Yii::app()->params['maxUploadFileSize'] / 1048576, 1) . ' MB'; ?>");
-                return false;
-            }
-        });
-    </script>
+				var res_field = document.getElementById('userfile').value;
+				var extension = res_field.substr(res_field.lastIndexOf('.') + 1).toLowerCase();
+				var allowedExtensions = ['csv'];
+				event.preventDefault();
+				if (res_field.length > 0)
+				{
+					if( allowedExtensions.indexOf(extension) === -1 )
+					{
+						event.preventDefault();
+						alert('Invalid file Format. Only ' + allowedExtensions.join(', ') + ' allowed.');
+						return false;
+					}
+				}
+				else{
+					//Submit form
+					$("#importListForm").submit();
+				}
+			} else {
+				//Prevent default and display error
+				event.preventDefault();
+				alert("Upload file cannot exceed <?php echo number_format(Yii::app()->params['maxUploadFileSize'] / 1048576, 1) . ' MB'; ?>");
+				return false;
+			}
+		});
+	</script>
