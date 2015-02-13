@@ -283,7 +283,18 @@ class Study extends CActiveRecord
 							continue;
 						if($answers[$question->id . "-" . $alter->id . "and" . $alter2->id]->value == $study->valueNotYetAnswered)
 							continue;
-						$alter_pair_question_list = $question;
+							if(!$question->askingStyleList){
+								if($question->preface != ""){
+									$page[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
+									$question->preface = "";
+									$i++;
+								}
+								$page[$i] = Study::checkPage($i, $pageNumber, $question->title . " - " . $alter->name . " and " . $alter2->name);
+								$i++;
+							}else{
+								$alter_pair_question_list = $question;
+
+							}
 					}
 					if(count($alter_pair_question_list) > 0){
 						if($question->preface != ""){
@@ -592,6 +603,18 @@ class Study extends CActiveRecord
 							$alter_pair_question->alterId2 = $alter2->id;
 							if(!$alter_pair_question->askingStyleList){
 								if($i == $pageNumber){
+									if($question->preface != ""){
+										if($i == $pageNumber){
+											$preface = new Question;
+											$preface->id = $question->id;
+											$preface->answerType = "PREFACE";
+											$preface->prompt = $question->preface;
+											$page[$i] = array('0'=>$preface);
+											return $page[$i];
+										}
+										$question->preface = "";
+										$i++;
+									}
 									$page[$i] = array($question->id.'-'.$alter->id . "and"  .$alter2->id=>$alter_pair_question);
 									return $page[$i];
 								}else {
