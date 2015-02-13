@@ -8,6 +8,12 @@
 $(function(){
 	$('#Study_introduction').summernote({
 		height:200,
+		toolbar: [
+            ['style', ['bold', 'italic', 'underline','fontsize']],
+            ['fontSize', ['fontSize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']]
+        ],
 		onImageUpload: function(files, editor, welEditable) {
 			uploadImage(files[0], editor, welEditable);
 		},

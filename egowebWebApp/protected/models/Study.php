@@ -343,6 +343,7 @@ class Study extends CActiveRecord
 		$egoQuestions = array();
 		$alterQuestions = array();
 		$alterPairQuestions = array();
+		$networkQuestions = array();
 		$page = array();
 		$i = 0;
 
