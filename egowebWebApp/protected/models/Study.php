@@ -590,7 +590,16 @@ class Study extends CActiveRecord
 							$alter_pair_question->prompt = str_replace('$$2', $alter2->name, $alter_pair_question->prompt);
 							$alter_pair_question->alterId1 = $alter->id;
 							$alter_pair_question->alterId2 = $alter2->id;
-							$alter_pair_question_list[$question->id.'-'.$alter->id.'and'.$alter2->id] = $alter_pair_question;
+							if(!$alter_pair_question->askingStyleList){
+								if($i == $pageNumber){
+									$page[$i] = array($question->id.'-'.$alter->id . "and"  .$alter2->id=>$alter_pair_question);
+									return $page[$i];
+								}else {
+									$i++;
+								}
+							}else{
+								$alter_pair_question_list[$question->id.'-'.$alter->id.'and'.$alter2->id] = $alter_pair_question;
+							}
 						}
 						if(count($alter_pair_question_list) > 0){
 							if($question->preface != ""){
