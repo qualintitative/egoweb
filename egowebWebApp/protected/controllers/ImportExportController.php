@@ -278,7 +278,7 @@ class ImportExportController extends Controller
 				if(count($interview->notes->note) != 0){
 					foreach($interview->notes->note as $note){
 						$newNote = new Note;
-						foreach($alter->attributes() as $key=>$value){
+						foreach($note->attributes() as $key=>$value){
 							if($key!="key" && $key != "id")
 								$newNote->$key = $value;
 						}
@@ -299,24 +299,39 @@ class ImportExportController extends Controller
 					foreach($interview->graphs->graph as $graph){
 						$newGraph = new Graph;
 						foreach($graph->attributes() as $key=>$value){
-							if($key!="key" && $key != "id")
+							if($key!="key" && $key != "id"){
 								if($key == "params"){
 									$params = json_decode(htmlspecialchars_decode($value), true);
-									foreach($params as &$param){
-										if(is_numeric($param['questionId']))
-											$param['questionId'] = $newQuestionIds[intval($param['questionId'])];
-										if(count($param['options']) > 0){
-											foreach($param['options'] as &$option){
-												$option['id'] = $newOptionIds[intval($option['id'])];
+									if($params){
+										foreach($params as $k => &$param){
+											if(is_numeric($param['questionId']))
+												$param['questionId'] = $newQuestionIds[intval($param['questionId'])];
+											if(count($param['options']) > 0){
+												foreach($param['options'] as &$option){
+													$option['id'] = $newOptionIds[intval($option['id'])];
+												}
 											}
 										}
 									}
 									$value = json_encode($params);
 								}
-								if($key == "nodes")
-									$value = htmlspecialchars_decode($value);
+								if($key == "nodes"){
+									$nodes = json_decode(htmlspecialchars_decode($value), true);
+									foreach($nodes as $node){
+										$oldNodeId = $node['id'];
+										$node['id'] =  $newAlterIds[intval($node['id'])];
+										$nodes[$node['id']] = $node;
+										unset($nodes[$oldNodeId]);
+									}
+									$value = json_encode($nodes);
+								}
 								$newGraph->$key = $value;
+							}
 						}
+						if(!preg_match("/,/", $newGraph->interviewId))
+							$newGraph->interviewId = $newInterview->id;
+
+						$newGraph->expressionId = $newExpressionIds[intval($newGraph->expressionId)];
 						if(!$newGraph->save()){
 							"Graph: " . print_r($newGraph->errors);
 							die();

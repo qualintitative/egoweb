@@ -38,7 +38,6 @@ class Graph extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('interviewId, expressionId, nodes', 'required'),
-			array('interviewId, expressionId', 'numerical', 'integerOnly'=>true),
 			array('params', 'default', "value"=>''),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
