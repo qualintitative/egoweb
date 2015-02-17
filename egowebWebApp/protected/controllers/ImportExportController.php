@@ -301,7 +301,7 @@ class ImportExportController extends Controller
 						foreach($graph->attributes() as $key=>$value){
 							if($key!="key" && $key != "id")
 								if($key == "params"){
-									$params = json_decode($value, true);
+									$params = json_decode(htmlspecialchars_decode($value), true);
 									foreach($params as &$param){
 										if(is_numeric($param['questionId']))
 											$param['questionId'] = $newQuestionIds[intval($param['questionId'])];
@@ -313,6 +313,8 @@ class ImportExportController extends Controller
 									}
 									$value = json_encode($params);
 								}
+								if($key == "nodes")
+									$value = htmlspecialchars_decode($value);
 								$newGraph->$key = $value;
 						}
 						if(!$newGraph->save()){

@@ -1018,6 +1018,8 @@ EOT;
 					$text .= "
 			<graphs>";
 					foreach($graphs[$interview->id] as $graph){
+						$graph->nodes = sanitizeXml($graph->nodes);
+						$graph->params = sanitizeXml($graph->params);
 						$text .= <<<EOT
 
 				<graph id="{$graph->id}" interviewId="{$graph->interviewId}" expressionId="{$graph->expressionId}" nodes="{$graph->nodes}" params="{$graph->params}" />
@@ -1031,6 +1033,7 @@ EOT;
 					$text .= "
 			<notes>";
 					foreach($notes[$interview->id] as $note){
+						$note->notes = sanitizeXml($note->notes);
 						$text .= <<<EOT
 
 				<note id="{$note->id}" interviewId="{$note->interviewId}" expressionId="{$note->expressionId}" alterId="{$note->alterId}" notes="{$note->notes}" />
