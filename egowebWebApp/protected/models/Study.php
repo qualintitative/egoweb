@@ -1014,6 +1014,32 @@ EOT;
 			</alters>";
 				}
 
+				if(isset($graphs[$interview->id])){
+					$text .= "
+			<graphs>";
+					foreach($graphs[$interview->id] as $graph){
+						$text .= <<<EOT
+
+				<graph id="{$graph->id}" interviewId="{$graph->interviewId}" expressionId="{$graph->expressionId}" nodes="{$graph->nodes}" params="{$graph->params}" />
+EOT;
+					}
+					$text .= "
+			</graphs>";
+				}
+
+				if(isset($notes[$interview->id])){
+					$text .= "
+			<notes>";
+					foreach($notes[$interview->id] as $note){
+						$text .= <<<EOT
+
+				<note id="{$note->id}" interviewId="{$note->interviewId}" expressionId="{$note->expressionId}" alterId="{$note->alterId}" notes="{$note->notes}" />
+EOT;
+					}
+					$text .= "
+			</notes>";
+				}
+
 			$text .= "
 		</interview>";
 			}

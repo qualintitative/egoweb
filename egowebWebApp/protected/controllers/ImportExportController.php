@@ -275,6 +275,53 @@ class ImportExportController extends Controller
 					}
 				}
 
+				if(count($interview->notes->note) != 0){
+					foreach($interview->notes->note as $note){
+						$newNote = new Note;
+						foreach($alter->attributes() as $key=>$value){
+							if($key!="key" && $key != "id")
+								$newNote->$key = $value;
+						}
+						if(!preg_match("/,/", $newNote->interviewId))
+							$newNote->interviewId = $newInterview->id;
+
+						$newNote->expressionId = $newExpressionIds[intval($newNote->expressionId)];
+						$newNote->alterId = $newAlterIds[intval($newNote->alterId)];
+
+						if(!$newNote->save()){
+							"Note: " . print_r($newNote->errors);
+							die();
+						}
+					}
+				}
+
+				if(count($interview->graphs->graph) != 0){
+					foreach($interview->graphs->graph as $graph){
+						$newGraph = new Graph;
+						foreach($graph->attributes() as $key=>$value){
+							if($key!="key" && $key != "id")
+								if($key == "params"){
+									$params = json_decode($value, true);
+									foreach($params as &$param){
+										if(is_numeric($param['questionId']))
+											$param['questionId'] = $newQuestionIds[intval($param['questionId'])];
+										if(count($param['options']) > 0){
+											foreach($param['options'] as &$option){
+												$option['id'] = $newOptionIds[intval($option['id'])];
+											}
+										}
+									}
+									$value = json_encode($params);
+								}
+								$newGraph->$key = $value;
+						}
+						if(!$newGraph->save()){
+							"Graph: " . print_r($newGraph->errors);
+							die();
+						}
+					}
+				}
+
 				if(count($interview->answers->answer) != 0){
 					foreach($interview->answers->answer as $answer){
 						$newAnswer = new Answer;
