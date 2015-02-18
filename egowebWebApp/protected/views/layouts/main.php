@@ -37,7 +37,7 @@
 				}
 
 				$criteria = array(
-					'condition'=>$condition,
+					'condition'=>$condition . " AND active = 1",
 					'order'=>'id DESC',
 				);
 				$studies = Study::model()->findAll($criteria);

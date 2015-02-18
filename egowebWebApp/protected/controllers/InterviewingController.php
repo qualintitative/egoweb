@@ -693,14 +693,14 @@ class InterviewingController extends Controller
 		}
 
 		$criteria = array(
-			'condition'=>$condition . " AND multiSessionEgoId = 0",
+			'condition'=>$condition . " AND multiSessionEgoId = 0 AND active = 1",
 			'order'=>'id DESC',
 		);
 
 		$single = Study::model()->findAll($criteria);
 
 		$criteria = array(
-			'condition'=>$condition . " AND multiSessionEgoId <> 0",
+			'condition'=>$condition . " AND multiSessionEgoId <> 0 AND active = 1",
 			'order'=>'multiSessionEgoId DESC',
 		);
 
