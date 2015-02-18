@@ -491,10 +491,14 @@ class InterviewingController extends Controller
 
 			$studyId = q("SELECT studyId FROM interview WHERE id = :interviewId", array($params))->queryScalar();
 
-			$name_exists = Alters::model()->findByAttributes(array('name'=>$_POST['Alters']['name'], 'interviewId'=>(int)$_POST['Alters']['interviewId']));
+			$alters = Alters::model()->findAllByAttributes(array('interviewId'=>(int)$_POST['Alters']['interviewId']));
+			$alterNames = array();
+			foreach($alters as $alter){
+				$alterNames[] = $alter->name;
+			}
 			$model = new Alters;
 			$model->attributes = $_POST['Alters'];
-			if($name_exists){
+			if(in_array($_POST['Alters']['name'], $alterNames)){
 				$model->addError('name', $_POST['Alters']['name']. ' has already been added!');
 			}
 
