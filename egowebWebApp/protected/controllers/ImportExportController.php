@@ -114,8 +114,6 @@ class ImportExportController extends Controller
 			// loop through the questions and correct linked ids
 			$newQuestions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
 			foreach($newQuestions as $newQuestion){
-				if($newQuestion->networkParams != 0)
-					$newQuestion->networkParams = $newQuestionIds[$newQuestion->networkParams];
 				if($newQuestion->networkNColorQId != 0)
 					$newQuestion->networkNColorQId = $newQuestionIds[$newQuestion->networkNColorQId];
 				if($newQuestion->networkNSizeQId != 0)
@@ -177,16 +175,11 @@ class ImportExportController extends Controller
 					if(count($questions) > 0){
 						foreach($questions as $question){
 							$question->answerReasonExpressionId = $newExpressionIds[$oldExpressionId];
-							$question->save();
-						}
-					}
-					$questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id,'networkRelationshipExprId'=>$oldExpressionId));
-					if(count($questions) > 0){
-						foreach($questions as $question){
 							$question->networkRelationshipExprId = $newExpressionIds[$oldExpressionId];
 							$question->save();
 						}
 					}
+
 					// reference the correct question, since we're not using old ids
 					if($newExpression->type == "Selection"){
 						$optionIds = explode(',', $newExpression->value);
@@ -233,6 +226,35 @@ class ImportExportController extends Controller
 
 			}
 
+		}
+
+		// loop through questions and relink network params
+		$questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id, "subjectType"=>"NETWORK"));
+		if(count($questions) > 0){
+			foreach($questions as $question){
+				$params = json_decode(htmlspecialchars_decode($question->networkParams), true);
+				if($params){
+					foreach($params as $k => &$param){
+						if(stristr($param['questionId'], "expression")){
+							list($label, $expressionId) = explode("_", $param['questionId']);
+							if(isset($newExpressionIds[intval($expressionId)]))
+								$expressionId = $newExpressionIds[intval($expressionId)];
+							$param['questionId'] = "expression_" . $expressionId;
+						}else{
+							if(is_numeric($param['questionId']) && isset($newQuestionIds[intval($param['questionId'])]))
+								$param['questionId'] = $newQuestionIds[intval($param['questionId'])];
+							if(count($param['options']) > 0){
+								foreach($param['options'] as &$option){
+									if(isset($newOptionIds[intval($option['id'])]))
+										$option['id'] = $newOptionIds[intval($option['id'])];
+								}
+							}
+						}
+					}
+				}
+				$question->networkParams = json_encode($params);
+				$question->save();
+			}
 		}
 
 		if(count($study->interviews) != 0){
