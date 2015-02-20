@@ -99,6 +99,10 @@ function rebuildEgowebTags(withCode){
 						withCode = withCode.replace("<img id='contains_" +i+"' src='/images/contains.png'>", containsSnips[i]);
 				}
 			}
+
+			withCode = withCode.replace(/&nbsp;/g, ' ')
+			.replace(/&lt;/g, '<')
+			.replace(/&gt;/g, '>');
 			return withCode;
 }
 
