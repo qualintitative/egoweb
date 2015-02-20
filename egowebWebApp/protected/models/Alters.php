@@ -59,7 +59,7 @@ class Alters extends CActiveRecord
 		);
 	}
 
-	public function sortOrder($ordering, $interviewId)
+	public static function sortOrder($ordering, $interviewId)
 	{
 		$criteria = new CDbCriteria();
 		$criteria=array(
@@ -72,7 +72,7 @@ class Alters extends CActiveRecord
 		}
 	}
 
-	public function moveUp($id)
+	public static function moveUp($id)
 	{
 		$model = Alters::model()->findByPk($id);
 		if($model && $model->ordering > 0){
@@ -106,7 +106,7 @@ class Alters extends CActiveRecord
 			return "#";
 		return "";
 	}
-	public function getName($id){
+	public static function getName($id){
 		$model = Alters::model()->findByPk($id);
 		if($model)
 			return $model->name;

@@ -50,7 +50,7 @@ class AlterList extends CActiveRecord
 		);
 	}
 
-	public function sortOrder($ordering, $studyId)
+	public static function sortOrder($ordering, $studyId)
 	{
 		$criteria = new CDbCriteria();
 		$criteria=array(
@@ -63,7 +63,7 @@ class AlterList extends CActiveRecord
 		}
 	}
 
-	public function moveUp($id)
+	public static function moveUp($id)
 	{
 		$model = AlterList::model()->findByPk($id);
 		if($model && $model->ordering > 0){

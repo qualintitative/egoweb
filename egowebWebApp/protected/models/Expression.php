@@ -255,7 +255,7 @@ class Expression extends CActiveRecord
 			if($expressionIds != ""){
 				$expressionIds = explode(',', $expressionIds);
 				foreach($expressionIds as $expressionId){
-					$count = $count + Expression::countExpression($expressionId, $interviewId, $alterId1, $alterId2);
+					$count = $count + Expression::countExpression($expressionId, $interviewId, $alterId1, $alterId2, $answers);
 				}
 			}
 			if($questionIds != ""){
@@ -267,7 +267,8 @@ class Expression extends CActiveRecord
 			return ($times * $count);
 		} else if($expression->type == "Comparison"){
 			list($value, $expressionId) =  preg_split('/:/', $expression->value);
-			$result = Expression::evalExpression($expressionId, $interviewId, $alterId1, $alterId2, $answers);
+			$newE = new Expression;
+			$result = $newE->evalExpression($expressionId, $interviewId, $alterId1, $alterId2, $answers);
 			$logic = "return " . $result . " " . $comparers[$expression->operator] . " " . $value . ";";
 			return eval($logic);
 		} else if($expression->type == "Compound"){
@@ -293,15 +294,16 @@ class Expression extends CActiveRecord
 		return false;
 	}
 
-	public function countExpression($id, $interviewId)
+	public static function countExpression($id, $interviewId, $alterId1, $alterId2, $answers)
 	{
-		if(Expression::evalExpression($id, $interviewId))
+		$countE = new Expression;
+		if($countE->evalExpression($id, $interviewId, $alterId1, $alterId2, $answers))
 			return 1;
 		else
 			return 0;
 	}
 
-	public function countQuestion($questionId, $interviewId, $operator, $alterId1 = null, $alterId2 = null)
+	public static function countQuestion($questionId, $interviewId, $operator, $alterId1 = null, $alterId2 = null)
 	{
 		$alter = ""; $alter2 = "";
 		if($alterId1 != null)

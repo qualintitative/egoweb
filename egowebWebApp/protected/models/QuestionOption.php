@@ -60,7 +60,7 @@ class QuestionOption extends CActiveRecord
 		);
 	}
 
-	public function sortOrder($ordering, $questionId)
+	public static function sortOrder($ordering, $questionId)
 	{
 		$criteria = new CDbCriteria();
 		$criteria=array(
@@ -73,7 +73,7 @@ class QuestionOption extends CActiveRecord
 		}
 	}
 
-	public function moveUp($optionId)
+	public static function moveUp($optionId)
 	{
 		$model = QuestionOption::model()->findByPk($optionId);
 		if($model && $model->ordering > 0){

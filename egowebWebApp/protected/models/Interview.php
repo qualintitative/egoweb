@@ -73,7 +73,7 @@ class Interview extends CActiveRecord
 		);
 	}
 
-	public function getInterviewFromEmail($studyId, $email){
+	public static function getInterviewFromEmail($studyId, $email){
         #OK FOR SQL INJECTION
 		$interviewId = q("SELECT interviewId FROM answer WHERE value='$email' AND questionType = 'EGO_ID' AND studyId = $studyId")->queryScalar();
 		if($interviewId)
@@ -88,7 +88,7 @@ class Interview extends CActiveRecord
      * @param $primekey
      * @return array|bool|CActiveRecord|Interview|mixed|null
      */
-    public function getInterviewFromPrimekey( $studyId, $primekey ){
+    public static function getInterviewFromPrimekey( $studyId, $primekey ){
         $answers = Answer::model()->findAllByAttributes( array( 'questionType' => 'EGO_ID',
                                                                 'studyId' => $studyId ) );
 
@@ -120,7 +120,7 @@ class Interview extends CActiveRecord
 
 	}
 
-	public function countAlters($id){
+	public static function countAlters($id){
 		$criteria=array(
 			'condition'=>"FIND_IN_SET(" . $id .", interviewId)",
 		);
@@ -128,7 +128,7 @@ class Interview extends CActiveRecord
 		return count($models);
 	}
 
-	public function getRespondant($id){
+	public static function getRespondant($id){
         #OK FOR SQL INJECTION
 		$studyId = q("SELECT studyId FROM answer WHERE interviewId = $id")->queryScalar();
 
@@ -153,7 +153,7 @@ class Interview extends CActiveRecord
 			return '';
 	}
 
-    public function getEgoId($id){
+    public static function getEgoId($id){
         #OK FOR SQL INJECTION
         $params = new stdClass();
         $params->name = ':id';
@@ -190,7 +190,7 @@ class Interview extends CActiveRecord
         return $egoId;
     }
 
-	public function multiInterviewIds($interviewId = null, $study = null){
+	public static function multiInterviewIds($interviewId = null, $study = null){
         #OK FOR SQL INJECTION
 		$interview = Interview::model()->findByPk((int)$interviewId);
 		if($interview && $study && $study->multiSessionEgoId){
@@ -215,7 +215,7 @@ class Interview extends CActiveRecord
 	}
 
     // CORE FUNCTION
-    public function interpretTags($string, $interviewId = null, $alterId1 = null, $alterId2 = null,  $study = null)
+    public static function interpretTags($string, $interviewId = null, $alterId1 = null, $alterId2 = null,  $study = null)
     {
 
         if(!$interviewId)

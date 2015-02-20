@@ -81,7 +81,7 @@ class Study extends CActiveRecord
 		// class name for the relations automatically generated below.
 	}
 
-	public function getName($id){
+	public static function getName($id){
 		$model = Study::model()->findByPk($id);
 		if($model)
 			return $model->name;
@@ -98,7 +98,7 @@ class Study extends CActiveRecord
 		return Interview::model()->count("studyId=:id AND completed != -1", array("id" => $this->id));
 	}
 
-	public function updated($id){
+	public static function updated($id){
 		if(!$id)
 			return false;
 		$study = Study::model()->findByPk($id);
@@ -108,7 +108,7 @@ class Study extends CActiveRecord
 		}
 	}
 
-	public function nav($study, $pageNumber, $interviewId = null, $answers = null){
+	public static function nav($study, $pageNumber, $interviewId = null, $answers = null){
 
 		$expressionList = Expression::model()->findAllByAttributes(array('studyId'=>$study->id));
 		$questionList = Question::model()->findAllByAttributes(array('studyId'=>$study->id),array('order'=>'ordering'));
@@ -326,7 +326,7 @@ class Study extends CActiveRecord
 		return json_encode($page);
 	}
 
-	private function checkPage($currentPage, $pageNumber, $text){
+	private static function checkPage($currentPage, $pageNumber, $text){
 		if($currentPage == $pageNumber)
 			$text = "<b>".$text."</b>";
 		return $text;
@@ -336,7 +336,7 @@ class Study extends CActiveRecord
 	 * CORE FUNCTION
 	 * @return array pages of questions
 	 */
-	public function buildQuestions($study, $pageNumber = null, $interviewId = null, $answers = null){
+	public static function buildQuestions($study, $pageNumber = null, $interviewId = null, $answers = null){
 
 		$expressionList = Expression::model()->findAllByAttributes(array('studyId'=>$study->id));
 		$questionList = Question::model()->findAllByAttributes(array('studyId'=>$study->id),array('order'=>'ordering'));
@@ -684,7 +684,7 @@ class Study extends CActiveRecord
 		return false;
 	}
 
-	public function multiStudyIds($interviewId){
+	public static function multiStudyIds($interviewId){
 		if($this->multiSessionEgoId){
 			#OK FOR SQL INJECTION
 			$params = new stdClass();
@@ -700,7 +700,7 @@ class Study extends CActiveRecord
 		return false;
 	}
 
-	public function replicate($study, $questions, $options, $expressions, $answerLists = array())
+	public static function replicate($study, $questions, $options, $expressions, $answerLists = array())
 	{
 		$newQuestionIds = array();
 		$newOptionIds = array();

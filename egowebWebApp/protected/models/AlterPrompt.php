@@ -45,7 +45,7 @@ class AlterPrompt extends CActiveRecord
 		);
 	}
 
-	public function getPrompt($studyId, $alters){
+	public static function getPrompt($studyId, $alters){
         #OK FOR SQL INJECTION
         $params1 = new stdClass();
         $params1->name = ':studyId';

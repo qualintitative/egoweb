@@ -153,13 +153,13 @@ class Question extends CActiveRecord
 		);
 	}
 
-	public function getTitle($id){
+	public static function getTitle($id){
 		$question = Question::model()->findByPk($id);
 		$study = Study::model()->findByPk($question->studyId);
 		return $study->name . ":" . $question->title;
 	}
 
-	public function sortOrder($ordering, $studyId)
+	public static function sortOrder($ordering, $studyId)
 	{
 		$criteria = new CDbCriteria();
 		$criteria=array(
@@ -172,7 +172,7 @@ class Question extends CActiveRecord
 		}
 	}
 
-	public function moveUp($questionId)
+	public static function moveUp($questionId)
 	{
 		$model = Question::model()->findByPk($questionId);
 		if($model && $model->ordering > 0){
@@ -198,7 +198,7 @@ class Question extends CActiveRecord
 		);
 	}
 
-	public function timeBits($timeUnits)
+	public static function timeBits($timeUnits)
 	{
 		$timeArray = array();
 		$bitVals = array(
