@@ -115,7 +115,7 @@ class User extends CActiveRecord
         // return uniqid('',true);
     }
 
-    public function getName($member_id){
+    public static function getName($member_id){
         $member = User::model()->findByPk($member_id);
         if($member)
             return $member->name;
