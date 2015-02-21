@@ -1,6 +1,7 @@
 <?php
 ini_set('memory_limit','3072M');
 error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
+date_default_timezone_set("America/Los Angeles");
 // change the following paths if necessary
 $yii=dirname(__FILE__).'/system/framework/yii.php';
 $config=dirname(__FILE__).'/protected/config/main.php';
