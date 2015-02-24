@@ -50,7 +50,7 @@ class Legend extends CActiveRecord
 		);
 	}
 
-	public function sortOrder($ordering, $questionId)
+	public static function sortOrder($ordering, $questionId)
 	{
 		$criteria = new CDbCriteria();
 		$criteria=array(
@@ -63,7 +63,7 @@ class Legend extends CActiveRecord
 		}
 	}
 
-	public function moveUp($id)
+	public static function moveUp($id)
 	{
 		$model = Legend::model()->findByPk($id);
 		if($model && $model->ordering > 0){

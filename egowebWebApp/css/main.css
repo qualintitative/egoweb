@@ -3,14 +3,19 @@ box-sizing:border-box;
 }
 body
 {
+	line-height:1.72222;
 	margin: 0;
 	padding: 0;
 	color: #555;
-	font: normal 10pt Arial,Helvetica,sans-serif;
+	font: 15px Arial,Helvetica,sans-serif;
 	background: #fff;
 	overflow-y: scroll;
 }
 
+.note-editable {
+	font-size:18px;
+	line-height:1.72222;
+}
 #content{
 	background-color: #fff;
 }
@@ -406,8 +411,12 @@ input, select{
 	font-weight:bold;
 }
 .question{
-    /*min-height:200px;*/
 	padding:0 0 20px 20px;
+}
+
+.question.ALTER, .question.ALTER_PAIR{
+    height:240px;
+	overflow-y:scroll;
 }
 .orangebutton{
 	background:url('/images/orange.png');
@@ -476,6 +485,7 @@ td{
 }
 
 #menubar{
+	font-size: 12px;
 	background:url('/images/menubar.png');
 	height:40px;
 }
@@ -564,7 +574,6 @@ td{
 .questionText{
 	background:url("/images/arrow.png") no-repeat;
 	float:left;
- 	font-family:Arial;
 	font-size:18px;
 	padding:0 20px 20px 20px;
 }

@@ -38,14 +38,14 @@ class AlterPrompt extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('studyId, afterAltersEntered, display', 'required'),
-			array('studyId, afterAltersEntered', 'numerical', 'integerOnly'=>true),
+			array('studyId', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, studyId, afterAltersEntered, display', 'safe', 'on'=>'search'),
 		);
 	}
 
-	public function getPrompt($studyId, $alters){
+	public static function getPrompt($studyId, $alters){
         #OK FOR SQL INJECTION
         $params1 = new stdClass();
         $params1->name = ':studyId';

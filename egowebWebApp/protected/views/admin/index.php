@@ -10,7 +10,7 @@
 			Start a new interview or continue a partially completed interview.
 		</p>
 	</td>
-	<?php if(Yii::app()->user->isSuperAdmin): ?>
+	<?php if(Yii::app()->user->isAdmin): ?>
 	<td>
 		<h3><a href="/authoring">Authoring</a></h3>
 		<p>
@@ -40,12 +40,14 @@
 			transferring between computers.
 		</p>
 	</td>
-	<td>
-		<h3><a href="/admin/user">User Admin</a></h3>
-		<p>
-			Add new users
-		</p>
-	</td>
+		<?php if(Yii::app()->user->isSuperAdmin): ?>
+		<td>
+			<h3><a href="/admin/user">User Admin</a></h3>
+			<p>
+				Add new users
+			</p>
+		</td>
+		<?php endif; ?>
 	</tr>
 	<?php endif; ?>
 	</tr>

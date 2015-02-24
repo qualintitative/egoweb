@@ -1,5 +1,4 @@
-<?php /* @var $this Controller */ ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -11,9 +10,13 @@
 		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/flat-ui.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/main.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/form.css" />
+		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/summernote.css" />
+		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/summernote-bs3.css" />
+		<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet">
 		<?php Yii::app()->clientScript->registerCssFile(Yii::app()->clientScript->getCoreScriptUrl().'/jui/css/base/jquery-ui.css'); ?>
-		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/indexof.js'); ?>
 		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/bootstrap.min.js'); ?>
+		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/summernote.js'); ?>
+		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/plugins/summernote-ext-fontstyle.js'); ?>
 		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/egoweb.js'); ?>
 		<?php Yii::app()->clientScript->registerCoreScript('jquery'); ?>
 		<?php Yii::app()->clientScript->registerCoreScript('jquery.ui'); ?>
@@ -34,7 +37,7 @@
 				}
 
 				$criteria = array(
-					'condition'=>$condition,
+					'condition'=>$condition . " AND active = 1",
 					'order'=>'id DESC',
 				);
 				$studies = Study::model()->findAll($criteria);
@@ -54,7 +57,7 @@
 									<?php endforeach; ?>
 								</ul>
 							</li>
-							<?php if(Yii::app()->user->isSuperAdmin): ?>
+							<?php if(Yii::app()->user->isAdmin): ?>
 							<li><a href="/authoring">Authoring</a>
 								<ul>
 									<?php foreach($studies as $data): ?>
@@ -75,6 +78,8 @@
 							</li>
 							<li><a href="/archive">Archive</a></li>
 							<li><a href="/importExport">Import & Export Studies</a></li>
+							<?php endif; ?>
+							<?php if(Yii::app()->user->isSuperAdmin): ?>
 							<li><a href="/admin/user">User Admin</a>
 							<?php endif; ?>
 							<li><a href="/mobile">Mobile</a>

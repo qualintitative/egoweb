@@ -3,11 +3,12 @@
 /* @var $model Question */
 /* @var $form CActiveForm */
 ?>
-<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/modal.js'); ?>
+
 <?php
 $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'question-form',
 	'enableAjaxValidation'=>$ajax,
+	"htmlOptions"=>array("class"=>"form-horizontal")
 ));
 ?>
 <div class="form" style="height:320px; overflow-y:auto;">
@@ -37,7 +38,8 @@ jQuery(document).ready(function(){
 		jQuery('.panel-<?php echo $model->id; ?>#NETWORK').show();
 	if('<?php echo $model->askingStyleList; ?>' == true)
 		jQuery('.panel-<?php echo $model->id; ?>#ALTER_STYLE').show();
-
+	if('<?php echo $model->answerType; ?>' == 'TIME_SPAN' || '<?php echo $model->answerType; ?>' == 'DATE')
+		jQuery('.panel-<?php echo $model->id; ?>#TIME_SPAN').show();
 });
 </script>
 <?php
@@ -54,26 +56,35 @@ jQuery('input.time-".$model->id."').change(function() {
 ");
 ?>
 
-	<div class="row" style="width:50%; float:left; padding:10px">
-		<?php echo $form->labelEx($model,'title', array('for'=>$model->id . "_" . "title")); ?>
-		<?php echo $form->textField($model,'title',array('size'=>50, 'id'=>$model->id . "_" . "title")); ?>
-		<?php echo $form->labelEx($model,'answerType', array('for'=>'a-'.$model->id)); ?>
+	<div  style="width:50%; float:left; padding:10px">
+		<div class="form-group">
+		<?php echo $form->labelEx($model,'title', array('for'=>$model->id . "_" . "title", "class"=>"control-label col-sm-3")); ?>
+		<div class="col-sm-9">
+		<?php echo $form->textField($model,'title',array('id'=>$model->id . "_" . "title", "class"=>"form-control")); ?>
+		</div>
+		</div>
+		<div class="form-group">
+		<?php echo $form->labelEx($model,'answerType', array('for'=>'a-'.$model->id, "class"=>"control-label col-sm-3")); ?>
+		<div class="col-sm-9">
 		<?php
 			echo $form->dropDownList(
 				$model,
 				'answerType',
 				$model->answerTypes(),
-				array('class'=>'answerTypeSelect', 'id'=>'a-'.$model->id, 'onchange'=>'changeAType(this)')
+				array('class'=>'answerTypeSelect', 'id'=>'a-'.$model->id, 'onchange'=>'changeAType(this)', "class"=>"form-control")
 			);
 		?>
+		</div>
+		</div>
 
-		<br clear=all>
-		<?php echo $form->labelEx($model,'answerReasonExpressionId', array('for'=>$model->id."_"."answerReasonExpressionId")); ?>
+				<div class="form-group">
+		<?php echo $form->labelEx($model,'Skip Logic Expression', array('for'=>$model->id."_"."answerReasonExpressionId", "class"=>"control-label col-sm-3")); ?>
 		<?php $criteria=new CDbCriteria;
 		$criteria=array(
 			'condition'=>"studyId = " . $model->studyId,
 		);
 		?>
+		<div class="col-sm-9">
 		<?php echo $form->dropdownlist(
 			$model,
 			'answerReasonExpressionId',
@@ -82,11 +93,10 @@ jQuery('input.time-".$model->id."').change(function() {
 				'id',
 				function($post) {return CHtml::encode(substr($post->name,0,40));}
 			),
-			array('empty' => 'Choose One', 'id'=>$model->id."_"."answerReasonExpressionId")
+			array('empty' => 'Choose One', 'id'=>$model->id."_"."answerReasonExpressionId", "class"=>"form-control")
 		); ?>
-		<?php echo $form->error($model,'answerReasonExpressionId'); ?>
-
-
+		</div>
+				</div>
 		<?php if($model->subjectType != "EGO_ID"): ?>
 			<br style="clear:left">
 			<?php echo $form->checkBox($model,'dontKnowButton', array('id'=>$model->id . "_" . "dontKnowButton")); ?>
@@ -407,18 +417,18 @@ function refresh(container){
 </div>
 
 	<div class="row" style="width:50%; float:left; padding:10px 20px">
-		<?php echo $form->labelEx($model,'prompt', array('onclick'=>'$(".nicEdit-main", this.parentNode)[0].focus()','class'=>'prompt')); ?>
+		<?php echo $form->labelEx($model,'prompt', array('onclick'=>'$(".nicEdit-main", this.parentNode)[0].focus()')); ?>
 		<div class="audioPlay" id="<?= $model->subjectType; ?>_<?= $model->id; ?>"><?php if(file_exists(Yii::app()->basePath."/../audio/".$model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3")): ?><a class="play-sound" onclick="playSound($(this).attr('file'))" href="#" file="/audio/<?= $model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3"; ?>"><span class="fui-volume"></span></a><?php endif; ?></div>
 		<?php if(!$model->isNewRecord):?>
-		<a class="btn btn-primary pull-right btn-sm" data-toggle="modal" data-target="#myModal" href="/authoring/uploadaudio?type=<?= $model->subjectType; ?>&id=<?= $model->id; ?>&studyId=<?= $model->studyId; ?>">Upload Audio</a>
+		<a class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#myModal" href="/authoring/uploadaudio?type=<?= $model->subjectType; ?>&id=<?= $model->id; ?>&studyId=<?= $model->studyId; ?>">Upload Audio</a>
 		<?php endif;?>
 		<?php echo $form->textArea($model,'prompt',array('rows'=>6, 'cols'=>50, 'id'=>'prompt'.$model->id)); ?>
 		<?php echo $form->error($model,'prompt'); ?>
 		<br>
-		<?php echo $form->labelEx($model,'preface', array('onclick'=>'$(".nicEdit-main", this.parentNode)[1].focus()','class'=>'prompt')); ?>
+		<?php echo $form->labelEx($model,'preface', array('onclick'=>'$(".nicEdit-main", this.parentNode)[1].focus()')); ?>
 		<div class="audioPlay" id="preface_<?= $model->id; ?>"><?php if(file_exists(Yii::app()->basePath."/../audio/".$model->studyId . "/PREFACE/" . $model->id . ".mp3")): ?><a class="play-sound" onclick="playSound($(this).attr('file'))" href="#" file="/audio/<?= $model->studyId . "/PREFACE/" . $model->id . ".mp3"; ?>"><span class="fui-volume"></span></a><?php endif; ?></div>
 		<?php if(!$model->isNewRecord):?>
-		<a class="btn btn-primary pull-right btn-sm" data-toggle="modal" data-target="#myModal" href="/authoring/uploadaudio?type=PREFACE&id=<?= $model->id; ?>&studyId=<?= $model->studyId; ?>">Upload Audio</a>
+		<a class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#myModal" href="/authoring/uploadaudio?type=PREFACE&id=<?= $model->id; ?>&studyId=<?= $model->studyId; ?>">Upload Audio</a>
 		<?php endif;?>
 		<?php echo $form->textArea($model,'preface',array('rows'=>6, 'cols'=>50, 'id'=>'preface'.$model->id)); ?>
 		<?php echo $form->error($model,'preface'); ?>
@@ -457,7 +467,7 @@ function refresh(container){
 		CController::createUrl('ajaxupdate?_'.uniqid()),
 		array(
 			'success' => 'js:function(data){data=data.split(";;;");console.log(data);$("#' . $model->id .' > h3").html($("#' . $model->id .' > h3").html().replace(data[0], data[1]));$(".optionLink").click(function(e){clickOption[$(this).parent().parent().attr("id")] = true;});$("#' . $model->id .' > h3").click();}',
-),
+		),
 		array('id'=>uniqid(), 'live'=>false));
 	?>
 <?php else: ?>
@@ -497,33 +507,68 @@ function refresh(container){
 
 <script>
 $(function(){
-	nPrompt = new nicEditor({buttonList : ['xhtml','fontSize','bold','italic','underline','strikeThrough','subscript','superscript','indent','outdent','hr','removeformat']}).panelInstance('prompt<?php echo $model->id; ?>');
-	nPreface = new nicEditor({buttonList : ['xhtml','fontSize','bold','italic','underline','strikeThrough','subscript','superscript','indent','outdent','hr','removeformat']}).panelInstance('preface<?php echo $model->id; ?>');
-	nCitation = new nicEditor({buttonList : ['xhtml','fontSize','bold','italic','underline','strikeThrough','subscript','superscript','indent','outdent','hr','removeformat']}).panelInstance('citation<?php echo $model->id; ?>');
-	if(<?php echo $model->id; ?> != 99999999999){
-		nPrompt.addEvent ("blur", function () {
-			var nicE = new nicEditors.findEditor('prompt<?php echo $model->id; ?>');
-            if(typeof nicE != "undefined")
-	            nicE.saveContent();
-            if($('#prompt<?php echo $model->id; ?>').val() == "<br>")
-            	$('#prompt<?php echo $model->id; ?>').val('');
-		});
-		nPreface.addEvent ("blur", function () {
-			var nicE = new nicEditors.findEditor('preface<?php echo $model->id; ?>');
-            if(typeof nicE != "undefined")
-	            nicE.saveContent();
-            if($('#preface<?php echo $model->id; ?>').val() == "<br>")
-            	$('#preface<?php echo $model->id; ?>').val('');
-		});
-		nCitation.addEvent ("blur", function () {
-			var nicE = new nicEditors.findEditor('citation<?php echo $model->id; ?>');
-            if(typeof nicE != "undefined")
-	            nicE.saveContent();
-            if($('#citation<?php echo $model->id; ?>').val() == "<br>")
-            	$('#citation<?php echo $model->id; ?>').val('');
-
-		});
-	}
-
+	$('#prompt<?php echo $model->id;?>').summernote({
+		toolbar:noteBar,
+		height:200,
+		onImageUpload: function(files, editor, welEditable) {
+			uploadImage(files[0], editor, welEditable);
+		},
+		onChange: function(contents, $editable) {
+			$('#prompt<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
+		},
+		onpaste: function(e) {
+			var thisNote = $(this);
+			var updatePastedText = function(someNote){
+				var original = someNote.code();
+				var cleaned = CleanPastedHTML(original);
+				someNote.code('').html(cleaned);
+			};
+			setTimeout(function () {
+				updatePastedText(thisNote);
+			}, 10);
+		}
+	});
+	$('#preface<?php echo $model->id;?>').summernote({
+		toolbar:noteBar,
+		height:200,
+		onImageUpload: function(files, editor, welEditable) {
+			uploadImage(files[0], editor, welEditable);
+		},
+		onChange: function(contents, $editable) {
+			$('#preface<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
+		},
+		onpaste: function(e) {
+			var thisNote = $(this);
+			var updatePastedText = function(someNote){
+				var original = someNote.code();
+				var cleaned = CleanPastedHTML(original);
+				someNote.code('').html(cleaned);
+			};
+			setTimeout(function () {
+				updatePastedText(thisNote);
+			}, 10);
+		}
+	});
+	$('#citation<?php echo $model->id;?>').summernote({
+		toolbar:noteBar,
+		height:200,
+		onImageUpload: function(files, editor, welEditable) {
+			uploadImage(files[0], editor, welEditable);
+		},
+		onChange: function(contents, $editable) {
+			$('#citation<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
+		},
+		onpaste: function(e) {
+			var thisNote = $(this);
+			var updatePastedText = function(someNote){
+				var original = someNote.code();
+				var cleaned = CleanPastedHTML(original);
+				someNote.code('').html(cleaned);
+			};
+			setTimeout(function () {
+				updatePastedText(thisNote);
+			}, 10);
+		}
+	});
 });
 </script>

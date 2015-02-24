@@ -50,7 +50,7 @@ class AlterList extends CActiveRecord
 		);
 	}
 
-	public function sortOrder($ordering, $studyId)
+	public static function sortOrder($ordering, $studyId)
 	{
 		$criteria = new CDbCriteria();
 		$criteria=array(
@@ -63,7 +63,7 @@ class AlterList extends CActiveRecord
 		}
 	}
 
-	public function moveUp($id)
+	public static function moveUp($id)
 	{
 		$model = AlterList::model()->findByPk($id);
 		if($model && $model->ordering > 0){
@@ -99,6 +99,7 @@ class AlterList extends CActiveRecord
 			'name' => 'Name',
 			'email' => 'Email',
 			'ordering' => 'Ordering',
+			'interviewId' => 'interview Id',
 		);
 	}
 
@@ -118,6 +119,7 @@ class AlterList extends CActiveRecord
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('email',$this->email,true);
 		$criteria->compare('ordering',$this->ordering,true);
+		$criteria->compare('interviewId',$this->interviewId,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -144,5 +146,5 @@ class AlterList extends CActiveRecord
 
         return parent::afterFind();
     }
-	
+
 }

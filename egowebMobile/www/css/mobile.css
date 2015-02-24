@@ -211,6 +211,7 @@ you can use the generic selector below, but it's slower:
 }
 a {
 	color: #06c;
+	text-decoration: none;
 }
 
 body

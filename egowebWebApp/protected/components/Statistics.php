@@ -30,17 +30,32 @@ class Statistics extends CComponent {
 			'condition'=>"FIND_IN_SET(" . $interviewId . ", interviewId)",
 		);
 		$alters = Alters::model()->findAll($criteria);
+		if(count($alters) == 0)
+			return false;
 		$this->alters = $alters;
 		$alters2 = $alters;
-		$expression = new Expression;
+
 		$this->expressionId = $expressionId;
 		$this->interviewId = $interviewId;
+		$expression = Expression::model()->findByPk($expressionId);
+		if($expression->questionId)
+			$expression->question = Question::model()->findByPk($expression->questionId);
+		$answers = array();
+		$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+		foreach($answerList as $answer){
+			if($answer->alterId1 && $answer->alterId2)
+				$answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
+			else if ($answer->alterId1 && !$answer->alterId2)
+				$answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
+			else
+				$answers[$answer->questionId] = $answer;
+		}
 		foreach($alters as $alter){
 			$this->names[$alter->id] = $alter->name;
 			$this->betweenesses[$alter->id] = 0;
-	   		array_shift($alters2);
+			array_shift($alters2);
 			foreach($alters2 as $alter2){
-				if($expression->evalExpression($expressionId, $interviewId, $alter->id, $alter2->id)){
+				if($expression->evalExpression($expressionId, $interviewId, $alter->id, $alter2->id, $answers)){
 					if(!in_array($alter->id, $this->nodes))
 						$this->nodes[] = $alter->id;
 					if(!in_array($alter2->id, $this->nodes))
@@ -141,8 +156,6 @@ class Statistics extends CComponent {
 						$this->shortPaths[md5($visited[0] . $endNode)][] = $v2;
 						$this->shortPaths[md5($endNode . $visited[0])][] = $v2;
 					}
-					//print_r($v2);
-					//echo $this->names[$visited[0]] . ":" . $this->names[$node1].":".$this->names[$endNode]."<br>\r\n";
 					$this->getDistance($v2, $node2);
 				}
 		    }
@@ -158,52 +171,6 @@ class Statistics extends CComponent {
 
 	public function getBetweenness($alterId){
 		return $this->betweenesses[$alterId];
-		/*
-		Old way #1 - super efficient
-
-		$sum = 0;
-		$otherNodes = array_diff($this->nodes, array($alterId));
-		$endNodes = $otherNodes;
-		foreach($otherNodes as $node){
-			foreach($endNodes as $endNode){
-				if($node == $endNode)
-					continue;
-				$all = 0; $between = 0;
-				if(isset($this->shortPaths[md5($node.$endNode)]))
-					$key = md5($node.$endNode);
-				elseif(isset($this->shortPaths[md5($node.$endNode)]))
-					$key = md5($endNode.$node);
-				else
-					continue;
-				foreach($this->shortPaths[$key] as $path){
-					if(in_array($alterId, $path))
-						$between++;
-					$all++;
-				}
-				if($all != 0)
-					$sum = $sum + floatval($between/ $all);
-			}
-		}
-		return round($sum,3);
-*/
-/*
-		Old way #2 - better, but still slow
-
-		$sum = 0;
-		foreach($this->shortPaths as $shortPaths){
-			$all = 0; $between = 0;
-			foreach($shortPaths as $path){
-				if($path[0] == $alterId || $path[count($path) - 1] == $alterId)
-					break;
-				if(in_array($alterId, $path))
-					$between++;
-				$all++;
-			}
-			if($all != 0)
-				$sum = $sum + floatval($between/ $all);
-		}
-		return round($sum,3);
-*/
 	}
 
 	public function getBetweenesses(){
@@ -213,7 +180,16 @@ class Statistics extends CComponent {
 				array_shift($path);
 				array_pop($path);
 				foreach($path as $node){
-					$between[$node] = $between[$node] + 1;
+
+					if(!isset($between[$node])){
+						$between[$node] = 1;
+					}else{
+						try{
+							$between[$node] = $between[$node] + 1;
+						}catch (Exception $e){
+							print_r($between);
+						}
+					}
 				}
 			}
 			foreach($between as $index=>$value){
@@ -344,36 +320,21 @@ class Statistics extends CComponent {
 	}
 
 	private $tinyNum = 0.0000001;
+
 	private function normalize($vec) {
 		$magnitudeSquared = 0.0;
 		foreach($vec as $gNode=>$value) {
-			//echo $magnitudeSquared ."+" . pow($value,2) . "=";
 			$magnitudeSquared = $magnitudeSquared + pow($value,2);
-			//echo "magnitude squared:".$magnitudeSquared."<br>";
 		}
 		$magnitude =  sqrt($magnitudeSquared);
 		$factor = 1 / ($magnitude < $this->tinyNum ? $this->tinyNum : $magnitude);
-		//echo "magnitude:".$magnitude.":factor:$factor<br>";
 		$normalized = array();
 		foreach($vec as $gNode=>$value) {
 			$normalized[$gNode] = $value  * $factor;
 		}
 		return $normalized;
 	}
-	/*
-	private Map<N,Double> normalize(Map<N,Double> vec) {
-		Double magnitudeSquared = 0.0;
-		for(Double component : vec.values()) {
-			magnitudeSquared += component * component;
-		}
-		Double magnitude = Math.sqrt(magnitudeSquared);
-		Double factor = 1 / (magnitude < tinyNum ? tinyNum : magnitude);
-		Map<N,Double> normalized = Maps.newHashMap();
-		for(N node : vec.keySet()) {
-			normalized.put(node, vec.get(node)*factor);
-		}
-		return normalized;
-	}*/
+
 	public function eigenvectorCentrality($node = null) {
 		if(count($this->eigenvectorCentralities) == 0) {
 			$tries = (count($this->nodes)+5)*(count($this->nodes)+5);
@@ -429,7 +390,6 @@ class Statistics extends CComponent {
 	public function degreeMaxDiff() {
 		$nodes = count($this->nodes);
 		return $nodes < 3 ? null : ($nodes-1) * ($nodes-2);
-		//return $nodes < 3 ? null : ($nodes-1) * (1 - 1.0/($nodes-1));
 	}
 
 	public function degreeCentralization() {
@@ -457,301 +417,4 @@ class Statistics extends CComponent {
 			round($total / $this->betweennessMaxDiff(),3);
 	}
 
-	/*
-	public function initComponents() {
-		if($components == null) {
-			isolates = Sets.newHashSet();
-			dyads = Sets.newHashSet();
-			components = Sets.newHashSet();
-			Set<N> nodes = network.getNodes();
-			for(N seed : nodes) {
-				Boolean seedRepresentsNewComponent = true;
-				for(Set<N> component : components) {
-					if(component.contains(seed)) {
-						seedRepresentsNewComponent = false;
-					}
-				}
-				if(seedRepresentsNewComponent) {
-					Set<N> component = new HashSet<N>();
-					for(N node : nodes) {
-						if(network.distance(seed, node) != null) {
-							component.add(node);
-						}
-					}
-					components.add(Collections.unmodifiableSet(component));
-					if(component.size() < 2) {
-						isolates.add(seed);
-					} else if(component.size() < 3) {
-						dyads.add(Collections.unmodifiableSet(component));
-					}
-				}
-			}
-		}
-	}
-
-	private Set<N> isolates;
-	private Set<Set<N>> dyads;
-	private Set<Set<N>> components;
-
-	public Set<N> isolates() {
-		initComponents();
-		return isolates;
-	}
-
-	public Set<Set<N>> dyads() {
-		initComponents();
-		return dyads;
-	}
-
-	public Set<Set<N>> components() {
-		initComponents();
-		return components;
-	}
-
-	/*
-	 * For each of these properties x, define two methods:
-	 * 1) Double xCentrality(N node)
-	 * 2) Double xCentralityMaxDifference(Integer nodes)
-	 *
-	 * Where xMaxCentralityDifference gives the maximum possible
-	 * sum of centrality differences for that many nodes. That
-	 * maximum is typically realized for a star network, in which
-	 * one node connects to all others but none of the others connect
-	 * to each other.
-	 */
-	//public static String[] centralityProperties = {"degree","closeness","betweenness","eigenvector"};
-
-	// Implement the following with reflection. See deprecated *betweenness* methods for examples.
-	/*
-	public function centrality(String property, N node) {
-		try {
-			Method centralityMethod =
-				Statistics.class.getDeclaredMethod(
-						property+"Centrality",
-						new Class[]{Object.class}); // Would be node.getClass() except generics erased at runtime.
-			return (Double) centralityMethod.invoke(this, node);
-		} catch (Exception ex) {
-			throw new RuntimeException("Unable to determine "+property+"Centrality for "+node,ex);
-		}
-	}
-
-	public Double centralityMean(String property) {
-		Double total = 0.0;
-		for(N node : network.getNodes()) {
-			total += centrality(property,node);
-		}
-		return network.getNodes().size() < 1 ? 0.0 : total / network.getNodes().size();
-	}
-
-	public Double maxCentrality(String property) {
-		N node = maxCentralityNode(property);
-		return node == null ? 0.0 : centrality(property,node);
-	}
-
-	public N maxCentralityNode(String property) {
-		Double maxValue = null;
-		N maxNode = null;
-		for(N node : network.getNodes()) {
-			if(maxValue == null || centrality(property,node) > maxValue) {
-				maxValue = centrality(property,node);
-				maxNode = node;
-			}
-		}
-		return maxNode;
-	}
-
-	public Double centralization(String property) {
-		Double maximumCentrality = maxCentrality(property);
-		Double totalCentralityDifference = 0.0;
-		Set<N> nodes = network.getNodes();
-		for(N node : nodes) {
-			totalCentralityDifference += maximumCentrality - centrality(property,node);
-		}
-		Integer n = nodes.size();
-		return n < 3 ? 0.0 :
-			totalCentralityDifference / centralityMaxDifference(property, n);
-	}
-
-	public static Double centralityMaxDifference(String property, Integer nodes) {
-
-		try {
-			Method centralityMethod =
-				Statistics.class.getDeclaredMethod(
-						property+"CentralityMaxDifference",
-						new Class[]{Integer.class});
-			return (Double) centralityMethod.invoke(null, nodes);
-		} catch (Exception ex) {
-			throw new RuntimeException("Unable to determine "+property+"CentralityMaxDifference for "+nodes+" nodes.",ex);
-		}
-	}
-
-	/*
-	 * Degree centrality is the number of direct connections
-	 * to a node divided by the number of possible direct
-	 * connection
-	 /s to a node in a network of that size.
-
-	public Double degreeCentrality(N node) {
-		Integer nodes = network.getNodes().size();
-		return nodes < 2 ? 0.0 : network.connections(node).size() * 1.0 / (nodes-1);
-	}
-	public static Double degreeCentralityMaxDifference(Integer nodes) {
-		return nodes < 3 ? null : (nodes-1) * (1 - 1.0/(nodes-1));
-	}
-
-	/*
-	 * For fully connected network, closeness is the reciprocal
-	 * of the average distance to other nodes. For disconnected
-	 * networks, it is the closeness within a component multiplied
-	 * by the portion of other nodes that are in that component.
-
-	public Double closenessCentrality(N node) {
-		if(! nodeToCloseness.containsKey(node)) {
-			Integer reachable = 0;
-			Integer totalDistance = 0;
-			Set<N> nodes = network.getNodes();
-			for(N n : nodes) {
-				Integer distance = network.distance(node, n);
-				if(distance != null && distance > 0) {
-					reachable++;
-					totalDistance += distance;
-				}
-			}
-			if(reachable < 1) {
-				return 0.0;
-			}
-			Double averageDistance = totalDistance*1.0/reachable;
-			nodeToCloseness.put(node, reachable / (averageDistance * (nodes.size()-1)));
-		}
-		return nodeToCloseness.get(node);
-	}
-	private Map<N,Double> nodeToCloseness = Maps.newHashMap();
-	public static Double closenessCentralityMaxDifference(Integer nodes) {
-		return nodes < 3 ? null : (nodes-2) * (nodes-1) / (2*nodes - 3.0);
-	}
-
-	/*
-	 * Sum over pairs of nodes a,b (such that none of a,b,n are equal)
-	 * of the number of shortest paths from a to b that pass through
-	 * n divided by the total number of shortest paths from a to b.
-	 * Disconnected networks are addressed by choosing that 0/0 => 0.
-
-	public Double betweennessCentrality(N node) {
-		if(! nodeToBetweenness.containsKey(node)) {
-			List<N> nodes = Lists.newArrayList(network.getNodes());
-			Double result = 0.0;
-			for(Integer i = 0; i < nodes.size(); i++) {
-				N node1 = nodes.get(i);
-				for(Integer j = i+1; j < nodes.size(); j++) {
-					N node2 = nodes.get(j);
-					if(! (node.equals(node1) || node.equals(node2))) {
-						result += portionOfShortestPathsBetweenAandBthroughN(node1, node2, node);
-					}
-				}
-			}
-			nodeToBetweenness.put(node, nodes.size() < 3 ? 0.0 : result * 2 / (nodes.size()-1) / (nodes.size()-2));
-		}
-		return nodeToBetweenness.get(node);
-	}
-	private Map<N,Double> nodeToBetweenness = Maps.newHashMap();
-
-	public static Double betweennessCentralityMaxDifference(Integer nodes) {
-		return nodes < 3 ? null : (nodes-1)*(nodes-1)*(nodes-2) / 2.0;
-	}
-
-	private Double portionOfShortestPathsBetweenAandBthroughN(N a, N b, N n) {
-		Integer totalDistance = network.distance(a, b);
-		Integer distance1 = network.distance(a, n);
-		Integer distance2 = network.distance(b, n);
-		if(totalDistance == null || distance1 == null || ! totalDistance.equals(distance1+distance2)) {
-			return 0.0;
-		}
-		Integer totalPaths = numberOfShortestPaths(a,b);
-		Integer inclusivePaths = numberOfShortestPaths(a,n)*numberOfShortestPaths(b,n);
-		return inclusivePaths * 1.0 / totalPaths;
-	}
-	private Integer numberOfShortestPaths(N a, N b) {
-		Integer distance = network.distance(a,b);
-		if(distance == null) {
-			return 0;
-		}
-		if(distance < 1) {
-			return 1;
-		}
-		Integer paths = 0;
-		for(N n : network.connections(a)) {
-			if(network.distance(n, b) < distance) {
-				paths += numberOfShortestPaths(n,b);
-			}
-		}
-		return paths;
-	}
-
-	/*
-	 * The eigenvector centrality of a node is proportional to the sum
-	 * of the eigenvector centralities of its neighbors. I compute
-	 * the eigenvector centrality iteratively, using closeness as an
-	 * initial guess.
-
-	public Double eigenvectorCentrality(N n) {
-		if(eigenvectorCentralities == null) {
-			Integer tries = (network.getNodes().size()+5)*(network.getNodes().size()+5);
-			Map<N,Double> guess = initialEigenvectorGuess();
-			while(true) {
-				Map<N,Double> nextGuess = nextEigenvectorGuess(guess);
-				if(change(guess,nextGuess) < tinyNum || tries < 0) {
-					eigenvectorCentralities = nextGuess;
-					return eigenvectorCentrality(n);
-				}
-				guess = nextGuess;
-				tries--;
-			}
-		}
-		return eigenvectorCentralities.get(n) < Math.sqrt(tinyNum) ? 0.0 : eigenvectorCentralities.get(n);
-	}
-	private Map<N,Double> eigenvectorCentralities = null;
-
-	public static Double eigenvectorCentralityMaxDifference(Integer nodes) {
-		return nodes < 3 ? null : (nodes-1)*Math.sqrt(0.5) - Math.sqrt(0.5*(nodes-1));
-	}
-
-	private Map<N,Double> nextEigenvectorGuess(Map<N,Double> guess) {
-		Map<N,Double> results = Maps.newHashMap();
-		for(N node : guess.keySet()) {
-			Double result = 0.0;
-			for(N neighbor : network.connections(node)) {
-				result += guess.get(neighbor);
-			}
-			results.put(node, result);
-		}
-		return normalize(results);
-	}
-	private Double change(Map<N,Double> vec1, Map<N,Double> vec2) {
-		Double total = 0.0;
-		for(N node : vec1.keySet()) {
-			total += Math.abs(vec1.get(node) - vec2.get(node));
-		}
-		return total;
-	}
-	private Double tinyNum = 0.0000001;
-	private Map<N,Double> normalize(Map<N,Double> vec) {
-		Double magnitudeSquared = 0.0;
-		for(Double component : vec.values()) {
-			magnitudeSquared += component * component;
-		}
-		Double magnitude = Math.sqrt(magnitudeSquared);
-		Double factor = 1 / (magnitude < tinyNum ? tinyNum : magnitude);
-		Map<N,Double> normalized = Maps.newHashMap();
-		for(N node : vec.keySet()) {
-			normalized.put(node, vec.get(node)*factor);
-		}
-		return normalized;
-	}
-	private Map<N,Double> initialEigenvectorGuess() {
-		Map<N,Double> guess = Maps.newHashMap();
-		for(N node : network.getNodes()) {
-			guess.put(node, closenessCentrality(node));
-		}
-		return guess;
-	}*/
 }

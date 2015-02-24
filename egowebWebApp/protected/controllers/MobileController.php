@@ -8,7 +8,15 @@ class MobileController extends Controller
 
 	public function actionIndex()
 	{
-		$this->render('index');
+		$filename = "EgoWebMobile.ipa";
+		$date = date ("F d Y", filemtime($filename));
+		$filename = "EgoWebMobile.apk";
+		$android_date = date ("F d Y", filemtime($filename));
+
+		$this->render('index', array(
+			'date'=>$date,
+			'android_date'=>$android_date
+		));
 	}
 
 	public function actionCheck(){
@@ -27,15 +35,15 @@ class MobileController extends Controller
 	}
 	public function actionAjaxstudies(){
 		if(isset($_POST['userId'])){
-            #OK FOR SQL INJECTION
-            $params = new stdClass();
-            $params->name = ':userId';
-            $params->value = $_POST['userId'];
-            $params->dataType = PDO::PARAM_INT;
+			#OK FOR SQL INJECTION
+			$params = new stdClass();
+			$params->name = ':userId';
+			$params->value = $_POST['userId'];
+			$params->dataType = PDO::PARAM_INT;
 
 			$permission = q("SELECT permissions FROM user WHERE id = :userId",array($params))->queryScalar();
 			if($permission != 11)
-                #OK FOR SQL INJECTION
+				#OK FOR SQL INJECTION
 				$studyIds = q("SELECT studyId FROM interviewers WHERE interviewerId = :userId",array($params))->queryColumn();
 			else
 				$studyIds = "";
@@ -43,10 +51,10 @@ class MobileController extends Controller
 			$studyIds = "";
 		}
 		if($studyIds)
-            #OK FOR SQL INJECTION
+			#OK FOR SQL INJECTION
 			$studies = q("SELECT id,name FROM study WHERE id IN (" . implode(",", $studyIds) . ")")->queryAll();
 		else
-            #OK FOR SQL INJECTION
+			#OK FOR SQL INJECTION
 			$studies = q("SELECT id,name FROM study")->queryAll();
 
 		foreach($studies as $study){
@@ -60,19 +68,26 @@ class MobileController extends Controller
 	}
 
 	public function actionAjaxdata($id){
-        #OK FOR SQL INJECTION
+		#OK FOR SQL INJECTION
 		$study = q("SELECT * FROM study WHERE id = " . $id)->queryRow(false);
-        #OK FOR SQL INJECTION
-        $questions = q("SELECT * FROM question WHERE studyId = ".$id)->queryAll(false);
-        #OK FOR SQL INJECTION
-        $options = q("SELECT * FROM questionOption WHERE studyId = " . $id)->queryAll(false);
-        #OK FOR SQL INJECTION
-        $expressions = q("SELECT * FROM expression WHERE studyId = " . $id)->queryAll(false);
-        #OK FOR SQL INJECTION
-        $answers = q("SELECT * FROM answer WHERE studyId = " . $id)->queryAll(false);
+		#OK FOR SQL INJECTION
+		$questions = q("SELECT * FROM question WHERE studyId = ".$id)->queryAll(false);
+		#OK FOR SQL INJECTION
+		$options = q("SELECT * FROM questionOption WHERE studyId = " . $id)->queryAll(false);
+
+		#OK FOR SQL INJECTION
+		$expressions = q("SELECT * FROM expression WHERE studyId = " . $id)->queryAll(false);
+		#OK FOR SQL INJECTION
+		$answers = q("SELECT * FROM answer WHERE studyId = " . $id)->queryAll(false);
+
+		foreach($answers as &$answer){
+			if(strlen($answer[6]) >= 8)
+				$answer[6] = decrypt($answer[6]);
+		}
+
 		$interviewIds = array();
-        #OK FOR SQL INJECTION
-        $interviews = q("SELECT * FROM interview WHERE studyId = " . $id)->queryAll(false);
+		#OK FOR SQL INJECTION
+		$interviews = q("SELECT * FROM interview WHERE studyId = " . $id)->queryAll(false);
 		$audioFiles = array();
 
 		$columns = array();
@@ -125,8 +140,12 @@ class MobileController extends Controller
 
 		if($interviewIds){
 			$interviewIds = implode(',', $interviewIds);
-            #OK FOR SQL INJECTION
+			#OK FOR SQL INJECTION
 			$alters = q("SELECT * FROM alters WHERE interviewId  in (" . $interviewIds . ")")->queryAll(false);
+			foreach($alters as &$alter){
+				if(strlen($alter[3]) >= 8)
+					$alter[3] = decrypt($alter[3]);
+			}
 		}else{
 			$alters = "";
 		}
@@ -141,19 +160,17 @@ class MobileController extends Controller
 			'audioFiles'=>$audioFiles,
 			'columns'=>$columns,
 		);
-		if (isset($_SERVER['HTTP_ORIGIN'])) {
-		    header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
-		    header('Access-Control-Allow-Credentials: true');
-		    header('Access-Control-Max-Age: 86400');    // cache for 1 day
-		}
+		header("Access-Control-Allow-Origin: *");
+		header('Access-Control-Allow-Credentials: true');
+		header('Access-Control-Max-Age: 86400');	// cache for 1 day
 		echo json_encode($data);
 		Yii::app()->end();
 	}
 
 	public function actionAuthenticate(){
-		    header("Access-Control-Allow-Origin: *");
-		    header('Access-Control-Allow-Credentials: true');
-		    header('Access-Control-Max-Age: 86400');    // cache for 1 day
+		header("Access-Control-Allow-Origin: *");
+		header('Access-Control-Allow-Credentials: true');
+		header('Access-Control-Max-Age: 86400');	// cache for 1 day
 
 		if(isset($_POST['LoginForm']))
 		{
@@ -185,13 +202,14 @@ class MobileController extends Controller
 			if(!$data['study']['ID']){
 				echo "Study object broken:";
 				print_r($data['study']);
+				header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
 				die();
 			}
-            #OK FOR SQL INJECTION
-            $params = new stdClass();
-            $params->name = ':studyId';
-            $params->value = $data['study']['ID'];
-            $params->dataType = PDO::PARAM_INT;
+			#OK FOR SQL INJECTION
+			$params = new stdClass();
+			$params->name = ':studyId';
+			$params->value = $data['study']['ID'];
+			$params->dataType = PDO::PARAM_INT;
 
 			$oldStudy = q("SELECT * FROM study WHERE id = :studyId", array($params))->queryRow();
 			if($oldStudy['modified'] == $data['study']['MODIFIED']){
@@ -242,31 +260,31 @@ class MobileController extends Controller
 	}
 
 	private function compare($data){
-        #OK FOR SQL INJECTION
+		#OK FOR SQL INJECTION
 		$oldStudy = q("SELECT * FROM study WHERE id = " . $data['study']['ID'])->queryRow();
 
 		foreach($oldStudy as $key=>$value){
-		    $oldStudy[strtoupper($key)] = $value;
-		    unset($oldStudy[$key]);
+		$oldStudy[strtoupper($key)] = $value;
+		unset($oldStudy[$key]);
 		}
 
 		if($data['study'] != $oldStudy)
-		    return false;
+		return false;
 
-        #OK FOR SQL INJECTION
+		#OK FOR SQL INJECTION
 		$oldQuestions = q("SELECT * FROM question WHERE studyId = " . $data['study']['ID'])->queryAll();
 		if(count($data['questions']) != count($oldQuestions))
-		    return false;
+		return false;
 
-        #OK FOR SQL INJECTION
+		#OK FOR SQL INJECTION
 		$oldQuestionOptions = q("SELECT * FROM questionOption WHERE studyId = " . $data['study']['ID'])->queryAll();
 		if(count($data['questionOptions']) != count($oldQuestionOptions))
-		    return false;
+		return false;
 
-        #OK FOR SQL INJECTION
+		#OK FOR SQL INJECTION
 		$oldExpressions = q("SELECT * FROM expression WHERE studyId = " . $data['study']['ID'])->queryAll();
 		if(count($data['expressions']) != count($oldExpressions))
-		    return false;
+		return false;
 
 		return true;
 	}
@@ -274,78 +292,78 @@ class MobileController extends Controller
 	private function saveAnswers($data, $newData = null)
 	{
 		foreach($data['interviews'] as $interview){
-		    $newInterview = new Interview;
-		    if($newData)
-		    	$newInterview->studyId = $newData['studyId'];
-		    else
-		    	$newInterview->studyId = $interview['STUDYID'];
-		    $newInterview->completed = $interview['COMPLETED'];
-		    $newInterview->save();
-		    $newInterviewIds[$interview['ID']] = $newInterview->id;
+		$newInterview = new Interview;
+		if($newData)
+			$newInterview->studyId = $newData['studyId'];
+		else
+			$newInterview->studyId = $interview['STUDYID'];
+		$newInterview->completed = $interview['COMPLETED'];
+		$newInterview->save();
+		$newInterviewIds[$interview['ID']] = $newInterview->id;
 		}
 		if(isset($data['alters'])){
-		    foreach($data['alters'] as $alter){
-		    	if(!isset($newInterviewIds[$alter['INTERVIEWID']]))
-		    		continue;
-		    	$newAlter = new Alters;
-		    	$newAlter->name = $alter['NAME'];
-		    	$newAlter->interviewId = $newInterviewIds[$alter['INTERVIEWID']];
-		    	$newAlter->ordering=1;
-		    	if(!$newAlter->save()){
-		    		$errors++;
-		    		print_r($newAlter->getErrors());
-		    		die();
-		    	}else{
-		    		$newAlterIds[$alter['ID']] = $newAlter->id;
-		    	}
-		    	$newAlter->save();
-		    }
+		foreach($data['alters'] as $alter){
+			if(!isset($newInterviewIds[$alter['INTERVIEWID']]))
+				continue;
+			$newAlter = new Alters;
+			$newAlter->name = $alter['NAME'];
+			$newAlter->interviewId = $newInterviewIds[$alter['INTERVIEWID']];
+			$newAlter->ordering=1;
+
+			if(!$newAlter->save()){
+				$errors++;
+				print_r($newAlter->getErrors());
+				die();
+			}else{
+				$newAlterIds[$alter['ID']] = $newAlter->id;
+			}
+		}
 		}
 		foreach($data['answers'] as $answer){
-		    $newAnswer = new Answer;
-		    if($newData){
-		    	if(!isset($newData['newQuestionIds'][$answer['QUESTIONID']]))
-		    		continue;
-		    	$newAnswer->questionId = $newData['newQuestionIds'][$answer['QUESTIONID']];
-		    	$newAnswer->studyId = $newData['studyId'];
-		    	if($answer['ANSWERTYPE'] == "MULTIPLE_SELECTION"){
-		    		$values = explode(',', $answer['VALUE']);
-		    		foreach($values as &$value){
-		    			if(isset($newData['newOptionIds'][$value]))
-		    				$value = $newData['newOptionIds'][$value];
-		    		}
-		    		$answer['VALUE'] = implode(',', $values);
-		    	}
-		    	$newAnswer->value = $answer['VALUE'];
-		    	if($answer['OTHERSPECIFYTEXT']){
-		    		foreach(preg_split('/;;/', $answer['OTHERSPECIFYTEXT']) as $other){
-		        		if($other && strstr($other, ':')){
-		    		    	list($key, $val) = preg_split('/:/', $other);
-		    		    	$responses[] = $newData['newOptionIds'][$key] . ":" .$val;
-		    		    }
-		    		}
-		    		$answer['OTHERSPECIFYTEXT'] = implode(";;", $responses);
-		    	}
-		    }else{
-		    	if(!isset($answer['QUESTIONID']))
-		    		continue;
-		    	$newAnswer->questionId = $answer['QUESTIONID'];
-		    	$newAnswer->studyId = $answer['STUDYID'];
-		    	$newAnswer->value = $answer['VALUE'];
-		    }
-		    $newAnswer->questionType = $answer['QUESTIONTYPE'];
-		    $newAnswer->answerType = $answer['ANSWERTYPE'];
-		    $newAnswer->otherSpecifyText = $answer['OTHERSPECIFYTEXT'];
-		    $newAnswer->skipReason = $answer['SKIPREASON'];
-		    $newAnswer->interviewId = $newInterviewIds[$answer['INTERVIEWID']];
-		    if(is_numeric($answer['ALTERID1']) && isset($newAlterIds[$answer['ALTERID1']]))
-		    	$newAnswer->alterId1 = $newAlterIds[$answer['ALTERID1']];
-		    if(is_numeric($answer['ALTERID2']) && isset($newAlterIds[$answer['ALTERID2']]))
-		    	$newAnswer->alterId2 = $newAlterIds[$answer['ALTERID2']];
-		    if(!$newAnswer->save()){
-		    	print_r($newAnswer->getErrors());
-		    	die();
-		    }
+		$newAnswer = new Answer;
+		if($newData){
+			if(!isset($newData['newQuestionIds'][$answer['QUESTIONID']]))
+				continue;
+			$newAnswer->questionId = $newData['newQuestionIds'][$answer['QUESTIONID']];
+			$newAnswer->studyId = $newData['studyId'];
+			if($answer['ANSWERTYPE'] == "MULTIPLE_SELECTION"){
+				$values = explode(',', $answer['VALUE']);
+				foreach($values as &$value){
+					if(isset($newData['newOptionIds'][$value]))
+						$value = $newData['newOptionIds'][$value];
+				}
+				$answer['VALUE'] = implode(',', $values);
+			}
+			$newAnswer->value = $answer['VALUE'];
+			if($answer['OTHERSPECIFYTEXT']){
+				foreach(preg_split('/;;/', $answer['OTHERSPECIFYTEXT']) as $other){
+				if($other && strstr($other, ':')){
+					list($key, $val) = preg_split('/:/', $other);
+					$responses[] = $newData['newOptionIds'][$key] . ":" .$val;
+				}
+				}
+				$answer['OTHERSPECIFYTEXT'] = implode(";;", $responses);
+			}
+		}else{
+			if(!isset($answer['QUESTIONID']))
+				continue;
+			$newAnswer->questionId = $answer['QUESTIONID'];
+			$newAnswer->studyId = $answer['STUDYID'];
+			$newAnswer->value = $answer['VALUE'];
+		}
+		$newAnswer->questionType = $answer['QUESTIONTYPE'];
+		$newAnswer->answerType = $answer['ANSWERTYPE'];
+		$newAnswer->otherSpecifyText = $answer['OTHERSPECIFYTEXT'];
+		$newAnswer->skipReason = $answer['SKIPREASON'];
+		$newAnswer->interviewId = $newInterviewIds[$answer['INTERVIEWID']];
+		if(is_numeric($answer['ALTERID1']) && isset($newAlterIds[$answer['ALTERID1']]))
+			$newAnswer->alterId1 = $newAlterIds[$answer['ALTERID1']];
+		if(is_numeric($answer['ALTERID2']) && isset($newAlterIds[$answer['ALTERID2']]))
+			$newAnswer->alterId2 = $newAlterIds[$answer['ALTERID2']];
+		if(!$newAnswer->save()){
+			print_r($newAnswer->getErrors());
+			die();
+		}
 		}
 	}
 

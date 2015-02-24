@@ -115,15 +115,17 @@ class User extends CActiveRecord
         // return uniqid('',true);
     }
 
-    public function getName($member_id){
+    public static function getName($member_id){
         $member = User::model()->findByPk($member_id);
         if($member)
             return $member->name;
     }
 
 	public function getPermission(){
-		if($this->permissions == 11)
+		if($this->permissions == 5)
 			return "admin";
+		if($this->permissions == 11)
+			return "super admin";
 		if(!Yii::app()->user->isGuest)
 			return "interviewer";
 	}

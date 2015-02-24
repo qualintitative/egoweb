@@ -16,8 +16,6 @@ return array(
 	'import'=>array(
 		'application.models.*',
 		'application.components.*',
-		'application.extensions.yiidebugtb.*',
-		'application.controllers.*'
 	),
 
 	'modules'=>array(
@@ -27,7 +25,7 @@ return array(
 			'class'=>'system.gii.GiiModule',
 			'password'=>'12345',
 			// If removed, Gii defaults to localhost only. Edit carefully to taste.
-			'ipFilters'=>array('127.0.0.1','::1',"*"),
+			'ipFilters'=>array('127.0.0.1','::1'),
 		),
 
 	),
@@ -77,43 +75,43 @@ return array(
 			// use 'site/error' action to display errors
 			'errorAction'=>'site/error',
 		),
+
 		'log'=>array(
 			'class'=>'CLogRouter',
 			'routes'=>array(
 				array(
 					'class'=>'CFileLogRoute',
-					'levels'=>'error, warning, trace',
-				),
-				array( // configuration for the toolbar
-					'class'=>'XWebDebugRouter',
-					'config'=>'alignLeft, opaque, fixedPos, collapsed, yamlStyle',
-					'levels'=>'error, warning, trace, profile, info',
-					'allowedIPs'=>array('127.0.0.1','::1','localhost', /*'71.231.64.172'*/),
+					'levels'=>'error, warning, trace, info',
 				),
 			),
 
 		),
-        'request'=>array(
-            'enableCsrfValidation'=>true,
-        ),
 
-        'securityManager'=>array(
-            'cryptAlgorithm' => 'blowfish',
-            'encryptionKey' => 'One morning I shot an elephant in my pajamas. How he got in my pajamas I dunno.',
-        )
+		'request'=>array(
+			'enableCsrfValidation'=>true,
+			'class'=>'HttpRequest',
+			'noCsrfValidationRoutes'=>array(
+				'mobile/*',
+				'api/*',
+			),
+		),
+
+		'securityManager'=>array(
+			'cryptAlgorithm' => 'blowfish',
+			'encryptionKey' => 'One morning I shot an elephant in my pajamas.',
+		)
 	),
 
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']
 	'params'=>array(
 		// this is used in contact page
-		'adminEmail'=>'info@bluscs.com',
+		'adminEmail'=>'admin@example.com',
 		// The max login attempt before showing captcha
 		'maxLoginAttempts'=>3,
-        'maxUploadFileSize'=>1024*1024*3, // 3MB
-        'apiKey' => 'API_KEY',
-        'surveyPrivateKey' => "file:///path/to/private/key/private.pem",
-        'surveyPublicKey' => "file:///path/to/public/key/public.pem",
-        'surveyEncryptionPassword' => 'private key encryption password'
+		'maxUploadFileSize'=>1024*1024*3, // 3MB
+		'apiKey' => 'API_KEY',
+		// file path for study export
+		'exportFilePath' => '',
 	)
 );

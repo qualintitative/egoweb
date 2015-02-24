@@ -9,6 +9,12 @@ class WebUser extends CWebUser{
 		return ($this->user && $this->user->permissions>=11);
 	}
 
+	// is the user a superadmin
+	function getIsAdmin(){
+		if(!isset($this->user->permissions))
+			return false;
+		return ($this->user && $this->user->permissions>=5);
+	}
 	// get the logged user
 	function getUser(){
 		if($this->_user===null){

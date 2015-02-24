@@ -7,9 +7,14 @@ class m140924_052523_add_dates_to_study extends CDbMigration
         $transaction=$this->getDbConnection()->beginTransaction();
         try
         {
-            $this->addColumn('study', 'created_date', 'int');
-            $this->addColumn('study', 'closed_date', 'int');
-            $transaction->commit();
+			$table = Yii::app()->db->schema->getTable('study');
+			if($table){
+				if(!isset($table->columns['created_date']))
+					$this->addColumn('study', 'created_date', 'int');
+				if(!isset($table->columns['closed_date']))
+					$this->addColumn('study', 'closed_date', 'int');
+				$transaction->commit();
+			}
         }
         catch(Exception $e)
         {

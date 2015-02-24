@@ -39,7 +39,6 @@ class Note extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('interviewId, expressionId, alterId, notes', 'required'),
-			array('interviewId, expressionId', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, interviewId, expressionId, alterId, notes', 'safe', 'on'=>'search'),
@@ -107,6 +106,6 @@ class Note extends CActiveRecord
      */
     protected function beforeSave() {
         $this->notes = encrypt( $this->notes );
-        return parent::afterSave();
+        return parent::beforeSave();
     }
 }

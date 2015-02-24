@@ -46,8 +46,24 @@ function importStudy(address, id){
 		tableNames.push(db.catalog.getAllTables()[i].tableName);
 	}
 	console.log(tableNames);
+$.ajax({
+    url: url,
+    type: "GET",
+    timeout: 30000,
+	crossDomain: true,
+    success: function(data) {
+        // show text reply as-is (debug)
 
-	$.get(url,function(data){
+        // show xml field values (debug)
+        //alert( $(data).find("title").text() );
+
+        // loop JSON array (debug)
+        //var str="";
+        //$.each(data.items, function(i,item) {
+        //  str += item.title + "\n";
+        //});
+        //alert(str);
+
 		data = JSON.parse(data);
 		console.log(data);
 
@@ -118,8 +134,13 @@ function importStudy(address, id){
 
 		for (k in data.options){
 			data.options[k][0] = parseInt(data.options[k][0]);
+			data.options[k][6] = parseInt(data.options[k][6]);
 			data.options[k][2] = newId;
-			db.catalog.getTable('questionOption').insertRow(data.options[k]);
+			try{
+				db.catalog.getTable('questionOption').insertRow(data.options[k]);
+			}catch(err){
+				console.log(data.options[k]);
+			}
 		}
 		var expression = {
 			tableName: "expression",
@@ -162,6 +183,7 @@ db.commit();
 	//$('#status').html($('#status').html()+"DONE!");
 	getStudyList(server);
 
+}
 });
 }
 

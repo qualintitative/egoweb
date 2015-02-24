@@ -50,13 +50,20 @@ class Study extends CActiveRecord
 			array('name', 'required'),
 			array('name', 'filter', 'filter'=>function($param) {return CHtml::encode(strip_tags($param));}),
 			array('active', 'numerical', 'integerOnly'=>true),
-			array('id, active, name, introduction, egoIdPrompt, alterPrompt, conclusion, minAlters, maxAlters, adjacencyExpressionId, multiSessionEgoId', 'length', 'max'=>2048),
+			array('id, active, name, minAlters, maxAlters, adjacencyExpressionId, multiSessionEgoId', 'length', 'max'=>255),
+			array('introduction, egoIdPrompt, alterPrompt, conclusion', 'length', 'max'=>32768),
+
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, active, name, introduction, egoIdPrompt, alterPrompt, conclusion, minAlters, maxAlters, adjacencyExpressionId, valueRefusal, valueDontKnow, valueLogicalSkip, valueNotYetAnswered', 'safe', 'on'=>'search'),
 			array('modified','default',
 				'value'=>new CDbExpression('NOW()'),
-				'setOnEmpty'=>true,'on'=>'insert'),
+				'setOnEmpty'=>true,'on'=>'insert'
+			),
+			array('userId','default',
+				'value'=>Yii::app()->user->id,
+				'setOnEmpty'=>true,'on'=>'insert'
+			),
 			array('multiSessionEgoId, useAsAlters, restrictAlters, fillAlterList','default',
 				'value'=>0,
 			'setOnEmpty'=>true),
@@ -74,7 +81,7 @@ class Study extends CActiveRecord
 		// class name for the relations automatically generated below.
 	}
 
-	public function getName($id){
+	public static function getName($id){
 		$model = Study::model()->findByPk($id);
 		if($model)
 			return $model->name;
@@ -91,7 +98,7 @@ class Study extends CActiveRecord
 		return Interview::model()->count("studyId=:id AND completed != -1", array("id" => $this->id));
 	}
 
-	public function updated($id){
+	public static function updated($id){
 		if(!$id)
 			return false;
 		$study = Study::model()->findByPk($id);
@@ -101,145 +108,225 @@ class Study extends CActiveRecord
 		}
 	}
 
-	public function nav($study, $pageNumber, $interviewId = null){
+	public static function nav($study, $pageNumber, $interviewId = null, $answers = null){
+
+		$expressionList = Expression::model()->findAllByAttributes(array('studyId'=>$study->id));
+		$questionList = Question::model()->findAllByAttributes(array('studyId'=>$study->id),array('order'=>'ordering'));
+		$egoQuestions = array();
+		$alterQuestions = array();
+		$alterPairQuestions = array();
+		$networkQuestions = array();
+
+		$page = array();
 		$i = 0;
-		$pages = array();
+
+		foreach($questionList as $question){
+			$questions[$question->id] = $question;
+			if($question->subjectType == "EGO_ID")
+				$ego_id_questions[$question->id] = $question;
+			else if($question->subjectType == "EGO")
+				$egoQuestions[$question->ordering] = $question;
+			else if($question->subjectType == "ALTER")
+				$alterQuestions[$question->ordering] = $question;
+			else if($question->subjectType == "ALTER_PAIR")
+				$alterPairQuestions[$question->ordering] = $question;
+			else if($question->subjectType == "NETWORK")
+				$networkQuestions[$question->ordering] = $question;
+		}
+
+		foreach($expressionList as $expression){
+			$expression->study = $study;
+			$expressions[$expression->id] = $expression;
+			if(isset($questions[$expression->questionId]))
+				$expressions[$expression->id]->question = $questions[$expression->questionId];
+		}
+
 		if($study->introduction != ""){
-			$pages[$i] = Study::checkPage($i, $pageNumber, "INTRODUCTION");
+			$page[$i] = Study::checkPage($i, $pageNumber, "INTRODUCTION");
 			$i++;
 		}
-		$pages[$i] = Study::checkPage($i, $pageNumber, "EGO ID");
+		$page[$i] = Study::checkPage($i, $pageNumber, "EGO ID");
 		$i++;
 		if(!$interviewId)
 			return json_encode($pages);
-        #OK FOR SQL INJECTION
-		$ego_qs = q("SELECT * FROM question WHERE studyId = $study->id AND subjectType ='EGO' order by ordering")->queryAll();
 		$prompt = "";
 		$ego_question_list = array();
-		$expression = new Expression;
-		foreach($ego_qs as $question){
+		foreach($egoQuestions as $question){
 			if($interviewId){
-				if(!$expression->evalExpression($question['answerReasonExpressionId'], $interviewId))
+				if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($question->answerReasonExpressionId, $interviewId, null, null, $answers))
+					continue;
+				if($answers[$question->id]->value == $study->valueNotYetAnswered)
 					continue;
 			}
-			if(($question['askingStyleList'] != 1 || $prompt != trim(preg_replace('/<\/*[^>]*>/', '', $question['prompt']))) && count($ego_question_list) > 0){
-				    $pages[$i] = Study::checkPage($i, $pageNumber, $ego_question_list['title']);
-					$prompt = "";
-				    $ego_question_list = array();
-				    $i++;
-			}
-			if($question['preface'] != ""){
-				$pages[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
+			if(($question->askingStyleList != 1 || $prompt != trim(preg_replace('/<\/*[^>]*>/', '', $question['prompt']))) && count($ego_question_list) > 0){
+				$page[$i] = Study::checkPage($i, $pageNumber, $ego_question_list->title);
+				$prompt = "";
+				$ego_question_list = array();
 				$i++;
 			}
-			if($question['askingStyleList'] == 1){
-			    $prompt = trim(preg_replace('/<\/*[^>]*>/', '', $question['prompt']));
-			    if(count($ego_question_list) == 0)
-			    	$ego_question_list = $question;
+			if($question->preface != ""){
+				$page[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
+				$i++;
+			}
+
+			if($question->askingStyleList == 1){
+				$prompt = trim(preg_replace('/<\/*[^>]*>/', '', $question->prompt));
+				if(count($ego_question_list) == 0)
+					$ego_question_list = $question;
 			}else{
-			    $pages[$i] = Study::checkPage($i, $pageNumber, $question['title']);
-			    $i++;
+				$page[$i] = Study::checkPage($i, $pageNumber, $question->title);
+				$i++;
 			}
 
 		}
 		if(count($ego_question_list) > 0){
-			$pages[$i] = Study::checkPage($i, $pageNumber, $ego_question_list['title']);
+			$page[$i] = Study::checkPage($i, $pageNumber, $ego_question_list->title);
 			$ego_question_list = array();
 			$i++;
 		}
 		if(trim(preg_replace('/<\/*[^>]*>/', '', $study->alterPrompt)) != ""){
-			$pages[$i] = Study::checkPage($i, $pageNumber, "ALTER_PROMPT");
+			$page[$i] = Study::checkPage($i, $pageNumber, "ALTER_PROMPT");
 			$i++;
 		}
 		$criteria = array(
 			'condition'=>"FIND_IN_SET(" . $interviewId . ", interviewId)",
 		);
 		$alters = Alters::model()->findAll($criteria);
-        #OK FOR SQL INJECTION
-		$answers = q("SELECT count(id) FROM answer WHERE interviewId = " . $interviewId . " AND (questionType =  'ALTER' OR questionType = 'ALTER_PAIR') ")->queryScalar();
-		if(count($alters) > 0 && $answers > 0){
-            #OK FOR SQL INJECTION
-			$alter_qs = q("SELECT * FROM question WHERE studyId = $study->id AND subjectType ='ALTER' order by ordering")->queryAll();
-			$prompt = "";
-			foreach($alter_qs as $question){
-				$alter_question_list = array();
-				$expression = new Expression;
-				foreach($alters as $alter){
-				    if(!$expression->evalExpression($question['answerReasonExpressionId'], $interviewId, $alter->id)){
-				    	continue;
-				    }
-				    if($question['askingStyleList']){
-				    	$alter_question_list=$question;
-				    }else{
-				    	if($question['preface'] != ""){
-				    		$pages[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
-				    		$i++;
-				    	}
-				    	$pages[$i] = Study::checkPage($i, $pageNumber, $question['title'] . " - " . $alter->name);
-				    	$i++;
-				    }
+		if(count($alters) > 0){
+			$prevQuestionId = false;
+			$NonListQIds = array();
+			$NonListQs = array();
+			$allNonListQIds = array();
+			foreach($alterQuestions as $question){
+				if($prevQuestion->id && !$prevQuestion->askingStyleList){
+					if(!$question->askingStyleList && $question->preface == ""){
+						if(count($NonListQIds) == 0){
+							$NonListQIds[] = $prevQuestion;
+							$allNonListQIds[] = $prevQuestion->id;
+						}
+						$NonListQIds[] = $question;
+						$allNonListQIds[] = $question->id;
+					}else{
+						if(count($NonListQIds) > 1)
+							$NonListQs[$NonListQIds[0]->id] = $NonListQIds;
+						$NonListQIds = array();
+					}
 				}
-				if($question['askingStyleList']){
-				    if(count($alter_question_list) > 0){
-				    	if($question['preface'] != ""){
-				    		$pages[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
-				    		$i++;
-				    	}
-				    	$pages[$i] = Study::checkPage($i, $pageNumber, $question['title']);
-				    	$i++;
-				    }
-				}
+				$prevQuestion = $question;
 			}
-            #OK FOR SQL INJECTION
-			$alter_pair_qs = q("SELECT * FROM question WHERE studyId = $study->id AND subjectType ='ALTER_PAIR' order by ordering")->queryAll();
 			$prompt = "";
-			$alter_pair_question_list = array();
-			foreach ($alter_pair_qs as $question){
-				$expression = new Expression;
-			    $alters2 = $alters;
-			    foreach($alters as $alter){
-			    	if($question['symmetric'])
-			    		array_shift($alters2);
-			    	$alter_pair_question_list = array();
-			    	foreach($alters2 as $alter2){
-			    		if($alter->id == $alter2->id)
-			    			continue;
-			    		if($question['answerReasonExpressionId'] && !$expression->evalExpression($question['answerReasonExpressionId'], $interviewId, $alter->id, $alter2->id))
-			    			continue;
-			    		$alter_pair_question_list = $question;
-			    	}
-			    	if(count($alter_pair_question_list) > 0){
-				    	if($question['preface'] != ""){
-				    		$pages[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
-				    		$question['preface'] = "";
-				    		$i++;
-				    	}
-				    	$pages[$i] = Study::checkPage($i, $pageNumber, $alter_pair_question_list['title'] . " - " . $alter->name);
-				    	$i++;
+			foreach($alterQuestions as $question){
+				if(in_array($question->id, $allNonListQIds)){
+					if(isset($NonListQs[$question->id])){
+						$preface = new Question;
+						foreach($alters as $alter){
+							foreach($NonListQs[$question->id] as $q){
+								if(isset($expressions[$q->answerReasonExpressionId]) && !$expressions[$q->answerReasonExpressionId]->evalExpression($q->answerReasonExpressionId, $interviewId, $alter->id, null, $answers))
+									continue;
+								if($answers[$q->id . "-" . $alter->id]->value == $study->valueNotYetAnswered)
+									continue;
+								if($q->preface != "" && !$preface->id){
+									$page[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
+									$preface->id = $q->id;
+									$i++;
+								}
+								$page[$i] = Study::checkPage($i, $pageNumber, $q->title . " - " . $alter->name);
+								$i++;
+							}
+						}
+					}else{
+						continue;
+					}
+				}else{
+					$alter_question_list = array();
+					foreach($alters as $alter){
+						if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($question->answerReasonExpressionId, $interviewId, $alter->id, null, $answers))
+							continue;
+						if($answers[$question->id . "-" . $alter->id]->value == $study->valueNotYetAnswered)
+							continue;
+						if($question->askingStyleList){
+							$alter_question_list = $question;
+						}else{
+							if($question->preface != ""){
+								$page[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
+								$i++;
+							}
+							$page[$i] = Study::checkPage($i, $pageNumber, $question->title . " - " . $alter->name);
+							$i++;
+						}
+					}
+					if($question->askingStyleList){
+						if(count($alter_question_list) > 0){
+							if($question->preface != ""){
+								$page[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
+								$i++;
+							}
+							$page[$i] = Study::checkPage($i, $pageNumber, $question->title);
+							$i++;
+						}
 					}
 				}
 			}
-            #OK FOR SQL INJECTION
-			$network_qs = q("SELECT * FROM question WHERE studyId = $study->id AND subjectType ='NETWORK' order by ordering")->queryAll();
-			foreach($network_qs as $question){
-			    if($interviewId){
-			    	$expression = new Expression;
-			    	if($question['answerReasonExpressionId'] && !$expression->evalExpression($question['answerReasonExpressionId'], $interviewId))
-			    		continue;
-			    }
-			    if($question['preface'] != ""){
-			    	$pages[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
-			    	$i++;
-			    }
-			    $pages[$i] = Study::checkPage($i, $pageNumber, $question['title']);
-			    $i++;
+
+			$prompt = "";
+			$alter_pair_question_list = array();
+			foreach ($alterPairQuestions as $question){
+				$alters2 = $alters;
+				foreach($alters as $alter){
+					if($question['symmetric'])
+						array_shift($alters2);
+					$alter_pair_question_list = array();
+					foreach($alters2 as $alter2){
+						if($alter->id == $alter2->id)
+							continue;
+						if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($question->answerReasonExpressionId, $interviewId, $alter->id, $alter2->id, $answers))
+							continue;
+						if($answers[$question->id . "-" . $alter->id . "and" . $alter2->id]->value == $study->valueNotYetAnswered)
+							continue;
+							if(!$question->askingStyleList){
+								if($question->preface != ""){
+									$page[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
+									$question->preface = "";
+									$i++;
+								}
+								$page[$i] = Study::checkPage($i, $pageNumber, $question->title . " - " . $alter->name . " and " . $alter2->name);
+								$i++;
+							}else{
+								$alter_pair_question_list = $question;
+
+							}
+					}
+					if(count($alter_pair_question_list) > 0){
+						if($question->preface != ""){
+							$page[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
+							$question->preface = "";
+							$i++;
+						}
+						$page[$i] = Study::checkPage($i, $pageNumber, $question->title . " - " . $alter->name);
+						$i++;
+					}
+				}
+			}
+			foreach($networkQuestions as $question){
+				if($interviewId){
+					if(isset($expressions[$question->id]) && !$expressions[$question->id]->evalExpression($question->answerReasonExpressionId, $interviewId,null,null, $answers))
+						continue;
+					if($answers[$question->id]->value == $study->valueNotYetAnswered)
+						continue;
+				}
+				if($question->preface != ""){
+					$page[$i] = Study::checkPage($i, $pageNumber, "PREFACE");
+					$i++;
+				}
+				$page[$i] = Study::checkPage($i, $pageNumber, $question->title);
+				$i++;
 			}
 		}
-		$pages[$i] = Study::checkPage($i, $pageNumber, "CONCLUSION");
-		return json_encode($pages);
+		$page[$i] = Study::checkPage($i, $pageNumber, "CONCLUSION");
+		return json_encode($page);
 	}
 
-	private function checkPage($currentPage, $pageNumber, $text){
+	private static function checkPage($currentPage, $pageNumber, $text){
 		if($currentPage == $pageNumber)
 			$text = "<b>".$text."</b>";
 		return $text;
@@ -249,10 +336,39 @@ class Study extends CActiveRecord
 	 * CORE FUNCTION
 	 * @return array pages of questions
 	 */
-	public function buildQuestions($study, $pageNumber = null, $interviewId = null){
-		$eKey = Yii::app()->getSecurityManager()->getEncryptionKey();
+	public static function buildQuestions($study, $pageNumber = null, $interviewId = null, $answers = null){
+
+		$expressionList = Expression::model()->findAllByAttributes(array('studyId'=>$study->id));
+		$questionList = Question::model()->findAllByAttributes(array('studyId'=>$study->id),array('order'=>'ordering'));
+		$egoQuestions = array();
+		$alterQuestions = array();
+		$alterPairQuestions = array();
+		$networkQuestions = array();
 		$page = array();
 		$i = 0;
+
+		foreach($questionList as $question){
+			$questions[$question->id] = $question;
+			if($question->subjectType == "EGO_ID")
+				$ego_id_questions[$question->id] = $question;
+			else if($question->subjectType == "EGO")
+				$egoQuestions[$question->ordering] = $question;
+			else if($question->subjectType == "ALTER")
+				$alterQuestions[$question->ordering] = $question;
+			else if($question->subjectType == "ALTER_PAIR")
+				$alterPairQuestions[$question->ordering] = $question;
+			else if($question->subjectType == "NETWORK")
+				$networkQuestions[$question->ordering] = $question;
+		}
+
+		foreach($expressionList as $expression){
+			$expression->study = $study;
+			$expressions[$expression->id] = $expression;
+			if(isset($questions[$expression->questionId]))
+				$expressions[$expression->id]->question = $questions[$expression->questionId];
+		}
+
+
 		if($study->introduction != ""){
 			if($i == $pageNumber){
 				$introduction = new Question;
@@ -263,78 +379,53 @@ class Study extends CActiveRecord
 			}
 			$i++;
 		}
+
 		if($pageNumber == $i){
-			$questions = Question::model()->findAllByAttributes(array('studyId'=>$study->id, 'subjectType'=>'EGO_ID'), $params=array('order'=>'ordering'));
-			foreach($questions as $question){
-				$ego_id_questions[$question->id] = $question;
-			}
 			$page[$i] = $ego_id_questions;
 			return $page[$i];
 		}
 		if(is_numeric($interviewId)){
 			$i++;
-            #OK FOR SQL INJECTION
-			$result = q("SELECT id, preface,answerReasonExpressionId FROM question WHERE subjectType = 'EGO' AND studyId = $study->id ORDER BY ordering")->queryAll();
-			$egoQuestionIds = array();
-			$egoPrefaces = array();
-			$egoQuestionExpressions = array();
-			foreach($result as $question){
-				$egoQuestionIds[] = $question['id'];
-				$egoPrefaces[$question['id']] = $question['preface'];
-				$egoQuestionExpressions[$question['id']] = $question['answerReasonExpressionId'];
-			}
-			if(count($egoQuestionIds) > 0)
-                #OK FOR SQL INJECTION
-                $result = q("SELECT id, questionId, value FROM answer WHERE questionId in (" . implode(',', $egoQuestionIds) . ")")->queryAll();
-			else
-				$result = array();
-			$answers = array();
-			foreach($result as $answer){
-				$answers[$answer['questionId']] = $answer;
-			}
 			$ego_question_list = array();
 			$prompt = "";
-			foreach ($egoQuestionIds as $questionId){
-				$expression = new Expression;
-				if(!$expression->evalExpression($egoQuestionExpressions[$questionId], $interviewId)){
-				    $data = array(
-				    	'value'=>$study->valueLogicalSkip,
-				    );
-				    if(isset($answers[$questionId]['id']))
-					    u('answer', $data, "id = " . $answers[$questionId]['id']);
-				    continue;
+			foreach ($egoQuestions as $question){
+				if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($question->answerReasonExpressionId, $interviewId, null, null, $answers)){
+					if(isset($answers[$question->id]) && $answers[$question->id]->value != $study->valueLogicalSkip){
+						$answers[$question->id]->value = $study->valueLogicalSkip;
+						$answers[$question->id]->save();
+					}
+					continue;
 				}
-				$question = Question::model()->findByPk($questionId);
 				if(($question->askingStyleList != 1 || $prompt != trim(preg_replace('/<\/*[^>]*>/', '', $question->prompt))) && count($ego_question_list) > 0){
-				    if($pageNumber == $i){
-				    	$page[$i] = $ego_question_list;
-				    	return $page[$i];
-				    }
-				    $prompt = trim(preg_replace('/<\/*[^>]*>/', '', $question->prompt));
-				    $ego_question_list = array();
-				    $i++;
+					if($pageNumber == $i){
+						$page[$i] = $ego_question_list;
+						return $page[$i];
+					}
+					$prompt = trim(preg_replace('/<\/*[^>]*>/', '', $question->prompt));
+					$ego_question_list = array();
+					$i++;
 				}
-				if($egoPrefaces[$questionId] != ""){
-				    if($pageNumber == $i){
-				    	$preface = new Question;
-				    	$preface->id = $questionId;
-				    	$preface->answerType = "PREFACE";
-				    	$preface->prompt = $egoPrefaces[$questionId];
-				    	$page[$i] = array('0'=>$preface);
-				    	return $page[$i];
-				    }
-				    $i++;
+				if($question->preface != ""){
+					if($pageNumber == $i){
+						$preface = new Question;
+						$preface->id = $question->id;
+						$preface->answerType = "PREFACE";
+						$preface->prompt = $question->preface;
+						$page[$i] = array('0'=>$preface);
+						return $page[$i];
+					}
+					$i++;
 				}
 
 				if($question->askingStyleList == 1){
-				    $prompt = trim(preg_replace('/<\/*[^>]*>/', '', $question->prompt));
-				    $ego_question_list[$question->id] = $question;
+					$prompt = trim(preg_replace('/<\/*[^>]*>/', '', $question->prompt));
+					$ego_question_list[$question->id] = $question;
 				}else{
-				    if($pageNumber == $i){
-				    	$page[$i] = array($question->id=>$question);
-				    	return $page[$i];
-				    }
-				    $i++;
+					if($pageNumber == $i){
+						$page[$i] = array($question->id=>$question);
+						return $page[$i];
+					}
+					$i++;
 				}
 			}
 			if(count($ego_question_list) > 0){
@@ -360,135 +451,149 @@ class Study extends CActiveRecord
 			);
 			$alters = Alters::model()->findAll($criteria);
 			if(count($alters) > 0){
-                #OK FOR SQL INJECTION
-				$result = q("SELECT id, preface, askingStyleList,answerReasonExpressionId FROM question WHERE subjectType = 'ALTER' AND studyId = $study->id ORDER BY ordering")->queryAll();
-				$alterQuestionIds = array();
-				$alterQuestionPrefaces = array();
-				$alterAskingStyles = array();
-				$alterQuestionExpressions = array();
-				foreach($result as $question){
-					$alterQuestionIds[] = $question['id'];
-					$alterPrefaces[$question['id']] = $question['preface'];
-					$alterQuestionExpressions[$question['id']] = $question['answerReasonExpressionId'];
-					$alterAskingStyles[$question['id']] = $question['askingStyleList'];
+				$prevQuestionId = false;
+				$NonListQIds = array();
+				$NonListQs = array();
+				$allNonListQIds = array();
+				foreach($alterQuestions as $question){
+					if($prevQuestion->id && !$prevQuestion->askingStyleList){
+						if(!$question->askingStyleList && $question->preface == ""){
+							if(count($NonListQIds) == 0){
+								$NonListQIds[] = $prevQuestion;
+								$allNonListQIds[] = $prevQuestion->id;
+							}
+							$NonListQIds[] = $question;
+							$allNonListQIds[] = $question->id;
+						}else{
+							if(count($NonListQIds) > 1)
+								$NonListQs[$NonListQIds[0]->id] = $NonListQIds;
+							$NonListQIds = array();
+						}
+					}
+					$prevQuestion = $question;
 				}
-				if(count($alterQuestionIds) > 0)
-                    #OK FOR SQL INJECTION
-					$result = q("SELECT id, questionId, alterId1, value FROM answer WHERE questionId in (" . implode(',', $alterQuestionIds) . ")")->queryAll();
-				else
-					$result = array();
-				$answers = array();
-				foreach($result as $answer){
-				    $answers[$answer['questionId'].'-'.$answer['alterId1']] = $answer;
-				}
-				foreach ($alterQuestionIds as $questionId){
-					$alter_question_list = array();
-					$expression = new Expression;
-					$question = Question::model()->findByPk($questionId);
-					foreach($alters as $alter){
-						if($alterQuestionExpressions[$questionId] && !$expression->evalExpression($alterQuestionExpressions[$questionId], $interviewId, $alter->id)){
 
-							$data = array(
-								//'value'=>utf8_encode(Yii::app()->getSecurityManager()->encrypt($study['valueLogicalSkip'], $eKey)),
-								'value'=>$study->valueLogicalSkip,
-							);
-							if(isset($answers[$question->id.'-'.$alter->id]['id']))
-								u('answer', $data, "id = " . $answers[$question->id.'-'.$alter->id]['id']);
+				foreach ($alterQuestions as $question){
+					$alter_question_list = array();
+					if(in_array($question->id, $allNonListQIds)){
+						if(isset($NonListQs[$question->id])){
+							$preface = new Question;
+							foreach($alters as $alter){
+								foreach($NonListQs[$question->id] as $q){
+
+									if($q->answerReasonExpressionId && !$expressions[$q->answerReasonExpressionId]->evalExpression($q->answerReasonExpressionId, $interviewId, $alter->id, null, $answers)){
+										if(isset($answers[$q->id.'-'.$alter->id]) && $answers[$q->id.'-'.$alter->id]->value != $study->valueLogicalSkip){
+											$answers[$q->id.'-'.$alter->id]->value = $study->valueLogicalSkip;
+											$answers[$q->id.'-'.$alter->id]->save();
+										}
+										continue;
+									}
+
+									if($q->preface != "" && !$preface->id){
+										$preface->id = $q->id;
+										if($i == $pageNumber ){
+											$preface->answerType = "PREFACE";
+											$preface->prompt = $q->preface;
+											$page[$i] = array('0'=>$preface);
+											return $page[$i];
+										}
+										$i++;
+									}
+									if($i == $pageNumber){
+										$alter_question = new Question;
+										$alter_question->attributes = $q->attributes;
+										$alter_question->prompt = str_replace('$$', $alter->name, $q->prompt);
+										$alter_question->alterId1 = $alter->id;
+										$page[$i] = array($alter_question->id.'-'.$alter->id=>$alter_question);
+										return $page[$i];
+									}else {
+										$i++;
+									}
+								}
+							}
+						}else{
 							continue;
 						}
-					    if($alterAskingStyles[$questionId]){
-					    	$alter_question = new Question;
-					    	$alter_question->attributes = $question->attributes;
-					    	$alter_question->prompt = str_replace('$$', $alter->name, $alter_question->prompt);
-					    	$alter_question->alterId1 = $alter->id;
-					    	$alter_question_list[$questionId.'-'.$alter->id]=$alter_question;
-					    }else{
-					    	if($alterPrefaces[$questionId] != ""){
-					    		if($i == $pageNumber){
-					    			$preface = new Question;
-									$preface->id = $questionId;
-					    			$preface->answerType = "PREFACE";
-					    			$preface->prompt = $alterPrefaces[$questionId];
-					    			$page[$i] = array('0'=>$preface);
+					}else{
+						foreach($alters as $alter){
+							if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($question->answerReasonExpressionId, $interviewId, $alter->id, null, $answers)){
+								if(isset($answers[$question->id.'-'.$alter->id]) && $answers[$question->id.'-'.$alter->id] != $study->valueLogicalSkip){
+									$answers[$question->id.'-'.$alter->id]->value = $study->valueLogicalSkip;
+									$answers[$question->id.'-'.$alter->id]->save();
+								}
+								continue;
+							}
+							if($question->askingStyleList){
+								$alter_question = new Question;
+								$alter_question->attributes = $question->attributes;
+								$alter_question->prompt = str_replace('$$', "_________", $question->prompt);
+								$alter_question->alterId1 = $alter->id;
+								$alter_question_list[$question->id.'-'.$alter->id]=$alter_question;
+							}else{
+								if($question->preface != ""){
+									if($i == $pageNumber){
+										$preface = new Question;
+										$preface->id = $question->id;
+										$preface->answerType = "PREFACE";
+										$preface->prompt = $question->preface;
+										$page[$i] = array('0'=>$preface);
+										return $page[$i];
+									}
+									$question->preface = "";
+									$i++;
+								}
+								if($i == $pageNumber){
+									$alter_question = new Question;
+									$alter_question->attributes = $question->attributes;
+									$alter_question->prompt = str_replace('$$', $alter->name, $question->prompt);
+									$alter_question->alterId1 = $alter->id;
+									$page[$i] = array($question->id.'-'.$alter->id=>$alter_question);
+									return $page[$i];
+								}else {
+									$i++;
+								}
+							}
+						}
+						if($question->askingStyleList){
+							if(count($alter_question_list) > 0){
+								if($question->preface != ""){
+									if($i == $pageNumber){
+										$preface = new Question;
+										$preface->id = $question->id;
+										$preface->answerType = "PREFACE";
+										$preface->prompt = $question->preface;
+										$page[$i] = array('0'=>$preface);
+										return $page[$i];
+									}
+									$i++;
+								}
+								if($i == $pageNumber){
+									$page[$i] = $alter_question_list;
+									return $page[$i];
+								}
+								$i++;
+							}
 
-					    			return $page[$i];
-					    		}
-					    		$alterPrefaces[$questionId] = "";
-					    		$i++;
-					    	}
-					    	if($i == $pageNumber){
-					    		$alter_question = new Question;
-					    		$alter_question->attributes = $question->attributes;
-					    		$alter_question->prompt = str_replace('$$', $alter->name, $alter_question->prompt);
-					    		$alter_question->alterId1 = $alter->id;
-					    		$page[$i] = array($question->id.'-'.$alter->id=>$alter_question);
-					    		return $page[$i];
-					    	}else {
-					    		$i++;
-					    	}
-					    }
+						}
 					}
-					if($alterAskingStyles[$questionId]){
-					    if(count($alter_question_list) > 0){
-					    	if($alterPrefaces[$questionId] != ""){
-					    		if($i == $pageNumber){
-					    			$preface = new Question;
-									$preface->id = $questionId;
-					    			$preface->answerType = "PREFACE";
-					    			$preface->prompt = $alterPrefaces[$questionId];
-					    			$page[$i] = array('0'=>$preface);
-					    			return $page[$i];
-					    		}
-					    		$i++;
-					    	}
-					    	if($i == $pageNumber){
-					    		$page[$i] = $alter_question_list;
-					    		return $page[$i];
-					    	}
-					    	$i++;
-					    }
-
-					}
 				}
 
-                #OK FOR SQL INJECTION
-				$result = q("SELECT id, preface, askingStyleList,answerReasonExpressionId, symmetric FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = $study->id ORDER BY ordering")->queryAll();
-				$alterPairQuestionIds = array();
-				$alterPairQuestionPrefaces = array();
-				$alterPairSymmetry = array();
-				$alterPairQuestionExpressions = array();
-				foreach($result as $question){
-					$alterPairQuestionIds[] = $question['id'];
-					$alterPairPrefaces[$question['id']] = $question['preface'];
-					$alterPairQuestionExpressions[$question['id']] = $question['answerReasonExpressionId'];
-					$alterPairSymmetry[$question['id']] = $question['symmetric'];
-				}
-				if(count($alterPairQuestionIds) > 0)
-                    #OK FOR SQL INJECTION
-					$result = q("SELECT id, questionId, alterId1, alterId2, value FROM answer WHERE questionId in (" . implode(',', $alterPairQuestionIds) . ")")->queryAll();
-				else
-					$result = array();
-				$answers = array();
-				foreach($result as $answer){
-				    $answers[$answer['questionId'].'-'.$answer['alterId1'].'and'.$answer['alterId2']] = $answer;
-				}
-				foreach ($alterPairQuestionIds as $questionId){
+				foreach ($alterPairQuestions as $question){
+					$preface = new Question;
 					$alters2 = $alters;
-					$question = Question::model()->findByPk($questionId);
 					foreach($alters as $alter){
 						$expression = new Expression;
-						if($alterPairSymmetry[$questionId])
+						if($question->symmetric)
 							array_shift($alters2);
 						$alter_pair_question_list = array();
 						foreach($alters2 as $alter2){
 							if($alter->id == $alter2->id)
 								continue;
-							if($alterPairQuestionExpressions[$questionId] && !$expression->evalExpression($alterPairQuestionExpressions[$questionId], $interviewId, $alter->id, $alter2->id)){
-								$data = array(
-									'value'=>$study->valueLogicalSkip,
-								);
-								if(isset($answers[$question->id.'-'.$alter->id.'and'.$alter2->id]))
-				    				u('answer', $data, "id = " . $answers[$question->id.'-'.$alter->id.'and'.$alter2->id]['id']);
+							if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($question->answerReasonExpressionId, $interviewId, $alter->id, $alter2->id, $answers)){
+								if(isset($answers[$question->id.'-'.$alter->id.'and'.$alter2->id]) && $answers[$question->id.'-'.$alter->id.'and'.$alter2->id]->value != $study->valueLogicalSkip){
+									$answers[$question->id.'-'.$alter->id.'and'.$alter2->id]->value = $study->valueLogicalSkip;
+									$answers[$question->id.'-'.$alter->id.'and'.$alter2->id]->save();
+								}
 								continue;
 							}
 							$alter_pair_question = new Question;
@@ -497,80 +602,78 @@ class Study extends CActiveRecord
 							$alter_pair_question->prompt = str_replace('$$2', $alter2->name, $alter_pair_question->prompt);
 							$alter_pair_question->alterId1 = $alter->id;
 							$alter_pair_question->alterId2 = $alter2->id;
-							$alter_pair_question_list[$question->id.'-'.$alter->id.'and'.$alter2->id] = $alter_pair_question;
+							if(!$alter_pair_question->askingStyleList){
+								if($i == $pageNumber){
+									if($question->preface != ""){
+										if($i == $pageNumber){
+											$preface = new Question;
+											$preface->id = $question->id;
+											$preface->answerType = "PREFACE";
+											$preface->prompt = $question->preface;
+											$page[$i] = array('0'=>$preface);
+											return $page[$i];
+										}
+										$question->preface = "";
+										$i++;
+									}
+									$page[$i] = array($question->id.'-'.$alter->id . "and"  .$alter2->id=>$alter_pair_question);
+									return $page[$i];
+								}else {
+									$i++;
+								}
+							}else{
+								$alter_pair_question_list[$question->id.'-'.$alter->id.'and'.$alter2->id] = $alter_pair_question;
+							}
 						}
 						if(count($alter_pair_question_list) > 0){
-						    if($alterPairPrefaces[$questionId] != ""){
-						    	if($i == $pageNumber){
-						    		$preface = new Question;
-									$preface->id = $questionId;
-						    		$preface->answerType = "PREFACE";
-						    		$preface->prompt = $alterPairPrefaces[$questionId];
-						    		$page[$i] = array('0'=>$preface);
-						    		return $page[$i];
-						    	}
-						    	$alterPairPrefaces[$questionId] = "";
-						    	$i++;
-						    }
-						    if($i == $pageNumber){
-						    	$page[$i] = $alter_pair_question_list;
-						    	return $page[$i];
-						    }
-						    $i++;
+							if($question->preface != ""){
+								if($i == $pageNumber){
+									$preface->id = $question->id;
+									$preface->answerType = "PREFACE";
+									$preface->prompt = $question->preface;
+									$page[$i] = array('0'=>$preface);
+									return $page[$i];
+								}
+								$question->preface = "";
+								$i++;
+							}
+							if($i == $pageNumber){
+								$page[$i] = $alter_pair_question_list;
+								return $page[$i];
+							}
+							$i++;
 						}
 					}
 				}
-                #OK FOR SQL INJECTION
-				$result = q("SELECT id, preface, answerReasonExpressionId FROM question WHERE subjectType = 'NETWORK' AND studyId = $study->id ORDER BY ordering")->queryAll();
-				$networkQuestionIds = array();
-				$networkPrefaces = array();
-				$networkExpressions = array();
-				foreach($result as $question){
-					$networkQuestionIds[] = $question['id'];
-					$networkPrefaces[$question['id']] = $question['preface'];
-					$networkExpressions[$question['id']] = $question['answerReasonExpressionId'];
+
+				foreach ($networkQuestions as $question){
+					if($i == $pageNumber){
+						if(isset($expressions[$question->id]) && !$expressions[$question->id]->evalExpression($question->answerReasonExpressionId, $interviewId,null,null, $answers)){
+							if(isset($answers[$questionId]) && $answers[$questionId]->value != $study->valueLogicalSkip){
+								$answers[$questionId]->value = $study->valueLogicalSkip;
+								$answers[$questionId]->save();
+							}
+							continue;
+						}
+					}
+					if($question->preface != ""){
+						if($pageNumber == $i){
+							$preface = new Question;
+							$preface->id = $question->id;
+							$preface->answerType = "PREFACE";
+							$preface->prompt = $question->preface;
+							$page[$i] = array('0'=>$preface);
+							return $page[$i];
+						}
+						$i++;
+					}
+					if($pageNumber == $i){
+						$page[$i] = array($question->id=>$question);
+						return $page[$i];
+					}
+					$i++;
 				}
-				if(count($networkQuestionIds) > 0)
-                    #OK FOR SQL INJECTION
-					$result = q("SELECT id, questionId, value FROM answer WHERE questionId in (" . implode(',', $networkQuestionIds) . ")")->queryAll();
-				else
-					$result = array();
-				$answers = array();
-				foreach($result as $answer){
-				    $answers[$answer['questionId']] = $answer;
-				}
-				foreach ($networkQuestionIds as $questionId){
-				    if($i == $pageNumber){
-				    	if(!isset($answers[$questionId]['value']))
-				    		$answers[$questionId]['value'] = $study->valueNotYetAnswered;
-				        $expression = new Expression;
-				        if(!$expression->evalExpression($networkExpressions[$questionId], $interviewId)){
-				        	$data = array(
-				        		'value'=>$study->valueLogicalSkip,
-				        	);
-				        	if(isset($answers[$questionId]['id']))
-				        		u('answer', $data, "id = " . $answers[$questionId]['id']);
-				        	continue;
-				        }
-				    }
-				    if($networkPrefaces[$questionId] != ""){
-				        if($pageNumber == $i){
-				        	$preface = new Question;
-							$preface->id = $questionId;
-				        	$preface->answerType = "PREFACE";
-				        	$preface->prompt = $networkPrefaces[$questionId];
-				        	$page[$i] = array('0'=>$preface);
-				        	return $page[$i];
-				        }
-				        $i++;
-				    }
-				    if($pageNumber == $i){
-				    	$question = Question::model()->findByPk($questionId);
-				    	$page[$i] = array($question->id=>$question);
-				    	return $page[$i];
-				    }
-				    $i++;
-				}
+
 			}
 			$conclusion = new Question;
 			$conclusion->answerType = "CONCLUSION";
@@ -581,15 +684,15 @@ class Study extends CActiveRecord
 		return false;
 	}
 
-	public function multiStudyIds($interviewId){
+	public static function multiStudyIds($interviewId){
 		if($this->multiSessionEgoId){
-            #OK FOR SQL INJECTION
-            $params = new stdClass();
-            $params->name = ':interviewId';
-            $params->value = $interviewId;
-            $params->dataType = PDO::PARAM_INT;
+			#OK FOR SQL INJECTION
+			$params = new stdClass();
+			$params->name = ':interviewId';
+			$params->value = $interviewId;
+			$params->dataType = PDO::PARAM_INT;
 
-            $egoValue = q("SELECT value FROM answer WHERE interviewId = :interviewId AND questionID = " . $this->multiSessionEgoId,array($params))->queryScalar();
+			$egoValue = q("SELECT value FROM answer WHERE interviewId = :interviewId AND questionID = " . $this->multiSessionEgoId,array($params))->queryScalar();
 			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $this->multiSessionEgoId . ")")->queryColumn();
 			$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
 			return $studyIds;
@@ -597,7 +700,7 @@ class Study extends CActiveRecord
 		return false;
 	}
 
-	public function replicate($study, $questions, $options, $expressions, $answerLists = array())
+	public static function replicate($study, $questions, $options, $expressions, $answerLists = array())
 	{
 		$newQuestionIds = array();
 		$newOptionIds = array();
@@ -608,7 +711,7 @@ class Study extends CActiveRecord
 		$newStudy->id = null;
 
 		if(!$newStudy->save())
-			return false;
+			throw new CHttpException(500,  "Study: " .  print_r($newStudy->errors)); //return false;
 
 		foreach($questions as $question){
 			$newQuestion = new Question;
@@ -616,7 +719,7 @@ class Study extends CActiveRecord
 			$newQuestion->id = null;
 			$newQuestion->studyId = $newStudy->id;
 			if(!$newQuestion->save())
-				return false;
+				throw new CHttpException(500,  "Question: " . print_r($newQuestion->errors)); //return false;
 			if($newStudy->multiSessionEgoId == $question->id){
 				$newStudy->multiSessionEgoId = $newQuestion->id;
 				$newStudy->save();
@@ -626,21 +729,21 @@ class Study extends CActiveRecord
 		foreach($questions as $question){
 		  $newQuestion = Question::model()->findByPk($newQuestionIds[$question->id]);
 		  if($newQuestion){
-		      if(is_numeric($newQuestion->minPrevQues) && $newQuestion->minPrevQues != 0)
-		          $newQuestion->minPrevQues = $newQuestionIds[$newQuestion->minPrevQues];
-		      if(is_numeric($newQuestion->maxPrevQues) && $newQuestion->maxPrevQues != 0)
-		          $newQuestion->maxPrevQues = $newQuestionIds[$newQuestion->maxPrevQues];
-		      if(is_numeric($newQuestion->networkParams) && $newQuestion->networkParams != 0)
-		          $newQuestion->networkParams = $newQuestionIds[$newQuestion->networkParams];
-		      if(is_numeric($newQuestion->networkNColorQId) && $newQuestion->networkNColorQId != 0)
-		          $newQuestion->networkNColorQId = $newQuestionIds[$newQuestion->networkNColorQId];
-		      if(is_numeric($newQuestion->networkNSizeQId) && $newQuestion->networkNSizeQId != 0)
-		          $newQuestion->networkNSizeQId = $newQuestionIds[$newQuestion->networkNSizeQId];
-		      if(is_numeric($newQuestion->networkEColorQId) && $newQuestion->networkEColorQId != 0)
-		          $newQuestion->networkEColorQId = $newQuestionIds[$newQuestion->networkEColorQId];
-		      if(is_numeric($newQuestion->networkESizeQId) && $newQuestion->networkESizeQId != 0)
-		          $newQuestion->networkESizeQId = $newQuestionIds[$newQuestion->networkESizeQId];
-		      $newQuestion->save();
+			  if(is_numeric($newQuestion->minPrevQues) && $newQuestion->minPrevQues != 0)
+				  $newQuestion->minPrevQues = $newQuestionIds[$newQuestion->minPrevQues];
+			  if(is_numeric($newQuestion->maxPrevQues) && $newQuestion->maxPrevQues != 0)
+				  $newQuestion->maxPrevQues = $newQuestionIds[$newQuestion->maxPrevQues];
+			  if(is_numeric($newQuestion->networkParams) && $newQuestion->networkParams != 0)
+				  $newQuestion->networkParams = $newQuestionIds[$newQuestion->networkParams];
+			  if(is_numeric($newQuestion->networkNColorQId) && $newQuestion->networkNColorQId != 0)
+				  $newQuestion->networkNColorQId = $newQuestionIds[$newQuestion->networkNColorQId];
+			  if(is_numeric($newQuestion->networkNSizeQId) && $newQuestion->networkNSizeQId != 0)
+				  $newQuestion->networkNSizeQId = $newQuestionIds[$newQuestion->networkNSizeQId];
+			  if(is_numeric($newQuestion->networkEColorQId) && $newQuestion->networkEColorQId != 0)
+				  $newQuestion->networkEColorQId = $newQuestionIds[$newQuestion->networkEColorQId];
+			  if(is_numeric($newQuestion->networkESizeQId) && $newQuestion->networkESizeQId != 0)
+				  $newQuestion->networkESizeQId = $newQuestionIds[$newQuestion->networkESizeQId];
+			  $newQuestion->save();
 
 		  }
 		}
@@ -650,9 +753,9 @@ class Study extends CActiveRecord
 			$newOption->id = null;
 			$newOption->studyId = $newStudy->id;
 			if(isset($newQuestionIds[$option->questionId]))
-			     $newOption->questionId = $newQuestionIds[$option->questionId];
+				 $newOption->questionId = $newQuestionIds[$option->questionId];
 			if(!$newOption->save())
-				return false;
+				throw new CHttpException(500,  "Option: " . print_r($newOption->errors)); //return false;
 			else
 				$newOptionIds[$option->id] = $newOption->id;
 		}
@@ -662,10 +765,12 @@ class Study extends CActiveRecord
 			$newExpression->attributes = $expression->attributes;
 			$newExpression->id = null;
 			$newExpression->studyId = $newStudy->id;
+			if(!$newExpression->name)
+				continue;
 			if($newExpression->questionId != "" &&  $newExpression->questionId  != 0 && isset($newQuestionIds[$expression->questionId]))
 				$newExpression->questionId = $newQuestionIds[$expression->questionId];
 			if(!$newExpression->save())
-				return false;
+				throw new CHttpException(500,  "Expression: " . print_r($newExpression->errors)); //return false;
 			else
 				$newExpressionIds[$expression->id] = $newExpression->id;
 		}
@@ -681,7 +786,7 @@ class Study extends CActiveRecord
 			$newExpression = Expression::model()->findByPk($newExpressionIds[$expression->id]);
 
 			if(!$newExpression)
-				die('error fetching expression id:' . $expression->id . $newExpressionIds[$expression->id]);
+				continue;
 
 			// replace answerReasonExpressionId for newly uploaded questions with correct expression ids
 			$questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id,'answerReasonExpressionId'=>$oldExpressionId));
@@ -720,8 +825,8 @@ class Study extends CActiveRecord
 				if($questionIds != ""){
 					$questionIds = explode(',', $questionIds);
 					foreach($questionIds as &$questionId){
-    					if(isset($newQuestionIds[$questionId]))
-    					   $questionId = $newQuestionIds[$questionId];
+						if(isset($newQuestionIds[$questionId]))
+						   $questionId = $newQuestionIds[$questionId];
 					}
 					$questionIds = implode(',', $questionIds);
 				}
@@ -746,7 +851,7 @@ class Study extends CActiveRecord
 			$newAnswerList->id = null;
 			$newAnswerList->studyId = $newStudy->id;
 			if(!$newAnswerList->save())
-				return false;
+				throw new CHttpException(500, "AnswerList: " . print_r($newAnswerList->errors)); //return false;
 		}
 
 		$data = array(
@@ -757,6 +862,197 @@ class Study extends CActiveRecord
 		);
 
 		return $data;
+	}
+
+	public function export($interviewIds = array()){
+
+		$questions = Question::model()->findAllByAttributes(array('studyId'=>$this->id));
+		$expressions = Expression::model()->findAllByAttributes(array('studyId'=>$this->id));
+		$answerLists = AnswerList::model()->findAllByAttributes(array('studyId'=>$this->id));
+		$alterLists = AlterList::model()->findAllByAttributes(array("studyId"=>$this->id));
+		$alterPrompts = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$this->id));
+
+		$this->introduction = sanitizeXml($this->introduction);
+		$this->egoIdPrompt = sanitizeXml($this->egoIdPrompt);
+		$this->alterPrompt = sanitizeXml($this->alterPrompt);
+		$this->alterPrompt = sanitizeXml($this->alterPrompt);
+		$this->conclusion = sanitizeXml($this->conclusion);
+
+		if(count($interviewIds) > 0){
+			$interviews = Interview::model()->findAllByAttributes(array("id"=>$interviewIds));
+			foreach($interviews as $result){
+				$interview[$result->id] = $result;
+				$answer = Answer::model()->findAllByAttributes(array("interviewId"=>$result->id));
+				$answers[$result->id] = $answer;
+				$criteria = array(
+					'condition'=>"FIND_IN_SET(" . $result->id . ", interviewId)",
+				);
+				$alter = Alters::model()->findAll($criteria);
+				$alters[$result->id] = $alter;
+				$graph = Graph::model()->findAllByAttributes(array("interviewId"=>$result->id));
+				$graphs[$result->id] = $graph;
+				$note = Note::model()->findAllByAttributes(array("interviewId"=>$result->id));
+				$notes[$result->id] = $note;
+			}
+		}
+		$text = <<<EOT
+<?xml version="1.0" encoding="UTF-8"?>
+<study id="{$this->id}" name="{$this->name}" minAlters="{$this->minAlters}" maxAlters="{$this->maxAlters}" valueDontKnow="{$this->valueDontKnow}" valueLogicalSkip="{$this->valueLogicalSkip}" valueNotYetAnswered="{$this->valueNotYetAnswered}" valueRefusal="{$this->valueRefusal}" adjacencyExpressionId="{$this->adjacencyExpressionId}" modified="{$this->modified}" multiSessionEgoId="{$this->multiSessionEgoId}" useAsAlters="{$this->useAsAlters}" restrictAlters="{$this->restrictAlters}" fillAlterList="{$this->fillAlterList}">
+	<introduction>{$this->introduction}</introduction>
+	<egoIdPrompt>{$this->egoIdPrompt}</egoIdPrompt>
+	<alterPrompt>{$this->alterPrompt}</alterPrompt>
+	<conclusion>{$this->conclusion}</conclusion>
+EOT;
+		if(count($alterPrompts) > 0){
+			$text .= '
+	<alterPrompts>';
+			foreach($alterPrompts as $alterPrompt){
+				$alterPrompt->display = sanitizeXml($alterPrompt->display);
+						$text .= <<<EOT
+
+			<alterPrompt id="{$alterPrompt->id}" studyId="{$alterPrompt->studyId}" afterAltersEntered="{$alterPrompt->afterAltersEntered}" display="{$alterPrompt->display}"/>
+EOT;
+			}
+			$text .= "
+	</alterPrompts>";
+		}
+
+		if(count($questions) > 0){
+			$text .= '
+	<questions>';
+			foreach($questions as $question){
+				$question->title = sanitizeXml($question->title);
+				$question->preface = sanitizeXml($question->preface);
+				$question->prompt = sanitizeXml($question->prompt);
+				$question->citation = sanitizeXml($question->citation);
+				$question->networkParams = sanitizeXml($question->networkParams);
+				$text .= <<<EOT
+
+		<question id="{$question->id}" title="{$question->title}" answerType="{$question->answerType}" subjectType="{$question->subjectType}" askingStyleList="{$question->askingStyleList}" ordering="{$question->ordering}" answerReasonExpressionId="{$question->answerReasonExpressionId}" otherSpecify="{$question->otherSpecify}" noneButton="{$question->noneButton}" allButton="{$question->allButton}" pageLevelDontKnowButton="{$question->pageLevelDontKnowButton}" pageLevelRefuseButton="{$question->pageLevelRefuseButton}" dontKnowButton="{$question->dontKnowButton}" networkRelationshipExprId="{$question->networkRelationshipExprId}" networkParams="{$question->networkParams}" networkNColorQId="{$question->networkNColorQId}" networkNSizeQId="{$question->networkNSizeQId}" networkEColorQId="{$question->networkEColorQId}" networkESizeQId="{$question->networkESizeQId}" refuseButton="{$question->refuseButton}" allOptionString="{$question->allOptionString}" minLimitType="{$question->minLimitType}" minLiteral="{$question->minLiteral}" minPrevQues="{$question->minPrevQues}" maxLimitType="{$question->maxLimitType}" maxLiteral="{$question->maxLiteral}" maxPrevQues="{$question->maxPrevQues}" minCheckableBoxes="{$question->minCheckableBoxes}" maxCheckableBoxes="{$question->maxCheckableBoxes}" withListRange="{$question->withListRange}" listRangeString="{$question->listRangeString}" minListRange="{$question->minListRange}" maxListRange="{$question->maxListRange}" timeUnits="{$question->timeUnits}" symmetric="{$question->symmetric}" keepOnSamePage="{$question->keepOnSamePage}">
+			<preface>{$question->preface}</preface>
+			<prompt>{$question->prompt}</prompt>
+			<citation>{$question->citation}</citation>
+EOT;
+				if($question->answerType == "SELECTION" || $question->answerType == "MULTIPLE_SELECTION"){
+					$options = QuestionOption::model()->findAllByAttributes(
+						array("studyId"=>$_POST['studyId'], "questionId"=>$question->id)
+					);
+
+					foreach($options as $option){
+						$option->name = sanitizeXml($option->name);
+						$text .= <<<EOT
+
+			<option id="{$option->id}" name="{$option->name}" value="{$option->value}" ordering="{$option->ordering}"/>
+EOT;
+					}
+				}
+				$text .= "
+		</question>";
+			}
+			$text .= "
+	</questions>";
+		}
+		if(count($expressions) > 0){
+			$text .= "
+	<expressions>";
+			foreach($expressions as $expression){
+				$expression->name = sanitizeXml($expression->name);
+
+				$text .= <<<EOT
+
+		<expression id="{$expression->id}" name="{$expression->name}" questionId="{$expression->questionId}" resultForUnanswered="{$expression->resultForUnanswered}" type="{$expression->type}" operator="{$expression->operator}">
+			<value>{$expression->value}</value>
+		</expression>
+EOT;
+			}
+			$text .= "
+	</expressions>";
+		}
+		if(count($answerLists) > 0){
+			$text .= "
+	<answerLists>";
+			foreach($answerLists as $answerList){
+				$text .= <<<EOT
+
+		<answerList id="{$answerList->id}" listName="{$answerList->listName}" listOptionNames="{$answerList->listOptionNames}"/>
+EOT;
+			}
+			$text .= "
+	</answerLists>";
+		}
+		if(count($interviewIds) > 0){
+			$text .= "
+	<interviews>";
+			foreach($interviews as $interview){
+				$text .= <<<EOT
+
+		<interview id="{$interview->id}" studyId="{$interview->studyId}" completed="{$interview->completed}" start_date="{$interview->start_date}" complete_date="{$interview->complete_date}">
+EOT;
+				if(isset($answers[$interview->id])){
+					$text .= "
+			<answers>";
+					foreach($answers[$interview->id] as $answer){
+						$text .= <<<EOT
+
+				<answer id="{$answer->id}" questionId="{$answer->questionId}" interviewId="{$answer->interviewId}" alterId1="{$answer->alterId1}" alterId2="{$answer->alterId2}" value="{$answer->value}" otherSpecifyText="{$answer->otherSpecifyText}" skipReason="{$answer->skipReason}" questionType="{$answer->questionType}" answerType="{$answer->answerType}" />
+EOT;
+					}
+					$text .= "
+			</answers>";
+				}
+
+				if(isset($alters[$interview->id])){
+					$text .= "
+			<alters>";
+					foreach($alters[$interview->id] as $alter){
+						$text .= <<<EOT
+
+				<alter id="{$alter->id}" name="{$alter->name}" interviewId="{$alter->interviewId}" ordering="{$alter->ordering}" alterListId="{$alter->alterListId}" />
+EOT;
+					}
+					$text .= "
+			</alters>";
+				}
+
+				if(isset($graphs[$interview->id])){
+					$text .= "
+			<graphs>";
+					foreach($graphs[$interview->id] as $graph){
+						$graph->nodes = sanitizeXml($graph->nodes);
+						$graph->params = sanitizeXml($graph->params);
+						$text .= <<<EOT
+
+				<graph id="{$graph->id}" interviewId="{$graph->interviewId}" expressionId="{$graph->expressionId}" nodes="{$graph->nodes}" params="{$graph->params}" />
+EOT;
+					}
+					$text .= "
+			</graphs>";
+				}
+
+				if(isset($notes[$interview->id])){
+					$text .= "
+			<notes>";
+					foreach($notes[$interview->id] as $note){
+						$note->notes = sanitizeXml($note->notes);
+						$text .= <<<EOT
+
+				<note id="{$note->id}" interviewId="{$note->interviewId}" expressionId="{$note->expressionId}" alterId="{$note->alterId}" notes="{$note->notes}" />
+EOT;
+					}
+					$text .= "
+			</notes>";
+				}
+
+			$text .= "
+		</interview>";
+			}
+			$text .= "
+	</interviews>";
+		}
+		$text .= "
+</study>";
+
+		return $text;
 	}
 
 	public function beforeDelete(){
@@ -783,7 +1079,7 @@ class Study extends CActiveRecord
 		if(trim($this->introduction) == "<br>")
 			$this->introduction = "";
 
-        $this->created_date = date('U');
+		$this->created_date = date('U');
 
 		return true;
 	}

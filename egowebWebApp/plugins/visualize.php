@@ -287,7 +287,7 @@ class visualize extends Plugin
 			#OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
-				echo "<label style='width:200px;float:left'>". decrypt($option['name']) . "</label>";
+				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
 				echo CHtml::dropDownList(
 						$option['id'],
 						(isset($nodeColors[$option['id']]) ? $nodeColors[$option['id']] : ''),
@@ -351,7 +351,7 @@ class visualize extends Plugin
 			#OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
-				echo "<label style='width:200px;float:left'>". decrypt($option['name']) . "</label>";
+				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
 				echo CHtml::dropDownList(
 						$option['id'],
 						(isset($nodeShapes[$option['id']]) ? $nodeShapes[$option['id']] : ''),
@@ -401,7 +401,7 @@ class visualize extends Plugin
 			#OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
-				echo "<label style='width:200px;float:left'>". decrypt($option['name']) . "</label>";
+				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
 				echo CHtml::dropDownList(
 						$option['id'],
 						(isset($nodeSizes[$option['id']]) ? $nodeSizes[$option['id']] : ''),
@@ -412,7 +412,7 @@ class visualize extends Plugin
 		}
 
 		foreach($centralities as $centrality){
-			echo "<div class='nodeSizeOptions' id='" .$centrality ."_nodeSize' style='" . ($centrality != $nodeColorId ? "display:none" : "") . "'>";
+			echo "<div class='nodeSizeOptions' id='" .$centrality ."_nodeSize' style='" . ($centrality != $nodeSizeId ? "display:none" : "") . "'>";
 			echo "</div>";
 		}
 	}
@@ -448,7 +448,7 @@ class visualize extends Plugin
 			#OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
-				echo "<label style='width:200px;float:left'>". decrypt($option['name']) . "</label>";
+				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
 				echo CHtml::dropDownList(
 						$option['id'],
 						(isset($edgeColors[$option['id']]) ? $edgeColors[$option['id']] : ''),
@@ -490,7 +490,7 @@ class visualize extends Plugin
 			#OK FOR SQL INJECTION
 			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
 			foreach($options as $option){
-				echo "<label style='width:200px;float:left'>". decrypt($option['name']) . "</label>";
+				echo "<label style='width:200px;float:left'>". $option['name'] . "</label>";
 				echo CHtml::dropDownList(
 						$option['id'],
 						(isset($edgeSizes[$option['id']]) ? $edgeSizes[$option['id']] : ''),
@@ -545,7 +545,21 @@ class visualize extends Plugin
 		#OK FOR SQL INJECTION
 		$alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId in (" . $studyId . ") AND questionId in (" . $questionIds . ")")->queryColumn();
 
+			$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interview->id));
+			$answers = array();
+			foreach($answerList as $answer){
+				if($answer->alterId1 && $answer->alterId2)
+					$answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
+				else if ($answer->alterId1 && !$answer->alterId2)
+					$answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
+				else
+					$answers[$answer->questionId] = $answer;
+			}
+
 		$expression = Expression::model()->findByPk($this->id);
+		if($expression->questionId)
+			$expression->question = Question::model()->findByPk($expression->questionId);
+
 		if($expression->type == "Compound"){
 			$expressionIds = explode(",", $expression->value);
 			foreach($expressionIds as $expressionId){
@@ -581,7 +595,9 @@ class visualize extends Plugin
 				)
 			);
 			foreach($alters2 as $alter2){
-				if($expression && $expression->evalExpression($expression->id, $this->method, $alter['id'], $alter2['id'])){
+				if($alter2['id'] == $alter['id'])
+					continue;
+				if($expression && $expression->evalExpression($expression->id, $this->method, $alter['id'], $alter2['id'], $answers)){
 					$edges[] = array(
 						"id" => $alter['id'] . "_" . $alter2['id'],
 						"source" => $alter2['id'],
@@ -593,18 +609,19 @@ class visualize extends Plugin
 			}
 		}
 
-		if($this->networkTitle)
-			$questionId = q("SELECT id FROM question WHERE studyId = " . $interview->studyId . " AND title = '" . $this->networkTitle . "'")->queryScalar();
-		$result = Legend::model()->findAllByAttributes(array("questionId"=>$questionId));
 		$legends = array();
-		if($result){
-			foreach($result as $legend){
-				$legends[] = array(
-					"shape"=>$legend->shape,
-					"label"=>$legend->label,
-					"color"=>$legend->color,
-					"size"=>$legend->size,
-				);
+		if($this->networkTitle){
+			$questionId = q("SELECT id FROM question WHERE studyId = " . $interview->studyId . " AND title = '" . $this->networkTitle . "'")->queryScalar();
+			$result = Legend::model()->findAllByAttributes(array("questionId"=>$questionId));
+			if($result){
+				foreach($result as $legend){
+					$legends[] = array(
+						"shape"=>$legend->shape,
+						"label"=>$legend->label,
+						"color"=>$legend->color,
+						"size"=>$legend->size,
+					);
+				}
 			}
 		}
 
@@ -810,13 +827,13 @@ function drawLegend(){
 
 function fullscreen(){
 	elem = document.getElementById("visualizePlugin");
-	if (elem.requestFullscreen) {
+	if (typeof elem.requestFullscreen != "undefined") {
 		elem.requestFullscreen();
-	} else if (elem.msRequestFullscreen) {
+	} else if (typeof elem.msRequestFullscreen != "undefined") {
 		elem.msRequestFullscreen();
-	} else if (elem.mozRequestFullScreen) {
+	} else if (typeof elem.mozRequestFullScreen != "undefined") {
 		elem.mozRequestFullScreen();
-	} else if (elem.webkitRequestFullscreen) {
+	} else if (typeof elem.webkitRequestFullscreen != "undefined") {
 		elem.webkitRequestFullscreen();
 	}
 }

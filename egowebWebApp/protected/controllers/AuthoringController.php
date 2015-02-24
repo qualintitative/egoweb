@@ -177,7 +177,15 @@ class AuthoringController extends Controller
 		$condition = "id != 0";
 		if(!Yii::app()->user->isSuperAdmin){
 			#OK FOR SQL INJECTION
-			$studies = q("SELECT studyId FROM interviewers WHERE active = 1 AND interviewerId = " . Yii::app()->user->id)->queryColumn();
+			$studies = array();
+			if(Yii::app()->user->isAdmin){
+				$studies = q("SELECT id FROM study WHERE userId = " . Yii::app()->user->id)->queryColumn();
+				$addedStudies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
+				if(count($addedStudies) > 0)
+					$studies = array_merge($studies, $addedStudies);
+			}else{
+				$studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
+			}
 			if($studies)
 				$condition = "id IN (" . implode(",", $studies) . ")";
 			else
@@ -186,14 +194,14 @@ class AuthoringController extends Controller
 
 
 		$criteria = array(
-			'condition'=>$condition . " AND multiSessionEgoId = 0",
+			'condition'=>$condition . " AND multiSessionEgoId = 0 AND active = 1",
 			'order'=>'id DESC',
 		);
 
 		$single = Study::model()->findAll($criteria);
 
 		$criteria = array(
-			'condition'=>$condition . " AND multiSessionEgoId <> 0",
+			'condition'=>$condition . " AND multiSessionEgoId <> 0 AND active = 1",
 			'order'=>'multiSessionEgoId DESC',
 		);
 
@@ -482,7 +490,7 @@ class AuthoringController extends Controller
 		));
 	}
 
-	public function actionAddInterviewer()
+	public function actionAddUser()
 	{
 		if(isset($_POST['Interviewer'])){
 			$model = new Interviewer;
@@ -547,6 +555,25 @@ class AuthoringController extends Controller
 				print_r($model->getErrors());
 			else
 				$this->redirect(Yii::app()->request->getUrlReferrer());
+		}
+	}
+
+	public function actionImage()
+	{
+		if ($_FILES['file']['name']) {
+			if (!$_FILES['file']['error']) {
+				$name = md5(rand(100, 200));
+				$ext = explode('.', $_FILES['file']['name']);
+				$filename = $name . '.' . $ext[1];
+				$destination = Yii::app()->basePath .'/../assets/' . $filename; //change this directory
+				$location = $_FILES["file"]["tmp_name"];
+				move_uploaded_file($location, $destination);
+				echo '/assets/' . $filename;
+			}
+			else
+			{
+			  echo  $message = 'Ooops!  Your upload triggered the following error:  '.$_FILES['file']['error'];
+			}
 		}
 	}
 
@@ -912,12 +939,15 @@ class AuthoringController extends Controller
 	*/
 	public function actionAjaxload()
 	{
+		Yii::app()->clientScript->scriptMap['jquery.js'] = false;
+		Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
 		if(isset($_GET['form'])){
 			if($_GET['form'] == "_form_question"){
 				if( !is_numeric($_GET['questionId']) ){
 					throw new CHttpException(500,"Invalid questionId specified ".$_GET['questionId']." !");
 				}
 				$model = Question::model()->findByPk((int)$_GET['questionId']);
+
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true), false, true);
 			}else if($_GET['form'] == "_form_alter_list_edit"){
 				if( !is_numeric($_GET['alterListId']) ){
@@ -936,6 +966,7 @@ class AuthoringController extends Controller
 					throw new CHttpException(500,"Invalid optionId specified ".$_GET['optionId']." !");
 				}
 				$model = QuestionOption::model()->findByPk((int)$_GET['optionId']);
+
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'questionId'=>$model->questionId), false, true);
 			}else if($_GET['form'] == "_form_legend_edit"){
 				if(isset($_GET['legendId']))
@@ -971,6 +1002,7 @@ class AuthoringController extends Controller
 					'criteria'=>$criteria,
 					'pagination'=>false,
 				));
+
 				$this->renderPartial("_form_option", array('dataProvider'=>$dataProvider, 'questionId'=>$_GET['questionId'], 'ajax'=>true), false, true);
 			}else if($_GET['form'] == "_form_legend"){
 
@@ -1026,6 +1058,8 @@ class AuthoringController extends Controller
 	}
 	public function actionAjaxmoveup()
 	{
+		Yii::app()->clientScript->scriptMap['jquery.js'] = false;
+		Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
 		if(isset($_GET['optionId'])){
 			QuestionOption::moveUp($_GET['optionId']);
 			$model = QuestionOption::model()->findByPk((int)$_GET['optionId']);

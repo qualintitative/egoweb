@@ -41,7 +41,7 @@ class QuestionOption extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('studyId, questionId, name, value, ordering', 'length', 'max'=>255),
+			array('studyId, questionId, name, value', 'length', 'max'=>255),
 			array('id, studyId, questionId, ordering', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -60,7 +60,7 @@ class QuestionOption extends CActiveRecord
 		);
 	}
 
-	public function sortOrder($ordering, $questionId)
+	public static function sortOrder($ordering, $questionId)
 	{
 		$criteria = new CDbCriteria();
 		$criteria=array(
@@ -73,7 +73,7 @@ class QuestionOption extends CActiveRecord
 		}
 	}
 
-	public function moveUp($optionId)
+	public static function moveUp($optionId)
 	{
 		$model = QuestionOption::model()->findByPk($optionId);
 		if($model && $model->ordering > 0){
@@ -127,20 +127,4 @@ class QuestionOption extends CActiveRecord
 		));
 	}
 
-    /**
-     * Decrypts "name" attribute after it's found.
-     */
-    protected function afterFind() {
-        $this->name = decrypt( $this->name );
-        return parent::afterFind();
-    }
-
-    /**
-     * Encrypts "name" attribute before it's saved.
-     * @return bool|void
-     */
-    protected function beforeSave() {
-        $this->name = encrypt( $this->name );
-        return parent::beforeSave();
-    }
 }

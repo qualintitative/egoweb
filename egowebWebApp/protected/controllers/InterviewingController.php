@@ -52,14 +52,26 @@ class InterviewingController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$study = Study::model()->findByPk((int)$id);
+		if($id == 0 && isset($_GET['study']))
+			$study = Study::model()->findByAttributes(array('name'=>$_GET['study']));
+		else
+			$study = Study::model()->findByPk((int)$id);
 		$currentPage = 0;
 		if(isset($_GET['page']))
 			$currentPage = CHtml::encode(strip_tags($_GET['page']));
 
 		if(isset($_GET['interviewId'])){
 			$interviewId = CHtml::encode(strip_tags($_GET['interviewId']));
-			$questions = Study::buildQuestions($study, $currentPage, $interviewId);
+			$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+			foreach($answerList as $answer){
+				if($answer->alterId1 && $answer->alterId2)
+					$answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
+				else if ($answer->alterId1 && !$answer->alterId2)
+					$answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
+				else
+					$answers[$answer->questionId] = $answer;
+			}
+			$questions = Study::buildQuestions($study, $currentPage, $interviewId, $answers);
 			if(!$questions){
 				$this->redirect(Yii::app()->createUrl(
 					'interviewing/'.$id.'?'.
@@ -67,28 +79,26 @@ class InterviewingController extends Controller
 					'page=0'
 				));
 			}
-
 			// loads answers into array model
 			foreach($questions as $question){
 				if(is_numeric($question->alterId1) && !is_numeric($question->alterId2)){
 					$array_id = $question->id . '-' . $question->alterId1;
-					$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId,'questionId'=>$question->id, 'alterId1'=>$question->alterId1));
 				}else if(is_numeric($question->alterId1) && is_numeric($question->alterId2)){
 					$array_id = $question->id . '-' . $question->alterId1 . 'and' . $question->alterId2;
-					$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId,'questionId'=>$question->id, 'alterId1'=>$question->alterId1,'alterId2'=>$question->alterId2));
 				}else{
 					$array_id = $question->id;
-					$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId,'questionId'=>$question->id));
 				}
-				if(!$model[$array_id]){
-					$model[$array_id] = new Answer;
-				}else{
+
+				if(isset($answers[$array_id])){
+					$model[$array_id] = $answers[$array_id];
 					if($model[$array_id]->value == $study->valueNotYetAnswered)
 						$model[$array_id]->value = "";
+				}else{
+					$model[$array_id] = new Answer;
 				}
+
 			}
-		}
-        else{
+		}else{
 			$questions = Study::buildQuestions($study, $currentPage);
 			$interviewId = '';
 
@@ -100,6 +110,8 @@ class InterviewingController extends Controller
 			foreach($questions as $question){
 				$array_id = $question->id;
 				$model[$array_id] = new Answer;
+				if(isset($_GET[$question->title]))
+					$model[$array_id]->value = $_GET[$question->title];
 			}
 		}
 
@@ -121,9 +133,8 @@ class InterviewingController extends Controller
 			}
 		}
 
-		$qNav = Study::nav($study, $currentPage, $interviewId);
+		$qNav = Study::nav($study, $currentPage, $interviewId , $answers);
 		$this->render('view',array(
-			'studyId'=>$id,
 			'questions'=>$questions,
 			'page'=>$currentPage,
 			'model'=>$model,
@@ -139,6 +150,7 @@ class InterviewingController extends Controller
 	 * @param integer $id the ID of the study
 	 */
 	public function actionSave($id){
+
 
 		if(isset($_POST['Answer']))
 		{
@@ -161,8 +173,11 @@ class InterviewingController extends Controller
 				$interview->completed = -1;
 				$interview->save();
 
-                if(Yii::app()->session->hasProperty('redirect'))
-                    $this->redirect(Yii::app()->session['redirect']);
+				if(isset(Yii::app()->params['exportFilePath']) && Yii::app()->params['exportFilePath'])
+					$this->exportInterview($interview->id);
+
+				if($study->redirectUrl)
+					$this->redirect($study->redirectUrl);
 				else if(Yii::app()->user->isGuest)
 					$this->redirect(Yii::app()->createUrl(''));
 				else
@@ -174,8 +189,20 @@ class InterviewingController extends Controller
 				if(!isset($interviewId) || !$interviewId)
 					$interviewId = $Answer['interviewId'];
 
+				if(!isset($answerList)){
+					$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+					foreach($answerList as $answer){
+						if($answer->alterId1 && $answer->alterId2)
+							$answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
+						else if ($answer->alterId1 && ! $answer->alterId2)
+							$answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
+						else
+							$answers[$answer->questionId] = $answer;
+					}
+				}
+
 				if(!isset($questions))
-					$questions = Study::buildQuestions($study, $_POST['page'], $interviewId);
+					$questions = Study::buildQuestions($study, $_POST['page'], $interviewId, $answers);
 
 				if($Answer['questionType'] == "EGO_ID" && $Answer['value'] != "" && !$interviewId){
 					if(Yii::app()->user->isGuest){
@@ -199,14 +226,14 @@ class InterviewingController extends Controller
 							$interview = Interview::getInterviewFromEmail($_POST['studyId'],$email);
 							if($interview){
 								$this->redirect(Yii::app()->createUrl(
-									'interviewing/'.$_POST['studyId'].'?'.
+									'interviewing/'.$study->id.'?'.
 									'interviewId='.$interview->id.'&'.
 									'page='.($interview->completed).'&key=' . $key
 								));
 							}
 						}
 						$interview = new Interview;
-						$interview->studyId = $_POST['studyId'];
+						$interview->studyId = $study->id;
 						if($interview->save()){
 							$interviewId = $interview->id;
 							$this->createEgoAnswers($interviewId, $id);
@@ -224,16 +251,9 @@ class InterviewingController extends Controller
 				else
 					$array_id = $Answer['questionId'];
 
-				if(isset($array_id) && $questions[$array_id] && !isset($model[$array_id])){
-					if($questions[$array_id]->subjectType == "ALTER")
-						$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId, 'questionId'=>$questions[$array_id]->id, 'alterId1'=>$questions[$array_id]->alterId1));
-					else if($questions[$array_id]->subjectType == "ALTER_PAIR")
-						$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId, 'questionId'=>$questions[$array_id]->id, 'alterId1'=>$questions[$array_id]->alterId1, 'alterId2'=>$questions[$array_id]->alterId2));
-					else
-						$model[$array_id] = Answer::model()->findByAttributes(array('interviewId'=>$interviewId, 'questionId'=>$questions[$array_id]->id));
-				}
-
-				if(!$model[$array_id])
+				if(isset($answers[$array_id]))
+					$model[$array_id] = $answers[$array_id];
+				else
 					$model[$array_id] = new Answer;
 
 
@@ -253,7 +273,7 @@ class InterviewingController extends Controller
 						$dname = decrypt($dname);
 						unset($dname);
 					}
-					
+
 					if(!in_array($Answer['value'], $restricted))
 						$model[$array_id]->addError('value', $Answer['value'] . " is either not in the participant list or has been assigned to another interviewer");
 				}
@@ -271,13 +291,13 @@ class InterviewingController extends Controller
 						$errorMsg = "";
 						if($questions[$array_id]->minListRange && $questions[$array_id]->maxListRange){
 							if($questions[$array_id]->minListRange != $questions[$array_id]->maxListRange)
-								$errorMsg = $questions[$array_id]->minListRange . " - " . $questions[$array_id]->maxListRange;
+								$errorMsg .= $questions[$array_id]->minListRange . " - " . $questions[$array_id]->maxListRange;
 							else
-								$errorMsg = "just ". $questions[$array_id]->minListRange;
+								$errorMsg .= "just ". $questions[$array_id]->minListRange;
 						}else if(!$questions[$array_id]->minListRange && !$questions[$array_id]->maxListRange){
-								$errorMsg = "up to ".$questions[$array_id]->maxListRange;
+								$errorMsg .= "up to ".$questions[$array_id]->maxListRange;
 						}else{
-								$errorMsg = "at least ".$questions[$array_id]->minListRange;
+								$errorMsg .= "at least ".$questions[$array_id]->minListRange;
 						}
 						$model[$array_id]->addError('value', "Please select " . $errorMsg . " response(s).");
 					}
@@ -291,7 +311,7 @@ class InterviewingController extends Controller
 					}else{
 						$this->createAlterAnswers($Answer['interviewId'], $_POST['studyId']);
 						$this->redirect(Yii::app()->createUrl(
-							'interviewing/'.$_POST['studyId'].'?'.
+							'interviewing/'.$study->id.'?'.
 							'interviewId='.$Answer['interviewId'].'&'.
 							'page='.($_POST['page']+1).'&key=' . $key
 						));
@@ -301,7 +321,7 @@ class InterviewingController extends Controller
 				if($Answer['questionType'] == "INTRODUCTION" || $Answer['questionType'] == "PREFACE"){
 					// no Answer to save, go to next page
 						$this->redirect(Yii::app()->createUrl(
-							'interviewing/'.$_POST['studyId'].'?'.
+							'interviewing/'.$study->id.'?'.
 							'interviewId='.$Answer['interviewId'].'&'.
 							'page='.($_POST['page']+1).'&key=' . $key
 						));
@@ -326,15 +346,16 @@ class InterviewingController extends Controller
 							$model[$array_id]->addError('value', 'Please enter 0 to 59 for the MM');
 							$errors++;
 						}
-					}else{
-						$model[$array_id]->addError('value', 'Please enter the time of day');
-						$errors++;
 					}
 					if(count($date) > 0){
 						if(intval($date[2]) < 1 || intval($date[2]) > 31){
 							$model[$array_id]->addError('value', 'Please enter a different number for the day of month');
 							$errors++;
 						}
+					}
+					if(count($date) == 0 && count($time) == 0){
+							$model[$array_id]->addError('value', 'Please fill in values for time');
+							$errors++;
 					}
 				}
 				// Custom validators
@@ -388,10 +409,12 @@ class InterviewingController extends Controller
 					if($max != "")
 						$numberErrors = $numberErrors + 2;
 
+
 					$checkedBoxes = count(explode(',',$Answer['value']));
 
-					if (($Answer['value'] == "" || $checkedBoxes < $min || $checkedBoxes > $max) && $Answer['skipReason'] == "NONE")
+					if (($Answer['value'] == "" || $Answer['value'] < 0 || $checkedBoxes < $min || $checkedBoxes > $max) && $Answer['skipReason'] == "NONE")
 						$showError = true;
+
 
 					$s='';
 					if($max != 1)
@@ -435,14 +458,17 @@ class InterviewingController extends Controller
 			if($errors == 0) {
 				$page = (int)$_POST['page'] + 1;
 				$this->redirect(Yii::app()->createUrl(
-					'interviewing/'.$_POST['studyId'].'?'.
+					'interviewing/'.$study->id.'?'.
 					'interviewId='.$interviewId.'&'.
 					'page='.$page.'&key=' . $key . $nodes
 				));
 			}else{
-				$qNav =  Study::nav($study, $_POST['page'], $interviewId);
+				foreach($model as &$a){
+					if(strlen($a->value) >= 8)
+						$a->value = decrypt($a->value);
+				}
+				$qNav =  Study::nav($study, $_POST['page'], $interviewId, $answers);
 				$this->render('view',array(
-					'studyId'=>$_POST['studyId'],
 					'questions'=>$questions,
 					'page'=>$_POST['page'],
 					'study'=>$study,
@@ -466,10 +492,14 @@ class InterviewingController extends Controller
 
 			$studyId = q("SELECT studyId FROM interview WHERE id = :interviewId", array($params))->queryScalar();
 
-			$name_exists = Alters::model()->findByAttributes(array('name'=>$_POST['Alters']['name'], 'interviewId'=>(int)$_POST['Alters']['interviewId']));
+			$alters = Alters::model()->findAllByAttributes(array('interviewId'=>(int)$_POST['Alters']['interviewId']));
+			$alterNames = array();
+			foreach($alters as $alter){
+				$alterNames[] = $alter->name;
+			}
 			$model = new Alters;
 			$model->attributes = $_POST['Alters'];
-			if($name_exists){
+			if(in_array($_POST['Alters']['name'], $alterNames)){
 				$model->addError('name', $_POST['Alters']['name']. ' has already been added!');
 			}
 
@@ -559,11 +589,13 @@ class InterviewingController extends Controller
 			$self = ''; $filter = "";
 			if(isset($_GET['self']))
 				$self = $_GET['self'];
-			$names = "";
+			$names = array();
 			if(isset($_GET['interviewId']) && $_GET['interviewId']){
 				$sql = "SELECT " . $_GET['field'] .  " FROM alters WHERE interviewId = " . $_GET['interviewId'];
 				$names = Yii::app()->db->createCommand($sql)->queryColumn();
-				$names = addslashes(implode("' , '", $names));
+				foreach($names as &$name){
+					$name = decrypt($name);
+				}
 			}else{
 				if(!Yii::app()->user->isSuperAdmin && !Yii::app()->user->isGuest)
 					$filter = " AND interviewerId = " . Yii::app()->user->id;
@@ -577,15 +609,21 @@ class InterviewingController extends Controller
 				" AND " . $_GET['field']. " NOT IN ('" . $names . "')" . $filter,
 				'order'=>'ordering',
 			);
-			$models = AlterList::model()->findAll($criteria);
+			$models = AlterList::model()->findAllByAttributes(array('studyId'=>$_GET['studyId']));
 			$result = array();
-			foreach ($models as $model)
-				$result[] = array(
-					'label' => $model->$_GET['field'],
-					'value' => $model->$_GET['field'],
-					'id' => $model->id,
-					'field' => $model->email,
-				);
+			foreach ($models as $model){
+				if(stristr($model->$_GET['field'], $_GET['term'])){
+					if($model->$_GET['field'] == $self || in_array($model->$_GET['field'],$names))
+						continue;
+					$result[] = array(
+						'label' => $model->$_GET['field'],
+						'value' => $model->$_GET['field'],
+						'id' => $model->id,
+						'field' => $model->$_GET['field'],
+					);
+				}
+			}
+
 
 			echo CJSON::encode($result);
 		}
@@ -595,8 +633,8 @@ class InterviewingController extends Controller
 	{
 		if(isset($_GET['Alters'])){
 			$model = Alters::model()->findByPk((int)$_GET['Alters']['id']);
+			$interviewId = $_GET['interviewId'];
 			if($model){
-				$interviewId = $_GET['interviewId'];
 				$ordering = $model->ordering;
 				if(strstr($model->interviewId, ",")){
 					$interviewIds = explode(",", $model->interviewId);
@@ -660,14 +698,14 @@ class InterviewingController extends Controller
 		}
 
 		$criteria = array(
-			'condition'=>$condition . " AND multiSessionEgoId = 0",
+			'condition'=>$condition . " AND multiSessionEgoId = 0 AND active = 1",
 			'order'=>'id DESC',
 		);
 
 		$single = Study::model()->findAll($criteria);
 
 		$criteria = array(
-			'condition'=>$condition . " AND multiSessionEgoId <> 0",
+			'condition'=>$condition . " AND multiSessionEgoId <> 0 AND active = 1",
 			'order'=>'multiSessionEgoId DESC',
 		);
 
@@ -719,7 +757,7 @@ class InterviewingController extends Controller
 				$answer = array(
 					'questionId' => $question['id'],
 					'interviewId'=>$interviewId,
-					//try encrypting here					
+					//try encrypting here
 					'value'=>encrypt($study['valueNotYetAnswered']),
 				  //'value'=>$study['valueNotYetAnswered'],
 					'skipReason'=>'NONE',
@@ -846,5 +884,19 @@ class InterviewingController extends Controller
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
+	}
+
+	/**
+	 * Exports study to file (added for LIM)
+	 * @param $id ID of interview to be exported
+	 */
+	protected function exportInterview($id)
+	{
+		$result = Interview::model()->findByPk($id);
+		$study = Study::model()->findByPk($result->studyId);
+		$text = $study->export(array($id));
+		$file = fopen(Yii::app()->params['exportFilePath'] . Interview::getEgoId($id) . ".study", "w") or die("Unable to open file!");
+		fwrite($file, $text);
+		fclose($file);
 	}
 }

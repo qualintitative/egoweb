@@ -7,8 +7,21 @@ class m140917_223213_graph_update extends CDbMigration
         $transaction=$this->getDbConnection()->beginTransaction();
         try
         {
-            $this->dropColumn('graphs', 'name');
-            $this->dropColumn('graphs', 'json');
+			$table = Yii::app()->db->schema->getTable('graphs');
+			if($table){
+				if(isset($table->columns['name']))
+	            	$this->dropColumn('graphs', 'name');
+				if(isset($table->columns['json']))
+					$this->dropColumn('graphs', 'json');
+            }else{
+				$this->createTable('grpahs', array(
+	                'id' => 'pk',
+					'interviewId' => 'integer',
+					'expressionId' => 'integer',
+	                'nodes' => 'text NOT NULL',
+	                'params' => 'text NOT NULL',
+				));
+            }
             $transaction->commit();
         }
         catch(Exception $e)

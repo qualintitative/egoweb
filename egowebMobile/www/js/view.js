@@ -38,7 +38,7 @@ function view(id, interviewId, page)
 	$('#ERROR').hide();
 
 	questionOrder = [];
-	if (Object.keys(questions).length > 1){
+	if (Object.keys(questions).length >= 1){
 		for (var l in questions) {
 			if(typeof offset == "undefined")
 				var offset = questions[l].ORDERING;

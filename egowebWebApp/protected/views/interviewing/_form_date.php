@@ -58,7 +58,10 @@ else
             </div>
         <?php endif ?>
 
+        <?php if(in_array("BIT_HOUR", $timeArray) && in_array("BIT_MINUTE", $timeArray)): ?>
+
         <div class='<?php echo $class . " " . $rowColor ?>'>Time (HH:MM)</div>
+        <?php endif; ?>
 
         <?php if(in_array("BIT_HOUR", $timeArray)): ?>
             <div class='<?php echo $class . " " . $rowColor ?>'>

@@ -5,6 +5,18 @@
     },
     "config_munge": {
         "files": {
+            "AndroidManifest.xml": {
+                "parents": {
+                    "/manifest": [],
+                    "/manifest/application": [],
+                    "/*": [
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
+                            "count": 2
+                        }
+                    ]
+                }
+            },
             "res/xml/config.xml": {
                 "parents": {
                     "/*": [
@@ -15,16 +27,10 @@
                         {
                             "xml": "<feature name=\"FileTransfer\"><param name=\"android-package\" value=\"org.apache.cordova.filetransfer.FileTransfer\" /></feature>",
                             "count": 1
-                        }
-                    ]
-                }
-            },
-            "AndroidManifest.xml": {
-                "parents": {
-                    "/*": [
+                        },
                         {
-                            "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
-                            "count": 2
+                            "xml": "<feature name=\"broadcaster\"><param name=\"android-package\" value=\"org.bsc.cordova.CDVBroadcaster\" /></feature>",
+                            "count": 1
                         }
                     ]
                 }
@@ -36,6 +42,9 @@
             "PACKAGE_NAME": "com.rand.egowebmoble"
         },
         "org.apache.cordova.file-transfer": {
+            "PACKAGE_NAME": "com.rand.egowebmoble"
+        },
+        "org.bsc.cordova.broadcaster": {
             "PACKAGE_NAME": "com.rand.egowebmoble"
         }
     },
