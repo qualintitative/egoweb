@@ -11,15 +11,24 @@ Yii::import('ext.httpclient.*');
 class SurveyController extends Controller {
 
     public function actionIndex(){
-        $input = file_get_contents('php://input');
+        $input = null;
 
-        if( !isset( $input ) ){
+        //Look for payload as form value in the request
+        if( array_key_exists( "payload", $_REQUEST ) ){
+            $input = trim( $_REQUEST["payload"] );
+        }
+        //Otherwise get the file from the raw request body itself
+        else{
+            $input = trim( file_get_contents( 'php://input' ) );
+        }
+
+        if( empty( $input ) ) {
             $msg = 'Missing input data';
             return ApiController::sendResponse( 419, $msg );
         }
 
-        $decoded = json_decode( trim( $input ), true );
-        if( !isset( $decoded ) ){
+        $decoded = json_decode( $input, true );
+        if( empty( $decoded ) ){
             return ApiController::sendResponse( 422, 'Unable to decode input' );
         }
 
