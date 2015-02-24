@@ -9,14 +9,38 @@
 Yii::import('ext.httpclient.*');
 
 class SurveyController extends Controller {
-    
+
     public function actionIndex(){
-        if( !isset( $_REQUEST['payload'] ) ){
-            $msg = 'Missing payload parameter';
+        $input = null;
+
+        //Look for payload as form value in the request
+        if( array_key_exists( "payload", $_REQUEST ) ){
+            $input = trim( $_REQUEST["payload"] );
+        }
+        //Otherwise get the file from the raw request body itself
+        else{
+            $input = trim( file_get_contents( 'php://input' ) );
+        }
+
+        if( empty( $input ) ) {
+            $msg = 'Missing input data';
             return ApiController::sendResponse( 419, $msg );
         }
 
-        return $this->receive( $_REQUEST['payload'] );
+        $decoded = json_decode( $input, true );
+        if( empty( $decoded ) ){
+            return ApiController::sendResponse( 422, 'Unable to decode input' );
+        }
+
+        if( !is_array( $decoded ) ){
+            return ApiController::sendResponse( 423, 'invalid input' );
+        }
+
+        if( !array_key_exists( "payload", $decoded ) ){
+            return ApiController::sendResponse( 424, 'payload attribute not set' );
+        }
+
+        return $this->receive( $decoded["payload"] );
     }
 
     /**
@@ -67,9 +91,10 @@ class SurveyController extends Controller {
             return ApiController::sendResponse( 422, 'Unable to decode payload' );
         }
 
-        $link = $this->generateRequestString( $decoded );
+        $link = $this->generateSurveyURL(  );
+        $payload = $this->encryptPayload( $decoded );
 
-        return ApiController::sendResponse( 200, array( 'link'=>$link) );
+        return ApiController::sendResponse( 200, array( 'link'=>$link, 'payload'=>$payload ) );
     }
 
     /**
@@ -147,8 +172,8 @@ class SurveyController extends Controller {
      */
     private function handlePassthrough( $userId, $surveyId ){
         $response = $this->redirectPost(   'http://'.$_SERVER['HTTP_HOST'].'/api/survey',
-                                            array('user_id'=>$userId, 'survey_id'=>$surveyId ),
-                                            array( 'api_key'=>Yii::app()->params['apiKey'] ));
+                                            array( 'user_id'=>$userId, 'survey_id'=>$surveyId ),
+                                            array( 'api_key'=>Yii::app()->params['apiKey'] ) );
 
         $decoded = json_decode( $response );
 
@@ -161,17 +186,22 @@ class SurveyController extends Controller {
     }
 
     /**
+     * @return string
+     */
+    public function generateSurveyURL( ){
+        return 'http://'.$_SERVER['HTTP_HOST'].'/survey';
+    }
+
+    /**
      * @param $payload
      * @return string
      */
-    public function generateRequestString( $payload ){
+    public function encryptPayload( $payload ){
 
         $plain = json_encode( $payload );
-        $content = encrypt( $plain );
+        $encrypted = encrypt( $plain );
 
-        $data = http_build_query( array( 'payload' => $content ) );
-
-        return 'http://'.$_SERVER['HTTP_HOST'].'/survey?'.$data;
+        return $encrypted;
     }
 
 } 
