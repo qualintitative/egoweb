@@ -17,19 +17,19 @@ class ApiController extends Controller
 
 	private function checkAPIheader(){
 		$headers = array();
-		foreach( $_SERVER as $key => $value ) {
-			if (substr($key, 0, 5) <> 'HTTP_') {
-				continue;
-			}
-			$header = str_replace( ' ', '-', str_replace( '_', ' ', strtolower( substr( $key, 5 ) ) ) );
+		foreach( apache_request_headers() as $key => $value ) {
+			$header = strtolower($key) ;
 			$headers[$header] = $value;
 		}
 
-		if( !isset( $headers['api-key'] ) ){
+		if(isset($_POST['api_key']))
+			$headers['api_key'] = $_POST['api_key'];
+
+		if( !isset( $headers['api_key']) ){
 			return $this->_sendResponse( 422, "Missing API Key" );
 		}
 
-		if( $headers['api-key'] != Yii::app()->params['apiKey'] ){
+		if( $headers['api_key'] != Yii::app()->params['apiKey'] ){
 			return $this->_sendResponse( 421, "Invalid API Key" );
 		}
 	}
@@ -60,7 +60,7 @@ class ApiController extends Controller
 	private function createSurvey(){
 		if( !isset($_POST['survey_id']) || !isset($_POST['user_id'] ) ){
 			$msg = "Missing survey_id and/or user_id parameter";
-			return $this->sendResponse( 419, $msg );
+			return $this->_sendResponse( 419, $msg );
 		}
 
 		$study = Study::model()->findByPk( (int)$_POST['survey_id'] );
@@ -80,12 +80,12 @@ class ApiController extends Controller
 			return $this->_sendResponse( 420, $msg );
 		}
 		else{
-			$data = array(
-							'redirect_url'=>Yii::app()->getBaseUrl(true)  .  "/interviewing/".$study->id."?".
+			if(isset($_POST['redirect']))
+				Yii::app()->session['redirect'] = $_POST['redirect'];
+			 $this->redirect(Yii::app()->getBaseUrl(true)  .  "/interviewing/".$study->id."?".
 																	"interviewId=".$interview->id."&".
 																	"page=".$interview->completed
 					);
-			return $this->_sendResponse( 201, $data );
 		}
 	}
 

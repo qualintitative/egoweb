@@ -176,8 +176,8 @@ class InterviewingController extends Controller
 				if(isset(Yii::app()->params['exportFilePath']) && Yii::app()->params['exportFilePath'])
 					$this->exportInterview($interview->id);
 
-				if($study->redirectUrl)
-					$this->redirect($study->redirectUrl);
+				if(isset(Yii::app()->session['redirect']))
+					$this->redirect(Yii::app()->session['redirect']);
 				else if(Yii::app()->user->isGuest)
 					$this->redirect(Yii::app()->createUrl(''));
 				else

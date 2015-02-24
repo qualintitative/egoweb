@@ -99,7 +99,7 @@ class Interview extends CActiveRecord
 		}
 
 		$criteria=new CDbCriteria;
-		$criteria->condition = ("AND lower(title) = 'prime_key' AND studyId = $studyId");
+		$criteria->condition = ("lower(title) = 'prime_key' AND studyId = $studyId");
 		$egoQ = Question::model()->find($criteria);
 
 		if(!$egoQ)
