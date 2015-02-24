@@ -267,12 +267,13 @@ class Interview extends CActiveRecord
 				$lastAnswer = Answer::model()->find($criteria);
 			}
 			if(isset($lastAnswer)){
-				if($question->answerType == "SELECTION" || $question->answerType == "MULTIPLE_SELECTION"){
-					$option = QuestionOption::model()->findbyPk($lastAnswer->value);
-					if($option){
-						$lastAnswer->value = $option->name;
-					}else{
-						$lastAnswer->value = "";
+				if($question->answerType == "MULTIPLE_SELECTION"){
+					$optionIds = explode(",", $lastAnswer->value);
+					$lastAnswer->value = "";
+					foreach($optionIds as $optionId){
+						$option = QuestionOption::model()->findbyPk($optionId);
+						if($option)
+							$lastAnswer->value .= $option->name . "\n";
 					}
 				}
 				$string =  preg_replace('#<VAR '.$var.' />#', $lastAnswer->value, $string);
