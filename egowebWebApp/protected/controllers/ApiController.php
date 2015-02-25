@@ -425,10 +425,10 @@ class ApiController extends Controller
 						<html>
 						<head>
 							<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-							<title>' . $status . ' ' . $this->getStatusCodeMessage($status) . '</title>
+							<title>' . $status . ' ' . self::getStatusCodeMessage($status) . '</title>
 						</head>
 						<body>
-							<h1>' . $this->getStatusCodeMessage($status) . '</h1>
+							<h1>' . self::getStatusCodeMessage($status) . '</h1>
 							<p>' . $message . '</p>
 							<hr />
 							<address>' . $signature . '</address>
