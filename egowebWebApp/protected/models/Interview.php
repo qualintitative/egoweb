@@ -88,7 +88,7 @@ class Interview extends CActiveRecord
 	 * @param $primekey
 	 * @return array|bool|CActiveRecord|Interview|mixed|null
 	 */
-	public static function getInterviewFromPrimekey( $studyId, $primekey ){
+	public static function getInterviewFromPrimekey( $studyId, $primekey, $prefill){
 		$answers = Answer::model()->findAllByAttributes( array( 'questionType' => 'EGO_ID',
 																'studyId' => $studyId ) );
 
@@ -99,25 +99,36 @@ class Interview extends CActiveRecord
 		}
 
 		$criteria=new CDbCriteria;
-		$criteria->condition = ("lower(title) = 'prime_key' AND studyId = $studyId");
-		$egoQ = Question::model()->find($criteria);
+		$criteria->condition = ("studyId = $studyId");
+		$egoQs = Question::model()->findAll($criteria);
 
-		if(!$egoQ)
+		if(count($egoQs) == 0)
 			return false;
+
+		$egoIds = array();
+		foreach($egoQs as $egoQ){
+			$egoIds[$egoQ->title] = $egoQ->id;
+		}
 
 		$interview = new Interview;
 		$interview->studyId = $studyId;
 		$interview->start_date = time();
 		$interview->completed = 0;
 		$interview->save();
-		$egoId = new Answer;
-		$egoId->interviewId = $interview->id;
-		$egoId->studyId = $studyId;
-		$egoId->questionType = "EGO_ID";
-		$egoId->answerType = "TEXTUAL";
-		$egoId->questionId = $egoQ['id'];
-		$egoId->value = $primekey;
-		$egoId->save();
+
+		array_push($prefill, array('prime_key'=>$primekey));
+
+		foreach($prefill as $key=>$value){
+			$egoIdQ = new Answer;
+			$egoIdQ->interviewId = $interview->id;
+			$egoIdQ->studyId = $studyId;
+			$egoIdQ->questionType = "EGO_ID";
+			$egoIdQ->answerType = "TEXTUAL";
+			$egoIdQ->questionId = $egoQIds[$key];
+			$egoIdQ->value = $value;
+			$egoIdQ->save();
+		}
+
 		return $interview;
 
 	}

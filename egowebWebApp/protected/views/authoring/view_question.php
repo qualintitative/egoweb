@@ -39,6 +39,13 @@ function initList(){
 	$('.optionLink').click(function(e){clickOption[$(this).parent().parent().attr('id')] = true;
 });
 
+
+setTimeout(function(){
+	$('#new').accordion({
+		collapsible: true,
+		heightStyle: "content",
+		active: false,
+	});
 $('.items')
 .accordion({
 	collapsible: true,
@@ -75,7 +82,7 @@ $('.items')
 })
 .sortable({
 	axis: "y",
-	handle: "h3",
+	scroll:false,
 	stop: function( event, ui ) {
 		ord = [];
 		$('.items > div').each(function(index){
@@ -88,12 +95,6 @@ $('.items')
 		ui.item.children( "h3" ).triggerHandler( "focusout" );
 	}
 });
-setTimeout(function(){
-	$('#new').accordion({
-		collapsible: true,
-		heightStyle: "content",
-		active: false,
-	});
 }, 50);
 
 }
