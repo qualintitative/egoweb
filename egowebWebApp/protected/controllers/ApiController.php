@@ -69,7 +69,7 @@ class ApiController extends Controller
 			return $this->sendResponse( 418, $msg );
 		}
 
-		$interview = Interview::getInterviewFromPrimekey( $study->id, $_POST['user_id'] );
+		$interview = Interview::getInterviewFromPrimekey( $study->id, $_POST['user_id'], $_POST['prefill'] );
 
 		if( !$interview ){
 			$msg = "Unable to find user_id and/or survey_id combination";
@@ -82,10 +82,11 @@ class ApiController extends Controller
 		else{
 			if(isset($_POST['redirect']))
 				Yii::app()->session['redirect'] = $_POST['redirect'];
-			 $this->redirect(Yii::app()->getBaseUrl(true)  .  "/interviewing/".$study->id."?".
-																	"interviewId=".$interview->id."&".
-																	"page=".$interview->completed
-					);
+
+			$this->redirect(Yii::app()->getBaseUrl(true)  .  "/interviewing/".$study->id."?".
+				"interviewId=".$interview->id."&".
+				"page=".$interview->completed
+			);
 		}
 	}
 
