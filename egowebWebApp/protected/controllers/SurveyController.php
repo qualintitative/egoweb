@@ -146,7 +146,11 @@ class SurveyController extends Controller {
                 return ApiController::sendResponse( 422, 'No survey_id in payload' );
             }
 
-            return $this->handlePassthrough( $decoded['user_id'], $decoded['survey_id'] );
+            $prefill = null;
+
+            if( array_key_exists ( 'prefill', $decoded ) ) $prefill = $decoded['prefill'];
+
+            return $this->handlePassthrough( $decoded['user_id'], $decoded['survey_id'], $prefill );
         }
     }
 
@@ -169,8 +173,10 @@ class SurveyController extends Controller {
     /**
      * @param $userId
      * @param $surveyId
+     * @param $prefill (default is null)
+     * @todo handle processing of $prefill parameter
      */
-    private function handlePassthrough( $userId, $surveyId ){
+    private function handlePassthrough( $userId, $surveyId, $prefill=null ){
         $response = $this->redirectPost(   'http://'.$_SERVER['HTTP_HOST'].'/api/survey',
                                             array( 'user_id'=>$userId, 'survey_id'=>$surveyId ),
                                             array( 'api_key'=>Yii::app()->params['apiKey'] ) );
