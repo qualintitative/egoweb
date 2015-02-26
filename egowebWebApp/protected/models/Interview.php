@@ -124,7 +124,7 @@ class Interview extends CActiveRecord
 			$egoIdQ->studyId = $studyId;
 			$egoIdQ->questionType = "EGO_ID";
 			$egoIdQ->answerType = "TEXTUAL";
-			$egoIdQ->questionId = $egoQIds[$key];
+			$egoIdQ->questionId = $egoIds[$key];
 			$egoIdQ->value = $value;
 			$egoIdQ->save();
 		}
