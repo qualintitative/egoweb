@@ -116,7 +116,7 @@ class Interview extends CActiveRecord
 		$interview->completed = 0;
 		$interview->save();
 
-		array_push($prefill, array('prime_key'=>$primekey));
+		$prefill['prime_key'] = $primekey;
 
 		foreach($prefill as $key=>$value){
 			$egoIdQ = new Answer;
