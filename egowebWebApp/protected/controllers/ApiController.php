@@ -22,10 +22,7 @@ class ApiController extends Controller
 			$headers[$header] = $value;
 		}
 
-		if(isset($_POST['api_key']))
-			$headers['api_key'] = $_POST['api_key'];
-
-		if( !isset( $headers['api_key']) ){
+		if( !array_key_exists( 'api_key', $headers ) ){
 			return $this->sendResponse( 422, "Missing API Key" );
 		}
 
@@ -46,7 +43,7 @@ class ApiController extends Controller
 				$this->getSurvey();
 				break;
 			case 'POST':
-				$this->createSurvey();
+				$this->postSurvey();
 				break;
 			case 'PUT':
 				$this->editSurvey();
@@ -57,37 +54,19 @@ class ApiController extends Controller
 		}
 	}
 
-	private function createSurvey(){
+	private function postSurvey(){
 		if( !isset($_POST['survey_id']) || !isset($_POST['user_id'] ) ){
 			$msg = "Missing survey_id and/or user_id parameter";
 			return $this->sendResponse( 419, $msg );
 		}
 
-		$study = Study::model()->findByPk( (int)$_POST['survey_id'] );
-		if( !$study ){
-			$msg = "Invalid survey_id";
-			return $this->sendResponse( 418, $msg );
-		}
+        $prefill = null;
 
-		$interview = Interview::getInterviewFromPrimekey( $study->id, $_POST['user_id'], $_POST['prefill'] );
+        if( array_key_exists( "prefill", $_POST ) ){
+            $prefill = $_POST["prefill"];
+        }
 
-		if( !$interview ){
-			$msg = "Unable to find user_id and/or survey_id combination";
-			return $this->sendResponse( 404, $msg );
-		}
-		else if( $interview->completed == -1 ){
-			$msg = "User already completed survey";
-			return $this->sendResponse( 420, $msg );
-		}
-		else{
-			if(isset($_POST['redirect']))
-				Yii::app()->session['redirect'] = $_POST['redirect'];
-
-			$this->redirect(Yii::app()->getBaseUrl(true)  .  "/interviewing/".$study->id."?".
-				"interviewId=".$interview->id."&".
-				"page=".$interview->completed
-			);
-		}
+        return SurveyController::createSurvey( $_POST['survey_id'], $_POST['user_id'], $prefill );
 	}
 
 	/**
