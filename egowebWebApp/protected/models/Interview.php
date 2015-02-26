@@ -101,6 +101,7 @@ class Interview extends CActiveRecord
 		$criteria=new CDbCriteria;
 		$criteria->condition = ("studyId = $studyId");
 		$egoQs = Question::model()->findAll($criteria);
+		$study = Study::model()->findByPk($studyId);
 
 		if(count($egoQs) == 0)
 			return false;
@@ -125,7 +126,10 @@ class Interview extends CActiveRecord
 			$egoIdQ->questionType = "EGO_ID";
 			$egoIdQ->answerType = "TEXTUAL";
 			$egoIdQ->questionId = $egoIds[$key];
-			$egoIdQ->value = $value;
+			if($value)
+				$egoIdQ->value = $value;
+			else
+				$egoIdQ->value = $study->valueDontKnow;
 			$egoIdQ->save();
 		}
 
