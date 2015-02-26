@@ -106,11 +106,6 @@ class Interview extends CActiveRecord
 		if(count($egoQs) == 0)
 			return false;
 
-		$egoIds = array();
-		foreach($egoQs as $egoQ){
-			$egoIds[$egoQ->title] = $egoQ->id;
-		}
-
 		$interview = new Interview;
 		$interview->studyId = $studyId;
 		$interview->start_date = time();
@@ -119,22 +114,24 @@ class Interview extends CActiveRecord
 
 		$prefill['prime_key'] = $primekey;
 
-		foreach($prefill as $key=>$value){
+		foreach($egoQs as $egoQ){
 			$egoIdQ = new Answer;
 			$egoIdQ->interviewId = $interview->id;
 			$egoIdQ->studyId = $studyId;
 			$egoIdQ->questionType = "EGO_ID";
 			$egoIdQ->answerType = "TEXTUAL";
-			$egoIdQ->questionId = $egoIds[$key];
-			if($value)
-				$egoIdQ->value = $value;
-			else
+			$egoIdQ->questionId = $egoQ->id;
+			$egoIdQ->skipReason = "NONE";
+			if(isset($prefill[$egoQ->title])){
+				$egoIdQ->value = $prefill[$egoQ->title];
+			}else{
+				$egoIdQ->skipReason = "DONT_KNOW";
 				$egoIdQ->value = $study->valueDontKnow;
+			}
 			$egoIdQ->save();
 		}
 
 		return $interview;
-
 	}
 
 	public static function countAlters($id){
