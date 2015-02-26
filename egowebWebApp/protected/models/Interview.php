@@ -195,9 +195,9 @@ class Interview extends CActiveRecord
 						$ego_ids[] = q("SELECT name FROM questionOption WHERE id = " . $optionId)->queryScalar();
 				}
 			}else{
-				#OK FOR SQL INJECTION
-
-				$ego_ids[] = decrypt(q("SELECT value FROM answer WHERE interviewId = " . $interview['id']  . " AND questionId = " . $question['id'])->queryScalar());
+				$id_response = Answer::model()->findByAttributes(array("interviewId" => $interview['id'], "questionId"=>$question['id']));
+				if($id_response)
+					$ego_ids[] = $id_response->value;
 			}
 		}
 
