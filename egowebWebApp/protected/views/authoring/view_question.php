@@ -86,6 +86,7 @@ $('.items')
 })
 .sortable({
 	axis: "y",
+	handle: "h3",
 	scroll:false,
 	stop: function( event, ui ) {
 		ord = [];
