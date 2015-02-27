@@ -371,7 +371,7 @@ class Interview extends CActiveRecord
 		// date interpretter
 		preg_match_all('#<DATE (.+?) />#ims', $string, $dates);
 		foreach($dates[1] as $date){
-			list($qTitle, $period, $amount) = preg_split('/\s/', $date);
+			list($qTitle, $amount, $period) = preg_split('/\s/', $date);
 			if(preg_match('/:/', $qTitle)){
 				list($sS, $sQ) = explode(":", $qTitle);
 				$study = Study::model()->findByAttributes(array("name"=>$sS));
@@ -390,7 +390,17 @@ class Interview extends CActiveRecord
 				'condition'=>'questionId = '. $question->id . $end,
 			);
 			$answer = Answer::model()->find($criteria);
-			$newDate = date('F jS, Y h:i:s', strtotime($answer->value . " " .$amount . " " . $period));
+			$timeArray = Question::timeBits($question->timeUnits);
+			$timeFormat = "";
+			if(in_array("BIT_MONTH", $timeArray))
+				$timeFormat = "F ";
+			if(in_array("BIT_DAY", $timeArray))
+				$timeFormat .= "jS ";
+			if(in_array("BIT_YEAR", $timeArray))
+				$timeFormat .= ", Y";
+			if(in_array("BIT_HOUR", $timeArray))
+				$timeFormat .= "h:i A";
+			$newDate = date($timeFormat, strtotime($answer->value . " " .$amount . " " . $period));
 			$string =  str_replace("<DATE ".$date." />", $newDate, $string);
 		}
 
@@ -432,6 +442,7 @@ class Interview extends CActiveRecord
 				);
 			}
 			$theAnswer = Answer::model()->find($criteria);
+			echo "contains". $theAnswer.print_r($criteria);
 			$string =  str_replace("<CONTAINS ".$contains." />", count($theAnswer), $string);
 		}
 
@@ -474,6 +485,7 @@ class Interview extends CActiveRecord
 					}
 				}
 				$logic = 'return ' . $exp[1] . ' ' . $exp[2] . ' ' . $exp[3] . ';';
+				//echo $logic;
 				if($exp[1] && $exp[2] && $exp[3])
 					$show = eval($logic);
 				else
