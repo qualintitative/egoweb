@@ -48,7 +48,6 @@ Network Statistics
 
 <?php
     echo CHtml::form('', 'post', array('id'=>'analysis'));
-    echo CHtml::hiddenField('expressionId', $study->adjacencyExpressionId);
     echo CHtml::hiddenField('studyId', $study->id);
     foreach($interviews as $interview){
         if($interview['completed'] == -1)
