@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Feb 05, 2015 at 02:18 AM
+-- Generation Time: Feb 27, 2015 at 09:06 AM
 -- Server version: 5.6.21
--- PHP Version: 5.5.18
+-- PHP Version: 5.6.6
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `alterPrompt` (
   `afterAltersEntered` int(11) NOT NULL,
   `display` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=211 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=231 ;
 
 -- --------------------------------------------------------
 
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `alters` (
   `interviewId` text NOT NULL,
   `alterListId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=27291 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=27793 ;
 
 -- --------------------------------------------------------
 
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `answer` (
   `answerType` text,
   PRIMARY KEY (`id`),
   KEY `answerIndex` (`questionId`,`interviewId`,`alterId1`,`alterId2`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1388119 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1399376 ;
 
 -- --------------------------------------------------------
 
@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS `answerList` (
   `studyId` int(11) DEFAULT NULL,
   `listOptionNames` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1016 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1033 ;
 
 -- --------------------------------------------------------
 
@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS `expression` (
   `studyId` int(11) DEFAULT NULL,
   `questionId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=14916 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=15313 ;
 
 -- --------------------------------------------------------
 
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS `graphs` (
   `nodes` text CHARACTER SET utf8mb4 NOT NULL,
   `params` text CHARACTER SET utf8mb4 NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=30 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=88 ;
 
 -- --------------------------------------------------------
 
@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS `interview` (
   `start_date` int(11) DEFAULT NULL,
   `complete_date` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2795 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2882 ;
 
 -- --------------------------------------------------------
 
@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS `interviewers` (
   `studyId` int(11) NOT NULL,
   `interviewerId` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
@@ -198,7 +198,7 @@ CREATE TABLE IF NOT EXISTS `notes` (
   `alterId` varchar(64) DEFAULT NULL,
   `notes` text CHARACTER SET utf32 NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=16 ;
 
 -- --------------------------------------------------------
 
@@ -251,7 +251,7 @@ CREATE TABLE IF NOT EXISTS `question` (
   `networkESizeQId` int(11) DEFAULT NULL,
   `useAlterListField` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=38627 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=39571 ;
 
 -- --------------------------------------------------------
 
@@ -268,7 +268,7 @@ CREATE TABLE IF NOT EXISTS `questionOption` (
   `value` text,
   `ordering` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=217770 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=220197 ;
 
 -- --------------------------------------------------------
 
@@ -299,7 +299,6 @@ CREATE TABLE IF NOT EXISTS `study` (
   `conclusion` text,
   `minAlters` int(11) NOT NULL DEFAULT '0',
   `maxAlters` int(11) NOT NULL DEFAULT '20',
-  `adjacencyExpressionId` text,
   `valueRefusal` int(11) DEFAULT '-1',
   `valueDontKnow` int(11) DEFAULT '-2',
   `valueLogicalSkip` int(11) DEFAULT '-3',
@@ -311,12 +310,11 @@ CREATE TABLE IF NOT EXISTS `study` (
   `fillAlterList` tinyint(1) NOT NULL DEFAULT '0',
   `created_date` int(11) DEFAULT NULL,
   `closed_date` int(11) DEFAULT NULL,
-  `completed` int(11) DEFAULT NULL,
-  `started` int(11) DEFAULT NULL,
   `status` int(11) DEFAULT NULL,
   `userId` int(11) NOT NULL,
+  `hideEgoIdPage` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=279 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=311 ;
 
 -- --------------------------------------------------------
 
@@ -333,7 +331,3 @@ CREATE TABLE IF NOT EXISTS `user` (
   `permissions` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=14 ;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
