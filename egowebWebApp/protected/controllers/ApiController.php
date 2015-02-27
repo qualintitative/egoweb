@@ -63,31 +63,19 @@ class ApiController extends Controller
 			return $this->sendResponse( 419, $msg );
 		}
 
-		$study = Study::model()->findByPk( (int)$_POST['survey_id'] );
-		if( !$study ){
-			$msg = "Invalid survey_id";
-			return $this->sendResponse( 418, $msg );
-		}
+        $prefill = null;
 
-		$interview = Interview::getInterviewFromPrimekey( $study->id, $_POST['user_id'], $_POST['prefill'] );
+        if( isset( $_POST['redirect'] ) ){
+            $prefill = $_POST['redirect'];
+        }
 
-		if( !$interview ){
-			$msg = "Unable to find user_id and/or survey_id combination";
-			return $this->sendResponse( 404, $msg );
-		}
-		else if( $interview->completed == -1 ){
-			$msg = "User already completed survey";
-			return $this->sendResponse( 420, $msg );
-		}
-		else{
-			if(isset($_POST['redirect']))
-				Yii::app()->session['redirect'] = $_POST['redirect'];
+        $redirect = null;
 
-			$this->redirect(Yii::app()->getBaseUrl(true)  .  "/interviewing/".$study->id."?".
-				"interviewId=".$interview->id."&".
-				"page=".$interview->completed
-			);
-		}
+        if( isset( $_POST['redirect'] ) ){
+            $redirect = $_POST['redirect'];
+        }
+
+        SurveyController::createSurvey( $_POST['survey_id'], $_POST['user_id'], $prefill, $redirect );
 	}
 
 	/**
