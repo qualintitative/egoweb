@@ -367,6 +367,31 @@ class Interview extends CActiveRecord
 			$string =  str_replace("<COUNT ".$count." />", count($answers), $string);
 		}
 
+		// date interpretter
+		preg_match_all('#<DATE (.+?) />#ims', $string, $dates);
+		foreach($dates[1] as $date){
+			list($qTitle, $period, $amount) = preg_split('/\s/', $date);
+			if(preg_match('/:/', $qTitle)){
+				list($sS, $sQ) = explode(":", $qTitle);
+				$study = Study::model()->findByAttributes(array("name"=>$sS));
+				$question = Question::model()->findByAttributes(array('title'=>$sQ, 'studyId'=>$study->id));
+			}else{
+				$question = Question::model()->findByAttributes(array('title'=>$qTitle, 'studyId'=>$studyId));
+			}
+			if(!$question || $question->answerType != "DATE")
+				continue;
+			$criteria=new CDbCriteria;
+				if($interviewId != null)
+					$end = " AND interviewId in (". $interviewId. ")";
+				else
+					$end = "";
+			$criteria=array(
+				'condition'=>'questionId = '. $question->id . $end,
+			);
+			$answer = Answer::model()->find($criteria);
+			$newDate = date('F jS, Y h:i:s', strtotime($answer->value . " " .$amount . " " . $period));
+			$string =  str_replace("<DATE ".$date." />", $newDate, $string);
+		}
 
 		// same as count, but limited to specific alter / alter pair questions
 		preg_match_all('#<CONTAINS (.+?) />#ims', $string, $containers);
@@ -393,7 +418,7 @@ class Interview extends CActiveRecord
 			}else{
 				$end = "";
 			}
-			if($question->answerType == "SELECTION" || $question->answerType == "MULTIPLE_SELECTION"){
+			if($question->answerType == "MULTIPLE_SELECTION"){
 				$option = QuestionOption::model()->findbyAttributes(array('name'=>$answer, 'questionId'=>$question->id));
 				if(!$option)
 					continue;
