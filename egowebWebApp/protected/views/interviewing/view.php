@@ -188,7 +188,7 @@ if(!isset($key) || !$key){
 <?php if(isset($questions[0])): ?>
 	<?php if(in_array($questions[0]->answerType, $prompts)): ?>
 		<div class="questionText <?php if($questions[0]->answerType == "ALTER_PROMPT"){ echo "col-sm-9"; } ?>">
-			<?php echo Interview::interpretTags($questions[0]->prompt, $interviewId); ?>
+			<?php echo Interview::interpretTags($questions[0]->prompt, $interviewId, $question->alterId1, $question->alterId2); ?>
 			<?php if($questions[0]->answerType == "PREFACE" && file_exists(Yii::app()->basePath."/../audio/".$study->id . "/PREFACE/" . $questions[0]->id . ".mp3")):?>
 				<script>
 					var promptAudio_<?=$questions[0]->id;?> = loadAudio("/audio/<?= $study->id . "/PREFACE/" . $questions[0]->id . ".mp3"; ?>");

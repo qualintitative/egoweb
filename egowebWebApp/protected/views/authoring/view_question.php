@@ -6,8 +6,12 @@
 
 function changeAType(answerSelect) {
 	var value = answerSelect.options[answerSelect.selectedIndex].value;
-	if(value == 'DATE')
+	if(value == 'TIME_SPAN')
+		$(".weeks").show();
+	if(value == 'DATE'){
 		value = 'TIME_SPAN';
+		$(".weeks").hide();
+	}
 	var model_id = $(answerSelect).attr('id').substring(2);
 	$('.panel-' + model_id).hide();
 	$('.panel-' + model_id + "#" +value).show();

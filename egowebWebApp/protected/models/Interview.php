@@ -229,13 +229,12 @@ class Interview extends CActiveRecord
 	}
 
 	// CORE FUNCTION
-	public static function interpretTags($string, $interviewId = null, $alterId1 = null, $alterId2 = null,  $study = null)
+	public static function interpretTags($string, $interviewId = null, $alterId1 = null, $alterId2 = null)
 	{
 
 		if(!$interviewId)
 			return $string;
 
-		if($study == null){
 			#OK FOR SQL INJECTION
 			$params = new stdClass();
 			$params->name = ':interviewId';
@@ -245,7 +244,6 @@ class Interview extends CActiveRecord
 			$studyId = q("SELECT studyId FROM interview WHERE id = :interviewId",array($params))->queryScalar();
 			#OK FOR SQL INJECTION
 			$study = Study::model()->findByPk((int)$studyId);
-		}
 
 		$interviewId = Interview::multiInterviewIds($interviewId, $study);
 
@@ -440,15 +438,24 @@ class Interview extends CActiveRecord
 				if(!$option)
 					continue;
 				$criteria=array(
-					'condition'=>'questionId = '. $question->id .' AND FIND_IN_SET('. $option->id .' ,value)' . $end,
+					'condition'=>'questionId = '. $question->id . $end,
 				);
+				$answers = Answer::model()->findAll($criteria);
+				foreach($answers as $a){
+					if(in_array($option->id, explode(",", $a->value)))
+						$theAnswer[] = $a;
+				}
+
 			}else{
 				$criteria=array(
-					'condition'=>'value = "' . $answer . '"' . $end,
+					'condition'=>"1 = 1" . $end,
 				);
+				$answers = Answer::model()->findAll($criteria);
+				foreach($answers as $a){
+					if($a->value == $answer)
+						$theAnswer[] = $a;
+				}
 			}
-			$theAnswer = Answer::model()->find($criteria);
-			echo "contains". $theAnswer.print_r($criteria);
 			$string =  str_replace("<CONTAINS ".$contains." />", count($theAnswer), $string);
 		}
 

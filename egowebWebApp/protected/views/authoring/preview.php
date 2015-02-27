@@ -1,6 +1,6 @@
 	<?php if ($question->subjectType != "EGO_ID"): ?>
 	<div class="questionText">
-		<?php echo Interview::interpretTags($question->prompt, '' , $question->alterId1, $question->alterId2); ?>
+		<?php echo $question->prompt; ?>
 	</div>
 	<br style="clear:both">
 	<div class="question">

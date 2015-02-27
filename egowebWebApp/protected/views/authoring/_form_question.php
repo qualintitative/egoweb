@@ -38,8 +38,14 @@ jQuery(document).ready(function(){
 		jQuery('.panel-<?php echo $model->id; ?>#NETWORK').show();
 	if('<?php echo $model->askingStyleList; ?>' == true)
 		jQuery('.panel-<?php echo $model->id; ?>#ALTER_STYLE').show();
-	if('<?php echo $model->answerType; ?>' == 'TIME_SPAN' || '<?php echo $model->answerType; ?>' == 'DATE')
+	if('<?php echo $model->answerType; ?>' == 'TIME_SPAN'){
 		jQuery('.panel-<?php echo $model->id; ?>#TIME_SPAN').show();
+		$(".weeks").show();
+	}
+	if('<?php echo $model->answerType; ?>' == 'DATE'){
+		jQuery('.panel-<?php echo $model->id; ?>#TIME_SPAN').show();
+		$(".weeks").hide();
+	}
 });
 </script>
 <?php
@@ -234,8 +240,8 @@ jQuery('input.time-".$model->id."').change(function() {
 				<td style="padding-left:0; padding-right:0;" align="left"><label for="<?php echo $model->id; ?>_yrs">Years</label></td>
 				<td style="padding-left:4px; padding-right:0;" ><input type="checkbox" class="time-<?php echo $model->id ?>" id="<?php echo $model->id; ?>_mons" value=2 <?php if(in_array("BIT_MONTH", $timeArray)): ?> checked <?php endif; ?> /></td>
 				<td style="padding-left:0; padding-right:0;" align="left"><label for="<?php echo $model->id; ?>_mons">Months</label></td>
-				<td style="padding-left:4px; padding-right:0;" ><input type="checkbox" class="time-<?php echo $model->id ?>" id="<?php echo $model->id; ?>_wks" value=4 <?php if(in_array("BIT_WEEK", $timeArray)): ?> checked <?php endif; ?> /></td>
-				<td style="padding-left:0; padding-right:0;" align="left"><label for="<?php echo $model->id; ?>_wks">Weeks</label></td>
+				<td class="weeks" style="padding-left:4px; padding-right:0;" ><input type="checkbox" class="time-<?php echo $model->id ?>" id="<?php echo $model->id; ?>_wks" value=4 <?php if(in_array("BIT_WEEK", $timeArray)): ?> checked <?php endif; ?> /></td>
+				<td class="weeks" style="padding-left:0; padding-right:0;" align="left"><label for="<?php echo $model->id; ?>_wks">Weeks</label></td>
 				<td style="padding-left:4px; padding-right:0;" ><input type="checkbox" class="time-<?php echo $model->id ?>" id="<?php echo $model->id; ?>_days" value=8 <?php if(in_array("BIT_DAY", $timeArray)): ?> checked <?php endif; ?> /></td>
 				<td style="padding-left:0; padding-right:0;" align="left"><label for="<?php echo $model->id; ?>_days">Days</label></td>
 				<td style="padding-left:4px; padding-right:0;"><input type="checkbox" class="time-<?php echo $model->id ?>" id="<?php echo $model->id; ?>_hrs" value=16 <?php if(in_array("BIT_HOUR", $timeArray)): ?> checked <?php endif; ?> /></td>
