@@ -345,7 +345,9 @@ class Interview extends CActiveRecord
 			$criteria=new CDbCriteria;
 			if(!$question)
 				continue;
-			if($question->answerType == "SELECTION" || $question->answerType == "MULTIPLE_SELECTION"){
+
+			$theAnswer = array();
+			if($question->answerType == "MULTIPLE_SELECTION"){
 				$option = QuestionOption::model()->findbyAttributes(array('name'=>$answer, 'questionId'=>$question->id));
 				if(!$option)
 					continue;
@@ -355,15 +357,24 @@ class Interview extends CActiveRecord
 					$end = "";
 				}
 				$criteria=array(
-					'condition'=>'questionId = '. $question->id .' AND FIND_IN_SET('. $option->id .' ,value)' . $end,
+					'condition'=>'questionId = '. $question->id . $end,
 				);
+				$answers = Answer::model()->findAll($criteria);
+				foreach($answers as $a){
+					if(in_array($option->id, explode(",", $a->value)))
+						$theAnswer[] = $a;
+				}
 			}else{
 				$criteria=array(
-					'condition'=>'value = "' . $answer . '"' . $end,
+					'condition'=>'1 = 1' . $end,
 				);
+				$answers = Answer::model()->findAll($criteria);
+				foreach($answers as $a){
+					if($a->value == $answer)
+						$theAnswer[] = $a;
+				}
 			}
-			$answers = Answer::model()->findAll($criteria);
-			$string =  str_replace("<COUNT ".$count." />", count($answers), $string);
+			$string =  str_replace("<COUNT ".$count." />", count($theAnswer), $string);
 		}
 
 		// date interpretter
@@ -445,7 +456,6 @@ class Interview extends CActiveRecord
 					if(in_array($option->id, explode(",", $a->value)))
 						$theAnswer[] = $a;
 				}
-
 			}else{
 				$criteria=array(
 					'condition'=>"1 = 1" . $end,
