@@ -44,38 +44,6 @@ class SurveyController extends Controller {
 	}
 
 	/**
-	 * Redirect with POST data.
-	 *
-	 * @param string $url URL.
-	 * @param array $post_data POST data. Example: array('foo' => 'var', 'id' => 123)
-	 * @param array $headers Optional. Extra headers to send.
-	 * @return string
-	 */
-	public function redirectPost($url, array $data, array $headers = null) {
-		$params = array(
-			'http' => array(
-				'method' => 'POST',
-				'content' => http_build_query($data)
-			)
-		);
-		if (!is_null($headers)) {
-			$params['http']['header'] = '';
-			foreach ($headers as $k => $v) {
-				$params['http']['header'] .= "$k: $v\n";
-			}
-		}
-		$ctx = stream_context_create($params);
-		$fp = @fopen($url, 'rb', false, $ctx);
-		if ($fp) {
-			return @stream_get_contents($fp);
-		} else {
-			// Error
-			return ApiController::sendResponse( 500, 'Unable to access survey' );
-			exit();
-		}
-	}
-
-	/**
 	 *
 	 */
 	public function actionGetLink(){
@@ -117,7 +85,7 @@ class SurveyController extends Controller {
 			return ApiController::sendResponse( 422, 'No action in payload' );
 		}
 
-		if( ( $decoded['action'] != 'login' ) && ( ( $decoded['action'] != 'passthrough' ) )  ){
+		if( ( $decoded['action'] != 'login' ) && ( ( $decoded['action'] != 'passthrough' ) ) ){
 			return ApiController::sendResponse( 422, 'Invalid action in payload' );
 		}
 
@@ -134,7 +102,7 @@ class SurveyController extends Controller {
 				return ApiController::sendResponse( 422, 'No password in payload' );
 			}
 
-			return $this->handleLogin( $decoded['email'], $decoded['password'] );
+			return $this->_handleLogin( $decoded['email'], $decoded['password'] );
 		}
 
 		if( ( $decoded['action'] == 'passthrough' ) ) {
@@ -150,10 +118,7 @@ class SurveyController extends Controller {
 
 			if( array_key_exists ( 'prefill', $decoded ) ) $prefill = $decoded['prefill'];
 
-			$this->redirectPost(   'http://'.$_SERVER['HTTP_HOST'].'/api/survey',
-											array( 'user_id'=>$decoded['user_id'], 'survey_id'=> $decoded['survey_id'], 'prefill'=> $decoded['prefill'] ),
-											array( 'api_key'=>Yii::app()->params['apiKey'] ) );
-
+            $this->createSurvey( $decoded['survey_id'], $decoded['user_id'], $prefill );
 		}
 	}
 
@@ -161,7 +126,7 @@ class SurveyController extends Controller {
 	 * @param $email
 	 * @param $password
 	 */
-	private function handleLogin( $email, $password ){
+	private function _handleLogin( $email, $password ){
 		$login = new LoginForm;
 		$login->username = $email;
 		$login->password = $password;
@@ -191,5 +156,39 @@ class SurveyController extends Controller {
 
 		return $encrypted;
 	}
+
+    /**
+     * @param $surveyId
+     * @param $userId
+     * @param null $prefill
+     */
+    public static function createSurvey( $surveyId, $userId, $prefill=null ){
+
+        $study = Study::model()->findByPk( $surveyId );
+        if( !$study ){
+            $msg = "Invalid survey_id";
+            return ApiController::sendResponse( 418, $msg );
+        }
+
+        $interview = Interview::getInterviewFromPrimekey( $study->id, $userId, $prefill );
+
+        if( !$interview ){
+            $msg = "Unable to find user_id and/or survey_id combination";
+            return ApiController::sendResponse( 404, $msg );
+        }
+        else if( $interview->completed == -1 ){
+            $msg = "User already completed survey";
+            return ApiController::sendResponse( 420, $msg );
+        }
+        else{
+            if( isset( $prefill ) )
+                Yii::app()->session['redirect'] = $_POST['redirect'];
+
+            self::redirect( Yii::app()->getBaseUrl(true)  .  "/interviewing/".$study->id."?".
+                            "interviewId=".$interview->id."&".
+                            "page=".$interview->completed
+                            );
+        }
+    }
 
 }

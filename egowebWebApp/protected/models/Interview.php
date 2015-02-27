@@ -99,16 +99,12 @@ class Interview extends CActiveRecord
 		}
 
 		$criteria=new CDbCriteria;
-		$criteria->condition = ("studyId = $studyId");
+		$criteria->condition = ("studyId = $studyId and subjectType = 'EGO_ID'");
 		$egoQs = Question::model()->findAll($criteria);
+		$study = Study::model()->findByPk($studyId);
 
 		if(count($egoQs) == 0)
 			return false;
-
-		$egoIds = array();
-		foreach($egoQs as $egoQ){
-			$egoIds[$egoQ->title] = $egoQ->id;
-		}
 
 		$interview = new Interview;
 		$interview->studyId = $studyId;
@@ -116,21 +112,26 @@ class Interview extends CActiveRecord
 		$interview->completed = 0;
 		$interview->save();
 
-		array_push($prefill, array('prime_key'=>$primekey));
+		$prefill['prime_key'] = $primekey;
 
-		foreach($prefill as $key=>$value){
+		foreach($egoQs as $egoQ){
 			$egoIdQ = new Answer;
 			$egoIdQ->interviewId = $interview->id;
 			$egoIdQ->studyId = $studyId;
 			$egoIdQ->questionType = "EGO_ID";
 			$egoIdQ->answerType = "TEXTUAL";
-			$egoIdQ->questionId = $egoQIds[$key];
-			$egoIdQ->value = $value;
+			$egoIdQ->questionId = $egoQ->id;
+			$egoIdQ->skipReason = "NONE";
+			if(isset($prefill[$egoQ->title])){
+				$egoIdQ->value = $prefill[$egoQ->title];
+			}else{
+				$egoIdQ->skipReason = "DONT_KNOW";
+				$egoIdQ->value = $study->valueDontKnow;
+			}
 			$egoIdQ->save();
 		}
 
 		return $interview;
-
 	}
 
 	public static function countAlters($id){
@@ -191,9 +192,9 @@ class Interview extends CActiveRecord
 						$ego_ids[] = q("SELECT name FROM questionOption WHERE id = " . $optionId)->queryScalar();
 				}
 			}else{
-				#OK FOR SQL INJECTION
-
-				$ego_ids[] = decrypt(q("SELECT value FROM answer WHERE interviewId = " . $interview['id']  . " AND questionId = " . $question['id'])->queryScalar());
+				$id_response = Answer::model()->findByAttributes(array("interviewId" => $interview['id'], "questionId"=>$question['id']));
+				if($id_response)
+					$ego_ids[] = $id_response->value;
 			}
 		}
 
@@ -367,6 +368,31 @@ class Interview extends CActiveRecord
 			$string =  str_replace("<COUNT ".$count." />", count($answers), $string);
 		}
 
+		// date interpretter
+		preg_match_all('#<DATE (.+?) />#ims', $string, $dates);
+		foreach($dates[1] as $date){
+			list($qTitle, $period, $amount) = preg_split('/\s/', $date);
+			if(preg_match('/:/', $qTitle)){
+				list($sS, $sQ) = explode(":", $qTitle);
+				$study = Study::model()->findByAttributes(array("name"=>$sS));
+				$question = Question::model()->findByAttributes(array('title'=>$sQ, 'studyId'=>$study->id));
+			}else{
+				$question = Question::model()->findByAttributes(array('title'=>$qTitle, 'studyId'=>$studyId));
+			}
+			if(!$question || $question->answerType != "DATE")
+				continue;
+			$criteria=new CDbCriteria;
+				if($interviewId != null)
+					$end = " AND interviewId in (". $interviewId. ")";
+				else
+					$end = "";
+			$criteria=array(
+				'condition'=>'questionId = '. $question->id . $end,
+			);
+			$answer = Answer::model()->find($criteria);
+			$newDate = date('F jS, Y h:i:s', strtotime($answer->value . " " .$amount . " " . $period));
+			$string =  str_replace("<DATE ".$date." />", $newDate, $string);
+		}
 
 		// same as count, but limited to specific alter / alter pair questions
 		preg_match_all('#<CONTAINS (.+?) />#ims', $string, $containers);
@@ -393,7 +419,7 @@ class Interview extends CActiveRecord
 			}else{
 				$end = "";
 			}
-			if($question->answerType == "SELECTION" || $question->answerType == "MULTIPLE_SELECTION"){
+			if($question->answerType == "MULTIPLE_SELECTION"){
 				$option = QuestionOption::model()->findbyAttributes(array('name'=>$answer, 'questionId'=>$question->id));
 				if(!$option)
 					continue;
