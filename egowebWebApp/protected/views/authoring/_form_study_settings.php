@@ -212,6 +212,9 @@ $(function(){
 		<label>Populate alter list from participant list</label>
 		<?php echo $form->checkBox($model,'fillAlterList'); ?>
 
+		<label>Hide Ego Id Page (for studies will Ego Id prefills)</label>
+		<?php echo $form->checkBox($model,'hideEgoIdPage'); ?>
+
 	<div class="row buttons">
 		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array("class"=>"btn btn-primary btn-sm",)); ?>
 

@@ -14,7 +14,6 @@
  * @property string $conclusion
  * @property string $minAlters
  * @property string $maxAlters
- * @property string $adjacencyExpressionId
  * @property integer $valueRefusal
  * @property integer $valueDontKnow
  * @property integer $valueLogicalSkip
@@ -50,12 +49,12 @@ class Study extends CActiveRecord
 			array('name', 'required'),
 			array('name', 'filter', 'filter'=>function($param) {return CHtml::encode(strip_tags($param));}),
 			array('active', 'numerical', 'integerOnly'=>true),
-			array('id, active, name, minAlters, maxAlters, adjacencyExpressionId, multiSessionEgoId', 'length', 'max'=>255),
+			array('id, active, name, minAlters, maxAlters, multiSessionEgoId', 'length', 'max'=>255),
 			array('introduction, egoIdPrompt, alterPrompt, conclusion', 'length', 'max'=>32768),
 
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, active, name, introduction, egoIdPrompt, alterPrompt, conclusion, minAlters, maxAlters, adjacencyExpressionId, valueRefusal, valueDontKnow, valueLogicalSkip, valueNotYetAnswered', 'safe', 'on'=>'search'),
+			array('id, active, name, introduction, egoIdPrompt, alterPrompt, conclusion, minAlters, maxAlters, valueRefusal, valueDontKnow, valueLogicalSkip, valueNotYetAnswered', 'safe', 'on'=>'search'),
 			array('modified','default',
 				'value'=>new CDbExpression('NOW()'),
 				'setOnEmpty'=>true,'on'=>'insert'
@@ -64,7 +63,11 @@ class Study extends CActiveRecord
 				'value'=>Yii::app()->user->id,
 				'setOnEmpty'=>true,'on'=>'insert'
 			),
-			array('multiSessionEgoId, useAsAlters, restrictAlters, fillAlterList','default',
+			array('conclusion','default',
+				'value'=>"Thank you!",
+				'setOnEmpty'=>true,'on'=>'insert'
+			),
+			array('multiSessionEgoId, useAsAlters, restrictAlters, fillAlterList, hideEgoIdPage','default',
 				'value'=>0,
 			'setOnEmpty'=>true),
 			);
@@ -145,10 +148,14 @@ class Study extends CActiveRecord
 			$page[$i] = Study::checkPage($i, $pageNumber, "INTRODUCTION");
 			$i++;
 		}
-		$page[$i] = Study::checkPage($i, $pageNumber, "EGO ID");
-		$i++;
+		if(!$study->hideEgoIdPage){
+			$page[$i] = Study::checkPage($i, $pageNumber, "EGO ID");
+			$i++;
+		}
 		if(!$interviewId)
 			return json_encode($pages);
+
+
 		$prompt = "";
 		$ego_question_list = array();
 		foreach($egoQuestions as $question){
@@ -369,7 +376,7 @@ class Study extends CActiveRecord
 		}
 
 
-		if($study->introduction != ""){
+		if($study->introduction){
 			if($i == $pageNumber){
 				$introduction = new Question;
 				$introduction->answerType = "INTRODUCTION";
@@ -380,12 +387,15 @@ class Study extends CActiveRecord
 			$i++;
 		}
 
-		if($pageNumber == $i){
-			$page[$i] = $ego_id_questions;
-			return $page[$i];
-		}
-		if(is_numeric($interviewId)){
+		if(!$study->hideEgoIdPage){
+			if($pageNumber == $i){
+				$page[$i] = $ego_id_questions;
+				return $page[$i];
+			}
 			$i++;
+		}
+
+		if(is_numeric($interviewId)){
 			$ego_question_list = array();
 			$prompt = "";
 			foreach ($egoQuestions as $question){
@@ -775,11 +785,6 @@ class Study extends CActiveRecord
 				$newExpressionIds[$expression->id] = $newExpression->id;
 		}
 
-		// replace adjacencyExpressionId for study
-		if($newStudy->adjacencyExpressionId != ""){
-			$newStudy->adjacencyExpressionId = $newExpressionIds[intval($newStudy->adjacencyExpressionId)];
-			$newStudy->save();
-		}
 		// second loop to replace old ids in Expression->value
 		foreach($expressions as $expression){
 			$oldExpressionId = $expression->id;
@@ -897,7 +902,7 @@ class Study extends CActiveRecord
 		}
 		$text = <<<EOT
 <?xml version="1.0" encoding="UTF-8"?>
-<study id="{$this->id}" name="{$this->name}" minAlters="{$this->minAlters}" maxAlters="{$this->maxAlters}" valueDontKnow="{$this->valueDontKnow}" valueLogicalSkip="{$this->valueLogicalSkip}" valueNotYetAnswered="{$this->valueNotYetAnswered}" valueRefusal="{$this->valueRefusal}" adjacencyExpressionId="{$this->adjacencyExpressionId}" modified="{$this->modified}" multiSessionEgoId="{$this->multiSessionEgoId}" useAsAlters="{$this->useAsAlters}" restrictAlters="{$this->restrictAlters}" fillAlterList="{$this->fillAlterList}">
+<study id="{$this->id}" name="{$this->name}" minAlters="{$this->minAlters}" maxAlters="{$this->maxAlters}" valueDontKnow="{$this->valueDontKnow}" valueLogicalSkip="{$this->valueLogicalSkip}" valueNotYetAnswered="{$this->valueNotYetAnswered}" valueRefusal="{$this->valueRefusal}" modified="{$this->modified}" multiSessionEgoId="{$this->multiSessionEgoId}" useAsAlters="{$this->useAsAlters}" restrictAlters="{$this->restrictAlters}" fillAlterList="{$this->fillAlterList} hideEgoIdPage="{$this->hideEgoIdPage}">
 	<introduction>{$this->introduction}</introduction>
 	<egoIdPrompt>{$this->egoIdPrompt}</egoIdPrompt>
 	<alterPrompt>{$this->alterPrompt}</alterPrompt>
@@ -1076,12 +1081,16 @@ EOT;
 	}
 
 	public function beforeSave(){
-		if(trim($this->introduction) == "<br>")
-			$this->introduction = "";
+		if($this->introduction)
+			$this->introduction = trim( $this->introduction );
+		if($this->egoIdPrompt)
+			$this->egoIdPrompt = trim( $this->egoIdPrompt );
 
-		$this->created_date = date('U');
+		if(!$this->created_date)
+			$this->created_date = date('U');
 
-		return true;
+		return parent::beforeSave();
+
 	}
 
 	/**
@@ -1099,7 +1108,6 @@ EOT;
 			'conclusion' => 'Conclusion',
 			'minAlters' => 'Min Alters',
 			'maxAlters' => 'Max Alters',
-			'adjacencyExpressionId' => 'Adjacency Expression',
 			'valueRefusal' => 'Value Refusal',
 			'valueDontKnow' => 'Value Dont Know',
 			'valueLogicalSkip' => 'Value Logical Skip',
@@ -1128,7 +1136,6 @@ EOT;
 		$criteria->compare('conclusion',$this->conclusion,true);
 		$criteria->compare('minAlters',$this->minAlters,true);
 		$criteria->compare('maxAlters',$this->maxAlters,true);
-		$criteria->compare('adjacencyExpressionId',$this->adjacencyExpressionId,true);
 		$criteria->compare('valueRefusal',$this->valueRefusal);
 		$criteria->compare('valueDontKnow',$this->valueDontKnow);
 		$criteria->compare('valueLogicalSkip',$this->valueLogicalSkip);

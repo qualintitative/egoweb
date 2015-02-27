@@ -155,11 +155,7 @@ class ImportExportController extends Controller
 					else
 						$newExpressionIds[$oldExpressionId] = $newExpression->id;
 				}
-				// replace adjacencyExpressionId for study
-				if($newStudy->adjacencyExpressionId != "" && isset($newExpressionIds[intval($newStudy->adjacencyExpressionId)])){
-					$newStudy->adjacencyExpressionId = $newExpressionIds[intval($newStudy->adjacencyExpressionId)];
-					$newStudy->save();
-				}
+
 				// second loop to replace old ids in Expression->value
 				foreach($study->expressions->expression as $expression){
 					if(!isset($newExpressionIds[$oldExpressionId]))

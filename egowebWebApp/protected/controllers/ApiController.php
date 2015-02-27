@@ -108,14 +108,18 @@ class ApiController extends Controller
 
 		$questions = q("SELECT * FROM question WHERE studyId = ".$_GET['survey_id'])->queryAll(false);
 
+
+		$started = count(Interview::model()->findByAttributes(array("studyId"=>$study->id)));
+		$completed = count(Interview::model()->findByAttributes(array("studyId"=>$study->id,"completed"=>-1)));
+
 		$data = array(
 					'survey'=>array(
 						'id'=>$study->id,
 						'name'=>$study->name,
 						'closed'=> $study->closed_date ? date('m/d/Y', $study->closed_date) : null,
 						'created'=> $study->created_date ? date('m/d/Y', $study->created_date) : null,
-						'num_completed'=>$study->completed,
-						'num_started'=>$study->started,
+						'num_completed'=>$completed,
+						'num_started'=>$started,
 						'status'=>$study->status,
 						'fields'=>$questions
 					),
@@ -323,16 +327,19 @@ class ApiController extends Controller
 		}
 
 		$studies = Study::model()->findAllByAttributes( array( 'id'=>$studyIds ) );
+
 		$data = array();
 
 		foreach($studies as $study){
+			$started = count(Interview::model()->findByAttributes(array("studyId"=>$study->id)));
+			$completed = count(Interview::model()->findByAttributes(array("studyId"=>$study->id,"completed"=>-1)));
 			$data[] = array(
 				'id'=>$study->id,
 				'name'=>$study->name,
 				'closed'=> $study->closed_date ? date('m/d/Y', $study->closed_date) : null,
 				'created'=> $study->created_date ? date('m/d/Y', $study->created_date) : null,
-				'num_completed'=>$study->completed,
-				'num_started'=>$study->started,
+				'num_completed'=>$completed,
+				'num_started'=>$started,
 				'status'=>$study->status
 			);
 		}
