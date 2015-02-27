@@ -387,24 +387,24 @@ class Interview extends CActiveRecord
 				if(!$question || $question->answerType != "DATE")
 					continue;
 					$criteria=new CDbCriteria;
-					if($interviewId != null)
-						$end = " AND interviewId in (". $interviewId. ")";
-					else
-						$end = "";
-					$criteria=array(
-						'condition'=>'questionId = '. $question->id . $end,
-					);
-					$answer = Answer::model()->find($criteria);
-					$timeArray = Question::timeBits($question->timeUnits);
-					$timeFormat = "";
-					if(in_array("BIT_MONTH", $timeArray))
-						$timeFormat = "F ";
-					if(in_array("BIT_DAY", $timeArray))
-						$timeFormat .= "jS ";
-					if(in_array("BIT_YEAR", $timeArray))
-						$timeFormat .= ", Y";
-					if(in_array("BIT_HOUR", $timeArray))
-						$timeFormat .= "h:i A";
+				if($interviewId != null)
+					$end = " AND interviewId in (". $interviewId. ")";
+				else
+					$end = "";
+				$criteria=array(
+					'condition'=>'questionId = '. $question->id . $end,
+				);
+				$answer = Answer::model()->find($criteria);
+				$timeArray = Question::timeBits($question->timeUnits);
+				$timeFormat = "";
+				if(in_array("BIT_MONTH", $timeArray))
+					$timeFormat = "F ";
+				if(in_array("BIT_DAY", $timeArray))
+					$timeFormat .= "jS ";
+				if(in_array("BIT_YEAR", $timeArray))
+					$timeFormat .= ", Y";
+				if(in_array("BIT_HOUR", $timeArray))
+					$timeFormat .= "h:i A";
 			}
 			$newDate = date($timeFormat, strtotime($answer->value . " " .$amount . " " . $period));
 			$string =  str_replace("<DATE ".$date." />", $newDate, $string);

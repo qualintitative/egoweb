@@ -13,10 +13,11 @@ jQuery('.time-".$array_id."').change(function() {
     	date = date + $(item + '#day').val() + ' ';
     if(typeof $(item + '#year').val() != 'undefined')
         date = date + $(item + '#year').val() + ' ';
-    date = date +
-        $(item + '#hour').val() + ':' +
-        $(item + '#minute').val() + ' ' +
-        $(item + '#ampm:checked').val();
+    if(typeof $(item + '#hour').val() != 'undefined'){
+        date = date + $(item + '#hour').val() + ':';
+        date = date + $(item + '#minute').val() ? $(item + '#minute').val() : '00';
+        date = date + $(item + '#ampm:checked').val();
+    }
     $('#Answer_".$array_id."_value').val(date);
 });
 ");
