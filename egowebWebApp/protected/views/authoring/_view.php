@@ -66,10 +66,6 @@
 	<?php echo CHtml::encode($data->maxAlters); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('adjacencyExpressionId')); ?>:</b>
-	<?php echo CHtml::encode($data->adjacencyExpressionId); ?>
-	<br />
-
 	<b><?php echo CHtml::encode($data->getAttributeLabel('valueRefusal')); ?>:</b>
 	<?php echo CHtml::encode($data->valueRefusal); ?>
 	<br />
