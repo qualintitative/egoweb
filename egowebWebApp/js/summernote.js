@@ -55,6 +55,15 @@ function parseEgowebTags(e){
 			e = e.replace(ifSnips[i],"<img id='if_" +i+"' src='/images/if.png'>");
 		}
 	}
+	var dateMatch = e.match(/<DATE((.|\n)*)\/>/gm);
+	if(dateMatch){
+		dateSnips = [];
+		for(k in dateMatch)
+			dateSnips.push(dateMatch[k]);
+		for(i = 0; i < dateSnips.length;i++){
+			e = e.replace(dateSnips[i],"<img id='date_" +i+"' src='/images/date.png'>");
+		}
+	}
 	return e;
 }
 
@@ -97,6 +106,15 @@ function rebuildEgowebTags(withCode){
 						withCode = withCode.replace("<img id=\"contains_" +i+"\" src=\"/images/contains.png\">", containsSnips[i]);
 					if(withCode.match("<img id='contains_" +i+"' src='/images/contains.png'>"))
 						withCode = withCode.replace("<img id='contains_" +i+"' src='/images/contains.png'>", containsSnips[i]);
+				}
+			}
+
+			if(typeof dateSnips != "undefined"){
+				for(i = 0; i < dateSnips.length;i++){
+					if(withCode.match("<img id=\"date_" +i+"\" src=\"/images/date.png\">"))
+						withCode = withCode.replace("<img id=\"date_" +i+"\" src=\"/images/date.png\">", dateSnips[i]);
+					if(withCode.match("<img id='date_" +i+"' src='/images/date.png'>"))
+						withCode = withCode.replace("<img id='date_" +i+"' src='/images/date.png'>", dateSnips[i]);
 				}
 			}
 
