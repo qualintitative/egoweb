@@ -161,8 +161,9 @@ class SurveyController extends Controller {
      * @param $surveyId
      * @param $userId
      * @param null $prefill
+     * @param null $redirect
      */
-    public static function createSurvey( $surveyId, $userId, $prefill=null ){
+    public static function createSurvey( $surveyId, $userId, $prefill=null, $redirect=null ){
 
         $study = Study::model()->findByPk( $surveyId );
         if( !$study ){
@@ -181,8 +182,8 @@ class SurveyController extends Controller {
             return ApiController::sendResponse( 420, $msg );
         }
         else{
-            if( isset( $prefill ) )
-                Yii::app()->session['redirect'] = $_POST['redirect'];
+            if( isset( $redirect ) )
+                Yii::app()->session['redirect'] = $redirect;
 
             self::redirect( Yii::app()->getBaseUrl(true)  .  "/interviewing/".$study->id."?".
                             "interviewId=".$interview->id."&".
