@@ -16,6 +16,7 @@ return array(
 	'import'=>array(
 		'application.models.*',
 		'application.components.*',
+		'application.controllers.*'
 	),
 
 	'modules'=>array(
@@ -88,13 +89,16 @@ return array(
 		),
 
 		'request'=>array(
-			'enableCsrfValidation'=>true,
-			'class'=>'HttpRequest',
-			'noCsrfValidationRoutes'=>array(
-				'mobile/*',
-				'api/*',
-			),
-		),
+                    'enableCsrfValidation'=>true,
+                    'class'=>'HttpRequest',
+                    'noCsrfValidationRoutes'=>array(
+                        'mobile/*',
+                        'survey/*',
+                        'survey',
+                        'api/*',
+                        'api'
+                    )
+                ),
 
 		'securityManager'=>array(
 			'cryptAlgorithm' => 'blowfish',
