@@ -171,6 +171,7 @@ class InterviewingController extends Controller
 			if(isset($_POST['Answer'][0]) && $_POST['Answer'][0]['answerType'] == "CONCLUSION"){
 				$interview = Interview::model()->findByPk((int)$_POST['Answer'][0]['interviewId']);
 				$interview->completed = -1;
+				$interview->complete_date = time();
 				$interview->save();
 
 				if(isset(Yii::app()->params['exportFilePath']) && Yii::app()->params['exportFilePath'])
