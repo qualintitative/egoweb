@@ -93,7 +93,7 @@ class User extends CActiveRecord
      * @param string salt
      * @return string hash
      */
-    public function hashPassword($password,$salt = '')
+    public static function hashPassword($password,$salt = '')
     {
         return md5($salt.$password);
     }
@@ -102,7 +102,7 @@ class User extends CActiveRecord
      * Generates a salt that can be used to generate a password hash.
      * @return string the salt
      */
-    public function generateSalt($max=5)
+    public static function generateSalt($max=5)
     {
         $characterList="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*?";
         $i=0;
