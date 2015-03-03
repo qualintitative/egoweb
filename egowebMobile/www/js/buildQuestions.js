@@ -97,7 +97,7 @@ function buildQuestions(id, pageNumber, interviewId){
 						continue;
 
 					question = $.extend(true,{}, alter_questions[j]);
-					question.PROMPT = question.PROMPT.replace("$$", alters[k].NAME);
+					question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
 					question.ALTERID1 = alters[k].ID;
 
 					if(alter_questions[j].ASKINGSTYLELIST == 1){

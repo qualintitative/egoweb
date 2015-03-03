@@ -6,7 +6,14 @@
 		vars = string.match(/<VAR (.+?) \/>/g);
 		for(k in vars){
 			thisVar = vars[k].match(/<VAR (.+?) \/>/)[1];
-			question = db.queryRowObject("SELECT * FROM question WHERE title = '" + thisVar + "' AND studyId = '" + studyId + "'");
+			var thisStudyId = studyId;
+			if(thisVar.match(/:/)){
+                thisStudyId = db.queryValue("SELECT id FROM study WHERE name = '" +  JSON.parse( JSON.stringify( thisVar.split(":")[0])) + "'");
+                var thisVarTitle = JSON.parse( JSON.stringify(thisVar.split(":")[1]));
+			}else{
+    			var thisVarTitle = thisVar;
+			}
+			question = db.queryRowObject("SELECT * FROM question WHERE lower(title) = lower('" + thisVarTitle + "') AND studyId = '" + thisStudyId + "'");
 			if(question){
 				if(interviewId != null){
 					end = " AND interviewId = " + interviewId;

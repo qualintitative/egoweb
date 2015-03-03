@@ -5,18 +5,6 @@
     },
     "config_munge": {
         "files": {
-            "AndroidManifest.xml": {
-                "parents": {
-                    "/manifest": [],
-                    "/manifest/application": [],
-                    "/*": [
-                        {
-                            "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
-                            "count": 2
-                        }
-                    ]
-                }
-            },
             "res/xml/config.xml": {
                 "parents": {
                     "/*": [
@@ -31,6 +19,16 @@
                         {
                             "xml": "<feature name=\"broadcaster\"><param name=\"android-package\" value=\"org.bsc.cordova.CDVBroadcaster\" /></feature>",
                             "count": 1
+                        }
+                    ]
+                }
+            },
+            "AndroidManifest.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.WRITE_EXTERNAL_STORAGE\" />",
+                            "count": 2
                         }
                     ]
                 }

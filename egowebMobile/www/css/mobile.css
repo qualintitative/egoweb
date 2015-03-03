@@ -221,7 +221,7 @@ body
     -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
     background-color:#ffffff;
     font-family:Helvetica, Arial, sans-serif;
-    font-size:14px;
+    font-size:1em;
     height:100%;
     padding:0px;
     width:100%;
@@ -246,6 +246,12 @@ input[type=checkbox]{
 
 button {
 	padding:3px;
+}
+
+p {
+    font-size: 18px;
+    line-height: 1.72222;
+    margin: 0 0 15px;
 }
 
 #navigation{
@@ -772,7 +778,7 @@ td{
 .questionText{
 	background:url("arrow.png") no-repeat;
 	float:left;
- 	font-family:Oswald Light;
+ 	font-family:Arial;
 	font-size:18px;
 	padding:0 20px 20px 20px;
 	width:100%;
