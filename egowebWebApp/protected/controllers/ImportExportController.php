@@ -18,7 +18,7 @@ class ImportExportController extends Controller
 		$merge = false;
 
 		foreach($study->attributes() as $key=>$value){
-			if($key != "id" && isset($newStudy->$key))
+			if($key != "id")
 				$newStudy->$key = $value;
 			if($key == "name"){
 				$oldStudy = Study::model()->findByAttributes(array("name"=>$value));
@@ -40,7 +40,7 @@ class ImportExportController extends Controller
 				$newStudy->name = $_POST['newName'];
 
 			if(!$newStudy->save()){
-				print_r($newStudy->getErrors());
+				echo "study: " . print_r($newStudy->getErrors());
 				die();
 			}
 
