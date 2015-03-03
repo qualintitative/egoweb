@@ -9,7 +9,7 @@ $form=$this->beginWidget('CActiveForm', array(
 if($model->value == "")
 	$model->value = "1:" . $expression->id;
 
-list($compare, $expressiond->id) = preg_split('/:/',$model->value);
+list($compare, $expression->id) = preg_split('/:/',$model->value);
 echo $form->hiddenField($model, 'id', array('value'=>$model->id));
 echo $form->hiddenField($model, 'studyId', array('value'=>$studyId));
 echo $form->hiddenField($model, 'value', array('value'=>$model->value));

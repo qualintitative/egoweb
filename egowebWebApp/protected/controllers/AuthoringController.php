@@ -778,6 +778,8 @@ class AuthoringController extends Controller
 	 */
 	public function actionAjaxdelete()
 	{
+		Yii::app()->clientScript->scriptMap['jquery.js'] = false;
+		Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
 		if(isset($_GET['Question'])){
 			$model = Question::model()->findByPk((int)$_GET['Question']['id']);
 			if($model){

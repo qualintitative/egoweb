@@ -902,7 +902,7 @@ class Study extends CActiveRecord
 		}
 		$text = <<<EOT
 <?xml version="1.0" encoding="UTF-8"?>
-<study id="{$this->id}" name="{$this->name}" minAlters="{$this->minAlters}" maxAlters="{$this->maxAlters}" valueDontKnow="{$this->valueDontKnow}" valueLogicalSkip="{$this->valueLogicalSkip}" valueNotYetAnswered="{$this->valueNotYetAnswered}" valueRefusal="{$this->valueRefusal}" modified="{$this->modified}" multiSessionEgoId="{$this->multiSessionEgoId}" useAsAlters="{$this->useAsAlters}" restrictAlters="{$this->restrictAlters}" fillAlterList="{$this->fillAlterList} hideEgoIdPage="{$this->hideEgoIdPage}">
+<study id="{$this->id}" name="{$this->name}" minAlters="{$this->minAlters}" maxAlters="{$this->maxAlters}" valueDontKnow="{$this->valueDontKnow}" valueLogicalSkip="{$this->valueLogicalSkip}" valueNotYetAnswered="{$this->valueNotYetAnswered}" valueRefusal="{$this->valueRefusal}" modified="{$this->modified}" multiSessionEgoId="{$this->multiSessionEgoId}" useAsAlters="{$this->useAsAlters}" restrictAlters="{$this->restrictAlters}" fillAlterList="{$this->fillAlterList}" hideEgoIdPage="{$this->hideEgoIdPage}">
 	<introduction>{$this->introduction}</introduction>
 	<egoIdPrompt>{$this->egoIdPrompt}</egoIdPrompt>
 	<alterPrompt>{$this->alterPrompt}</alterPrompt>

@@ -42,6 +42,10 @@ class Interview extends CActiveRecord
 			array('id, active, studyId, completed', 'length', 'max'=>255),
 			array('id, active, studyId', 'numerical', 'integerOnly'=>true),
 			array('completed','default','value'=>0),
+			array('start_date','default',
+				'value'=>time(),
+				'setOnEmpty'=>true,'on'=>'insert'
+			),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, active, studyId, completed', 'safe', 'on'=>'search'),
@@ -108,7 +112,6 @@ class Interview extends CActiveRecord
 
 		$interview = new Interview;
 		$interview->studyId = $studyId;
-		$interview->start_date = time();
 		$interview->completed = 0;
 		$interview->save();
 
@@ -542,10 +545,5 @@ class Interview extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
-	}
-
-	public function beforeSave(){
-		$this->start_date = date('U');
-		return parent::beforeSave();
 	}
 }

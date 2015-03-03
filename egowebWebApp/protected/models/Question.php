@@ -219,9 +219,9 @@ class Question extends CActiveRecord
 
 
 	public function beforeSave(){
-		if(trim($this->preface) == "<br>")
+		if(trim($this->preface) == "<br>" || $this->preface == " ")
 			$this->preface = "";
-		if(trim($this->citation) == "<br>")
+		if(trim($this->citation) == "<br>" ||  $this->citation == " ")
 			$this->citation = "";
 		return true;
 	}

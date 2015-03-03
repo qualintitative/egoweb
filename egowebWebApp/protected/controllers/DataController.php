@@ -35,17 +35,13 @@ class DataController extends Controller
 
     public function actionStudy($id)
     {
-        #OK FOR SQL INJECTION
-        $params = new stdClass();
-        $params->name = ':id';
-        $params->value = $id;
-        $params->dataType = PDO::PARAM_INT;
 
-        $interviews = q("SELECT * FROM interview WHERE studyId = :id",array($params))->queryAll();
-        #OK FOR SQL INJECTION
+        $interviews = Interview::model()->findAllByAttributes(array("studyId"=>$id));
         $study = Study::model()->findByPk((int)$id);
-        #OK FOR SQL INJECTION
-        $questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = :id",array($params))->queryColumn();
+        $questionIds = array();
+        $questions = Question::model()->findAllByAttributes(array("subjectType"=>"ALTER_PAIR", "studyId"=>$id));
+		foreach($questions as $question)
+			$questionIds[] = $question->id;
         $expressions = array();
         if(count($questionIds) > 0){
             $questionIds = implode(",", $questionIds);

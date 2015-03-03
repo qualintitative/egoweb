@@ -1,12 +1,4 @@
-<?php
-$form=$this->beginWidget('CActiveForm', array(
-    'id'=>'expression-text-form',
-    'enableAjaxValidation'=>false,
-    'action'=>'/authoring/expression/'.$studyId,
-
-));
-
-echo "<script>
+<script>
 function buildValue(times, expressionIds, questionIds){
     $('#Expression_value').val(times + ':' + expressionIds + ':' + questionIds);
 }
@@ -14,6 +6,10 @@ function buildValue(times, expressionIds, questionIds){
 jQuery('.expressionList').change(function() {
     expressionValue = $('#Expression_value').val().split(/:/);
     expressionValue[1] = '';
+     if(!expressionValue[0])
+    	expressionValue[0] = 1;
+    if(typeof expressionValue[2] == 'undefined')
+    	expressionValue[2] = '';
     $('.expressionList').each(function() {
         if($(this).is(':checked')){
             if(expressionValue[1] != '')
@@ -30,6 +26,10 @@ jQuery('.expressionList').change(function() {
 
 jQuery('.questionList').change(function() {
     expressionValue = $('#Expression_value').val().split(/:/);
+    if(!expressionValue[0])
+    	expressionValue[0] = 1;
+    if(typeof expressionValue[1] == 'undefined')
+    	expressionValue[1] = '';
     expressionValue[2] = '';
     $('.questionList').each(function() {
         if($(this).is(':checked')){
@@ -45,11 +45,27 @@ jQuery('.questionList').change(function() {
 
 jQuery('#times').change(function() {
     expressionValue = $('#Expression_value').val().split(/:/);
+    if(!$(this).val())
+        $(this).val(1);
+    if(typeof expressionValue[1] == 'undefined')
+        expressionValue[1] = '';
+    if(typeof expressionValue[2] == 'undefined')
+        expressionValue[2] = '';
     expressionValue[0] = $(this).val();
     buildValue(expressionValue[0], expressionValue[1], expressionValue[2]);
     console.log($('#Expression_value').val());
 });
-</script>";
+</script>
+
+<?php
+$form=$this->beginWidget('CActiveForm', array(
+    'id'=>'expression-text-form',
+    'enableAjaxValidation'=>false,
+    'action'=>'/authoring/expression/'.$studyId,
+
+));
+
+
 
 echo $form->hiddenField($model, 'id', array('value'=>$model->id));
 echo $form->hiddenField($model, 'studyId', array('value'=>$studyId));
