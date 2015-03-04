@@ -148,7 +148,7 @@ CREATE TABLE IF NOT EXISTS `interview` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `active` tinyint(1) DEFAULT '1',
   `studyId` int(11) DEFAULT NULL,
-  `completed` tinyint(1) DEFAULT NULL,
+  `completed` int(11) DEFAULT NULL,
   `start_date` int(11) DEFAULT NULL,
   `complete_date` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)

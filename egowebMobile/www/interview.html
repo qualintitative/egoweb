@@ -65,8 +65,8 @@ function getInterviews(studyId){
 	div = $('#interviewList');
 	div.show();
 	interviews = db.queryObjects("SELECT * FROM interview WHERE studyId = " + studyId).data;
-	div.append("<div class='multiRow' style='width:70%; text-align:left; height:50px'><h3>"+ getInterviewName(studyId) + "</h3></div>");
-	div.append("<div class='multiRow' style='height:50px'><button onclick='loadStudy(" + studyId + ")' style='margin-top:15px;'>New Interview</button></div>");
+	div.append("<div class='multiRow' style='width:70%; text-align:left;'><h3>"+ getInterviewName(studyId) + "</h3></div>");
+	div.append("<div class='multiRow' style=''><button onclick='loadStudy(" + studyId + ")' style='margin-top:15px;'>New Interview</button></div>");
 	div.append("<br style='clear:both'>");
 	for (var i in interviews) {
 		div.append("<div class='multiRow" + color + "' style='width:70%; text-align:left'>"+ getEgoIdValue(interviews[i].ID) + "</div>");
@@ -455,7 +455,7 @@ function changeOther(other_id){
 			</div>
 			<br clear=left>
 			<div style="float:left; margin-top:20px">
-				<a class="graybutton" href="javascript:void(0)" onclick="view(studyId,interviewId, currentPage-1);audio.pause();" style="display:none">Back</a>
+				<button class="graybutton" onclick="view(studyId,interviewId, currentPage-1);audio.pause();" style="display:none">Back</button>
 				<button id="next" class='orangebutton' onclick="save(studyId,currentPage);audio.pause();" style="display:none">Next</button>
 			</div>
 		</div>

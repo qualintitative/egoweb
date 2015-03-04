@@ -220,12 +220,13 @@ body
     -webkit-text-size-adjust: none;             /* prevent webkit from resizing text to fit */
     -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
     background-color:#ffffff;
-    font-family:Helvetica, Arial, sans-serif;
-    font-size:1em;
+    font-family:Arial, sans-serif;
+    font-size:18px;
     height:100%;
     padding:0px;
     width:100%;
 }
+
 
 input[type=text],input[type=password]{
 	margin:8px 0;
@@ -236,8 +237,8 @@ input[type=radio]{
 }
 
 input[type=checkbox]{
-	width:20px;
-	height:20px;
+	width:18px;
+	height:18px;
 }
 
 #EMPTY label{
@@ -641,24 +642,20 @@ textarea {
 
 
 .graybutton{
-	background:url('gray.png');
+	background-color:#555;
 	border:solid #999 1px;
 	border-radius:4px;
-	font-size:12px;
+	font-size:18px;
 	color:#fff;
-	height:24px;
-	line-height:24px;
 	display:block;
 	text-decoration:none;
-	padding:0 6px 2px 6px;
+	padding-bottom:2px;
 	margin:0 10px 10px 0;
 	text-align:center;
-	width:60px;
+	width:120px;
 	float:left;
 }
-.graybutton:hover{
-	color:#fff;
-}
+
 hr{
 	margin:10px 0;
 }
@@ -672,20 +669,18 @@ input, select{
 	font-weight:bold;
 }
 .question{
-    /*min-height:200px;*/
-	padding:0 0 20px 20px;
+	padding:0 0 40px 20px;
 }
 .orangebutton{
-	background:url('orange.png');
+	background-color:#db7522;
 	border:solid #c60 1px;
 	border-radius:4px;
-	font-size:12px;
+	font-size:18px;
 	color:#fff;
-	height:24px;
 	padding-bottom:2px;
 	margin:0 10px 10px 0;
 	text-align:center;
-	width:60px;
+	width:120px;
 }
 
 td{
@@ -721,11 +716,11 @@ td{
 	height:60px;
 	text-align:right;
 	padding-right:40px;
-	padding-top:20px;
+	padding-top:10px;
 }
 
 #topbar h3{
-	padding-top:15px;
+	padding-top:10px;
 }
 
 #menubar{
@@ -779,7 +774,7 @@ td{
 	background:url("arrow.png") no-repeat;
 	float:left;
  	font-family:Arial;
-	font-size:18px;
+	font-size:22px;
 	padding:0 20px 20px 20px;
 	width:100%;
 }
@@ -857,7 +852,7 @@ ul.authoring li a:hover{
 
 .multiRow{
     float:left;
-    padding:8px;
+    padding:16px 8px;
     text-align:center;
     min-height:36px;
     display:block;
