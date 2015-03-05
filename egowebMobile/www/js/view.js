@@ -157,6 +157,7 @@ function view(id, interviewId, page)
 			if($(this).attr('id') == "VALUE"){
 				$(this).attr('name', 'answer[' + array_id + '][VALUE]');
 				$(this).attr('id', 'Answer_' + array_id + '_value');
+				$(this).attr('onchange', 'unSelectSkips("' + array_id + '")')
 				$(this).val(model[array_id].VALUE);
 				if(parseInt(questions[k].ASKINGSTYLELIST) && (questions[k].ANSWERTYPE == "TEXTUAL" || questions[k].ANSWERTYPE == "NUMERICAL")){
 					columnWidth = 480 / (2 + Object.keys(skipList).length);
@@ -176,7 +177,9 @@ function view(id, interviewId, page)
 						name = questions[k].CITATION;
 						multi = 'multiRow';
 					newForm.append('<div class="'+multi+'" style="width:180px; text-align:left">' + name + '</div>');
+					//$(this).wrap('<div class="'+multi+'" style="width:180px; text-align:left"></div>')
 					newForm.append($(this));
+					$(this).wrap('<div class="'+multi+'" style="width:180px; text-align:left"></div>');
 				}else{
 					newForm.append($(this));
 				}
@@ -518,6 +521,12 @@ function view(id, interviewId, page)
 	buildNav(currentPage, interviewId);
 	$('body').scrollTop(0);
 
+}
+
+function unSelectSkips(array_id){
+    $("#" + array_id + "-skipReason_DONT_KNOW").prop('checked', false);
+    $("#" + array_id + "-skipReason_REFUSE").prop('checked', false);
+    $('#Answer_' + array_id + "_SKIPREASON").val('NONE');
 }
 
 function audioFileExists(path, div){

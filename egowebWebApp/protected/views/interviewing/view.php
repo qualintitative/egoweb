@@ -533,20 +533,6 @@ $('.".$array_id."-skipReason').click(function(event){
 						);
 					}
 				echo "</div>";
-			}else{
-				echo CHtml::checkBoxList(
-					'multiselect-pageLevel',
-					'',
-					CHtml::listData($options, 'id', 'name'),
-					array('class'=>'multiselect pageLevel')
-				);
-				echo "<br>";
-			if(count($skipList) != 0){
-
-					echo "<div clear=all>".
-						CHtml::checkBoxList("pageLevel_skip pageLevel", array($model[$array_id]->skipReason), $skipList, array('class'=>'skipReason pageLevel'))
-						."</div>";
-			}
 			}
 
 		}

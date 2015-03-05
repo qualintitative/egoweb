@@ -229,9 +229,9 @@ body
 
 
 input[type=text],input[type=password]{
-	margin:8px 0;
-	width:`120px;
+	width:120px;
 }
+
 input[type=radio]{
     float:left;
 }

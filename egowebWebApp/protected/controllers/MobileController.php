@@ -68,6 +68,7 @@ class MobileController extends Controller
 	}
 
 	public function actionAjaxdata($id){
+        Yii::log("begin import");
 		#OK FOR SQL INJECTION
 		$study = q("SELECT * FROM study WHERE id = " . $id)->queryRow(false);
 		#OK FOR SQL INJECTION
@@ -78,12 +79,12 @@ class MobileController extends Controller
 		#OK FOR SQL INJECTION
 		$expressions = q("SELECT * FROM expression WHERE studyId = " . $id)->queryAll(false);
 		#OK FOR SQL INJECTION
-		$answers = q("SELECT * FROM answer WHERE studyId = " . $id)->queryAll(false);
+		//$answers = q("SELECT * FROM answer WHERE studyId = " . $id)->queryAll(false);
 
-		foreach($answers as &$answer){
-			if(strlen($answer[6]) >= 8)
-				$answer[6] = decrypt($answer[6]);
-		}
+		//foreach($answers as &$answer){
+		//	if(strlen($answer[6]) >= 8)
+		//		$answer[6] = decrypt($answer[6]);
+		//}
 
 		$interviewIds = array();
 		#OK FOR SQL INJECTION
@@ -134,6 +135,7 @@ class MobileController extends Controller
 			}
 		}
 
+		/*
 		foreach($interviews as $interview){
 			array_push($interviewIds, $interview[0]);
 		}
@@ -149,21 +151,25 @@ class MobileController extends Controller
 		}else{
 			$alters = "";
 		}
+        */
+
 		$data = array(
 			'study'=>$study,
 			'questions'=>$questions,
 			'options'=>$options,
 			'expressions'=>$expressions,
-			'answers'=>$answers,
-			'interviews'=>$interviews,
-			'alters'=>$alters,
+	//		'answers'=>$answers,
+	//		'interviews'=>$interviews,
+	//		'alters'=>$alters,
 			'audioFiles'=>$audioFiles,
 			'columns'=>$columns,
 		);
+
 		header("Access-Control-Allow-Origin: *");
 		header('Access-Control-Allow-Credentials: true');
 		header('Access-Control-Max-Age: 86400');	// cache for 1 day
 		echo json_encode($data);
+        Yii::log("end import");
 		Yii::app()->end();
 	}
 

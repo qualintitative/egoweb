@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Feb 27, 2015 at 09:06 AM
+-- Generation Time: Mar 05, 2015 at 02:13 AM
 -- Server version: 5.6.21
 -- PHP Version: 5.6.6
 
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS `alterPrompt` (
   `afterAltersEntered` int(11) NOT NULL,
   `display` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=231 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=235 ;
 
 -- --------------------------------------------------------
 
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `alters` (
   `interviewId` text NOT NULL,
   `alterListId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=27793 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=27807 ;
 
 -- --------------------------------------------------------
 
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `answer` (
   `answerType` text,
   PRIMARY KEY (`id`),
   KEY `answerIndex` (`questionId`,`interviewId`,`alterId1`,`alterId2`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1399376 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1400283 ;
 
 -- --------------------------------------------------------
 
@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS `answerList` (
   `studyId` int(11) DEFAULT NULL,
   `listOptionNames` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1033 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1037 ;
 
 -- --------------------------------------------------------
 
@@ -121,7 +121,7 @@ CREATE TABLE IF NOT EXISTS `expression` (
   `studyId` int(11) DEFAULT NULL,
   `questionId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=15313 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=15602 ;
 
 -- --------------------------------------------------------
 
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS `graphs` (
   `nodes` text CHARACTER SET utf8mb4 NOT NULL,
   `params` text CHARACTER SET utf8mb4 NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=88 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=89 ;
 
 -- --------------------------------------------------------
 
@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS `interview` (
   `start_date` int(11) DEFAULT NULL,
   `complete_date` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2882 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2885 ;
 
 -- --------------------------------------------------------
 
@@ -251,7 +251,7 @@ CREATE TABLE IF NOT EXISTS `question` (
   `networkESizeQId` int(11) DEFAULT NULL,
   `useAlterListField` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=39571 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=39985 ;
 
 -- --------------------------------------------------------
 
@@ -268,7 +268,7 @@ CREATE TABLE IF NOT EXISTS `questionOption` (
   `value` text,
   `ordering` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=220197 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=221511 ;
 
 -- --------------------------------------------------------
 
@@ -312,9 +312,43 @@ CREATE TABLE IF NOT EXISTS `study` (
   `closed_date` int(11) DEFAULT NULL,
   `status` int(11) DEFAULT NULL,
   `userId` int(11) NOT NULL,
-  `hideEgoIdPage` tinyint(1) DEFAULT NULL,
+  `hideEgoIdPage` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=311 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=313 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_migration`
+--
+
+CREATE TABLE IF NOT EXISTS `tbl_migration` (
+  `version` varchar(255) NOT NULL,
+  `apply_time` int(11) DEFAULT NULL,
+  PRIMARY KEY (`version`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `tbl_migration`
+--
+
+INSERT INTO `tbl_migration` (`version`, `apply_time`) VALUES
+('m000000_000000_base', 1416903954),
+('m140917_223213_graph_update', 1416903960),
+('m140918_011844_change_alter_id', 1416903960),
+('m140924_014007_add_dates_to_interview', 1416903960),
+('m140924_052523_add_dates_to_study', 1416903961),
+('m141015_042552_legend', 1416903961),
+('m141020_221311_encrypt_answer', 1416905154),
+('m141021_013819_encrypt_questionOption', 1416905175),
+('m141023_003707_encrypt_alters', 1416905182),
+('m141023_004706_encrypt_alterList', 1416905182),
+('m141023_005646_encrypt_notes', 1416905182),
+('m141023_010620_encrypt_user', 1416905182),
+('m141118_014141_add_completed_started_and_status_to_study', 1422895412),
+('m150202_163202_add_userId_study', 1422895412),
+('m150227_070331_hide_ego_id', 1425022213),
+('m150303_014601_change_completed_type', 1425347235);
 
 -- --------------------------------------------------------
 
@@ -331,3 +365,7 @@ CREATE TABLE IF NOT EXISTS `user` (
   `permissions` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=14 ;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
