@@ -153,6 +153,8 @@ class Expression extends CActiveRecord
 			}
 		}
 		if(is_numeric($expression->questionId)){
+    		if(!$expression->question)
+    		    $expression->question = Question::model()->findByPk($expression->questionId);
 			$subjectType = $this->question->subjectType;
 			$questionId = $this->question->id;
 		}else{

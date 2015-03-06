@@ -229,7 +229,8 @@ body
 
 
 input[type=text],input[type=password]{
-	width:120px;
+    font-size: 18px;
+	width:180px;
 }
 
 input[type=radio]{
