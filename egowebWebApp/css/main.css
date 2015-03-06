@@ -580,7 +580,7 @@ td{
 
 .multiSelect{
 	padding-bottom:5px;
-	display:block;
+	display:inline-block;
 }
 .alterPrompt{
 	width:560px;

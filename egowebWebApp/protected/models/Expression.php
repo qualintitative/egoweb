@@ -281,7 +281,7 @@ class Expression extends CActiveRecord
 				$isTrue[$subExpression] = false;
 				if($subExpression == $id)
 					continue;
-				$sub[$subExpression] = new Expression;
+				$sub[$subExpression] = Expression::model()->findByPk($subExpression);
 				$isTrue[$subExpression] = $sub[$subExpression]->evalExpression($subExpression, $interviewId, $alterId1, $alterId2,$answers);
 				if($expression->operator == "Some" && $isTrue[$subExpression])
 					return true;

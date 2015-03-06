@@ -508,7 +508,7 @@ $('.".$array_id."-skipReason').click(function(event){
 					$maxwidth = intval(620 / $columns);
 				if($maxwidth > 180)
 					$maxwidth = 180;
-				echo "<br clear=all><div counter=$counter class='multiRow palette-sun-flower' style='width:100%; text-align:left'><label style='width:180px'>Set All</label>".CHtml::checkBoxList(
+				echo "<br clear=all><div counter=$counter class='multiRow palette-sun-flower' style='text-align:left'><label style='width:180px'>Set All</label>".CHtml::checkBoxList(
 						'multiselect-pageLevel',
 						'',
 						CHtml::listData($options, 'id', ''),
