@@ -176,10 +176,9 @@ function view(id, interviewId, page)
 					else
 						name = questions[k].CITATION;
 						multi = 'multiRow';
-					newForm.append('<div class="'+multi+'" style="width:180px; text-align:left">' + name + '</div>');
-					//$(this).wrap('<div class="'+multi+'" style="width:180px; text-align:left"></div>')
+					newForm.append('<div class="'+multi+'" style="width:20%; text-align:left">' + name + '</div>');
 					newForm.append($(this));
-					$(this).wrap('<div class="'+multi+'" style="width:180px; text-align:left"></div>');
+					$(this).wrap('<div class="'+multi+'" style="width:20%; text-align:left"></div>');
 				}else{
 					newForm.append($(this));
 				}
@@ -190,16 +189,16 @@ function view(id, interviewId, page)
 				else
 					values = [];
 				if(parseInt(questions[k].ASKINGSTYLELIST)){
-					columnWidth = 480 / (Object.keys(options).length + Object.keys(skipList).length);
-					if(columnWidth > 180)
-						columnWidth = 180;
+					columnWidth = 80 / (Object.keys(options).length + Object.keys(skipList).length);
+					if(columnWidth > 80)
+						columnWidth = 80;
 					if(counter == 0){
-						newForm.append('<div class="multiRow" style="width:180px">&nbsp;</div>');
+						newForm.append('<div class="multiRow" style="width:20%">&nbsp;</div>');
 						for (o in options){
-							newForm.append('<div class="multiRow" style="width:'+columnWidth+'px">'+options[o].NAME +'</div>');
+							newForm.append('<div class="multiRow" style="width:'+columnWidth+'%">'+options[o].NAME +'</div>');
 						}
 						for (s in skipList){
-							newForm.append('<div class="multiRow" style="width:'+columnWidth+'px">'+skipList[s] +'</div>');
+							newForm.append('<div class="multiRow" style="width:'+columnWidth+'%">'+skipList[s] +'</div>');
 						}
 						newForm.append('<br clear=all>');
 					}
@@ -215,7 +214,7 @@ function view(id, interviewId, page)
 						name = getAlterName(questions[k].ALTERID2);
 					else
 						name = questions[k].CITATION;
-					newForm.append('<div class="'+multi+'" style="width:180px; text-align:left">' + name + '</div>');
+					newForm.append('<div class="'+multi+'" style="width:20%; text-align:left">' + name + '</div>');
 				}
 				var oi = 0;
 				for (o in options){
@@ -242,7 +241,7 @@ function view(id, interviewId, page)
 					newElement = $('#EMPTY').clone();
 					newElement.toggleClass(multi);
 					if(parseInt(questions[k].ASKINGSTYLELIST)){
-						newElement.css('width',columnWidth + 'px');
+						newElement.css('width',columnWidth + '%');
 					}
 					newElement.append($(this).clone());
 					newElement.append(display);
@@ -342,7 +341,7 @@ function view(id, interviewId, page)
 					skipContainer = $('#EMPTY').clone();
 					if(parseInt(questions[k].ASKINGSTYLELIST)){
 						$('.' + thisSkip + '_LABEL', skipForm).remove();
-						skipContainer.css('width', columnWidth);
+						skipContainer.css('width', columnWidth + "%");
 						skipContainer.toggleClass(multi);
 					}
 					$(this).toggleClass(array_id + '-skipReason');
@@ -407,10 +406,10 @@ function view(id, interviewId, page)
 			if(parseInt(questions[k].ASKINGSTYLELIST) && parseInt(questions[k].ALLBUTTON)){
 				options = db.queryObjects("SELECT * FROM questionOption WHERE questionId = " + questions[k].ID).data;
 				var newForm = $('#EMPTY').clone();
-				columnWidth = 480 / (Object.keys(options).length + Object.keys(skipList).length);
-				if(columnWidth > 180)
-					columnWidth = 180;
-				newForm.append('<div class="multiRow palette-sun-flower" style="width:180px; text-align:left">Set All</div>');
+				columnWidth = 80 / (Object.keys(options).length + Object.keys(skipList).length);
+				if(columnWidth > 80)
+					columnWidth = 80;
+				newForm.append('<div class="multiRow palette-sun-flower" style="width:20%; text-align:left">Set All</div>');
 				for (o in options){
 					checkbox = $("#MULTIPLE_SELECTION #MULTISELECT").clone();
 					checkbox.val(options[o].ID);
@@ -423,7 +422,7 @@ function view(id, interviewId, page)
 					newElement = $('#EMPTY').clone();
 					newElement.toggleClass(multi);
 					if(parseInt(questions[k].ASKINGSTYLELIST)){
-						newElement.css('width',columnWidth + 'px');
+						newElement.css('width',columnWidth + '%');
 					}
 					newElement.append(checkbox.clone());
 					newForm.append(newElement);
@@ -435,7 +434,7 @@ function view(id, interviewId, page)
 							var thisSkip = $(this).attr('id').slice(0);
 							skipContainer = $('#EMPTY').clone();
 								$('.' + thisSkip + '_LABEL', skipForm).remove();
-								skipContainer.css('width', columnWidth);
+								skipContainer.css('width', columnWidth + "%");
 								skipContainer.toggleClass(multi);
 							$(this).attr('class', 'pageLevel skipReason');
 							$(this).attr('id', 'skipReason_' + thisSkip);

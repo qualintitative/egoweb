@@ -856,7 +856,7 @@ ul.authoring li a:hover{
     padding:16px 8px;
     text-align:center;
     min-height:36px;
-    display:block;
+    display:table-cell;
 }
 .singleRow{
     padding:8px;

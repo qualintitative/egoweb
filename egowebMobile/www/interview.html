@@ -153,8 +153,10 @@ function skipReason(array_id, checkbox){
 		$('#Answer_' + array_id +"_value").val('');
 		$('#Answer_' + array_id +"_OTHERSPECIFYTEXT").val('');
 		$('#Answer_' + array_id +"_SKIPREASON").val(checkbox.val());
+		$('#Answer_' + array_id +"_value").prop('readonly', true);
 	}else{
 		$('#Answer_' + array_id + "_SKIPREASON").val('NONE');
+		$('#Answer_' + array_id +"_value").prop('readonly', false);
 	}
 }
 
