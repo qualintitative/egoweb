@@ -671,6 +671,11 @@ class AuthoringController extends Controller
 					throw new CHttpException(500, print_r($model->errors));
 				$questionId = $model->questionId;
 			}
+			if(isset($model->studyId))
+			    $studyId = $model->studyId;
+            else
+			    $studyId = $newOption->studyId;
+			Study::updated($studyId);
 			$criteria=new CDbCriteria;
 			$criteria=array(
 				'condition'=>"questionId = " . $questionId,

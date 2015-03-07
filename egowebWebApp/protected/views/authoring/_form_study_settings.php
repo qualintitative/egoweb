@@ -105,6 +105,7 @@ $(function(){
 		<?php echo $form->labelEx($model,'name'); ?>
 		<?php echo $form->textField($model,'name',array('size'=>60,'maxlength'=>100)); ?>
 		<?php echo $form->error($model,'name'); ?>
+		Last Updated <?php echo $model->modified; ?>
 	</div>
 
 	<div class="row" style="width:50%; float:left; padding:10px">

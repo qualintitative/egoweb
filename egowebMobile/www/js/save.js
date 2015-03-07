@@ -184,6 +184,7 @@ function save(id, page){
 			// no Answer to save, go to next page
 			if(countAlters() < study.MINALTERS){
 				errorModel.addError('0', 'Please list ' + study.MINALTERS + ' people');
+				errors++;
 				view(studyId, interviewId, page);
 			}else{
 				if(alter_questions.length > 0){
@@ -300,6 +301,7 @@ function save(id, page){
 						errorMsg = "at least " + questions[array_id].MINLISTRANGE;
 				}
 				errorModel.addError(array_id, "Please select "  + errorMsg + " response(s).  You selected " + checks);
+				errors++;
 			}
 		}
 
@@ -330,6 +332,7 @@ function save(id, page){
 			    if(parseInt(date[2]) < 1 || parseInt(date[2]) > 31){
 			    	errorMsg = 'Please enter a different number for the day of month';
 				    errorModel.addError(array_id, errorMsg);
+					errors++;
 			    }
 			}
 		}
@@ -363,8 +366,10 @@ function save(id, page){
 			else if (numberErrors == 1 && showError)
 				errorMsg = "The range of valid answers is " + min + " or greater.";
 
-			if(showError)
+			if(showError){
 				errorModel.addError(array_id, errorMsg);
+				errors++;
+			}
 		}
 
 		if(answer.ANSWERTYPE == "MULTIPLE_SELECTION"){
@@ -380,11 +385,10 @@ function save(id, page){
 			checkedBoxes = answer.VALUE.split(',').length;
 			if(!answer.VALUE)
 				checkedBoxes = 0;
-			console.log('min:' + min + ':max:' + max + ':checked:' + checkedBoxes);
+			console.log('min:' + min + ':max:' + max + ':checked:' + checkedBoxes+ ":answer:" + answer.VALUE);
 
 			if ((answer.VALUE === "" || checkedBoxes < min || checkedBoxes > max) && answer.SKIPREASON == "NONE")
 				showError = true;
-
 			s='';
 			if(max != 1)
 				s = 's';
@@ -400,8 +404,10 @@ function save(id, page){
 				errorMsg = "You must select at least " + min + " response" + s + " please.";
 			if(answer.OTHERSPECIFYTEXT && showError)
 				showError = false;
+
 			if(showError){
 				errorModel.addError(array_id, errorMsg);
+				errors++;
 			}
 		}
 
@@ -423,7 +429,6 @@ function save(id, page){
 				completed = page + 1;
 			}else{
 				completed = page;
-				errors++;
 			}
 			if(parseInt(db.queryValue("SELECT completed FROM interview WHERE id = " + interviewId)) != -1){
 				interview = db.queryRow("SELECT * FROM interview WHERE id = " + interviewId);

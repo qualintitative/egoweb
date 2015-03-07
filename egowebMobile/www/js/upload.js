@@ -62,7 +62,7 @@ function upload(studyId){
         crossDomain: true,
 		data:$('#hiddenForm').serialize(),
 		success:function(data){
-			if(data == "Upload completed.  No Errors Found"){
+			if(data.match("Upload completed.  No Errors Found")){
 				justUploaded.push(studyId);
 				$('#uploader-' + studyId).hide();
 				deleteInterviews(studyId);
