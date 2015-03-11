@@ -304,6 +304,8 @@ class MobileController extends Controller
 		else
 			$newInterview->studyId = $interview['STUDYID'];
 		$newInterview->completed = $interview['COMPLETED'];
+		$newInterview->start_date = $interview['START_DATE'];
+		$newInterview->complete_date = $interview['COMPLETE_DATE'];
 		$newInterview->save();
 		$newInterviewIds[$interview['ID']] = $newInterview->id;
 		}

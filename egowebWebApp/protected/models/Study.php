@@ -694,7 +694,7 @@ class Study extends CActiveRecord
 		return false;
 	}
 
-	public static function multiStudyIds($interviewId){
+	public function multiStudyIds($interviewId){
 		if($this->multiSessionEgoId){
 			#OK FOR SQL INJECTION
 			$params = new stdClass();

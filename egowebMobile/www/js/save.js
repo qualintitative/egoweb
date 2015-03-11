@@ -340,8 +340,10 @@ function save(id, page){
 		// Custom validators
 		if(answer.ANSWERTYPE == "NUMERICAL"){
 			min = ""; max = ""; numberErrors = 0; showError = false;
-			if((answer.VALUE == "" && answer.SKIPREASON == "NONE") || (answer.VALUE != "" && isNaN(parseInt(answer.VALUE))))
+			if((answer.VALUE == "" && answer.SKIPREASON == "NONE") || (answer.VALUE != "" && isNaN(parseInt(answer.VALUE)))){
 				errorModel.addError(array_id, "Please enter a number");
+				errors++;
+            }
 			if(questions[array_id].MINLIMITTYPE == "NLT_LITERAL"){
 				min = questions[array_id].MINLITERAL;
 			}else if(questions[array_id].MINLIMITTYPE == "NLT_PREVQUES"){
@@ -413,8 +415,8 @@ function save(id, page){
 
 		if(interviewId){
 			answer.INTERVIEWID = interviewId;
-			console.log('answer');
 			console.log(answer);
+			console.log(errorModel);
 			if(!errorModel.getError(array_id)){
 				model[array_id]= answer;
 				console.log(model[array_id].ID);
