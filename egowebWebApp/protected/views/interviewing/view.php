@@ -41,8 +41,8 @@ if(!isset($key) || !$key){
 		});
 
 		$(document).keydown(function(e) {
-			if(e.keyCode == 13){
-				if($("textarea").length == 0 && $("#alterFormBox").length != 0 && $("#alterFormBox").html() != "")
+			if($("textarea").length == 0 &&  e.keyCode == 13){
+				if($("#alterFormBox").length != 0 && $("#alterFormBox").html() != "")
 					$('.alterSubmit').submit();
 				else
 					$('#answer-form').submit();
