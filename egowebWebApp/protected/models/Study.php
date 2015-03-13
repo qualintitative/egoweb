@@ -160,7 +160,7 @@ class Study extends CActiveRecord
 		$ego_question_list = array();
 		foreach($egoQuestions as $question){
 			if($interviewId){
-				if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($question->answerReasonExpressionId, $interviewId, null, null, $answers))
+				if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($interviewId, null, null, $answers))
 					continue;
 				if($answers[$question->id]->value == $study->valueNotYetAnswered)
 					continue;
@@ -228,7 +228,7 @@ class Study extends CActiveRecord
 						$preface = new Question;
 						foreach($alters as $alter){
 							foreach($NonListQs[$question->id] as $q){
-								if(isset($expressions[$q->answerReasonExpressionId]) && !$expressions[$q->answerReasonExpressionId]->evalExpression($q->answerReasonExpressionId, $interviewId, $alter->id, null, $answers))
+								if(isset($expressions[$q->answerReasonExpressionId]) && !$expressions[$q->answerReasonExpressionId]->evalExpression($interviewId, $alter->id, null, $answers))
 									continue;
 								if($answers[$q->id . "-" . $alter->id]->value == $study->valueNotYetAnswered)
 									continue;
@@ -247,7 +247,7 @@ class Study extends CActiveRecord
 				}else{
 					$alter_question_list = array();
 					foreach($alters as $alter){
-						if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($question->answerReasonExpressionId, $interviewId, $alter->id, null, $answers))
+						if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($interviewId, $alter->id, null, $answers))
 							continue;
 						if($answers[$question->id . "-" . $alter->id]->value == $study->valueNotYetAnswered)
 							continue;
@@ -286,7 +286,7 @@ class Study extends CActiveRecord
 					foreach($alters2 as $alter2){
 						if($alter->id == $alter2->id)
 							continue;
-						if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($question->answerReasonExpressionId, $interviewId, $alter->id, $alter2->id, $answers))
+						if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($interviewId, $alter->id, $alter2->id, $answers))
 							continue;
 						if($answers[$question->id . "-" . $alter->id . "and" . $alter2->id]->value == $study->valueNotYetAnswered)
 							continue;
@@ -316,7 +316,7 @@ class Study extends CActiveRecord
 			}
 			foreach($networkQuestions as $question){
 				if($interviewId){
-					if(isset($expressions[$question->id]) && !$expressions[$question->id]->evalExpression($question->answerReasonExpressionId, $interviewId,null,null, $answers))
+					if(isset($expressions[$question->id]) && !$expressions[$question->id]->evalExpression($interviewId,null,null, $answers))
 						continue;
 					if($answers[$question->id]->value == $study->valueNotYetAnswered)
 						continue;
@@ -399,7 +399,7 @@ class Study extends CActiveRecord
 			$ego_question_list = array();
 			$prompt = "";
 			foreach ($egoQuestions as $question){
-				if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($question->answerReasonExpressionId, $interviewId, null, null, $answers)){
+				if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($interviewId, null, null, $answers)){
 					if(isset($answers[$question->id]) && $answers[$question->id]->value != $study->valueLogicalSkip){
 						$answers[$question->id]->value = $study->valueLogicalSkip;
 						$answers[$question->id]->save();
@@ -491,7 +491,7 @@ class Study extends CActiveRecord
 							foreach($alters as $alter){
 								foreach($NonListQs[$question->id] as $q){
 
-									if($q->answerReasonExpressionId && !$expressions[$q->answerReasonExpressionId]->evalExpression($q->answerReasonExpressionId, $interviewId, $alter->id, null, $answers)){
+									if($q->answerReasonExpressionId && !$expressions[$q->answerReasonExpressionId]->evalExpression($interviewId, $alter->id, null, $answers)){
 										if(isset($answers[$q->id.'-'.$alter->id]) && $answers[$q->id.'-'.$alter->id]->value != $study->valueLogicalSkip){
 											$answers[$q->id.'-'.$alter->id]->value = $study->valueLogicalSkip;
 											$answers[$q->id.'-'.$alter->id]->save();
@@ -526,7 +526,7 @@ class Study extends CActiveRecord
 						}
 					}else{
 						foreach($alters as $alter){
-							if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($question->answerReasonExpressionId, $interviewId, $alter->id, null, $answers)){
+							if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($interviewId, $alter->id, null, $answers)){
 								if(isset($answers[$question->id.'-'.$alter->id]) && $answers[$question->id.'-'.$alter->id] != $study->valueLogicalSkip){
 									$answers[$question->id.'-'.$alter->id]->value = $study->valueLogicalSkip;
 									$answers[$question->id.'-'.$alter->id]->save();
@@ -599,7 +599,7 @@ class Study extends CActiveRecord
 						foreach($alters2 as $alter2){
 							if($alter->id == $alter2->id)
 								continue;
-							if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($question->answerReasonExpressionId, $interviewId, $alter->id, $alter2->id, $answers)){
+							if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($interviewId, $alter->id, $alter2->id, $answers)){
 								if(isset($answers[$question->id.'-'.$alter->id.'and'.$alter2->id]) && $answers[$question->id.'-'.$alter->id.'and'.$alter2->id]->value != $study->valueLogicalSkip){
 									$answers[$question->id.'-'.$alter->id.'and'.$alter2->id]->value = $study->valueLogicalSkip;
 									$answers[$question->id.'-'.$alter->id.'and'.$alter2->id]->save();
@@ -658,7 +658,7 @@ class Study extends CActiveRecord
 
 				foreach ($networkQuestions as $question){
 					if($i == $pageNumber){
-						if(isset($expressions[$question->id]) && !$expressions[$question->id]->evalExpression($question->answerReasonExpressionId, $interviewId,null,null, $answers)){
+						if(isset($expressions[$question->id]) && !$expressions[$question->id]->evalExpression($interviewId,null,null, $answers)){
 							if(isset($answers[$questionId]) && $answers[$questionId]->value != $study->valueLogicalSkip){
 								$answers[$questionId]->value = $study->valueLogicalSkip;
 								$answers[$questionId]->save();

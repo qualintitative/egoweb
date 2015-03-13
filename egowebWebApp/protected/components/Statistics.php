@@ -55,7 +55,7 @@ class Statistics extends CComponent {
 			$this->betweenesses[$alter->id] = 0;
 			array_shift($alters2);
 			foreach($alters2 as $alter2){
-				if($expression->evalExpression($expressionId, $interviewId, $alter->id, $alter2->id, $answers)){
+				if($expression->evalExpression($interviewId, $alter->id, $alter2->id, $answers)){
 					if(!in_array($alter->id, $this->nodes))
 						$this->nodes[] = $alter->id;
 					if(!in_array($alter2->id, $this->nodes))

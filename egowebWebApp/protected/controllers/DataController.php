@@ -24,7 +24,7 @@ class DataController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index', 'exportego', 'savenote', 'noteexists','exportalterpair', 'exportalterlist', 'exportother', 'visualize', 'study', 'ajaxAdjacencies'),
+				'actions'=>array('index', 'exportego', 'savenote', 'noteexists','exportalterpair', 'exportalterlist', 'exportother', 'visualize', 'study', 'ajaxAdjacencies', 'exportinterview'),
 				'users'=>array('@'),
 			),
 			array('allow',  // deny all users
@@ -197,13 +197,19 @@ class DataController extends Controller
 			$headers[] = "Eigenvector";
 		}
 
+        $interviewIds = array();
+        foreach($_POST['export'] as $key=>$value){
+            $interviewIds[] = $key;
+        }
 		echo implode(',', $headers) . "\n";
 
-		$interviews = Interview::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
-		foreach ($interviews as $interview){
-			if(!isset($_POST['export'][$interview->id]))
-				continue;
-
+		foreach ($interviewIds as $interviewId){
+    		$filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . ".csv";
+    		  if (file_exists($filePath)) {
+                echo file_get_contents($filePath);
+                unlink($filePath);
+            }
+            /*
             #OK FOR SQL INJECTION
 			$alters = q("SELECT * FROM alters WHERE interviewId = " . $interview->id)->queryAll();
 			if(!$alters){
@@ -282,7 +288,7 @@ class DataController extends Controller
 							$answer = decrypt($answer);
                         #OK FOR SQL INJECTION
                         $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'])->queryScalar();
-						if($answer && $skipReason == "NONE"){
+						if($answer != "" && $skipReason == "NONE"){
 							if($question['answerType'] == "SELECTION"){
 								$answers[] = $options[$answer];
 							}else if($question['answerType'] == "MULTIPLE_SELECTION"){
@@ -304,11 +310,6 @@ class DataController extends Controller
 								$answers[] = $study->valueDontKnow;
 							else
 								$answers[] = $study->valueRefusal;
-						} else {
-							if(is_numeric($question['answerReasonExpressionId']) && !$expression->evalExpression($question['answerReasonExpressionId'], $interview->id, $alter['id']))
-								$answers[] = $study->valueLogicalSkip;
-							else
-								$answers[] = $study->valueNotYetAnswered;
 						}
 					}
 				}
@@ -328,12 +329,38 @@ class DataController extends Controller
 				}
 				echo implode(',', $answers) . "\n";
 				flush();
-			}
+			}*/
 
 		}
 		Yii::app()->end();
 
 	}
+
+    public function actionExportinterview()
+    {
+        if (!isset($_POST['studyId']))
+            die("no study selected");
+
+        $filePath = getcwd()."/assets/".$_POST['studyId'];
+        if(file_exists($filePath . "/" . $_POST['interviewId'] . ".csv")){
+            echo "success";
+            Yii::app()->end();
+        }
+
+        if (!is_dir($filePath))
+            mkdir($filePath, 0777, true);
+
+        $interview = Interview::model()->findByPk($_POST['interviewId']);
+        if ($interview) {
+            $text = $interview->exportEgoAlterData();
+            $file = fopen($filePath . "/" . $_POST['interviewId'] . ".csv", "w") or die("Unable to open file!");
+	    	fwrite($file, $text);
+    		fclose($file);
+    		echo "success";
+    		Yii::app()->end();
+        }
+        echo "fail";
+    }
 
 	public function actionExportalterpair()
 	{
@@ -418,7 +445,7 @@ class DataController extends Controller
 						$answer = decrypt(q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'] . " AND alterId2 = " . $alter2['id'])->queryScalar());
                         #OK FOR SQL INJECTION
                         $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'] . " AND alterId2 = " . $alter2['id'])->queryScalar();
-						if($answer && $skipReason == "NONE"){
+						if($answer != "" && $skipReason == "NONE"){
 							if($question['answerType'] == "SELECTION"){
 								$answers[] = $options[$answer];
 							}else if($question['answerType'] == "MULTIPLE_SELECTION"){
@@ -440,12 +467,6 @@ class DataController extends Controller
 								$answers[] = $study->valueDontKnow;
 							else
 								$answers[] = $study->valueRefusal;
-						} else {
-							$expression = new Expression;
-							if(is_numeric($question['answerReasonExpressionId']) && !$expression->evalExpression($question['answerReasonExpressionId'], $interview->id, $alter['id'], $alter2['id']))
-								$answers[] = $study->valueLogicalSkip;
-							else
-								$answers[] = $study->valueNotYetAnswered;
 						}
 					}
 					echo implode(',', $answers) . "\n";

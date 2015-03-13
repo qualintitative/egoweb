@@ -126,12 +126,12 @@ class Expression extends CActiveRecord
 	 * Show logic for the expressions. determines whether or not to display a question
 	 * returns either true/false or a number for the Counting expressions
 	 */
-	public function evalExpression($id, $interviewId, $alterId1 = null, $alterId2 = null, $answers = null)
+	public function evalExpression($interviewId, $alterId1 = null, $alterId2 = null, $answers = null)
 	{
 		if(isset($this->id))
 			$expression = $this;
 		else
-			$expression = Expression::model()->findByPk($id);
+			return false;
 
 		if(!$expression)
 			return true;
@@ -269,28 +269,28 @@ class Expression extends CActiveRecord
 			return ($times * $count);
 		} else if($expression->type == "Comparison"){
 			list($value, $expressionId) =  preg_split('/:/', $expression->value);
-			$newE = new Expression;
-			$result = $newE->evalExpression($expressionId, $interviewId, $alterId1, $alterId2, $answers);
+			$newE = Expression::model()->findByPk($expressionId);
+			$result = $newE->evalExpression($interviewId, $alterId1, $alterId2, $answers);
 			$logic = "return " . $result . " " . $comparers[$expression->operator] . " " . $value . ";";
 			return eval($logic);
 		} else if($expression->type == "Compound"){
 			$subExpressions = explode(',', $expression->value);
-			$trues[$id] = 0;
+			$trues[$this->id] = 0;
 			foreach($subExpressions as $subExpression){
 				// prevent infinite loops!
 				$isTrue[$subExpression] = false;
-				if($subExpression == $id)
+				if($subExpression == $this->id)
 					continue;
 				$sub[$subExpression] = Expression::model()->findByPk($subExpression);
-				$isTrue[$subExpression] = $sub[$subExpression]->evalExpression($subExpression, $interviewId, $alterId1, $alterId2,$answers);
+				$isTrue[$subExpression] = $sub[$subExpression]->evalExpression($interviewId, $alterId1, $alterId2,$answers);
 				if($expression->operator == "Some" && $isTrue[$subExpression])
 					return true;
 				if($isTrue[$subExpression])
-					$trues[$id]++;
+					$trues[$this->id]++;
 			}
-			if($expression->operator == "None" && $trues[$id] == 0)
+			if($expression->operator == "None" && $trues[$this->id] == 0)
 				return true;
-			else if ($expression->operator == "All" && $trues[$id] == count($subExpressions))
+			else if ($expression->operator == "All" && $trues[$this->id] == count($subExpressions))
 				return true;
 		}
 		return false;
@@ -298,8 +298,8 @@ class Expression extends CActiveRecord
 
 	public static function countExpression($id, $interviewId, $alterId1, $alterId2, $answers)
 	{
-		$countE = new Expression;
-		if($countE->evalExpression($id, $interviewId, $alterId1, $alterId2, $answers))
+		$countE = Expression::model()->findByPk($id);
+		if($countE->evalExpression($interviewId, $alterId1, $alterId2, $answers))
 			return 1;
 		else
 			return 0;

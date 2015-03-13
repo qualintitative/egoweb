@@ -76,6 +76,7 @@ class visualize extends Plugin
 		9=>"#A00000",
 	);
 	public $stats = "";
+	public $answers = array();
 
 	private function getNodeColor($nodeId){
 		$default = "#07f";
@@ -102,9 +103,9 @@ class visualize extends Plugin
 				$value = round((($value-$min) / ($range)) * 9);
 				return $this->gradient[$value];
 			}else if(stristr($this->params['nodeColor']['questionId'], "expression")){
-				$expression = new Expression;
 				list($label, $expressionId) = explode("_", $this->params['nodeColor']['questionId']);
-				if($expression->evalExpression($expressionId, $this->method, $nodeId)){
+				$expression = Expression::model()->findByPk($expressionId);
+				if($expression->evalExpression($this->method, $nodeId, null, $this->answers)){
 					foreach($this->params['nodeColor']['options'] as $option){
 						if($option['id'] == 1)
 							return $option['color'];
@@ -546,14 +547,14 @@ class visualize extends Plugin
 		$alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId in (" . $studyId . ") AND questionId in (" . $questionIds . ")")->queryColumn();
 
 			$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interview->id));
-			$answers = array();
+
 			foreach($answerList as $answer){
 				if($answer->alterId1 && $answer->alterId2)
-					$answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
+					$this->answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
 				else if ($answer->alterId1 && !$answer->alterId2)
-					$answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
+					$this->answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
 				else
-					$answers[$answer->questionId] = $answer;
+					$this->answers[$answer->questionId] = $answer;
 			}
 
 		$expression = Expression::model()->findByPk($this->id);
@@ -571,7 +572,7 @@ class visualize extends Plugin
 			foreach($filterIds as $filterId){
 				$filter = Expression::model()->findByPK($filterId);
 				foreach($alters as $index=>$alter){
-					if(!$filter->evalExpression($filterId, $this->method, $alter['id'])){
+					if(!$filter->evalExpression($this->method, $alter['id'])){
 						array_splice($alters, $index, 1);
 						array_splice($alterIds, $index, 1);
 					}
@@ -597,7 +598,7 @@ class visualize extends Plugin
 			foreach($alters2 as $alter2){
 				if($alter2['id'] == $alter['id'])
 					continue;
-				if($expression && $expression->evalExpression($expression->id, $this->method, $alter['id'], $alter2['id'], $answers)){
+				if($expression && $expression->evalExpression($this->method, $alter['id'], $alter2['id'], $this->answers)){
 					$edges[] = array(
 						"id" => $alter['id'] . "_" . $alter2['id'],
 						"source" => $alter2['id'],
