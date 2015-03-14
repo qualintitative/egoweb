@@ -60,79 +60,412 @@ class InterviewingController extends Controller
 		if(isset($_GET['page']))
 			$currentPage = CHtml::encode(strip_tags($_GET['page']));
 
-		if(isset($_GET['interviewId'])){
-			$interviewId = CHtml::encode(strip_tags($_GET['interviewId']));
-			$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewId));
-			foreach($answerList as $answer){
-				if($answer->alterId1 && $answer->alterId2)
-					$answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
-				else if ($answer->alterId1 && !$answer->alterId2)
-					$answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
+		if(isset($_POST['Answer']))
+		{
+
+			$study = Study::model()->findByPk($id);
+			$errors = 0;
+
+			if(stristr($id, "key"))
+				list($id, $key) = explode('&key=', $id);
+			else
+				$key = '';
+
+			if(isset($_POST['nodes']))
+				$nodes = "&nodes=" .  urlencode($_POST['nodes']);
+			else
+				$nodes = "";
+
+			if(isset($_POST['Answer'][0]) && $_POST['Answer'][0]['answerType'] == "CONCLUSION"){
+				$interview = Interview::model()->findByPk((int)$_POST['Answer'][0]['interviewId']);
+				$interview->completed = -1;
+				$interview->complete_date = time();
+				$interview->save();
+
+				if(isset(Yii::app()->params['exportFilePath']) && Yii::app()->params['exportFilePath'])
+					$this->exportInterview($interview->id);
+
+				if(isset(Yii::app()->session['redirect']))
+					$this->redirect(Yii::app()->session['redirect']);
+				else if(Yii::app()->user->isGuest)
+					$this->redirect(Yii::app()->createUrl(''));
 				else
-					$answers[$answer->questionId] = $answer;
+					$this->redirect(Yii::app()->createUrl('admin/'));
 			}
-			$questions = Study::buildQuestions($study, $currentPage, $interviewId, $answers);
-			if(!$questions){
+
+			foreach($_POST['Answer'] as $Answer){
+
+				if(!isset($interviewId) || !$interviewId)
+					$interviewId = $Answer['interviewId'];
+
+				if(!isset($answerList)){
+					$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+					foreach($answerList as $answer){
+						if($answer->alterId1 && $answer->alterId2)
+							$answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
+						else if ($answer->alterId1 && ! $answer->alterId2)
+							$answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
+						else
+							$answers[$answer->questionId] = $answer;
+					}
+				}
+
+				if(!isset($questions))
+					$questions = Study::buildQuestions($study, $_POST['page'], $interviewId, $answers);
+
+				if($Answer['questionType'] == "EGO_ID" && $Answer['value'] != "" && !$interviewId){
+					if(Yii::app()->user->isGuest){
+						foreach($_POST['Answer'] as $ego_id){
+							$array_id = $ego_id['questionId'];
+							$model[$array_id] = new Answer;
+							$model[$array_id]->attributes = $ego_id;
+							if(stristr(Question::getTitle($ego_id['questionId']), 'email')){
+								$email = $ego_id['value'];
+								$email_id = $array_id;
+							}
+						}
+						if($key && User::hashPassword($email) != $key){
+							$model[$email_id]->addError('value', 'You do not have the correct email for this survey.');
+							$errors++;
+							break;
+						}
+					}
+					if($errors == 0){
+						if(Yii::app()->user->isGuest && isset($email)){
+							$interview = Interview::getInterviewFromEmail($_POST['studyId'],$email);
+							if($interview){
+								$this->redirect(Yii::app()->createUrl(
+									'interviewing/'.$study->id.'?'.
+									'interviewId='.$interview->id.'&'.
+									'page='.($interview->completed).'&key=' . $key
+								));
+							}
+						}
+						$interview = new Interview;
+						$interview->studyId = $study->id;
+						if($interview->save()){
+							$interviewId = $interview->id;
+							$this->createEgoAnswers($interviewId, $id);
+						}else{
+							print_r($interview->errors);
+							die();
+						}
+					}
+				}
+
+				if($Answer['questionType'] == "ALTER")
+					$array_id = $Answer['questionId'] . "-" . $Answer['alterId1'];
+				else if($Answer['questionType'] == "ALTER_PAIR")
+					$array_id = $Answer['questionId'] . "-" . $Answer['alterId1'] . "and" . $Answer['alterId2'];
+				else
+					$array_id = $Answer['questionId'];
+
+				if(isset($answers[$array_id]))
+					$model[$array_id] = $answers[$array_id];
+				else
+					$model[$array_id] = new Answer;
+
+
+				if($questions[$array_id]->useAlterListField){
+					$interviewer = "";
+					$field = $questions[$array_id]->useAlterListField;
+					if(!Yii::app()->user->isSuperAdmin && !Yii::app()->user->isGuest)
+						$interviewer = " AND interviewerId = " . Yii::app()->user->id;
+                    #OK FOR SQL INJECTION
+                    $params = new stdClass();
+                    $params->name = ':studyId';
+                    $params->value = $_POST['studyId'];
+                    $params->dataType = PDO::PARAM_INT;
+					$restricted = q("SELECT " . $field . " FROM alterList WHERE studyId = :studyId " . $interviewer, array($params))->queryColumn();
+					//have to decrypt the names from the AlterList table before checking against
+					foreach ($restricted as &$dname){
+						$dname = decrypt($dname);
+						unset($dname);
+					}
+
+					if(!in_array($Answer['value'], $restricted))
+						$model[$array_id]->addError('value', $Answer['value'] . " is either not in the participant list or has been assigned to another interviewer");
+				}
+
+				// check for list range limitations
+				$checks = 0;
+				if($questions[$array_id]->withListRange){
+					foreach($_POST['Answer'] as $listCheck){
+						if(in_array($questions[$array_id]->listRangeString, explode(',',$listCheck['value']))){
+							$checks++;
+						}
+
+					}
+					if($checks < $questions[$array_id]->maxListRange || $checks > $questions[$array_id]->maxListRange){
+						$errorMsg = "";
+						if($questions[$array_id]->minListRange && $questions[$array_id]->maxListRange){
+							if($questions[$array_id]->minListRange != $questions[$array_id]->maxListRange)
+								$errorMsg .= $questions[$array_id]->minListRange . " - " . $questions[$array_id]->maxListRange;
+							else
+								$errorMsg .= "just ". $questions[$array_id]->minListRange;
+						}else if(!$questions[$array_id]->minListRange && !$questions[$array_id]->maxListRange){
+								$errorMsg .= "up to ".$questions[$array_id]->maxListRange;
+						}else{
+								$errorMsg .= "at least ".$questions[$array_id]->minListRange;
+						}
+						$model[$array_id]->addError('value', "Please select " . $errorMsg . " response(s).");
+					}
+
+				}
+
+				if($Answer['questionType'] == "ALTER_PROMPT"){
+					// no Answer to save, go to next page
+					if(Interview::countAlters($Answer['interviewId']) < $_POST['minAlters']){
+						$model[$Answer['questionId']]->addError('value', 'Please list ' . $_POST['minAlters'] . ' people');
+					}else{
+						$this->createAlterAnswers($Answer['interviewId'], $_POST['studyId']);
+						$this->redirect(Yii::app()->createUrl(
+							'interviewing/'.$study->id.'?'.
+							'interviewId='.$Answer['interviewId'].'&'.
+							'page='.($_POST['page']+1).'&key=' . $key
+						));
+					}
+				}
+
+				if($Answer['questionType'] == "INTRODUCTION" || $Answer['questionType'] == "PREFACE"){
+					// no Answer to save, go to next page
+						$this->redirect(Yii::app()->createUrl(
+							'interviewing/'.$study->id.'?'.
+							'interviewId='.$Answer['interviewId'].'&'.
+							'page='.($_POST['page']+1).'&key=' . $key
+						));
+				}
+
+				if($Answer['value'] == "" && $Answer['skipReason'] == "NONE" && $Answer['answerType'] == "TEXTUAL"){
+					$model[$array_id]->addError('value', 'Please enter a valid response');
+					$errors++;
+				}
+
+				if($Answer['answerType'] == "DATE"){
+
+					preg_match("/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/", $Answer['value'], $date);
+					preg_match("/(\d{1,2}):(\d{1,2}) (AM|PM)/", $Answer['value'], $time);
+
+					if(count($time) > 0){
+						if(intval($time[1]) < 1 || intval($time[1]) > 12){
+							$model[$array_id]->addError('value', 'Please enter 1 to 12 for the HH');
+							$errors++;
+						}
+						if(intval($time[2]) < 0 || intval($time[2]) > 59){
+							$model[$array_id]->addError('value', 'Please enter 0 to 59 for the MM');
+							$errors++;
+						}
+					}
+					if(count($date) > 0){
+						if(intval($date[2]) < 1 || intval($date[2]) > 31){
+							$model[$array_id]->addError('value', 'Please enter a different number for the day of month');
+							$errors++;
+						}
+					}
+					if(count($date) == 0 && count($time) == 0){
+							$model[$array_id]->addError('value', 'Please fill in values for time');
+							$errors++;
+					}
+				}
+				// Custom validators
+				if($Answer['answerType'] == "NUMERICAL"){
+					$min = ""; $max = ""; $numberErrors = 0; $showError = false;
+					if(($Answer['value'] == "" && $Answer['skipReason'] == "NONE") || ($Answer['value'] != "" && !is_numeric($Answer['value'])))
+						$model[$array_id]->addError('value', "Please enter a number");
+					if($questions[$array_id]->minLimitType == "NLT_LITERAL"){
+					    $min = $questions[$array_id]->minLiteral;
+					}else if($questions[$array_id]->minLimitType == "NLT_PREVQUES"){
+					    $min = Answer::model()->findByAttributes(array('interviewId'=>$interviewId,'questionId'=>$questions[$array_id]->minPrevQues));
+					    if($min)
+					    	$min = $min->value;
+					    else
+					    	$min = "";
+					}
+					if($questions[$array_id]->maxLimitType == "NLT_LITERAL"){
+					    $max = $questions[$array_id]->maxLiteral;
+					}else if($questions[$array_id]->maxLimitType == "NLT_PREVQUES"){
+					    $max = Answer::model()->findByAttributes(array('interviewId'=>$interviewId,'questionId'=>$questions[$array_id]->maxPrevQues));
+					    if($max)
+					    	$max = $max->value;
+					    else
+					    	$max = "";
+					}
+					if($min != "")
+						$numberErrors++;
+					if($max != "")
+						$numberErrors = $numberErrors + 2;
+
+ 					if((($max != "" && $Answer['value'] > $max)  ||  ($min != "" && $Answer['value'] < $min)) && $Answer['skipReason'] == "NONE")
+ 						$showError = true;
+
+					if($numberErrors == 3 && $showError)
+						$errorMsg = "The range of valid answers is " . $min . " to " . $max .".";
+					else if ($numberErrors == 2 && $showError)
+						$errorMsg = "The range of valid answers is " . $max . " or fewer.";
+					else if ($numberErrors == 1 && $showError)
+						$errorMsg = "The range of valid answers is " . $min . " or greater.";
+					if($showError)
+						$model[$array_id]->addError('value', $errorMsg);
+				}
+
+				if($Answer['answerType'] == "MULTIPLE_SELECTION"){
+
+					$min = $questions[$array_id]->minCheckableBoxes;
+					$max = $questions[$array_id]->maxCheckableBoxes;
+					$numberErrors = 0; $showError = false; $errorMsg = "";
+					if($min != "")
+						$numberErrors++;
+					if($max != "")
+						$numberErrors = $numberErrors + 2;
+
+
+					$checkedBoxes = explode(',',$Answer['value']);
+                    foreach($checkedBoxes as $index){
+                        if(isset($_POST['otherSpecify'][$index]) && $interviewId){
+                			$other = otherSpecify::model()->findByAttributes(array("interviewId"=>$interviewId, "optionId"=>$index));
+                			$value = $_POST['otherSpecify'][$index];
+                            if(!$value)
+                               continue;
+                			if(!$other)
+                			    $other = new otherSpecify;
+                            $other->interviewId = $interviewId;
+                            $other->optionId = $index;
+                            $other->value = $value;
+                            if(!$other->save())
+                                throw new CHttpException(500, $other->errors);
+    			        }
+                    }
+
+					if (($Answer['value'] == "" || $Answer['value'] < 0 || count($checkedBoxes) < $min || count($checkedBoxes) > $max) && $Answer['skipReason'] == "NONE")
+						$showError = true;
+
+
+					$s='';
+					if($max != 1)
+						$s = 's';
+					if($questions[$array_id]->askingStyleList)
+						$s .= ' for each row';
+					if($numberErrors == 3 && $min == $max && $showError)
+						$errorMsg = "Select " . $max ." response" . $s . " please.";
+					else if($numberErrors == 3 && $min != $max && $showError)
+						$errorMsg = "Select " . $min . " to " . $max ." response" . $s ." please.";
+					else if ($numberErrors == 2 && $showError)
+						$errorMsg = "You may select up to " . $max . " response" . $s ." please.";
+					else if ($numberErrors == 1 && $showError)
+						$errorMsg = "You must select at least " . $min . " response" . $s ." please.";
+
+					if($showError)
+						$model[$array_id]->addError('value', $errorMsg);
+
+				}
+
+
+				$model[$array_id]->attributes=$Answer;
+				if($interviewId){
+					$model[$array_id]->interviewId = $interviewId;
+					$interview = Interview::model()->findByPk((int)$interviewId);
+					if(!$model[$array_id]->getError('value')){
+						$model[$array_id]->save();
+						if($interview->completed != -1 && is_numeric($_POST['page'])){
+							$interview->completed = (int)$_POST['page'] + 1;
+							$interview->save();
+						}
+					}else{
+						if($interview->completed != -1 && is_numeric($_POST['page'])){
+							$interview->completed = (int)$_POST['page'];
+							$interview->save();
+						}
+						$errors++;
+					}
+				}
+			}
+
+
+
+			if($errors == 0) {
+				$page = (int)$_POST['page'] + 1;
 				$this->redirect(Yii::app()->createUrl(
-					'interviewing/'.$id.'?'.
+					'interviewing/'.$study->id.'?'.
 					'interviewId='.$interviewId.'&'.
-					'page=0'
+					'page='.$page.'&key=' . $key . $nodes
 				));
 			}
-			// loads answers into array model
-			foreach($questions as $question){
-				if(is_numeric($question->alterId1) && !is_numeric($question->alterId2)){
-					$array_id = $question->id . '-' . $question->alterId1;
-				}else if(is_numeric($question->alterId1) && is_numeric($question->alterId2)){
-					$array_id = $question->id . '-' . $question->alterId1 . 'and' . $question->alterId2;
-				}else{
-					$array_id = $question->id;
-				}
+			//die();
+		} else {
 
-				if(isset($answers[$array_id])){
-					$model[$array_id] = $answers[$array_id];
-					if($model[$array_id]->value == $study->valueNotYetAnswered)
-						$model[$array_id]->value = "";
-				}else{
-					$model[$array_id] = new Answer;
-				}
+    		if(isset($_GET['interviewId'])){
+    			$interviewId = CHtml::encode(strip_tags($_GET['interviewId']));
+    			$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+    			foreach($answerList as $answer){
+    				if($answer->alterId1 && $answer->alterId2)
+    					$answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
+    				else if ($answer->alterId1 && !$answer->alterId2)
+    					$answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
+    				else
+    					$answers[$answer->questionId] = $answer;
+    			}
+    			$questions = Study::buildQuestions($study, $currentPage, $interviewId, $answers);
+    			if(!$questions){
+    				$this->redirect(Yii::app()->createUrl(
+    					'interviewing/'.$id.'?'.
+    					'interviewId='.$interviewId.'&'.
+    					'page=0'
+    				));
+    			}
+    			// loads answers into array model
+    			foreach($questions as $question){
+    				if(is_numeric($question->alterId1) && !is_numeric($question->alterId2)){
+    					$array_id = $question->id . '-' . $question->alterId1;
+    				}else if(is_numeric($question->alterId1) && is_numeric($question->alterId2)){
+    					$array_id = $question->id . '-' . $question->alterId1 . 'and' . $question->alterId2;
+    				}else{
+    					$array_id = $question->id;
+    				}
 
-			}
-		}else{
-			$questions = Study::buildQuestions($study, $currentPage);
-			$interviewId = '';
+    				if(isset($answers[$array_id])){
+    					$model[$array_id] = $answers[$array_id];
+    					if($model[$array_id]->value == $study->valueNotYetAnswered)
+    						$model[$array_id]->value = "";
+    				}else{
+    					$model[$array_id] = new Answer;
+    				}
 
-            if( count($questions) < 1 ){
-                throw new CHttpException(500,"No questions found for interview $id !");
-                return;
-            }
+    			}
+    		}else{
+    			$questions = Study::buildQuestions($study, $currentPage);
+    			$interviewId = '';
 
-			foreach($questions as $question){
-				$array_id = $question->id;
-				$model[$array_id] = new Answer;
-				if(isset($_GET[$question->title]))
-					$model[$array_id]->value = $_GET[$question->title];
-			}
-		}
+                if( count($questions) < 1 ){
+                    throw new CHttpException(500,"No questions found for interview $id !");
+                    return;
+                }
 
-		if(isset($questions[0]) && $questions[0]->answerType == 'ALTER_PROMPT' && $study->fillAlterList){
-            #OK FOR SQL INJECTION
-            $check = q("SELECT count(id) FROM alters WHERE interviewId = " . $interviewId)->queryScalar();
-			if(!$check){
+    			foreach($questions as $question){
+    				$array_id = $question->id;
+    				$model[$array_id] = new Answer;
+    				if(isset($_GET[$question->title]))
+    					$model[$array_id]->value = $_GET[$question->title];
+    			}
+    		}
+
+    		if(isset($questions[0]) && $questions[0]->answerType == 'ALTER_PROMPT' && $study->fillAlterList){
                 #OK FOR SQL INJECTION
-				$names = q("SELECT name FROM alterList where studyId = " . $study->id)->queryColumn();
-				$count = 0;
-				foreach($names as $name){
-					$alter = new Alters;
-					$alter->name = $name;
-					$alter->ordering = $count;
-					$alter->interviewId = $interviewId;
-					$alter->save();
-					$count++;
-				}
-			}
-		}
-
+                $check = q("SELECT count(id) FROM alters WHERE interviewId = " . $interviewId)->queryScalar();
+    			if(!$check){
+                    #OK FOR SQL INJECTION
+    				$names = q("SELECT name FROM alterList where studyId = " . $study->id)->queryColumn();
+    				$count = 0;
+    				foreach($names as $name){
+    					$alter = new Alters;
+    					$alter->name = $name;
+    					$alter->ordering = $count;
+    					$alter->interviewId = $interviewId;
+    					$alter->save();
+    					$count++;
+    				}
+    			}
+    		}
+        }
 		$qNav = Study::nav($study, $currentPage, $interviewId , $answers);
 		$this->render('view',array(
 			'questions'=>$questions,
@@ -150,7 +483,6 @@ class InterviewingController extends Controller
 	 * @param integer $id the ID of the study
 	 */
 	public function actionSave($id){
-
 
 		if(isset($_POST['Answer']))
 		{
@@ -456,6 +788,7 @@ class InterviewingController extends Controller
 					}
 				}
 			}
+
 			if($errors == 0) {
 				$page = (int)$_POST['page'] + 1;
 				$this->redirect(Yii::app()->createUrl(
@@ -480,6 +813,7 @@ class InterviewingController extends Controller
 				));
 			}
 		}
+
 
 	}
 

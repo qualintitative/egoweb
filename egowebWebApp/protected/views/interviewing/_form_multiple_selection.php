@@ -3,9 +3,9 @@
 Yii::app()->clientScript->registerScript('optionsToValue-'.$array_id, "
 $('.multiselect-".$array_id."').change(function() {
 	var values = $('#Answer_".$array_id."_value').val().split(',');
-		current = $(this);
+	current = $(this);
 	$('#Answer_".$array_id."_skipReason').val('NONE');
-	$('.multiselect-".$array_id."').each(function() {
+	$('.answerInput.multiselect-".$array_id."').each(function() {
 		if($(this).is(':checked')){
 			$('#Answer_".$array_id."_otherSpecifyText').val('');
 			$('#Answer_".$array_id."_otherSpecifyText').hide();
@@ -13,14 +13,20 @@ $('.multiselect-".$array_id."').change(function() {
 			$('.".$array_id."-skipReason').prop('checked', false);
 			if(values.indexOf($(this).val()) == -1)
 				values.push($(this).val());
+
+            $('#otherSpecify_' + $(this).val()).show();
 		}else{
 			if(values.indexOf($(this).val()) != -1)
 				values.splice(values.indexOf(current.val()),1);
+            $('#otherSpecify_' + $(this).val()).val('');
+            $('#otherSpecify_' + $(this).val()).hide();
 		}
 	});
 	if(values.length > parseInt(".$question->maxCheckableBoxes.")){
 		value = values.shift();
 		$('input.multiselect-".$array_id."[value=\"' + value + '\"]').prop('checked', false);
+		$('#otherSpecify_' + value).hide();
+            $('#otherSpecify_' + value).val('');
 	}
 	$('#Answer_".$array_id."_value').val(values.join(','));
 });
@@ -60,6 +66,7 @@ if($rowColor != "" && $question->askingStyleList){
 				'template'=>'{input}',
 				'class'=>'answerInput multiselect-'.$array_id,
 				'container'=>'',
+				'template'=>'{input}<input />',
 				'separator'=>"",
 				'style'=>"margin-left:" . intval($maxwidth * .4) ."px; width:" . intval($maxwidth * .6) ."px",
 			)
@@ -80,11 +87,28 @@ if($rowColor != "" && $question->askingStyleList){
 		}
 		echo "</div>";
 }else{
+    $otherValue = array();
+    foreach($options as $option){
+        if($option->otherSpecify){
+            $otherSpecify = otherSpecify::model()->findByAttributes(array("interviewId"=>$interviewId, "optionId"=>$option->id));
+                if($otherSpecify)
+                    $otherValue[$option->id] = $otherSpecify->value;
+                else
+                    $otherValue[$option->id] = "";
+        }
+    }
 	echo CHtml::checkBoxList(
 	    'multiselect-'.$array_id,
 	    $selected,
 	    CHtml::listData($options, 'id', function($data){
-	    	return $data->name .(file_exists(Yii::app()->basePath."/../audio/".$data->studyId . "/OPTION/" . $data->id . ".mp3") ? '<script>var optionAudio_' . $data->id . ' = loadAudio("/audio/' . $data->studyId  . "/OPTION/"  . $data->id . '.mp3");</script>'. "<a class=\"playSound\" onclick=\"playSound('/audio/" . $data->studyId  . "/OPTION/"  . $data->id . ".mp3')\" href=\"#\"><span class=\"fui-volume play-sound\"></span></a>": "");}),
+    	    if(file_exists(Yii::app()->basePath."/../audio/".$data->studyId . "/OPTION/" . $data->id . ".mp3"))
+        	    $name = '<script>var optionAudio_' . $data->id . ' = loadAudio("/audio/' . $data->studyId  . "/OPTION/"  . $data->id . '.mp3");</script>'. "<a class=\"playSound\" onclick=\"playSound('/audio/" . $data->studyId  . "/OPTION/"  . $data->id . ".mp3')\" href=\"#\"><span class=\"fui-volume play-sound\"></span></a>";
+            else
+                $name = "";
+            if($data->otherSpecify)
+                $name .= CHtml::textField("otherSpecify[".$data->id."]","",array("class"=>"otherSpecify")) ;
+	    	return $data->name . $name;
+	   }),
 	    array('class'=>'answerInput multiselect-'.$array_id)
 	);
 		if(count($skipList) != 0){
@@ -98,33 +122,20 @@ if($rowColor != "" && $question->askingStyleList){
 echo $form->hiddenField($model[$array_id],  '['.$array_id.']value',array('value'=>$model[$array_id]->value, 'class'=>$array_id));
 echo $form->hiddenField($model[$array_id],  '['.$array_id.']otherSpecifyText',array('value'=>$model[$array_id]->otherSpecifyText));
 
-$otherValue = array();
-foreach(preg_split('/;;/', $model[$array_id]->otherSpecifyText) as $other){
-  	if($other && strstr($other, ':')){
-		list($key, $val) = preg_split('/:/', $other);
-		$otherValue[$key] = $val;
-	}
-}
+
 ?>
 <script>
+otherSpecify = JSON.parse('<?php echo json_encode($otherValue) ?>');
 $(function(){
-	array_id = '<?php echo $array_id ?>';
-	otherValue = <?php echo json_encode($otherValue); ?>;
-	$('#multiselect-' + array_id + ' label').each(function(index){
-		if($(this).html().match(/OTHER \(*SPECIFY\)*/i)){
-			display = '';
-			val = '';
-			if($('#' + $(this).attr('for')).prop('checked') != true)
-				display = 'style="display:none"';
-			else
-				val = otherValue[$('#' + $(this).attr('for')).val()];
-			$(this).after(
-			'<input id="' + $('#' + $(this).attr('for')).val() + '" class="' + array_id +'_other" ' + display+ ' onchange="changeOther('+array_id+')" value="'+  val + '" style="margin:5px"/>'
-			);
-			$('#' + $(this).attr('for')).click(function(){
-				toggleOther($('#' + $(this).val()));
-			});
-		}
-	});
+    $(".otherSpecify").each(function(index){
+        if($(this).attr("id").match(/\d+/))
+            var otherId = $(this).attr("id").match(/\d+/)[0];
+        if(typeof otherSpecify[otherId] != "undefined")
+            $(this).val(otherSpecify[otherId]);
+        if($("input[type='checkbox'][value='" + otherId + "']").prop("checked") == true)
+            $(this).show();
+        else
+            $(this).hide();
+    });
 });
 </script>

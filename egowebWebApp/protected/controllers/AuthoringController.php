@@ -686,7 +686,23 @@ class AuthoringController extends Controller
 				'pagination'=>false,
 			));
 			$this->renderPartial('_form_option', array('dataProvider'=>$dataProvider, 'questionId'=>$questionId, 'ajax'=>true), false, true);
-
+		} else if (isset($_POST['otherSpecify']) && isset($_POST['optionId'])) {
+            if (is_numeric($_POST['optionId'])) {
+                $option = questionOption::model()->findByPk($_POST['optionId']);
+                $option->otherSpecify = $_POST['otherSpecify'];
+                if(!$option->save())
+                    throw new CHttpException(500,"Other Specify update error!");
+    			$criteria=new CDbCriteria;
+    			$criteria=array(
+    				'condition'=>"questionId = " . $option->questionId,
+    				'order'=>'ordering',
+    			);
+    			$dataProvider=new CActiveDataProvider('QuestionOption',array(
+    				'criteria'=>$criteria,
+    				'pagination'=>false,
+    			));
+    			$this->renderPartial('_form_option', array('dataProvider'=>$dataProvider, 'questionId'=>$option->questionId, 'ajax'=>true), false, true);
+            }
 		}else if(isset($_POST['AlterList'])){
 			// edit existing alterList entry
 			if(is_numeric($_POST['AlterList']['id'])){

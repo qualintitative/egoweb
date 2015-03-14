@@ -27,7 +27,7 @@ class AdminController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index', 'download', 'user', 'useredit', 'userdelete', 'getlink'),
+				'actions'=>array('index', 'download', 'user', 'useredit', 'userdelete', 'getlink', 'migrate'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -206,4 +206,21 @@ class AdminController extends Controller
 			$this->redirect($this->createUrl('forgot'));
 		}
 	}
+
+    public function actionMigrate() {
+        $this->runMigrationTool();
+    }
+
+    private function runMigrationTool() {
+        $commandPath = Yii::app()->getBasePath() . DIRECTORY_SEPARATOR . 'commands';
+        $runner = new CConsoleCommandRunner();
+        $runner->addCommands($commandPath);
+        $commandPath = Yii::getFrameworkPath() . DIRECTORY_SEPARATOR . 'cli' . DIRECTORY_SEPARATOR . 'commands';
+        $runner->addCommands($commandPath);
+        $args = array('yiic', 'migrate', '--interactive=0');
+        ob_start();
+        $runner->run($args);
+        echo htmlentities(ob_get_clean(), null, Yii::app()->charset);
+    }
+
 }

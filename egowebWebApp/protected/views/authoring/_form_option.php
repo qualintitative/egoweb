@@ -1,5 +1,12 @@
 <div style="overflow-y:auto; height:320px">
 <div style="width:300px; float:left; margin-left:20px">
+<script>
+function ajaxCheck(optionId, checked){
+    $.post("/authoring/ajaxupdate",{optionId:optionId, otherSpecify:(checked == true ? 1:0),YII_CSRF_TOKEN:$("input[name='YII_CSRF_TOKEN']").val()}, function(data){
+        $('#data-<?php echo $questionId ?>').html(data);
+    });
+}
+</script>
 <?php
 #OK FOR SQL INJECTION
 $studyId = q("SELECT studyId FROM question WHERE id = " . $questionId)->queryScalar();
@@ -50,16 +57,23 @@ $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'option-grid-'.$questionId,
 	'dataProvider'=>$dataProvider,
 	'columns'=>array(
-				array(
-					'name'=>'name',
-					'value'=>'"<label>$data->name</label>" . "<div id=\"OPTION_" . $data->id  . "\" class=\"audioPlay\">" . (file_exists(Yii::app()->basePath."/../audio/".$data->studyId . "/OPTION/" . $data->id . ".mp3") ? ' .
-					'"<a class=\"playSound\" onclick=\"playSound($(this).attr(\'file\'))\" href=\"#\" file=\"/audio/$data->studyId/OPTION/$data->id.mp3\"><span class=\"fui-volume play-sound\"></span></a></div>" : "")',
-					'type'=>'raw',
-					'htmlOptions'=>array(
-						'style'=>'width:60%',
-					),
+            array(
+				'name'=>'name',
+				'value'=>'"<label>$data->name</label>" . "<div id=\"OPTION_" . $data->id  . "\" class=\"audioPlay\">" . (file_exists(Yii::app()->basePath."/../audio/".$data->studyId . "/OPTION/" . $data->id . ".mp3") ? ' .
+				'"<a class=\"playSound\" onclick=\"playSound($(this).attr(\'file\'))\" href=\"#\" file=\"/audio/$data->studyId/OPTION/$data->id.mp3\"><span class=\"fui-volume play-sound\"></span></a></div>" : "")',
+				'type'=>'raw',
+				'htmlOptions'=>array(
+					'style'=>'width:60%',
 				),
+            ),
 		'value',
+            array(
+				'name'=>'otherSpecify',
+				'value'=>'CHtml::checkBox("otherSpecify", $data->otherSpecify, array("onchange"=>"ajaxCheck($data->id, $(this).prop(\'checked\'))"));',
+				'type'=>'raw',
+				'htmlOptions'=>array(
+                ),
+            ),
 		array
 		(
 			'class'=>'CButtonColumn',

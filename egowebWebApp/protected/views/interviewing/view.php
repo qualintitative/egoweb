@@ -217,8 +217,8 @@ foreach($questions as $first) {
 	$form=$this->beginWidget('CActiveForm', array(
 		'id'=>'answer-form',
 		'htmlOptions'=>array('class'=>$first->subjectType == "NETWORK" ? 'col-sm-6' : 'col-sm-12'),
-		'enableAjaxValidation'=>true,
-		'action'=>'/interviewing/save/'.$study->id.($key ? "&key=" . $key : ""),
+		//'enableAjaxValidation'=>true,
+		//'action'=>'/interviewing/save/'.$study->id.($key ? "&key=" . $key : ""),
 	));
 	break;
 }
