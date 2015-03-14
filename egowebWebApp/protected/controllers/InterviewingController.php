@@ -322,12 +322,12 @@ class InterviewingController extends Controller
 					$checkedBoxes = explode(',',$Answer['value']);
                     foreach($checkedBoxes as $index){
                         if(isset($_POST['otherSpecify'][$index]) && $interviewId){
-                			$other = otherSpecify::model()->findByAttributes(array("interviewId"=>$interviewId, "optionId"=>$index));
+                			$other = OtherSpecify::model()->findByAttributes(array("interviewId"=>$interviewId, "optionId"=>$index));
                 			$value = $_POST['otherSpecify'][$index];
                             if(!$value)
                                continue;
                 			if(!$other)
-                			    $other = new otherSpecify;
+                			    $other = new OtherSpecify;
                             $other->interviewId = $interviewId;
                             $other->optionId = $index;
                             $other->value = $value;

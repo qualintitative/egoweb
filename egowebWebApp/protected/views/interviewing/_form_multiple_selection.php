@@ -90,7 +90,7 @@ if($rowColor != "" && $question->askingStyleList){
     $otherValue = array();
     foreach($options as $option){
         if($option->otherSpecify){
-            $otherSpecify = otherSpecify::model()->findByAttributes(array("interviewId"=>$interviewId, "optionId"=>$option->id));
+            $otherSpecify = OtherSpecify::model()->findByAttributes(array("interviewId"=>$interviewId, "optionId"=>$option->id));
                 if($otherSpecify)
                     $otherValue[$option->id] = $otherSpecify->value;
                 else

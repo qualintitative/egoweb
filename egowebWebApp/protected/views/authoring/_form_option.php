@@ -68,7 +68,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
             ),
 		'value',
             array(
-				'name'=>'otherSpecify',
+				'name'=>'Specify',
 				'value'=>'CHtml::checkBox("otherSpecify", $data->otherSpecify, array("onchange"=>"ajaxCheck($data->id, $(this).prop(\'checked\'))"));',
 				'type'=>'raw',
 				'htmlOptions'=>array(
