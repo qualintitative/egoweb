@@ -688,7 +688,7 @@ class AuthoringController extends Controller
 			$this->renderPartial('_form_option', array('dataProvider'=>$dataProvider, 'questionId'=>$questionId, 'ajax'=>true), false, true);
 		} else if (isset($_POST['otherSpecify']) && isset($_POST['optionId'])) {
             if (is_numeric($_POST['optionId'])) {
-                $option = questionOption::model()->findByPk($_POST['optionId']);
+                $option = QuestionOption::model()->findByPk($_POST['optionId']);
                 $option->otherSpecify = $_POST['otherSpecify'];
                 if(!$option->save())
                     throw new CHttpException(500,"Other Specify update error!");
