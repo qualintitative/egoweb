@@ -81,8 +81,7 @@ class Interview extends CActiveRecord
     {
         #OK FOR SQL INJECTION
         $interviewId = q("SELECT interviewId FROM answer WHERE value='$email' AND questionType = 'EGO_ID' AND studyId = $studyId")->queryScalar();
-        if
-        ($interviewId)
+        if ($interviewId)
             return Interview::model()->findByPk($interviewId);
         else
             return false;
@@ -99,11 +98,9 @@ class Interview extends CActiveRecord
         $answers = Answer::model()->findAllByAttributes( array( 'questionType' => 'EGO_ID',
                 'studyId' => $studyId ) );
 
-        foreach
-        ( $answers as $answer )
+        foreach ( $answers as $answer )
         {
-            if
-            ( $answer->value == $primekey )
+            if ( $answer->value == $primekey )
             {
                 return Interview::model()->findByPk( $answer->interviewId );
             }
@@ -114,8 +111,7 @@ class Interview extends CActiveRecord
         $egoQs = Question::model()->findAll($criteria);
         $study = Study::model()->findByPk($studyId);
 
-        if
-        (count($egoQs) == 0)
+        if (count($egoQs) == 0)
             return false;
 
         $interview = new Interview;
@@ -125,8 +121,7 @@ class Interview extends CActiveRecord
 
         $prefill['prime_key'] = $primekey;
 
-        foreach
-        ($egoQs as $egoQ)
+        foreach ($egoQs as $egoQ)
         {
             $egoIdQ = new Answer;
             $egoIdQ->interviewId = $interview->id;
@@ -135,8 +130,7 @@ class Interview extends CActiveRecord
             $egoIdQ->answerType = "TEXTUAL";
             $egoIdQ->questionId = $egoQ->id;
             $egoIdQ->skipReason = "NONE";
-            if
-            (isset($prefill[$egoQ->title]))
+            if (isset($prefill[$egoQ->title]))
             {
                 $egoIdQ->value = $prefill[$egoQ->title];
             }else
@@ -164,26 +158,22 @@ class Interview extends CActiveRecord
         #OK FOR SQL INJECTION
         $studyId = q("SELECT studyId FROM answer WHERE interviewId = $id")->queryScalar();
 
-        if
-        (!$studyId)
+        if (!$studyId)
             return 'error';
         #OK FOR SQL INJECTION
         $firstId = q("SELECT id from question WHERE studyId = $studyId and subjectType = 'EGO_ID' ORDER by ordering")->queryScalar();
 
-        if
-        (!$firstId)
+        if (!$firstId)
             return '';
         $egoIdAnswer = Answer::model()->find(array(
                 'condition'=>"interviewId=:interviewId AND questionId = $firstId AND value != ''",
                 'params'=>array(':interviewId'=>$id),
             ));
 
-        if
-        (isset($egoIdAnswer->value) && stristr($egoIdAnswer->value, '@'))
+        if (isset($egoIdAnswer->value) && stristr($egoIdAnswer->value, '@'))
             #OK FOR SQL INJECTION
             return q("SELECT name FROM alterList WHERE email = '" .$egoIdAnswer->value . "'")->queryScalar();
-        else if
-            (isset($egoIdAnswer->value))
+        else if (isset($egoIdAnswer->value))
                 return $egoIdAnswer->value;
             else
                 return '';
@@ -207,14 +197,12 @@ class Interview extends CActiveRecord
         $ego_ids = array();
         foreach ($ego_id_questions as $question)
         {
-            if
-            ($question['answerType'] == "MULTIPLE_SELECTION")
+            if ($question['answerType'] == "MULTIPLE_SELECTION")
             {
                 #OK FOR SQL INJECTION
                 $optionId = decrypt(q("SELECT value FROM answer WHERE interviewId = " . $interview['id']  . " AND questionId = " . $question['id'])->queryScalar());
 
-                if
-                ($optionId && is_numeric($optionId))
+                if ($optionId && is_numeric($optionId))
                 {
                     //$optionId = decrypt($optionId);
                     #OK FOR SQL INJECTION
@@ -223,14 +211,12 @@ class Interview extends CActiveRecord
             }else
             {
                 $id_response = Answer::model()->findByAttributes(array("interviewId" => $interview['id'], "questionId"=>$question['id']));
-                if
-                ($id_response)
+                if ($id_response)
                     $ego_ids[] = $id_response->value;
             }
         }
 
-        if
-        (isset($ego_ids))
+        if (isset($ego_ids))
             $egoId = implode("_", $ego_ids);
 
         return $egoId;
@@ -240,23 +226,19 @@ class Interview extends CActiveRecord
     {
         #OK FOR SQL INJECTION
         $interview = Interview::model()->findByPk((int)$interviewId);
-        if
-        ($interview && $study && $study->multiSessionEgoId)
+        if ($interview && $study && $study->multiSessionEgoId)
         {
             #OK FOR SQL INJECTION
             $egoValue = decrypt(q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $study->multiSessionEgoId)->queryScalar());
             #OK FOR SQL INJECTION
             $multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-            if
-            ($multiIds)
+            if ($multiIds)
             {
                 $answers = Answer::model()->findAllByAttributes(array('questionId'=>$multiIds));
                 $interviewIds = array();
-                foreach
-                ($answers as $answer)
+                foreach ($answers as $answer)
                 {
-                    if
-                    ($answer->value == $egoValue)
+                    if ($answer->value == $egoValue)
                     {
                         $interviewIds[] = $answer->interviewId;
                     }
@@ -273,8 +255,7 @@ class Interview extends CActiveRecord
     public static function interpretTags($string, $interviewId = null, $alterId1 = null, $alterId2 = null)
     {
 
-        if
-        (!$interviewId)
+        if (!$interviewId)
             return $string;
 
         #OK FOR SQL INJECTION
@@ -289,17 +270,14 @@ class Interview extends CActiveRecord
 
         $interviewId = Interview::multiInterviewIds($interviewId, $study);
 
-        if
-        (is_array($interviewId))
+        if (is_array($interviewId))
             $interviewId = implode(",", $interviewId);
 
         // parse out and replace variables
         preg_match_all('#<VAR (.+?) />#ims', $string, $vars);
-        foreach
-        ($vars[1] as $var)
+        foreach ($vars[1] as $var)
         {
-            if
-            (preg_match('/:/', $var))
+            if (preg_match('/:/', $var))
             {
                 list($sS, $sQ) = explode(":", $var);
 
@@ -311,11 +289,9 @@ class Interview extends CActiveRecord
                 $question = Question::model()->findByAttributes(array('title'=>$var, 'studyId'=>$studyId));
             }
 
-            if
-            ($question)
+            if ($question)
             {
-                if
-                ($interviewId != null)
+                if ($interviewId != null)
                 {
                     $end = " AND interviewId in (". $interviewId .")";
                 }else
@@ -329,21 +305,23 @@ class Interview extends CActiveRecord
                 );
                 $lastAnswer = Answer::model()->find($criteria);
             }
-            if
-            (isset($lastAnswer))
+            if (isset($lastAnswer))
             {
-                if
-                ($question->answerType == "MULTIPLE_SELECTION")
+                if ($question->answerType == "MULTIPLE_SELECTION")
                 {
                     $optionIds = explode(",", $lastAnswer->value);
                     $lastAnswer->value = "";
-                    foreach
-                    ($optionIds as $optionId)
+                    foreach  ($optionIds as $optionId)
                     {
                         $option = QuestionOption::model()->findbyPk($optionId);
-                        if
-                        ($option)
-                            $lastAnswer->value .= $option->name . "\n";
+                        if ($option)
+                        {
+                            $lastAnswer->value .= $option->name;
+                            $otherSpecify = OtherSpecify::model()->findByAttributes(array("optionId"=>$option->id, "interviewId"=>$interviewId));
+                            if ($otherSpecify)
+                                $lastAnswer->value .= " (" . $otherSpecify->value . ")";
+                            $lastAnswer->value .= "; ";
+                        }
                     }
                 }
                 $string =  preg_replace('#<VAR '.$var.' />#', $lastAnswer->value, $string);
@@ -355,29 +333,24 @@ class Interview extends CActiveRecord
 
         // performs calculations on questions
         preg_match_all('#<CALC (.+?) />#ims', $string, $calcs);
-        foreach
-        ($calcs[1] as $calc)
+        foreach ($calcs[1] as $calc)
         {
             preg_match('/(\w+)/', $calc, $vars);
-            foreach
-            ($vars as $var)
+            foreach ($vars as $var)
             {
-                if
-                (preg_match('/:/', $var))
+                if (preg_match('/:/', $var))
                 {
                     list($sS, $sQ) = explode(":", $var);
                     #OK FOR SQL INJECTION
                     $sId = q("SELECT id FROM study WHERE name = '".$sS ."'")->queryScalar();
                     $question = Question::model()->findByAttributes(array('title'=>$sQ, 'studyId'=>$sId));
-                }else
+                } else
                 {
                     $question = Question::model()->findByAttributes(array('title'=>$var, 'studyId'=>$studyId));
                 }
-                if
-                ($question)
+                if ($question)
                 {
-                    if
-                    ($interviewId != null)
+                    if ($interviewId != null)
                     {
                         $end = " AND interviewId in (". $interviewId . ")";
                     }else
@@ -391,8 +364,7 @@ class Interview extends CActiveRecord
                     );
                     $lastAnswer = Answer::model()->find($criteria);
                 }
-                if
-                (isset($lastAnswer))
+                if (isset($lastAnswer))
                     $logic =  preg_replace('#'.$var.'#', $lastAnswer->value, $calc);
                 else
                     $logic =  preg_replace('#'.$var.'#', '', $calc);
@@ -405,13 +377,11 @@ class Interview extends CActiveRecord
 
         // counts numbers of times question is answered with string
         preg_match_all('#<COUNT (.+?) />#ims', $string, $counts);
-        foreach
-        ($counts[1] as $count)
+        foreach ($counts[1] as $count)
         {
             list($qTitle, $answer) = preg_split('/\s/', $count);
             $answer = str_replace('"', '', $answer);
-            if
-            (preg_match('/:/', $qTitle))
+            if (preg_match('/:/', $qTitle))
             {
                 list($sS, $sQ) = explode(":", $qTitle);
                 #OK FOR SQL INJECTION
@@ -422,20 +392,16 @@ class Interview extends CActiveRecord
                 $question = Question::model()->findByAttributes(array('title'=>$qTitle, 'studyId'=>$studyId));
             }
             $criteria=new CDbCriteria;
-            if
-            (!$question)
+            if (!$question)
                 continue;
 
             $theAnswer = array();
-            if
-            ($question->answerType == "MULTIPLE_SELECTION")
+            if ($question->answerType == "MULTIPLE_SELECTION")
             {
                 $option = QuestionOption::model()->findbyAttributes(array('name'=>$answer, 'questionId'=>$question->id));
-                if
-                (!$option)
+                if (!$option)
                     continue;
-                if
-                ($interviewId != null)
+                if ($interviewId != null)
                 {
                     $end = " AND interviewId in (". $interviewId. ")";
                 }else
@@ -446,11 +412,9 @@ class Interview extends CActiveRecord
                     'condition'=>'questionId = '. $question->id . $end,
                 );
                 $answers = Answer::model()->findAll($criteria);
-                foreach
-                ($answers as $a)
+                foreach ($answers as $a)
                 {
-                    if
-                    (in_array($option->id, explode(",", $a->value)))
+                    if (in_array($option->id, explode(",", $a->value)))
                         $theAnswer[] = $a;
                 }
             }else
@@ -459,11 +423,9 @@ class Interview extends CActiveRecord
                     'condition'=>'1 = 1' . $end,
                 );
                 $answers = Answer::model()->findAll($criteria);
-                foreach
-                ($answers as $a)
+                foreach ($answers as $a)
                 {
-                    if
-                    ($a->value == $answer)
+                    if ($a->value == $answer)
                         $theAnswer[] = $a;
                 }
             }
@@ -472,12 +434,10 @@ class Interview extends CActiveRecord
 
         // date interpretter
         preg_match_all('#<DATE (.+?) />#ims', $string, $dates);
-        foreach
-        ($dates[1] as $date)
+        foreach ($dates[1] as $date)
         {
             list($qTitle, $amount, $period) = preg_split('/\s/', $date);
-            if
-            (preg_match('/:/', $qTitle))
+            if (preg_match('/:/', $qTitle))
             {
                 list($sS, $sQ) = explode(":", $qTitle);
                 $study = Study::model()->findByAttributes(array("name"=>$sS));
@@ -486,20 +446,17 @@ class Interview extends CActiveRecord
             {
                 $question = Question::model()->findByAttributes(array('title'=>$qTitle, 'studyId'=>$studyId));
             }
-            if
-            (strtolower($qTitle) == "now")
+            if(strtolower($qTitle) == "now")
             {
                 $answer = new Answer;
                 $answer->value = "now";
                 $timeFormat = "F jS, Y";
-            }else
+            } else
             {
-                if
-                (!$question || $question->answerType != "DATE")
+                if (!$question || $question->answerType != "DATE")
                     continue;
                 $criteria=new CDbCriteria;
-                if
-                ($interviewId != null)
+                if ($interviewId != null)
                     $end = " AND interviewId in (". $interviewId. ")";
                 else
                     $end = "";
@@ -509,17 +466,13 @@ class Interview extends CActiveRecord
                 $answer = Answer::model()->find($criteria);
                 $timeArray = Question::timeBits($question->timeUnits);
                 $timeFormat = "";
-                if
-                (in_array("BIT_MONTH", $timeArray))
+                if (in_array("BIT_MONTH", $timeArray))
                     $timeFormat = "F ";
-                if
-                (in_array("BIT_DAY", $timeArray))
+                if (in_array("BIT_DAY", $timeArray))
                     $timeFormat .= "jS ";
-                if
-                (in_array("BIT_YEAR", $timeArray))
+                if (in_array("BIT_YEAR", $timeArray))
                     $timeFormat .= ", Y";
-                if
-                (in_array("BIT_HOUR", $timeArray))
+                if (in_array("BIT_HOUR", $timeArray))
                     $timeFormat .= "h:i A";
             }
             $newDate = date($timeFormat, strtotime($answer->value . " " .$amount . " " . $period));
@@ -528,13 +481,11 @@ class Interview extends CActiveRecord
 
         // same as count, but limited to specific alter / alter pair questions
         preg_match_all('#<CONTAINS (.+?) />#ims', $string, $containers);
-        foreach
-        ($containers[1] as $contains)
+        foreach ($containers[1] as $contains)
         {
             list($qTitle, $answer) = preg_split('/\s/', $contains);
             $answer = str_replace('"', '', $answer);
-            if
-            (preg_match('/:/', $qTitle))
+            if (preg_match('/:/', $qTitle))
             {
                 list($sS, $sQ) = explode(":", $qTitle);
                 #OK FOR SQL INJECTION
@@ -545,39 +496,31 @@ class Interview extends CActiveRecord
                 $question = Question::model()->findByAttributes(array('title'=>$qTitle, 'studyId'=>$studyId));
             }
             $criteria=new CDbCriteria;
-            if
-            (!$question)
+            if (!$question)
                 continue;
-            if
-            ($interviewId != null)
+            if ($interviewId != null)
             {
                 $end = " AND interviewId in (". $interviewId . ")";
-                if
-                (is_numeric($alterId1))
+                if (is_numeric($alterId1))
                     $end .= " AND alterId1 = " . $alterId1;
-                if
-                (is_numeric($alterId2))
+                if (is_numeric($alterId2))
                     $end .= " AND alterId2 = " . $alterId2;
             }else
             {
                 $end = "";
             }
-            if
-            ($question->answerType == "MULTIPLE_SELECTION")
+            if ($question->answerType == "MULTIPLE_SELECTION")
             {
                 $option = QuestionOption::model()->findbyAttributes(array('name'=>$answer, 'questionId'=>$question->id));
-                if
-                (!$option)
+                if (!$option)
                     continue;
                 $criteria=array(
                     'condition'=>'questionId = '. $question->id . $end,
                 );
                 $answers = Answer::model()->findAll($criteria);
-                foreach
-                ($answers as $a)
+                foreach ($answers as $a)
                 {
-                    if
-                    (in_array($option->id, explode(",", $a->value)))
+                    if (in_array($option->id, explode(",", $a->value)))
                         $theAnswer[] = $a;
                 }
             }else
@@ -586,11 +529,9 @@ class Interview extends CActiveRecord
                     'condition'=>"1 = 1" . $end,
                 );
                 $answers = Answer::model()->findAll($criteria);
-                foreach
-                ($answers as $a)
+                foreach ($answers as $a)
                 {
-                    if
-                    ($a->value == $answer)
+                    if ($a->value == $answer)
                         $theAnswer[] = $a;
                 }
             }
@@ -599,51 +540,45 @@ class Interview extends CActiveRecord
 
         // parse out and show logics
         preg_match_all('#<IF (.+?) />#ims', $string, $showlogics);
-        //print_r($showlogics);
-        foreach
-        ($showlogics[1] as $showlogic)
+        foreach ($showlogics[1] as $showlogic)
         {
             preg_match('/(.+?) (==|!=|<|>|<=|>=)+ (.+?) \"(.+?)\"/ims', $showlogic, $exp);
-            if
-            (count($exp) > 1)
+            if (count($exp) > 1)
             {
-                for
-                ($i = 1; $i < 3; $i++)
+                for ($i = 1; $i < 3; $i++)
                 {
-                    if
-                    ($i == 2 || is_numeric($exp[$i]))
+                    if ($i == 2 || is_numeric($exp[$i]))
                         continue;
-                    if
-                    (preg_match("#/>#", $exp[$i]))
+                    if (preg_match("#/>#", $exp[$i]))
                     {
                         $exp[$i] = Interview::interpretTags($exp[$i]);
                     }else
                     {
-                        if
-                        (preg_match('/:/', $exp[$i]))
+                        if (preg_match('/:/', $exp[$i]))
                         {
                             list($sS, $sQ) = explode(":", $exp[$i]);
                             #OK FOR SQL INJECTION
                             $sId = q("SELECT id FROM study WHERE name = '".$sS ."'")->queryScalar();
                             $question = Question::model()->findByAttributes(array('title'=>$sQ, 'studyId'=>$sId));
-                        }else
+                        } else
                         {
                             $question = Question::model()->findByAttributes(array('title'=>$exp[$i], 'studyId'=>$studyId));
                         }
-                        if
-                        (!$question)
+
+                        if (!$question)
                         {
                             $exp[$i] = "";
                             continue;
                         }
-                        if
-                        ($interviewId != null)
+
+                        if ($interviewId != null)
                         {
                             $end = " AND interviewId in (". $interviewId .")";
-                        }else
+                        } else
                         {
                             $end = "";
                         }
+
                         $criteria=new CDbCriteria;
                         $criteria=array(
                             'condition'=>"questionId = " . $question->id . $end,
@@ -655,13 +590,11 @@ class Interview extends CActiveRecord
                 }
                 $logic = 'return ' . $exp[1] . ' ' . $exp[2] . ' ' . $exp[3] . ';';
                 //echo $logic;
-                if
-                ($exp[1] && $exp[2] && $exp[3])
+                if ($exp[1] && $exp[2] && $exp[3])
                     $show = eval($logic);
                 else
                     $show = false;
-                if
-                ($show)
+                if ($show)
                 {
                     $string =  str_replace("<IF ".$showlogic." />", $exp[4], $string);
                 }else
@@ -688,19 +621,16 @@ class Interview extends CActiveRecord
             $alters = array('0'=>array('id'=>null));
         } else
         {
-            if
-            (isset($_POST['expressionId']) && $_POST['expressionId'])
+            if (isset($_POST['expressionId']) && $_POST['expressionId'])
             {
                 $stats = new Statistics;
                 $stats->initComponents($this->id, $expressionId);
             }
         }
 
-        foreach
-        ($alters as &$alter)
+        foreach ($alters as &$alter)
         {
-            if
-            (isset($alter['name']) && $alter['name']!="")
+            if (isset($alter['name']) && $alter['name']!="")
                 $alter['name'] = decrypt($alter['name']);
         }
 
@@ -714,108 +644,113 @@ class Interview extends CActiveRecord
             $study = Study::model()->findByPk($this->studyId);
             $optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
 
-    		// create an array with option ID as key
-    		$options = array();
-    		foreach ($optionsRaw as $option){
-    			$options[$option['id']] = $option['value'];
-    		}
-            foreach ($ego_id_questions as $question) {
+            // create an array with option ID as key
+            $options = array();
+            foreach ($optionsRaw as $option)
+            {
+                $options[$option['id']] = $option['value'];
+            }
+            foreach ($ego_id_questions as $question)
+            {
                 #OK FOR SQL INJECTION
                 $ego_ids[] = q("SELECT value FROM answer WHERE interviewId = " . $this->id  . " AND questionId = " . $question['id'])->queryScalar();
             }
-            foreach ($ego_ids as &$ego_id) {
+            foreach ($ego_ids as &$ego_id)
+            {
                 if ($ego_id!="")
                     $ego_id = decrypt($ego_id);
             }
             $answers[] = implode("_", $ego_ids);
             foreach ($ego_ids as $eid)
+            {
                 $answers[] = $eid;
-            foreach ($ego_questions as $question) {
+            }
+            foreach ($ego_questions as $question)
+            {
                 #OK FOR SQL INJECTION
                 $answer = q("SELECT value FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'])->queryScalar();
                 if ($answer)
                     $answer = decrypt($answer);
                 #OK FOR SQL INJECTION
                 $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'])->queryScalar();
-                if ($answer !== "" && $skipReason == "NONE") {
-                    if ($question['answerType'] == "SELECTION") {
+                if ($answer !== "" && $skipReason == "NONE")
+                {
+                    if ($question['answerType'] == "SELECTION")
+                    {
                         if (isset($options[$answer]))
                             $answers[] = $options[$answer];
                         else
                             $answers[] = "";
-                    } else if ($question['answerType'] == "MULTIPLE_SELECTION") {
+                    } else if ($question['answerType'] == "MULTIPLE_SELECTION")
+                    {
                         $optionIds = explode(',', $answer);
                         $list = array();
-                        foreach ($optionIds as $optionId) {
+                        foreach ($optionIds as $optionId)
+                        {
                             if (isset($options[$optionId]))
                                 $list[] = $options[$optionId];
                         }
                         $answers[] = implode('; ', $list);
-                    } else {
+                    } else
+                    {
                         $answers[] = $answer;
                     }
-                } else if (($skipReason == "DONT_KNOW" || $skipReason == "REFUSE")) {
+                } else if (($skipReason == "DONT_KNOW" || $skipReason == "REFUSE"))
+                {
                     if ($skipReason == "DONT_KNOW")
                         $answers[] = $study->valueDontKnow;
                     else
                         $answers[] = $study->valueRefusal;
-                } else {
+                } else
+                {
                     $answers[] = "";
                 }
             }
 
-            if (is_numeric($alter['id'])){
+            if (is_numeric($alter['id']))
+            {
                 $answers[] = $alter['name'];
                 foreach ($alter_questions as $question)
                 {
                     $expression = new Expression;
                     #OK FOR SQL INJECTION
                     $answer = q("SELECT value FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'])->queryScalar();
-                    if
-                    (strlen($answer) >= 8)
+                    if (strlen($answer) >= 8)
                         $answer = decrypt($answer);
                     #OK FOR SQL INJECTION
                     $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'])->queryScalar();
-                    if
-                    ($answer != "" && $skipReason == "NONE")
+                    if ($answer != "" && $skipReason == "NONE")
                     {
-                        if
-                        ($question['answerType'] == "SELECTION")
+                        if ($question['answerType'] == "SELECTION")
                         {
                             $answers[] = $options[$answer];
-                        }else if
-                            ($question['answerType'] == "MULTIPLE_SELECTION")
+                        } else if ($question['answerType'] == "MULTIPLE_SELECTION")
+                        {
+                            $optionIds = explode(',', $answer);
+                            $list = array();
+                            foreach ($optionIds as $optionId)
                             {
-                                $optionIds = explode(',', $answer);
-                                $list = array();
-                                foreach
-                                ($optionIds as $optionId)
-                                {
-                                    if
-                                    (isset($options[$optionId]))
-                                        $list[] = $options[$optionId];
-                                }
-                                if
-                                (count($list) == 0)
-                                    $answers[] = $study->valueNotYetAnswered;
-                                else
-                                    $answers[] = implode('; ', $list);
-                            }else
+                                if (isset($options[$optionId]))
+                                    $list[] = $options[$optionId];
+                            }
+                            if (count($list) == 0)
+                                $answers[] = $study->valueNotYetAnswered;
+                            else
+                                $answers[] = implode('; ', $list);
+                        } else
                         {
                             $answers[] = $answer;
                         }
                     } else if (!$answer && ($skipReason == "DONT_KNOW" || $skipReason == "REFUSE"))
-                        {
-                            if
-                            ($skipReason == "DONT_KNOW")
-                                $answers[] = $study->valueDontKnow;
-                            else
-                                $answers[] = $study->valueRefusal;
-                        }
+                    {
+                        if ($skipReason == "DONT_KNOW")
+                            $answers[] = $study->valueDontKnow;
+                        else
+                            $answers[] = $study->valueRefusal;
+                    }
                 }
             }
-            if
-            ($expressionId && isset($stats))
+            if ($expressionId && isset($stats))
             {
                 $answers[] = $stats->getDensity();
                 $answers[] = $stats->maxDegree();

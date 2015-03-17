@@ -579,6 +579,8 @@ class AuthoringController extends Controller
 
 	public function actionAjaxupdate()
 	{
+		Yii::app()->clientScript->scriptMap['jquery.js'] = false;
+		Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
 		if(isset($_POST['Question'])){
 			if(is_numeric($_POST['Question']['id']))
 				$model = Question::model()->findByPk((int)$_POST['Question']['id']);

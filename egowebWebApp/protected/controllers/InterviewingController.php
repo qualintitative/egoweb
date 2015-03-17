@@ -366,6 +366,7 @@ class InterviewingController extends Controller
 					$interview = Interview::model()->findByPk((int)$interviewId);
 					if(!$model[$array_id]->getError('value')){
 						$model[$array_id]->save();
+						$model[$array_id]->value = decrypt( $model[$array_id]->value );
 						if($interview->completed != -1 && is_numeric($_POST['page'])){
 							$interview->completed = (int)$_POST['page'] + 1;
 							$interview->save();
@@ -381,7 +382,6 @@ class InterviewingController extends Controller
 			}
 
 
-
 			if($errors == 0) {
 				$page = (int)$_POST['page'] + 1;
 				$this->redirect(Yii::app()->createUrl(
@@ -390,7 +390,7 @@ class InterviewingController extends Controller
 					'page='.$page.'&key=' . $key . $nodes
 				));
 			}
-			//die();
+
 		} else {
 
     		if(isset($_GET['interviewId'])){
