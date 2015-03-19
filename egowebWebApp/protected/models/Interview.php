@@ -324,7 +324,7 @@ class Interview extends CActiveRecord
                                 $answerArray[] = $option->name;
                         }
                     }
-                    $lastAnswer->value = implode(";", $answerArray);
+                    $lastAnswer->value = implode("; ", $answerArray);
                 }
                 $string =  preg_replace('#<VAR '.$var.' />#', $lastAnswer->value, $string);
             }else
