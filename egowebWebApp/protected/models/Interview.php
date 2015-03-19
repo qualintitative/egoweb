@@ -511,6 +511,7 @@ class Interview extends CActiveRecord
             {
                 $end = "";
             }
+            $theAnswer = array();
             if ($question->answerType == "MULTIPLE_SELECTION")
             {
                 $option = QuestionOption::model()->findbyAttributes(array('name'=>$answer, 'questionId'=>$question->id));
