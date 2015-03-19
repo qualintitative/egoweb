@@ -331,6 +331,8 @@ class InterviewingController extends Controller
                             $other->interviewId = $interviewId;
                             $other->optionId = $index;
                             $other->value = $value;
+                            if($Answer['alterId1'])
+                                $other->alterId = $Answer['alterId1'];
                             if(!$other->save())
                                 throw new CHttpException(500, $other->errors);
     			        }

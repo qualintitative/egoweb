@@ -483,14 +483,6 @@ class DataController extends Controller
 			die("nothing to export");
 
 		$study = Study::model()->findByPk((int)$_POST['studyId']);
-        #OK FOR SQL INJECTION
-		$optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
-
-		// create an array with option ID as key
-		$options = array();
-		foreach ($optionsRaw as $option){
-			$options[$option['id']] = $option['value'];
-		}
 
 		header("Content-Type: application/octet-stream");
 		header("Content-Disposition: attachment; filename=".seoString($study->name)."-other-specify-data".".csv");
@@ -504,18 +496,35 @@ class DataController extends Controller
 		echo implode(',', $headers) . "\n";
 
         #OK FOR SQL INJECTION
-		$other_qs = q("SELECT * FROM question WHERE otherSpecify = 1 AND studyId = ".$study->id)->queryAll();
+		$options = QuestionOption::model()->findAllByAttributes(array("otherSpecify"=>true, "studyId"=>$study->id));
+		if(!$options)
+		    die();
+		foreach($options as $option){
+    		$other_options[$option->id] = $option;
+    		if(!isset($other_qs[$option->questionId]))
+    		    $other_qs[$option->questionId] = Question::model()->findByPk($option->questionId);
+		}
 		$interviews = Interview::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
-
 		foreach ($interviews as $interview){
 			if(!isset($_POST['export'][$interview->id]))
 				continue;
 			foreach($other_qs as $question){
-				$answer = array();
-				if($question['subjectType'] == "ALTER"){
+    			    $answers = array();
+					$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interview->id));
+					foreach($answerList as $a){
+						if($a->alterId1 && $a->alterId2)
+							$answers[$a->questionId . "-" . $a->alterId1 . "and" . $a->alterId2] = $a;
+						else if ($a->alterId1 && ! $a->alterId2)
+							$answers[$a->questionId . "-" . $a->alterId1] = $a;
+						else
+							$answers[$a->questionId] = $a;
+					}
+				if($question->subjectType == "ALTER"){
 					$alters = Alters::model()->findAllByAttributes(array('interviewId'=>$interview->id));
 					foreach($alters as $alter){
+    					$answer = array();
                         #OK FOR SQL INJECTION
+                        /*
 						$response = q("SELECT otherSpecifyText FROM answer WHERE questionId = " . $question['id'] . " AND interviewId = " . $interview->id . "AND alterId1 = " . $alter->id)->queryScalar();
 						$responses = array();
 						foreach(preg_split('/;;/', $response) as $other){
@@ -526,37 +535,51 @@ class DataController extends Controller
 						}
 						if(count($responses) > 0)
 							$response = implode(";; ", $responses);
+                        */
+
+                        $optionIds = explode(",", $answers[$question->id . "-" . $alter->id]);
+                        $answerArray = array();
+                        foreach  ($optionIds as $optionId)
+                        {
+                            if (isset($other_options[$optionId])) {
+                                $otherSpecify = OtherSpecify::model()->findByAttributes(array("optionId"=>$optionId, "interviewId"=>$interview->id, "alterId"=>$alter->id));
+                                if ($otherSpecify)
+                                    $answerArray[] = $other_options[$optionId]->name . " (\"" . $otherSpecify->value . "\")";
+                                else
+                                    $answerArray[] = $other_options[$optionId]->name;
+                            }
+                        }
+
 						$answer[] = $interview->id;
 						$answer[] = Interview::getRespondant($interview->id);
-						$answer[] = $question['title'];
-						if($alter->name!="")
-						         $answer[] = decrypt($alter->name);
-						//$answer[] = $alter->name;
-						if($response!="")
-						         $answer[] = decrypt($response);
-						//$answer[] = $response;
+						$answer[] = $question->title;
+						$answer[] = $alter->name;
+                        $answer[] = implode("; ", $answerArray);
+
 						echo implode(',', $answer) . "\n";
 						flush();
 					}
-				}else{
-                    #OK FOR SQL INJECTION
-					$response = q("SELECT otherSpecifyText FROM answer WHERE questionId = " . $question['id'] . " AND interviewId = " . $interview->id)->queryScalar();
-					$responses = array();
-					foreach(preg_split('/;;/', $response) as $other){
-					    if($other && strstr($other, ':')){
-					    	list($key, $val) = preg_split('/:/', $other);
-					    	$responses[] = $options[$key] . ":" . '"'.$val.'"';
-					    }
-					}
-					if(count($responses) > 0)
-						$response = implode("; ", $responses);
+				} else {
+    				$answer = array();
+                    $optionIds = explode(",", $answers[$question->id]);
+                    $answerArray = array();
+                    foreach  ($optionIds as $optionId)
+                    {
+                        if (isset($other_options[$optionId])) {
+                            $otherSpecify = OtherSpecify::model()->findByAttributes(array("optionId"=>$optionId, "interviewId"=>$interview->id));
+                            if ($otherSpecify)
+                                $answerArray[] = $other_options[$optionId]->name . " (\"" . $otherSpecify->value . "\")";
+                            else
+                                $answerArray[] = $other_options[$optionId]->name;
+                        }
+                    }
+
 					$answer[] = $interview->id;
 					$answer[] = Interview::getRespondant($interview->id);
-					$answer[] = $question['title'];
+					$answer[] = $question->title;
 					$answer[] = "";
-						if($response!="")
-						         $answer[] = decrypt($response);
-					//$answer[] = $response;
+                    $answer[] = implode("; ", $answerArray);
+
 					echo implode(',', $answer) . "\n";
 					flush();
 				}

@@ -312,6 +312,25 @@ class ImportExportController extends Controller
 					}
 				}
 
+				if(count($interview->otherSpecifies->otherSpecify) != 0){
+					foreach($interview->otherSpecifies->otherSpecify as $other){
+						$newOther = new OtherSpecify;
+						foreach($other->attributes() as $key=>$value){
+							if($key != "id")
+								$newOther->$key = $value;
+						}
+						if(!preg_match("/,/", $newOther->interviewId))
+							$newOther->interviewId = $newInterview->id;
+
+						$newOther->alterId = $newAlterIds[intval($newOther->alterId)];
+
+						if(!$newOther->save()){
+							"OtherSpecify: " . print_r($newOther->errors);
+							die();
+						}
+					}
+				}
+
 				if(count($interview->graphs->graph) != 0){
 					foreach($interview->graphs->graph as $graph){
 						$newGraph = new Graph;

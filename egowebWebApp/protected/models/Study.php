@@ -898,6 +898,8 @@ class Study extends CActiveRecord
 				$graphs[$result->id] = $graph;
 				$note = Note::model()->findAllByAttributes(array("interviewId"=>$result->id));
 				$notes[$result->id] = $note;
+				$other = OtherSpecify::model()->findAllByAttributes(array("interviewId"=>$result->id));
+				$others[$result->id] = $other;
 			}
 		}
 		$text = <<<EOT
@@ -947,7 +949,7 @@ EOT;
 						$option->name = sanitizeXml($option->name);
 						$text .= <<<EOT
 
-			<option id="{$option->id}" name="{$option->name}" value="{$option->value}" ordering="{$option->ordering}"/>
+			<option id="{$option->id}" name="{$option->name}" value="{$option->value}" ordering="{$option->ordering}" otherSpecify="{$option->otherSpecify}"/>
 EOT;
 					}
 				}
@@ -1046,6 +1048,20 @@ EOT;
 					}
 					$text .= "
 			</notes>";
+				}
+
+				if(isset($others[$interview->id])){
+					$text .= "
+			<otherSpecifies>";
+					foreach($others[$interview->id] as $other){
+						$other->value = sanitizeXml($other->value);
+						$text .= <<<EOT
+
+				<otherSpecify id="{$other->id}" interviewId="{$other->interviewId}" optionId="{$other->optionId}" value="{$other->value}" alterId="{$other->alterId}" />
+EOT;
+					}
+					$text .= "
+			</otherSpecifies>";
 				}
 
 			$text .= "
