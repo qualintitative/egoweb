@@ -66,7 +66,7 @@ if($rowColor != "" && $question->askingStyleList){
 				'template'=>'{input}',
 				'class'=>'answerInput multiselect-'.$array_id,
 				'container'=>'',
-				'template'=>'{input}<input />',
+				'template'=>'{input}',
 				'separator'=>"",
 				'style'=>"margin-left:" . intval($maxwidth * .4) ."px; width:" . intval($maxwidth * .6) ."px",
 			)
