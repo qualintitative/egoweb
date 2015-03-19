@@ -322,6 +322,8 @@ class ImportExportController extends Controller
 						if(!preg_match("/,/", $newOther->interviewId))
 							$newOther->interviewId = $newInterview->id;
 
+						$newOther->optionId = $newOptionIds[intval($newOther->optionId)];
+
 						$newOther->alterId = $newAlterIds[intval($newOther->alterId)];
 
 						if(!$newOther->save()){

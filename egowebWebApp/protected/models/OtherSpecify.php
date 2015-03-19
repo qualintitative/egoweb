@@ -27,9 +27,8 @@ class OtherSpecify extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('value', 'required'),
-			array('optionId, interviewId', 'numerical', 'integerOnly'=>true),
-			array('value, alterId', 'length', 'max'=>255),
+			array('value, optionId, interviewId', 'required'),
+			array('value, alterId', 'length', 'max'=>2048),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, optionId, interviewId, value', 'safe', 'on'=>'search'),

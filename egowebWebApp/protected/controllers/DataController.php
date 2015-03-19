@@ -537,7 +537,7 @@ class DataController extends Controller
 							$response = implode(";; ", $responses);
                         */
 
-                        $optionIds = explode(",", $answers[$question->id . "-" . $alter->id]);
+                        $optionIds = explode(",", $answers[$question->id . "-" . $alter->id]->value);
                         $answerArray = array();
                         foreach  ($optionIds as $optionId)
                         {
@@ -561,7 +561,7 @@ class DataController extends Controller
 					}
 				} else {
     				$answer = array();
-                    $optionIds = explode(",", $answers[$question->id]);
+                    $optionIds = explode(",", $answers[$question->id]->value);
                     $answerArray = array();
                     foreach  ($optionIds as $optionId)
                     {
