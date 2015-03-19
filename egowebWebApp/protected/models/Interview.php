@@ -311,18 +311,20 @@ class Interview extends CActiveRecord
                 {
                     $optionIds = explode(",", $lastAnswer->value);
                     $lastAnswer->value = "";
+                    $answerArray = array();
                     foreach  ($optionIds as $optionId)
                     {
                         $option = QuestionOption::model()->findbyPk($optionId);
                         if ($option)
                         {
-                            $lastAnswer->value .= $option->name;
                             $otherSpecify = OtherSpecify::model()->findByAttributes(array("optionId"=>$option->id, "interviewId"=>$interviewId));
                             if ($otherSpecify)
-                                $lastAnswer->value .= " (" . $otherSpecify->value . ")";
-                            $lastAnswer->value .= "; ";
+                                $answerArray[] = $option->name . " (\"" . $otherSpecify->value . "\")";
+                            else
+                                $answerArray[] = $option->name;
                         }
                     }
+                    $lastAnswer->value = implode(";", $answerArray);
                 }
                 $string =  preg_replace('#<VAR '.$var.' />#', $lastAnswer->value, $string);
             }else
