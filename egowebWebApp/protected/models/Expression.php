@@ -299,10 +299,7 @@ class Expression extends CActiveRecord
 	public static function countExpression($id, $interviewId, $alterId1, $alterId2, $answers)
 	{
 		$countE = Expression::model()->findByPk($id);
-		if($countE->evalExpression($interviewId, $alterId1, $alterId2, $answers))
-			return 1;
-		else
-			return 0;
+		return $countE->evalExpression($interviewId, $alterId1, $alterId2, $answers);
 	}
 
 	public static function countQuestion($questionId, $interviewId, $operator, $alterId1 = null, $alterId2 = null)
