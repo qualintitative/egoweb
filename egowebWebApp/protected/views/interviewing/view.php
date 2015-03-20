@@ -96,7 +96,7 @@ if(!isset($key) || !$key){
 		});
 
 		if(<?php echo $completed; ?> == -1){
-			$("input").prop('disabled', true);
+            $("input").prop( "readonly", "readonly");
 			$("select").prop('disabled', true);
 			$(".orangebutton").prop('disabled', false);
 			$(".graybutton").prop('disabled', false);
