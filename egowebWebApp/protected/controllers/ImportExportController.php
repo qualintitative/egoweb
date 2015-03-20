@@ -18,7 +18,7 @@ class ImportExportController extends Controller
 		$merge = false;
 
 		foreach($study->attributes() as $key=>$value){
-			if($key != "id")
+			if($key != "id" && $newStudy->hasAttribute($key))
 				$newStudy->$key = $value;
 			if($key == "name"){
 				$oldStudy = Study::model()->findByAttributes(array("name"=>$value));
