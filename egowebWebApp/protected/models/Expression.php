@@ -307,18 +307,20 @@ class Expression extends CActiveRecord
 
 	public static function countQuestion($questionId, $interviewId, $operator, $alterId1 = null, $alterId2 = null)
 	{
-		$alter = ""; $alter2 = "";
+
+        $attributes["questionId"] = $questionId;
+        $attributes["interviewId"] = $interviewId;
 		if($alterId1 != null)
-			$alter = " AND alterId1 = " . $alterId1;
+			$attributes["alterId1"] = $alterId1;
 		if($alterId2 != null)
-			$alter2 = " AND alterId2 = " . $alterId2;
-        #OK FOR SQL INJECTION
-		$answer = q("SELECT value FROM answer WHERE questionId = " . $questionId . " AND interviewId = " . $interviewId . $alter . $alter2)->queryScalar();
-		if(!$answer || !is_numeric($answer)){
+			$attributes["alterId2"] = $alterId2;
+
+        $answer = Answer::model()->findByAttributes($attributes);
+		if(!$answer || !is_numeric($answer->value)){
 			return 0;
 		}else{
 			if($operator == "Sum")
-				return $answer;
+				return $answer->value;
 			else
 				return 1;
 		}
