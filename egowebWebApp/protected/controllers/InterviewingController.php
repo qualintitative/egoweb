@@ -63,7 +63,6 @@ class InterviewingController extends Controller
 		if(isset($_POST['Answer']))
 		{
 
-			$study = Study::model()->findByPk($id);
 			$errors = 0;
 
 			if(stristr($id, "key"))
@@ -368,7 +367,8 @@ class InterviewingController extends Controller
 					$interview = Interview::model()->findByPk((int)$interviewId);
 					if(!$model[$array_id]->getError('value')){
 						$model[$array_id]->save();
-						$model[$array_id]->value = decrypt( $model[$array_id]->value );
+						if(strlen($model[$array_id]->value) >= 8)
+						    $model[$array_id]->value = decrypt( $model[$array_id]->value );
 						if($interview->completed != -1 && is_numeric($_POST['page'])){
 							$interview->completed = (int)$_POST['page'] + 1;
 							$interview->save();
