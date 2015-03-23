@@ -696,7 +696,7 @@ class Interview extends CActiveRecord
                         $answers[] = implode('; ', $list);
                     } else
                     {
-                        $answers[] = $answer;
+                        $answers[] = str_replace(',', '', $answer);
                     }
                 } else if (($skipReason == "DONT_KNOW" || $skipReason == "REFUSE"))
                 {

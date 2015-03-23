@@ -519,6 +519,11 @@ class visualize extends Plugin
 			$alterIds[] = $alter['id'];
 			$alterNames[$alter['id']] = decrypt($alter['name']);
 		}
+
+        $expression = Expression::model()->findByPk($this->id);
+        if(!$expression)
+            return;
+
 		$this->stats = new Statistics;
 		$this->stats->initComponents($this->method, $this->id);
 
@@ -557,7 +562,7 @@ class visualize extends Plugin
 					$this->answers[$answer->questionId] = $answer;
 			}
 
-		$expression = Expression::model()->findByPk($this->id);
+
 		if($expression->questionId)
 			$expression->question = Question::model()->findByPk($expression->questionId);
 
