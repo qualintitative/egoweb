@@ -218,7 +218,7 @@ class ImportExportController extends Controller
 		$questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
 		if (count($questions) > 0) {
 			foreach ($questions as $question) {
-    			if ($question->subjectRtpe == "NETWORK") {
+    			if ($question->subjectType == "NETWORK") {
     				$params = json_decode(htmlspecialchars_decode($question->networkParams), true);
     				if($params){
     					foreach($params as $k => &$param){
