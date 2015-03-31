@@ -28,9 +28,9 @@ class LoginForm extends CFormModel
 			// password needs to be authenticated
 			array('password', 'authenticate'),
 			// captcha must pass if required
-                        array('username,password,verifyCode','required','on'=>'captchaRequired'),
-                        array('verifyCode', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements(), 'on'=>'captchaRequired'),
-                    );
+            array('username,password,verifyCode','required','on'=>'captchaRequired'),
+            array('verifyCode', 'captcha', 'allowEmpty'=>!CCaptcha::checkRequirements(), 'on'=>'captchaRequired')
+        );
 	}
 
 	/**
@@ -40,6 +40,7 @@ class LoginForm extends CFormModel
 	{
 		return array(
 			'rememberMe'=>'Remember me next time',
+			'username' => 'Email',
 		);
 	}
 

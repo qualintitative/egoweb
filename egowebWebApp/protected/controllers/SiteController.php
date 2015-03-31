@@ -40,8 +40,16 @@ class SiteController extends Controller
 				$password = $model->password;
 				$model->password = User::hashPassword($model->password,$salt).':'.$salt;
 				$model->confirm = $model->password;
-				if($model->save())
-					Yii::app()->request->redirect($this->createUrl("/site/login"));
+				if($model->save()){
+    				$model = User::model()->findByPk($model->id);
+                    $login = new LoginForm;
+                    $login->username = $model->email;
+                    $login->password = $password;
+                    // validate user input and redirect to the previous page if valid
+        			if($login->validate() && $login->login()){
+                        $this->redirect(array('/admin'));
+        			}
+				}
 			}
 			$this->render('create', array(
 				'model'=>$model,

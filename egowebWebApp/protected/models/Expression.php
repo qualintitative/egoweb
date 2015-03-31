@@ -279,7 +279,7 @@ class Expression extends CActiveRecord
 			foreach($subExpressions as $subExpression){
 				// prevent infinite loops!
 				$isTrue[$subExpression] = false;
-				if($subExpression == $this->id)
+				if(!$subExpression || $subExpression == $this->id)
 					continue;
 				$sub[$subExpression] = Expression::model()->findByPk($subExpression);
 				$isTrue[$subExpression] = $sub[$subExpression]->evalExpression($interviewId, $alterId1, $alterId2,$answers);

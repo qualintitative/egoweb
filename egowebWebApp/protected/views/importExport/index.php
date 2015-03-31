@@ -7,11 +7,11 @@
 <?php echo CHtml::form('/importExport/importstudy', 'post', array('id'=>'importForm','enctype'=>'multipart/form-data')); ?>
     <!-- MAX_FILE_SIZE must precede the file input field -->
     <!-- Name of input element determines name in $_FILES array -->
-    New Name (optional)
     <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo 'MAX = ' + Yii::app()->params['maxUploadFileSize']; ?>" />
-    <input id="userfile" name="userfile" type="file" />
+    <input id="userfile" name="files[]" type="file" multiple/>
+    New Name (optional)
     <input type="text" name="newName" />
-    <input type="submit" value="Send File" />
+    <input type="submit" value="Import" />
 </form>
 <br clear=all>
 <br clear=all>
