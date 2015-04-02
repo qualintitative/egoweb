@@ -189,6 +189,7 @@ class AdminController extends Controller
 				$model->password=User::model()->hashPassword($model->password,$salt).':'.$salt;
 				$model->confirm=$model->password;
 				if($model->save()){
+    				$model->email = decrypt($model->email);
 					$login=new LoginForm;
 					$login->username=$model->email;
 					$login->password=$password;

@@ -627,7 +627,7 @@ class Interview extends CActiveRecord
             if (isset($_POST['expressionId']) && $_POST['expressionId'])
             {
                 $stats = new Statistics;
-                $stats->initComponents($this->id, $expressionId);
+                $stats->initComponents($this->id, $_POST['expressionId']);
             }
         }
 
@@ -750,10 +750,12 @@ class Interview extends CActiveRecord
                             $answers[] = $study->valueDontKnow;
                         else
                             $answers[] = $study->valueRefusal;
+                    }else{
+                        $answers[] = "";
                     }
                 }
             }
-            if ($expressionId && isset($stats))
+            if (isset($stats))
             {
                 $answers[] = $stats->getDensity();
                 $answers[] = $stats->maxDegree();
