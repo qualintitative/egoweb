@@ -66,7 +66,6 @@ echo $form->hiddenField($model, 'interviewId',array('value'=>$interviewId));
 			);
         $egoValue = Answer::model()->find($criteria)->value;
         $multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-       // print_r($multiIds);
         #OK FOR SQL INJECTION
 
         $oldAnswers = Answer::model()->findAllByAttributes(array("questionId"=>$multiIds));
@@ -75,7 +74,7 @@ echo $form->hiddenField($model, 'interviewId',array('value'=>$interviewId));
                 $interviewIds[] = $oldA->interviewId;
         }
 
-		//$interviewIds = array_diff($interviewIds, array($interviewId));
+		$interviewIds = array_diff($interviewIds, array($interviewId));
 		$alters = array();
 		foreach($interviewIds as $i_id){
 			$criteria = array(
@@ -87,12 +86,12 @@ echo $form->hiddenField($model, 'interviewId',array('value'=>$interviewId));
 			}
 		}
 
-			if($alters){
-				echo "<b>Previous Alters</b><br><br>";
-				foreach($alters as $oldAlter){
-					echo $oldAlter. "<br>";
-				}
+		if($alters){
+			echo "<b>Previous Alters</b><br><br>";
+			foreach($alters as $oldAlter){
+				echo $oldAlter. "<br>";
 			}
+		}
 		?>
 		</div>
 		<?php endif; ?>
