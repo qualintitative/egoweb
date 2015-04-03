@@ -694,22 +694,6 @@ class Study extends CActiveRecord
 		return false;
 	}
 
-	public function multiStudyIds($interviewId){
-		if($this->multiSessionEgoId){
-			#OK FOR SQL INJECTION
-			$params = new stdClass();
-			$params->name = ':interviewId';
-			$params->value = $interviewId;
-			$params->dataType = PDO::PARAM_INT;
-
-			$egoValue = q("SELECT value FROM answer WHERE interviewId = :interviewId AND questionID = " . $this->multiSessionEgoId,array($params))->queryScalar();
-			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $this->multiSessionEgoId . ")")->queryColumn();
-			$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
-			return $studyIds;
-		}
-		return false;
-	}
-
 	public static function replicate($study, $questions, $options, $expressions, $answerLists = array())
 	{
 		$newQuestionIds = array();

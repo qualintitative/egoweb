@@ -543,7 +543,8 @@ class visualize extends Plugin
 			$questionIds = 0;
 
 		if($study->multiSessionEgoId){
-			$studyId = implode(",", $study->multiStudyIds($interview->id));
+			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
+			$studyId = implode(",", q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn());
 		}else{
 			$studyId = $interview->studyId;
 		}

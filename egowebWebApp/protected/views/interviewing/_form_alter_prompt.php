@@ -61,25 +61,36 @@ echo $form->hiddenField($model, 'interviewId',array('value'=>$interviewId));
 		<div id="previous_alters">
 		<?php
         #OK FOR SQL INJECTION
-		$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionId = " . $study->multiSessionEgoId)->queryScalar();
-        #OK FOR SQL INJECTION
+			$criteria = array(
+				'condition'=>"interviewId = $interviewId AND questionId = $study->multiSessionEgoId",
+			);
+        $egoValue = Answer::model()->find($criteria)->value;
         $multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
+       // print_r($multiIds);
         #OK FOR SQL INJECTION
-        $interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
-		$interviewIds = array_diff($interviewIds, array($interviewId));
+
+        $oldAnswers = Answer::model()->findAllByAttributes(array("questionId"=>$multiIds));
+        foreach($oldAnswers as $oldA){
+            if($oldA->value == $egoValue)
+                $interviewIds[] = $oldA->interviewId;
+        }
+
+		//$interviewIds = array_diff($interviewIds, array($interviewId));
 		$alters = array();
 		foreach($interviewIds as $i_id){
-			$aList =  q("SELECT * FROM alters WHERE FIND_IN_SET($i_id, interviewId) AND NOT FIND_IN_SET($interviewId, interviewId)")->queryAll();
+			$criteria = array(
+				'condition'=>"FIND_IN_SET($i_id, interviewId) AND NOT FIND_IN_SET($interviewId, interviewId)",
+			);
+			$aList =  Alters::model()->findAll($criteria);
 			foreach($aList as $a){
-				$alters[$a['id']] = $a;
+				$alters[$a->id] = $a->name;
 			}
 		}
 
-		array_unique($alters);
 			if($alters){
 				echo "<b>Previous Alters</b><br><br>";
 				foreach($alters as $oldAlter){
-					echo $oldAlter['name'] . "<br>";
+					echo $oldAlter. "<br>";
 				}
 			}
 		?>
