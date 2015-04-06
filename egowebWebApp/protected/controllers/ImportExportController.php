@@ -211,43 +211,71 @@ class ImportExportController extends Controller
     				}
     
     			}
-    
-    		}
-    
-    		// loop through questions and relink network params
-    		$questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
-    		if (count($questions) > 0) {
-    			foreach ($questions as $question) {
-        			if ($question->subjectType == "NETWORK") {
-        				$params = json_decode(htmlspecialchars_decode($question->networkParams), true);
-        				if($params){
-        					foreach($params as $k => &$param){
-        						if(stristr($param['questionId'], "expression")){
-        							list($label, $expressionId) = explode("_", $param['questionId']);
-        							if(isset($newExpressionIds[intval($expressionId)]))
-        								$expressionId = $newExpressionIds[intval($expressionId)];
-        							$param['questionId'] = "expression_" . $expressionId;
-        						}else{
-        							if(is_numeric($param['questionId']) && isset($newQuestionIds[intval($param['questionId'])]))
-        								$param['questionId'] = $newQuestionIds[intval($param['questionId'])];
-        							if(count($param['options']) > 0){
-        								foreach($param['options'] as &$option){
-        									if(isset($newOptionIds[intval($option['id'])]))
-        										$option['id'] = $newOptionIds[intval($option['id'])];
-        								}
-        							}
-        						}
-        					}
+
+        		// loop through questions and relink network params
+        		$questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
+        		if (count($questions) > 0) {
+        			foreach ($questions as $question) {
+            			if ($question->subjectType == "NETWORK") {
+            				$params = json_decode(htmlspecialchars_decode($question->networkParams), true);
+            				if($params){
+            					foreach($params as $k => &$param){
+            						if(stristr($param['questionId'], "expression")){
+            							list($label, $expressionId) = explode("_", $param['questionId']);
+            							if(isset($newExpressionIds[intval($expressionId)]))
+            								$expressionId = $newExpressionIds[intval($expressionId)];
+            							$param['questionId'] = "expression_" . $expressionId;
+            						}else{
+            							if(is_numeric($param['questionId']) && isset($newQuestionIds[intval($param['questionId'])]))
+            								$param['questionId'] = $newQuestionIds[intval($param['questionId'])];
+            							if(count($param['options']) > 0){
+            								foreach($param['options'] as &$option){
+            									if(isset($newOptionIds[intval($option['id'])]))
+            										$option['id'] = $newOptionIds[intval($option['id'])];
+            								}
+            							}
+            						}
+            					}
+            				}
+            				$question->networkParams = json_encode($params);
         				}
-        				$question->networkParams = json_encode($params);
-    				}
-                    if(isset($newExpressionIds[$question->answerReasonExpressionId]))
-    				    $question->answerReasonExpressionId = $newExpressionIds[$question->answerReasonExpressionId];
-    				if(isset($newExpressionIds[$question->networkRelationshipExprId]))
-    					$question->networkRelationshipExprId = $newExpressionIds[$question->networkRelationshipExprId];
-    				$question->save();
-    			}
+                        if(isset($newExpressionIds[$question->answerReasonExpressionId]))
+        				    $question->answerReasonExpressionId = $newExpressionIds[$question->answerReasonExpressionId];
+        				if(isset($newExpressionIds[$question->networkRelationshipExprId]))
+        					$question->networkRelationshipExprId = $newExpressionIds[$question->networkRelationshipExprId];
+        				$question->save();
+        			}
+        		}
+    		
+    		}else{
+                $questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
+                foreach ($questions as $question) {
+                    $qIds[$question->title] = $question->id;
+                }
+        		$options = QuestionOption::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
+                foreach ($options as $option) {
+                    $oIds[$option->questionId . "-" . $option->name] = $option->id;
+                }
+        		$expressions = Expression::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
+                foreach ($expressions as $expression) {
+                    $eIds[$expression->name] = $expression->id;
+                }
+        		foreach($study->questions->question as $question){
+            		$newQuestionIds[intval($question->attributes()['id'])] = $qIds[strval($question->attributes()['title'])];
+            		if(isset($question->option)){
+                		foreach($question->option as $option){
+                            $newOptionIds[intval($option->attributes()['id'])] = $oIds[strval($qIds[strval($question->attributes()['title'])] . "-" .$option->attributes()['name'])];
+                        }
+                    }
+                }
+    			if(count($study->expressions) != 0){
+    				foreach($study->expressions->expression as $expression){
+        				$newExpressionIds[intval($expression->attributes()['id'])] = $eIds[strval($expression->attributes()['name'])];
+                    }
+                }
     		}
+    
+
     
     		if(count($study->interviews) != 0){
     			foreach($study->interviews->interview as $interview){
@@ -386,7 +414,6 @@ class ImportExportController extends Controller
     									if($key == "alterId2" && isset($newAlterIds[intval($value)]))
     										$newAnswer->alterId2 = $newAlterIds[intval($value)];
     
-    								if(!$merge){
     
     									if($key == "questionId"){
     										$newAnswer->questionId = $newQuestionIds[intval($value)];
@@ -395,21 +422,18 @@ class ImportExportController extends Controller
     
     									if($key == "answerType")
     										$answerType = $value;
-    								}
     						}
     
-    						if(!$merge){
     
-    							if($answerType == "MULTIPLE_SELECTION" && !in_array($newAnswer->value, array($newStudy->valueRefusal,$newStudy->valueDontKnow,$newStudy->valueLogicalSkip,$newStudy->valueNotYetAnswered))){
-    								$values = explode(',', $newAnswer->value);
-    								foreach($values as &$value){
-    									if(isset($newOptionIds[intval($value)]))
-    										$value = $newOptionIds[intval($value)];
-    								}
-    								$newAnswer->value = implode(',', $values);
-    							}
+							if($answerType == "MULTIPLE_SELECTION" && !in_array($newAnswer->value, array($newStudy->valueRefusal,$newStudy->valueDontKnow,$newStudy->valueLogicalSkip,$newStudy->valueNotYetAnswered))){
+								$values = explode(',', $newAnswer->value);
+								foreach($values as &$value){
+									if(isset($newOptionIds[intval($value)]))
+										$value = $newOptionIds[intval($value)];
+								}
+								$newAnswer->value = implode(',', $values);
+							}
     
-    						}
     
     						$newAnswer->studyId = $newStudy->id;
     						$newAnswer->interviewId = $newInterview->id;
