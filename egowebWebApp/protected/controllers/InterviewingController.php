@@ -828,8 +828,11 @@ class InterviewingController extends Controller
             $params->dataType = PDO::PARAM_INT;
 
 			$studyId = q("SELECT studyId FROM interview WHERE id = :interviewId", array($params))->queryScalar();
-
-			$alters = Alters::model()->findAllByAttributes(array('interviewId'=>(int)$_POST['Alters']['interviewId']));
+			$criteria=array(
+				'condition'=>"FIND_IN_SET(" . $_POST['Alters']['interviewId'] .", interviewId)",
+				'order'=>'ordering',
+			);
+			$alters = Alters::model()->findAll($criteria);
 			$alterNames = array();
 			foreach($alters as $alter){
 				$alterNames[] = $alter->name;
@@ -860,34 +863,49 @@ class InterviewingController extends Controller
 				}
 			}
 
+            $foundAlter = false;
 			if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
                 #OK FOR SQL INJECTION
-				$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $model->interviewId . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
                 #OK FOR SQL INJECTION
                 $multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
                 #OK FOR SQL INJECTION
-                $interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
-				$interviewIds = array_diff($interviewIds, array($_POST['Alters']['interviewId']));
-				foreach($interviewIds as $interviewId){
-                    #OK FOR SQL INJECTION
-                    $params = new stdClass();
-                    $params->name = ':name';
-                    $params->value = $_POST['Alters']['name'];
-                    $params->dataType = PDO::PARAM_STR;
-					$oldAlterId = q("SELECT id FROM alters WHERE FIND_IN_SET (" . $interviewId . ", interviewId) and name = :name LIMIT 1", array($params))->queryScalar();
-					if($oldAlterId){
-						$model = Alters::model()->findByPk($oldAlterId);
-						$model->interviewId = $model->interviewId . ",". $_POST['Alters']['interviewId'];
-						break;
-					}
-				}
+
+    			$criteria=array(
+    				'condition'=>"interviewId = ". $_POST['Alters']['interviewId']." AND questionId IN (" . implode(",", $multiIds) . ")",
+    			);
+                $egoValue = Answer::model()->find($criteria);
+    			$criteria=array(
+    				'condition'=>"questionId IN (" . implode(",", $multiIds) . ")",
+    			);
+
+                $otherEgoValues = Answer::model()->findAll($criteria);
+                foreach($otherEgoValues as $other){
+                    if($other->value == $egoValue->value)
+                        $interviewIds[] = $other->interviewId;
+                }
+				$interviewIds = array_diff(array_unique($interviewIds), array($_POST['Alters']['interviewId']));
+
+                foreach($interviewIds as $iId){
+                    $criteria=array(
+                        'condition'=>"FIND_IN_SET (" . $iId . ", interviewId) ",
+                    );
+                    $alters = Alters::model()->findAll($criteria);
+                    foreach($alters as $alter){
+                        if($alter->name == $_POST['Alters']['name']){
+                            $alter->interviewId = $alter->interviewId . ",". $_POST['Alters']['interviewId'];
+                            $alter->save();
+                            $foundAlter = true;
+                        }
+                    
+                    }
+                }
 			}
 			$criteria=new CDbCriteria;
 			$criteria->condition = ('interviewId = '.$_POST['Alters']['interviewId']);
 			$criteria->select='count(ordering) AS ordering';
 			$row = Alters::model()->find($criteria);
 			$model->ordering = $row['ordering'];
-			if(!$model->getError('name'))
+			if(!$model->getError('name') && $foundAlter == false)
 				$model->save();
 			$interviewId = $_POST['Alters']['interviewId'];
 
