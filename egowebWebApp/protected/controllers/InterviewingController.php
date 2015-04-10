@@ -1079,7 +1079,14 @@ class InterviewingController extends Controller
 		if($egoIdQ){
 			$participants = q("SELECT " . $egoIdQ['useAlterListField'] . " FROM alterList where interviewerId = " . Yii::app()->user->id)->queryColumn();
 			if($participants){
-				$interviewIds = q("SELECT interviewId from answer where questionId = " .$egoIdQ['id'] . " AND value in ( '" . implode("','", $participants) . "' )")->queryColumn();
+        		$criteria = array(
+        			'condition'=>"questionId = " .$egoIdQ['id'],
+        		);
+                $answers = Answer::model()->findAll($criteria);
+                foreach($answers as $answer){
+                    if(in_array($answer->value, $participants))
+                        $interviewIds[] = $answer->interviewId;
+                }
 				if($interviewIds)
 					$restrictions = ' and id in (' . implode(",", $interviewIds) . ')';
 				else
