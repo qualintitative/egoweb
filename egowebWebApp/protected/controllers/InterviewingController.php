@@ -173,7 +173,7 @@ class InterviewingController extends Controller
                     #OK FOR SQL INJECTION
                     $params = new stdClass();
                     $params->name = ':studyId';
-                    $params->value = $_POST['studyId'];
+                    $params->value = $study->id;
                     $params->dataType = PDO::PARAM_INT;
 					$restricted = q("SELECT " . $field . " FROM alterList WHERE studyId = :studyId " . $interviewer, array($params))->queryColumn();
 					//have to decrypt the names from the AlterList table before checking against
