@@ -183,7 +183,7 @@ class InterviewingController extends Controller
 					}
 					
 					if(isset($interviewId)){
-    					$egoValues = Answer::model()->findByAttributes(array("studyId"=>$study->id, "questionId"=>$questions[$array_id]->id));
+    					$egoValues = Answer::model()->findAllByAttributes(array("studyId"=>$study->id, "questionId"=>$questions[$array_id]->id));
     					foreach ($egoValues as $egoValue){
         					if($egoValue && $egoValue->value == $Answer['value'] && $egoValue->interviewId != $interviewId)
         					    $model[$array_id]->addError('value', $Answer['value'] . " has already been used in this study");
