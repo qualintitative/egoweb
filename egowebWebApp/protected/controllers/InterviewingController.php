@@ -181,7 +181,15 @@ class InterviewingController extends Controller
 						$dname = decrypt($dname);
 						unset($dname);
 					}
-
+					
+					if(isset($interviewId)){
+    					$egoValues = Answer::model()->findByAttributes(array("studyId"=>$study->id, "questionId"=>$questions[$array_id]->id));
+    					foreach ($egoValue as $egoValue){
+    					if($egoValue && $egoValue->value == $Answer['value'])
+    					    $model[$array_id]->addError('value', $Answer['value'] . " has already been used in this study");
+    					}
+    				}
+                    
 					if(!in_array($Answer['value'], $restricted))
 						$model[$array_id]->addError('value', $Answer['value'] . " is either not in the participant list or has been assigned to another interviewer");
 				}
