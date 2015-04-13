@@ -184,9 +184,9 @@ class InterviewingController extends Controller
 					
 					if(isset($interviewId)){
     					$egoValues = Answer::model()->findByAttributes(array("studyId"=>$study->id, "questionId"=>$questions[$array_id]->id));
-    					foreach ($egoValue as $egoValue){
-    					if($egoValue && $egoValue->value == $Answer['value'])
-    					    $model[$array_id]->addError('value', $Answer['value'] . " has already been used in this study");
+    					foreach ($egoValues as $egoValue){
+        					if($egoValue && $egoValue->value == $Answer['value'])
+        					    $model[$array_id]->addError('value', $Answer['value'] . " has already been used in this study");
     					}
     				}
                     
