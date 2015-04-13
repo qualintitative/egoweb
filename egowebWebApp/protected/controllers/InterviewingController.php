@@ -1086,6 +1086,10 @@ class InterviewingController extends Controller
 		$restrictions = "";
 		if($egoIdQ){
 			$participants = q("SELECT " . $egoIdQ['useAlterListField'] . " FROM alterList where interviewerId = " . Yii::app()->user->id)->queryColumn();
+			foreach($participants as &$p){
+    			if(strlen($p) >= 8)
+    			    $p = decrypt($p);
+			}
 			if($participants){
         		$criteria = array(
         			'condition'=>"questionId = " .$egoIdQ['id'],
