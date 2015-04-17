@@ -22,7 +22,7 @@
 		); ?>
 
 <?php if($ajax == true): ?>
-	<?php echo CHtml::submitButton ("Add User");?>
+	<?php echo CHtml::submitButton ("Add User", array("class"=>"btn btn-primary btn-xs"));?>
 <?php else: ?>
 	<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
 <?php endif; ?>

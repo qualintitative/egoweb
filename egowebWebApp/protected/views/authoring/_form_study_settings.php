@@ -274,8 +274,6 @@ $(function(){
 		?>
 		</div>
 
-
-
 		<div id="showLink" style="padding:10px;clear:both;"></div>
 
 		<div style="float:left; width:400px;">
@@ -313,7 +311,8 @@ $(function(){
 				<?php echo CHtml::ajaxSubmitButton ("Add Alter",
 					CController::createUrl('ajaxupdate'),
 					array('update' => '#alterList'),
-					array('id'=>uniqid(), 'live'=>false));
+					array('id'=>uniqid(), 'live'=>false, "class"=>"btn btn-primary btn-xs")
+				);
 				?>
 				<?php $this->endWidget(); ?>
 			</div>
@@ -362,7 +361,7 @@ $(function(){
 			<?php echo CHtml::ajaxSubmitButton ("Add",
 				CController::createUrl('ajaxupdate'),
 				array('update' => '#alterPrompt'),
-				array('id'=>uniqid(), 'live'=>false, 'style'=>'float:left; margin:3px 5px;'));
+				array('id'=>uniqid(), 'live'=>false, 'style'=>'float:left; margin:3px 5px;', "class"=>"btn btn-primary btn-xs"));
 			?>
 			<?php $this->endWidget(); ?>
 			<div id="edit-alterPrompt" style="margin-top:15px;float:left;clear:both;"></div>

@@ -89,39 +89,6 @@ class Expression extends CActiveRecord
 	}
 
 	/**
-	 * FUNCTION
-	 * fetches all the answers for an alter / alter pair question
-	 *
-	 */
-    public function fetchAlterAnswers($questionId, $interviewId, $multi = false)
-    {
-        #OK FOR SQL INJECTION
-        $params = new stdClass();
-        $params->name = ':interviewId';
-        $params->value = $interviewId;
-        $params->dataType = PDO::PARAM_INT;
-
-        $alters = q("SELECT * FROM alters WHERE interviewId = :interviewId ",array($params))->queryAll();
-
-        #OK FOR SQL INJECTION
-        $params2 = new stdClass();
-        $params2->name = ':questionId';
-        $params2->value = $questionId;
-        $params2->dataType = PDO::PARAM_INT;
-
-        $answers = q("SELECT * FROM answer WHERE questionId = :questionId and interviewId = :interviewId",array($params2, $params))->queryAll();
-        foreach ($answers as $answer){
-            if($answer['questionType'] == "ALTER" && strlen($answer['value']) >= 8){
-                $array_id = $answer['questionId'] . '-' . $answer['alterId1'];
-                $this->answers[$array_id] = decrypt($answer['value']);
-            }else if($answer['questionType'] == "ALTER_PAIR" && strlen($answer['value']) >= 8){
-                $array_id = $answer['questionId'] . '-' . $answer['alterId1'] . 'and' . $answer['alterId2'] ;
-                $this->answers[$array_id] = decrypt($answer['value']);
-            }
-        }
-    }
-
-	/**
 	 * CORE FUNCTION
 	 * Show logic for the expressions. determines whether or not to display a question
 	 * returns either true/false or a number for the Counting expressions
@@ -175,40 +142,12 @@ class Expression extends CActiveRecord
 
 		if(is_numeric($questionId)){
 			if($subjectType == 'ALTER_PAIR'){
-				/*
-				if(!$this->answers){
-					if(strstr($interviewId, ",")){
-						foreach(explode(",", $interviewId) as $id){
-                            #OK FOR SQL INJECTION
-							$studyId = q("SELECT studyId FROM interview WHERE id = $id")->queryScalar();
-                            #OK FOR SQL INJECTION
-                            if(q("SELECT id FROM question WHERE id = $questionId and studyId = $studyId")->queryScalar())
-								$this->fetchAlterAnswers($questionId, $id);
-						}
-					}else{
-						$this->fetchAlterAnswers($questionId, $interviewId);
-					}
-				}*/
 				$array_id = $questionId . '-' .  $alterId1 . "and" . $alterId2;
 				if(isset($answers[$array_id]))
 					$answer = $answers[$array_id]->value;
 				else
 					$answer = "";
 			}else if($subjectType == 'ALTER'){
-				/*
-				if(!$this->answers){
-					if(strstr($interviewId, ",")){
-						foreach(explode(",", $interviewId) as $id){
-                            #OK FOR SQL INJECTION
-							$studyId = q("SELECT studyId FROM interview WHERE id = $id")->queryScalar();
-                            #OK FOR SQL INJECTION
-                            if(q("SELECT id FROM question WHERE id = $questionId and studyId = $studyId")->queryScalar())
-								$this->fetchAlterAnswers($questionId, $id);
-						}
-					}else{
-						$this->fetchAlterAnswers($questionId, $interviewId);
-					}
-				}*/
 				$array_id = $questionId . '-' .  $alterId1;
 				if(isset($answers[$array_id]))
 					$answer = $answers[$array_id]->value;
@@ -216,8 +155,6 @@ class Expression extends CActiveRecord
 					$answer = "";
 			}else{
 				$answer = $answers[$questionId]->value;
-                #OK FOR SQL INJECTION
-				//$answer = decrypt(q("SELECT value FROM answer WHERE questionId = $questionId AND interviewId in ($interviewId)")->queryScalar());
 			}
 		}
 
