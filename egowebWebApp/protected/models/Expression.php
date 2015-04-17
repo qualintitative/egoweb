@@ -128,6 +128,9 @@ class Expression extends CActiveRecord
 	 */
 	public function evalExpression($interviewId, $alterId1 = null, $alterId2 = null, $answers = null)
 	{
+    	if(!$interviewId)
+    	    return false;
+
 		if(isset($this->id))
 			$expression = $this;
 		else
@@ -144,11 +147,11 @@ class Expression extends CActiveRecord
 		if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
 			if(!stristr($interviewId, ",")){
                 #OK FOR SQL INJECTION
-				$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionID = " . $study->multiSessionEgoId)->queryScalar();
+				$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionId = " . $study->multiSessionEgoId)->queryScalar();
                 #OK FOR SQL INJECTION
                 $multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
                 #OK FOR SQL INJECTION
-				$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" .$egoValue . "'" )->queryColumn();
+				$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" . decrypt($egoValue) . "'" )->queryColumn();
 				$interviewId = implode(",", $interviewIds);
 			}
 		}

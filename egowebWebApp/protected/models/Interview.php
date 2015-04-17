@@ -538,7 +538,6 @@ class Interview extends CActiveRecord
                         $theAnswer[] = $a->value;
                 }
             }
-            echo "<div style='display:none'>".count($theAnswer). "answers"."</div>";
             $string =  str_replace("<CONTAINS ".$contains." />", count($theAnswer), $string);
         }
 
