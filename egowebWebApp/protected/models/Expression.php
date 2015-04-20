@@ -91,45 +91,25 @@ class Expression extends CActiveRecord
 	/**
 	 * CORE FUNCTION
 	 * Show logic for the expressions. determines whether or not to display a question
-	 * returns either true/false or a number for the Counting expressions
+	 * returns either true/false $interviewIdor a number for the Counting expressions
 	 */
 	public function evalExpression($interviewId, $alterId1 = null, $alterId2 = null, $answers = null)
 	{
     	if(!$interviewId)
     	    return false;
 
-		if(isset($this->id))
-			$expression = $this;
-		else
+		if(!isset($this->id))
 			return false;
 
-		if(!$expression)
-			return true;
 
 		if(isset($this->study))
 			$study = $this->study;
 		else
-			$study = Study::model()->findByPk($expression->studyId);
+			$study = Study::model()->findByPk($this->studyId);
 
-		if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
-			if(!stristr($interviewId, ",")){
-                #OK FOR SQL INJECTION
-				$egoValue = q("SELECT value FROM answer WHERE interviewId = " . $interviewId . " AND questionId = " . $study->multiSessionEgoId)->queryScalar();
-                #OK FOR SQL INJECTION
-                $multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-                #OK FOR SQL INJECTION
-				$interviewIds = q("SELECT interviewId FROM answer WHERE questionId in (" . implode(",", $multiIds) . ") AND value = '" . decrypt($egoValue) . "'" )->queryColumn();
-				$interviewId = implode(",", $interviewIds);
-			}
-		}
-		if(is_numeric($expression->questionId)){
-    		if(!$expression->question)
-    		    $expression->question = Question::model()->findByPk($expression->questionId);
-			$subjectType = $this->question->subjectType;
-			$questionId = $this->question->id;
-		}else{
-			$questionId = "";
-			$subjectType = "";
+		if(is_numeric($this->questionId)){
+    		if(!$this->question)
+    		    $this->question = Question::model()->findByPk($this->questionId);
 		}
 
 		$comparers = array(
@@ -140,59 +120,56 @@ class Expression extends CActiveRecord
 			'Less'=>'<'
 		);
 
-		if(is_numeric($questionId)){
-			if($subjectType == 'ALTER_PAIR'){
-				$array_id = $questionId . '-' .  $alterId1 . "and" . $alterId2;
-				if(isset($answers[$array_id]))
-					$answer = $answers[$array_id]->value;
-				else
-					$answer = "";
-			}else if($subjectType == 'ALTER'){
-				$array_id = $questionId . '-' .  $alterId1;
-				if(isset($answers[$array_id]))
-					$answer = $answers[$array_id]->value;
-				else
-					$answer = "";
+		if(is_numeric($this->questionId)){
+			if($this->question->subjectType == 'ALTER_PAIR'){
+				$array_id = $this->questionId . '-' .  $alterId1 . "and" . $alterId2;
+
+			}else if($this->question->subjectType == 'ALTER'){
+				$array_id = $this->questionId . '-' .  $alterId1;
 			}else{
-				$answer = $answers[$questionId]->value;
+    			$array_id = $this->questionId;
 			}
+			if(isset($answers[$array_id]))
+				$answer = $answers[$array_id]->value;
+			else
+				$answer = "";
 		}
 
-		if($expression->type == "Text"){
+		if($this->type == "Text"){
 			if(!$answer)
-				return $expression->resultForUnanswered;
-			if($expression->operator == "Contains"){
-				if(strstr($answer, $expression->value))
+				return $this->resultForUnanswered;
+			if($this->operator == "Contains"){
+				if(strstr($answer, $this->value))
 					return true;
-			}else if($expression->operator == "Equals"){
-				if($answer == $expression->value)
+			}else if($this->operator == "Equals"){
+				if($answer == $this->value)
 					return true;
 			}
-		}else if($expression->type == "Number"){
+		}else if($this->type == "Number"){
 			if(!$answer || !is_numeric($answer))
-				return $expression->resultForUnanswered;
-			$logic = "return " . $answer . " " . $comparers[$expression->operator] . " " . $expression->value . ";";
+				return $this->resultForUnanswered;
+			$logic = "return " . $answer . " " . $comparers[$this->operator] . " " . $this->value . ";";
 			return eval($logic);
-		}else if($expression->type == "Selection"){
+		}else if($this->type == "Selection"){
 			if(!$answer)
-				return $expression->resultForUnanswered;
+				return $this->resultForUnanswered;
 			$selectedOptions = explode(',', $answer);
-			$options = explode(',', $expression->value);
+			$options = explode(',', $this->value);
 			$trues = 0;
 			foreach($selectedOptions as $selectedOption){
 				if(!$selectedOption)
 					continue;
-				if($expression->operator == "Some" && in_array($selectedOption, $options))
+				if($this->operator == "Some" && in_array($selectedOption, $options))
 					return true;
-				if($expression->operator == "None" && in_array($selectedOption, $options))
+				if($this->operator == "None" && in_array($selectedOption, $options))
 					return false;
 				if(in_array($selectedOption, $options))
 					$trues++;
 			}
-			if($expression->operator == "None" || ($expression->operator == "All" && $trues >= count($options)))
+			if($this->operator == "None" || ($this->operator == "All" && $trues >= count($options)))
 				return true;
-		}else if($expression->type == "Counting"){
-			list($times, $expressionIds, $questionIds) = preg_split('/:/', $expression->value);
+		}else if($this->type == "Counting"){
+			list($times, $expressionIds, $questionIds) = preg_split('/:/', $this->value);
 			$count = 0;
 			if($expressionIds != ""){
 				$expressionIds = explode(',', $expressionIds);
@@ -203,34 +180,35 @@ class Expression extends CActiveRecord
 			if($questionIds != ""){
 				$questionIds = explode(',', $questionIds);
 				foreach($questionIds as $questionId){
-					$count = $count + Expression::countQuestion($questionId, $interviewId, $expression->operator);
+					$count = $count + Expression::countQuestion($questionId, $interviewId, $this->operator, $alterId1, $alterId2, $answers);
 				}
 			}
 			return ($times * $count);
-		} else if($expression->type == "Comparison"){
-			list($value, $expressionId) =  preg_split('/:/', $expression->value);
+		} else if($this->type == "Comparison"){
+			list($value, $expressionId) =  preg_split('/:/', $this->value);
 			$newE = Expression::model()->findByPk($expressionId);
 			$result = $newE->evalExpression($interviewId, $alterId1, $alterId2, $answers);
-			$logic = "return " . $result . " " . $comparers[$expression->operator] . " " . $value . ";";
+			$logic = "return " . $result . " " . $comparers[$this->operator] . " " . $value . ";";
 			return eval($logic);
-		} else if($expression->type == "Compound"){
-			$subExpressions = explode(',', $expression->value);
+		} else if($this->type == "Compound"){
+			$subExpressions = explode(',', $this->value);
 			$trues[$this->id] = 0;
-			foreach($subExpressions as $subExpression){
+			foreach($subExpressions as $subId){
 				// prevent infinite loops!
-				$isTrue[$subExpression] = false;
-				if(!$subExpression || $subExpression == $this->id)
+				$isTrue[$subId] = false;
+				if(!$subId || $subId == $this->id)
 					continue;
-				$sub[$subExpression] = Expression::model()->findByPk($subExpression);
-				$isTrue[$subExpression] = $sub[$subExpression]->evalExpression($interviewId, $alterId1, $alterId2,$answers);
-				if($expression->operator == "Some" && $isTrue[$subExpression])
+				$newE = Expression::model()->findByPk($subId);
+				$isTrue[$subId] = $newE->evalExpression($interviewId, $alterId1, $alterId2, $answers);
+
+				if($this->operator == "Some" && $isTrue[$subId])
 					return true;
-				if($isTrue[$subExpression])
+				if($isTrue[$subId])
 					$trues[$this->id]++;
 			}
-			if($expression->operator == "None" && $trues[$this->id] == 0)
+			if($this->operator == "None" && $trues[$this->id] == 0)
 				return true;
-			else if ($expression->operator == "All" && $trues[$this->id] == count($subExpressions))
+			else if ($this->operator == "All" && $trues[$this->id] == count($subExpressions))
 				return true;
 		}
 		return false;
@@ -242,22 +220,27 @@ class Expression extends CActiveRecord
 		return $countE->evalExpression($interviewId, $alterId1, $alterId2, $answers);
 	}
 
-	public static function countQuestion($questionId, $interviewId, $operator, $alterId1 = null, $alterId2 = null)
+	public static function countQuestion($questionId, $interviewId, $operator, $alterId1 = null, $alterId2 = null, $answers)
 	{
+        $question = Question::model()->findByPk($questionId);
+		if($question->subjectType == 'ALTER_PAIR'){
+			$array_id = $question->id . '-' .  $alterId1 . "and" . $alterId2;
 
-        $attributes["questionId"] = $questionId;
-        $attributes["interviewId"] = $interviewId;
-		if($alterId1 != null)
-			$attributes["alterId1"] = $alterId1;
-		if($alterId2 != null)
-			$attributes["alterId2"] = $alterId2;
+		}else if($question->subjectType == 'ALTER'){
+			$array_id = $question->id . '-' .  $alterId1;
+		}else{
+			$array_id = $question->id;
+		}
+		if(isset($answers[$array_id]))
+			$answer = $answers[$array_id]->value;
+		else
+			$answer = "";
 
-        $answer = Answer::model()->findByAttributes($attributes);
-		if(!$answer || !is_numeric($answer->value)){
+		if(!$answer || !is_numeric($answer)){
 			return 0;
 		}else{
 			if($operator == "Sum")
-				return $answer->value;
+				return $answer;
 			else
 				return 1;
 		}
