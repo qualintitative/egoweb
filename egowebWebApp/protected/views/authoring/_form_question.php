@@ -11,7 +11,7 @@ $form=$this->beginWidget('CActiveForm', array(
 	"htmlOptions"=>array("class"=>"form-horizontal")
 ));
 ?>
-<div class="form" style="height:320px; overflow-y:auto;">
+<div class="form" style="height:315px; overflow-y:auto;">
 
 <?php echo $form->errorSummary($model); ?>
 <?php echo $form->hiddenField($model,'id',array('value'=>$model->id)); ?>
@@ -467,6 +467,7 @@ function refresh(container){
 */
 ?>
 </div>
+<div class="btn-group" style="padding:5px">
 <?php if($ajax == true): ?>
 	<?php echo CHtml::ajaxSubmitButton (
 		$model->isNewRecord ? 'Create' : 'Save',
@@ -474,10 +475,10 @@ function refresh(container){
 		array(
 			'success' => 'js:function(data){data=data.split(";;;");console.log(data);$("#' . $model->id .' > h3").html($("#' . $model->id .' > h3").html().replace(data[0], data[1]));$(".optionLink").click(function(e){clickOption[$(this).parent().parent().attr("id")] = true;});$("#' . $model->id .' > h3").click();}',
 		),
-		array('id'=>uniqid(), 'live'=>false));
+		array('id'=>uniqid(), 'live'=>false, 'class'=>"btn btn-success btn-xs"));
 	?>
 <?php else: ?>
-	<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
+	<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('class'=>"btn btn-success btn-xs")); ?>
 <?php endif; ?>
 <?php if(!$model->isNewRecord): ?>
 <?php
@@ -485,30 +486,30 @@ function refresh(container){
 	echo CHtml::ajaxButton ("Delete",
 		CController::createUrl('ajaxdelete', array('form'=>'_form_question', 'Question[id]'=>$model->id)),
 		array('success' => 'js:function(data){$("#question-list").html(data);initList();}'),
-		array('id' => 'delete-'.$model->id, 'live'=>false)
+		array('id' => 'delete-'.$model->id, 'live'=>false, 'class'=>"btn btn-danger btn-xs")
 	);
 
 	echo CHtml::ajaxButton (CHtml::encode('Preview'),
 		CController::createUrl('preview', array('questionId'=>$model->id)),
 		array('update' => '#data-'.$model->id),
-		array('id' => uniqid(), 'live'=>false)
+		array('id' => uniqid(), 'live'=>false, 'class'=>"btn btn-info btn-xs")
 	);
 
 	echo CHtml::button(
 		CHtml::encode('Duplicate'),
-		array("submit"=>CController::createUrl('duplicate', array('questionId'=>$model->id)))
+		array("submit"=>CController::createUrl('duplicate', array('questionId'=>$model->id)), 'class'=>"btn btn-warning btn-xs")
 	);
 
 	if($model->subjectType == "NETWORK"){
 		echo CHtml::ajaxButton (CHtml::encode('Legend'),
 			CController::createUrl('ajaxload', array('questionId'=>$model->id, 'form'=>'_form_legend', 'studyId'=>$model->studyId)),
 			array('update' => '#data-'.$model->id),
-			array('id' => uniqid(), 'live'=>false)
+			array('id' => uniqid(), 'live'=>false, 'class'=>"btn btn-default btn-xs")
 		);
 	}
 ?>
 <?php endif; ?>
-
+</div>
 <?php $this->endWidget(); ?>
 
 <script>

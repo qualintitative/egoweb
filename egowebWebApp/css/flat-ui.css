@@ -776,7 +776,7 @@ fieldset[disabled] .btn-link:focus {
 }
 .btn-xs {
   padding: 6px 9px;
-  font-size: 12px;
+  font-size: 12px!important;
   line-height: 1.083;
   border-radius: 3px;
 }
