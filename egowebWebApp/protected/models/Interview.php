@@ -317,7 +317,11 @@ class Interview extends CActiveRecord
                         $option = QuestionOption::model()->findbyPk($optionId);
                         if ($option)
                         {
-                            $otherSpecify = OtherSpecify::model()->findByAttributes(array("optionId"=>$option->id, "interviewId"=>$interviewId));
+                            $criteria=new CDbCriteria;
+                            $criteria=array(
+                                'condition'=>"optionId = " . $option->id . " AND interviewId in ($interviewId)",
+                            );
+                            $otherSpecify = OtherSpecify::model()->find($criteria);
                             if ($otherSpecify)
                                 $answerArray[] = $option->name . " (\"" . $otherSpecify->value . "\")";
                             else
