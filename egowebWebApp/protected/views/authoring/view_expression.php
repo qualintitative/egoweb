@@ -1,3 +1,6 @@
+<?php
+    $this->pageTitle = $study->name;
+?>
 <h1>Expressions</h1>
 
 <div style="width:350px; float:left;">

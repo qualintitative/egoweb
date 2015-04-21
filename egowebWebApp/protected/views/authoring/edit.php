@@ -1,7 +1,7 @@
 <?php
 /* @var $this StudyController */
 /* @var $model Study */
-
+$this->pageTitle = $model->name;
 ?>
 
 <h1>Study Settings</h1>

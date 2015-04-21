@@ -1,6 +1,8 @@
 <?php
 /* @var $this InterviewingController */
 /* @var $dataProvider CActiveDataProvider */
+$this->pageTitle = "Interviewing";
+
 ?>
 
 <div class="view" style="width:360px;float:left;margin-right:30px">

@@ -157,10 +157,13 @@ class Expression extends CActiveRecord
 			$options = explode(',', $this->value);
 			$trues = 0;
 			foreach($selectedOptions as $selectedOption){
+
 				if(!$selectedOption)
 					continue;
 				if($this->operator == "Some" && in_array($selectedOption, $options))
 					return true;
+					
+
 				if($this->operator == "None" && in_array($selectedOption, $options))
 					return false;
 				if(in_array($selectedOption, $options))

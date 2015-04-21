@@ -225,6 +225,7 @@ class AuthoringController extends Controller
 	public function actionEgo_id($id)
 	{
 		$this->studyId=$id;
+		$study = Study::model()->findByPk($id);
 		if(isset($_POST['Question'])){
 			$model = new Question;
 			$model->attributes = $_POST['Question'];
@@ -256,6 +257,7 @@ class AuthoringController extends Controller
 		$this->render('view_question',array(
 			'model'=>$model,
 			'dataProvider'=>$dataProvider,
+			'study'=>$study,
 		));
 	}
 
@@ -265,6 +267,7 @@ class AuthoringController extends Controller
 	public function actionEgo($id)
 	{
 		$this->studyId=$id;
+		$study = Study::model()->findByPk($id);
 		if(isset($_POST['Question'])){
 			$model = new Question;
 			$model->attributes=$_POST['Question'];
@@ -296,6 +299,7 @@ class AuthoringController extends Controller
 		$this->render('view_question',array(
 			'model'=>$model,
 			'dataProvider'=>$dataProvider,
+			'study'=>$study,
 		));
 	}
 
@@ -305,6 +309,7 @@ class AuthoringController extends Controller
 	public function actionAlter($id)
 	{
 		$this->studyId=$id;
+		$study = Study::model()->findByPk($id);
 		if(isset($_POST['Question'])){
 			$model = new Question;
 			$model->attributes=$_POST['Question'];
@@ -335,6 +340,7 @@ class AuthoringController extends Controller
 		$this->render('view_question',array(
 			'model'=>$model,
 			'dataProvider'=>$dataProvider,
+			'study'=>$study,
 		));
 	}
 
@@ -344,6 +350,7 @@ class AuthoringController extends Controller
 	public function actionAlterpair($id)
 	{
 		$this->studyId=$id;
+		$study = Study::model()->findByPk($id);
 		if(isset($_POST['Question'])){
 			$model = new Question;
 			$model->attributes=$_POST['Question'];
@@ -374,6 +381,7 @@ class AuthoringController extends Controller
 		$this->render('view_question',array(
 			'model'=>$model,
 			'dataProvider'=>$dataProvider,
+			'study'=>$study,
 		));
 	}
 
@@ -383,6 +391,7 @@ class AuthoringController extends Controller
 	public function actionNetwork($id)
 	{
 		$this->studyId=$id;
+		$study = Study::model()->findByPk($id);
 		if(isset($_POST['Question'])){
 			$model = new Question;
 			$model->attributes=$_POST['Question'];
@@ -413,6 +422,7 @@ class AuthoringController extends Controller
 		$this->render('view_question',array(
 			'model'=>$model,
 			'dataProvider'=>$dataProvider,
+			'study'=>$study,
 		));
 	}
 
@@ -448,6 +458,7 @@ class AuthoringController extends Controller
 	public function actionExpression($id)
 	{
 		$this->studyId=$id;
+		$study = Study::model()->findByPk($id);
 		if(isset($_POST['Expression'])){
 			$model = Expression::model()->findByPk((int)$_POST['Expression']['id']);
 			if(!$model)
@@ -476,6 +487,7 @@ class AuthoringController extends Controller
 			'multi'=>$multi,
 			'studyId'=>$id,
 			'model'=>$model,
+			'study'=>$study,
 			'dataProvider'=>$dataProvider,
 		));
 	}

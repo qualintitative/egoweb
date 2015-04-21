@@ -1,6 +1,8 @@
 <?php
 
 /* @var $this AdminController */
+$this->pageTitle =  "Admin";
+
 ?>
 	<table cellspacing=0 cellpadding=0 class="admin">
 	<tr>

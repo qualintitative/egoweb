@@ -97,7 +97,7 @@ class InterviewingController extends Controller
 				if(!isset($interviewId) || !$interviewId)
 					$interviewId = $Answer['interviewId'];
 
-				if(!isset($answerList)){
+				if(!isset($answers)){
     				$interviewIds = Interview::multiInterviewIds($interviewId, $study);
     				if(is_array($interviewIds))
 					    $answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewIds));
@@ -409,18 +409,20 @@ class InterviewingController extends Controller
 
     		if(isset($_GET['interviewId'])){
     			$interviewId = CHtml::encode(strip_tags($_GET['interviewId']));
+    			if(!isset($answers)){
     				$interviewIds = Interview::multiInterviewIds($interviewId, $study);
     				if(is_array($interviewIds))
 					    $answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewIds));
     				else
 					    $answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewId));
-    			foreach($answerList as $answer){
-    				if($answer->alterId1 && $answer->alterId2)
-    					$answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
-    				else if ($answer->alterId1 && !$answer->alterId2)
-    					$answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
-    				else
-    					$answers[$answer->questionId] = $answer;
+        			foreach($answerList as $answer){
+        				if($answer->alterId1 && $answer->alterId2)
+        					$answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
+        				else if ($answer->alterId1 && !$answer->alterId2)
+        					$answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
+        				else
+        					$answers[$answer->questionId] = $answer;
+        			}
     			}
     			$questions = Study::buildQuestions($study, $currentPage, $interviewId, $answers);
     			if(!$questions){

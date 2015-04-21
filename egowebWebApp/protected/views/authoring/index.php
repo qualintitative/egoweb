@@ -1,6 +1,7 @@
 <?php
 /* @var $this StudyController */
 /* @var $dataProvider CActiveDataProvider */
+$this->pageTitle = "Authoring";
 ?>
 
 <div class="form">

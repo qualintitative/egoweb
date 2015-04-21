@@ -1,5 +1,6 @@
 <?php
 /* @var $this DataController */
+$this->pageTitle = "Data Processing";
 ?>
 
 <div class="view" style="width:360px;float:left;margin-right:30px">

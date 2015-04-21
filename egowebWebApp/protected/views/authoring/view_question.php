@@ -1,3 +1,6 @@
+<?php
+    $this->pageTitle = $study->name;
+?>
 <h1><?php echo $model->subjectType; ?> Questions</h1>
 
 <?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/summernote.js'); ?>

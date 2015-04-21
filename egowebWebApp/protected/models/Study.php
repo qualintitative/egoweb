@@ -316,7 +316,7 @@ class Study extends CActiveRecord
 			}
 			foreach($networkQuestions as $question){
 				if($interviewId){
-					if(isset($expressions[$question->id]) && !$expressions[$question->id]->evalExpression($interviewId,null,null, $answers))
+					if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($interviewId,null,null, $answers))
 						continue;
 					if($answers[$question->id]->value == $study->valueNotYetAnswered)
 						continue;
@@ -658,10 +658,10 @@ class Study extends CActiveRecord
 
 				foreach ($networkQuestions as $question){
 					if($i == $pageNumber){
-						if(isset($expressions[$question->id]) && !$expressions[$question->id]->evalExpression($interviewId,null,null, $answers)){
-							if(isset($answers[$questionId]) && $answers[$questionId]->value != $study->valueLogicalSkip){
-								$answers[$questionId]->value = $study->valueLogicalSkip;
-								$answers[$questionId]->save();
+						if(isset($expressions[$question->answerReasonExpressionId]) && !$expressions[$question->answerReasonExpressionId]->evalExpression($interviewId,null,null, $answers)){
+							if(isset($answers[$question->id]) && $answers[$question->id]->value != $study->valueLogicalSkip){
+								$answers[$question->id]->value = $study->valueLogicalSkip;
+								$answers[$question->id]->save();
 							}
 							continue;
 						}

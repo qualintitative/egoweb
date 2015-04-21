@@ -96,7 +96,7 @@
 					</li>
 				</ul>
 				<?php endif; ?>
-				<a class="titlelink" href="/admin">EgoWeb 2.0</a><span class="title">Exploring social networks via interviews</span>
+				<a class="titlelink" href="/admin">EgoWeb 2.0</a><span class="title"><?php echo CHtml::encode($this->pageTitle); ?></span>
 			</div>
 			</nav>
 			<div id="menubar">
