@@ -6,6 +6,17 @@ $form=$this->beginWidget('CActiveForm', array(
     'action'=>'/authoring/expression/'.$studyId,
 
 ));
+$criteria=new CDbCriteria;
+$criteria=array(
+    'condition'=>"studyId = " . $studyId . " AND type='Counting'",
+);
+
+echo CHtml::dropdownlist(
+    'expressionId',
+    '',
+    CHtml::listData(Expression::model()->findAll($criteria), 'id', 'name'),
+    array('empty' => 'Choose One')
+);
 if($model->value == "")
 	$model->value = "1:" . $expression->id;
 

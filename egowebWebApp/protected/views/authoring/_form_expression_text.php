@@ -1,4 +1,46 @@
-<span>Expression about <?php echo Question::getTitle($question->id); ?></span>
+<script>
+function changeEQ(questionId){
+    $.get("/authoring/ajaxload?form=_form_expression_question&questionId="
+        + questionId + "&expressionId=<?php echo $model->id; ?>",
+        function(data){
+            $("#expressionQ").html(data);
+        }
+    )
+}
+</script>
+<span>Expression about <?php
+				if(isset($_GET['questionId']) && is_numeric($_GET['questionId']) && $_GET['questionId'] != 0)
+					$question = Question::model()->findByPk((int)$_GET['questionId']);
+				else
+					$question = new Question;
+$criteria=new CDbCriteria;
+if($multi){
+    #OK FOR SQL INJECTION
+	$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " .$multi . ")")->queryColumn();
+    #OK FOR SQL INJECTION
+    $studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
+	$criteria=array(
+		'condition'=>"studyId in (" . implode(",", $studyIds) . ")",
+	);
+} else {
+	$criteria=array(
+		'condition'=>"studyId = " . $studyId,
+		'order'=>'FIELD(subjectType, "EGO_ID", "EGO","ALTER", "ALTER_PAIR", "NETWORK"), ordering',
+	);
+}
+$questions = Question::model()->findAll($criteria);
+$qList = array();
+foreach($questions as $q){
+	$studyName = q("SELECT name FROM study WHERE id = " . $q->studyId)->queryScalar();
+	$qList[$q->id] = $studyName . ":" . $q->title;
+}
+echo CHtml::dropdownlist(
+	'questionId',
+	$model->questionId,
+	$qList,
+	array('empty' => 'Choose One', 'onChange'=>"changeEQ(\$(this).val());")
+);
+ ?></span>
 <?php
 // text expression form
 $form=$this->beginWidget('CActiveForm', array(
@@ -6,22 +48,7 @@ $form=$this->beginWidget('CActiveForm', array(
     'enableAjaxValidation'=>false,
     'action'=>'/authoring/expression/'.$studyId,
 ));
-// converts multiple selection checkboxes into answer value
-echo "
-<script>
-jQuery('.valueList').change(function() {
-    $('#Expression_value').val('');
-    $('.valueList').each(function() {
-        if($(this).is(':checked')){
-            if($('#Expression_value').val() != '')
-                $('#Expression_value').val($('#Expression_value').val() + ',' + $(this).val());
-            else
-                $('#Expression_value').val($(this).val());
-        }
-    });
-    console.log($('#Expression_value').val());
-});
-</script>";
+
 ?>
 
 <?php echo $form->labelEx($model,'name'); ?>
@@ -30,66 +57,11 @@ jQuery('.valueList').change(function() {
 
 <br clear=all>
 
+<div id="expressionQ">
 <?php
-$after = "";
-if($question->answerType == "TEXTUAL" || $question->answerType == "TEXTUAL_PP"){
-    echo $form->hiddenField($model, 'type', array('value'=>'Text'));
-    echo "Expression is true for an answer that";
-    $choices = array(
-        'Contains'=>'Contains',
-        'Equals'=>'Equals',
-    );
-} else if ($question->answerType == "NUMERICAL" ) {
-    echo $form->hiddenField($model, 'type', array('value'=>'Number'));
-    echo "Expression is true for an answer is";
-    $choices = array(
-        'Greater'=>'Greater',
-        'GreaterOrEqual'=>'Greater Or Equal',
-        'Equals'=>'Equals',
-        'LessOrEqual'=>'Less Or Equal',
-        'Less'=>'Less'
-    );
-} else {
-    echo $form->hiddenField($model, 'type', array('value'=>'Selection'));
-    echo "Expression is true for an answer that contains ";
-    $choices = array(
-        'Some'=>'Some',
-        'All'=>'All',
-        'None'=>'None',
-    );
-    $after = " of the selected options below:";
-
-}
-echo $form->dropdownlist($model,
-    'operator',
-    $choices
-);
-echo $after . "<br>";
+    $this->renderPartial("_form_expression_question", array('model'=>$model, 'question'=>$question), false, true);
 ?>
-<?php echo $form->error($model,'operator'); ?>
-
-<?php
-echo $form->hiddenField($model, 'id', array('value'=>$model->id));
-echo $form->hiddenField($model, 'studyId', array('value'=>$studyId));
-echo $form->hiddenField($model, 'questionId', array('value'=>$question->id));
-
-if($after != ""){
-    $selected = explode(',', $model->value);
-    echo CHtml::CheckboxList(
-        'valueList',
-        $selected,
-        CHtml::listData(QuestionOption::model()->findAllByAttributes(array('questionId'=>$question->id)), 'id', 'name'),
-        array(
-            'separator'=>'<br>',
-            'class'=>'valueList',
-        )
-    );
-    echo $form->hiddenField($model, 'value', array('value'=>$model->value));
-
-}else{
-    echo $form->textField($model, 'value', array('style'=>'width:100px'));
-}
-?>
+</div>
 
 <br />
 
@@ -106,6 +78,10 @@ echo $form->dropdownlist($model,
 if the question is unanswered.
 
 <br clear=all />
-<input type="submit" value="Save"/>
+<br clear=all />
+
+<div class="btn-group">
+<input type="submit" value="Save" class="btn btn-success btn-xs"/>
 <?php $this->endWidget(); ?>
-<button onclick="$.get('/authoring/ajaxdelete?expressionId=<?php echo $model->id; ?>&studyId=<?php echo $model->studyId; ?>', function(data){location.reload();})">delete</button>
+<button onclick="$.get('/authoring/ajaxdelete?expressionId=<?php echo $model->id; ?>&studyId=<?php echo $model->studyId; ?>', function(data){location.reload();})"  class="btn btn-danger btn-xs">delete</button>
+</div>

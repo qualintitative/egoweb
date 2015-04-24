@@ -2,8 +2,6 @@
 /* @var $this StudyController */
 /* @var $data Study */
 ?>
-
-
 	<b><?php
 	if($data->type == "Text" || $data->type == "Number" || $data->type == "Selection")
 		$form = "_form_expression_text";
@@ -16,13 +14,13 @@
 		$expressionId = "";
 	}
 	echo
-CHtml::ajaxLink (CHtml::encode($data->name),
-        		CController::createUrl('ajaxload'),
-        		array('update' => '#Expression', 'data'=>'form='.$form.'&studyId='.$data->studyId.'&id='.$data->id.'&questionId='.$data->questionId.$expressionId),
-        		array('id'=>uniqid(), 'live'=>false)
+    CHtml::ajaxLink (CHtml::encode($data->name),
+        CController::createUrl('ajaxload'),
+        array('update' => '#Expression', 'data'=>'form='.$form.'&studyId='.$data->studyId.'&id='.$data->id.'&questionId='.$data->questionId.$expressionId),
+        array('id'=>uniqid(), 'live'=>false)
 
-        	);
+    );
 ?>
 </b>
-	<br />
-	<br />
+<br />
+<br />

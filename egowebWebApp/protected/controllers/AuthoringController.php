@@ -1012,11 +1012,7 @@ class AuthoringController extends Controller
 					$model = new Legend;
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'questionId'=>$_GET['questionId'], 'studyId'=>$_GET['studyId']), false, true);
 			}else if($_GET['form'] == "_form_expression_text" || $_GET['form'] == "_form_expression_counting" || $_GET['form'] == "_form_expression_comparison" || $_GET['form'] == "_form_expression_compound"){
-				$questionId = "";
-				if(isset($_GET['questionId']) && is_numeric($_GET['questionId']) && $_GET['questionId'] != 0)
-					$question = Question::model()->findByPk((int)$_GET['questionId']);
-				else
-					$question = new Question;
+
 				if(isset($_GET['id']))
 					$model = Expression::model()->findbyPk((int)$_GET['id']);
 				else
@@ -1027,6 +1023,17 @@ class AuthoringController extends Controller
 				else
 					$expression = new Expression;
 				$this->renderPartial($_GET['form'], array('model'=>$model, 'expression'=>$expression, 'ajax'=>true, 'question'=>$question, 'studyId'=>(int)$_GET['studyId']), false, false);
+			}else if($_GET['form'] == "_form_expression_question"){
+                if(isset($_GET['expressionId']) && $_GET['expressionId'])
+					$model = Expression::model()->findbyPk((int)$_GET['expressionId']);
+				else
+					$model = new Expression;
+				if($model->id){
+    				$model->value = "";
+    				$model->save();
+				}
+				$question = Question::model()->findByPk($_GET['questionId']);
+				$this->renderPartial("_form_expression_question", array('model'=>$model, 'question'=>$question), false, true);
 			}else if($_GET['form'] == "_form_option"){
 
 				$criteria=new CDbCriteria;
