@@ -8,16 +8,10 @@ $expressionTypes = array(
 
 );
 ?>
-<h1>Expressions</h1>
 
 <div class="col-md-6">
+<h1>Expressions</h1>
 <?php
-    $this->widget('zii.widgets.CListView', array(
-    	'dataProvider'=>$dataProvider,
-    	'itemView'=>'_view_expression_list',
-    	'template'=>"{sorter}\n{items}\n{pager}",
-    ));
-
     $form = $this->beginWidget('CActiveForm', array(
         'id'=>'new-expression',
         'enableAjaxValidation'=>false,
@@ -41,8 +35,22 @@ $expressionTypes = array(
     );
 
     $this->endWidget();
+
+
+
+
 ?>
+<br>
+<?php
+        $this->widget('zii.widgets.CListView', array(
+    	'dataProvider'=>$dataProvider,
+    	'itemView'=>'_view_expression_list',
+    	'template'=>"{sorter}\n{items}\n{pager}",
+    ));
+    ?>
 </div>
 
-<div id="Expression" class="col-md-6 pull-right">
+<div class="col-md-6 pull-right" style="">
+<div class="col-md-6" id="Expression" data-spy="affix"  style="background-color: #f8f8f8;height:80%; overflow-y: scroll; position:fixed;">
+</div>
 </div>

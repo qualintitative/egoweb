@@ -1,11 +1,7 @@
-<span>Expression about <?php echo $expression->name; ?></span>
+<h4>Comparison Expression 
+<span>about <?php echo $expression->name; ?></span>
 <?php
-$form=$this->beginWidget('CActiveForm', array(
-    'id'=>'expression-text-form',
-    'enableAjaxValidation'=>false,
-    'action'=>'/authoring/expression/'.$studyId,
 
-));
 $criteria=new CDbCriteria;
 $criteria=array(
     'condition'=>"studyId = " . $studyId . " AND type='Counting'",
@@ -21,26 +17,38 @@ if($model->value == "")
 	$model->value = "1:" . $expression->id;
 
 list($compare, $expression->id) = preg_split('/:/',$model->value);
+$form=$this->beginWidget('CActiveForm', array(
+    'id'=>'expression-form',
+    'enableAjaxValidation'=>false,
+    'action'=>'/authoring/expression/'.$studyId,
+    "htmlOptions"=>array("class"=>"form-horizontal"),
+
+));
 echo $form->hiddenField($model, 'id', array('value'=>$model->id));
 echo $form->hiddenField($model, 'studyId', array('value'=>$studyId));
 echo $form->hiddenField($model, 'value', array('value'=>$model->value));
 echo $form->hiddenField($model, 'type', array('value'=>'Comparison'));
 
-
-echo "<script>
+?>
+</h4>
+<script>
 jQuery('#compare').change(function() {
 	if($(this).val() == '')
 		$(this).val(1);
-    $('#Expression_value').val($(this).val() + ':' + ". $expression->id . ");
+    $('#Expression_value').val($(this).val() + ':' + <?php echo $expression->id; ?>);
     console.log($('#Expression_value').val());
 });
-</script>";
-?>
-<?php echo $form->labelEx($model,'name'); ?>
-<?php echo $form->textField($model,'name', array('style'=>'width:100px')); ?>
-<?php echo $form->error($model,'name'); ?>
+</script>
 
-<br />
+<div class="form-group">
+    <?php echo $form->labelEx($model,'name', array('class'=>'control-label col-sm-2')); ?>
+    <div class="col-sm-8">
+        <?php echo $form->textField($model,'name', array('class'=>'form-control')); ?>
+    </div>
+</div>
+
+<br clear=all>
+
 <span>Expression is true for an answer that is</span>
 <?php
 echo $form->dropdownlist($model,
@@ -59,8 +67,8 @@ echo $form->dropdownlist($model,
 ?>
 <br clear=all />
 
-<input type="submit" value="Save"/>
-
-
 <?php $this->endWidget(); ?>
-<button onclick="$.get('/authoring/ajaxdelete?expressionId=<?php echo $model->id; ?>&studyId=<?php echo $model->studyId; ?>', function(data){location.reload();})">delete</button>
+<div class="btn-group">
+<input type="submit" class="btn btn-success btn-xs" onclick="$('#expression-form').submit()" />
+<button onclick="$.get('/authoring/ajaxdelete?expressionId=<?php echo $model->id; ?>&studyId=<?php echo $model->studyId; ?>', function(data){location.reload();})"  class="btn btn-danger btn-xs">delete</button>
+</div>

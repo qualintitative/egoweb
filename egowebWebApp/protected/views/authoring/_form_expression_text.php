@@ -8,7 +8,8 @@ function changeEQ(questionId){
     )
 }
 </script>
-<span>Expression about <?php
+<h4>Simple Expression 
+<span>about <?php
 				if(isset($_GET['questionId']) && is_numeric($_GET['questionId']) && $_GET['questionId'] != 0)
 					$question = Question::model()->findByPk((int)$_GET['questionId']);
 				else
@@ -41,21 +42,26 @@ echo CHtml::dropdownlist(
 	$qList,
 	array('empty' => 'Choose One', 'onChange'=>"changeEQ(\$(this).val());")
 );
- ?></span>
+ ?></span></h4>
 <?php
 // text expression form
 $form=$this->beginWidget('CActiveForm', array(
-    'id'=>'expression-text-form',
+    'id'=>'expression-form',
     'enableAjaxValidation'=>false,
     'action'=>'/authoring/expression/'.$studyId,
+    "htmlOptions"=>array("class"=>"form-horizontal")
 ));
 
 ?>
 
 <?php echo $form->hiddenField($model,'studyId', array('value'=>$studyId)); ?>
-<?php echo $form->labelEx($model,'name'); ?>
-<?php echo $form->textField($model,'name', array('style'=>'width:100px')); ?>
-<?php echo $form->error($model,'name'); ?>
+
+<div class="form-group">
+    <?php echo $form->labelEx($model,'name', array('class'=>'control-label col-sm-2')); ?>
+    <div class="col-sm-8">
+        <?php echo $form->textField($model,'name', array('class'=>'form-control')); ?>
+    </div>
+</div>
 
 <br clear=all>
 
@@ -81,9 +87,9 @@ if the question is unanswered.
 
 <br clear=all />
 <br clear=all />
+<?php $this->endWidget(); ?>
 
 <div class="btn-group">
-<input type="submit" value="Save" class="btn btn-success btn-xs"/>
-<?php $this->endWidget(); ?>
+<input type="submit" class="btn btn-success btn-xs" onclick="$('#expression-form').submit()" />
 <button onclick="$.get('/authoring/ajaxdelete?expressionId=<?php echo $model->id; ?>&studyId=<?php echo $model->studyId; ?>', function(data){location.reload();})"  class="btn btn-danger btn-xs">delete</button>
 </div>

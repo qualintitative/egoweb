@@ -1,8 +1,10 @@
+<h4>Compound Expression</h4>
 <?php
 $form=$this->beginWidget('CActiveForm', array(
-    'id'=>'expression-compound-form',
+    'id'=>'expression-form',
 	'enableAjaxValidation'=>false,
 	'action'=>'/authoring/expression/'.$studyId,
+    "htmlOptions"=>array("class"=>"form-horizontal"),
 
 ));
 echo $form->hiddenField($model, 'id', array('value'=>$model->id));
@@ -28,10 +30,14 @@ jQuery('.expressionList').change(function() {
 </script>";
 ?>
 
-<?php echo $form->labelEx($model,'name'); ?>
-<?php echo $form->textField($model,'name', array('style'=>'width:100px')); ?>
-<?php echo $form->error($model,'name'); ?>
-<br />
+<div class="form-group">
+    <?php echo $form->labelEx($model,'name', array('class'=>'control-label col-sm-2')); ?>
+    <div class="col-sm-8">
+        <?php echo $form->textField($model,'name', array('class'=>'form-control')); ?>
+    </div>
+</div>
+
+<br clear=all>
 
 Expression is true if
 <?php
@@ -47,7 +53,6 @@ echo $form->dropdownlist($model,
 of the selected expressions below are true:
 <br />
 
-<div id="Expressions">
 <?php
 	$selected = explode(',', $model->value);
 			$criteria=new CDbCriteria;
@@ -65,9 +70,10 @@ of the selected expressions below are true:
 	);
 
 ?>
-</div>
 
 <br clear=all />
-<input type="submit" value="Save"/>
 <?php $this->endWidget(); ?>
-<button onclick="$.get('/authoring/ajaxdelete?expressionId=<?php echo $model->id; ?>&studyId=<?php echo $model->studyId; ?>', function(data){location.reload();})">delete</button>
+<div class="btn-group">
+<input type="submit" class="btn btn-success btn-xs" onclick="$('#expression-form').submit()" />
+<button onclick="$.get('/authoring/ajaxdelete?expressionId=<?php echo $model->id; ?>&studyId=<?php echo $model->studyId; ?>', function(data){location.reload();})"  class="btn btn-danger btn-xs">delete</button>
+</div>

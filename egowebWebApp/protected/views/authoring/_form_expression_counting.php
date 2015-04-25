@@ -2,7 +2,6 @@
 function buildValue(times, expressionIds, questionIds){
     $('#Expression_value').val(times + ':' + expressionIds + ':' + questionIds);
 }
-
 jQuery('.expressionList').change(function() {
     expressionValue = $('#Expression_value').val().split(/:/);
     expressionValue[1] = '';
@@ -56,16 +55,15 @@ jQuery('#times').change(function() {
     console.log($('#Expression_value').val());
 });
 </script>
-
+<h4>Counting Expression</h4>
 <?php
 $form=$this->beginWidget('CActiveForm', array(
-    'id'=>'expression-text-form',
+    'id'=>'expression-form',
     'enableAjaxValidation'=>false,
     'action'=>'/authoring/expression/'.$studyId,
+    "htmlOptions"=>array("class"=>"form-horizontal"),
 
 ));
-
-
 
 echo $form->hiddenField($model, 'id', array('value'=>$model->id));
 echo $form->hiddenField($model, 'studyId', array('value'=>$studyId));
@@ -82,15 +80,16 @@ if(strstr($model->value, ":")){
     $questionIds = "";
 }
 
-?>			<legend>
-				<span>Counting expression</span>
-			</legend>
-			<div wicket:id="feedback"/>
-<?php echo $form->labelEx($model,'name'); ?>
-<?php echo $form->textField($model,'name', array('style'=>'width:100px')); ?>
-<?php echo $form->error($model,'name'); ?>
-    	 	<br />
-    	 	<br />
+?>
+<div class="form-group">
+    <?php echo $form->labelEx($model,'name', array('class'=>'control-label col-sm-2')); ?>
+    <div class="col-sm-8">
+        <?php echo $form->textField($model,'name', array('class'=>'form-control')); ?>
+    </div>
+</div>
+
+<br clear=all>
+
 <?php
     echo CHtml::textField('times', $times, array('id'=>'times'));
 ?>
@@ -160,9 +159,11 @@ if($study->multiSessionEgoId){
 
             </div>
     	 	<br />
-    		<input wicket:id="saveExpression" type="submit" value="Save"/>
 	        <?php
 
 $this->endWidget();
 ?>
-<button onclick="$.get('/authoring/ajaxdelete?expressionId=<?php echo $model->id; ?>&studyId=<?php echo $model->studyId; ?>', function(data){location.reload();})">delete</button>
+<div class="btn-group">
+<input type="submit" class="btn btn-success btn-xs" onclick="$('#expression-form').submit()" />
+<button onclick="$.get('/authoring/ajaxdelete?expressionId=<?php echo $model->id; ?>&studyId=<?php echo $model->studyId; ?>', function(data){location.reload();})"  class="btn btn-danger btn-xs">delete</button>
+</div>

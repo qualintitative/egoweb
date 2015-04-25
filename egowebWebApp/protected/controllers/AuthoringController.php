@@ -1030,7 +1030,6 @@ class AuthoringController extends Controller
 					$model = new Expression;
 				if($model->id){
     				$model->value = "";
-    				$model->save();
 				}
 				$question = Question::model()->findByPk($_GET['questionId']);
 				$this->renderPartial("_form_expression_question", array('model'=>$model, 'question'=>$question), false, true);
