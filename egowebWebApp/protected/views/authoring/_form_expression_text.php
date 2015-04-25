@@ -14,6 +14,7 @@ function changeEQ(questionId){
 				else
 					$question = new Question;
 $criteria=new CDbCriteria;
+$multi = q("SELECT multiSessionEgoId FROM study WHERE id = " . $studyId)->queryScalar();
 if($multi){
     #OK FOR SQL INJECTION
 	$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " .$multi . ")")->queryColumn();
@@ -51,6 +52,7 @@ $form=$this->beginWidget('CActiveForm', array(
 
 ?>
 
+<?php echo $form->hiddenField($model,'studyId', array('value'=>$studyId)); ?>
 <?php echo $form->labelEx($model,'name'); ?>
 <?php echo $form->textField($model,'name', array('style'=>'width:100px')); ?>
 <?php echo $form->error($model,'name'); ?>
