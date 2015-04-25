@@ -74,6 +74,6 @@ of the selected expressions below are true:
 <br clear=all />
 <?php $this->endWidget(); ?>
 <div class="btn-group">
-<input type="submit" class="btn btn-success btn-xs" onclick="$('#expression-form').submit()" />
+<input type="submit" value="Save" class="btn btn-success btn-xs" onclick="$('#expression-form').submit()" />
 <button onclick="$.get('/authoring/ajaxdelete?expressionId=<?php echo $model->id; ?>&studyId=<?php echo $model->studyId; ?>', function(data){location.reload();})"  class="btn btn-danger btn-xs">delete</button>
 </div>

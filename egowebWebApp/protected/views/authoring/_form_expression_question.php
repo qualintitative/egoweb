@@ -38,7 +38,6 @@ echo $after . "<br>";
 <?php
     
 echo CHtml::activeHiddenField($model, 'id', array('value'=>$model->id));
-echo CHtml::activeHiddenField($model, 'studyId', array('value'=>$question->studyId));
 echo CHtml::activeHiddenField($model, 'questionId', array('value'=>$question->id));
 
 if($after != ""){
