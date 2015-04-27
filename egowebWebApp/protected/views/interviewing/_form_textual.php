@@ -1,8 +1,5 @@
 <?php
 Yii::app()->clientScript->registerScript('focus-'.$array_id, "
-jQuery(document).ready(function(){
-	$('#Answer_".$array_id."_value').focus();
-});
 $('#Answer_".$array_id."_value').change(function(){
 	if($('#Answer_".$array_id."_value').val() != ''){
 		$('.".$array_id."-skipReason').prop('checked', false);

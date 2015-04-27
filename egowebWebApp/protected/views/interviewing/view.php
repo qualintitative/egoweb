@@ -71,6 +71,7 @@ if(!isset($key) || !$key){
 					if(index > 0)
 						index--;
 					$(".answerInput")[index].focus();
+					console.log("focus:" + index);
 				}
 			}
 			if (e.keyCode == 40){
@@ -91,6 +92,7 @@ if(!isset($key) || !$key){
 					if(typeof $(".answerInput")[index+1] != "undefined")
 						index++;
 					$(".answerInput")[index].focus();
+					console.log("focus:" + index);
 				}
 			}
 		});
@@ -444,17 +446,7 @@ foreach($questions as $question) {
 		if($question->refuseButton)
 			$skipList['REFUSE'] = ($question->askingStyleList) ? "": "Refuse";
 
-		Yii::app()->clientScript->registerScript('focus-'.$array_id, "
-jQuery(document).ready(function(){
-	$('#Answer_".$array_id."_value').focus();
-});
-$('#Answer_".$array_id."_value').change(function(){
-	if($('#Answer_".$array_id."_value').val() != ''){
-		$('.".$array_id."-skipReason').prop('checked', false);
-		$('#Answer_".$array_id."_skipReason').val('NONE');
-	}
-});
-");
+
 		Yii::app()->clientScript->registerScript('skipReason-'.$array_id, "
 $('.".$array_id."-skipReason').click(function(event){
 	if($(this).val() != $('#Answer_".$array_id."_skipReason').val()){
