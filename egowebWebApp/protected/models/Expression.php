@@ -202,7 +202,7 @@ class Expression extends CActiveRecord
 				if(!$subId || $subId == $this->id)
 					continue;
 				$subE[$subId] = Expression::model()->findByPk($subId);
-				if(!$newE)
+				if(!$subE[$subId])
 				    return false;
 				$isTrue[$subId] = $subE[$subId]->evalExpression($interviewId, $alterId1, $alterId2, $answers);
 
