@@ -335,6 +335,7 @@ class InterviewingController extends Controller
                         if($checked < 0)
                             unset($checkedBoxes[$index]);
 					}
+					$Answer['value'] = implode(",", $checkedBoxes);
 
                     foreach($checkedBoxes as $index){
                         if(isset($_POST['otherSpecify'][$index]) && $interviewId){
