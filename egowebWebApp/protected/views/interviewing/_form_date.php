@@ -66,12 +66,12 @@ else
 
         <?php if(in_array("BIT_HOUR", $timeArray)): ?>
             <div class='<?php echo $class . " " . $rowColor ?>'>
-                <div style="padding-left:4px; padding-right:0;"><input type="text" class="time-<?php echo $array_id; ?>" id="hour" size="1" value="<?php if(isset($time[1])) echo $time[1]; ?>" /></div>
+                <div style="padding-left:4px; padding-right:0;"><input type="text" class="time-<?php echo $array_id; ?>" id="hour" style="width:30px" value="<?php if(isset($time[1])) echo $time[1]; ?>" /></div>
             </div>
         <?php endif; ?>
         <?php if(in_array("BIT_MINUTE", $timeArray)): ?>
             <div class='<?php echo $class . " " . $rowColor ?>'>
-                <div style="float:left; padding-left:4px; padding-right:0;"><input type="text" class="time-<?php echo $array_id; ?>" id="minute" size="1" value="<?php if(isset($time[2])) echo $time[2]; ?>" /></div>
+                <div style="float:left; padding-left:4px; padding-right:0;"><input type="text" class="time-<?php echo $array_id; ?>" id="minute" style="width:30px" value="<?php if(isset($time[2])) echo $time[2]; ?>" /></div>
             </div>
         <?php endif; ?>
         <?php if(in_array("BIT_HOUR", $timeArray)): ?>
@@ -93,12 +93,12 @@ else
         <?php endif; ?>
         <?php if(in_array("BIT_DAY", $timeArray)): ?>
             <div class='<?php echo $class . " " . $rowColor ?>'>
-                <td style="padding-left:4px; padding-right:0;" ><input type="text" class="time-<?php echo $array_id; ?>" id="day" size="1" value="<?php if(isset($date[2])) echo $date[2]; ?>" /></td>
+                <td style="padding-left:4px; padding-right:0;" ><input type="text" class="time-<?php echo $array_id; ?>" id="day" style="width:30px" value="<?php if(isset($date[2])) echo $date[2]; ?>" /></td>
             </div>
         <?php endif; ?>
         <?php if(in_array("BIT_YEAR", $timeArray)): ?>
             <div class='<?php echo $class . " " . $rowColor ?>'>
-                <input type="text" class="time-<?php echo $array_id; ?>" id="year" size="3" value="<?php if(isset($date[3])) echo $date[3]; ?>" />
+                <input type="text" class="time-<?php echo $array_id; ?>" id="year" style="width:60px" value="<?php if(isset($date[3])) echo $date[3]; ?>" />
             </div>
         <?php endif; ?>
 <?php
