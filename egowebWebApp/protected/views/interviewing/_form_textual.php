@@ -48,6 +48,11 @@ if($question->subjectType == "EGO_ID" && $question->useAlterListField != ""){
 		echo "<br clear=all>";
 	}else{
 		echo $form->textField($model[$array_id], '['.$array_id.']'.'value',array('class'=>$array_id . " answerInput")) . "<br style='clear:both'>";
+		if(count($skipList) != 0){
+				echo "<div clear=all>".
+					CHtml::checkBoxList($array_id."_skip", array($model[$array_id]->skipReason), $skipList, array('class'=>"answerInput " .$array_id.'-skipReason'))
+					."</div>";
+		}
 	}
 }
 

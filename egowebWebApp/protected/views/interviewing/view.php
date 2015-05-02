@@ -388,6 +388,12 @@ foreach($questions as $question) {
 	if($counter == 0)
 		echo "<input type='hidden' id='question_$question->id' value='$question->title' questionId='$question->id'>";
 
+	$skipList = array();
+	if($question->dontKnowButton)
+		$skipList['DONT_KNOW'] = "Don't Know";
+	if($question->refuseButton)
+		$skipList['REFUSE'] =  "Refuse";
+
 	// either set empty values for prompt / preface page, or display the question
 	if(in_array($question->answerType, $prompts)){
 		$model = new Answer;
@@ -399,11 +405,6 @@ foreach($questions as $question) {
 		echo $form->hiddenField($model, '[0]'.'interviewId',array('value'=>$interviewId));
 		echo CHtml::hiddenField('minAlters', Study::model()->findByPk($study->id)->minAlters);
 	}else{
-		$skipList = array();
-		if($question->dontKnowButton)
-			$skipList['DONT_KNOW'] = "Don't Know";
-		if($question->refuseButton)
-			$skipList['REFUSE'] =  "Refuse";
 
 		$options = QuestionOption::model()->findAllByAttributes(array('questionId'=>$question->id), $params=array('order'=>'ordering'));
 		if($counter == 0 && $question->askingStyleList){
@@ -441,11 +442,6 @@ foreach($questions as $question) {
 				echo "<div class='multiRow' style='width:".$maxwidth."px'>".$value."</div>";
 			}
 		}
-		if($question->dontKnowButton)
-			$skipList['DONT_KNOW'] = ($question->askingStyleList) ? "" : "Don't Know";
-		if($question->refuseButton)
-			$skipList['REFUSE'] = ($question->askingStyleList) ? "": "Refuse";
-
 
 		Yii::app()->clientScript->registerScript('skipReason-'.$array_id, "
 $('.".$array_id."-skipReason').click(function(event){

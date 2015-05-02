@@ -257,7 +257,7 @@ class InterviewingController extends Controller
 					preg_match("/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/", $Answer['value'], $date);
 					preg_match("/(\d{1,2}):(\d{1,2}) (AM|PM)/", $Answer['value'], $time);
 
-					if(count($time) > 0){
+					if(count($time) > 0 && $Answer['skipReason'] == "NONE"){
 						if(intval($time[1]) < 1 || intval($time[1]) > 12){
 							$model[$array_id]->addError('value', 'Please enter 1 to 12 for the HH');
 							$errors++;
@@ -267,13 +267,13 @@ class InterviewingController extends Controller
 							$errors++;
 						}
 					}
-					if(count($date) > 0){
+					if(count($date) > 0 && $Answer['skipReason'] == "NONE"){
 						if(intval($date[2]) < 1 || intval($date[2]) > 31){
 							$model[$array_id]->addError('value', 'Please enter a different number for the day of month');
 							$errors++;
 						}
 					}
-					if(count($date) == 0 && count($time) == 0){
+					if(count($date) == 0 && count($time) == 0 && $Answer['skipReason'] == "NONE"){
 							$model[$array_id]->addError('value', 'Please fill in values for time');
 							$errors++;
 					}
