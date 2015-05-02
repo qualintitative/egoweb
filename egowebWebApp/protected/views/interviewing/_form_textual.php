@@ -45,11 +45,24 @@ if($question->subjectType == "EGO_ID" && $question->useAlterListField != ""){
 			$name = $question->citation;
 		echo "<div class='multiRow ".$rowColor."' style='width:180px;  text-align:left'>".$name."</div>";
 		echo "<div class='multiRow ".$rowColor."'>" . $form->textField($model[$array_id], '['.$array_id.']'.'value',array('class'=>$array_id)) . "</div>";
+		if(count($skipList) != 0){
+			echo CHtml::checkBoxList(
+				$array_id."_skip",
+				array($model[$array_id]->skipReason),
+				$skipList,
+				array('class'=>$array_id.'-skipReason',
+					'container'=>'',
+					'separator'=>"",
+					'template'=>'{input}',
+					'style'=>"margin-left:" . intval($maxwidth * .4) ."px; width:" . intval($maxwidth * .6) ."px",
+				)
+			);
+		}
 		echo "<br clear=all>";
 	}else{
 		echo $form->textField($model[$array_id], '['.$array_id.']'.'value',array('class'=>$array_id . " answerInput")) . "<br style='clear:both'>";
 		if(count($skipList) != 0){
-				echo "<div clear=all>".
+            echo "<br style='clear:both'><div>".
 					CHtml::checkBoxList($array_id."_skip", array($model[$array_id]->skipReason), $skipList, array('class'=>"answerInput " .$array_id.'-skipReason'))
 					."</div>";
 		}
