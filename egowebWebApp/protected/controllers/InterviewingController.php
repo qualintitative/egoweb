@@ -331,6 +331,11 @@ class InterviewingController extends Controller
 
 
 					$checkedBoxes = explode(',',$Answer['value']);
+					foreach($checkedBoxes as $index=>$checked){
+                        if($checked < 0)
+                            unset($checkedBoxes[$index]);
+					}
+
                     foreach($checkedBoxes as $index){
                         if(isset($_POST['otherSpecify'][$index]) && $interviewId){
                 			$other = OtherSpecify::model()->findByAttributes(array("interviewId"=>$interviewId, "optionId"=>$index));
@@ -349,7 +354,7 @@ class InterviewingController extends Controller
     			        }
                     }
 
-					if (($Answer['value'] == "" || $Answer['value'] < 0 || count($checkedBoxes) < $min || count($checkedBoxes) > $max) && $Answer['skipReason'] == "NONE")
+					if (($Answer['value'] == "" || count($checkedBoxes) < $min || count($checkedBoxes) > $max) && $Answer['skipReason'] == "NONE")
 						$showError = true;
 
 
