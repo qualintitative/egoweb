@@ -20,6 +20,10 @@ jQuery('.time-".$array_id."').change(function() {
     }
     $('#Answer_".$array_id."_value').val(date);
 });
+
+    $('.timeInput')[0].focus();
+    $('#month').focus();
+
 ");
 
 preg_match("/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/", $model[$array_id]->value, $date);
@@ -66,12 +70,12 @@ else
 
         <?php if(in_array("BIT_HOUR", $timeArray)): ?>
             <div class='<?php echo $class . " " . $rowColor ?>'>
-                <div style="padding-left:4px; padding-right:0;"><input type="text" class="time-<?php echo $array_id; ?>" id="hour" maxlength="2" style="width:30px" value="<?php if(isset($time[1])) echo $time[1]; ?>" /></div>
+                <div style="padding-left:4px; padding-right:0;"><input type="text" class="timeInput time-<?php echo $array_id; ?>" id="hour" maxlength="2" style="width:30px" value="<?php if(isset($time[1])) echo $time[1]; ?>" /></div>
             </div>
         <?php endif; ?>
         <?php if(in_array("BIT_MINUTE", $timeArray)): ?>
             <div class='<?php echo $class . " " . $rowColor ?>'>
-                <div style="float:left; padding-left:4px; padding-right:0;"><input type="text" class="time-<?php echo $array_id; ?>" id="minute" maxlength="2" style="width:30px" value="<?php if(isset($time[2])) echo $time[2]; ?>" /></div>
+                <div style="float:left; padding-left:4px; padding-right:0;"><input type="text" class="timeInput time-<?php echo $array_id; ?>" id="minute" maxlength="2" style="width:30px" value="<?php if(isset($time[2])) echo $time[2]; ?>" /></div>
             </div>
         <?php endif; ?>
         <?php if(in_array("BIT_HOUR", $timeArray)): ?>
@@ -93,12 +97,12 @@ else
         <?php endif; ?>
         <?php if(in_array("BIT_DAY", $timeArray)): ?>
             <div class='<?php echo $class . " " . $rowColor ?>'>
-                <td style="padding-left:4px; padding-right:0;" ><input type="text" class="time-<?php echo $array_id; ?>" id="day" maxlength="2" style="width:30px" value="<?php if(isset($date[2])) echo $date[2]; ?>" /></td>
+                <td style="padding-left:4px; padding-right:0;" ><input type="text" class="timeInput time-<?php echo $array_id; ?>" id="day" maxlength="2" style="width:30px" value="<?php if(isset($date[2])) echo $date[2]; ?>" /></td>
             </div>
         <?php endif; ?>
         <?php if(in_array("BIT_YEAR", $timeArray)): ?>
             <div class='<?php echo $class . " " . $rowColor ?>'>
-                <input type="text" class="time-<?php echo $array_id; ?>" id="year" style="width:60px" maxlength="4" value="<?php if(isset($date[3])) echo $date[3]; ?>" />
+                <input type="text" class="timeInput time-<?php echo $array_id; ?>" id="year" style="width:60px" maxlength="4" value="<?php if(isset($date[3])) echo $date[3]; ?>" />
             </div>
         <?php endif; ?>
 <?php
