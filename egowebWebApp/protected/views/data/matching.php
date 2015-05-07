@@ -41,6 +41,7 @@ function autoMatch(){
             $("#"  + id + "-name").val(alters2[dId]);
         }else{
             $(this).val("");
+            $("#"  + id + "-name").val("");
         }
     });
 }
