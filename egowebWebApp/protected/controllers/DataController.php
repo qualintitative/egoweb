@@ -125,6 +125,38 @@ class DataController extends Controller
         }
     }
 
+    public function actionMatching()
+    {
+        if(count($_POST['export']) < 2)
+            die("You must select at least 2 interviews");
+    
+        foreach($_POST['export'] as $key=>$value){
+            $interviewIds[] = $key;
+        }
+        arsort($interviewIds);
+        $interview1 = Interview::model()->findByPK($interviewIds[0]);
+        $interview2 = Interview::model()->findByPK($interviewIds[1]);
+		$criteria = array(
+			'condition'=>"FIND_IN_SET(" . $interview1->id . ", interviewId)",
+		);
+		$result = Alters::model()->findAll($criteria);
+		foreach($result as $alter){
+    		$alters1[$alter->id] = $alter->name;
+		}
+		$criteria = array(
+			'condition'=>"FIND_IN_SET(" . $interview2->id . ", interviewId)",
+		);
+		$result = Alters::model()->findAll($criteria);
+		foreach($result as $alter){
+    		$alters2[$alter->id] = $alter->name;
+		}
+		$this->render('matching', array(
+			'interview1'=>$interview1,
+			'alters1'=>$alters1,
+			'interview2'=>$interview2,
+			'alters2'=>$alters2,
+		));
+    }
 
 	public function actionIndex()
 	{

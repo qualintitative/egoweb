@@ -41,6 +41,10 @@ function exportAlterList(){
 	$('#analysis').attr('action', '/data/exportalterlist');
 	$('#analysis').submit();
 }
+function matchAlters(){
+	$('#analysis').attr('action', '/data/matching');
+	$('#analysis').submit();
+}
 function deleteInterviews(){
 	if(confirm("Are you sure you want to DELETE these interviews?  The data will not be retrievable.")){
 		$('#analysis').attr('action', '/data/deleteinterviews');
@@ -76,6 +80,7 @@ Network Statistics
 <button onclick='exportAlterPair()' class='authorButton'>Export Alter Pair Data</button><br style='clear:both'>
 <button onclick='exportOther()' class='authorButton'>Export Other Specify Data</button><br style='clear:both'>
 <button onclick='exportAlterList()' class='authorButton'>Export Pre-defined Alter List</button><br style='clear:both'>
+<button onclick='matchAlters()' class='authorButton'>Match Alters</button><br style='clear:both'>
 <button onclick='deleteInterviews()' class='authorButton'>Delete Interviews</button><br style='clear:both'>
 
 

@@ -9,6 +9,7 @@ $custy=dirname(__FILE__).'/protected/extensions/custy.php';
 
 // custom functions
 require_once($custy);
+
 // remove the following lines when in production mode
 //defined('YII_DEBUG') or define('YII_DEBUG',true);
 // specify how many levels of call stack should be shown in each log message
