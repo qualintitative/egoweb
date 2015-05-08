@@ -185,6 +185,7 @@ class DataController extends Controller
         $result = Question::model()->findAllByAttributes(array("subjectType"=>"ALTER", "studyId"=>$interview1->studyId));
         foreach($result as $question){
             $questions[$question->id] = $question->title;
+            $prompts[$question->id] = substr(strip_tags($question->prompt),0,80);
         }
 		$this->render('matching', array(
 			'interview1'=>$interview1,
@@ -193,6 +194,7 @@ class DataController extends Controller
 			'alters2'=>$alters2,
 			'answers'=>$answers,
 			'questions'=>$questions,
+			'prompts'=>$prompts,
 		));
     }
 

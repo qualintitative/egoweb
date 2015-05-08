@@ -4,6 +4,7 @@
 alters1 = <?php echo json_encode($alters1); ?>;
 alters2 = <?php echo json_encode($alters2); ?>;
 answers = <?php echo json_encode($answers); ?>;
+prompts = <?php echo json_encode($prompts); ?>;
 
 altersD = new Object;
 altersL = new Object;
@@ -86,16 +87,17 @@ function save(){
 <div class="panel panel-warning">
 <div class="panel-heading">
 
-                Display Alter Question Response
+
 
 <?php
                     echo CHtml::dropdownlist(
                         'question',
                         '',
                         $questions,
-                        array('empty' => 'Choose Question', "onChange"=>'loadR($(this).val());')
+                        array('empty' => 'Choose Question', "class"=>"pull-left","onChange"=>'loadR($(this).val());$("#prompt").html(prompts[$(this).val()])')
                     );
 ?>
+    <div id="prompt">Display Alter Question Response</div>
     </div>
 </div>
 
