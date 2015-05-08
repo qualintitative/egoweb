@@ -3,6 +3,8 @@
 <script>
 alters1 = <?php echo json_encode($alters1); ?>;
 alters2 = <?php echo json_encode($alters2); ?>;
+answers = <?php echo json_encode($answers); ?>;
+
 altersD = new Object;
 altersL = new Object;
 altersLId = new Object;
@@ -39,10 +41,21 @@ function autoMatch(){
         if(lTol <= $("#lTol").val() && dTol <= $("#dTol").val()){
             $(this).val(dId);
             $("#"  + id + "-name").val(alters2[dId]);
+            $(this).parent().next().attr("alterId",$(this).val());
         }else{
             $(this).val("");
             $("#"  + id + "-name").val("");
+            $(this).parent().next().attr("alterId",$(this).val());
+            $(this).parent().next().html("");
         }
+    });
+    loadR($("#question").val());
+}
+function loadR(questionId){
+    if(!questionId)
+        return false;
+    $(".responses").each(function(){
+        $(this).html(answers[questionId][$(this).attr("alterId")]);
     });
 }
 function save(){
@@ -70,29 +83,48 @@ function save(){
         </div>
     </div>
 </div>
+<div class="panel panel-warning">
+<div class="panel-heading">
+
+                Display Alter Question Response
+
+<?php
+                    echo CHtml::dropdownlist(
+                        'question',
+                        '',
+                        $questions,
+                        array('empty' => 'Choose Question', "onChange"=>'loadR($(this).val());')
+                    );
+?>
+    </div>
+</div>
+
+
 <table class="table table-condensed">
     <tr>
         <th>Interview 1</th>
+        <th>Responses</th>
 
         <th>Interview 2</th>
+        <th>Responses</th>
 
         <th>Matched Alter name</th>
     </tr><?php foreach($alters1 as $alterId=>$alter): ?>
 
     <tr>
         <td><?php echo $alter; ?></td>
-
+        <td class="responses" alterId=<?php echo $alterId; ?>></td>
         <td><?php
                     if(count($alters2) > 0){
                         echo CHtml::dropdownlist(
                             'alterId2',
                             '',
                             $alters2,
-                            array('empty' => 'No Match', "class"=>"aMatch", "id"=>$alterId, "onChange"=>'$("#" + $(this).attr("id") + "-name").val($("option:selected", this).text());')
+                            array('empty' => 'No Match', "class"=>"aMatch", "id"=>$alterId, "onChange"=>'$(this).parent().next().attr("alterId",$(this).val()); $("#" + $(this).attr("id") + "-name").val($("option:selected", this).text()); loadR($("#question").val());')
                         );
                     }
                 ?></td>
-
+        <td class="responses"></td>
         <td><?php echo CHtml::textField("name", "" ,array("id"=>$alterId."-name")); ?></td>
     </tr><?php endforeach; ?>
 </table>

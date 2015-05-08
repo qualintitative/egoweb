@@ -147,14 +147,52 @@ class DataController extends Controller
 			'condition'=>"FIND_IN_SET(" . $interview2->id . ", interviewId)",
 		);
 		$result = Alters::model()->findAll($criteria);
+        
+
 		foreach($result as $alter){
     		$alters2[$alter->id] = $alter->name;
 		}
+        $criteria = array(
+			'condition'=>"questionType = 'ALTER' AND interviewId in (" . $interview1->id . ", " . $interview2->id  . ")",
+		);
+        $result = Answer::model()->findAll($criteria);
+		foreach($result as $answer){
+    		if($answer->answerType == "MULTIPLE_SELECTION"){
+                    $optionIds = explode(",", $answer->value);
+                    $answer->value = "";
+                    $answerArray = array();
+                    foreach  ($optionIds as $optionId)
+                    {
+                        $option = QuestionOption::model()->findbyPk($optionId);
+                        if ($option)
+                        {
+                            $criteria=new CDbCriteria;
+                            $criteria=array(
+                                'condition'=>"optionId = " . $option->id . " AND interviewId in (".$answer->interviewId.")",
+                            );
+                            $otherSpecify = OtherSpecify::model()->find($criteria);
+                            if ($otherSpecify)
+                                $answerArray[] = $option->name . " (\"" . $otherSpecify->value . "\")";
+                            else
+                                $answerArray[] = $option->name;
+                        }
+                    }
+                    $answer->value = implode("; ", $answerArray);
+
+    		}
+            $answers[$answer->questionId][$answer->alterId1] = $answer->value;
+		}
+        $result = Question::model()->findAllByAttributes(array("subjectType"=>"ALTER", "studyId"=>$interview1->studyId));
+        foreach($result as $question){
+            $questions[$question->id] = $question->title;
+        }
 		$this->render('matching', array(
 			'interview1'=>$interview1,
 			'alters1'=>$alters1,
 			'interview2'=>$interview2,
 			'alters2'=>$alters2,
+			'answers'=>$answers,
+			'questions'=>$questions,
 		));
     }
 
