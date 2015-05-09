@@ -308,7 +308,7 @@ $(function(){
 					$interviewers,
 					array('empty' => 'None')
 				); ?>
-				<?php echo CHtml::ajaxSubmitButton ("Add Alter",
+				<?php echo CHtml::ajaxSubmitButton ("Add Participant",
 					CController::createUrl('ajaxupdate'),
 					array('update' => '#alterList'),
 					array('id'=>uniqid(), 'live'=>false, "class"=>"btn btn-primary btn-xs")

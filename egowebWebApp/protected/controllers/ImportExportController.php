@@ -113,14 +113,6 @@ class ImportExportController extends Controller
     			// loop through the questions and correct linked ids
     			$newQuestions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
     			foreach($newQuestions as $newQuestion){
-    				if($newQuestion->networkNColorQId != 0)
-    					$newQuestion->networkNColorQId = $newQuestionIds[$newQuestion->networkNColorQId];
-    				if($newQuestion->networkNSizeQId != 0)
-    					$newQuestion->networkNSizeQId = $newQuestionIds[$newQuestion->networkNSizeQId];
-    				if($newQuestion->networkEColorQId != 0)
-    					$newQuestion->networkEColorQId = $newQuestionIds[$newQuestion->networkEColorQId];
-    				if($newQuestion->networkESizeQId != 0)
-    					$newQuestion->networkESizeQId = $newQuestionIds[$newQuestion->networkESizeQId];
     				if(is_numeric($newQuestion->listRangeString) && isset($newOptionIds[intval($newQuestion->listRangeString)]))
     					$newQuestion->listRangeString = $newOptionIds[intval($newQuestion->listRangeString)];
     				$newQuestion->save();
@@ -491,9 +483,9 @@ class ImportExportController extends Controller
 		$questions = Question::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
 		$options = QuestionOption::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
 		$expressions = Expression::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
-		$answerLists = AnswerList::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
+		$alterPrompts = AlterPrompt::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
 
-		$data = Study::replicate($study, $questions, $options, $expressions, $answerLists);
+		$data = Study::replicate($study, $questions, $options, $expressions, $alterPrompts);
 		$this->redirect(array('/authoring/edit','id'=>$data['studyId']));
 
 	}

@@ -86,17 +86,14 @@ function save(){
 </div>
 <div class="panel panel-warning">
 <div class="panel-heading">
-
-
-
-<?php
-                    echo CHtml::dropdownlist(
-                        'question',
-                        '',
-                        $questions,
-                        array('empty' => 'Choose Question', "class"=>"pull-left","onChange"=>'loadR($(this).val());$("#prompt").html(prompts[$(this).val()])')
-                    );
-?>
+    <?php
+    echo CHtml::dropdownlist(
+        'question',
+        '',
+        $questions,
+        array('empty' => 'Choose Question', "class"=>"pull-left","onChange"=>'loadR($(this).val());$("#prompt").html(prompts[$(this).val()])')
+    );
+    ?>
     <div id="prompt">Display Alter Question Response</div>
     </div>
 </div>

@@ -694,7 +694,7 @@ class Study extends CActiveRecord
 		return false;
 	}
 
-	public static function replicate($study, $questions, $options, $expressions, $answerLists = array())
+	public static function replicate($study, $questions, $options, $expressions, $alterPrompts = array())
 	{
 		$newQuestionIds = array();
 		$newOptionIds = array();
@@ -729,14 +729,6 @@ class Study extends CActiveRecord
 				  $newQuestion->maxPrevQues = $newQuestionIds[$newQuestion->maxPrevQues];
 			  if(is_numeric($newQuestion->networkParams) && $newQuestion->networkParams != 0)
 				  $newQuestion->networkParams = $newQuestionIds[$newQuestion->networkParams];
-			  if(is_numeric($newQuestion->networkNColorQId) && $newQuestion->networkNColorQId != 0)
-				  $newQuestion->networkNColorQId = $newQuestionIds[$newQuestion->networkNColorQId];
-			  if(is_numeric($newQuestion->networkNSizeQId) && $newQuestion->networkNSizeQId != 0)
-				  $newQuestion->networkNSizeQId = $newQuestionIds[$newQuestion->networkNSizeQId];
-			  if(is_numeric($newQuestion->networkEColorQId) && $newQuestion->networkEColorQId != 0)
-				  $newQuestion->networkEColorQId = $newQuestionIds[$newQuestion->networkEColorQId];
-			  if(is_numeric($newQuestion->networkESizeQId) && $newQuestion->networkESizeQId != 0)
-				  $newQuestion->networkESizeQId = $newQuestionIds[$newQuestion->networkESizeQId];
 			  $newQuestion->save();
 
 		  }
@@ -834,13 +826,13 @@ class Study extends CActiveRecord
 			$newExpression->save();
 		}
 
-		foreach($answerLists as $answerList){
-			$newAnswerList = new answerList;
-			$newAnswerList->attributes = $answerList->attributes;
-			$newAnswerList->id = null;
-			$newAnswerList->studyId = $newStudy->id;
-			if(!$newAnswerList->save())
-				throw new CHttpException(500, "AnswerList: " . print_r($newAnswerList->errors)); //return false;
+		foreach($alterPrompts as $alterPrompt){
+			$newAlterPrompt = new AlterPrompt;
+			$newAlterPrompt->attributes = $alterPrompt->attributes;
+			$newAlterPrompt->id = null;
+			$newAlterPrompt->studyId = $newStudy->id;
+			if(!$newAlterPrompt->save())
+				throw new CHttpException(500, "AlterPrompt: " . print_r($newAlterPrompt->errors)); //return false;
 		}
 
 		$data = array(
@@ -958,18 +950,6 @@ EOT;
 			}
 			$text .= "
 	</expressions>";
-		}
-		if(count($answerLists) > 0){
-			$text .= "
-	<answerLists>";
-			foreach($answerLists as $answerList){
-				$text .= <<<EOT
-
-		<answerList id="{$answerList->id}" listName="{$answerList->listName}" listOptionNames="{$answerList->listOptionNames}"/>
-EOT;
-			}
-			$text .= "
-	</answerLists>";
 		}
 		if(count($interviewIds) > 0){
 			$text .= "

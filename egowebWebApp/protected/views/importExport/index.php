@@ -1,6 +1,7 @@
 <?php
 /* @var $this ImportExportController */
 ?>
+
 <div class="panel panel-success">
     <div class="panel-heading">
         Import Study
@@ -28,30 +29,62 @@
     </div>
 </div>
 
-
 <br clear=all>
 <br clear=all>
-<h1>Replicate Study</h1>
-<?php
-// replicate study
-$form=$this->beginWidget('CActiveForm', array(
-    'id'=>'replicate',
-    'enableAjaxValidation'=>false,
-    'action'=>'/importExport/replicate'
-));
-?>
-new name
-<?php
 
-echo CHtml::textField('name');
+<div class="panel panel-warning">
+    <div class="panel-heading">
+        Replicate Study
+    </div>
+
+    <div class="panel-body">
+        <?php
+        // replicate study
+        $form=$this->beginWidget('CActiveForm', array(
+            'id'=>'replicate',
+            'enableAjaxValidation'=>false,
+            'action'=>'/importExport/replicate'
+        ));
+        ?>
+        <div class="form-group">
+            <div class="col-lg-3">
+<?php
 $criteria=new CDbCriteria;
 $criteria->order = 'name';
-echo CHtml::dropdownlist('studyId', '', CHtml::listData(Study::model()->findAll($criteria), 'id', 'name'));
-echo CHtml::submitButton( 'Replicate');
-$this->endWidget(); ?>
+echo CHtml::dropdownlist(
+    'studyId',
+    '',
+    CHtml::listData(Study::model()->findAll($criteria), 'id', 'name'),
+    array("class"=>"form-control")
+);
+?>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-3">
+                <?php echo CHtml::textField('name', '',array('class'=>"form-control", "placeholder"=>"new name")); ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-4 ">
+                <button class="btn btn-warning">Replicate</button>
+            </div>
+        </div>
+        <?php $this->endWidget(); ?>
+    </div>
+</div>
+
 <br clear=all>
 <br clear=all>
-<h1>Export Study</h1>
+
+
+<div class="panel panel-info">
+    <div class="panel-heading">
+        Export Study
+    </div>
+
+    <div class="panel-body">
+        
 <script>
 function getInterviews(dropdown){
 	$.get('/importExport/ajaxinterviews/' + dropdown.val(), function(data){$('#interviews').html(data);});
@@ -82,10 +115,15 @@ echo CHtml::dropdownlist(
 echo "<br><br>";
 echo " Include Responses<br><br>";
 ?>
-<div id="interviews"></div>
-<?php
-echo CHtml::submitButton( 'Export');
-$this->endWidget(); ?>
+    <div id="interviews"></div>
+        <div class="form-group">
+            <div class="col-lg-4 ">
+                <button class="btn btn-info">Export</button>
+            </div>
+        </div>
+    <?php $this->endWidget(); ?>
+    </div>
+</div>
 
 <script type="text/javascript">
 //On import study form submit
