@@ -1,18 +1,34 @@
 <?php
 /* @var $this ImportExportController */
-
 ?>
-<h1>Import Study</h1>
+<div class="panel panel-success">
+    <div class="panel-heading">
+        Import Study
+    </div>
 
-<?php echo CHtml::form('/importExport/importstudy', 'post', array('id'=>'importForm','enctype'=>'multipart/form-data')); ?>
-    <!-- MAX_FILE_SIZE must precede the file input field -->
-    <!-- Name of input element determines name in $_FILES array -->
-    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo 'MAX = ' + Yii::app()->params['maxUploadFileSize']; ?>" />
-    <input id="userfile" name="files[]" type="file" multiple/>
-    New Name (optional)
-    <input type="text" name="newName" />
-    <input type="submit" value="Import" />
-</form>
+    <div class="panel-body">
+        <?php echo CHtml::form('/importExport/importstudy', 'post', array('id'=>'importForm','enctype'=>'multipart/form-data')); ?>
+        <div class="form-group">
+            <div class="col-lg-3">
+                <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo 'MAX = ' + Yii::app()->params['maxUploadFileSize']; ?>" />
+                <input id="userfile" name="files[]" class="form-control" type="file" multiple/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-3">
+                <input type="text" name="newName" class="form-control" placeholder="New Name (optional)">
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-4 ">
+                <button class="btn btn-success">Import</button>
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+
+
 <br clear=all>
 <br clear=all>
 <h1>Replicate Study</h1>

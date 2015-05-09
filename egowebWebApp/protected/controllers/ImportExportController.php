@@ -22,7 +22,7 @@ class ImportExportController extends Controller
     				$newStudy->$key = $value;
     			if($key == "name"){
     				$oldStudy = Study::model()->findByAttributes(array("name"=>$value));
-    				if($oldStudy){
+    				if($oldStudy && $_POST['newName'] != $oldStudy->name){
     					$merge = true;
     					$newStudy = $oldStudy;
     				}
