@@ -50,10 +50,19 @@ class Interviewer extends CActiveRecord
 	{
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
-		return array(
-		);
+        return array(
+        );
 	}
 
+    public function getPermission(){
+        $user = User::model()->findByPk($this->interviewerId);
+		if($user->permissions == 5)
+			return "admin";
+		if($user->permissions == 11)
+			return "super admin";
+		if(!Yii::app()->user->isGuest)
+			return "interviewer";
+    }
 	/**
 	 * @return array customized attribute labels (name=>label)
 	 */

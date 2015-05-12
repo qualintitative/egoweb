@@ -25,6 +25,12 @@ if(isset($model))
 			'type' => 'raw',
 			'htmlOptions' => array('style'=>'width:60px;'),
 		),
+		array(
+			'name'=>'permissions',
+			'header'=>'Role',
+			'type'=>'raw',
+			'value'=>'$data->permission',
+		),
 		array
 		(
 			'class'=>'CButtonColumn',
