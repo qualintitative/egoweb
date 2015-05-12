@@ -622,7 +622,9 @@ class Interview extends CActiveRecord
         $alter_questions = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND studyId = " . $this->studyId . " ORDER BY ordering")->queryAll();
 
         #OK FOR SQL INJECTION
-        $alters = q("SELECT * FROM alters WHERE interviewId = " . $this->id)->queryAll();
+        $alters = Alters::model()->findAllByAttributes(array("interviewId"=>$this->id));
+        //q("SELECT * FROM alters WHERE interviewId = " . $this->id)->queryAll();
+
         if (!$alters)
         {
             $alters = array('0'=>array('id'=>null));
@@ -633,12 +635,6 @@ class Interview extends CActiveRecord
                 $stats = new Statistics;
                 $stats->initComponents($this->id, $_POST['expressionId']);
             }
-        }
-
-        foreach ($alters as &$alter)
-        {
-            if (isset($alter['name']) && $alter['name']!="")
-                $alter['name'] = decrypt($alter['name']);
         }
 
         $text = "";
@@ -714,18 +710,18 @@ class Interview extends CActiveRecord
                 }
             }
 
-            if (is_numeric($alter['id']))
+            if (isset($alter->id))
             {
-                $answers[] = $alter['name'];
+                $answers[] = $alter->name;
                 foreach ($alter_questions as $question)
                 {
                     $expression = new Expression;
                     #OK FOR SQL INJECTION
-                    $answer = q("SELECT value FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'])->queryScalar();
+                    $answer = q("SELECT value FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter->id)->queryScalar();
                     if (strlen($answer) >= 8)
                         $answer = decrypt($answer);
                     #OK FOR SQL INJECTION
-                    $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'])->queryScalar();
+                    $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter->id)->queryScalar();
                     if ($answer != "" && $skipReason == "NONE")
                     {
                         if ($question['answerType'] == "SELECTION")
@@ -770,9 +766,9 @@ class Interview extends CActiveRecord
                 $answers[] = count($stats->components);
                 $answers[] = count($stats->dyads);
                 $answers[] = count($stats->isolates);
-                $answers[] = $stats->getDegree($alter['id']);
-                $answers[] = $stats->getBetweenness($alter['id']);
-                $answers[] = $stats->eigenvectorCentrality($alter['id']);
+                $answers[] = $stats->getDegree($alter->id);
+                $answers[] = $stats->getBetweenness($alter->id);
+                $answers[] = $stats->eigenvectorCentrality($alter->id);
             }
             $text .= implode(',', $answers) . "\n";
         }
