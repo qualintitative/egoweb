@@ -694,7 +694,7 @@ class Study extends CActiveRecord
 		return false;
 	}
 
-	public static function replicate($study, $questions, $options, $expressions, $alterPrompts = array())
+	public static function replicate($study, $questions, $options, $expressions, $alterPrompts = array(), $alterLists = array())
 	{
 		$newQuestionIds = array();
 		$newOptionIds = array();
@@ -832,7 +832,16 @@ class Study extends CActiveRecord
 			$newAlterPrompt->id = null;
 			$newAlterPrompt->studyId = $newStudy->id;
 			if(!$newAlterPrompt->save())
-				throw new CHttpException(500, "AlterPrompt: " . print_r($newAlterPrompt->errors)); //return false;
+				throw new CHttpException(500, "AlterPrompt: " . print_r($newAlterPrompt->errors));
+		}
+
+		foreach($alterLists as $alterList){
+			$newAlterList = new AlterList;
+			$newAlterList->attributes = $alterList->attributes;
+			$newAlterList->id = null;
+			$newAlterList->studyId = $newStudy->id;
+			if(!$newAlterList->save())
+				throw new CHttpException(500, "AlterPrompt: " . print_r($newAlterList->errors));
 		}
 
 		$data = array(
@@ -849,13 +858,12 @@ class Study extends CActiveRecord
 
 		$questions = Question::model()->findAllByAttributes(array('studyId'=>$this->id));
 		$expressions = Expression::model()->findAllByAttributes(array('studyId'=>$this->id));
-		$answerLists = AnswerList::model()->findAllByAttributes(array('studyId'=>$this->id));
+		//$answerLists = AnswerList::model()->findAllByAttributes(array('studyId'=>$this->id));
 		$alterLists = AlterList::model()->findAllByAttributes(array("studyId"=>$this->id));
 		$alterPrompts = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$this->id));
 
 		$this->introduction = sanitizeXml($this->introduction);
 		$this->egoIdPrompt = sanitizeXml($this->egoIdPrompt);
-		$this->alterPrompt = sanitizeXml($this->alterPrompt);
 		$this->alterPrompt = sanitizeXml($this->alterPrompt);
 		$this->conclusion = sanitizeXml($this->conclusion);
 
@@ -886,6 +894,18 @@ class Study extends CActiveRecord
 	<alterPrompt>{$this->alterPrompt}</alterPrompt>
 	<conclusion>{$this->conclusion}</conclusion>
 EOT;
+		if(count($alterLists) > 0){
+			$text .= '
+	<alterLists>';
+			foreach($alterLists as $alterList){
+						$text .= <<<EOT
+
+			<alterList id="{$alterList->id}" studyId="{$alterList->studyId}" name="{$alterList->name}" email="{$alterList->email}" ordering="{$alterList->ordering}" interviewerId="{$alterList->interviewerId}"/>
+EOT;
+			}
+			$text .= "
+	</alterLists>";
+		}
 		if(count($alterPrompts) > 0){
 			$text .= '
 	<alterPrompts>';
@@ -899,7 +919,6 @@ EOT;
 			$text .= "
 	</alterPrompts>";
 		}
-
 		if(count($questions) > 0){
 			$text .= '
 	<questions>';

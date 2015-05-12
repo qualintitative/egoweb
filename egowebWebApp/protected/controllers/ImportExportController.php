@@ -50,14 +50,33 @@ class ImportExportController extends Controller
     				foreach($study->alterPrompts->alterPrompt as $alterPrompt){
     					$newAlterPrompt = new AlterPrompt;
     					foreach($alterPrompt->attributes() as $key=>$value){
-    						if($key != "id")
-    							$newAlterPrompt->$key = $value;
     						if($key == "afterAltersEntered")
     							$value = intval($value);
+    						if($key != "id")
+    							$newAlterPrompt->$key = $value;
+
     					}
     					$newAlterPrompt->studyId = $newStudy->id;
     					if(!$newAlterPrompt->save())
     						echo "Alter prompt: $newAlterPrompt->afterAltersEntered :" . print_r($newAlterPrompt->errors);
+    				}
+    			}
+
+    			if($study->alterLists->alterList){
+    
+    				foreach($study->alterLists->alterList as $alterList){
+    					$newAlterList = new AlterList;
+    					foreach($alterList->attributes() as $key=>$value){
+    						if(in_array($key,  array("ordering", "studyId", "interviewerId")))
+    							$value = intval($value);
+    						if($key != "id")
+    							$newAlterList->$key = $value;
+    					}
+    					$newAlterList->studyId = $newStudy->id;
+    					if(!$newAlterList->save()){
+    						echo "Alter list: $newAlterList->name :" . print_r($newAlterPrompt->errors);
+    						die();
+    						}
     				}
     			}
     
@@ -123,7 +142,7 @@ class ImportExportController extends Controller
     				$newStudy->multiSessionEgoId = $newQuestionIds[intval($newStudy->multiSessionEgoId)];
     				$newStudy->save();
     			}
-    
+
     			if(count($study->expressions) != 0){
     				foreach($study->expressions->expression as $expression){
     					$newExpression = new Expression;
@@ -485,8 +504,9 @@ class ImportExportController extends Controller
 		$options = QuestionOption::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
 		$expressions = Expression::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
 		$alterPrompts = AlterPrompt::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
+		$alterLists = AlterList::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
 
-		$data = Study::replicate($study, $questions, $options, $expressions, $alterPrompts);
+		$data = Study::replicate($study, $questions, $options, $expressions, $alterPrompts, $alterLists);
 		$this->redirect(array('/authoring/edit','id'=>$data['studyId']));
 
 	}
