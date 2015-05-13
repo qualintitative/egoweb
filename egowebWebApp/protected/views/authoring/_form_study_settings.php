@@ -91,6 +91,11 @@ $(function(){
 		}
 	});
 });
+function deleteAlterList(studyId){
+    $.get("/authoring/ajaxdelete?studyId=" + studyId + "&AlterList[id]=all", function(data){
+        $("#alterList").html(data);
+    });
+}
 </script>
 <div class="form">
 
@@ -315,6 +320,7 @@ $(function(){
 				);
 				?>
 				<?php $this->endWidget(); ?>
+				<button class="btn btn-danger btn-xs" onclick="deleteAlterList(<?php echo $model->id; ?>)">Delete Participant List</button>
 			</div>
 			<div id="edit-alterList" style="margin-bottom:15px;"></div>
 		</div>
