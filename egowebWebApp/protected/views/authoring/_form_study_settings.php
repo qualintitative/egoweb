@@ -92,9 +92,11 @@ $(function(){
 	});
 });
 function deleteAlterList(studyId){
-    $.get("/authoring/ajaxdelete?studyId=" + studyId + "&AlterList[id]=all", function(data){
-        $("#alterList").html(data);
-    });
+    if(confirm("Are you sure you want to delete all the participants in the list?")){
+        $.get("/authoring/ajaxdelete?studyId=" + studyId + "&AlterList[id]=all", function(data){
+            $("#alterList").html(data);
+        });
+    }
 }
 </script>
 <div class="form">
