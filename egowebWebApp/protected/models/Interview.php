@@ -622,7 +622,7 @@ class Interview extends CActiveRecord
         $alter_questions = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND studyId = " . $this->studyId . " ORDER BY ordering")->queryAll();
 
         #OK FOR SQL INJECTION
-        $alters = Alters::model()->findAllByAttributes(array("interviewId"=>$this->id));
+        $alters = Alters::model()->findAll(array('order'=>'id', 'condition'=>'interviewId=:x', 'params'=>array(':x'=>$this->id)));
         //q("SELECT * FROM alters WHERE interviewId = " . $this->id)->queryAll();
 
         if (!$alters)
@@ -638,6 +638,8 @@ class Interview extends CActiveRecord
         }
 
         $text = "";
+        $count = 1;
+
 
         foreach ($alters as $alter)
         {
@@ -712,6 +714,7 @@ class Interview extends CActiveRecord
 
             if (isset($alter->id))
             {
+                $answers[] = $count;
                 $answers[] = $alter->name;
                 foreach ($alter_questions as $question)
                 {
@@ -771,6 +774,7 @@ class Interview extends CActiveRecord
                 $answers[] = $stats->eigenvectorCentrality($alter->id);
             }
             $text .= implode(',', $answers) . "\n";
+            $count++;
         }
         return $text;
     }

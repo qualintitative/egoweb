@@ -602,7 +602,6 @@ class InterviewingController extends Controller
 
 			$criteria=array(
 				'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId)",
-				'order'=>'ordering',
 			);
 
 			$dataProvider=new CActiveDataProvider('Alters',array(
