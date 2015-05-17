@@ -483,7 +483,10 @@ class InterviewingController extends Controller
     				$count = 0;
     				foreach($names as $name){
     					$alter = new Alters;
-    					$alter->name = $name;
+    					if(strlen($name) >= 8)
+        					$alter->name = decrypt($name);
+        				else
+        				    continue;
     					$alter->ordering = $count;
     					$alter->interviewId = $interviewId;
     					$alter->save();
