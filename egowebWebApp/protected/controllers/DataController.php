@@ -24,7 +24,7 @@ class DataController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index', 'exportego', 'savenote', 'noteexists','exportalterpair', 'exportalterlist', 'exportother', 'visualize', 'study', 'ajaxAdjacencies', 'exportinterview'),
+				'actions'=>array('index', 'exportego', 'savenote', 'noteexists','exportalterpair', 'exportalterlist', 'exportother', 'visualize', 'study', 'ajaxAdjacencies', 'exportinterview' , "savematch" , "unmatch"),
 				'users'=>array('@'),
 			),
 			array('allow',  // deny all users
@@ -136,6 +136,7 @@ class DataController extends Controller
         arsort($interviewIds);
         $interview1 = Interview::model()->findByPK($interviewIds[0]);
         $interview2 = Interview::model()->findByPK($interviewIds[1]);
+        $study = Study::model()->findByPk($interview1->studyId);
 		$criteria = array(
 			'condition'=>"FIND_IN_SET(" . $interview1->id . ", interviewId)",
 		);
@@ -195,7 +196,30 @@ class DataController extends Controller
 			'answers'=>$answers,
 			'questions'=>$questions,
 			'prompts'=>$prompts,
+			'study'=>$study
 		));
+    }
+
+	public function actionSavematch()
+	{
+    	if(isset($_POST)){
+        	$match = new MatchedAlters;
+        	$match->attributes = $_POST;
+        	if($match->save())
+                echo "<button class='btn btn-xs btn-danger unMatch-" . $_POST['alterId1'] . "' onclick='unMatch(" . $_POST['alterId1'] . ", " . $_POST['alterId2'] . ")'>Unmatch</button>";
+            else
+                print_r($match->errors);
+        	
+    	}
+    }
+
+	public function actionUnmatch()
+    {
+        if(isset($_POST)){
+            $match = MatchedAlters::model()->findByAttributes(array("alterId1"=>$_POST['alterId1'], "alterId2"=>$_POST['alterId2']));
+            if($match)
+                $match->delete();
+        }
     }
 
 	public function actionIndex()

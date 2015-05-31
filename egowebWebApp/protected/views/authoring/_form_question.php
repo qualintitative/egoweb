@@ -437,7 +437,7 @@ function refresh(container){
 		<?php echo $form->textArea($model,'preface',array('rows'=>6, 'cols'=>50, 'id'=>'preface'.$model->id)); ?>
 		<?php echo $form->error($model,'preface'); ?>
 		<br>
-		<?php echo $form->labelEx($model,'citation', array('onclick'=>'$(".nicEdit-main", this.parentNode)[2].focus()')); ?>
+		<?php echo $form->labelEx($model,'Leaf and Stem'); ?>
 		<?php echo $form->textArea($model,'citation',array('rows'=>6, 'cols'=>50, 'id'=>'citation'.$model->id)); ?>
 		<?php echo $form->error($model,'citation'); ?>
 	</div>

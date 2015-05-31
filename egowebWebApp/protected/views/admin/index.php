@@ -30,7 +30,7 @@ $this->pageTitle =  "Admin";
 	<td>
 		<h3><a href="/archive">Archive</a></h3>
 		<p>
-			Archive studies that not no longer active.
+			Archive studies that are no longer active.
 		</p>
 	</td>
 	</tr>
@@ -46,7 +46,7 @@ $this->pageTitle =  "Admin";
 		<td>
 			<h3><a href="/admin/user">User Admin</a></h3>
 			<p>
-				Add new users
+				Add new users.
 			</p>
 		</td>
 		<?php endif; ?>
@@ -57,13 +57,13 @@ $this->pageTitle =  "Admin";
 	<td>
 		<h3><a href="/mobile">Mobile</a></h3>
 		<p>
-			Egoweb Mobile development
+			Apps for iOS and Android.
 		</p>
 	</td>
 	<td>
 		<h3><a href="/site/logout">Logout</a></h3>
 		<p>
-			Logout of Admin Mode
+			Logout of Admin Mode.
 		</p>
 	</td>
 	</tr>
