@@ -327,16 +327,15 @@ function deleteAlterList(studyId){
 			<div id="edit-alterList" style="margin-bottom:15px;"></div>
 		</div>
 		<div style="float:left; width:400px; clear:left">
-
-<?php echo CHtml::form('/authoring/importlist', 'post', array('id'=>'importListForm', 'enctype'=>'multipart/form-data')) ?>
-	<!-- MAX_FILE_SIZE must precede the file input field -->
-	<!-- Name of input element determines name in $_FILES array -->
-	<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo 'MAX = ' + Yii::app()->params['maxUploadFileSize']; ?>" />
-	<input name="userfile" type="file" />
-	<input type="hidden" name="studyId" value="<?= $model->id; ?>" />
-	<input class="btn btn-primary" type="submit" value="Import Participant List" />
-</form>
-	</div>
+            <?php echo CHtml::form('/authoring/importlist', 'post', array('id'=>'importListForm', 'enctype'=>'multipart/form-data')) ?>
+            	<!-- MAX_FILE_SIZE must precede the file input field -->
+            	<!-- Name of input element determines name in $_FILES array -->
+            	<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo 'MAX = ' + Yii::app()->params['maxUploadFileSize']; ?>" />
+            	<input name="userfile" type="file" />
+            	<input type="hidden" name="studyId" value="<?= $model->id; ?>" />
+            	<input class="btn btn-primary" type="submit" value="Import Participant List" />
+            </form>
+	    </div>
 		<div id="alterPrompt" >
 		<?php
 			$criteria=new CDbCriteria;
@@ -373,6 +372,16 @@ function deleteAlterList(studyId){
 			?>
 			<?php $this->endWidget(); ?>
 			<div id="edit-alterPrompt" style="margin-top:15px;float:left;clear:both;"></div>
+		<div style="float:left; width:400px; clear:left">
+            <?php echo CHtml::form('/authoring/importprompts', 'post', array('id'=>'importListForm', 'enctype'=>'multipart/form-data')) ?>
+            	<!-- MAX_FILE_SIZE must precede the file input field -->
+            	<!-- Name of input element determines name in $_FILES array -->
+            	<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo 'MAX = ' + Yii::app()->params['maxUploadFileSize']; ?>" />
+            	<input name="userfile" type="file" />
+            	<input type="hidden" name="studyId" value="<?= $model->id; ?>" />
+            	<input class="btn btn-primary" type="submit" value="Import Variable Prompts" />
+            </form>
+	    </div>
 		</div>
 	</div>
 	<script type="text/javascript">

@@ -64,6 +64,28 @@ class AuthoringController extends Controller
 		$this->redirect(Yii::app()->request->getUrlReferrer());
 	}
 
+	public function actionImportprompts()
+	{
+		if(!is_uploaded_file($_FILES['userfile']['tmp_name'])) //checks that file is uploaded
+			die("Error importing Variable Alter Prompts");
+
+		$file = fopen($_FILES['userfile']['tmp_name'],"r");
+
+		while(! feof($file)){
+			$data = fgetcsv($file);
+			if(isset($data[0]) && $data[0]){
+				$model = new AlterPrompt;
+				$model->studyId = $_POST['studyId'];
+				$model->afterAltersEntered = trim($data[0]);
+				$model->display = isset($data[1]) ? $data[1] : "";
+				$model->save();
+			}
+		}
+
+		fclose($file);
+		$this->redirect(Yii::app()->request->getUrlReferrer());
+	}
+
 	public function actionUploadaudio()
 	{
 		if(isset($_POST['studyId']) && isset($_POST['type']) && isset($_POST['id'])){
