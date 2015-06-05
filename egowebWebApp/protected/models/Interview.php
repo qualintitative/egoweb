@@ -93,7 +93,7 @@ class Interview extends CActiveRecord
      * @param $primekey
      * @return array|bool|CActiveRecord|Interview|mixed|null
      */
-    public static function getInterviewFromPrimekey( $studyId, $primekey, $prefill)
+    public static function getInterviewFromPrimekey( $studyId, $primekey, $prefill, $questions = array())
     {
         $answers = Answer::model()->findAllByAttributes( array( 'questionType' => 'EGO_ID',
                 'studyId' => $studyId ) );
@@ -141,7 +141,38 @@ class Interview extends CActiveRecord
             $egoIdQ->save();
         }
 
+        if(count($questions) > 0)
+            $this->fillEgoQs($interview->id, $questions);
+
         return $interview;
+    }
+
+    public static function fillEgoQs($id, $qs)
+    {
+        $interview = Interview::model()->findByPk($id);
+        foreach ($qs as $title=>$value)
+        {
+            $question = Question::model()->findByAttributes(array("title"=>$title));
+            $answer = Answer::model()->findByAttributes(array("interviewId"=>$id, "questionId"=>$question->id));
+            if($answer)
+                continue;
+            $answer = new Answer;
+            $answer->interviewId = $interview->id;
+            $answer->studyId = $interview->studyId;
+            $answer->questionType = $question->subjectType;
+            $answer->answerType = $question->answerType;
+            $answer->questionId = $question->id;
+            $answer->skipReason = "NONE";
+            if ($value)
+            {
+                $answer->value = $value;
+            }else
+            {
+                $answer->skipReason = "DONT_KNOW";
+                $answer->value = $study->valueDontKnow;
+            }
+            $answer->save();
+        }
     }
 
     public static function countAlters($id)
