@@ -199,6 +199,7 @@ class Question extends CActiveRecord
 			'DATE'=>'DATE',
 			'TIME_SPAN'=>'TIME_SPAN',
 			'TEXTUAL_PP'=>'TEXTUAL_PP',
+			'NO_RESPONSE'=>'NO_RESPONSE',
 		);
 	}
 

@@ -238,7 +238,7 @@ class InterviewingController extends Controller
 					}
 				}
 
-				if($Answer['questionType'] == "INTRODUCTION" || $Answer['questionType'] == "PREFACE"){
+				if($Answer['questionType'] == "INTRODUCTION" || $Answer['questionType'] == "PREFACE" || $Answer['answerType'] == "NO_RESPONSE"){
 					// no Answer to save, go to next page
 						$this->redirect(Yii::app()->createUrl(
 							'interviewing/'.$study->id.'?'.
