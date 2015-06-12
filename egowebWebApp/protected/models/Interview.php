@@ -652,9 +652,12 @@ class Interview extends CActiveRecord
         #OK FOR SQL INJECTION
         $alter_questions = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND studyId = " . $this->studyId . " ORDER BY ordering")->queryAll();
 
-        #OK FOR SQL INJECTION
+        $criteria=new CDbCriteria;
+        $criteria->condition = ("studyId = $this->studyId and subjectType = 'NETWORK'");
+        $criteria->order = "ordering";
+        $network_questions = Question::model()->findAll($criteria);
+
         $alters = Alters::model()->findAll(array('order'=>'id', 'condition'=>'interviewId=:x', 'params'=>array(':x'=>$this->id)));
-        //q("SELECT * FROM alters WHERE interviewId = " . $this->id)->queryAll();
 
         if (!$alters)
         {
@@ -670,7 +673,6 @@ class Interview extends CActiveRecord
 
         $text = "";
         $count = 1;
-
 
         foreach ($alters as $alter)
         {
@@ -789,6 +791,42 @@ class Interview extends CActiveRecord
                     }
                 }
             }
+                foreach ($network_questions as $question)
+                {
+                    $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question->id));
+                    if ($answer->value !== "" && $answer->skipReason == "NONE")
+                    {
+                        if ($question->answerType == "SELECTION")
+                        {
+                            if (isset($options[$answer]))
+                                $answers[] = $options[$answer];
+                            else
+                                $answers[] = "";
+                        } else if ($question->answerType == "MULTIPLE_SELECTION")
+                        {
+                            $optionIds = explode(',', $answer->value);
+                            $list = array();
+                            foreach ($optionIds as $optionId)
+                            {
+                                if (isset($options[$optionId]))
+                                    $list[] = $options[$optionId];
+                            }
+                            $answers[] = implode('; ', $list);
+                        } else
+                        {
+                            $answers[] = str_replace(',', '', $answer->value);
+                        }
+                    } else if ($answer->skipReason == "DONT_KNOW")
+                    {
+                        $answers[] = $study->valueDontKnow;
+                    } else if ( $answer->skipReason == "REFUSE")
+                    {
+                        $answers[] = $study->valueRefusal;
+                    } else
+                    {
+                        $answers[] = "";
+                    }
+                }
             if (isset($stats))
             {
                 $answers[] = $stats->getDensity();

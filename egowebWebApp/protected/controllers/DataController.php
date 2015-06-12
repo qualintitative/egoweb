@@ -260,6 +260,11 @@ class DataController extends Controller
         #OK FOR SQL INJECTION
         $alter_questions = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND studyId = " . $study->id . " ORDER BY ordering")->queryAll();
 
+        $criteria=new CDbCriteria;
+        $criteria->condition = ("studyId = $study->id and subjectType = 'NETWORK'");
+        $criteria->order = "ordering";
+        $network_questions = Question::model()->findAll($criteria);
+    
 		// start generating export file
 		header("Content-Type: application/octet-stream");
 		header("Content-Disposition: attachment; filename=".seoString($study->name)."-ego-alter-data".".csv");
@@ -278,6 +283,9 @@ class DataController extends Controller
 		$headers[] = "Alter Name";
 		foreach ($alter_questions as $question){
 			$headers[] = $question['title'];
+		}
+		foreach ($network_questions as $question){
+			$headers[] = $question->title;
 		}
 		if($expressionId){
 			$headers[] = "Density";
@@ -306,128 +314,6 @@ class DataController extends Controller
                 echo file_get_contents($filePath);
                 unlink($filePath);
             }
-            /*
-            #OK FOR SQL INJECTION
-			$alters = q("SELECT * FROM alters WHERE interviewId = " . $interview->id)->queryAll();
-			if(!$alters){
-				$alters = array('0'=>array('id'=>null));
-			}else{
-				if(isset($_POST['noAlters']) && $_POST['noAlters'] == 1)
-					continue;
-				if($expressionId){
-					$stats = new Statistics;
-					$stats->initComponents($interview->id, $expressionId);
-				}
-			}
-
-			foreach($alters as &$alter){
-				if(isset($alter['name']) && $alter['name']!="")
-					$alter['name'] = decrypt($alter['name']);
-			}
-
-
-
-			foreach ($alters as $alter){
-				$answers = array();
-				$answers[] = $interview->id;
-				$ego_ids = array();
-				foreach ($ego_id_questions as $question){
-                    #OK FOR SQL INJECTION
-					$ego_ids[] = q("SELECT value FROM answer WHERE interviewId = " . $interview->id  . " AND questionId = " . $question['id'])->queryScalar();
-				}
-				foreach($ego_ids as &$ego_id){
-					if ($ego_id!="")
-						$ego_id = decrypt($ego_id);
-				}
-				$answers[] = implode("_", $ego_ids);
-				foreach($ego_ids as $eid)
-					$answers[] = $eid;
-				foreach ($ego_questions as $question){
-                    #OK FOR SQL INJECTION
-					$answer = q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'])->queryScalar();
-					if($answer)
-						$answer = decrypt($answer);
-                    #OK FOR SQL INJECTION
-                    $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'])->queryScalar();
-					if($answer && $skipReason == "NONE"){
-						if($question['answerType'] == "SELECTION"){
-							if(isset($options[$answer]))
-								$answers[] = $options[$answer];
-							else
-								$answers[] = "";
-						}else if($question['answerType'] == "MULTIPLE_SELECTION"){
-							$optionIds = explode(',', $answer);
-							$list = array();
-							foreach($optionIds as $optionId){
-								if(isset($options[$optionId]))
-								$list[] = $options[$optionId];
-							}
-							$answers[] = implode('; ', $list);
-						}else{
-							$answers[] = $answer;
-						}
-					} else if (!$answer && ($skipReason == "DONT_KNOW" || $skipReason == "REFUSE")) {
-						if($skipReason == "DONT_KNOW")
-							$answers[] = $study->valueDontKnow;
-						else
-							$answers[] = $study->valueRefusal;
-					} else {
-							$answers[] = $study->valueNotYetAnswered;
-					}
-				}
-				if(is_numeric($alter['id'])){
-					$answers[] = $alter['name'];
-					foreach ($alter_questions as $question){
-						$expression = new Expression;
-                        #OK FOR SQL INJECTION
-						$answer = q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'])->queryScalar();
-						if(strlen($answer) >= 8)
-							$answer = decrypt($answer);
-                        #OK FOR SQL INJECTION
-                        $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter['id'])->queryScalar();
-						if($answer != "" && $skipReason == "NONE"){
-							if($question['answerType'] == "SELECTION"){
-								$answers[] = $options[$answer];
-							}else if($question['answerType'] == "MULTIPLE_SELECTION"){
-								$optionIds = explode(',', $answer);
-								$list = array();
-								foreach($optionIds as $optionId){
-									if(isset($options[$optionId]))
-										$list[] = $options[$optionId];
-								}
-								if(count($list) == 0)
-									$answers[] = $study->valueNotYetAnswered;
-								else
-									$answers[] = implode('; ', $list);
-							}else{
-								$answers[] = $answer;
-							}
-						} else if (!$answer && ($skipReason == "DONT_KNOW" || $skipReason == "REFUSE")) {
-							if($skipReason == "DONT_KNOW")
-								$answers[] = $study->valueDontKnow;
-							else
-								$answers[] = $study->valueRefusal;
-						}
-					}
-				}
-				if($expressionId && isset($stats)){
-					$answers[] = $stats->getDensity();
-					$answers[] = $stats->maxDegree();
-					$answers[] = $stats->maxBetweenness();
-					$answers[] = $stats->maxEigenvector();
-					$answers[] =  $stats->degreeCentralization();
-					$answers[] = $stats->betweennessCentralization();
-					$answers[] = count($stats->components);
-					$answers[] = count($stats->dyads);
-					$answers[] = count($stats->isolates);
-					$answers[] = $stats->getDegree($alter['id']);
-					$answers[] = $stats->getBetweenness($alter['id']);
-					$answers[] = $stats->eigenvectorCentrality($alter['id']);
-				}
-				echo implode(',', $answers) . "\n";
-				flush();
-			}*/
-
 		}
 		Yii::app()->end();
 
