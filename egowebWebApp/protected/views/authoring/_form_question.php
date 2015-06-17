@@ -111,7 +111,11 @@ jQuery('input.time-".$model->id."').change(function() {
 			<?php echo $form->labelEx($model,'refuseButton', array('for'=>$model->id . "_" . "refuseButton")); ?>
 			<br style="clear:left">
 			<?php echo $form->checkBox($model,'askingStyleList', array('id'=>$model->id . "_" . "askingStyleList", 'onchange'=>'changeStyle($(this), '.$model->id.', "' . $model->subjectType.'")')); ?>
-			<?php echo $form->labelEx($model,'askingStyleList', array('for'=>$model->id . "_" . "askingStyleList")); ?>
+                <?php if($model->subjectType == "EGO"): ?>
+                <?php echo CHtml::label("Leaf and Stem Question", $model->id . "_" . "askingStyleList"); ?>
+                <?php else: ?>
+    			<?php echo $form->labelEx($model,'askingStyleList', array('for'=>$model->id . "_" . "askingStyleList")); ?>
+    			<?php endif;?>
 			<?php else: ?>
 
 	<div class="panel-<?php echo $model->id; ?>" id="EGO_ID" style="display:none">

@@ -27,7 +27,7 @@ class AdminController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index', 'download', 'user', 'useredit', 'userdelete', 'getlink', 'migrate'),
+				'actions'=>array('index', 'download', 'user', 'useredit', 'userdelete', 'getlink', 'migrate', 'update'),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -212,6 +212,10 @@ class AdminController extends Controller
         $this->runMigrationTool();
     }
 
+    public function actionUpdate() {
+        $this->runGitUpdate();
+    }
+    
     private function runMigrationTool() {
         $commandPath = Yii::app()->getBasePath() . DIRECTORY_SEPARATOR . 'commands';
         $runner = new CConsoleCommandRunner();
@@ -223,5 +227,19 @@ class AdminController extends Controller
         $runner->run($args);
         echo htmlentities(ob_get_clean(), null, Yii::app()->charset);
     }
+
+    private function runGitUpdate() {
+        $commandPath = Yii::app()->getBasePath() . "/../../";
+        $runner = new CConsoleCommandRunner();
+        $runner->addCommands($commandPath);
+        
+        $commandPath = Yii::getFrameworkPath() . DIRECTORY_SEPARATOR . 'cli' . DIRECTORY_SEPARATOR . 'commands';
+        $runner->addCommands($commandPath);
+        $args = array('git', 'pull', '');
+        ob_start();
+        $runner->run($args);
+        echo htmlentities(ob_get_clean(), null, Yii::app()->charset);
+    }
+
 
 }
