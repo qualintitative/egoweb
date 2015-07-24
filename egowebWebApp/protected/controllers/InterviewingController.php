@@ -355,9 +355,8 @@ class InterviewingController extends Controller
     			        }
                     }
 
-					if (($Answer['value'] == "" || count($checkedBoxes) < $min || count($checkedBoxes) > $max) && $Answer['skipReason'] == "NONE")
+					if ((($Answer['value'] == "" && $min != 0) || count($checkedBoxes) < $min || count($checkedBoxes) > $max) && $Answer['skipReason'] == "NONE")
 						$showError = true;
-
 
 					$s='';
 					if($max != 1)
