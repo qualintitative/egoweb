@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Mar 31, 2015 at 12:04 AM
+-- Generation Time: Aug 03, 2015 at 03:28 PM
 -- Server version: 5.6.23
--- PHP Version: 5.5.14
+-- PHP Version: 5.5.24
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -177,6 +177,20 @@ CREATE TABLE IF NOT EXISTS `legend` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `matchedAlters`
+--
+
+CREATE TABLE IF NOT EXISTS `matchedAlters` (
+  `id` int(11) NOT NULL,
+  `studyId` int(11) DEFAULT NULL,
+  `alterId1` int(11) DEFAULT NULL,
+  `alterId2` int(11) DEFAULT NULL,
+  `matchedName` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `notes`
 --
 
@@ -326,26 +340,6 @@ CREATE TABLE IF NOT EXISTS `tbl_migration` (
   `apply_time` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `tbl_migration` (`version`, `apply_time`) VALUES
-('m000000_000000_base', 1416903954),
-('m140917_223213_graph_update', 1416903960),
-('m140918_011844_change_alter_id', 1416903960),
-('m140924_014007_add_dates_to_interview', 1416903960),
-('m140924_052523_add_dates_to_study', 1416903961),
-('m141015_042552_legend', 1416903961),
-('m141020_221311_encrypt_answer', 1416905154),
-('m141021_013819_encrypt_questionOption', 1416905175),
-('m141023_003707_encrypt_alters', 1416905182),
-('m141023_004706_encrypt_alterList', 1416905182),
-('m141023_005646_encrypt_notes', 1416905182),
-('m141023_010620_encrypt_user', 1416905182),
-('m141118_014141_add_completed_started_and_status_to_study', 1422895412),
-('m150202_163202_add_userId_study', 1422895412),
-('m150227_070331_hide_ego_id', 1425022213),
-('m150303_014601_change_completed_type', 1425347235),
-('m150314_043742_otherSpecUpdate', 1427782503),
-('m150319_063109_add_alter_to_os', 1427782503);
-
 -- --------------------------------------------------------
 
 --
@@ -426,6 +420,12 @@ ALTER TABLE `legend`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `matchedAlters`
+--
+ALTER TABLE `matchedAlters`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `notes`
 --
 ALTER TABLE `notes`
@@ -496,7 +496,7 @@ ALTER TABLE `alters`
 -- AUTO_INCREMENT for table `answer`
 --
 ALTER TABLE `answer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT
 --
 -- AUTO_INCREMENT for table `answerList`
 --
@@ -526,6 +526,11 @@ ALTER TABLE `interviewers`
 -- AUTO_INCREMENT for table `legend`
 --
 ALTER TABLE `legend`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `matchedAlters`
+--
+ALTER TABLE `matchedAlters`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `notes`
