@@ -3,6 +3,26 @@ class ImportExportController extends Controller
 {
 	public function actionImportstudy()
 	{
+        switch( $_FILES['files']['error'] ) {
+            case UPLOAD_ERR_OK:
+                $message = false;;
+                break;
+            case UPLOAD_ERR_INI_SIZE:
+            case UPLOAD_ERR_FORM_SIZE:
+                $message .= ' - file too large (limit of '.get_max_upload().' bytes).';
+                break;
+            case UPLOAD_ERR_PARTIAL:
+                $message .= ' - file upload was not completed.';
+                break;
+            case UPLOAD_ERR_NO_FILE:
+                $message .= ' - zero-length file uploaded.';
+                break;
+            default:
+                $message .= ' - internal error #'. $_FILES['files']['error'];
+                break;
+        }
+        if($message)
+            echo $message;
 		if(!is_uploaded_file($_FILES['files']['tmp_name'][0])) //checks that file is uploaded
 			die("Error importing study");
 

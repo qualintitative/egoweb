@@ -9,13 +9,13 @@
                 "parents": {
                     "AssetsLibrary.framework": [
                         {
-                            "xml": "false",
+                            "xml": false,
                             "count": 2
                         }
                     ],
                     "MobileCoreServices.framework": [
                         {
-                            "xml": "false",
+                            "xml": false,
                             "count": 1
                         }
                     ]
@@ -31,10 +31,6 @@
                         {
                             "xml": "<feature name=\"FileTransfer\"><param name=\"ios-package\" value=\"CDVFileTransfer\" /></feature>",
                             "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"broadcaster\"><param name=\"ios-package\" value=\"CDVBroadcaster\" /></feature>",
-                            "count": 1
                         }
                     ]
                 }
@@ -46,9 +42,6 @@
             "PACKAGE_NAME": "com.rand.egowebmoble"
         },
         "org.apache.cordova.file-transfer": {
-            "PACKAGE_NAME": "com.rand.egowebmoble"
-        },
-        "org.bsc.cordova.broadcaster": {
             "PACKAGE_NAME": "com.rand.egowebmoble"
         }
     },

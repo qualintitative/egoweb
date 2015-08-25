@@ -15,10 +15,6 @@
                         {
                             "xml": "<feature name=\"FileTransfer\"><param name=\"android-package\" value=\"org.apache.cordova.filetransfer.FileTransfer\" /></feature>",
                             "count": 1
-                        },
-                        {
-                            "xml": "<feature name=\"broadcaster\"><param name=\"android-package\" value=\"org.bsc.cordova.CDVBroadcaster\" /></feature>",
-                            "count": 1
                         }
                     ]
                 }
@@ -40,9 +36,6 @@
             "PACKAGE_NAME": "com.rand.egowebmoble"
         },
         "org.apache.cordova.file-transfer": {
-            "PACKAGE_NAME": "com.rand.egowebmoble"
-        },
-        "org.bsc.cordova.broadcaster": {
             "PACKAGE_NAME": "com.rand.egowebmoble"
         }
     },

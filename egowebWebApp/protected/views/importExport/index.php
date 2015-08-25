@@ -11,7 +11,6 @@
         <?php echo CHtml::form('/importExport/importstudy', 'post', array('id'=>'importForm','enctype'=>'multipart/form-data')); ?>
         <div class="form-group">
             <div class="col-lg-3">
-                <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo 'MAX = ' + Yii::app()->params['maxUploadFileSize']; ?>" />
                 <input id="userfile" name="files[]" class="form-control" type="file" multiple/>
             </div>
         </div>
