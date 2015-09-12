@@ -111,10 +111,10 @@ function listServers(div){
 	for (k in servers){
 		console.log( servers[k].ADDRESS);
 		div.append("<hr>");
-		div.append('<div id="' +servers[k].ID + '" style="width:100%; clear:both; text-align:left"><h1>' + servers[k].ADDRESS + '</h1></div>');
+		div.append('<div id="' +servers[k].ID + '" style="width:100%; clear:both; text-align:left"><h1>' + servers[k].ADDRESS + '</h1></div><br style="clear:both">');
 		div.append('<form id = "' +servers[k].ID + '_serverForm">' +
-		'<div class="multiRow" style="width:100px;text-align:left">Username</div><input type=text name="LoginForm[username]" /><br style="clear:both">' +
-		'<div class="multiRow" style="width:100px;text-align:left">Password</div><input type=password name="LoginForm[password]" /><br style="clear:both">'+
+		'<div style="float:left; width:100px;text-align:left">Username</div><input type=text name="LoginForm[username]" /><br style="clear:both"><br style="clear:both">' +
+		'<div style="float:left; width:100px;text-align:left">Password</div><input type=password name="LoginForm[password]" /><br style="clear:both"><br style="clear:both">'+
 		'<button onclick=\'verifyServer("'+ servers[k].ADDRESS + '", $("#' +servers[k].ID + '_serverForm").serialize()); return false\'>Connect</button></form>');
 	}
 }

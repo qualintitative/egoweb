@@ -46,15 +46,15 @@ $(function(){
 				<br style="clear:both">
 			</div>
 			<div id="addServer">
-				<div class='multiRow' style="width:100px;text-align:left">Server</div><input id="server" type=text name="server" /><br style='clear:both'>
+				<div style="float:left; width:100px;text-align:left">Server</div><input id="server" type=text name="server" /><br style='clear:both'>
 				<button onclick='addServer($("#server").val())'>Add</button>
 				<button onclick='cancelAdd()'>Cancel</button>
 			</div>
 			<div id="connect">
 				<h1 id="serverName"></h1>
-				<form id = "serverForm">
-					<div class='multiRow' style="width:100px;text-align:left">Username</div><input type=text name="LoginForm[username]" /><br style='clear:both'>
-					<div class='multiRow' style="width:100px;text-align:left">Password</div><input type=password name="LoginForm[password]" /><br style='clear:both'>
+				<form id="serverForm">
+					<div style="float:left; width:100px;text-align:left">Username</div><input type=text name="LoginForm[username]" /><br style='clear:both'>
+					<div style="float:left; width:100px;text-align:left">Password</div><input type=password name="LoginForm[password]" /><br style='clear:both'>
 				</form>
 				<button onclick='verifyServer($("#serverName").html(),$("#serverForm").serialize())'>Connect</button>
 			</div>

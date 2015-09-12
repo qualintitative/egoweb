@@ -322,7 +322,7 @@ class ImportExportController extends Controller
     				}
     				$newInterview->studyId = $newStudy->id;
     				if(!$newInterview->save())
-    					print_r($newInterview->errors);
+    					echo "New interview: " .  print_r($newInterview->errors);
     				else
     					$newInterviewIds[intval($oldInterviewId)] = $newInterview->id;
     
@@ -428,7 +428,9 @@ class ImportExportController extends Controller
     
     						$newGraph->expressionId = $newExpressionIds[intval($newGraph->expressionId)];
     						if(!$newGraph->save()){
-    							"Graph: " . print_r($newGraph->errors);
+        						print_r($newExpressionIds);
+        						print_r($newGraph->expressionId);
+    							echo "Graph: " . print_r($newGraph->errors);
     							die();
     						}
     					}
@@ -474,6 +476,7 @@ class ImportExportController extends Controller
     							continue;
     
     						if(!$newAnswer->save()){
+        						echo "new answer:";
     							echo $oldQId . "<br>";
     							echo $newQuestionIds[$oldQId]."<br>";
     							print_r($newQuestionIds);

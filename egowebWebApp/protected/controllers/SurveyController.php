@@ -165,7 +165,7 @@ class SurveyController extends Controller {
      * @param null $prefill
      * @param null $redirect
      */
-    public static function createSurvey( $surveyId, $userId, $prefill=null, $redirect=null ){
+    public static function createSurvey( $surveyId, $userId, $prefill=null, $questions=array(), $redirect=null ){
 
         $study = Study::model()->findByPk( $surveyId );
         if( !$study ){
@@ -173,7 +173,7 @@ class SurveyController extends Controller {
             return ApiController::sendResponse( 418, $msg );
         }
 
-        $interview = Interview::getInterviewFromPrimekey( $study->id, $userId, $prefill );
+        $interview = Interview::getInterviewFromPrimekey( $study->id, $userId, $prefill, $questions);
 
         if( !$interview ){
             $msg = "Unable to find user_id and/or survey_id combination";
