@@ -169,6 +169,7 @@ class Interview extends CActiveRecord
             }else
             {
                 $answer->skipReason = "DONT_KNOW";
+                $study = Study::model()->findByPk($interview->studyId);
                 $answer->value = $study->valueDontKnow;
             }
             $answer->save();
