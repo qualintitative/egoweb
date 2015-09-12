@@ -142,7 +142,7 @@ class Interview extends CActiveRecord
         }
 
         if(count($questions) > 0)
-            $this->fillEgoQs($interview->id, $questions);
+            self::fillEgoQs($interview->id, $questions);
 
         return $interview;
     }
