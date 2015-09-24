@@ -134,6 +134,8 @@ jQuery('input.time-".$model->id."').change(function() {
 	</div>
 	<?php endif; ?>
 	<div class="panel-<?php echo $model->id; ?>" id="MULTIPLE_SELECTION" style="display:none">
+		<?php echo $form->checkBox($model,'otherSpecify',array('id'=>$model->id . "_" . "otherSpecify")); ?>
+		<?php echo $form->labelEx($model,'otherSpecify',array('for'=>$model->id . "_" . "otherSpecify")); ?>
 		<table border="0" bgcolor="#dddddd" >
 			<tr><td colspan="2">Bounds for MULTIPLE_SELECTION Entry:</td></tr>
 			<tr>
