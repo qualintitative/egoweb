@@ -142,7 +142,7 @@ class Interview extends CActiveRecord
         }
 
         if(count($questions) > 0)
-            $this->fillEgoQs($interview->id, $questions);
+            self::fillEgoQs($interview->id, $questions);
 
         return $interview;
     }
@@ -169,6 +169,7 @@ class Interview extends CActiveRecord
             }else
             {
                 $answer->skipReason = "DONT_KNOW";
+                $study = Study::model()->findByPk($interview->studyId);
                 $answer->value = $study->valueDontKnow;
             }
             $answer->save();
