@@ -91,6 +91,8 @@ class Interview extends CActiveRecord
      * retrieves interview (or create new one) from MMIC prime key
      * @param $studyId
      * @param $primekey
+     * @param $prefill (Ego ID Prefill)
+     * @param $question (Ego Questions Prefill)
      * @return array|bool|CActiveRecord|Interview|mixed|null
      */
     public static function getInterviewFromPrimekey( $studyId, $primekey, $prefill, $questions = array())
@@ -152,7 +154,7 @@ class Interview extends CActiveRecord
         $interview = Interview::model()->findByPk($id);
         foreach ($qs as $title=>$value)
         {
-            $question = Question::model()->findByAttributes(array("title"=>$title));
+            $question = Question::model()->findByAttributes(array("title"=>$title, "studyId"=>$interview->studyId));
             $answer = Answer::model()->findByAttributes(array("interviewId"=>$id, "questionId"=>$question->id));
             if($answer)
                 continue;
