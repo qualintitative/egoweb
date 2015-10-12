@@ -37,6 +37,10 @@ function exportOther(){
 	$('#analysis').attr('action', '/data/exportother');
 	$('#analysis').submit();
 }
+function exportOtherLegacy(){
+	$('#analysis').attr('action', '/data/oldexportother');
+	$('#analysis').submit();
+}
 function exportAlterList(){
 	$('#analysis').attr('action', '/data/exportalterlist');
 	$('#analysis').submit();
@@ -79,6 +83,7 @@ Network Statistics
 <button onclick='exportEgo()' class='authorButton'>Export Ego-Alter Data</button><br style='clear:both'>
 <button onclick='exportAlterPair()' class='authorButton'>Export Alter Pair Data</button><br style='clear:both'>
 <button onclick='exportOther()' class='authorButton'>Export Other Specify Data</button><br style='clear:both'>
+<button onclick='exportOtherLegacy()' class='authorButton'>Export Legacy Other Specify Data</button><br style='clear:both'>
 <button onclick='exportAlterList()' class='authorButton'>Export Pre-defined Alter List</button><br style='clear:both'>
 <button onclick='matchAlters()' class='authorButton'>Match Alters</button><br style='clear:both'>
 <button onclick='deleteInterviews()' class='authorButton'>Delete Interviews</button><br style='clear:both'>
