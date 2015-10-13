@@ -91,6 +91,8 @@ class Interview extends CActiveRecord
      * retrieves interview (or create new one) from MMIC prime key
      * @param $studyId
      * @param $primekey
+     * @param $prefill (Ego ID Prefill)
+     * @param $question (Ego Questions Prefill)
      * @return array|bool|CActiveRecord|Interview|mixed|null
      */
     public static function getInterviewFromPrimekey( $studyId, $primekey, $prefill, $questions = array())
