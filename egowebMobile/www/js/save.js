@@ -313,7 +313,6 @@ function save(id, page){
 		if(answer.ANSWERTYPE == "DATE"){
 			var date = answer.VALUE.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
 			var time = answer.VALUE.match(/(\d+):(\d+) (AM|PM)/);
-
 			if(typeof time != "undefined" && time && time.length > 2){
 			    if(parseInt(time[1]) < 1 || parseInt(time[1]) > 12){
 			    	errorMsg = 'Please enter 1 to 12 for HH';
@@ -327,6 +326,7 @@ function save(id, page){
 			}else{
 		    	errorMsg = 'Please enter the time of day';
 			    errorModel.addError(array_id, errorMsg);
+				errors++;
 			}
 			if(typeof date != "undefined" && date && date.length > 3){
 			    if(parseInt(date[2]) < 1 || parseInt(date[2]) > 31){
@@ -417,6 +417,7 @@ function save(id, page){
 			answer.INTERVIEWID = interviewId;
 			console.log(answer);
 			console.log(errorModel);
+			console.log(errorModel.getError(array_id));
 			if(!errorModel.getError(array_id)){
 				model[array_id]= answer;
 				console.log(model[array_id].ID);
@@ -430,6 +431,7 @@ function save(id, page){
 				}
 				completed = page + 1;
 			}else{
+				console.log("page prevented from progressing");
 				completed = page;
 			}
 			if(parseInt(db.queryValue("SELECT completed FROM interview WHERE id = " + interviewId)) != -1){
