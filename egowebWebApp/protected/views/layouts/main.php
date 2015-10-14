@@ -118,7 +118,7 @@
 	</div>
 </div>
 				</div>
-				<?php if(Yii::app()->getController()->getId() == "interviewing" && isset($_GET['interviewId'])): ?>
+				<?php if(Yii::app()->getController()->getId() == "interviewing" && isset($_GET['interviewId']) && !Yii::app()->user->isGuest): ?>
 				<span class="interviewee"><?php echo (isset($_GET['interviewId']) && $_GET['interviewId']) ?  Interview::getEgoId($_GET['interviewId']) : ""; ?></span>
 				<span class="intleft">Interviewing:</span>
 				<?php endif; ?>
