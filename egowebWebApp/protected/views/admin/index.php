@@ -21,6 +21,14 @@ $this->pageTitle =  "Admin";
 	</td>
 	</tr>
 	<tr>
+	<td width=50%>
+		<h3><a href="/interview">Interview (BETA)</a></h3>
+		<p>
+			Start a new interview or continue a partially completed interview.
+		</p>
+	</td>
+	</tr>
+	<tr>
 	<td>
 		<h3><a href="/data">Data Processing</a></h3>
 		<p>

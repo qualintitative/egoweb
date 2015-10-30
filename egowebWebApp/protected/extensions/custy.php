@@ -108,4 +108,34 @@ function encrypt( $decrypted ){
     return $encrypted;
 }
 
+function mToA($models) {
+    if (is_array($models))
+        $arrayMode = TRUE;
+    else {
+        $models = array($models);
+        $arrayMode = FALSE;
+    }
+
+    $result = array();
+    foreach ($models as $model) {
+        $attributes = $model->getAttributes();
+        $relations = array();
+        foreach($attributes as $key=>$value){
+            $attributes[strtoupper($key)] = $value;
+            unset($attributes[$key]);
+        }
+        foreach ($model->relations() as $key => $related) {
+            if ($model->hasRelated($key)) {
+                $relations[$key] = convertModelToArray($model->$key);
+            }
+        }
+        $all = array_merge($attributes, $relations);
+
+        if ($arrayMode)
+            array_push($result, $all);
+        else
+            $result = $all;
+    }
+    return $result;
+}
 ?>
