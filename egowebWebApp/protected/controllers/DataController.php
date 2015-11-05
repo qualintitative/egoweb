@@ -457,6 +457,94 @@ class DataController extends Controller
 		Yii::app()->end();
 	}
 
+	public function actionOldexportother()
+	{
+		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
+			die("nothing to export");
+
+		$study = Study::model()->findByPk((int)$_POST['studyId']);
+        #OK FOR SQL INJECTION
+		$optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
+
+		// create an array with option ID as key
+		$options = array();
+		foreach ($optionsRaw as $option){
+			$options[$option['id']] = $option['value'];
+		}
+
+		header("Content-Type: application/octet-stream");
+		header("Content-Disposition: attachment; filename=".seoString($study->name)."-other-specify-data".".csv");
+		header("Content-Type: application/force-download");
+		$headers = array();
+		$headers[] = 'INTERVIEW ID';
+		$headers[] = "EGO ID";
+		$headers[] = "QUESTION";
+		$headers[] = "ALTER ID";
+		$headers[] = "RESPONSE";
+		echo implode(',', $headers) . "\n";
+
+        #OK FOR SQL INJECTION
+		$other_qs = q("SELECT * FROM question WHERE otherSpecify = 1 AND studyId = ".$study->id)->queryAll();
+		$interviews = Interview::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
+
+		foreach ($interviews as $interview){
+			if(!isset($_POST['export'][$interview->id]))
+				continue;
+			foreach($other_qs as $question){
+				$answer = array();
+				if($question['subjectType'] == "ALTER"){
+					$alters = Alters::model()->findAllByAttributes(array('interviewId'=>$interview->id));
+					foreach($alters as $alter){
+                        #OK FOR SQL INJECTION
+						$response = q("SELECT otherSpecifyText FROM answer WHERE questionId = " . $question['id'] . " AND interviewId = " . $interview->id . "AND alterId1 = " . $alter->id)->queryScalar();
+						$responses = array();
+						foreach(preg_split('/;;/', $response) as $other){
+					    	if($other && strstr($other, ':')){
+						    	list($key, $val) = preg_split('/:/', $other);
+						    	$responses[] = $options[$key] . ":" . '"'.$val.'"';
+						    }
+						}
+						if(count($responses) > 0)
+							$response = implode(";; ", $responses);
+						$answer[] = $interview->id;
+						$answer[] = Interview::getRespondant($interview->id);
+						$answer[] = $question['title'];
+						if($alter->name!="")
+						         $answer[] = decrypt($alter->name);
+						//$answer[] = $alter->name;
+						if($response!="")
+						         $answer[] = decrypt($response);
+						//$answer[] = $response;
+						echo implode(',', $answer) . "\n";
+						flush();
+					}
+				}else{
+                    #OK FOR SQL INJECTION
+					$response = q("SELECT otherSpecifyText FROM answer WHERE questionId = " . $question['id'] . " AND interviewId = " . $interview->id)->queryScalar();
+					$responses = array();
+					foreach(preg_split('/;;/', $response) as $other){
+					    if($other && strstr($other, ':')){
+					    	list($key, $val) = preg_split('/:/', $other);
+					    	$responses[] = $options[$key] . ":" . '"'.$val.'"';
+					    }
+					}
+					if(count($responses) > 0)
+						$response = implode("; ", $responses);
+					$answer[] = $interview->id;
+					$answer[] = Interview::getRespondant($interview->id);
+					$answer[] = $question['title'];
+					$answer[] = "";
+						if($response!="")
+						         $answer[] = decrypt($response);
+					//$answer[] = $response;
+					echo implode(',', $answer) . "\n";
+					flush();
+				}
+			}
+		}
+		Yii::app()->end();
+	}
+
 	public function actionExportother()
 	{
 		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")

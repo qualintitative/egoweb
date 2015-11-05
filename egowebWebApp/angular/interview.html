@@ -1,0 +1,216 @@
+<h4 ng-if="prompt != ''" ng-bind-html="prompt">{{ prompt }}</h4>
+
+<div id="alterFormBox" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'">
+
+
+    <form id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
+        <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
+        <div class="form-group">
+                <input style="float:left" name="Alters[name]" id="Alters_name" type="text" maxlength="1024">
+                <input value="{{ interviewId }}" name="Alters[interviewId]" id="Alters_interviewId" type="hidden"> 
+                <input class="orangebutton alterSubmit" type="submit" name="yt0" value="+ Add">
+        </div>
+    </form>
+
+    <form id="deleteAlterForm" name="deleteAlterForm">
+        <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
+        <input id="deleteAlterId" name="Alters[id]" type="hidden">
+        <input value="{{ interviewId }}" name="Alters[interviewId]" type="hidden"> 
+    </form>
+
+</div>
+    <div id="alterListBox" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'">
+        <table class="items">
+        <tbody>
+        <tr class="odd" ng-repeat="alter in alters track by $index">
+        <td style="width:20px;" id="ordering"></td>
+        <td style="width:120px;">{{ alter.NAME }}</td>
+        <td class="button-column"><a class="alter-delete" title="Delete" ng-click="removeAlter(alter.ID)"><img src="/assets/7828ca7f/gridview/delete.png" alt="Delete"></a></td>
+        </tr>
+        </tbody>
+        </table>
+    </div>
+
+<span ng-if="answerForm.$submitted && errors">
+    <div class="alert alert-danger" role="alert" ng-if="$index == 0" ng-repeat="error in errors">
+        {{ error }}
+    </div>
+</span>
+
+<form id="answerForm" name="answerForm" ng-submit="submitForm(answerForm.$valid)" novalidate>
+    
+
+
+<div class="multi" ng-show="askingStyleList != false">
+    <div>
+    <div></div>
+    <div ng-repeat="option in options[askingStyleList]" style="width:120px">{{ option.NAME }}</div>
+    </div>
+</div>
+
+<div class="panel" ng-if="hideQ == false" ng-class="{multiBox: askingStyleList != false && pageQ != 'EGO'}">
+    <div ng-class="{multi: question.ASKINGSTYLELIST == true}" ng-repeat="question in questions">
+        <h4 ng-if="question.SUBJECTTYPE == 'EGO_ID'">{{ question.PROMPT }}</h4>
+
+        <div ng-if="question.ANSWERTYPE == 'TEXTUAL' || question.ANSWERTYPE == 'NUMERICAL'">
+            <input id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}' subject-type='{{ question.SUBJECTTYPE }}' question-id='{{ question.ID }}' question-alter-id-1='{{ question.ALTERID2 }}'>
+        </div>
+
+        <div class="hidden" ng-if="question.ANSWERTYPE != 'TEXTUAL' && question.ANSWERTYPE != 'NUMERICAL'">
+            <input id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}' subject-type='{{ question.SUBJECTTYPE }}' question-id='{{ question.ID }}' question-alter-id-1='{{ question.ALTERID2 }}'>
+        </div>
+
+        <div ng-if="question.ANSWERTYPE == 'DATE'">
+    <div class="multiRow ">
+        Time (HH:MM)
+    </div>
+
+    <div class="multiRow ">
+        <div style="padding-left:4px; padding-right:0;">
+            <input type="text" class="timeInput time-261" id="hour" maxlength="2" style="width:30px" value="">
+        </div>
+    </div>
+
+    <div class="multiRow ">
+        <div style="float:left; padding-left:4px; padding-right:0;">
+            <input type="text" class="timeInput time-261" id="minute" maxlength="2" style="width:30px" value="">
+        </div>
+    </div>
+
+    <div class="multiRow ">
+        <input id="ampm" class="time-261" name="ampm-261" value="AM" type="radio" checked> AM <input id="ampm" class="time-261" name="ampm-261" value="PM" type="radio"> PM
+    </div>
+
+    <div class="multiRow ">
+        (Month,Day,Year)
+    </div>
+
+    <div class="multiRow ">
+        <select class="time-261" name="month" id="month">
+            <option value="January">
+                January
+            </option>
+
+            <option value="February">
+                February
+            </option>
+
+            <option value="March">
+                March
+            </option>
+
+            <option value="April">
+                April
+            </option>
+
+            <option value="May">
+                May
+            </option>
+
+            <option value="June">
+                June
+            </option>
+
+            <option value="July">
+                July
+            </option>
+
+            <option value="August">
+                August
+            </option>
+
+            <option value="September">
+                September
+            </option>
+
+            <option value="October">
+                October
+            </option>
+
+            <option value="November">
+                November
+            </option>
+
+            <option value="December">
+                December
+            </option>
+        </select>
+    </div>
+
+    <div class="multiRow ">
+        <input type="text" class="timeInput time-261" id="day" maxlength="2" style="width:30px" value="">
+    </div>
+
+    <div class="multiRow ">
+        <input type="text" class="timeInput time-261" id="year" style="width:60px" maxlength="4" value="">
+    </div>
+        </div>
+        
+
+        <div ng-if="question.ANSWERTYPE == 'TIME_SPAN'">
+
+            <div class="singleRow " style="width:180px">
+                <input type="text" ng-model="time_spans[question.array_id].YEARS" ng-change="timeValue(question.array_id)" style="width:30px">
+                Years
+            </div>
+                            <div class="singleRow " style="width:180px">
+                <input type="text"  ng-model="time_spans[question.array_id].MONTHS" ng-change="timeValue(question.array_id)" style="width:30px">
+                Months
+            </div>
+                            <div class="singleRow " style="width:180px">
+                <input type="text"  ng-model="time_spans[question.array_id].WEEKS" ng-change="timeValue(question.array_id)" style="width:30px">
+                Weeks
+            </div>
+                            <div class="singleRow " style="width:180px">
+                <input type="text"  ng-model="time_spans[question.array_id].DAYS" ng-change="timeValue(question.array_id)" style="width:30px">
+                Days
+            </div>
+                            <div class="singleRow " style="width:180px">
+                <input type="text"  ng-model="time_spans[question.array_id].HOURS" ng-change="timeValue(question.array_id)" style="width:30px">
+                Hours
+            </div>
+                            <div class="singleRow " style="width:180px">
+                <input type="text"  ng-model="time_spans[question.array_id].MINUTES" ng-change="timeValue(question.array_id)" style="width:30px">
+                Minutes
+            </div>
+        </div>
+        
+        <div ng-class="{'bg-danger':answerForm.$submitted && errors[question.array_id]}" ng-if="question.ANSWERTYPE == 'MULTIPLE_SELECTION'">
+            <div ng-show="question.ASKINGSTYLELIST == true">
+                <label ng-show="question.SUBJECTTYPE == 'EGO'">{{ question.CITATION }}</label>
+                <label ng-show="question.SUBJECTTYPE == 'ALTER'">{{ alters[question.ALTERID1].NAME }}</label>
+                <label ng-show="question.SUBJECTTYPE == 'ALTER_PAIR'">{{ alters[question.ALTERID2].NAME }}</label>
+            </div>
+        
+            <div ng-repeat="option in options[question.array_id]" style="width:{{ fixedWidth }}">
+                <input class="answerInput" ng-model="option.checked" type="checkbox" ng-change="multiSelect('{{ option.ID }}', '{{$index}}', '{{question.array_id}}',{{ question.MAXCHECKABLEBOXES }})">
+                <label ng-show="question.ASKINGSTYLELIST == false" for="multiselect-1515_{{ $index }}">{{ option.NAME }}</label><br>
+            </div>
+        </div>
+
+        <div class="hidden">
+            <input name="Answer[{{ question.array_id }}][otherSpecifyText]" ng-model="answers[question.array_id].OTHERSPECIFYTEXT">
+            <input name="Answer[{{ question.array_id }}][skipReason]" ng-model="answers[question.array_id].SKIPREASON">
+            <input name="Answer[{{ question.array_id }}][questionId]" value="{{ question.ID }}" type="hidden">
+            <input name="Answer[{{ question.array_id }}][questionType]" value="{{ question.SUBJECTTYPE }}" type="hidden">
+            <input name="Answer[{{ question.array_id }}][studyId]" value="{{ question.STUDYID }}" type="hidden">
+            <input name="Answer[{{ question.array_id }}][answerType]" value="{{ question.ANSWERTYPE }}" type="hidden">
+            <input name="Answer[{{ question.array_id }}][alterId1]" value="{{ question.ALTERID1 }}" type="hidden">
+            <input name="Answer[{{ question.array_id }}][alterId2]" value="{{ question.ALTERID2 }}" type="hidden">
+            <input name="Answer[{{ question.array_id }}][interviewId]" value="{{ answers[question.array_id].INTERVIEWID }}" type="hidden">
+        </div>
+
+    </div>
+</div>
+
+<input name="Answer[{{ questions[0].array_id }}][value]" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'" ng-model="answers[question.array_id].VALUE" check-answer array-id='0' answer-type='{{ questions[0].ANSWERTYPE }}' type="hidden">
+<input name="page" value='{{ page }}' type="hidden">
+<input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
+
+<div class="form-group clear-left">
+    <button ng-show="page > 0" id="next" class='graybutton' ng-click="goBack();">Back</button>
+	<button id="next" class='orangebutton' type="submit">Next</button>
+</div>
+
+</form>
+

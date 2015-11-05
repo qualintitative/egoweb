@@ -91,6 +91,8 @@ class Interview extends CActiveRecord
      * retrieves interview (or create new one) from MMIC prime key
      * @param $studyId
      * @param $primekey
+     * @param $prefill (Ego ID Prefill)
+     * @param $question (Ego Questions Prefill)
      * @return array|bool|CActiveRecord|Interview|mixed|null
      */
     public static function getInterviewFromPrimekey( $studyId, $primekey, $prefill, $questions = array())
@@ -142,23 +144,22 @@ class Interview extends CActiveRecord
         }
 
         if(count($questions) > 0)
-            $this->fillEgoQs($interview->id, $questions);
+            $interview->fillEgoQs($questions);
 
         return $interview;
     }
 
-    public static function fillEgoQs($id, $qs)
+    public function fillEgoQs($qs)
     {
-        $interview = Interview::model()->findByPk($id);
         foreach ($qs as $title=>$value)
         {
-            $question = Question::model()->findByAttributes(array("title"=>$title));
-            $answer = Answer::model()->findByAttributes(array("interviewId"=>$id, "questionId"=>$question->id));
+            $question = Question::model()->findByAttributes(array("title"=>$title, "studyId"=>$this->studyId));
+            $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question->id));
             if($answer)
                 continue;
             $answer = new Answer;
-            $answer->interviewId = $interview->id;
-            $answer->studyId = $interview->studyId;
+            $answer->interviewId = $this->id;
+            $answer->studyId = $this->studyId;
             $answer->questionType = $question->subjectType;
             $answer->answerType = $question->answerType;
             $answer->questionId = $question->id;
@@ -169,6 +170,7 @@ class Interview extends CActiveRecord
             }else
             {
                 $answer->skipReason = "DONT_KNOW";
+                $study = Study::model()->findByPk($this->studyId);
                 $answer->value = $study->valueDontKnow;
             }
             $answer->save();

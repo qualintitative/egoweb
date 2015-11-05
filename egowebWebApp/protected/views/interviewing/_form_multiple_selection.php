@@ -43,6 +43,7 @@ if($question->dontKnowButton)
 if($question->refuseButton)
 	$skipList['REFUSE'] = ($rowColor && $question->askingStyleList) ? "" : "Refuse";
 
+$legacy = false;
 
 if($rowColor != "" && $question->askingStyleList){
 	$columns = count($options) + count($skipList);
@@ -97,6 +98,16 @@ if($rowColor != "" && $question->askingStyleList){
                     $otherValue[$option->id] = "";
         }
     }
+    
+    if(count($otherValue) == 0){
+        $legacy = true;
+        foreach(preg_split('/;;/', $model[$array_id]->otherSpecifyText) as $other){
+          	if($other && strstr($other, ':')){
+        		list($key, $val) = preg_split('/:/', $other);
+        		$otherValue[$key] = $val;
+        	}
+        }
+    }
 	echo CHtml::checkBoxList(
 	    'multiselect-'.$array_id,
 	    $selected,
@@ -126,7 +137,28 @@ echo $form->hiddenField($model[$array_id],  '['.$array_id.']otherSpecifyText',ar
 ?>
 <script>
 otherSpecify = JSON.parse('<?php echo json_encode($otherValue) ?>');
+array_id = '<?php echo $array_id ?>';
 $(function(){
+<?php if ($legacy): ?>
+    
+	$('#multiselect-' + array_id + ' label').each(function(index){
+		if($(this).html().match(/OTHER \(*SPECIFY\)*/i)){
+			display = '';
+			val = '';
+			if($('#' + $(this).attr('for')).prop('checked') != true)
+				display = 'style="display:none"';
+			else
+				val = otherSpecify[$('#' + $(this).attr('for')).val()];
+			$(this).after(
+			'<input id="' + $('#' + $(this).attr('for')).val() + '" class="' + array_id +'_other" ' + display+ ' onchange="changeOther('+array_id+')" value="'+  val + '" style="margin:5px"/>'
+			);
+			$('#' + $(this).attr('for')).click(function(){
+				toggleOther($('#' + $(this).val()));
+			});
+		}
+	});
+});
+<?php else: ?>
     $(".otherSpecify").each(function(index){
         if($(this).attr("id").match(/\d+/))
             var otherId = $(this).attr("id").match(/\d+/)[0];
@@ -137,5 +169,5 @@ $(function(){
         else
             $(this).hide();
     });
-});
+<?php endif; ?>
 </script>

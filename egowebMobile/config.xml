@@ -13,4 +13,17 @@
 
 <preference name="iosPersistentFileLocation" value="Library" />
     <access origin="*" />
+
+<platform name="ios">
+<config-file target="*-Info.plist" parent="NSAppTransportSecurity">
+<array>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <boolean>YES</boolean>
+    </dict>
+</array>
+</config-file>
+</platform>
+
 </widget>
+

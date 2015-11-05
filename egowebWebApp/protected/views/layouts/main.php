@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="egowebApp">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title><?php echo CHtml::encode($this->pageTitle); ?></title>
@@ -22,7 +22,7 @@
 		<?php Yii::app()->clientScript->registerCoreScript('jquery.ui'); ?>
 	</head>
 	<body>
-			<nav class="navbar">
+        <nav class="navbar">
 			<div class="collapse navbar-collapse" id="topbar">
 				<?php if(!Yii::app()->user->isGuest): ?>
 				<?php
@@ -97,8 +97,17 @@
 				</ul>
 				<?php endif; ?>
 				<a class="titlelink" href="/admin">EgoWeb 2.0</a><span class="title"><?php echo CHtml::encode($this->pageTitle); ?></span>
+				<ul id="navbox" class="nav navbar-nav navbar-right">
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" target="#second">
+							<span class="fui-lock"></span>
+						</a>
+					<ul id="second"></ul>
+					</li>
+
+				</ul>
 			</div>
-			</nav>
+        </nav>
 			<div id="menubar">
 				<!-- navigation start -->
 				<?php $this->widget('zii.widgets.CMenu',array(
@@ -118,7 +127,7 @@
 	</div>
 </div>
 				</div>
-				<?php if(Yii::app()->getController()->getId() == "interviewing" && isset($_GET['interviewId'])): ?>
+				<?php if(Yii::app()->getController()->getId() == "interviewing" && isset($_GET['interviewId']) && !Yii::app()->user->isGuest): ?>
 				<span class="interviewee"><?php echo (isset($_GET['interviewId']) && $_GET['interviewId']) ?  Interview::getEgoId($_GET['interviewId']) : ""; ?></span>
 				<span class="intleft">Interviewing:</span>
 				<?php endif; ?>
