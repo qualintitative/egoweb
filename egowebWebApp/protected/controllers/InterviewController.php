@@ -82,6 +82,7 @@ class InterviewController extends Controller
 	public function actionView($id)
 	{
         $study = Study::model()->findByPk($id);
+        $this->pageTitle = $study->name;
         $expressions = array();
         $results = Expression::model()->findAllByAttributes(array("studyId"=>$id));
         foreach($results as $result)

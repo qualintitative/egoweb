@@ -2,6 +2,10 @@
 height:320px; overflow-y: scroll;
 }
 
+.clear-left {
+    clear:left;
+}
+
 .multi {
     display: table;
     width:100%;

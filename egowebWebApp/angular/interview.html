@@ -17,7 +17,9 @@
         <input id="deleteAlterId" name="Alters[id]" type="hidden">
         <input value="{{ interviewId }}" name="Alters[interviewId]" type="hidden"> 
     </form>
-    <div id="alterListBox">
+
+</div>
+    <div id="alterListBox" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'">
         <table class="items">
         <tbody>
         <tr class="odd" ng-repeat="alter in alters track by $index">
@@ -28,7 +30,6 @@
         </tbody>
         </table>
     </div>
-</div>
 
 <span ng-if="answerForm.$submitted && errors">
     <div class="alert alert-danger" role="alert" ng-if="$index == 0" ng-repeat="error in errors">
@@ -206,7 +207,7 @@
 <input name="page" value='{{ page }}' type="hidden">
 <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
 
-<div class="form-group">
+<div class="form-group clear-left">
     <button ng-show="page > 0" id="next" class='graybutton' ng-click="goBack();">Back</button>
 	<button id="next" class='orangebutton' type="submit">Next</button>
 </div>

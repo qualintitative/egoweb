@@ -1,4 +1,5 @@
 <?php
+$maxwidth = 180;
 Yii::app()->clientScript->registerScript('focus-'.$array_id, "
 $('#Answer_".$array_id."_value').change(function(){
 	if($('#Answer_".$array_id."_value').val() != ''){

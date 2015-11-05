@@ -22,7 +22,7 @@
 		<?php Yii::app()->clientScript->registerCoreScript('jquery.ui'); ?>
 	</head>
 	<body>
-			<nav class="navbar">
+        <nav class="navbar">
 			<div class="collapse navbar-collapse" id="topbar">
 				<?php if(!Yii::app()->user->isGuest): ?>
 				<?php
@@ -97,8 +97,17 @@
 				</ul>
 				<?php endif; ?>
 				<a class="titlelink" href="/admin">EgoWeb 2.0</a><span class="title"><?php echo CHtml::encode($this->pageTitle); ?></span>
+				<ul id="navbox" class="nav navbar-nav navbar-right">
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" target="#second">
+							<span class="fui-lock"></span>
+						</a>
+					<ul id="second"></ul>
+					</li>
+
+				</ul>
 			</div>
-			</nav>
+        </nav>
 			<div id="menubar">
 				<!-- navigation start -->
 				<?php $this->widget('zii.widgets.CMenu',array(
