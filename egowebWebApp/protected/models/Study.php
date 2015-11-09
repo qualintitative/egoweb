@@ -73,6 +73,26 @@ class Study extends CActiveRecord
 			);
 	}
 
+    public function questionList()
+    {
+
+        if ($this->multiSessionEgoId)
+            $multiIds = q("SELECT studyId FROM question WHERE title = (SELECT title FROM question WHERE id = " . $this->multiSessionEgoId . ")")->queryColumn();
+        else
+            $multiIds = $this->id;
+        $studies = Study::model()->findAllByAttributes(array('id'=>$multiIds));
+        foreach($studies as $study){
+            $studyNames[$study->id] = $study->name;
+        }
+        $questions = Question::model()->findAllByAttributes(array('studyId'=>$multiIds));
+        $questionList = array();
+        foreach ($questions as $question)
+        {
+            $questionList[$studyNames[$question->studyId]][$question->title] = $question->id;
+        }
+        return $questionList;
+    }
+
 	/**
 	 * @return array relational rules.
 	 */
