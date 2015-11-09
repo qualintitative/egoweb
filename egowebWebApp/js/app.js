@@ -54,10 +54,15 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.alters = alters;
     $scope.askingStyleList = false;
     $scope.hideQ = false;
-    $scope.pageQ = false;
+    $scope.subjectType = false;
     $scope.prompt = "";
     $scope.dates = new Object;
     $scope.time_spans = new Object;
+    $scope.nav = buildNav($scope.page);
+    $('#navbox ul').html("");
+    for(k in $scope.nav){
+    	$('#navbox ul').append("<li><a href='/interview/" + study.ID + (interviewId ? "/" + interviewId  : "") + "#page/" + k + "'>" + $scope.nav[k] + "</a></li>");
+    }
 
 	questionOrder = [];
 	for (var l in $scope.questions) {
@@ -81,8 +86,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         else
             $scope.fixedWidth = "auto";
 
-        if($scope.pageQ == false)
-            $scope.pageQ = $scope.questions[k].SUBJECTTYPE;
+        if($scope.subjectType == false)
+            $scope.subjectType = $scope.questions[k].SUBJECTTYPE;
 
         if($scope.questions[k].ANSWERTYPE == "PREFACE" || $scope.questions[k].ANSWERTYPE == "ALTER_PROMPT")
             $scope.hideQ = true;
@@ -122,7 +127,27 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 $scope.time_spans[k].MINUTES = answers[k].VALUE.match(/(\d*)\sMINUTES/)[1];
         }
 
-        if($scope.questions[k].DONTKNOWBUTTON){
+        if($scope.questions[k].ANSWERTYPE == "DATE"){
+            $scope.dates[k] = new Object;
+            console.log(answers[k].VALUE);
+            var date = answers[k].VALUE.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
+            var time = answers[k].VALUE.match(/(\d{1,2}):(\d{1,2}) (AM|PM)/);
+			if(date && date.length > 3){
+				$scope.dates[k].YEAR = date[3];
+				$scope.dates[k].MONTH = date[1];
+				$scope.dates[k].DAY = date[2];
+			}
+			if(time && time.length > 2){
+				$scope.dates[k].HOUR = time[1];
+				$scope.dates[k].MINUTE = time[2];
+			}
+			if(time && time.length > 3)
+				$scope.dates[k].AMPM = time[3];
+            else
+				$scope.dates[k].AMPM = "AM";
+        }
+
+        if($scope.questions[k].DONTKNOWBUTTON == true){
             var button = new Object;
             button.NAME = "Don't Know";
             button.ID = "DONT_KNOW";
@@ -132,7 +157,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             $scope.options[k][Object.keys($scope.options[k]).length] = button;
         }
 
-        if($scope.questions[k].REFUSEBUTTON){
+        if($scope.questions[k].REFUSEBUTTON == true){
             var button = new Object;
             button.NAME = "Refuse";
             button.ID = "REFUSE";
@@ -143,9 +168,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
 
         if($scope.questions[k].SUBJECTTYPE != "EGO_ID"){
-            if($scope.prompt == "")
-                $scope.prompt = $sce.trustAsHtml($scope.questions[k].PROMPT);
+            $scope.prompt = $sce.trustAsHtml(interpretTags($scope.questions[k].PROMPT, $scope.questions[k].ALTERID1, $scope.questions[k].ALTERID2));
         }else{
+            $scope.prompt = $sce.trustAsHtml(study.EGOIDPROMPT);
             $scope.questions[k].PROMPT = $scope.questions[k].PROMPT.replace(/(<([^>]+)>)/ig, '');
         }
     }
@@ -182,6 +207,15 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         });
     };
 
+    $scope.unSkip = function (array_id){
+        if($scope.answers[array_id].VALUE != "" && $scope.answers[array_id].VALUE != "SKIPREASON"){
+    		for(k in $scope.options[array_id]){
+            		$scope.options[array_id][k].checked = false;
+    		}
+            $scope.answers[array_id].SKIPREASON = "NONE";
+        }
+    }
+
     $scope.multiSelect = function (v, index, array_id, maxCheck){
 
     	if($scope.answers[array_id].VALUE)
@@ -192,14 +226,25 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         if(v == "DONT_KNOW" || v == "REFUSE"){
             if($scope.options[array_id][index].checked){
         		for(k in $scope.options[array_id]){
+            		console.log(k + ":" + index)
             		if(k != index)
                 		$scope.options[array_id][k].checked = false;
         		}
-        		$scope.answers[array_id].VALUE = "";
         		$scope.answers[array_id].OTHERSPECIFYTEXT = "";
         		$scope.answers[array_id].SKIPREASON = v;
+        		//$scope.answers[array_id].VALUE = "";
+        		console.log($scope.answers[array_id].SKIPREASON);
+                $('#Answer_' + array_id + '_VALUE').val("SKIPREASON").change();
+                $('#Answer_' + array_id + '_VALUE').val("").change();
+
         	}else{
         		$scope.answers[array_id].SKIPREASON = "NONE";
+                //$scope.answers[array_id].VALUE = "";
+
+        		$('#Answer_' + array_id + '_VALUE').val("SKIPREASON").change();
+                $('#Answer_' + array_id + '_VALUE').val("").change();
+
+
         	}
         }else{
             if($scope.options[array_id][index].checked){
@@ -228,7 +273,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     }
 
     $scope.timeValue = function (array_id){
-    	var date = ""
+    	var date = "";
     	if(!isNaN($scope.time_spans[array_id].YEARS))
     	    date = $scope.time_spans[array_id].YEARS + ' YEARS ';
     	if(!isNaN($scope.time_spans[array_id].MONTHS))
@@ -246,15 +291,22 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     }
 
     $scope.dateValue = function (array_id){
-    	item = '.time-' + array_id;
-    	if($(item + '#MINUTE').val() != '' && parseInt($(item + '#MINUTE').val()) < 10)
-    		$(item + '#MINUTE').val('0' + parseInt($(item + '#MINUTE').val()));
-    	date = $(item + '#MONTH option:selected').val() + ' ' +
-    		$(item + '#DAY').val() + ' ' +
-    		$(item + '#YEAR').val() + ' ' +
-    		$(item + '#HOUR').val() + ':' +
-    		$(item + '#MINUTE').val() + ' ' +
-    		$(item + '#AMPM:checked').val();
+    	var date = "";
+    	if($scope.dates[array_id].MONTH)
+    		date += $scope.dates[array_id].MONTH + ' ';
+    	if($scope.dates[array_id].DAY)
+    		date += $scope.dates[array_id].DAY + ' ';
+    	if(!isNaN($scope.dates[array_id].YEAR))
+    	    date += $scope.dates[array_id].YEAR + ' ';
+    	if(!isNaN($scope.dates[array_id].HOUR))
+    		date += $scope.dates[array_id].HOUR + ':';
+    	if(!isNaN($scope.dates[array_id].MINUTE)){
+        	if($scope.dates[array_id].MINUTE.toString().length < 2)
+        	    $scope.dates[array_id].MINUTE = '0' + $scope.dates[array_id].MINUTE;
+    		date += $scope.dates[array_id].MINUTE + ' ';
+        }
+    	if($scope.dates[array_id].AMPM)
+    		date += $scope.dates[array_id].AMPM;
     	$scope.answers[array_id].VALUE = date;
     	console.log(date);
     
@@ -288,7 +340,8 @@ app.directive('checkAnswer', [function (){
             ngModel.$parsers.unshift(function(value) {
                 var valid = true;
                 array_id = attr.arrayId;
-                console.log("check");
+                console.log("check:" + value);
+
                 if(attr.answerType == "ALTER_PROMPT"){
         			if(Object.keys(alters).length < study.MINALTERS){
         				scope.errors[array_id] = 'Please list ' + study.MINALTERS + ' people';
@@ -297,10 +350,15 @@ app.directive('checkAnswer', [function (){
 			    }
 
                 if(attr.answerType == "TEXTUAL"){
-                    if(value == "" && scope.answers[array_id].SKIPREASON == "NONE"){
-                        scope.errors[array_id] = "Value cannot be blank";
-                    	valid = false;
+                    if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
+                        if(value == ""){
+                            scope.errors[array_id] = "Value cannot be blank";
+                        	valid = false;
+                    	}
+                    }else{
+                        valid = true;
                     }
+                    console.log(scope.answers[array_id].SKIPREASON +  ":" + value + ":" + valid);
                 }
 
         		if(attr.answerType == "NUMERICAL"){
@@ -420,12 +478,18 @@ app.directive('checkAnswer', [function (){
         			}
 			    }
 
-            if(attr.answerType == "TEXTUAL"){
-                if(value == "" && scope.answers[array_id].SKIPREASON == "NONE"){
-                    scope.errors[array_id] = "Value cannot be blank";
-                	valid = false;
+                if(attr.answerType == "TEXTUAL"){
+                    if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
+                        if(value == ""){
+                            scope.errors[array_id] = "Value cannot be blank (reverse)";
+                        	valid = false;
+                    	}
+                    }else{
+                        valid = true;
+                    }
+                    console.log(scope.answers[array_id].SKIPREASON +  ":" + value + ":" + valid);
                 }
-            }
+    
         		if(attr.answerType == "MULTIPLE_SELECTION"){
             		var showError = false;
         			min = scope.questions[array_id].MINCHECKABLEBOXES;
@@ -509,7 +573,7 @@ function buildQuestions(pageNumber, interviewId){
 		ego_question_list = new Object;
 		prompt = "";
 		for(j in ego_questions){
-			console.log('eval:'+ego_questions[j].TITLE + ":"+ ego_questions[j].ANSWERREASONEXPRESSIONID+":"+evalExpression(ego_questions[j].ANSWERREASONEXPRESSIONID, interviewId));
+			console.log('eval:'+ego_questions[j].TITLE + ":"+ ego_questions[j].ANSWERREASONEXPRESSIONID+":"+evalExpression(ego_questions[j].ANSWERREASONEXPRESSIONID));
 			if(Object.keys(ego_question_list).length > 0 && prompt != ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
 				if(pageNumber == i){
 					page[i] = ego_question_list;
@@ -521,7 +585,7 @@ function buildQuestions(pageNumber, interviewId){
 				page[i] = new Object;
 			}
 
-			if(evalExpression(ego_questions[j].ANSWERREASONEXPRESSIONID, interviewId) != true)
+			if(evalExpression(ego_questions[j].ANSWERREASONEXPRESSIONID) != true)
 				continue;
 
 			if(ego_questions[j].PREFACE != ""){
@@ -578,10 +642,10 @@ function buildQuestions(pageNumber, interviewId){
 			for(j in alter_questions){
 				alter_question_list = new Object;
 				for(k in alters){
-					if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].INTERVIEWID, alters[k].ID) != true)
+					if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
 						continue;
 
-					question = $.extend(true,{}, alter_questions[j]);
+					var question = $.extend(true,{}, alter_questions[j]);
 					question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
 					question.ALTERID1 = alters[k].ID;
 			    	question.array_id = question.QUESTIONID + '-' + question.ALTERID1;
@@ -591,7 +655,7 @@ function buildQuestions(pageNumber, interviewId){
 					}else{
 						if(alter_questions[j].PREFACE != ""){
 							if(i == pageNumber){
-								preface = new Question();
+								var preface = new Question();
 								preface.ID = alter_questions[j].ID;
 								preface.ANSWERTYPE = "PREFACE";
 								preface.SUBJECTTYPE = "PREFACE";
@@ -616,7 +680,7 @@ function buildQuestions(pageNumber, interviewId){
 					if(Object.keys(alter_question_list).length > 0){
 						if(alter_questions[j].PREFACE != ""){
 							if(i == pageNumber){
-								preface = new Question();
+								var preface = new Question();
 								preface.ID = alter_questions[j].ID;
 								preface.ANSWERTYPE = "PREFACE";
 								preface.SUBJECTTYPE = "PREFACE";
@@ -639,7 +703,7 @@ function buildQuestions(pageNumber, interviewId){
 
 			for(j in alter_pair_questions){
 				var alters2 = $.extend(true,{}, alters);
-				preface = new Question();
+				var preface = new Question();
 				preface.ID = alter_pair_questions[j].ID;
 				preface.ANSWERTYPE = "PREFACE";
 				preface.SUBJECTTYPE = "PREFACE";
@@ -654,9 +718,9 @@ function buildQuestions(pageNumber, interviewId){
 					for(l in alters2){
 						if(alters[k].ID == alters2[l].ID)
 							continue;
-						if(evalExpression(alter_pair_questions[j].ANSWERREASONEXPRESSIONID, interviewId, alters[k].ID, alters2[l].ID) != true)
+						if(evalExpression(alter_pair_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID, alters2[l].ID) != true)
 							continue;
-						question = $.extend(true,{}, alter_pair_questions[j]);
+						var question = $.extend(true,{}, alter_pair_questions[j]);
 						question.PROMPT = question.PROMPT.replace(/\$\$1/g, alters[k].NAME);
 						question.PROMPT = question.PROMPT.replace(/\$\$2/g, alters2[l].NAME);
 						question.ALTERID1 = alters[k].ID;
@@ -706,14 +770,14 @@ function buildQuestions(pageNumber, interviewId){
 				}
 			}
     		for(j in network_questions){
-    			console.log('eval:'+network_questions[j].TITLE + ":"+ network_questions[j].ANSWERREASONEXPRESSIONID+":"+evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID, interviewId));
+    			console.log('eval:'+network_questions[j].TITLE + ":"+ network_questions[j].ANSWERREASONEXPRESSIONID+":"+evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID));
 
-    			if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID, interviewId) != true)
+    			if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID) != true)
     				continue;
     
     			if(network_questions[j].PREFACE != ""){
     				if(pageNumber == i){
-    					preface = new Question();
+    					var preface = new Question();
     					preface.ID = network_questions[j].ID;
     					preface.ANSWERTYPE = "PREFACE";
     					preface.SUBJECTTYPE = "PREFACE";
@@ -743,17 +807,16 @@ function buildQuestions(pageNumber, interviewId){
 	return false;
 }
 
-function evalExpression(id, interviewId, alterId1, alterId2)
+function evalExpression(id, alterId1, alterId2)
 {
 
 	var array_id;
     if(!id || id == 0)
         return true;
 
-        console.log(id);
     questionId = expressions[id].QUESTIONID;
     subjectType = "";
-    if(questionId)
+    if(questionId && questions[questionId])
         subjectType = questions[questionId].SUBJECTTYPE;
         
     /*
@@ -781,7 +844,7 @@ function evalExpression(id, interviewId, alterId1, alterId2)
     if(typeof alterId1 != 'undefined' && subjectType == 'ALTER')
     	array_id += "-" + alterId1;
     else if(typeof alterId2 != 'undefined' && subjectType == 'ALTER_PAIR')
-    	array_id += 'and' + alterId2;
+    	array_id += "-" + alterId1 + 'and' + alterId2;
     
     if(typeof answers[array_id] != "undefined")
 		answer = answers[array_id].VALUE;
@@ -827,19 +890,19 @@ function evalExpression(id, interviewId, alterId1, alterId2)
     	countingSplit = expressions[id].VALUE.split(':');
 		times = countingSplit[0];
 		expressionIds = countingSplit[1];
-		questionIds = countingSplit[2];
+		var questionIds = countingSplit[2];
 
     	count = 0;
     	if(expressionIds != ""){
     		expressionIds = expressionIds.split(',');
     		for (var k in expressionIds) {
-    			count = count + countExpression(expressionIds[k], interviewId, alterId1, alterId2);
+    			count = count + countExpression(expressionIds[k], alterId1, alterId2);
     		}
     	}
     	if(questionIds != ""){
     		questionIds = questionIds.split(',');
     		for (var k in questionIds) {
-    			count = count + countQuestion(questionIds[k], interviewId, expressions[id].OPERATOR);
+    			count = count + countQuestion(questionIds[k], expressions[id].OPERATOR);
     		}
     	}
     	return (times * count);
@@ -848,7 +911,7 @@ function evalExpression(id, interviewId, alterId1, alterId2)
     	compSplit =  expressions[id].VALUE.split(':');
     	value = parseInt(compSplit[0]);
     	expressionId = parseInt(compSplit[1]);
-    	result = evalExpression(expressionId, interviewId, alterId1, alterId2);
+    	result = evalExpression(expressionId, alterId1, alterId2);
     	logic = result + " " + comparers[expressions[id].OPERATOR] + " " + value;
     	result = eval(logic);
     	return result;
@@ -862,7 +925,7 @@ function evalExpression(id, interviewId, alterId1, alterId2)
     		console.log(expressions[id].NAME +":subexpression:"+ k +":");
     		if(parseInt(subexpressions[k]) == id)
     			continue;
-    		isTrue = evalExpression(parseInt(subexpressions[k]), interviewId, alterId1, alterId2);
+    		isTrue = evalExpression(parseInt(subexpressions[k]), alterId1, alterId2);
     		if(expressions[id].OPERATOR == "Some" && isTrue){
     			return true;
     		}
@@ -878,15 +941,15 @@ function evalExpression(id, interviewId, alterId1, alterId2)
 
 }
 
-function countExpression(id, interviewId)
+function countExpression(id)
 {
-    if(evalExpression(id, interviewId))
+    if(evalExpression(id))
     	return 1;
     else
     	return 0;
 }
 
-function countQuestion(questionId, interviewId, operator, alterId1, alterId2)
+function countQuestion(questionId, operator, alterId1, alterId2)
 {
     if(questionId)
     	array_id = questionId;
@@ -909,35 +972,33 @@ function countQuestion(questionId, interviewId, operator, alterId1, alterId2)
     }
 }
 
-	function interpretTags(string, interviewId, alterId1, alterId2)
+	function interpretTags(string, alterId1, alterId2)
 	{
 
 		// parse out and replace variables
 		vars = string.match(/<VAR (.+?) \/>/g);
 		for(k in vars){
-			thisVar = vars[k].match(/<VAR (.+?) \/>/)[1];
-			var thisStudyId = study.ID;
-			if(thisVar.match(/:/)){
-                thisStudyId = db.queryValue("SELECT id FROM study WHERE name = '" +  JSON.parse( JSON.stringify( thisVar.split(":")[0])) + "'");
-                var thisVarTitle = JSON.parse( JSON.stringify(thisVar.split(":")[1]));
-			}else{
-    			var thisVarTitle = thisVar;
-			}
-			question = db.queryRowObject("SELECT * FROM question WHERE lower(title) = lower('" + thisVarTitle + "') AND studyId = '" + thisStudyId + "'");
-			if(question){
-				if(interviewId != null){
-					end = " AND interviewId = " + interviewId;
-				}else{
-					end = "";
-				}
-				lastAnswer = db.queryValue("SELECT value FROM answer WHERE questionId = " + question.ID + end + ' ORDER BY id DESC');
-			}
+			var thisVar = vars[k].match(/<VAR (.+?) \/>/)[1];
+			if(thisVar.match(/:/))
+                var question = questions[questionList[thisVar.split(":")[0]][thisVar.split(":")[1]]];
+			else
+                var question = questions[questionList[study.NAME][thisVar]];
+
+            var array_id = question.ID;
+            if(typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
+            	array_id += "-" + alterId1;
+            else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
+            	array_id += 'and' + alterId2;
+    	
+			var lastAnswer = answers[array_id].VALUE;
+				
 			if(typeof lastAnswer != 'undefined'){
 				if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
-					option = db.queryValue("SELECT NAME FROM questionOption WHERE id = " + lastAnswer);
-					if(option){
-						lastAnswer = option;
-					}else{
+					for(o in options[question.ID]){
+    					if(options[question.ID][o].NAME == lastAnswer)
+    					    lastAnswer = options[question.ID][o].NAME;
+					}
+					if(!isNaN(lastAnswer)){
 						lastAnswer = "";
 					}
 				}
@@ -955,26 +1016,29 @@ function countQuestion(questionId, interviewId, operator, alterId1, alterId2)
 			for(k in vars){
 				question = "";
 				if(vars[k].match(/<VAR (.+?) \/>/)){
-					thisVar = vars[k].match(/<VAR (.+?) \/>/)[1];
-					question = db.queryRowObject('SELECT * FROM question WHERE title = "' + thisVar + '" AND studyId = ' +studyId);
+        			if(thisVar.match(/:/))
+                        var question = questions[questionList[thisVar.split(":")[0]][thisVar.split(":")[1]]];
+        			else
+                        var question = questions[questionList[study.NAME][thisVar]];
 				}
-				if(question){
-					if(interviewId != null){
-						end = " AND interviewId = ". interviewId;
-					}else{
-						end = "";
-					}
-					lastAnswer = db.queryValue("SELECT VALUE FROM answer WHERE questionId = " + question.ID + end + ' ORDER BY id DESC');
-				}
-				if(typeof lastAnswer != 'undefined'){
-					if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
-						option = db.queryValue("SELECT NAME FROM questionOption WHERE id = " + lastAnswer);
-						if(option){
-							lastAnswer = option;
-						}else{
-							lastAnswer = "";
-						}
-					}
+                var array_id = question.ID;
+                if(typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
+                	array_id += "-" + alterId1;
+                else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
+                	array_id += 'and' + alterId2;
+        	
+    			var lastAnswer = answers[array_id].VALUE;
+    				
+    			if(typeof lastAnswer != 'undefined'){
+    				if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
+    					for(o in options[question.ID]){
+        					if(options[question.ID][o].NAME == lastAnswer)
+        					    lastAnswer = options[question.ID][o].NAME;
+    					}
+    					if(!isNaN(lastAnswer)){
+    						lastAnswer = "";
+    					}
+    				}
 					logic =  calc.replace(thisVar, lastAnswer);
 				}else{
 					logic =  calc.replace(thisVar, '0');
@@ -991,59 +1055,81 @@ function countQuestion(questionId, interviewId, operator, alterId1, alterId2)
 		// counts numbers of times question is answered with string
 		counts = string.match(/<COUNT (.+?) \/>/g);
 		for(k in counts){
-			count = counts[k].match(/<COUNT (.+?) \/>/)[1];
-			parts = count.split(' ');
-			qTitle = parts[0];
-			answer = aprts[1];
+			var count = counts[k].match(/<COUNT (.+?) \/>/)[1];
+			var parts = count.split(' ');
+			var qTitle = parts[0];
+			var answer = parts[1];
 			answer = answer.replace ('"', '');
-			question = db.queryRowObject("SELECT * FROM question WHERE title = '" + qTitle + "' AND studyId = " + studyId);
+
+			if(qTitle.match(/:/))
+                var question = questions[questionList[qTitle.split(":")[0]][qTitle.split(":")[1]]];
+			else
+                var question = questions[questionList[study.NAME][qTitle]];
 			if(!question)
 				continue;
-			if(question.ANSWERTYPE == "SELECTION" || question.ANSWERTYPE == "MULTIPLE_SELECTION"){
-				option = db.queryRowObject("SELECT * FROM questionOption WHERE name = '" + answer + "' AND questionId = " + question.ID);
-				if(!option)
-					continue;
-				if(interviewId != null){
-					end = " AND interviewId = " + interviewId;
-				}else{
-					end = "";
+
+            var array_id = question.ID;
+            if(typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
+            	array_id += "-" + alterId1;
+            else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
+            	array_id += 'and' + alterId2;
+    	
+			var lastAnswer = answers[array_id].VALUE;
+				
+			if(typeof lastAnswer != 'undefined'){
+				if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
+					for(o in options[question.ID]){
+    					if(options[question.ID][o].NAME == lastAnswer)
+    					    lastAnswer = options[question.ID][o].NAME;
+					}
+					if(!isNaN(lastAnswer)){
+						lastAnswer = "";
+					}
 				}
-				answers = db.queryObjects("SELECT * FROM answer WHERE questionId = " +  question.id + " AND FIND_IN_SET(" + option.ID  + ' ,value)' + end).data;
+				string = string.replace('<COUNT ' + count + ' />', lastAnswer ? 1 : 0);
 			}else{
-				answers = db.queryObjects('SELECT * FROM answer WHERE value = "' +  answer + '"' + end).data;
+				string = string.replace('<COUNT ' + count + ' />', 0);
 			}
-			string =  string.replace("<COUNT " + count +" />", answers.length);
 		}
 
 		// same as count, but limited to specific alter / alter pair questions
 		containers  = string.match(/<CONTAINS (.+?) \/>/g);
 		for(k in containers){
-			contains = containers[k].match(/<CONTAINS (.+?) \/>/)[1];
-			parts = contains.split(/\s/);
-			qTitle = parts[0];
-			answer = aprts[1];
+			var contains = containers[k].match(/<CONTAINS (.+?) \/>/)[1];
+			var parts = contains.split(/\s/);
+			var qTitle = parts[0];
+			var answer = parts[1];
 			answer = answer.replace ('"', '');
-			question = db.queryRowObject("SELECT * FROM question WHERE title = '" + qTitle + "' AND studyId = " + studyId);
+
+			if(qTitle.match(/:/))
+                var question = questions[questionList[qTitle.split(":")[0]][qTitle.split(":")[1]]];
+			else
+                var question = questions[questionList[study.NAME][qTitle]];
 			if(!question)
 				continue;
-			if(interviewId != null){
-				end = " AND interviewId = " + interviewId;
-				if(is_numeric(alterId1))
-					end += " AND alterId1 = " + alterId1;
-				if(is_numeric(alterId2))
-					end += " AND alterId2 = " + alterId2;
+
+            var array_id = question.ID;
+            if(typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
+            	array_id += "-" + alterId1;
+            else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
+            	array_id += 'and' + alterId2;
+    	
+			var lastAnswer = answers[array_id].VALUE;
+				
+			if(typeof lastAnswer != 'undefined'){
+				if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
+					for(o in options[question.ID]){
+    					if(options[question.ID][o].NAME == lastAnswer)
+    					    lastAnswer = options[question.ID][o].NAME;
+					}
+					if(!isNaN(lastAnswer)){
+						lastAnswer = "";
+					}
+				}
+				string = string.replace("<CONTAINS " + contains + " />", lastAnswer ? 1 : 0);
 			}else{
-				end = "";
+				string = string.replace("<CONTAINS " + contains + " />", 0);
 			}
-			if(question.answerType == "SELECTION" || question.answerType == "MULTIPLE_SELECTION"){
-				option = db.queryRowObject("SELECT * FROM questionOption WHERE name = '" + answer + "' AND questionId = " + question.ID);
-				if(!option)
-					continue;
-				answers = db.queryObjects("SELECT * FROM answer WHERE questionId = " +  question.id + " AND FIND_IN_SET(" + option.ID  + ' ,value)' + end).data;
-			}else{
-				answers = db.queryObjects('SELECT * FROM answer WHERE value = "' +  answer + '"' + end).data;
-			}
-			string =  string.replace("<CONTAINS "+contains+" />", answers.length);
 		}
 
 		// parse out and show logics
@@ -1058,16 +1144,34 @@ function countQuestion(questionId, interviewId, operator, alterId1, alterId2)
 					if(exp[i].match("/>")){
 						exp[i] = interpretTags(exp[i]);
 					}else{
-						question = db.queryRowObject("SELECT * FROM question WHERE title = '" + exp[i] + "' AND studyId = " + studyId);
-						if(interviewId != null){
-							end = " AND interviewId = " + interviewId;
-						}else{
-							end = "";
-						}
-						if(question)
-							lastAnswer = db.queryValue("SELECT VALUE FROM answer WHERE questionId = " + question.ID + end + ' ORDER BY id DESC');
-						else
+    					
+                        var qTitle = exp[i];
+            			if(qTitle.match(/:/))
+                            var question = questions[questionList[qTitle.split(":")[0]][qTitle.split(":")[1]]];
+            			else
+                            var question = questions[questionList[study.NAME][qTitle]];
+
+                        var array_id = question.ID;
+                        if(typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
+                        	array_id += "-" + alterId1;
+                        else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
+                        	array_id += 'and' + alterId2;
+                	
+            			var lastAnswer = answers[array_id].VALUE;
+            				
+            			if(typeof lastAnswer != 'undefined'){
+            				if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
+            					for(o in options[question.ID]){
+                					if(options[question.ID][o].NAME == lastAnswer)
+                					    lastAnswer = options[question.ID][o].NAME;
+            					}
+            					if(!isNaN(lastAnswer)){
+            						lastAnswer = "";
+            					}
+            				}
+                        }else{
 							return false;
+                        }
 						exp[i] = lastAnswer;
 					}
 				}
@@ -1082,3 +1186,257 @@ function countQuestion(questionId, interviewId, operator, alterId1, alterId2)
 		}
 		return string;
 	}
+	
+function initStats(expressionId){
+    nodes = [];
+    edges = [];
+	if(alters.length == 0)
+		return false;
+    
+    var alters2 = $.extend(true,{}, alters);
+
+
+	var expression = expressions[expressionId];
+	if(expression.QUESTIONID)
+		var question = questions[expression.QUESTIONID];
+		
+
+	for(a in alters){
+		nodes.push(
+			{
+				'id'   : alters[a].ID,
+				'label': alters[a].NAME ,// . (isset($alterNotes[$alter['id']]) ? " �" : ""),
+				'x'    : Math.random(),
+				'y'    : Math.random(),
+				"type" :'circle', //$this->getNodeShape($alter['id']),
+				"color":'blue', //$this->getNodeColor($alter['id']),
+				"size" :4 //$this->getNodeSize($alter['id']),
+			}
+		);
+		for(b in alters2){
+			if(alters[a].ID == alters2[b].ID)
+				continue;
+			if(evalExpression(expressionId, alters[a].ID, alters2[b].ID)){
+				edges.push({
+					"id"    : alters[a].ID + "_" + alters2[b].ID,
+					"source": alters2[b].ID,
+					"target": alters[a].ID,
+					"color" : 'black',//$this->getEdgeColor($alter['id'], $alter2['id']),
+					"size"  : 1 //$this->getEdgeSize($alter['id'], $alter2['id']),
+				});
+			}
+		}
+	}
+	/*
+
+	public function getDistance($visited, $node2){
+		$node1 =  $visited[count($visited)-1];
+		if(in_array($node2, $this->connections[$node1])){
+			$trail = array_merge($visited,array($node2));
+			if(!isset($this->shortPaths[md5($visited[0] . $node2)])){
+				$this->shortPaths[md5($visited[0] . $node2)][] = $trail;
+				$this->shortPaths[md5($node2 . $visited[0])][] = $trail;
+			}else{
+
+				if(count($trail) < count($this->shortPaths[md5($visited[0] . $node2)][0])){
+					$this->shortPaths[md5($visited[0] . $node2)] = array();
+					$this->shortPaths[md5($node2 . $visited[0])] = array();
+				}
+
+				if(count($this->shortPaths[md5($visited[0] . $node2)]) == 0 || count($trail) == count($this->shortPaths[md5($visited[0] . $node2)][0])){
+					$this->shortPaths[md5($visited[0] . $node2)][] = $trail;
+					$this->shortPaths[md5($node2 . $visited[0])][] = $trail;
+				}
+			}
+		}else{
+			foreach($this->connections[$node1] as $endNode){
+				if(!in_array($endNode, $visited)){
+					$v2 = array_merge($visited,array($endNode));
+					if (isset($this->shortPaths[md5($visited[0] . $endNode)])){
+						if(count($v2) < count($this->shortPaths[md5($visited[0] . $endNode)][0])){
+							$this->shortPaths[md5($visited[0] . $endNode)] = array();
+							$this->shortPaths[md5($endNode . $visited[0])] = array();
+						}
+						if(count($this->shortPaths[md5($visited[0] . $endNode)]) == 0 || count($v2) == count($this->shortPaths[md5($visited[0] . $endNode)][0])){
+							$this->shortPaths[md5($visited[0] . $endNode)][] = $v2;
+							$this->shortPaths[md5($endNode . $visited[0])][] = $v2;
+						}else{
+							continue;
+						}
+					} else {
+						$this->shortPaths[md5($visited[0] . $endNode)][] = $v2;
+						$this->shortPaths[md5($endNode . $visited[0])][] = $v2;
+					}
+					$this->getDistance($v2, $node2);
+				}
+		    }
+		}
+	}
+
+	foreach($alters as $alter){
+		$this->names[$alter->id] = $alter->name;
+		$this->betweenesses[$alter->id] = 0;
+		array_shift($alters2);
+		foreach($alters2 as $alter2){
+			if($expression->evalExpression($interviewId, $alter->id, $alter2->id, $answers)){
+				if(!in_array($alter->id, $this->nodes))
+					$this->nodes[] = $alter->id;
+				if(!in_array($alter2->id, $this->nodes))
+					$this->nodes[] = $alter2->id;
+				$this->adjacencies[] = array($alter->id, $alter2->id);
+				$this->connections[$alter2->id][] = $alter->id;
+				$this->connections[$alter->id][] =  $alter2->id;
+			}
+		}
+	}
+
+	foreach($alters as $alter){
+		if(!in_array($alter->id, $this->nodes)){
+			$this->isolates[] = $alter->id;
+			$this->nodes[] = $alter->id;
+			$this->connections[$alter->id] = array();
+		}
+	}
+
+	$endNodes = $this->nodes;
+	foreach($this->nodes as $node){
+		array_shift($endNodes);
+		foreach($endNodes as $endNode){
+			$this->getDistance(array($node), $endNode);
+		}
+	}
+
+	$this->getBetweenesses();*/
+}
+
+	function buildNav(pageNumber){
+		var i = 0;
+		var pages = [];
+
+    	this.checkPage = function (currentPage, pageNumber, text){
+    		if(currentPage == pageNumber)
+    			text = "<b>" + text + "</b>";
+    		return text;
+    	};
+	
+		if(study.INTRODUCTION != ""){
+			pages[i] = this.checkPage(i, pageNumber, "INTRODUCTION");
+			i++;
+		}
+		pages[i] = this.checkPage(i, pageNumber, "EGO ID");
+		i++;
+		if(!interviewId){
+			return pages;
+		}
+		var prompt = "";
+		var ego_question_list = '';
+		for(j in ego_questions){
+			if(evalExpression(ego_questions[j].ANSWERREASONEXPRESSIONID, interviewId) != true)
+				continue;
+
+			if((parseInt(ego_questions[j].ASKINGSTYLELIST) != 1 || prompt != ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")) && ego_question_list){
+			    pages[i] = this.checkPage(i, pageNumber, ego_question_list.TITLE);
+				prompt = "";
+			    ego_question_list = '';
+			    i++;
+			}
+			if(ego_questions[j].PREFACE != ""){
+				pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+				i++;
+			}
+			if(parseInt(ego_questions[j].ASKINGSTYLELIST)){
+			    prompt = ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
+			    if(ego_question_list == '')
+				    ego_question_list = ego_questions[j];
+			}else{
+			    pages[i] = this.checkPage(i, pageNumber, ego_questions[j].TITLE);
+			    i++;
+			}
+
+		}
+		if(ego_question_list){
+			pages[i] = this.checkPage(i, pageNumber, ego_question_list.TITLE);
+			ego_question_list = '';
+			i++;
+		}
+		if(study.ALTERPROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
+			pages[i] = this.checkPage(i, pageNumber, "ALTER_PROMPT");
+			i++;
+		}
+		if(Object.keys(alters).length > 0){
+			prompt = "";
+			for(j in alter_questions){
+				var alter_question_list = '';
+				for(k in alters){
+					if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
+						continue;
+					if(parseInt(alter_questions[j].ASKINGSTYLELIST)){
+				    	alter_question_list = alter_questions[j];
+				    }else{
+						if(alter_questions[j].PREFACE != ""){
+				    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+				    		i++;
+				    	}
+				    	pages[i] = this.checkPage(i, pageNumber, alter_questions[j].TITLE + " - " + alters[k].NAME);
+				    	i++;
+				    }
+				}
+				if(parseInt(alter_questions[j].ASKINGSTYLELIST)){
+				    if(alter_question_list){
+				    	if(alter_questions[j].PREFACE != ""){
+				    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+				    		i++;
+				    	}
+				    	pages[i] = this.checkPage(i, pageNumber, alter_question_list.TITLE);
+				    	i++;
+				    }
+				}
+			}
+			prompt = "";
+			for(j in alter_pair_questions){
+				var alters2 = $.extend(true,{}, alters);
+				preface = new Question;
+				preface.ANSWERTYPE = "PREFACE";
+				preface.PROMPT = alter_pair_questions[j].PREFACE;
+				for(k in alters){
+					if(alter_pair_questions[j].SYMMETRIC){
+    					var keys = Object.keys(alters2);
+    					delete alters2[keys[0]];
+					}
+					var alter_pair_question_list = '';
+					for(l in alters2){
+			    		if(alters[k].ID == alters2[l].ID)
+			    			continue;
+						if(evalExpression(alter_pair_questions[j].ANSWERREASONEXPRESSIONID, interviewId, alters[k].ID, alters2[l].ID) != true)
+			    			continue;
+			    		alter_pair_question_list = alter_pair_questions[j];
+			    	}
+			    	if(alter_pair_question_list){
+						if(preface.PROMPT != ""){
+				    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+							preface.PROMPT = "";
+				    		i++;
+				    	}
+				    	pages[i] = this.checkPage(i, pageNumber, alter_pair_question_list.TITLE + " - " + alters[k].NAME);
+				    	i++;
+					}
+				}
+			}
+			
+			for(j in network_questions){
+			    if(interviewId){
+			    	if(!evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID))
+			    		continue;
+			    }
+			    if(network_questions[j].PREFACE != ""){
+			    	pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+			    	i++;
+			    }
+			    pages[i] = this.checkPage(i, pageNumber, network_questions[j].TITLE);
+			    i++;
+			}
+		}
+		pages[i] = this.checkPage(i, pageNumber, "CONCLUSION");
+		return pages;
+	}
+

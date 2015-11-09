@@ -42,3 +42,9 @@ input[type=checkbox]{
 	width:18px;
 	height:18px;
 }
+
+#second {
+    left:-180px;
+    height:400px;
+    overflow-y:scroll;
+}

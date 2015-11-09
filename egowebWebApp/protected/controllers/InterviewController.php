@@ -82,25 +82,31 @@ class InterviewController extends Controller
 	public function actionView($id)
 	{
         $study = Study::model()->findByPk($id);
+        if ($study->multiSessionEgoId)
+            $multiIds = q("SELECT studyId FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
+        else
+            $multiIds = $study->id;
         $this->pageTitle = $study->name;
         $expressions = array();
-        $results = Expression::model()->findAllByAttributes(array("studyId"=>$id));
+        $results = Expression::model()->findAllByAttributes(array("studyId"=>$multiIds));
         foreach($results as $result)
             $expressions[$result->id] = mToA($result);
         $questions = array();
-        $results = Question::model()->findAll(array('order'=>'ordering', 'condition'=>'studyId = :id', 'params'=>array(':id'=>$id)));
+        $results = Question::model()->findAllByAttributes(array("studyId"=>$multiIds), array('order'=>'ordering'));
         foreach($results as $result){
             $questions[$result->id] = mToA($result);
-            if($result->subjectType == "EGO_ID")
-                $ego_id_questions[] = mToA($result);
-            if($result->subjectType == "EGO")
-                $ego_questions[] = mToA($result);
-            if($result->subjectType == "ALTER")
-                $alter_questions[] = mToA($result);
-            if($result->subjectType == "ALTER_PAIR")
-                $alter_pair_questions[] = mToA($result);
-            if($result->subjectType == "NETWORK")
-                $network_questions[] = mToA($result);
+            if($id == $result->studyId){
+                if($result->subjectType == "EGO_ID")
+                    $ego_id_questions[] = mToA($result);
+                if($result->subjectType == "EGO")
+                    $ego_questions[] = mToA($result);
+                if($result->subjectType == "ALTER")
+                    $alter_questions[] = mToA($result);
+                if($result->subjectType == "ALTER_PAIR")
+                    $alter_pair_questions[] = mToA($result);
+                if($result->subjectType == "NETWORK")
+                    $network_questions[] = mToA($result);
+            }
         }
         $options = array();
         $results = QuestionOption::model()->findAllByAttributes(array("studyId"=>$id));
@@ -112,10 +118,11 @@ class InterviewController extends Controller
         if(isset($_GET['interviewId'])){
             $interviewId = $_GET['interviewId'];
     		$interviewIds = Interview::multiInterviewIds($_GET['interviewId'], $study);
-    		if(is_array($interviewIds))
+    		if(is_array($interviewIds)){
     		    $answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewIds));
-    		else
+    		}else{
     		    $answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$_GET['interviewId']));
+            }
     		foreach($answerList as $answer){
     			if($answer->alterId1 && $answer->alterId2)
     				$array_id = $answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2;
@@ -149,6 +156,7 @@ class InterviewController extends Controller
                 "interviewId" => $interviewId,
                 "answers"=>json_encode($answers),
                 "alters"=>json_encode($alters),
+                "questionList"=>json_encode($study->questionList()),
             )
         );
 	}

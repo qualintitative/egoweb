@@ -100,9 +100,10 @@
 				<ul id="navbox" class="nav navbar-nav navbar-right">
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown" target="#second">
-							<span class="fui-lock"></span>
+							<span class="fui-gear"></span>
 						</a>
-					<ul id="second"></ul>
+					<ul id="second">
+					</ul>
 					</li>
 
 				</ul>
@@ -121,11 +122,12 @@
 					<?php if(Yii::app()->getController()->getId() == "interviewing" && !Yii::app()->user->isGuest && !isset($_GET['studyId']) && preg_match('/\d+/', Yii::app()->getRequest()->getRequestUri())): ?>
 					<a href="javascript:void(0)" onclick="$('#navigation').toggle()"><img src="/images/nav.png"></a>
 					<?php endif; ?>
-<div id="navigation">
-	<div id="navbox">
-		<ul></ul>
-	</div>
-</div>
+                    <div id="navigation">
+                    	<div id="navbox">
+                    		<ul>
+                    		</ul>
+                    	</div>
+                    </div>
 				</div>
 				<?php if(Yii::app()->getController()->getId() == "interviewing" && isset($_GET['interviewId']) && !Yii::app()->user->isGuest): ?>
 				<span class="interviewee"><?php echo (isset($_GET['interviewId']) && $_GET['interviewId']) ?  Interview::getEgoId($_GET['interviewId']) : ""; ?></span>
