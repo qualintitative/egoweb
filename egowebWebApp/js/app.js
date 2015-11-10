@@ -78,7 +78,25 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         $scope.questions[k].array_id = k;
         if($scope.questions[k].CITATION)
             $scope.questions[k].CITATION = $scope.questions[k].CITATION.replace(/(<([^>]+)>)/ig, '');
-        $scope.options[k] = $.extend(true,{}, options[$scope.questions[k].ID]);;
+        if($scope.questions[k].ALLBUTTON == true && !$scope.options["all"]){
+            $scope.options['all'] = $.extend(true,{}, options[$scope.questions[k].ID]);
+            if($scope.questions[k].DONTKNOWBUTTON == true){
+                var button = new Object;
+                button.NAME = "Don't Know";
+                button.ID = "DONT_KNOW";
+                button.checked = false;
+                $scope.options['all'][Object.keys($scope.options['all']).length] = button;
+            }
+    
+            if($scope.questions[k].REFUSEBUTTON == true){
+                var button = new Object;
+                button.NAME = "Refuse";
+                button.ID = "REFUSE";
+                button.checked = false;
+                $scope.options['all'][Object.keys($scope.options['all']).length] = button;
+            }
+        }
+        $scope.options[k] = $.extend(true,{}, options[$scope.questions[k].ID]);
         if($scope.questions[k].ASKINGSTYLELIST == true)
             $scope.askingStyleList = k;
         if($scope.askingStyleList != false)
@@ -216,7 +234,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
     }
 
-    $scope.multiSelect = function (v, index, array_id, maxCheck){
+    $scope.multiSelect = function (v, index, array_id){
 
     	if($scope.answers[array_id].VALUE)
     		values = $scope.answers[array_id].VALUE.split(',');
@@ -232,19 +250,13 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         		}
         		$scope.answers[array_id].OTHERSPECIFYTEXT = "";
         		$scope.answers[array_id].SKIPREASON = v;
-        		//$scope.answers[array_id].VALUE = "";
-        		console.log($scope.answers[array_id].SKIPREASON);
                 $('#Answer_' + array_id + '_VALUE').val("SKIPREASON").change();
                 $('#Answer_' + array_id + '_VALUE').val("").change();
 
         	}else{
         		$scope.answers[array_id].SKIPREASON = "NONE";
-                //$scope.answers[array_id].VALUE = "";
-
         		$('#Answer_' + array_id + '_VALUE').val("SKIPREASON").change();
                 $('#Answer_' + array_id + '_VALUE').val("").change();
-
-
         	}
         }else{
             if($scope.options[array_id][index].checked){
@@ -260,7 +272,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     				values.splice(values.indexOf(v),1);
                 }
     		}
-        	if(values.length > maxCheck){
+        	if(values.length > $scope.questions[array_id].MAXCHECKABLEBOXES){
         		value = values.shift();
         		for(k in $scope.options[array_id]){
             		if($scope.options[array_id][k].ID == value)
@@ -272,6 +284,22 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 
     }
 
+    $scope.setAll = function (v, index){
+        for(k in $scope.questions){
+            if($scope.answers[k].VALUE == undefined)
+                $scope.answers[k].VALUE = "";
+            if(
+                ($scope.answers[k].VALUE == "" && $scope.answers[k].SKIPREASON == "NONE" && $scope.options['all'][index].checked == true) ||
+                ((($scope.answers[k].VALUE != "" && $.inArray(v.toString(), $scope.answers[k].VALUE.split(",")) != -1) || ($scope.answers[k].SKIPREASON != "" && $.inArray(v.toString(), $scope.answers[k].SKIPREASON.split(",")) != -1)) && $scope.options['all'][index].checked == false) 
+            
+            )
+            {
+                $scope.options[k][index].checked = $scope.options['all'][index].checked;
+                $scope.multiSelect(v, index, k);
+            }
+        }
+    }
+    
     $scope.timeValue = function (array_id){
     	var date = "";
     	if(!isNaN($scope.time_spans[array_id].YEARS))

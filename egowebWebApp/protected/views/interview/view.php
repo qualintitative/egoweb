@@ -28,5 +28,61 @@ answers = <?php echo $answers ?>;
 alters = <?php echo $alters ?>;
 questionList = <?php echo $questionList ?>;
 csrf = '<?php echo Yii::app()->request->csrfToken; ?>';
+		$(document).keydown(function(e) {
+			if($("textarea").length == 0 &&  e.keyCode == 13){
+				if($("#alterFormBox").length != 0 && $("#alterFormBox").html() != "")
+					$('.alterSubmit').submit();
+				else
+					$('#answer-form').submit();
+			}
+			if (e.keyCode == 39){
+				e.preventDefault();
+				$("input:focus").next().focus();
+			}
+			if (e.keyCode == 37){
+				e.preventDefault();
+				$("input:focus").prev().focus();
+			}
+			if (e.keyCode == 38){
+				e.preventDefault();
+				var counter = $("input:focus").parent().attr("counter");
+				if(typeof counter != "undefined"){
+					var index = $("input:focus").index();
+					if(counter > 0)
+						counter--;
+					$("[counter='" + counter + "']").children()[index].focus();
+				}else{
+					$(".answerInput").each(function(i){
+					if($(this).is(":focus"))
+						index = i;
+					});					console.log(index);
+					if(index > 0)
+						index--;
+					$(".answerInput")[index].focus();
+					console.log("focus:" + index);
+				}
+			}
+			if (e.keyCode == 40){
+				e.preventDefault();
+				var counter = $("input:focus").parent().attr("counter");
+				if(typeof counter != "undefined"){
+					var index = $("input:focus").index();
+					counter++;
+					if($("[counter='" + counter + "']").length == 0)
+						counter--;
+					$("[counter='" + counter + "']").children()[index].focus();
+				}else{
+					$(".answerInput").each(function(i){
+					if($(this).is(":focus"))
+						index = i;
+					});
+					console.log(index);
+					if(typeof $(".answerInput")[index+1] != "undefined")
+						index++;
+					$(".answerInput")[index].focus();
+					console.log("focus:" + index);
+				}
+			}
+		});
 </script>
 <div ng-view></div>
