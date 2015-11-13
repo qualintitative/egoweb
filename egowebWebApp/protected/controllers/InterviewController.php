@@ -123,6 +123,19 @@ class InterviewController extends Controller
     		}else{
     		    $answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$_GET['interviewId']));
             }
+            $alterPrompts = array();
+            $results = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$id));
+            foreach($results as $result){
+                $alterPrompts[$result->afterAltersEntered] = $result->display;
+            }
+            $participantList = array();
+            $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
+            foreach($results as $result){
+                if($result->name)
+                    $participantList['name'][] = $result->name;
+                if($result->email)
+                    $participantList['email'][] = $result->email;
+            }
     		foreach($answerList as $answer){
     			if($answer->alterId1 && $answer->alterId2)
     				$array_id = $answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2;
@@ -155,7 +168,9 @@ class InterviewController extends Controller
                 "options"=>json_encode($options),
                 "interviewId" => $interviewId,
                 "answers"=>json_encode($answers),
+                "alterPrompts"=>json_encode($alterPrompts),
                 "alters"=>json_encode($alters),
+                "participantList"=>json_encode($participantList),
                 "questionList"=>json_encode($study->questionList()),
             )
         );

@@ -2,13 +2,20 @@
 
 <h4 ng-if="prompt != ''" ng-bind-html="prompt">{{ prompt }}</h4>
 
+<span ng-if="answerForm.$submitted && errors">
+    <div class="alert alert-danger" role="alert" ng-if="$index == 0" ng-repeat="error in errors">
+        {{ error }}
+    </div>
+</span>
+
 <div id="alterFormBox" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'">
 
-
+    <div ng-if='alterPrompt != ""'>{{ alterPrompt }}</div>
     <form id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
         <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
         <div class="form-group">
-                <input style="float:left" name="Alters[name]" id="Alters_name" type="text" maxlength="1024">
+                <input name="Alters[name]" id="Alters_name" type="hidden" value="{{ alterName }}">
+                <autocomplete style="float:left" ng-model="alterName" data="participants" required></autocomplete>
                 <input value="{{ interviewId }}" name="Alters[interviewId]" id="Alters_interviewId" type="hidden"> 
                 <input class="orangebutton alterSubmit" type="submit" name="yt0" value="+ Add">
         </div>
@@ -21,27 +28,20 @@
     </form>
 
 </div>
-    <div id="alterListBox" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'">
-        <table class="items">
-        <tbody>
-        <tr class="odd" ng-repeat="alter in alters track by $index">
-        <td style="width:20px;" id="ordering"></td>
-        <td style="width:120px;">{{ alter.NAME }}</td>
-        <td class="button-column"><a class="alter-delete" title="Delete" ng-click="removeAlter(alter.ID)"><img src="/assets/7828ca7f/gridview/delete.png" alt="Delete"></a></td>
-        </tr>
-        </tbody>
-        </table>
-    </div>
 
-<span ng-if="answerForm.$submitted && errors">
-    <div class="alert alert-danger" role="alert" ng-if="$index == 0" ng-repeat="error in errors">
-        {{ error }}
-    </div>
-</span>
+<div id="alterListBox" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'">
+    <table class="items">
+    <tbody>
+    <tr class="odd" ng-repeat="alter in alters track by $index">
+    <td style="width:20px;" id="ordering"></td>
+    <td style="width:120px;">{{ alter.NAME }}</td>
+    <td class="button-column"><a class="alter-delete" title="Delete" ng-click="removeAlter(alter.ID)"><img src="/assets/7828ca7f/gridview/delete.png" alt="Delete"></a></td>
+    </tr>
+    </tbody>
+    </table>
+</div>
 
 <form id="answerForm" name="answerForm" ng-submit="submitForm(answerForm.$valid)" novalidate>
-    
-
 
 <div class="multi" ng-show="askingStyleList != false">
     <div>
@@ -56,7 +56,8 @@
         <h4 ng-if="question.SUBJECTTYPE == 'EGO_ID'">{{ question.PROMPT }}</h4>
 
         <div ng-if="question.ANSWERTYPE == 'TEXTUAL' || question.ANSWERTYPE == 'NUMERICAL'">
-            <input ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'>
+            <autocomplete ng-if="question.USEALTERLISTFIELD == 'name' || question.USEALTERLISTFIELD == 'email'" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" data="participants" check-answer array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'></autocomplete>
+            <input ng-if="question.USEALTERLISTFIELD != 'name'&& question.USEALTERLISTFIELD != 'email'" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'>
         </div>
         <div ng-if="question.ANSWERTYPE == 'TEXTUAL_PP'">
             <textarea ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'></textarea>

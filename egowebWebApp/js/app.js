@@ -1,4 +1,4 @@
-var app = angular.module('egowebApp', ['ngRoute']);
+var app = angular.module('egowebApp', ['ngRoute', 'autocomplete']);
 
 app.config(function ($routeProvider) {
     
@@ -43,8 +43,34 @@ app.directive("questionList", function() {
    }
 });
 
+app.factory('MovieRetriever', function($http, $q, $timeout){
+  var MovieRetriever = new Object();
 
-app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', '$location', '$route', "saveAlter", "deleteAlter", function($scope, $log, $routeParams, $sce, $location, $route, saveAlter, deleteAlter) {
+  MovieRetriever.getmovies = function(i) {
+    var moviedata = $q.defer();
+    var movies;
+
+    var someMovies = ["The Wolverine", "The Smurfs 2", "The Mortal Instruments: City of Bones", "Drinking Buddies", "All the Boys Love Mandy Lane", "The Act Of Killing", "Red 2", "Jobs", "Getaway", "Red Obsession", "2 Guns", "The World's End", "Planes", "Paranoia", "The To Do List", "Man of Steel"];
+
+    var moreMovies = ["The Wolverine", "The Smurfs 2", "The Mortal Instruments: City of Bones", "Drinking Buddies", "All the Boys Love Mandy Lane", "The Act Of Killing", "Red 2", "Jobs", "Getaway", "Red Obsession", "2 Guns", "The World's End", "Planes", "Paranoia", "The To Do List", "Man of Steel", "The Way Way Back", "Before Midnight", "Only God Forgives", "I Give It a Year", "The Heat", "Pacific Rim", "Pacific Rim", "Kevin Hart: Let Me Explain", "A Hijacking", "Maniac", "After Earth", "The Purge", "Much Ado About Nothing", "Europa Report", "Stuck in Love", "We Steal Secrets: The Story Of Wikileaks", "The Croods", "This Is the End", "The Frozen Ground", "Turbo", "Blackfish", "Frances Ha", "Prince Avalanche", "The Attack", "Grown Ups 2", "White House Down", "Lovelace", "Girl Most Likely", "Parkland", "Passion", "Monsters University", "R.I.P.D.", "Byzantium", "The Conjuring", "The Internship"]
+
+    if(i && i.indexOf('T')!=-1)
+      movies=moreMovies;
+    else
+      movies=moreMovies;
+
+    $timeout(function(){
+      moviedata.resolve(movies);
+    },1000);
+
+    return moviedata.promise
+  }
+
+  return MovieRetriever;
+});
+
+
+app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', '$location', '$route', "saveAlter", "deleteAlter", "MovieRetriever", function($scope, $log, $routeParams, $sce, $location, $route, saveAlter, deleteAlter, MovieRetriever) {
     $scope.questions = buildQuestions($routeParams.page, interviewId);
     $scope.page = $routeParams.page;
     $scope.csrf = csrf;
@@ -52,10 +78,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.answers = answers;
     $scope.options = new Object;
     $scope.alters = alters;
+    $scope.alterPrompt = "";
     $scope.askingStyleList = false;
     $scope.hideQ = false;
     $scope.subjectType = false;
     $scope.prompt = "";
+    $scope.alterName = "";
     $scope.dates = new Object;
     $scope.time_spans = new Object;
     $scope.nav = buildNav($scope.page);
@@ -63,6 +91,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     for(k in $scope.nav){
     	$('#navbox ul').append("<li><a href='/interview/" + study.ID + (interviewId ? "/" + interviewId  : "") + "#page/" + k + "'>" + $scope.nav[k] + "</a></li>");
     }
+
+
 
 	questionOrder = [];
 	for (var l in $scope.questions) {
@@ -76,6 +106,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 
     for(var k in $scope.questions){
         $scope.questions[k].array_id = k;
+        if($scope.questions[k].USEALTERLISTFIELD == "name" || $scope.questions[k].USEALTERLISTFIELD == "email"){
+            $scope.participants = participantList[$scope.questions[k].USEALTERLISTFIELD];
+        }
+
         if($scope.questions[k].CITATION)
             $scope.questions[k].CITATION = $scope.questions[k].CITATION.replace(/(<([^>]+)>)/ig, '');
         if($scope.questions[k].ALLBUTTON == true && !$scope.options["all"]){
@@ -107,9 +141,17 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         if($scope.subjectType == false)
             $scope.subjectType = $scope.questions[k].SUBJECTTYPE;
 
-        if($scope.questions[k].ANSWERTYPE == "PREFACE" || $scope.questions[k].ANSWERTYPE == "ALTER_PROMPT")
+        if($scope.questions[k].ANSWERTYPE == "PREFACE" || $scope.questions[k].ANSWERTYPE == "ALTER_PROMPT"){
             $scope.hideQ = true;
+            if(study.USEASALTERS == true){
+                $scope.participants = participantList['name'];
+            }
+        }
 
+        if($scope.questions[k].ANSWERTYPE == "ALTER_PROMPT"){
+            if(typeof alterPrompts[Object.keys(alters).length] != "undefined")
+                $scope.alterPrompt = alterPrompts[Object.keys(alters).length];
+        }
         for(o in $scope.options[k]){
             $scope.options[k][o].checked = false;
             if(typeof answers[k] != "undefined"){
