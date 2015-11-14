@@ -1,8 +1,7 @@
 <div ng-if="subjectType == 'NETWORK'" id="infovis" class="col-sm-6 pull-right"></div>
 
 <h4 ng-if="prompt != ''" ng-bind-html="prompt">{{ prompt }}</h4>
-
-<span ng-if="answerForm.$submitted && errors">
+<span ng-if="(answerForm.$submitted || alterForm.$submitted) && errors">
     <div class="alert alert-danger" role="alert" ng-if="$index == 0" ng-repeat="error in errors">
         {{ error }}
     </div>
@@ -15,7 +14,7 @@
         <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
         <div class="form-group">
                 <input name="Alters[name]" id="Alters_name" type="hidden" value="{{ alterName }}">
-                <autocomplete style="float:left" ng-model="alterName" data="participants" required></autocomplete>
+                <autocomplete style="float:left" ng-model="alterName" data="participants"></autocomplete>
                 <input value="{{ interviewId }}" name="Alters[interviewId]" id="Alters_interviewId" type="hidden"> 
                 <input class="orangebutton alterSubmit" type="submit" name="yt0" value="+ Add">
         </div>
@@ -56,6 +55,7 @@
         <h4 ng-if="question.SUBJECTTYPE == 'EGO_ID'">{{ question.PROMPT }}</h4>
 
         <div ng-if="question.ANSWERTYPE == 'TEXTUAL' || question.ANSWERTYPE == 'NUMERICAL'">
+            <input ng-if="question.USEALTERLISTFIELD == 'name' || question.USEALTERLISTFIELD == 'email'" name="Answer[{{ question.array_id }}][value]" value="{{answers[question.array_id].VALUE}}" type="hidden">
             <autocomplete ng-if="question.USEALTERLISTFIELD == 'name' || question.USEALTERLISTFIELD == 'email'" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" data="participants" check-answer array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'></autocomplete>
             <input ng-if="question.USEALTERLISTFIELD != 'name'&& question.USEALTERLISTFIELD != 'email'" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'>
         </div>

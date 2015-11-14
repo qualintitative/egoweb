@@ -44,7 +44,7 @@
 				?>
 				<ul class="nav navbar-nav navbar-left">
 					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+						<a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
 							<span class="fui-list"></span>
 						</a>
 						<ul class="dropdown-menu">
@@ -98,7 +98,7 @@
 				<?php endif; ?>
 				<a class="titlelink" href="/admin">EgoWeb 2.0</a><span class="title"><?php echo CHtml::encode($this->pageTitle); ?></span>
 				<ul id="navbox" class="nav navbar-nav navbar-right">
-					<li class="dropdown">
+					<li id="questionMenu" class="dropdown hidden">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown" target="#second">
 							<span class="fui-gear"></span>
 						</a>

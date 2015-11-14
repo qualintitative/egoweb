@@ -43,34 +43,7 @@ app.directive("questionList", function() {
    }
 });
 
-app.factory('MovieRetriever', function($http, $q, $timeout){
-  var MovieRetriever = new Object();
-
-  MovieRetriever.getmovies = function(i) {
-    var moviedata = $q.defer();
-    var movies;
-
-    var someMovies = ["The Wolverine", "The Smurfs 2", "The Mortal Instruments: City of Bones", "Drinking Buddies", "All the Boys Love Mandy Lane", "The Act Of Killing", "Red 2", "Jobs", "Getaway", "Red Obsession", "2 Guns", "The World's End", "Planes", "Paranoia", "The To Do List", "Man of Steel"];
-
-    var moreMovies = ["The Wolverine", "The Smurfs 2", "The Mortal Instruments: City of Bones", "Drinking Buddies", "All the Boys Love Mandy Lane", "The Act Of Killing", "Red 2", "Jobs", "Getaway", "Red Obsession", "2 Guns", "The World's End", "Planes", "Paranoia", "The To Do List", "Man of Steel", "The Way Way Back", "Before Midnight", "Only God Forgives", "I Give It a Year", "The Heat", "Pacific Rim", "Pacific Rim", "Kevin Hart: Let Me Explain", "A Hijacking", "Maniac", "After Earth", "The Purge", "Much Ado About Nothing", "Europa Report", "Stuck in Love", "We Steal Secrets: The Story Of Wikileaks", "The Croods", "This Is the End", "The Frozen Ground", "Turbo", "Blackfish", "Frances Ha", "Prince Avalanche", "The Attack", "Grown Ups 2", "White House Down", "Lovelace", "Girl Most Likely", "Parkland", "Passion", "Monsters University", "R.I.P.D.", "Byzantium", "The Conjuring", "The Internship"]
-
-    if(i && i.indexOf('T')!=-1)
-      movies=moreMovies;
-    else
-      movies=moreMovies;
-
-    $timeout(function(){
-      moviedata.resolve(movies);
-    },1000);
-
-    return moviedata.promise
-  }
-
-  return MovieRetriever;
-});
-
-
-app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', '$location', '$route', "saveAlter", "deleteAlter", "MovieRetriever", function($scope, $log, $routeParams, $sce, $location, $route, saveAlter, deleteAlter, MovieRetriever) {
+app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', '$location', '$route', "saveAlter", "deleteAlter", function($scope, $log, $routeParams, $sce, $location, $route, saveAlter, deleteAlter) {
     $scope.questions = buildQuestions($routeParams.page, interviewId);
     $scope.page = $routeParams.page;
     $scope.csrf = csrf;
@@ -86,13 +59,13 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.alterName = "";
     $scope.dates = new Object;
     $scope.time_spans = new Object;
+
     $scope.nav = buildNav($scope.page);
     $('#navbox ul').html("");
     for(k in $scope.nav){
     	$('#navbox ul').append("<li><a href='/interview/" + study.ID + (interviewId ? "/" + interviewId  : "") + "#page/" + k + "'>" + $scope.nav[k] + "</a></li>");
     }
-
-
+    $("#questionMenu").removeClass("hidden");
 
 	questionOrder = [];
 	for (var l in $scope.questions) {
@@ -250,6 +223,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     };
 
     $scope.addAlter = function(isValid) {
+        if($.inArray($scope.alterName, alters) != -1){
+            $scope.errors[0] = 'That name is already listed';
+            return false;
+        }
         // check to make sure the form is completely valid
         saveAlter.getAlters().then(function(data){
             alters = JSON.parse(data);
@@ -406,7 +383,7 @@ app.directive('checkAnswer', [function (){
    return {
         require: 'ngModel',
         link: function(scope, elem, attr, ngModel) {
-          //For DOM -> model validation
+          //For DOM . model validation
             ngModel.$parsers.unshift(function(value) {
                 var valid = true;
                 array_id = attr.arrayId;
@@ -551,7 +528,7 @@ app.directive('checkAnswer', [function (){
                 if(attr.answerType == "TEXTUAL"){
                     if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
                         if(value == ""){
-                            scope.errors[array_id] = "Value cannot be blank (reverse)";
+                            scope.errors[array_id] = "Value cannot be blank...";
                         	valid = false;
                     	}
                     }else{
@@ -612,9 +589,6 @@ app.directive('checkAnswer', [function (){
    };
 }]);
 
-function Question()
-{
-}
 
 function buildQuestions(pageNumber, interviewId){
 	var page = [];
@@ -622,7 +596,7 @@ function buildQuestions(pageNumber, interviewId){
 	page[i] = new Object;
 	if(study.INTRODUCTION != ""){
 		if(i == pageNumber){
-			introduction = new Question();
+			introduction = new Object;
 			introduction.ANSWERTYPE = "INTRODUCTION";
 			introduction.PROMPT = study.INTRODUCTION;
 			page[i][0] = introduction;
@@ -660,7 +634,7 @@ function buildQuestions(pageNumber, interviewId){
 
 			if(ego_questions[j].PREFACE != ""){
 				if(pageNumber == i){
-					preface = new Question();
+					preface = new Object;
 					preface.ID = ego_questions[j].ID;
 					preface.ANSWERTYPE = "PREFACE";
 					preface.SUBJECTTYPE = "PREFACE";
@@ -699,7 +673,7 @@ function buildQuestions(pageNumber, interviewId){
 		}
 
 		if(pageNumber == i && study.ALTERPROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"") != ""){
-			alter_prompt = new Question();
+			alter_prompt = new Object;
 			alter_prompt.ANSWERTYPE = "ALTER_PROMPT";
 			alter_prompt.PROMPT = study.ALTERPROMPT;
 			alter_prompt.studyId = study.ID;
@@ -725,7 +699,7 @@ function buildQuestions(pageNumber, interviewId){
 					}else{
 						if(alter_questions[j].PREFACE != ""){
 							if(i == pageNumber){
-								var preface = new Question();
+								var preface = new Object;
 								preface.ID = alter_questions[j].ID;
 								preface.ANSWERTYPE = "PREFACE";
 								preface.SUBJECTTYPE = "PREFACE";
@@ -750,7 +724,7 @@ function buildQuestions(pageNumber, interviewId){
 					if(Object.keys(alter_question_list).length > 0){
 						if(alter_questions[j].PREFACE != ""){
 							if(i == pageNumber){
-								var preface = new Question();
+								var preface = new Object;
 								preface.ID = alter_questions[j].ID;
 								preface.ANSWERTYPE = "PREFACE";
 								preface.SUBJECTTYPE = "PREFACE";
@@ -773,7 +747,7 @@ function buildQuestions(pageNumber, interviewId){
 
 			for(j in alter_pair_questions){
 				var alters2 = $.extend(true,{}, alters);
-				var preface = new Question();
+				var preface = new Object;
 				preface.ID = alter_pair_questions[j].ID;
 				preface.ANSWERTYPE = "PREFACE";
 				preface.SUBJECTTYPE = "PREFACE";
@@ -847,7 +821,7 @@ function buildQuestions(pageNumber, interviewId){
     
     			if(network_questions[j].PREFACE != ""){
     				if(pageNumber == i){
-    					var preface = new Question();
+    					var preface = new Object;
     					preface.ID = network_questions[j].ID;
     					preface.ANSWERTYPE = "PREFACE";
     					preface.SUBJECTTYPE = "PREFACE";
@@ -867,7 +841,7 @@ function buildQuestions(pageNumber, interviewId){
     			    page[i] = new Object;
     		}
 		}
-		conclusion = new Question;
+		conclusion = new Object;
 		conclusion.ANSWERTYPE = "CONCLUSION";
 		conclusion.PROMPT = study.CONCLUSION;
 		page[i][0] = conclusion;
@@ -1258,6 +1232,8 @@ function countQuestion(questionId, operator, alterId1, alterId2)
 	}
 	
 function initStats(expressionId){
+    shortPaths  = new Object;
+    connections = [];
     nodes = [];
     edges = [];
 	if(alters.length == 0)
@@ -1272,15 +1248,16 @@ function initStats(expressionId){
 		
 
 	for(a in alters){
+		//betweenesses[alters[a].ID] = 0;
 		nodes.push(
 			{
 				'id'   : alters[a].ID,
 				'label': alters[a].NAME ,// . (isset($alterNotes[$alter['id']]) ? " �" : ""),
 				'x'    : Math.random(),
 				'y'    : Math.random(),
-				"type" :'circle', //$this->getNodeShape($alter['id']),
-				"color":'blue', //$this->getNodeColor($alter['id']),
-				"size" :4 //$this->getNodeSize($alter['id']),
+				"type" :'circle', //this.getNodeShape($alter['id']),
+				"color":'blue', //this.getNodeColor($alter['id']),
+				"size" :4 //this.getNodeSize($alter['id']),
 			}
 		);
 		for(b in alters2){
@@ -1291,92 +1268,85 @@ function initStats(expressionId){
 					"id"    : alters[a].ID + "_" + alters2[b].ID,
 					"source": alters2[b].ID,
 					"target": alters[a].ID,
-					"color" : 'black',//$this->getEdgeColor($alter['id'], $alter2['id']),
-					"size"  : 1 //$this->getEdgeSize($alter['id'], $alter2['id']),
+					"color" : 'black',//this.getEdgeColor($alter['id'], $alter2['id']),
+					"size"  : 1 //this.getEdgeSize($alter['id'], $alter2['id']),
 				});
+				if(typeof connections[alters[a].ID] == "undefined")
+				    connections[alters[a].ID] = [];
+				if(typeof connections[alters2[b].ID] == "undefined")
+				    connections[alters2[b].ID] = [];
+				connections[alters[a].ID].push(alters2[b].ID);
+				connections[alters2[b].ID].push(alters[a].ID);
 			}
 		}
 	}
-	/*
 
-	public function getDistance($visited, $node2){
-		$node1 =  $visited[count($visited)-1];
-		if(in_array($node2, $this->connections[$node1])){
-			$trail = array_merge($visited,array($node2));
-			if(!isset($this->shortPaths[md5($visited[0] . $node2)])){
-				$this->shortPaths[md5($visited[0] . $node2)][] = $trail;
-				$this->shortPaths[md5($node2 . $visited[0])][] = $trail;
+
+	this.getDistance = function (visited, node2){
+		var node1 =  visited[visited.length - 1];
+		if($.inArray(node2, connections[node1]) != -1){
+    		var trail = visited;
+			trail.push(node2);
+			if(typeof shortPaths[visited[0] + "-" + node2] != "undefined"){
+				shortPaths[visited[0] + "-" + node2].push(trail);
+				shortPaths[node2 + "-" + visited[0]].push(trail);
 			}else{
-
-				if(count($trail) < count($this->shortPaths[md5($visited[0] . $node2)][0])){
-					$this->shortPaths[md5($visited[0] . $node2)] = array();
-					$this->shortPaths[md5($node2 . $visited[0])] = array();
+				if(trail.length < shortPaths[visited[0] + "-" + node2][0].length){
+					shortPaths[visited[0] + "-" + node2] = [];
+					shortPaths[node2 + "-" + visited[0]] = [];
 				}
-
-				if(count($this->shortPaths[md5($visited[0] . $node2)]) == 0 || count($trail) == count($this->shortPaths[md5($visited[0] . $node2)][0])){
-					$this->shortPaths[md5($visited[0] . $node2)][] = $trail;
-					$this->shortPaths[md5($node2 . $visited[0])][] = $trail;
+				if(shortPaths[visited[0] + "-" + node2].length == 0 || trail.length == shortPaths[visited[0] + "-" + node2][0]){
+					shortPaths[visited[0] + "-" + node2].push(trail);
+					shortPaths[node2 + "-" + visited[0]].push(trail);
 				}
 			}
 		}else{
-			foreach($this->connections[$node1] as $endNode){
-				if(!in_array($endNode, $visited)){
-					$v2 = array_merge($visited,array($endNode));
-					if (isset($this->shortPaths[md5($visited[0] . $endNode)])){
-						if(count($v2) < count($this->shortPaths[md5($visited[0] . $endNode)][0])){
-							$this->shortPaths[md5($visited[0] . $endNode)] = array();
-							$this->shortPaths[md5($endNode . $visited[0])] = array();
+			for(k in this.connections[node1]){
+    			var endNode = this.connections[node1][k];
+				if($.inArray(endNode, visited) != -1){
+    				var v2 = visited;
+					v2.push(endNode);
+					if (typeof shortPaths[visited[0] + "-" + endNode] != "undefined"){
+						if(v2.length < shortPaths[visited[0] + "-" + endNode][0].length){
+							shortPaths[visited[0] + "-" + endNode] = [];
+							shortPaths[endNode + "-" + visited[0]] = [];
 						}
-						if(count($this->shortPaths[md5($visited[0] . $endNode)]) == 0 || count($v2) == count($this->shortPaths[md5($visited[0] . $endNode)][0])){
-							$this->shortPaths[md5($visited[0] . $endNode)][] = $v2;
-							$this->shortPaths[md5($endNode . $visited[0])][] = $v2;
+						if(shortPaths[visited[0] + "-" + endNode].length == 0 || v2.length == shortPaths[visited[0] + "-" + endNode][0].length){
+							shortPaths[visited[0] + "-" + endNode].push(v2);
+							shortPaths[endNode + "-" + visited[0]].push(v2);
 						}else{
 							continue;
 						}
 					} else {
-						$this->shortPaths[md5($visited[0] . $endNode)][] = $v2;
-						$this->shortPaths[md5($endNode . $visited[0])][] = $v2;
+						shortPaths[visited[0] + "-" + endNode].push(v2);
+						shortPaths[endNode + "-" + visited[0]].push(v2);
 					}
-					$this->getDistance($v2, $node2);
+					this.getDistance(v2, node2);
 				}
 		    }
 		}
 	}
 
-	foreach($alters as $alter){
-		$this->names[$alter->id] = $alter->name;
-		$this->betweenesses[$alter->id] = 0;
-		array_shift($alters2);
-		foreach($alters2 as $alter2){
-			if($expression->evalExpression($interviewId, $alter->id, $alter2->id, $answers)){
-				if(!in_array($alter->id, $this->nodes))
-					$this->nodes[] = $alter->id;
-				if(!in_array($alter2->id, $this->nodes))
-					$this->nodes[] = $alter2->id;
-				$this->adjacencies[] = array($alter->id, $alter2->id);
-				$this->connections[$alter2->id][] = $alter->id;
-				$this->connections[$alter->id][] =  $alter2->id;
-			}
-		}
-	}
+/*
 
 	foreach($alters as $alter){
-		if(!in_array($alter->id, $this->nodes)){
-			$this->isolates[] = $alter->id;
-			$this->nodes[] = $alter->id;
-			$this->connections[$alter->id] = array();
+		if(!in_array($alter.id, this.nodes)){
+			this.isolates[] = $alter.id;
+			this.nodes[] = $alter.id;
+			this.connections[$alter.id] = array();
+		}
+	}
+*/
+    var alters2 = $.extend(true,{}, alters);
+	for(a in alters){
+        var keys = Object.keys(alters2);
+        delete alters2[keys[0]];
+		for(b in alters2){
+			this.getDistance([alters[a].ID], alters2[b].ID);
 		}
 	}
 
-	$endNodes = $this->nodes;
-	foreach($this->nodes as $node){
-		array_shift($endNodes);
-		foreach($endNodes as $endNode){
-			$this->getDistance(array($node), $endNode);
-		}
-	}
-
-	$this->getBetweenesses();*/
+	//this.getBetweenesses();*/
 }
 
 	function buildNav(pageNumber){
@@ -1465,7 +1435,7 @@ function initStats(expressionId){
 			prompt = "";
 			for(j in alter_pair_questions){
 				var alters2 = $.extend(true,{}, alters);
-				preface = new Question;
+				preface = new Object;
 				preface.ANSWERTYPE = "PREFACE";
 				preface.PROMPT = alter_pair_questions[j].PREFACE;
 				for(k in alters){

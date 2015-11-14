@@ -115,6 +115,14 @@ class InterviewController extends Controller
         }
         $answers = array();
         $interviewId = false;
+        $participantList = array();
+        $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
+        foreach($results as $result){
+            if($result->name)
+                $participantList['name'][] = $result->name;
+            if($result->email)
+                $participantList['email'][] = $result->email;
+        }
         if(isset($_GET['interviewId'])){
             $interviewId = $_GET['interviewId'];
     		$interviewIds = Interview::multiInterviewIds($_GET['interviewId'], $study);
@@ -127,14 +135,6 @@ class InterviewController extends Controller
             $results = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$id));
             foreach($results as $result){
                 $alterPrompts[$result->afterAltersEntered] = $result->display;
-            }
-            $participantList = array();
-            $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
-            foreach($results as $result){
-                if($result->name)
-                    $participantList['name'][] = $result->name;
-                if($result->email)
-                    $participantList['email'][] = $result->email;
             }
     		foreach($answerList as $answer){
     			if($answer->alterId1 && $answer->alterId2)
