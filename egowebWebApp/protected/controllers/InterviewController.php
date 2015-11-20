@@ -154,6 +154,16 @@ class InterviewController extends Controller
 			foreach($results as $result){
     			$alters[$result->id] = mToA($result);
 			}
+			$graphs = array();
+			$results = Graph::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+			foreach($results as $result){
+    			$graphs[$result->expressionId] = mToA($result);
+			}
+    		$notes = array();
+    		$results = Note::model()->findAllByAttributes(array("interviewId"=>$interviewId));
+    		foreach($results as $result){
+    			$notes[$result->expressionId][$result->alterId] = $result->notes;
+    		}
         }
         $this->render('view', array(
                 "study"=>json_encode(mToA($study)),
@@ -170,6 +180,8 @@ class InterviewController extends Controller
                 "answers"=>json_encode($answers),
                 "alterPrompts"=>json_encode($alterPrompts),
                 "alters"=>json_encode($alters),
+                "graphs"=>json_encode($graphs),
+                "allNotes"=>json_encode($notes),
                 "participantList"=>json_encode($participantList),
                 "questionList"=>json_encode($study->questionList()),
             )

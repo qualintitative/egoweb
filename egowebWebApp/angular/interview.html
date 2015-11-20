@@ -1,4 +1,15 @@
-<div ng-if="subjectType == 'NETWORK'" id="infovis" class="col-sm-6 pull-right"></div>
+<div ng-if="subjectType == 'NETWORK'" class="col-sm-6 pull-right">
+    <div id="infovis"></div>
+    <form class="form-horizontal" id="graph-form" method="post">
+        <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
+        <input value="{{ graphId }}" name="Graph[id]" id="Graph_id" type="hidden">
+        <input value="{{ graphInterviewId }}" name="Graph[interviewId]" id="Graph_interviewId" type="hidden">
+        <input value="{{ graphExpressionId }}" name="Graph[expressionId]" id="Graph_expressionId" type="hidden">
+        <input value="{{ graphNodes }}" name="Graph[nodes]" id="Graph_nodes" type="hidden">
+        <input value="{{ graphParams }}" name="Graph[params]" id="Graph_params" type="hidden">	
+        <button class="btn btn-danger print-button" style="margin-top:10px" onclick="redraw(resetParams());return false;">Redraw</button>
+    </form>
+</div>
 
 <h4 ng-if="prompt != ''" ng-bind-html="prompt">{{ prompt }}</h4>
 <span ng-if="(answerForm.$submitted || alterForm.$submitted) && errors">
@@ -13,10 +24,10 @@
     <form id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
         <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
         <div class="form-group">
-                <input name="Alters[name]" id="Alters_name" type="hidden" value="{{ alterName }}">
-                <autocomplete style="float:left" ng-model="alterName" data="participants"></autocomplete>
-                <input value="{{ interviewId }}" name="Alters[interviewId]" id="Alters_interviewId" type="hidden"> 
-                <input class="orangebutton alterSubmit" type="submit" name="yt0" value="+ Add">
+            <input name="Alters[name]" id="Alters_name" type="hidden" value="{{ alterName }}">
+            <autocomplete style="float:left" ng-model="alterName" data="participants"></autocomplete>
+            <input value="{{ interviewId }}" name="Alters[interviewId]" id="Alters_interviewId" type="hidden"> 
+            <input class="orangebutton alterSubmit" type="submit" name="yt0" value="+ Add">
         </div>
     </form>
 
@@ -59,7 +70,7 @@
             <autocomplete ng-if="question.USEALTERLISTFIELD == 'name' || question.USEALTERLISTFIELD == 'email'" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" data="participants" check-answer array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'></autocomplete>
             <input ng-if="question.USEALTERLISTFIELD != 'name'&& question.USEALTERLISTFIELD != 'email'" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'>
         </div>
-        <div ng-if="question.ANSWERTYPE == 'TEXTUAL_PP'">
+        <div ng-if="question.ANSWERTYPE == 'TEXTUAL_PP'" class="col-sm-6">
             <textarea ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'></textarea>
         </div>
         <div ng-if="question.ANSWERTYPE == 'DATE'">

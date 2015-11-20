@@ -59,6 +59,11 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.alterName = "";
     $scope.dates = new Object;
     $scope.time_spans = new Object;
+    $scope.graphId = "";
+    $scope.graphExpressionId = "";
+    $scope.graphInterviewId = "";
+    $scope.graphNodes = "";
+    $scope.graphParams = "";
 
     $scope.nav = buildNav($scope.page);
     $('#navbox ul').html("");
@@ -205,6 +210,19 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }else{
             $scope.prompt = $sce.trustAsHtml(study.EGOIDPROMPT);
             $scope.questions[k].PROMPT = $scope.questions[k].PROMPT.replace(/(<([^>]+)>)/ig, '');
+        }
+
+        if($scope.questions[k].SUBJECTTYPE == "NETWORK"){
+            initStats($scope.questions[k]);
+            expressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
+            if(typeof graphs[expressionId] != "undefined"){
+                $scope.graphId = graphs[expressionId].ID;
+                $scope.graphExpressionId = graphs[expressionId].EXPRESSIONID;
+                $scope.graphInterviewId = graphs[expressionId].INTERVIEWID;
+                $scope.graphNodes = graphs[expressionId].NODES;
+                $scope.graphParams = graphs[expressionId].PARAMS;
+                notes = allNotes[expressionId];
+            }
         }
     }
 
@@ -1231,46 +1249,39 @@ function countQuestion(questionId, operator, alterId1, alterId2)
 		return string;
 	}
 	
-function initStats(expressionId){
+function initStats(question){
     shortPaths  = new Object;
     connections = [];
     nodes = [];
     edges = [];
+    var n = [];
+    var expressionId = question.NETWORKRELATIONSHIPEXPRID;
+    this.params = JSON.parse(question.NETWORKPARAMS);
+    console.log(this.params);
+    alterNames = new Object;
+    betweennesses = [];
 	if(alters.length == 0)
 		return false;
     
     var alters2 = $.extend(true,{}, alters);
 
-
 	var expression = expressions[expressionId];
 	if(expression.QUESTIONID)
 		var question = questions[expression.QUESTIONID];
 		
-
 	for(a in alters){
-		//betweenesses[alters[a].ID] = 0;
-		nodes.push(
-			{
-				'id'   : alters[a].ID,
-				'label': alters[a].NAME ,// . (isset($alterNotes[$alter['id']]) ? " �" : ""),
-				'x'    : Math.random(),
-				'y'    : Math.random(),
-				"type" :'circle', //this.getNodeShape($alter['id']),
-				"color":'blue', //this.getNodeColor($alter['id']),
-				"size" :4 //this.getNodeSize($alter['id']),
-			}
-		);
+		betweennesses[alters[a].ID] = 0;
+		var keys = Object.keys(alters2);
+		delete alters2[keys[0]];
+		alterNames[alters[a].ID] = alters[a].NAME;
 		for(b in alters2){
 			if(alters[a].ID == alters2[b].ID)
 				continue;
 			if(evalExpression(expressionId, alters[a].ID, alters2[b].ID)){
-				edges.push({
-					"id"    : alters[a].ID + "_" + alters2[b].ID,
-					"source": alters2[b].ID,
-					"target": alters[a].ID,
-					"color" : 'black',//this.getEdgeColor($alter['id'], $alter2['id']),
-					"size"  : 1 //this.getEdgeSize($alter['id'], $alter2['id']),
-				});
+				if($.inArray(alters[a].ID, n) == -1)
+				    n.push(alters[a].ID);
+				if($.inArray(alters2[b].ID, n) == -1)
+				    n.push(alters2[b].ID);
 				if(typeof connections[alters[a].ID] == "undefined")
 				    connections[alters[a].ID] = [];
 				if(typeof connections[alters2[b].ID] == "undefined")
@@ -1281,202 +1292,621 @@ function initStats(expressionId){
 		}
 	}
 
-
 	this.getDistance = function (visited, node2){
 		var node1 =  visited[visited.length - 1];
+		
 		if($.inArray(node2, connections[node1]) != -1){
-    		var trail = visited;
+    		var trail = visited.slice(0);
 			trail.push(node2);
-			if(typeof shortPaths[visited[0] + "-" + node2] != "undefined"){
+			if(typeof shortPaths[visited[0] + "-" + node2] == "undefined"){
+
+    			shortPaths[visited[0] + "-" + node2] = [];
 				shortPaths[visited[0] + "-" + node2].push(trail);
+				if(typeof shortPaths[node2 + "-" + visited[0]] == "undefined")
+				    shortPaths[node2 + "-" + visited[0]] = [];
 				shortPaths[node2 + "-" + visited[0]].push(trail);
 			}else{
 				if(trail.length < shortPaths[visited[0] + "-" + node2][0].length){
 					shortPaths[visited[0] + "-" + node2] = [];
 					shortPaths[node2 + "-" + visited[0]] = [];
 				}
-				if(shortPaths[visited[0] + "-" + node2].length == 0 || trail.length == shortPaths[visited[0] + "-" + node2][0]){
+				if(shortPaths[visited[0] + "-" + node2].length == 0 || trail.length == shortPaths[visited[0] + "-" + node2][0].length){
 					shortPaths[visited[0] + "-" + node2].push(trail);
 					shortPaths[node2 + "-" + visited[0]].push(trail);
 				}
 			}
 		}else{
-			for(k in this.connections[node1]){
-    			var endNode = this.connections[node1][k];
-				if($.inArray(endNode, visited) != -1){
-    				var v2 = visited;
-					v2.push(endNode);
+			for(k in connections[node1]){
+
+    			var endNode = connections[node1][k];
+
+				if($.inArray(endNode, visited) == -1){
+
+    				var trail = visited.slice(0);
+					trail.push(endNode);
 					if (typeof shortPaths[visited[0] + "-" + endNode] != "undefined"){
-						if(v2.length < shortPaths[visited[0] + "-" + endNode][0].length){
+
+						if(trail.length < shortPaths[visited[0] + "-" + endNode][0].length){
+
 							shortPaths[visited[0] + "-" + endNode] = [];
 							shortPaths[endNode + "-" + visited[0]] = [];
 						}
-						if(shortPaths[visited[0] + "-" + endNode].length == 0 || v2.length == shortPaths[visited[0] + "-" + endNode][0].length){
-							shortPaths[visited[0] + "-" + endNode].push(v2);
-							shortPaths[endNode + "-" + visited[0]].push(v2);
+						if(shortPaths[visited[0] + "-" + endNode].length == 0 || trail.length == shortPaths[visited[0] + "-" + endNode][0].length){
+
+							shortPaths[visited[0] + "-" + endNode].push(trail);
+							shortPaths[endNode + "-" + visited[0]].push(trail);
 						}else{
 							continue;
 						}
 					} else {
-						shortPaths[visited[0] + "-" + endNode].push(v2);
-						shortPaths[endNode + "-" + visited[0]].push(v2);
+    					shortPaths[visited[0] + "-" + endNode] = [];
+						shortPaths[visited[0] + "-" + endNode].push(trail);
+						if(typeof shortPaths[endNode + "-" + visited[0]] == "undefined")
+						    shortPaths[endNode + "-" + visited[0]] = [];
+						shortPaths[endNode + "-" + visited[0]].push(trail);
 					}
-					this.getDistance(v2, node2);
+					this.getDistance(trail, node2);
 				}
 		    }
 		}
 	}
 
-/*
 
-	foreach($alters as $alter){
-		if(!in_array($alter.id, this.nodes)){
-			this.isolates[] = $alter.id;
-			this.nodes[] = $alter.id;
-			this.connections[$alter.id] = array();
+
+	for(k in alters){
+		if(typeof connections[alters[k].ID] == "undefined"){
+			//this.isolates[] = $alter.id;
+			//this.nodes[] = $alter.id;
+			n.push(alters[k].ID);
+			connections[alters[k].ID] = [];
 		}
 	}
-*/
+
+    var n2 = n.slice(0);
+	for(a in n){
+        n2.shift();
+		for(b in n2){
+			this.getDistance([n[a]], n2[b]);
+		}
+	}
+
+
+	for(k in shortPaths){
+		var between = [];
+
+		for(p in shortPaths[k]){
+
+			var path = shortPaths[k][p].slice(0);
+			path.pop();
+			path.shift();
+
+			for(n in path){
+				if(typeof between[path[n]] == "undefined")
+					between[path[n]] = 1;
+				else
+                    between[path[n]] = between[path[n]] + 1;
+			}
+		}
+		for(b in between){
+			betweennesses[b] = betweennesses[b] + (between[b] / shortPaths[k].length);
+		}
+	}
+
+
+    closenesses = [];
     var alters2 = $.extend(true,{}, alters);
 	for(a in alters){
-        var keys = Object.keys(alters2);
-        delete alters2[keys[0]];
+        var total = 0;
+        var reachable = 0;
 		for(b in alters2){
-			this.getDistance([alters[a].ID], alters2[b].ID);
+			if(typeof shortPaths[alters[a].ID + "-" + alters2[b].ID] != "undefined"){
+				distance = shortPaths[alters[a].ID + "-" + alters2[b].ID][0].length - 1;
+				total = total + distance;
+				reachable++;
+			}
+		}
+		if(reachable < 1){
+			closenesses[alters[a].ID] = 0.0;
+        }else{
+		    average = total / reachable;
+            closenesses[alters[a].ID] = reachable / (average * (Object.keys(alters2).length - 1));
+        }
+	}
+
+	this.nextEigenvectorGuess = function(guess) {
+		var results = [];
+		for(g in guess) {
+			var result = 0.0;
+			if(typeof connections[g] != "undefined"){
+				for(c in connections[g]) {
+					result = result + guess[connections[g][c]];
+				}
+			}
+			results[g] = result;
+		}
+		return this.normalize(results);
+	}
+
+	this.tinyNum = 0.0000001;
+
+	this.normalize = function(vec) {
+		var magnitudeSquared = 0.0;
+		for(g in vec) {
+			magnitudeSquared = magnitudeSquared + Math.pow(vec[g],2);
+		}
+		var magnitude =  Math.sqrt(magnitudeSquared);
+		var factor = 1 / (magnitude < this.tinyNum ? this.tinyNum : magnitude);
+		var normalized = [];
+		for(g in vec) {
+			normalized[g] = vec[g]  * factor;
+		}
+		return normalized;
+	}
+	
+	this.change = function (vec1, vec2) {
+		var total = 0.0;
+		for(g in vec1) {
+			total = total + Math.abs(vec1[g] - vec2[g]);
+		}
+		return total;
+	}
+	
+	var tries = (n.length+5)*(n.length+5);
+	var guess = closenesses;
+	while(tries >= 0) {
+		var nextGuess = this.nextEigenvectorGuess(guess);
+		if(this.change(guess,nextGuess) < this.tinyNum || tries == 0) {
+			eigenvectors = nextGuess;
+		}
+		guess = nextGuess;
+		tries--;
+	}
+
+	var all = [];
+	for(k in betweennesses){
+    	all.push(betweennesses[k]);
+	}
+	maxBetweenness = Math.max.apply(Math, all);
+	minBetweenness = Math.min.apply(Math, all);
+
+	var all = [];
+	for(k in eigenvectors){
+    	all.push(eigenvectors[k]);
+	}
+	maxEigenvector = Math.max.apply(Math, all);
+	minEigenvector = Math.min.apply(Math, all);
+	
+	var all = [];
+	for(k in connections){
+    	all.push(connections[k].length);
+	}
+	maxDegree = Math.max.apply(Math, all);
+	minDegree = Math.min.apply(Math, all);
+
+    this.edgeColors = {
+		'#000':'black',
+		'#ccc':'gray',
+		'#07f':'blue',
+		'#0c0':'green',
+		'#F80':'orange',
+		'#fa0':'yellow',
+		'#f00':'red',
+		'#c0f':'purple',
+	};
+	this.edgeSizes = {
+		"0.5":'0.5',
+		"2":'2',
+		"4":'4',
+		"8":'8',
+	};
+	this.nodeColors = {
+		'#000':'black',
+		'#ccc':'gray',
+		'#07f':'blue',
+		'#0c0':'green',
+		'#F80':'orange',
+		'#fa0':'yellow',
+		'#f00':'red',
+		'#c0f':'purple',
+	};
+	this.nodeShapes = {
+		'circle':'circle',
+		'star':'star',
+		'diamond':'diamond',
+		'cross':'cross',
+		'equilateral':'triangle',
+		'square':'square',
+	};
+	this.nodeSizes = {
+		2:'1',
+		4:'2',
+		6:'3',
+		8:'4',
+		10:'5',
+		12:'6',
+		14:'7',
+		16:'8',
+		18:'9',
+		20:'10',
+	};
+	this.gradient = {
+		0:"#F5D6D6",
+		1:"#ECBEBE",
+		2:"#E2A6A6",
+		3:"#D98E8E",
+		4:"#CF7777",
+		5:"#C65F5F",
+		6:"#BC4747",
+		7:"#B32F2F",
+		8:"#A91717",
+		9:"#A00000",
+	};
+
+	this.getNodeColor = function(nodeId){
+		if(typeof this.params['nodeColor'] != "undefined"){
+			if($.inArray(this.params['nodeColor']['questionId'], ["degree", "betweenness", "eigenvector"]) != -1){
+				if(this.params['nodeColor']['questionId'] == "degree"){
+					max = maxDegree;
+					min = minDegree;
+					value = connections[nodeId].length;
+				}
+				if(this.params['nodeColor']['questionId'] == "betweenness"){
+					max = maxBetweenness;
+					min = minBetweenness;
+					value = betweennesses[nodeId];
+				}
+				if(this.params['nodeColor']['questionId'] == "eigenvector"){
+					max = maxEigenvector;
+					min = minEigenvector;
+					value = eigenvectors[nodeId];
+				}
+				range = max - min;
+				if(range == 0)
+					range = 1;
+				value = Math.round(((value-min) / (range)) * 9);
+				return this.gradient[value];
+			}else if(this.params['nodeColor']['questionId'].search("expression") != -1){
+				var qId = this.params['nodeColor']['questionId'].split("_");
+				if(evalExpression(qId[1], nodeId)){
+					for(p in this.params['nodeColor']['options']){
+						if(this.params['nodeColor']['options'][p]['id'] == 1)
+							return this.params['nodeColor']['options'][p]['color'];
+					}
+				}else{
+					for(p in this.params['nodeColor']['options']){
+						if(this.params['nodeColor']['options'][p]['id'] == 0)
+							return this.params['nodeColor']['options'][p]['color'];
+					}
+				}
+			}else if(!isNaN(this.params['nodeColor']['questionId'])){
+                if(typeof answers[this.params['nodeColor']['questionId'] + "-" + nodeId] != "undefined")
+	    			var answer = answers[this.params['nodeColor']['questionId'] + "-" + nodeId].VALUE.split(",");
+                else
+                    var answer = "";
+				for(p in this.params['nodeColor']['options']){
+					if(this.params['nodeColor']['options'][p]['id'] == answer || $.inArray(this.params['nodeColor']['options'][p]['id'], answer) != -1)
+                        return this.params['nodeColor']['options'][p]['color'];
+				}
+			}
+		}
+		return "#07f";
+	}
+
+	this,getNodeSize = function(nodeId){
+		if(typeof this.params['nodeSize'] != "undefined"){
+			if($.inArray(this.params['nodeSize']['questionId'], ["degree", "betweenness", "eigenvector"]) != -1){
+				if(this.params['nodeSize']['questionId'] == "degree"){
+					max = maxDegree;
+					min = minDegree;
+					value = connections[nodeId].length;
+				}
+				if(this.params['nodeSize']['questionId'] == "betweenness"){
+					max = maxBetweenness;
+					min = minBetweenness;
+					value = betweennesses[nodeId];
+				}
+				if(this.params['nodeSize']['questionId'] == "eigenvector"){
+					max = maxEigenvector;
+					min = minEigenvector;
+					value = eigenvectors[nodeId];
+				}
+				range = max - min;
+				if(range == 0)
+					range = 1;
+				value = Math.round(((value-min) / (range)) * 9) + 1;
+				return value * 2;
+			}else{
+    			if(typeof answers[this.params['nodeSize']['questionId'] + "-" + nodeId] != "undefined")
+				    var answer = answers[this.params['nodeSize']['questionId'] + "-" + nodeId].VALUE.split(",");
+				else
+				    var answer = "";
+    			for(p in this.params['nodeSize']['options']){
+    				if(this.params['nodeSize']['options'][p]['id'] == answer || $.inArray(this.params['nodeSize']['options'][p]['id'], answer) != -1)
+    				    return this.params['nodeSize']['options'][p]['size'];
+    			}
+			}
+
+		}
+		return 4;
+	}
+
+	this.getNodeShape = function(nodeId){
+		if(typeof this.params['nodeShape'] != "undefined"){
+            if(typeof answers[this.params['nodeShape']['questionId'] + "-" + nodeId] != "undefined")
+                var answer = answers[this.params['nodeShape']['questionId'] + "-" + nodeId].VALUE.split(",");
+            else
+                var answer = "";
+			for(p in this.params['nodeShape']['options']){
+				if(this.params['nodeShape']['options'][p]['id'] == answer || $.inArray(this.params['nodeShape']['options'][p]['id'], answer))
+				    return this.params['nodeShape']['options'][p]['shape'];
+			}
+		}
+		return "circle";
+	}
+
+	this.getEdgeColor = function(nodeId1, nodeId2){
+		if(typeof this.params['edgeColor'] != "undefined"){
+            if(typeof answers[this.params['edgeColor']['questionId'] + "-" + nodeId1 + "and" + nodeId2] != "undefined")
+                var answer = answers[this.params['edgeColor']['questionId'] + "-" + nodeId1 + "and" + nodeId2].VALUE.split(",");
+            else
+                var answer = "";
+			for(p in this.params['edgeColor']['options']){
+				if(this.params['edgeColor']['options'][p]['id'] == answer || $.inArray(this.params['edgeColor']['options'][p]['id'], answer))
+				    return this.params['edgeColor']['options'][p]['color'];
+			}
+		}
+		return "#ccc";
+	}
+
+	this.getEdgeSize = function(nodeId1, nodeId2){
+		if(typeof this.params['edgeSize'] != "undefined"){
+            if(typeof answers[this.params['edgeSize']['questionId'] + "-" + nodeId1 + "and" + nodeId2] != "undefined")
+                var answer = answers[this.params['edgeSize']['questionId'] + "-" + nodeId1 + "and" + nodeId2].VALUE.split(",");
+            else
+                var answer = "";
+			for(p in this.params['edgeSize']['options']){
+				if(this.params['edgeSize']['options'][p]['id'] == answer || $.inArray(this.params['edgeSize']['options'][p]['id'], answer))
+				    return this.params['edgeSize']['options'][p]['size'];
+			}
+		}
+		return 1;
+	}	
+
+    var alters2 = $.extend(true,{}, alters);
+	for(a in alters){
+		nodes.push(
+			{
+				'id'   : alters[a].ID,
+				'label': alters[a].NAME, // . (isset($alterNotes[$alter['id']]) ? " �" : ""),
+				'x'    : Math.random(),
+				'y'    : Math.random(),
+				"type" : this.getNodeShape(alters[a].ID),
+				"color": this.getNodeColor(alters[a].ID),
+				"size" : this.getNodeSize(alters[a].ID),
+			}
+		);
+		var keys = Object.keys(alters2);
+		delete alters2[keys[0]];
+		for(b in alters2){
+			if(evalExpression(expressionId, alters[a].ID, alters2[b].ID)){
+				edges.push({
+					"id"    : alters[a].ID + "_" + alters2[b].ID,
+					"source": alters2[b].ID,
+					"target": alters[a].ID,
+					"color" : this.getEdgeColor(alters[a].ID, alters2[b].ID),
+					"size"  : this.getEdgeSize(alters[a].ID, alters2[b].ID),
+				});
+			}
 		}
 	}
 
-	//this.getBetweenesses();*/
+
+g = {
+	nodes: nodes,
+	edges: edges,
+	//legends:  <?= json_encode($legends); ?>
+};
+
+sizes = [];
+for(y in g.nodes){sizes.push(g.nodes[y].size)}
+	max_node_size = Math.max.apply(Math, sizes);
+
+sizes = [];
+for(y in g.edges){sizes.push(g.edges[y].size)}
+	max_edge_size = Math.max.apply(Math, sizes);
+
+setTimeout(function(){
+	sigma.renderers.def = sigma.renderers.canvas;
+	
+	s = new sigma({
+		graph: g,
+		renderer: {
+			container: document.getElementById('infovis'),
+			type: 'canvas'
+		},
+		settings: {
+			doubleClickEnabled: false,
+			labelThreshold: 1,
+			minNodeSize: 2,
+			maxNodeSize: max_node_size,
+			minEdgeSize: 0.5,
+			maxEdgeSize: max_edge_size,
+			zoomingRatio: 1.0,
+			sideMargin: 2
+		}
+	});
+	CustomEdgeShapes.init(s);
+	initNotes(s);
+	if(typeof graphs[expressionId] != "undefined"){
+        savedNodes = JSON.parse(graphs[expressionId].NODES);
+		for(var k in savedNodes){
+			var node = s.graph.nodes(k.toString());
+			if(node){
+				node.x = savedNodes[k].x;
+				node.y = savedNodes[k].y;
+			}
+		}
+	}else{
+		s.startForceAtlas2({
+			"worker":false,
+			"outboundAttractionDistribution":true,
+			"speed":2000,
+			"gravity": 0.2,
+			"jitterTolerance": 0,
+			"strongGravityMode": true,
+			"barnesHutOptimize": false,
+			"totalSwinging": 0,
+			"totalEffectiveTraction": 0,
+			"complexIntervals":500,
+			"simpleIntervals": 1000
+		});
+		setTimeout("s.stopForceAtlas2(); saveNodes(); $('#fullscreenButton').prop('disabled', false);", 5000);
+    }
+	s.refresh();
+	sigma.plugins.dragNodes(s, s.renderers[0]);
+	},1);
 }
 
-	function buildNav(pageNumber){
-		var i = 0;
-		var pages = [];
+function saveNodes()
+{
+	var nodes = {};
+	for(var k in s.graph.nodes()){
+		nodes[s.graph.nodes()[k].id] = s.graph.nodes()[k];
+	}
+	$("#Graph_nodes").val(JSON.stringify(nodes));
+	$.post( "/data/savegraph", $('#graph-form').serialize(), function( data ) {
+		console.log("nodes saved");
+	});
+}
 
-    	this.checkPage = function (currentPage, pageNumber, text){
-    		if(currentPage == pageNumber)
-    			text = "<b>" + text + "</b>";
-    		return text;
-    	};
-	
-		if(study.INTRODUCTION != ""){
-			pages[i] = this.checkPage(i, pageNumber, "INTRODUCTION");
-			i++;
-		}
-		pages[i] = this.checkPage(i, pageNumber, "EGO ID");
+function buildNav(pageNumber){
+	var i = 0;
+	var pages = [];
+
+	this.checkPage = function (currentPage, pageNumber, text){
+		if(currentPage == pageNumber)
+			text = "<b>" + text + "</b>";
+		return text;
+	};
+
+	if(study.INTRODUCTION != ""){
+		pages[i] = this.checkPage(i, pageNumber, "INTRODUCTION");
 		i++;
-		if(!interviewId){
-			return pages;
-		}
-		var prompt = "";
-		var ego_question_list = '';
-		for(j in ego_questions){
-			if(evalExpression(ego_questions[j].ANSWERREASONEXPRESSIONID, interviewId) != true)
-				continue;
-
-			if((parseInt(ego_questions[j].ASKINGSTYLELIST) != 1 || prompt != ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")) && ego_question_list){
-			    pages[i] = this.checkPage(i, pageNumber, ego_question_list.TITLE);
-				prompt = "";
-			    ego_question_list = '';
-			    i++;
-			}
-			if(ego_questions[j].PREFACE != ""){
-				pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-				i++;
-			}
-			if(parseInt(ego_questions[j].ASKINGSTYLELIST)){
-			    prompt = ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
-			    if(ego_question_list == '')
-				    ego_question_list = ego_questions[j];
-			}else{
-			    pages[i] = this.checkPage(i, pageNumber, ego_questions[j].TITLE);
-			    i++;
-			}
-
-		}
-		if(ego_question_list){
-			pages[i] = this.checkPage(i, pageNumber, ego_question_list.TITLE);
-			ego_question_list = '';
-			i++;
-		}
-		if(study.ALTERPROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
-			pages[i] = this.checkPage(i, pageNumber, "ALTER_PROMPT");
-			i++;
-		}
-		if(Object.keys(alters).length > 0){
-			prompt = "";
-			for(j in alter_questions){
-				var alter_question_list = '';
-				for(k in alters){
-					if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
-						continue;
-					if(parseInt(alter_questions[j].ASKINGSTYLELIST)){
-				    	alter_question_list = alter_questions[j];
-				    }else{
-						if(alter_questions[j].PREFACE != ""){
-				    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-				    		i++;
-				    	}
-				    	pages[i] = this.checkPage(i, pageNumber, alter_questions[j].TITLE + " - " + alters[k].NAME);
-				    	i++;
-				    }
-				}
-				if(parseInt(alter_questions[j].ASKINGSTYLELIST)){
-				    if(alter_question_list){
-				    	if(alter_questions[j].PREFACE != ""){
-				    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-				    		i++;
-				    	}
-				    	pages[i] = this.checkPage(i, pageNumber, alter_question_list.TITLE);
-				    	i++;
-				    }
-				}
-			}
-			prompt = "";
-			for(j in alter_pair_questions){
-				var alters2 = $.extend(true,{}, alters);
-				preface = new Object;
-				preface.ANSWERTYPE = "PREFACE";
-				preface.PROMPT = alter_pair_questions[j].PREFACE;
-				for(k in alters){
-					if(alter_pair_questions[j].SYMMETRIC){
-    					var keys = Object.keys(alters2);
-    					delete alters2[keys[0]];
-					}
-					var alter_pair_question_list = '';
-					for(l in alters2){
-			    		if(alters[k].ID == alters2[l].ID)
-			    			continue;
-						if(evalExpression(alter_pair_questions[j].ANSWERREASONEXPRESSIONID, interviewId, alters[k].ID, alters2[l].ID) != true)
-			    			continue;
-			    		alter_pair_question_list = alter_pair_questions[j];
-			    	}
-			    	if(alter_pair_question_list){
-						if(preface.PROMPT != ""){
-				    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-							preface.PROMPT = "";
-				    		i++;
-				    	}
-				    	pages[i] = this.checkPage(i, pageNumber, alter_pair_question_list.TITLE + " - " + alters[k].NAME);
-				    	i++;
-					}
-				}
-			}
-			
-			for(j in network_questions){
-			    if(interviewId){
-			    	if(!evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID))
-			    		continue;
-			    }
-			    if(network_questions[j].PREFACE != ""){
-			    	pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-			    	i++;
-			    }
-			    pages[i] = this.checkPage(i, pageNumber, network_questions[j].TITLE);
-			    i++;
-			}
-		}
-		pages[i] = this.checkPage(i, pageNumber, "CONCLUSION");
+	}
+	pages[i] = this.checkPage(i, pageNumber, "EGO ID");
+	i++;
+	if(!interviewId){
 		return pages;
 	}
+	var prompt = "";
+	var ego_question_list = '';
+	for(j in ego_questions){
+		if(evalExpression(ego_questions[j].ANSWERREASONEXPRESSIONID, interviewId) != true)
+			continue;
+
+		if((parseInt(ego_questions[j].ASKINGSTYLELIST) != 1 || prompt != ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")) && ego_question_list){
+		    pages[i] = this.checkPage(i, pageNumber, ego_question_list.TITLE);
+			prompt = "";
+		    ego_question_list = '';
+		    i++;
+		}
+		if(ego_questions[j].PREFACE != ""){
+			pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+			i++;
+		}
+		if(parseInt(ego_questions[j].ASKINGSTYLELIST)){
+		    prompt = ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
+		    if(ego_question_list == '')
+			    ego_question_list = ego_questions[j];
+		}else{
+		    pages[i] = this.checkPage(i, pageNumber, ego_questions[j].TITLE);
+		    i++;
+		}
+
+	}
+	if(ego_question_list){
+		pages[i] = this.checkPage(i, pageNumber, ego_question_list.TITLE);
+		ego_question_list = '';
+		i++;
+	}
+	if(study.ALTERPROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
+		pages[i] = this.checkPage(i, pageNumber, "ALTER_PROMPT");
+		i++;
+	}
+	if(Object.keys(alters).length > 0){
+		prompt = "";
+		for(j in alter_questions){
+			var alter_question_list = '';
+			for(k in alters){
+				if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
+					continue;
+				if(parseInt(alter_questions[j].ASKINGSTYLELIST)){
+			    	alter_question_list = alter_questions[j];
+			    }else{
+					if(alter_questions[j].PREFACE != ""){
+			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+			    		i++;
+			    	}
+			    	pages[i] = this.checkPage(i, pageNumber, alter_questions[j].TITLE + " - " + alters[k].NAME);
+			    	i++;
+			    }
+			}
+			if(parseInt(alter_questions[j].ASKINGSTYLELIST)){
+			    if(alter_question_list){
+			    	if(alter_questions[j].PREFACE != ""){
+			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+			    		i++;
+			    	}
+			    	pages[i] = this.checkPage(i, pageNumber, alter_question_list.TITLE);
+			    	i++;
+			    }
+			}
+		}
+		prompt = "";
+		for(j in alter_pair_questions){
+			var alters2 = $.extend(true,{}, alters);
+			preface = new Object;
+			preface.ANSWERTYPE = "PREFACE";
+			preface.PROMPT = alter_pair_questions[j].PREFACE;
+			for(k in alters){
+				if(alter_pair_questions[j].SYMMETRIC){
+					var keys = Object.keys(alters2);
+					delete alters2[keys[0]];
+				}
+				var alter_pair_question_list = '';
+				for(l in alters2){
+		    		if(alters[k].ID == alters2[l].ID)
+		    			continue;
+					if(evalExpression(alter_pair_questions[j].ANSWERREASONEXPRESSIONID, interviewId, alters[k].ID, alters2[l].ID) != true)
+		    			continue;
+		    		alter_pair_question_list = alter_pair_questions[j];
+		    	}
+		    	if(alter_pair_question_list){
+					if(preface.PROMPT != ""){
+			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+						preface.PROMPT = "";
+			    		i++;
+			    	}
+			    	pages[i] = this.checkPage(i, pageNumber, alter_pair_question_list.TITLE + " - " + alters[k].NAME);
+			    	i++;
+				}
+			}
+		}
+		
+		for(j in network_questions){
+		    if(interviewId){
+		    	if(!evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID))
+		    		continue;
+		    }
+		    if(network_questions[j].PREFACE != ""){
+		    	pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+		    	i++;
+		    }
+		    pages[i] = this.checkPage(i, pageNumber, network_questions[j].TITLE);
+		    i++;
+		}
+	}
+	pages[i] = this.checkPage(i, pageNumber, "CONCLUSION");
+	return pages;
+}
 

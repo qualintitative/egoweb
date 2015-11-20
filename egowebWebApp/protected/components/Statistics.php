@@ -114,7 +114,6 @@ class Statistics extends CComponent {
 				$this->getDistance(array($node), $endNode);
 			}
 		}
-
 		$this->getBetweenesses();
 	}
 
@@ -138,15 +137,21 @@ class Statistics extends CComponent {
 				}
 			}
 		}else{
+
 			foreach($this->connections[$node1] as $endNode){
+
 				if(!in_array($endNode, $visited)){
+
 					$v2 = array_merge($visited,array($endNode));
 					if (isset($this->shortPaths[md5($visited[0] . $endNode)])){
+
 						if(count($v2) < count($this->shortPaths[md5($visited[0] . $endNode)][0])){
+
 							$this->shortPaths[md5($visited[0] . $endNode)] = array();
 							$this->shortPaths[md5($endNode . $visited[0])] = array();
 						}
 						if(count($this->shortPaths[md5($visited[0] . $endNode)]) == 0 || count($v2) == count($this->shortPaths[md5($visited[0] . $endNode)][0])){
+
 							$this->shortPaths[md5($visited[0] . $endNode)][] = $v2;
 							$this->shortPaths[md5($endNode . $visited[0])][] = $v2;
 						}else{
@@ -175,8 +180,10 @@ class Statistics extends CComponent {
 
 	public function getBetweenesses(){
 		foreach($this->shortPaths as $shortPaths){
+
 			$between = array();
 			foreach($shortPaths as $path){
+
 				array_shift($path);
 				array_pop($path);
 				foreach($path as $node){
