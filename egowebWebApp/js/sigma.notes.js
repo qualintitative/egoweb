@@ -26,6 +26,7 @@ function deleteNote(){
         if(!isNaN(data)){
             var node = s.graph.nodes(data);
             node.label = node.label.replace(" �","");
+            delete notes[data];
             s.refresh();
             $("#left-container").html("");
         }else{

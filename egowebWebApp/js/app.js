@@ -64,6 +64,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.graphInterviewId = "";
     $scope.graphNodes = "";
     $scope.graphParams = "";
+    $scope.otherSpecify = {};
 
     $scope.nav = buildNav($scope.page);
     $('#navbox ul').html("");
@@ -109,6 +110,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             }
         }
         $scope.options[k] = $.extend(true,{}, options[$scope.questions[k].ID]);
+
         if($scope.questions[k].ASKINGSTYLELIST == true)
             $scope.askingStyleList = k;
         if($scope.askingStyleList != false)
@@ -205,6 +207,25 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             $scope.options[k][Object.keys($scope.options[k]).length] = button;
         }
 
+        if(typeof $scope.answers[k].OTHERSPECIFYTEXT != "undefined"){
+            var specify = $scope.answers[k].OTHERSPECIFYTEXT.split(";;");
+            for(s in specify){
+                var pair = specify[s].split(":");
+                $scope.otherSpecify[pair[0]] = pair[1];
+            }
+        }
+        console.log($scope.otherSpecify);
+        for(a in $scope.options[k]){
+            if($scope.otherSpecify[$scope.options[k][a].ID] && $scope.otherSpecify[$scope.options[k][a].ID] != "")
+                continue;
+            if($scope.options[k][a].OTHERSPECIFY)
+                $scope.otherSpecify[$scope.options[k][a].ID] = "";
+            else if($scope.options[k][a].NAME.match(/OTHER \(*SPECIFY\)*/i))
+                $scope.otherSpecify[$scope.options[k][a].ID] = "";
+            else
+                $scope.otherSpecify[$scope.options[k][a].ID] = false;
+        }
+
         if($scope.questions[k].SUBJECTTYPE != "EGO_ID"){
             $scope.prompt = $sce.trustAsHtml(interpretTags($scope.questions[k].PROMPT, $scope.questions[k].ALTERID1, $scope.questions[k].ALTERID2));
         }else{
@@ -213,7 +234,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
 
         if($scope.questions[k].SUBJECTTYPE == "NETWORK"){
-            initStats($scope.questions[k]);
             expressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
             if(typeof graphs[expressionId] != "undefined"){
                 $scope.graphId = graphs[expressionId].ID;
@@ -221,8 +241,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 $scope.graphInterviewId = graphs[expressionId].INTERVIEWID;
                 $scope.graphNodes = graphs[expressionId].NODES;
                 $scope.graphParams = graphs[expressionId].PARAMS;
-                notes = allNotes[expressionId];
+                if(typeof allNotes[expressionId] != "undefined")
+                    notes = allNotes[expressionId];
+                else
+                    notes = [];
             }
+            initStats($scope.questions[k]);
         }
     }
 
@@ -271,6 +295,17 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
     }
 
+    $scope.changeOther = function (array_id){
+        var specify = [];
+        for(a in $scope.options[array_id]){
+            if($scope.otherSpecify[$scope.options[array_id][a].ID] != false && $scope.otherSpecify[$scope.options[array_id][a].ID] != ""){
+                specify.push($scope.options[array_id][a].ID + ":" + $scope.otherSpecify[$scope.options[array_id][a].ID])
+            }
+        }
+        $scope.answers[array_id].OTHERSPECIFYTEXT = specify.join(";;");
+        console.log($scope.answers[array_id].OTHERSPECIFYTEXT);
+    }
+
     $scope.multiSelect = function (v, index, array_id){
 
     	if($scope.answers[array_id].VALUE)
@@ -305,6 +340,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     			if(values.indexOf(v.toString()) == -1)
     				values.push(v.toString());
     		}else{
+        		if($scope.otherSpecify[$scope.options[array_id][index].ID] != false){
+        		    $scope.otherSpecify[$scope.options[array_id][index].ID] = "";
+        		    $scope.changeOther(array_id);
+                }
     			if(values.indexOf(v.toString()) != -1){
     				values.splice(values.indexOf(v),1);
                 }
@@ -1677,7 +1716,7 @@ function initStats(question){
 		nodes.push(
 			{
 				'id'   : alters[a].ID,
-				'label': alters[a].NAME, // . (isset($alterNotes[$alter['id']]) ? " �" : ""),
+				'label': alters[a].NAME + (typeof notes[alters[a].ID] != "undefined" ? " �" : ""),
 				'x'    : Math.random(),
 				'y'    : Math.random(),
 				"type" : this.getNodeShape(alters[a].ID),
@@ -1773,11 +1812,37 @@ function saveNodes()
 	for(var k in s.graph.nodes()){
 		nodes[s.graph.nodes()[k].id] = s.graph.nodes()[k];
 	}
-	$("#Graph_nodes").val(JSON.stringify(nodes));
+	graphs[expressionId].NODES = JSON.stringify(nodes);
 	$.post( "/data/savegraph", $('#graph-form').serialize(), function( data ) {
 		console.log("nodes saved");
 	});
 }
+
+function fullscreen(){
+	elem = document.getElementById("visualizePlugin");
+	if (typeof elem.requestFullscreen != "undefined") {
+		elem.requestFullscreen();
+	} else if (typeof elem.msRequestFullscreen != "undefined") {
+		elem.msRequestFullscreen();
+	} else if (typeof elem.mozRequestFullScreen != "undefined") {
+		elem.mozRequestFullScreen();
+	} else if (typeof elem.webkitRequestFullscreen != "undefined") {
+		elem.webkitRequestFullscreen();
+	}
+}
+
+			function redraw(params){
+				url = "/data/deleteGraph?id=" + $("#Graph_id").val();
+				$.get(url, function(data){
+					url = "/data/visualize?expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent(JSON.stringify(params));
+					document.location = document.location + "&params=" + encodeURIComponent(JSON.stringify(params));
+				});
+			}
+
+			function print(expressionId, interviewId){
+				url = "/data/visualize?print&expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent($("#Graph_params").val());
+				window.open(url);
+			}
 
 function buildNav(pageNumber){
 	var i = 0;

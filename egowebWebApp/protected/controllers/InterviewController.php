@@ -264,6 +264,8 @@ class InterviewController extends Controller
 				$answers[$array_id]->save();
 				if(strlen($answers[$array_id]->value) >= 8)
 				    $answers[$array_id]->value = decrypt( $answers[$array_id]->value);
+				if(strlen($answers[$array_id]->otherSpecifyText) >= 8)
+				    $answers[$array_id]->otherSpecifyText = decrypt( $answers[$array_id]->otherSpecifyText);
 
 			}
         }
