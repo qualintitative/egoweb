@@ -51,6 +51,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.answers = answers;
     $scope.options = new Object;
     $scope.alters = alters;
+    $scope.prevAlters = prevAlters;
     $scope.alterPrompt = "";
     $scope.askingStyleList = false;
     $scope.hideQ = false;
@@ -206,8 +207,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 button.checked = true;
             $scope.options[k][Object.keys($scope.options[k]).length] = button;
         }
-
-        if(typeof $scope.answers[k].OTHERSPECIFYTEXT != "undefined"){
+        
+        columns = Object.keys($scope.options[k]).length;
+        if(typeof $scope.answers[k].OTHERSPECIFYTEXT != "undefined" && $scope.answers[k].OTHERSPECIFYTEXT != ""){
             var specify = $scope.answers[k].OTHERSPECIFYTEXT.split(";;");
             for(s in specify){
                 var pair = specify[s].split(":");
@@ -218,7 +220,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         for(a in $scope.options[k]){
             if($scope.otherSpecify[$scope.options[k][a].ID] && $scope.otherSpecify[$scope.options[k][a].ID] != "")
                 continue;
-            if($scope.options[k][a].OTHERSPECIFY)
+            if($scope.options[k][a].OTHERSPECIFY == true)
                 $scope.otherSpecify[$scope.options[k][a].ID] = "";
             else if($scope.options[k][a].NAME.match(/OTHER \(*SPECIFY\)*/i))
                 $scope.otherSpecify[$scope.options[k][a].ID] = "";
@@ -248,6 +250,11 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             }
             initStats($scope.questions[k]);
         }
+        setTimeout(
+            function(){
+                $(".answerInput")[0].focus();
+            },
+        0);
     }
 
     $scope.errors = new Object;
@@ -272,6 +279,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         // check to make sure the form is completely valid
         saveAlter.getAlters().then(function(data){
             alters = JSON.parse(data);
+            for(k in alters){
+                if(typeof prevAlters[k] != "undefined")
+                    delete prevAlters[k];
+            }
             $route.reload();
         });
     };

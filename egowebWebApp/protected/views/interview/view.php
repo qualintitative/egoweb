@@ -28,6 +28,7 @@ options = <?php echo $options ?>;
 interviewId = <?php echo $interviewId ? $interviewId : "undefined" ?>;
 answers = <?php echo $answers ?>;
 alters = <?php echo $alters ?>;
+prevAlters = <?php echo $prevAlters ?>;
 graphs = <?php echo $graphs; ?>;
 allNotes = <?php echo $allNotes; ?>;
 alterPrompts = <?php echo $alterPrompts ?>;
@@ -35,60 +36,50 @@ questionList = <?php echo $questionList ?>;
 participantList = <?php echo $participantList ?>;
 csrf = '<?php echo Yii::app()->request->csrfToken; ?>';
 
+$(function(){
+    setTimeout(function(){
+    $(".answerInput")[0].focus();
+    }, 0);
+})
 $(document).keydown(function(e) {
 	if($("textarea").length == 0 &&  e.keyCode == 13){
+    		e.preventDefault();
 		if($("#alterFormBox").length != 0 && $("#alterFormBox").html() != "")
-			$('.alterSubmit').submit();
+			$('#alterForm').submit();
 		else
-			$('#answer-form').submit();
-	}
-	if (e.keyCode == 39){
-		e.preventDefault();
-		$("input:focus").next().focus();
+			$('.orangebutton')[0].click();
 	}
 	if (e.keyCode == 37){
 		e.preventDefault();
-		$("input:focus").prev().focus();
+		$(".answerInput:focus").parent().prev().find(".answerInput").focus();
+	}
+	if (e.keyCode == 39){
+		e.preventDefault();
+		$(".answerInput:focus").parent().next().find(".answerInput").focus();
 	}
 	if (e.keyCode == 38){
 		e.preventDefault();
-		var counter = $("input:focus").parent().attr("counter");
-		if(typeof counter != "undefined"){
-			var index = $("input:focus").index();
-			if(counter > 0)
-				counter--;
-			$("[counter='" + counter + "']").children()[index].focus();
-		}else{
-			$(".answerInput").each(function(i){
-			if($(this).is(":focus"))
-				index = i;
-			});					console.log(index);
-			if(index > 0)
-				index--;
-			$(".answerInput")[index].focus();
-			console.log("focus:" + index);
-		}
+        $(".answerInput").each(function(index){
+            if($(this).is(":focus")){
+                if(typeof $(".answerInput")[index-columns] != "undefined")
+                    $(".answerInput")[index-columns].focus();
+                else
+                    $(".answerInput:focus").parent().prev().find(".answerInput").focus();
+                return false;
+            }
+        });
 	}
 	if (e.keyCode == 40){
 		e.preventDefault();
-		var counter = $("input:focus").parent().attr("counter");
-		if(typeof counter != "undefined"){
-			var index = $("input:focus").index();
-			counter++;
-			if($("[counter='" + counter + "']").length == 0)
-				counter--;
-			$("[counter='" + counter + "']").children()[index].focus();
-		}else{
-			$(".answerInput").each(function(i){
-			if($(this).is(":focus"))
-				index = i;
-			});
-			console.log(index);
-			if(typeof $(".answerInput")[index+1] != "undefined")
-				index++;
-			$(".answerInput")[index].focus();
-			console.log("focus:" + index);
-		}
+        $(".answerInput").each(function(index){
+            if($(this).is(":focus")){
+                if(typeof $(".answerInput")[index+columns] != "undefined")
+                    $(".answerInput")[index+columns].focus();
+                else
+                    $(".answerInput:focus").parent().next().find(".answerInput").focus();
+                return false;
+            }
+        });
 	}
 });
 </script>

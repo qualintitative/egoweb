@@ -126,6 +126,9 @@ class InterviewController extends Controller
         if(isset($_GET['interviewId'])){
             $interviewId = $_GET['interviewId'];
     		$interviewIds = Interview::multiInterviewIds($_GET['interviewId'], $study);
+    		$prevIds = array();
+    		if(is_array($interviewIds))
+        		$prevIds = array_diff($interviewIds, array($interviewId));
     		if(is_array($interviewIds)){
     		    $answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewIds));
     		}else{
@@ -145,6 +148,17 @@ class InterviewController extends Controller
     				$array_id = $answer->questionId;
                 $answers[$array_id] = mToA($answer);
     		}
+    		$prevAlters = array();
+    		foreach($prevIds as $i_id){
+    			$criteria = array(
+    				'condition'=>"FIND_IN_SET(" . $i_id .", interviewId)",
+    				'order'=>'ordering',
+    			);
+    			$results = Alters::model()->findAll($criteria);
+    			foreach($results as $result){
+        			$prevAlters[$result->id] = mToA($result);
+    			}
+            }
     		$alters = array();
 			$criteria = array(
 				'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId)",
@@ -152,6 +166,8 @@ class InterviewController extends Controller
 			);
 			$results = Alters::model()->findAll($criteria);
 			foreach($results as $result){
+    			if(isset($prevAlters[$result->id]))
+    			    unset($prevAlters[$result->id]);
     			$alters[$result->id] = mToA($result);
 			}
 			$graphs = array();
@@ -180,6 +196,7 @@ class InterviewController extends Controller
                 "answers"=>json_encode($answers),
                 "alterPrompts"=>json_encode($alterPrompts),
                 "alters"=>json_encode($alters),
+                "prevAlters"=>json_encode($prevAlters),
                 "graphs"=>json_encode($graphs),
                 "allNotes"=>json_encode($notes),
                 "participantList"=>json_encode($participantList),
@@ -190,8 +207,6 @@ class InterviewController extends Controller
 
 	public function actionSave()
 	{
-
-
 		foreach($_POST['Answer'] as $Answer){
 
             $interviewId = $Answer['interviewId'];
