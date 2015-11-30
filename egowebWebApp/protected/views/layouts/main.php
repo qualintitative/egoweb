@@ -91,7 +91,7 @@
 					</li>
 				</ul>
 				<?php endif; ?>
-				<a class="titlelink" href="/admin">EgoWeb 3.0</a><span class="title"><?php echo CHtml::encode($this->pageTitle); ?><?php if(!Yii::app()->user->isGuest): ?><span id="questionTitle"></span><?php endif; ?></span>
+				<a class="titlelink" href="/admin">EgoWeb 2.0</a><span class="title"><?php echo CHtml::encode($this->pageTitle); ?><?php if(!Yii::app()->user->isGuest): ?><span id="questionTitle"></span><?php endif; ?></span>
 
 				<ul id="navbox" class="nav navbar-nav navbar-right">
 					<li id="questionMenu" class="dropdown hidden">
