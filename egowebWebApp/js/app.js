@@ -209,7 +209,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
         
         columns = Object.keys($scope.options[k]).length;
-        if(typeof $scope.answers[k].OTHERSPECIFYTEXT != "undefined" && $scope.answers[k].OTHERSPECIFYTEXT != ""){
+        if(typeof $scope.answers[k].OTHERSPECIFYTEXT != "undefined" && $scope.answers[k].OTHERSPECIFYTEXT != null && $scope.answers[k].OTHERSPECIFYTEXT != ""){
             var specify = $scope.answers[k].OTHERSPECIFYTEXT.split(";;");
             for(s in specify){
                 var pair = specify[s].split(":");
@@ -237,6 +237,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 
         if($scope.questions[k].SUBJECTTYPE == "NETWORK"){
             expressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
+                    notes = [];
             if(typeof graphs[expressionId] != "undefined"){
                 $scope.graphId = graphs[expressionId].ID;
                 $scope.graphExpressionId = graphs[expressionId].EXPRESSIONID;
@@ -245,8 +246,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 $scope.graphParams = graphs[expressionId].PARAMS;
                 if(typeof allNotes[expressionId] != "undefined")
                     notes = allNotes[expressionId];
-                else
-                    notes = [];
+            }else{
+                $scope.graphExpressionId = expressionId;
+                $scope.graphInterviewId = interviewId;
+                
             }
             initStats($scope.questions[k]);
         }
@@ -1823,8 +1826,9 @@ function saveNodes()
 	for(var k in s.graph.nodes()){
 		nodes[s.graph.nodes()[k].id] = s.graph.nodes()[k];
 	}
-	graphs[expressionId].NODES = JSON.stringify(nodes);
+	$("#Graph_nodes").val(JSON.stringify(nodes));
 	$.post( "/data/savegraph", $('#graph-form').serialize(), function( data ) {
+    	//graphs[expressionId].NODES = JSON.stringify(nodes);
 		console.log("nodes saved");
 	});
 }
@@ -1840,6 +1844,29 @@ function fullscreen(){
 	} else if (typeof elem.webkitRequestFullscreen != "undefined") {
 		elem.webkitRequestFullscreen();
 	}
+	$("#infovis").height(640);
+    setTimeout( function (){
+    document.addEventListener('webkitfullscreenchange', exitHandler, false);
+    document.addEventListener('mozfullscreenchange', exitHandler, false);
+    document.addEventListener('fullscreenchange', exitHandler, false);
+    document.addEventListener('MSFullscreenChange', exitHandler, false);
+
+    }, 500);
+
+}
+
+
+
+function exitHandler()
+{
+    if (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement !== null)
+    {
+    	$("#infovis").height(480);
+    document.removeEventListener('webkitfullscreenchange', exitHandler, false);
+    document.removeEventListener('mozfullscreenchange', exitHandler, false);
+    document.removeEventListener('fullscreenchange', exitHandler, false);
+    document.removeEventListener('MSFullscreenChange', exitHandler, false);
+    }
 }
 
 			function redraw(params){
@@ -1860,8 +1887,10 @@ function buildNav(pageNumber){
 	var pages = [];
 
 	this.checkPage = function (currentPage, pageNumber, text){
-		if(currentPage == pageNumber)
+		if(currentPage == pageNumber){
+            $("#questionTitle").html(" : " + text);
 			text = "<b>" + text + "</b>";
+		}
 		return text;
 	};
 

@@ -3,7 +3,6 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/angular.mi
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/angular-route.min.js');
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/autocomplete.js');
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/app.js');
-Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl.'/css/egoweb.css');
 Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl.'/css/autocomplete.css');
 Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/sigma.min.js');
 Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/js/sigma.notes.js');
@@ -45,7 +44,7 @@ $(document).keydown(function(e) {
 	if($("textarea").length == 0 &&  e.keyCode == 13){
     		e.preventDefault();
 		if($("#alterFormBox").length != 0 && $("#alterFormBox").html() != "")
-			$('#alterForm').submit();
+			$('.alterSubmit')[0].click();
 		else
 			$('.orangebutton')[0].click();
 	}

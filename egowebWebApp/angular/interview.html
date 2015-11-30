@@ -7,7 +7,7 @@
     <div class="col-sm-4 pull-right">
         <button  onclick="fullscreen()" class="btn btn-info print-button" id="fullscreenButton">Fullscreen</button>
         <button  class="btn btn-primary print-button" style="margin-top:10px">Print Preview</button>
-        <form class="form-horizontal" id="graph-form" method="post">
+        <form id="graph-form" method="post">
             <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
             <input value="{{ graphId }}" name="Graph[id]" id="Graph_id" type="hidden">
             <input value="{{ graphInterviewId }}" name="Graph[interviewId]" id="Graph_interviewId" type="hidden">
@@ -19,13 +19,24 @@
     </div>
 </div>
 
-<h4 ng-if="prompt != ''" ng-bind-html="prompt">{{ prompt }}</h4>
+<div ng-if="prompt != ''" ng-bind-html="prompt" ng-class="{'col-sm-10 no-padding': questions[0].ANSWERTYPE == 'ALTER_PROMPT'}">{{ prompt }}</div>
 <span ng-if="(answerForm.$submitted || alterForm.$submitted) && errors">
     <div class="alert alert-danger" role="alert" ng-if="$index == 0" ng-repeat="error in errors">
         {{ error }}
     </div>
 </span>
 
+<div id="alterListBox" class="col-sm-2" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'">
+    <table class="items">
+    <tbody>
+    <tr class="odd" ng-repeat="alter in alters track by $index">
+    <td style="width:20px;" id="ordering"></td>
+    <td style="width:120px;">{{ alter.NAME }}</td>
+    <td class="button-column"><a class="alter-delete" title="Delete" ng-click="removeAlter(alter.ID)"><img src="/images/delete.png" alt="Delete"></a></td>
+    </tr>
+    </tbody>
+    </table>
+</div>
 <div id="alterFormBox" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'">
 
     <div ng-if='alterPrompt != ""'>{{ alterPrompt }}</div>
@@ -39,7 +50,7 @@
             <input name="Alters[name]" id="Alters_name" type="hidden" value="{{ alterName }}">
             <autocomplete attr-input-class="answerInput" style="float:left" ng-model="alterName" data="participants"></autocomplete>
             <input value="{{ interviewId }}" name="Alters[interviewId]" id="Alters_interviewId" type="hidden"> 
-            <input class="orangebutton alterSubmit" type="submit" name="yt0" value="+ Add">
+            <input class="btn orangebutton alterSubmit" type="submit" name="yt0" value="+ Add">
         </div>
     </form>
 
@@ -49,18 +60,6 @@
         <input value="{{ interviewId }}" name="Alters[interviewId]" type="hidden"> 
     </form>
 
-</div>
-
-<div id="alterListBox" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'">
-    <table class="items">
-    <tbody>
-    <tr class="odd" ng-repeat="alter in alters track by $index">
-    <td style="width:20px;" id="ordering"></td>
-    <td style="width:120px;">{{ alter.NAME }}</td>
-    <td class="button-column"><a class="alter-delete" title="Delete" ng-click="removeAlter(alter.ID)"><img src="/images/delete.png" alt="Delete"></a></td>
-    </tr>
-    </tbody>
-    </table>
 </div>
 
 <form id="answerForm" name="answerForm" ng-submit="submitForm(answerForm.$valid)" novalidate>
@@ -245,8 +244,8 @@
 <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
 
 <div class="form-group clear-left">
-    <button ng-show="page > 0" id="next" class='graybutton' ng-click="goBack();">Back</button>
-	<button id="next" class='orangebutton' type="submit">Next</button>
+    <button ng-show="page > 0" id="next" class='btn graybutton' ng-click="goBack();">Back</button>
+	<button id="next" class='btn orangebutton' type="submit">Next</button>
 </div>
 
 </form>

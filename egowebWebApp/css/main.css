@@ -1,22 +1,40 @@
-*{
-box-sizing:border-box;
-}
+/*
 body
 {
 	line-height:1.72222;
 	margin: 0;
 	padding: 0;
 	color: #555;
-	font: 15px Arial,Helvetica,sans-serif;
 	background: #fff;
 	overflow-y: scroll;
 }
+*/
 
+.no-padding{
+    	padding: 0!important;
+}
+
+.alterSubmit{
+    width:70px!important;
+}
+
+.optionLink{
+    font-size:15px;
+}
+#visualizePlugin:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+}
+
+#menu-button {
+    padding:10px 15px;
+}
 .note-editable {
 	font-size:18px;
 	line-height:1.72222;
 }
 #content{
+    padding-top: 15px;
 	background-color: #fff;
 }
 
@@ -359,7 +377,6 @@ textarea {
     border-width: 3px;
 }
 
-@CHARSET "US-ASCII";
 * {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;    /* Firefox, other Gecko */
@@ -368,36 +385,23 @@ textarea {
     padding:0;
 }
 
-html, body{
-    height:100%;
-    margin:0;
-    padding:0;
-    border:0;
-}
-
 
 .graybutton{
-	background:url('/images/gray.png');
-	border:solid #999 1px;
-	border-radius:4px;
-	font-size:12px;
-	color:#fff;
-	height:24px;
-	width:60px;
-	line-height:24px;
-	display:block;
-	text-decoration:none;
-	padding:0 6px 2px 6px;
-	margin:0 10px 10px 0;
-	text-align:center;
 	float:left;
+	width:120px;
+	background-color:#555;
+    color:#eee;
 }
-.graybutton:hover{
-	color:#fff;
+
+.orangebutton{
+	background-color:#db7522;
+	float:left;
+	margin:0 10px 10px 0;
+    width:120px;
+    margin-left:15px;
+    color:#eee;
 }
-.orangebutton:hover{
-	color:#fff;
-}
+
 hr{
 	margin:10px 0;
 }
@@ -418,23 +422,7 @@ input, select{
     height:240px;
 	overflow-y:scroll;
 }
-.orangebutton{
-	background:url('/images/orange.png');
-	border:solid #c60 1px;
-	border-radius:4px;
-	font-size:12px;
-	color:#fff;
-	height:24px;
-	display:block;
-	float:left;
-	line-height:24px;
-	padding:0 6px 2px 6px;
-	margin:0 10px 10px 0;
-	text-decoration:none;
-	text-align:center;
-	height:24px;
-	width:60px;
-}
+
 
 .authorButton{
 	padding:3px;
@@ -447,32 +435,15 @@ td{
 .admin td{
 	padding:10px;
 }
-#wrapper
-{
-	box-shadow:0 0 60px #333;
-	font-family:Arial;
-	font-size:12px;
-    background: #fff;
-	height: auto !important;
-	width:900px;
-	height:100%; /* IE6: treaded as min-height*/
-	min-height: 100%; /* real browsers */
-	margin: 0 auto -20px; /* the bottom margin is the negative value of the footer's height */
-	overflow:hidden;
-}
 
-#content{
-	padding:10px;
-}
 
 #home_button{
 	float:right;
 }
 #topbar{
-	color:#666;
-	background:#e6e7e8;
-	height:60px;
-	padding-left:0;
+	color:#fff;
+	background:#333;
+	border-radius: 0;
 }
 
 #topbar h3{
@@ -524,17 +495,16 @@ td{
 	font-family:Arial;
 	font-size:20px;
     display:block;
-	padding:15px 0;
+	padding:8px 0;
 	margin-left:20px;
 }
 .title {
 	float:left;
 	font-family:Arial;
 	font-size:20px;
-	color:#707070;
+	color:#eee;
     display:block;
-	padding:5px 0;
-	margin:10px 0 10px 20px;
+	margin:8px 0 8px 20px;
 	padding-left:20px;
 	border-left: 1px solid #707070;
 }
@@ -548,14 +518,15 @@ td{
 	border-left:1px solid #fff;
 }
 
-.interviewee{
-	padding:0 6px 0 0;
-	float:right;
-	color:#fff;
-	font-size:10px;
-    line-height:40px;
-	display:block;
-	border-right:1px solid #fff;
+.interviewee {
+    padding: 0 10px 0 0;
+    margin: 8px 0;
+    float: right;
+    color: #fff;
+    font-size: 10px;
+    line-height: 34px;
+    display: block;
+    border-right: 1px solid #707070;
 }
 
 .orangeText{
@@ -590,7 +561,6 @@ td{
 }
 #alterListBox{
 	height:530px;
-	width:180px;
 	overflow-y:scroll;
 	float:right;
 }
@@ -725,7 +695,7 @@ ul.authoring li a:hover{
 
 a.btn {
 	color:#fff;
-	margin-bottom:5px;
+	margin-top:10px;
 }
 
 #visualize-bar label, #expression-bar label, #load-bar label,#inner-details label {
@@ -852,4 +822,57 @@ label.prompt , .grid-view label {
 	border-radius: 10px;
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
 	background-color: #555;
+}
+
+
+.multiBox {
+height:320px; overflow-y: scroll;
+}
+
+.clear-left {
+    clear:left;
+}
+
+.multi {
+    display: table;
+    width:100%;
+}
+
+.multi div {
+    display: table-row;
+}
+
+.multi:nth-child(even) {
+    background-color: #f7f7f7;
+}
+.multi:nth-child(even).bg-danger {
+    background-color: #efc7c7;
+}
+
+.multi div div {
+    display: table-cell;
+    width:auto;
+    padding:8px;
+    text-align: center;
+}
+
+.multi div div:first-child {
+    text-align:left;
+    width:180px;
+}
+
+.w120 {
+    width:120px!important;
+}
+
+input[type=checkbox]{
+	width:18px;
+	height:18px;
+}
+
+#second {
+    left:-180px;
+    height:400px;
+    overflow-y:scroll;
+    padding-top:0;
 }

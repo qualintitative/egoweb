@@ -7,9 +7,9 @@ $this->pageTitle =  "Admin";
 	<table cellspacing=0 cellpadding=0 class="admin">
 	<tr>
 	<td width=50%>
-		<h3><a href="/interviewing">Interviewing</a></h3>
+		<h3><a href="/interview">Interviewing</a></h3>
 		<p>
-			Start a new interview or continue a partially completed interview.
+			Start a new interview or continue a partially completed interview.  On older browser, you may need to use the <a href="/interviewing">Legacy Interview</a> instead.
 		</p>
 	</td>
 	<?php if(Yii::app()->user->isAdmin): ?>
@@ -17,14 +17,6 @@ $this->pageTitle =  "Admin";
 		<h3><a href="/authoring">Authoring</a></h3>
 		<p>
 			Create a new interview, add or change questions for an existing interview.
-		</p>
-	</td>
-	</tr>
-	<tr>
-	<td width=50%>
-		<h3><a href="/interview">Interview (BETA)</a></h3>
-		<p>
-			Start a new interview or continue a partially completed interview.
 		</p>
 	</td>
 	</tr>

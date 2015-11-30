@@ -3,13 +3,9 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 		<title><?php echo CHtml::encode($this->pageTitle); ?></title>
-		<!--[if lt IE 8]>
-		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/ie.css" media="screen, projection" />
-		<![endif]-->
 		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/bootstrap.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/flat-ui.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/main.css" />
-		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/form.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/summernote.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/summernote-bs3.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/font-awesome.min.css" />
@@ -22,8 +18,7 @@
 		<?php Yii::app()->clientScript->registerCoreScript('jquery.ui'); ?>
 	</head>
 	<body>
-        <nav class="navbar">
-			<div class="collapse navbar-collapse" id="topbar">
+        <nav class="navbar" id="topbar">
 				<?php if(!Yii::app()->user->isGuest): ?>
 				<?php
 				$condition = "id != 0";
@@ -44,15 +39,15 @@
 				?>
 				<ul class="nav navbar-nav navbar-left">
 					<li class="dropdown">
-						<a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
+						<a id="menu-button" href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
 							<span class="fui-list"></span>
 						</a>
 						<ul class="dropdown-menu">
-							<li><a href="/interviewing">Interviewing</a>
+							<li><a href="/interview">Interviewing</a>
 								<ul>
 									<?php foreach($studies as $data): ?>
 									<li>
-									<?php echo CHtml::link(CHtml::encode($data->name), array('/interviewing?studyId='.$data->id)); ?>
+									<?php echo CHtml::link(CHtml::encode($data->name), array('/interview?studyId='.$data->id)); ?>
 									</li>
 									<?php endforeach; ?>
 								</ul>
@@ -90,34 +85,30 @@
 				<?php else: ?>
 				<ul class="nav navbar-nav navbar-left">
 					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+						<a id="menu-button" href="#" class="dropdown-toggle" data-toggle="dropdown">
 							<span class="fui-lock"></span>
 						</a>
 					</li>
 				</ul>
 				<?php endif; ?>
-				<a class="titlelink" href="/admin">EgoWeb 2.0</a><span class="title"><?php echo CHtml::encode($this->pageTitle); ?></span>
+				<a class="titlelink" href="/admin">EgoWeb 3.0</a><span class="title"><?php echo CHtml::encode($this->pageTitle); ?><?php if(!Yii::app()->user->isGuest): ?><span id="questionTitle"></span><?php endif; ?></span>
+
 				<ul id="navbox" class="nav navbar-nav navbar-right">
 					<li id="questionMenu" class="dropdown hidden">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown" target="#second">
+						<a id="menu-button" href="#" class="dropdown-toggle" data-toggle="dropdown" target="#second">
 							<span class="fui-gear"></span>
 						</a>
-					<ul id="second">
-					</ul>
+                        <ul id="second"></ul>
 					</li>
 
 				</ul>
-			</div>
+				<?php if(Yii::app()->getController()->getId() == "interview" && isset($_GET['interviewId']) && !Yii::app()->user->isGuest): ?>
+				<span class="interviewee"><?php echo (isset($_GET['interviewId']) && $_GET['interviewId']) ?  Interview::getEgoId($_GET['interviewId']) : ""; ?></span>
+				<?php endif; ?>
         </nav>
+        <!--
 			<div id="menubar">
-				<!-- navigation start -->
-				<?php $this->widget('zii.widgets.CMenu',array(
-					'id'=>'mainNav',
-					'items'=>$this->menu,
-					'activateItems'=>false,
-					'htmlOptions'=>array('class'=>'authoring')
-				)); echo "\n";?>
-				<!-- navigation end -->
+
 				<div id="nav">
 					<?php if(Yii::app()->getController()->getId() == "interviewing" && !Yii::app()->user->isGuest && !isset($_GET['studyId']) && preg_match('/\d+/', Yii::app()->getRequest()->getRequestUri())): ?>
 					<a href="javascript:void(0)" onclick="$('#navigation').toggle()"><img src="/images/nav.png"></a>
@@ -133,8 +124,31 @@
 				<span class="interviewee"><?php echo (isset($_GET['interviewId']) && $_GET['interviewId']) ?  Interview::getEgoId($_GET['interviewId']) : ""; ?></span>
 				<span class="intleft">Interviewing:</span>
 				<?php endif; ?>
-			</div>
+			</div>-->
 			<div id="content" class="container">
+	<?php
+	if(Yii::app()->getController()->getId() == "authoring" && preg_match('/\d+/', Yii::app()->getRequest()->getRequestUri())){
+		if(isset($this->studyId)){
+			$this->menu=array(
+				array('label'=>'Study Settings', 'url'=>array('edit','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'edit'),
+				array('label'=>'Ego ID Questions', 'url'=>array('ego_id','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'ego_id'),
+				array('label'=>'Ego Questions', 'url'=>array('ego','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'ego'),
+				array('label'=>'Alter Questions', 'url'=>array('alter','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'alter'),
+				array('label'=>'Alter Pair Questions', 'url'=>array('alterpair','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'alterpair'),
+				array('label'=>'Network Questions', 'url'=>array('network','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'network'),
+				array('label'=>'Expressions', 'url'=>array('expression','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'expression'),
+				array('label'=>'Option Lists', 'url'=>array('optionlist','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'optionlist'),
+			);
+
+		}
+	}
+	?>
+					<?php $this->widget('zii.widgets.CMenu',array(
+					'id'=>'mainNav',
+					'items'=>$this->menu,
+					'activeCssClass'=>'active',
+					'htmlOptions'=>array('class'=>'nav nav-pills small')
+				)); echo "\n";?>
 					<?php echo $content; ?>
 			</div>
 			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

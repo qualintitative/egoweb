@@ -1,31 +1,4 @@
-<?php
-Yii::app()->clientScript->registerScript('delete-prompt', "
-jQuery('a.delete-prompt').click(function() {
 
-        var url = $(this).attr('href');
-        //  do your post request here
-
-
-        $.get(url,function(data){
-             $('#alterPrompt').html(data);
-         });
-        return false;
-});
-");
-Yii::app()->clientScript->registerScript('update-prompt', "
-jQuery('a.update-prompt').click(function() {
-
-        var url = $(this).attr('href');
-        //  do your post request here
-
-
-        $.get(url,function(data){
-             $('#edit-alterPrompt').html(data);
-         });
-        return false;
-});
-");
-?>
 <div style="width:100%; float:left">
 <h3>Variable Alter Prompts</h3>
 
@@ -57,7 +30,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
         		),
         		'update' => array
         		(
-            		'url'=>'Yii::app()->createUrl("/authoring/ajaxload", array("alterPromptId"=>$data->id, "form"=>"_form_alter_prompt_edit", "_"=>"'.uniqid().'"))',
+            		'url'=>'"javascript:updatePrompt(\"" . Yii::app()->createUrl("/authoring/ajaxload", array("alterPromptId"=>$data->id, "form"=>"_form_alter_prompt_edit", "_"=>"'.uniqid().'")) . "\")"',
             		'options'=>array('class'=>'update-prompt'),
         		),
     		),

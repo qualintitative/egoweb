@@ -47,4 +47,5 @@ input[type=checkbox]{
     left:-180px;
     height:400px;
     overflow-y:scroll;
+    padding-top:0;
 }

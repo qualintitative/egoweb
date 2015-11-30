@@ -24,6 +24,12 @@ $(function(){
 })
 
 
+function updatePrompt(url) {
+    $.get(url,function(data){
+         $('#edit-alterPrompt').html(data);
+     });
+    return false;
+}
 
 function createUUID() {
     var s = [];
