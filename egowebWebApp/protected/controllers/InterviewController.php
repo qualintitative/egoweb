@@ -63,6 +63,8 @@ class InterviewController extends Controller
 					$restrictions = ' and id = -1';
 			}
 		}
+        if(!Yii::app()->user->isSuperAdmin)
+            $restrictions = "";
 		$criteria=array(
 			'condition'=>'completed > -1 && studyId = '.$id . $restrictions,
 			'order'=>'id DESC',
