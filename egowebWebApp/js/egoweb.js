@@ -48,17 +48,20 @@ function createUUID() {
 var audio = new Audio();
 function playSound(uri){
 	if(audio.paused){
+        console.log(uri);
 		audio = new Audio(uri);
 		audio.play();
 	}
 }
 
 function uploadAudio(file, id, studyId, type, update){
+    var csrf = $("input[name='YII_CSRF_TOKEN']").val();
 	data = new FormData();
 	data.append("userfile", file.files[0]);
 	data.append("id", id);
 	data.append("studyId", studyId);
 	data.append("type", type);
+	data.append("YII_CSRF_TOKEN", csrf);
 	$.ajax({
 		data: data,
 		type: "POST",

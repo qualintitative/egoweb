@@ -75,10 +75,18 @@ class MobileController extends Controller
 		$questions = q("SELECT * FROM question WHERE studyId = ".$id)->queryAll(false);
 		#OK FOR SQL INJECTION
 		$options = q("SELECT * FROM questionOption WHERE studyId = " . $id)->queryAll(false);
-
 		#OK FOR SQL INJECTION
 		$expressions = q("SELECT * FROM expression WHERE studyId = " . $id)->queryAll(false);
 		#OK FOR SQL INJECTION
+		$alterList = q("SELECT * FROM alterList WHERE studyId = " . $id)->queryAll(false);
+		foreach($alterList as &$alter){
+			if(strlen($alter[2]) >= 8)
+				$alter[2] = decrypt($alter[2]);
+		}
+
+		#OK FOR SQL INJECTION
+		$alterPrompts = q("SELECT * FROM alterPrompt WHERE studyId = " . $id)->queryAll(false);
+
 		//$answers = q("SELECT * FROM answer WHERE studyId = " . $id)->queryAll(false);
 
 		//foreach($answers as &$answer){
@@ -99,6 +107,11 @@ class MobileController extends Controller
 		$columns['answer'] = Yii::app()->db->schema->getTable("answer")->getColumnNames();
 		$columns['alters'] = Yii::app()->db->schema->getTable("alters")->getColumnNames();
 		$columns['interview'] = Yii::app()->db->schema->getTable("interview")->getColumnNames();
+		$columns['alterList'] = Yii::app()->db->schema->getTable("alterList")->getColumnNames();
+		$columns['alterPrompt'] = Yii::app()->db->schema->getTable("alterPrompt")->getColumnNames();
+		$columns['alterList'] = Yii::app()->db->schema->getTable("alterList")->getColumnNames();
+		$columns['graphs'] = Yii::app()->db->schema->getTable("graphs")->getColumnNames();
+		$columns['notes'] = Yii::app()->db->schema->getTable("notes")->getColumnNames();
 
 		if(file_exists(Yii::app()->basePath."/../audio/".$id . "/STUDY/ALTERPROMPT.mp3")){
 			$audioFiles[] = array(
@@ -161,6 +174,8 @@ class MobileController extends Controller
 	//		'answers'=>$answers,
 	//		'interviews'=>$interviews,
 	//		'alters'=>$alters,
+	        'alterList'=>$alterList,
+	        'alterPrompts'=>$alterPrompts,
 			'audioFiles'=>$audioFiles,
 			'columns'=>$columns,
 		);
@@ -185,6 +200,53 @@ class MobileController extends Controller
 			// validate user input and redirect to the previous page if valid
 			if($model->validate() && $model->login()){
 				echo Yii::app()->user->id;
+				Yii::app()->end();
+			}else{
+				echo "failed";
+			}
+		}else{
+			header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+		}
+	}
+
+	public function actionGetstudies(){
+		header("Access-Control-Allow-Origin: *");
+		header('Access-Control-Allow-Credentials: true');
+		header('Access-Control-Max-Age: 86400');	// cache for 1 day
+
+		if(isset($_POST['LoginForm']))
+		{
+			$model = new LoginForm;
+			$model->attributes=$_POST['LoginForm'];
+			// validate user input and redirect to the previous page if valid
+			if($model->validate() && $model->login()){
+        		if(Yii::app()->user->id){
+        			#OK FOR SQL INJECTION
+        			$params = new stdClass();
+        			$params->name = ':userId';
+        			$params->value = Yii::app()->user->id;
+        			$params->dataType = PDO::PARAM_INT;
+        
+        			$permission = q("SELECT permissions FROM user WHERE id = :userId",array($params))->queryScalar();
+        			if($permission != 11)
+        				#OK FOR SQL INJECTION
+        				$studyIds = q("SELECT studyId FROM interviewers WHERE interviewerId = :userId",array($params))->queryColumn();
+        			else
+        				$studyIds = "";
+        		}else{
+        			$studyIds = "";
+        		}
+        		if($studyIds)
+        			#OK FOR SQL INJECTION
+        			$studies = q("SELECT id,name FROM study WHERE id IN (" . implode(",", $studyIds) . ")")->queryAll();
+        		else
+        			#OK FOR SQL INJECTION
+        			$studies = q("SELECT id,name FROM study")->queryAll();
+        
+        		foreach($studies as $study){
+        			$json[] = array("id"=>$study['id'], "name"=>$study['name']);
+        		}
+        		echo json_encode($json);
 				Yii::app()->end();
 			}else{
 				echo "failed";

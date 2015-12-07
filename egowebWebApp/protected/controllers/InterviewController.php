@@ -94,9 +94,16 @@ class InterviewController extends Controller
         foreach($results as $result)
             $expressions[$result->id] = mToA($result);
         $questions = array();
+        $audio = array();
+        if(file_exists(Yii::app()->basePath."/../audio/".$study->id . "/STUDY/ALTERPROMPT.mp3"))
+            $audio['ALTERPROMPT'] = "/audio/".$study->id . "/STUDY/ALTERPROMPT.mp3";
         $results = Question::model()->findAllByAttributes(array("studyId"=>$multiIds), array('order'=>'ordering'));
         foreach($results as $result){
             $questions[$result->id] = mToA($result);
+            if(file_exists(Yii::app()->basePath."/../audio/".$study->id . "/PREFACE/" . $result->id . ".mp3"))
+                $audio['PREFACE_' . $result->id] = "/audio/".$study->id . "/PREFACE/" . $result->id . ".mp3";
+            if(file_exists(Yii::app()->basePath."/../audio/".$study->id . "/" . $result->subjectType . "/" . $result->id . ".mp3"))
+                $audio[$result->subjectType . $result->id] = "/audio/".$study->id . "/" . $result->subjectType . "/" . $result->id . ".mp3";
             if($id == $result->studyId){
                 if($result->subjectType == "EGO_ID")
                     $ego_id_questions[] = mToA($result);
@@ -113,6 +120,8 @@ class InterviewController extends Controller
         $options = array();
         $results = QuestionOption::model()->findAllByAttributes(array("studyId"=>$id));
         foreach($results as $result){
+    	    if(file_exists(Yii::app()->basePath."/../audio/". $study->id . "/OPTION/" . $result->id . ".mp3"))
+                $audio['OPTION' . $result->id] = "/audio/".$study->id . "/OPTION/" . $result->id . ".mp3";
             $options[$result->questionId][$result->ordering] = mToA($result);
         }
         $answers = array();
@@ -203,15 +212,36 @@ class InterviewController extends Controller
                 "allNotes"=>json_encode($notes),
                 "participantList"=>json_encode($participantList),
                 "questionList"=>json_encode($study->questionList()),
+                "audio"=>json_encode($audio),
             )
         );
 	}
 
 	public function actionSave()
 	{
+
+		if(isset($_POST['Answer'][0]) && $_POST['Answer'][0]['answerType'] == "CONCLUSION"){
+			$interview = Interview::model()->findByPk((int)$_POST['Answer'][0]['interviewId']);
+			$interview->completed = -1;
+			$interview->complete_date = time();
+			$interview->save();
+
+			if(isset(Yii::app()->params['exportFilePath']) && Yii::app()->params['exportFilePath'])
+				$this->exportInterview($interview->id);
+                /*
+			if(isset(Yii::app()->session['redirect']))
+				$this->redirect(Yii::app()->session['redirect']);
+			else if(Yii::app()->user->isGuest)
+				$this->redirect(Yii::app()->createUrl(''));
+			else
+				$this->redirect(Yii::app()->createUrl('admin/'));*/
+		}
+        $interviewId = null;
 		foreach($_POST['Answer'] as $Answer){
 
-            $interviewId = $Answer['interviewId'];
+            if($Answer['interviewId'])
+                $interviewId = $Answer['interviewId'];
+
             if($interviewId && !isset($answers)){
             	$answers = array();
         		$interviewIds = Interview::multiInterviewIds($interviewId, $study);
@@ -442,4 +472,17 @@ class InterviewController extends Controller
 		}
 	}
 
+	/**
+	 * Exports study to file (added for LIM)
+	 * @param $id ID of interview to be exported
+	 */
+	protected function exportInterview($id)
+	{
+		$result = Interview::model()->findByPk($id);
+		$study = Study::model()->findByPk($result->studyId);
+		$text = $study->export(array($id));
+		$file = fopen(Yii::app()->params['exportFilePath'] . Interview::getEgoId($id) . ".study", "w") or die("Unable to open file!");
+		fwrite($file, $text);
+		fclose($file);
+	}
 }

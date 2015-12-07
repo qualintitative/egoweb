@@ -16,5 +16,5 @@ require_once($custy);
 //defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',2);
 
 require_once($yii);
-Yii::setPathOfAlias('plugins', dirname(__FILE__).'/plugins/');
+Yii::setPathOfAlias('plugins', dirname(__FILE__).'/protected/plugins/');
 Yii::createWebApplication($config)->run();

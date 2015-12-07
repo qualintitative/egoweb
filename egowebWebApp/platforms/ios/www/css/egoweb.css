@@ -1,0 +1,51 @@
+.multiBox {
+height:320px; overflow-y: scroll;
+}
+
+.clear-left {
+    clear:left;
+}
+
+.multi {
+    display: table;
+    width:100%;
+}
+
+.multi div {
+    display: table-row;
+}
+
+.multi:nth-child(even) {
+    background-color: #f7f7f7;
+}
+.multi:nth-child(even).bg-danger {
+    background-color: #efc7c7;
+}
+
+.multi div div {
+    display: table-cell;
+    width:auto;
+    padding:8px;
+    text-align: center;
+}
+
+.multi div div:first-child {
+    text-align:left;
+    width:180px;
+}
+
+.w120 {
+    width:120px!important;
+}
+
+input[type=checkbox]{
+	width:18px;
+	height:18px;
+}
+
+#second {
+    left:-180px;
+    height:400px;
+    overflow-y:scroll;
+    padding-top:0;
+}
