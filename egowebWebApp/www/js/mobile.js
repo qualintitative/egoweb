@@ -525,6 +525,7 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
     $scope.address = "";
     $("#studyTitle").html("Admin");
     $("#questionTitle").html("");
+    $("#questionMenu").addClass("hidden");
     console.log(studyList);
     $scope.studyList = studyList;
     $scope.connect = function(address) {

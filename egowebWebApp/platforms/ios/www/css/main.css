@@ -15,7 +15,7 @@ body
 }
 
 .no-padding{
-    	padding: 0!important;
+    padding: 0!important;
 }
 
 .alterSubmit{
@@ -629,7 +629,7 @@ ul.authoring li a:hover{
 
 .multiRow{
     float:left;
-    padding:8px;
+    padding:8px 8px 15px 0;
     text-align:center;
     min-height:36px;
     display:block;
@@ -870,6 +870,10 @@ height:320px; overflow-y: scroll;
 
 .w120 {
     width:120px!important;
+}
+
+.btn-top{
+    padding-top:15px;
 }
 
 input[type=checkbox]{

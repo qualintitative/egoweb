@@ -14,6 +14,7 @@ app.config(function ($routeProvider) {
 app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', '$location', '$route', "saveAlter", "deleteAlter", function($scope, $log, $routeParams, $sce, $location, $route, saveAlter, deleteAlter) {
     $scope.questions = buildQuestions($routeParams.page, interviewId);
     $scope.page = $routeParams.page;
+    $scope.study = study;
     $scope.csrf = csrf;
     $scope.interviewId = interviewId;
     $scope.answers = answers;
@@ -38,6 +39,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.otherSpecify = {};
     $scope.audioFiles = {};
     $scope.audio = {};
+    $scope.keys = Object.keys;
 
     for(k in audio){
         $scope.audio[k] = audio[k];
@@ -45,7 +47,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         $scope.audioFiles[k].src = audio[k];
     }
 
-    console.log($location.absUrl().replace($location.url(),''));
+    console.log($scope.questions);    
     $scope.nav = buildNav($scope.page);
 
     $('#navbox ul').html("");
@@ -57,18 +59,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     }
     $("#questionMenu").removeClass("hidden");
 
-	questionOrder = [];
-	for (var l in $scope.questions) {
-		if(typeof offset == "undefined")
-			var offset = $scope.questions[l].ORDERING;
-		if($scope.questions[l].SUBJECTTYPE == "EGO_ID")
-			questionOrder[$scope.questions[l].ORDERING] = $scope.questions[l].ID;
-		else
-			questionOrder[$scope.questions[l].ORDERING - offset] = $scope.questions[l].ID;
-	}
-
     for(var k in $scope.questions){
-        $scope.questions[k].array_id = k;
+        var array_id = $scope.questions[k].array_id;
         if($scope.questions[k].USEALTERLISTFIELD == "name" || $scope.questions[k].USEALTERLISTFIELD == "email"){
             $scope.participants = participantList[$scope.questions[k].USEALTERLISTFIELD];
         }
@@ -93,7 +85,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 $scope.options['all'][Object.keys($scope.options['all']).length] = button;
             }
         }
-        $scope.options[k] = $.extend(true,{}, options[$scope.questions[k].ID]);
+        $scope.options[array_id] = $.extend(true,{}, options[$scope.questions[k].ID]);
 
         if($scope.questions[k].ASKINGSTYLELIST == true)
             $scope.askingStyleList = k;
@@ -120,59 +112,59 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             if(typeof alterPrompts[Object.keys(alters).length] != "undefined")
                 $scope.alterPrompt = alterPrompts[Object.keys(alters).length];
         }
-        for(o in $scope.options[k]){
-            $scope.options[k][o].checked = false;
-            if(typeof answers[k] != "undefined"){
-                var values = answers[k].VALUE.split(',');
-                if(values.indexOf($scope.options[k][o].ID.toString()) != -1)
-                    $scope.options[k][o].checked = true;
+        for(o in $scope.options[array_id]){
+            $scope.options[array_id][o].checked = false;
+            if(typeof answers[array_id] != "undefined"){
+                var values = answers[array_id].VALUE.split(',');
+                if(values.indexOf($scope.options[array_id][o].ID.toString()) != -1)
+                    $scope.options[array_id][o].checked = true;
             }
         }
 
-        if(typeof $scope.answers[k] == "undefined"){
-            $scope.answers[k] = new Object;
-            $scope.answers[k].VALUE = "";
-            $scope.answers[k].INTERVIEWID = interviewId;
-            $scope.answers[k].SKIPREASON = "NONE";
+        if(typeof $scope.answers[array_id] == "undefined"){
+            $scope.answers[array_id] = new Object;
+            $scope.answers[array_id].VALUE = "";
+            $scope.answers[array_id].INTERVIEWID = interviewId;
+            $scope.answers[array_id].SKIPREASON = "NONE";
         }else{
-            if($scope.answers[k].VALUE == "-4")
-                $scope.answers[k].VALUE = "";
+            if($scope.answers[array_id].VALUE == "-4")
+                $scope.answers[array_id].VALUE = "";
         }
 
         if($scope.questions[k].ANSWERTYPE == "TIME_SPAN"){
-            $scope.time_spans[k] = new Object;
-			if(answers[k].VALUE.match(/(\d*)\sYEARS/))
-                $scope.time_spans[k].YEARS = answers[k].VALUE.match(/(\d*)\sYEARS/)[1];
-			if(answers[k].VALUE.match(/(\d*)\sMONTHS/))
-                $scope.time_spans[k].MONTHS = answers[k].VALUE.match(/(\d*)\sMONTHS/)[1];
-			if(answers[k].VALUE.match(/(\d*)\sWEEKS/))
-                $scope.time_spans[k].WEEKS = answers[k].VALUE.match(/(\d*)\sWEEKS/)[1];
-			if(answers[k].VALUE.match(/(\d*)\sDAYS/))
-                $scope.time_spans[k].DAYS = answers[k].VALUE.match(/(\d*)\sDAYS/)[1];
-			if(answers[k].VALUE.match(/(\d*)\sHOURS/))
-                $scope.time_spans[k].HOURS = answers[k].VALUE.match(/(\d*)\sHOURS/)[1];
-			if(answers[k].VALUE.match(/(\d*)\sMINUTES/))
-                $scope.time_spans[k].MINUTES = answers[k].VALUE.match(/(\d*)\sMINUTES/)[1];
+            $scope.time_spans[array_id] = new Object;
+			if(answers[array_id].VALUE.match(/(\d*)\sYEARS/))
+                $scope.time_spans[array_id].YEARS = answers[array_id].VALUE.match(/(\d*)\sYEARS/)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sMONTHS/))
+                $scope.time_spans[array_id].MONTHS = answers[array_id].VALUE.match(/(\d*)\sMONTHS/)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sWEEKS/))
+                $scope.time_spans[array_id].WEEKS = answers[array_id].VALUE.match(/(\d*)\sWEEKS/)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sDAYS/))
+                $scope.time_spans[array_id].DAYS = answers[array_id].VALUE.match(/(\d*)\sDAYS/)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sHOURS/))
+                $scope.time_spans[array_id].HOURS = answers[array_id].VALUE.match(/(\d*)\sHOURS/)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sMINUTES/))
+                $scope.time_spans[array_id].MINUTES = answers[array_id].VALUE.match(/(\d*)\sMINUTES/)[1];
         }
 
         if($scope.questions[k].ANSWERTYPE == "DATE"){
-            $scope.dates[k] = new Object;
-            console.log(answers[k].VALUE);
-            var date = answers[k].VALUE.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
-            var time = answers[k].VALUE.match(/(\d{1,2}):(\d{1,2}) (AM|PM)/);
+            $scope.dates[array_id] = new Object;
+            console.log(answers[array_id].VALUE);
+            var date = answers[array_id].VALUE.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
+            var time = answers[array_id].VALUE.match(/(\d{1,2}):(\d{1,2}) (AM|PM)/);
 			if(date && date.length > 3){
-				$scope.dates[k].YEAR = date[3];
-				$scope.dates[k].MONTH = date[1];
-				$scope.dates[k].DAY = date[2];
+				$scope.dates[array_id].YEAR = date[3];
+				$scope.dates[array_id].MONTH = date[1];
+				$scope.dates[array_id].DAY = date[2];
 			}
 			if(time && time.length > 2){
-				$scope.dates[k].HOUR = time[1];
-				$scope.dates[k].MINUTE = time[2];
+				$scope.dates[array_id].HOUR = time[1];
+				$scope.dates[array_id].MINUTE = time[2];
 			}
 			if(time && time.length > 3)
-				$scope.dates[k].AMPM = time[3];
+				$scope.dates[array_id].AMPM = time[3];
             else
-				$scope.dates[k].AMPM = "AM";
+				$scope.dates[array_id].AMPM = "AM";
         }
 
         if($scope.questions[k].DONTKNOWBUTTON == true){
@@ -180,9 +172,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             button.NAME = "Don't Know";
             button.ID = "DONT_KNOW";
             button.checked = false;
-            if($scope.answers[k].SKIPREASON == "DONT_KNOW")
+            if($scope.answers[array_id].SKIPREASON == "DONT_KNOW")
                 button.checked = true;
-            $scope.options[k][Object.keys($scope.options[k]).length] = button;
+            $scope.options[array_id][Object.keys($scope.options[array_id]).length] = button;
         }
 
         if($scope.questions[k].REFUSEBUTTON == true){
@@ -190,29 +182,29 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             button.NAME = "Refuse";
             button.ID = "REFUSE";
             button.checked = false;
-            if($scope.answers[k].SKIPREASON == "REFUSE")
+            if($scope.answers[array_id].SKIPREASON == "REFUSE")
                 button.checked = true;
-            $scope.options[k][Object.keys($scope.options[k]).length] = button;
+            $scope.options[array_id][Object.keys($scope.options[array_id]).length] = button;
         }
         
-        columns = Object.keys($scope.options[k]).length;
-        if(typeof $scope.answers[k].OTHERSPECIFYTEXT != "undefined" && $scope.answers[k].OTHERSPECIFYTEXT != null && $scope.answers[k].OTHERSPECIFYTEXT != ""){
-            var specify = $scope.answers[k].OTHERSPECIFYTEXT.split(";;");
+        columns = Object.keys($scope.options[array_id]).length;
+        if(typeof $scope.answers[array_id].OTHERSPECIFYTEXT != "undefined" && $scope.answers[array_id].OTHERSPECIFYTEXT != null && $scope.answers[array_id].OTHERSPECIFYTEXT != ""){
+            var specify = $scope.answers[array_id].OTHERSPECIFYTEXT.split(";;");
             for(s in specify){
                 var pair = specify[s].split(":");
                 $scope.otherSpecify[pair[0]] = pair[1];
             }
         }
         console.log($scope.otherSpecify);
-        for(a in $scope.options[k]){
-            if($scope.otherSpecify[$scope.options[k][a].ID] && $scope.otherSpecify[$scope.options[k][a].ID] != "")
+        for(a in $scope.options[array_id]){
+            if($scope.otherSpecify[$scope.options[array_id][a].ID] && $scope.otherSpecify[$scope.options[array_id][a].ID] != "")
                 continue;
-            if($scope.options[k][a].OTHERSPECIFY == true)
-                $scope.otherSpecify[$scope.options[k][a].ID] = "";
-            else if($scope.options[k][a].NAME.match(/OTHER \(*SPECIFY\)*/i))
-                $scope.otherSpecify[$scope.options[k][a].ID] = "";
+            if($scope.options[array_id][a].OTHERSPECIFY == true)
+                $scope.otherSpecify[$scope.options[array_id][a].ID] = "";
+            else if($scope.options[array_id][a].NAME.match(/OTHER \(*SPECIFY\)*/i))
+                $scope.otherSpecify[$scope.options[array_id][a].ID] = "";
             else
-                $scope.otherSpecify[$scope.options[k][a].ID] = false;
+                $scope.otherSpecify[$scope.options[array_id][a].ID] = false;
         }
 
         if($scope.questions[k].SUBJECTTYPE != "EGO_ID"){
@@ -250,13 +242,18 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 
     $scope.errors = new Object;
 
+	$scope.print = function(){
+		url = "/data/visualize?print&expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent($("#Graph_params").val());
+		window.open(url);
+	}
+			
     $scope.playSound = function(file) {
         $scope.audioFiles[file].play();
     }
 
     $scope.goBack = function() {
         var url = $location.absUrl().replace($location.url(),'');
-        document.location = url + "/page/" + (parseInt($routeParams.page) - 1);
+        document.location = url + "page/" + (parseInt($routeParams.page) - 1);
     }
 
     $scope.submitForm = function(isValid) {
@@ -272,6 +269,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             if($("#Alters_name").val() == alters[k].NAME){
                 $scope.errors[0] = 'That name is already listed';
             }
+        }
+        if($("#Alters_name").val().trim() == ""){
+            $scope.errors[0] = 'Name cannot be blank';
         }
         // check to make sure the form is completely valid
         if($scope.errors[0] == false){
@@ -318,6 +318,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 
     $scope.multiSelect = function (v, index, array_id){
 
+        if(typeof $scope.questions[array_id] != "undefined")
+            var question = $scope.questions[array_id];
+        else
+            var question = questions[$scope.options[array_id][index].QUESTIONID];
     	if($scope.answers[array_id].VALUE)
     		values = $scope.answers[array_id].VALUE.split(',');
     	else
@@ -332,6 +336,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         		}
         		$scope.answers[array_id].OTHERSPECIFYTEXT = "";
         		$scope.answers[array_id].SKIPREASON = v;
+        		if(typeof $scope.errors[array_id] != "undefined")
+                    delete $scope.errors[array_id];
                 $('#Answer_' + array_id + '_VALUE').val("SKIPREASON").change();
                 $('#Answer_' + array_id + '_VALUE').val("").change();
 
@@ -358,7 +364,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     				values.splice(values.indexOf(v),1);
                 }
     		}
-        	if(values.length > $scope.questions[array_id].MAXCHECKABLEBOXES){
+        	if(values.length > question.MAXCHECKABLEBOXES){
         		value = values.shift();
         		for(k in $scope.options[array_id]){
             		if($scope.options[array_id][k].ID == value)
@@ -372,15 +378,16 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 
     $scope.setAll = function (v, index){
         for(k in $scope.questions){
-            if($scope.answers[k].VALUE == undefined)
-                $scope.answers[k].VALUE = "";
+            var array_id = $scope.questions[k].array_id;
+            if($scope.answers[array_id].VALUE == undefined)
+                $scope.answers[array_id].VALUE = "";
             if(
-                ($scope.answers[k].VALUE == "" && $scope.answers[k].SKIPREASON == "NONE" && $scope.options['all'][index].checked == true) ||
-                ((($scope.answers[k].VALUE != "" && $.inArray(v.toString(), $scope.answers[k].VALUE.split(",")) != -1) || ($scope.answers[k].SKIPREASON != "" && $.inArray(v.toString(), $scope.answers[k].SKIPREASON.split(",")) != -1)) && $scope.options['all'][index].checked == false) 
+                ($scope.answers[array_id].VALUE == "" && $scope.answers[array_id].SKIPREASON == "NONE" && $scope.options['all'][index].checked == true) ||
+                ((($scope.answers[array_id].VALUE != "" && $.inArray(v.toString(), $scope.answers[array_id].VALUE.split(",")) != -1) || ($scope.answers[array_id].SKIPREASON != "" && $.inArray(v.toString(), $scope.answers[array_id].SKIPREASON.split(",")) != -1)) && $scope.options['all'][index].checked == false) 
             
             )
             {
-                $scope.options[k][index].checked = $scope.options['all'][index].checked;
+                $scope.options[array_id][index].checked = $scope.options['all'][index].checked;
                 $scope.multiSelect(v, index, k);
             }
         }
@@ -435,7 +442,10 @@ app.directive('checkAnswer', [function (){
           //For DOM . model validation
             ngModel.$parsers.unshift(function(value) {
                 var valid = true;
-                array_id = attr.arrayId;
+                var array_id = attr.arrayId;
+                var question = questions[attr.questionId];
+                
+                console.log(question);
                 console.log("check:" + value);
 
                 if(attr.answerType == "ALTER_PROMPT"){
@@ -467,15 +477,15 @@ app.directive('checkAnswer', [function (){
                         scope.errors[array_id] = 'Please enter a number';
                         valid = false;
                     }
-        			if(scope.questions[array_id].MINLIMITTYPE == "NLT_LITERAL"){
-        				min = scope.questions[array_id].MINLITERAL;
-        			}else if(scope.questions[array_id].MINLIMITTYPE == "NLT_PREVQUES"){
-        				min = scope.answers[scope.questions[array_id].MINPREVQUES].VALUE;
+        			if(question.MINLIMITTYPE == "NLT_LITERAL"){
+        				min = question.MINLITERAL;
+        			}else if(question.MINLIMITTYPE == "NLT_PREVQUES"){
+        				min = scope.answers[question.MINPREVQUES].VALUE;
         			}
-        			if(scope.questions[array_id].MAXLIMITTYPE == "NLT_LITERAL"){
-        				max = scope.questions[array_id].MAXLITERAL;
-        			}else if(scope.questions[array_id].MAXLIMITTYPE == "NLT_PREVQUES"){
-        				max = scope.answers[scope.questions[array_id].MAXPREVQUES].VALUE;
+        			if(question.MAXLIMITTYPE == "NLT_LITERAL"){
+        				max = question.MAXLITERAL;
+        			}else if(question.MAXLIMITTYPE == "NLT_PREVQUES"){
+        				max = scope.answers[question.MAXPREVQUES].VALUE;
         			}
         			if(min !== "")
         				numberErrors++;
@@ -525,8 +535,8 @@ app.directive('checkAnswer', [function (){
     
         		if(attr.answerType == "MULTIPLE_SELECTION"){
             		var showError = false;
-        			min = scope.questions[array_id].MINCHECKABLEBOXES;
-        			max = scope.questions[array_id].MAXCHECKABLEBOXES;
+        			min = question.MINCHECKABLEBOXES;
+        			max = question.MAXCHECKABLEBOXES;
         			var numberErrors = 0; var showError = false; var errorMsg = "";
         			if(min !== "")
         				numberErrors++;
@@ -544,7 +554,7 @@ app.directive('checkAnswer', [function (){
         			s='';
         			if(max != 1)
         				s = 's';
-        			if(parseInt(scope.questions[array_id].ASKINGSTYLELIST) == 1)
+        			if(parseInt(question.ASKINGSTYLELIST) == 1)
         				s += ' for each row';
         			if(numberErrors == 3 && min == max && showError)
         				errorMsg = "Select " + max  + " response" + s + " please.";
@@ -568,8 +578,9 @@ app.directive('checkAnswer', [function (){
             });
           
           ngModel.$formatters.unshift(function(value) {
-            var valid = true;
-            array_id = attr.arrayId;
+                var valid = true;
+                var array_id = attr.arrayId;
+                var question = questions[attr.questionId];
 
                 if(attr.answerType == "ALTER_PROMPT"){
         			if(Object.keys(alters).length < study.MINALTERS){
@@ -597,15 +608,15 @@ app.directive('checkAnswer', [function (){
                         scope.errors[array_id] = 'Please enter a number';
                         valid = false;
                     }
-        			if(scope.questions[array_id].MINLIMITTYPE == "NLT_LITERAL"){
-        				min = scope.questions[array_id].MINLITERAL;
-        			}else if(scope.questions[array_id].MINLIMITTYPE == "NLT_PREVQUES"){
-        				min = scope.answers[scope.questions[array_id].MINPREVQUES].VALUE;
+        			if(question.MINLIMITTYPE == "NLT_LITERAL"){
+        				min = question.MINLITERAL;
+        			}else if(question.MINLIMITTYPE == "NLT_PREVQUES"){
+        				min = scope.answers[question.MINPREVQUES].VALUE;
         			}
-        			if(scope.questions[array_id].MAXLIMITTYPE == "NLT_LITERAL"){
-        				max = scope.questions[array_id].MAXLITERAL;
-        			}else if(scope.questions[array_id].MAXLIMITTYPE == "NLT_PREVQUES"){
-        				max = scope.answers[scope.questions[array_id].MAXPREVQUES].VALUE;
+        			if(question.MAXLIMITTYPE == "NLT_LITERAL"){
+        				max = question.MAXLITERAL;
+        			}else if(question.MAXLIMITTYPE == "NLT_PREVQUES"){
+        				max = scope.answers[question.MAXPREVQUES].VALUE;
         			}
         			if(min !== "")
         				numberErrors++;
@@ -655,8 +666,8 @@ app.directive('checkAnswer', [function (){
 
         		if(attr.answerType == "MULTIPLE_SELECTION"){
             		var showError = false;
-        			min = scope.questions[array_id].MINCHECKABLEBOXES;
-        			max = scope.questions[array_id].MAXCHECKABLEBOXES;
+        			min = question.MINCHECKABLEBOXES;
+        			max = question.MAXCHECKABLEBOXES;
         			var numberErrors = 0; var showError = false; var errorMsg = "";
         			if(min !== "")
         				numberErrors++;
@@ -675,7 +686,7 @@ app.directive('checkAnswer', [function (){
         			s='';
         			if(max != 1)
         				s = 's';
-        			if(parseInt(scope.questions[array_id].ASKINGSTYLELIST) == 1)
+        			if(parseInt(question.ASKINGSTYLELIST) == 1)
         				s += ' for each row';
         			if(numberErrors == 3 && min == max && showError)
         				errorMsg = "Select " + max  + " response" + s + " please.";
@@ -723,7 +734,8 @@ function buildQuestions(pageNumber, interviewId){
 	}
 	if(pageNumber == i){
 		for(j in ego_id_questions){
-			page[i][ego_id_questions[j].ID] = ego_id_questions[j];
+            ego_id_questions[j].array_id = ego_id_questions[j].ID;
+			page[i][ego_id_questions[j].ORDERING + 1] = ego_id_questions[j];
 		}
 		return page[i];
 	}
@@ -733,7 +745,7 @@ function buildQuestions(pageNumber, interviewId){
 		ego_question_list = new Object;
 		prompt = "";
 		for(j in ego_questions){
-			console.log('eval:'+ego_questions[j].TITLE + ":"+ ego_questions[j].ANSWERREASONEXPRESSIONID+":"+evalExpression(ego_questions[j].ANSWERREASONEXPRESSIONID));
+            ego_questions[j].array_id = ego_questions[j].ID;
 			if(Object.keys(ego_question_list).length > 0 && prompt != ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
 				if(pageNumber == i){
 					page[i] = ego_question_list;
@@ -766,8 +778,7 @@ function buildQuestions(pageNumber, interviewId){
 			    if(prompt == "" || prompt == ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
 			    	//console.log('list type question');
 			    	prompt = ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
-			    	ego_questions[j].array_id = ego_questions[j].QUESTIONID;
-			    	ego_question_list[ego_questions[j].ID]=ego_questions[j];
+			    	ego_question_list[ego_questions[j].ORDERING]=ego_questions[j];
 			    }
 			}else{
 			    if(pageNumber == i){
@@ -808,7 +819,7 @@ function buildQuestions(pageNumber, interviewId){
 					var question = $.extend(true,{}, alter_questions[j]);
 					question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
 					question.ALTERID1 = alters[k].ID;
-			    	question.array_id = question.QUESTIONID + '-' + question.ALTERID1;
+			    	question.array_id = question.ID + '-' + question.ALTERID1;
 
 					if(alter_questions[j].ASKINGSTYLELIST == 1){
 						alter_question_list[question.ID + '-' + question.ALTERID1] = question;
@@ -885,7 +896,7 @@ function buildQuestions(pageNumber, interviewId){
 						question.PROMPT = question.PROMPT.replace(/\$\$2/g, alters2[l].NAME);
 						question.ALTERID1 = alters[k].ID;
 						question.ALTERID2 = alters2[l].ID;
-                        question.array_id = question.QUESTIONID + '-' + question.ALTERID1 + 'and' + question.ALTERID2;
+                        question.array_id = question.ID + '-' + question.ALTERID1 + 'and' + question.ALTERID2;
 
 						if(alter_pair_questions[j].ASKINGSTYLELIST){
 							alter_pair_question_list[question.ID + '-' + question.ALTERID1 + 'and' + question.ALTERID2] = question;
@@ -930,7 +941,7 @@ function buildQuestions(pageNumber, interviewId){
 				}
 			}
     		for(j in network_questions){
-    			console.log('eval:'+network_questions[j].TITLE + ":"+ network_questions[j].ANSWERREASONEXPRESSIONID+":"+evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID));
+                network_questions[j].array_id = network_questions[j].ID;
 
     			if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID) != true)
     				continue;
@@ -1909,10 +1920,7 @@ function exitHandler()
 				});
 			}
 
-			function print(expressionId, interviewId){
-				url = "/data/visualize?print&expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent($("#Graph_params").val());
-				window.open(url);
-			}
+
 
 function buildNav(pageNumber){
 	var i = 0;

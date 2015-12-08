@@ -186,6 +186,9 @@ module.exports = [
 ];
 module.exports.metadata = 
 // TOP OF METADATA
-{}
+{
+    "org.apache.cordova.file": "1.3.2-dev",
+    "org.apache.cordova.file-transfer": "0.4.8-dev"
+}
 // BOTTOM OF METADATA
 });

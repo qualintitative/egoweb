@@ -11,7 +11,7 @@
     <div class="col-sm-4" id="left-container"></div>
     <div class="col-sm-4 pull-right">
         <button  onclick="fullscreen()" class="btn btn-info print-button" id="fullscreenButton">Fullscreen</button>
-        <button  class="btn btn-primary print-button" style="margin-top:10px">Print Preview</button>
+        <button  class="btn btn-primary print-button" style="margin-top:10px" ng-click="print()">Print Preview</button>
         <form id="graph-form" method="post">
             <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
             <input value="{{ graphId }}" name="Graph[id]" id="Graph_id" type="hidden">
@@ -45,7 +45,7 @@
         <b>Previous Alters</b><br>
         <label ng-repeat="pAlter in prevAlters">{{ pAlter }}</label>
     </div>
-    <form id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
+    <form ng-if="keys(alters).length < study.MAXALTERS" id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
         <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
         <div class="form-group">
             <input name="Alters[name]" id="Alters_name" type="hidden" value="{{ alterName }}">
@@ -77,96 +77,96 @@
 
         <div ng-if="askingStyleList == false && (question.ANSWERTYPE == 'TEXTUAL' || question.ANSWERTYPE == 'NUMERICAL')">
             <input ng-if="question.USEALTERLISTFIELD == 'name' || question.USEALTERLISTFIELD == 'email'" name="Answer[{{ question.array_id }}][value]" value="{{answers[question.array_id].VALUE}}" type="hidden">
-            <autocomplete attr-input-class="answerInput" ng-if="question.USEALTERLISTFIELD == 'name' || question.USEALTERLISTFIELD == 'email'" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" data="participants" check-answer array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'></autocomplete>
-            <input class="answerInput" ng-if="question.USEALTERLISTFIELD != 'name'&& question.USEALTERLISTFIELD != 'email'" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'>
+            <autocomplete attr-input-class="answerInput" ng-if="question.USEALTERLISTFIELD == 'name' || question.USEALTERLISTFIELD == 'email'" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" data="participants" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'></autocomplete>
+            <input class="answerInput" ng-if="question.USEALTERLISTFIELD != 'name'&& question.USEALTERLISTFIELD != 'email'" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'>
         </div>
         <div ng-if="question.ANSWERTYPE == 'TEXTUAL_PP'" class="row form-group col-sm-6">
-            <textarea class="answerInput" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'></textarea>
+            <textarea class="answerInput" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'></textarea>
         </div>
-        <div ng-if="question.ANSWERTYPE == 'DATE'">
-    <div class="multiRow ">
-        Time (HH:MM)
-    </div>
-
-    <div class="multiRow ">
-        <div style="padding-left:4px; padding-right:0;">
-            <input class="answerInput" type="text"  ng-model="dates[question.array_id].HOUR" ng-change="dateValue(question.array_id)" maxlength="2" style="width:30px" value="">
-        </div>
-    </div>
-
-    <div class="multiRow ">
-        <div style="float:left; padding-left:4px; padding-right:0;">
-            <input class="answerInput" type="text" ng-model="dates[question.array_id].MINUTE" ng-blur="dateValue(question.array_id)" maxlength="2" style="width:30px" value="">
-        </div>
-    </div>
-
-    <div class="multiRow ">
-        <input class="answerInput" ng-model="dates[question.array_id].AMPM" ng-change="dateValue(question.array_id)" value="AM" type="radio"> AM <input ng-model="dates[question.array_id].AMPM" ng-change="dateValue(question.array_id)" value="PM" type="radio"> PM
-    </div>
-
-    <div class="multiRow ">
-        (Month,Day,Year)
-    </div>
-
-    <div class="multiRow ">
-        <select class="answerInput" ng-model="dates[question.array_id].MONTH" ng-change="dateValue(question.array_id)">
-            <option value="January">
-                January
-            </option>
-
-            <option value="February">
-                February
-            </option>
-
-            <option value="March">
-                March
-            </option>
-
-            <option value="April">
-                April
-            </option>
-
-            <option value="May">
-                May
-            </option>
-
-            <option value="June">
-                June
-            </option>
-
-            <option value="July">
-                July
-            </option>
-
-            <option value="August">
-                August
-            </option>
-
-            <option value="September">
-                September
-            </option>
-
-            <option value="October">
-                October
-            </option>
-
-            <option value="November">
-                November
-            </option>
-
-            <option value="December">
-                December
-            </option>
-        </select>
-    </div>
-
-    <div class="multiRow ">
-        <input class="answerInput" type="text" ng-model="dates[question.array_id].DAY" ng-change="dateValue(question.array_id)" maxlength="2" style="width:30px" value="">
-    </div>
-
-    <div class="multiRow ">
-        <input class="answerInput" type="text" ng-model="dates[question.array_id].YEAR" ng-change="dateValue(question.array_id)" style="width:60px" maxlength="4" value="">
-    </div>
+        <div ng-if="question.ANSWERTYPE == 'DATE'" class="col-xs-12 no-padding">
+            <div class="multiRow ">
+                Time (HH:MM)
+            </div>
+        
+            <div class="multiRow ">
+                <div style="padding-left:4px; padding-right:0;">
+                    <input class="answerInput" type="text"  ng-model="dates[question.array_id].HOUR" ng-change="dateValue(question.array_id)" maxlength="2" style="width:30px" value="">
+                </div>
+            </div>
+        
+            <div class="multiRow ">
+                <div style="float:left; padding-left:4px; padding-right:0;">
+                    <input class="answerInput" type="text" ng-model="dates[question.array_id].MINUTE" ng-blur="dateValue(question.array_id)" maxlength="2" style="width:30px" value="">
+                </div>
+            </div>
+        
+            <div class="multiRow ">
+                <input class="answerInput" ng-model="dates[question.array_id].AMPM" ng-change="dateValue(question.array_id)" value="AM" type="radio"> AM <input ng-model="dates[question.array_id].AMPM" ng-change="dateValue(question.array_id)" value="PM" type="radio"> PM
+            </div>
+        
+            <div class="multiRow ">
+                (Month,Day,Year)
+            </div>
+        
+            <div class="multiRow ">
+                <select class="answerInput" ng-model="dates[question.array_id].MONTH" ng-change="dateValue(question.array_id)">
+                    <option value="January">
+                        January
+                    </option>
+        
+                    <option value="February">
+                        February
+                    </option>
+        
+                    <option value="March">
+                        March
+                    </option>
+        
+                    <option value="April">
+                        April
+                    </option>
+        
+                    <option value="May">
+                        May
+                    </option>
+        
+                    <option value="June">
+                        June
+                    </option>
+        
+                    <option value="July">
+                        July
+                    </option>
+        
+                    <option value="August">
+                        August
+                    </option>
+        
+                    <option value="September">
+                        September
+                    </option>
+        
+                    <option value="October">
+                        October
+                    </option>
+        
+                    <option value="November">
+                        November
+                    </option>
+        
+                    <option value="December">
+                        December
+                    </option>
+                </select>
+            </div>
+        
+            <div class="multiRow ">
+                <input class="answerInput" type="text" ng-model="dates[question.array_id].DAY" ng-change="dateValue(question.array_id)" maxlength="2" style="width:30px" value="">
+            </div>
+        
+            <div class="multiRow ">
+                <input class="answerInput" type="text" ng-model="dates[question.array_id].YEAR" ng-change="dateValue(question.array_id)" style="width:50px" maxlength="4" value="">
+            </div>
         </div>
         
 
@@ -206,7 +206,7 @@
             </div>
         
             <div ng-if="(question.ANSWERTYPE == 'TEXTUAL' || question.ANSWERTYPE == 'NUMERICAL') && question.ASKINGSTYLELIST == true" style="width:{{ fixedWidth }}">
-                <input class="answerInput" ng-if="question.USEALTERLISTFIELD != 'name'&& question.USEALTERLISTFIELD != 'email'" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'>
+                <input class="answerInput" ng-if="question.USEALTERLISTFIELD != 'name'&& question.USEALTERLISTFIELD != 'email'" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'>
             </div>
 
             <div ng-repeat="option in options[question.array_id]" style="width:{{ fixedWidth }}">
@@ -219,7 +219,7 @@
         </div>
 
         <div class="hidden">
-            <input name="Answer[{{ question.array_id }}][value]" ng-if="question.ANSWERTYPE != 'TEXTUAL' && question.ANSWERTYPE != 'NUMERICAL' && question.ANSWERTYPE != 'TEXTUAL_PP'" id="Answer_{{ question.array_id }}_VALUE"  ng-model="answers[question.array_id].VALUE" check-answer array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'>
+            <input name="Answer[{{ question.array_id }}][value]" ng-if="question.ANSWERTYPE != 'TEXTUAL' && question.ANSWERTYPE != 'NUMERICAL' && question.ANSWERTYPE != 'TEXTUAL_PP'" id="Answer_{{ question.array_id }}_VALUE"  ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'>
             <input name="Answer[{{ question.array_id }}][otherSpecifyText]" value="{{ answers[question.array_id].OTHERSPECIFYTEXT }}">
             <input name="Answer[{{ question.array_id }}][skipReason]" value="{{ answers[question.array_id].SKIPREASON }}">
             <input name="Answer[{{ question.array_id }}][questionId]" value="{{ question.ID }}" type="hidden">
@@ -242,13 +242,12 @@
         </div>
     </div>
 </div>
-<input name="Answer[{{ questions[0].array_id }}][value]" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'" ng-model="answers[question.array_id].VALUE" check-answer array-id='0' answer-type='{{ questions[0].ANSWERTYPE }}' type="hidden">
+<input name="Answer[{{ questions[0].array_id }}][value]" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='0' answer-type='{{ questions[0].ANSWERTYPE }}' type="hidden">
 <input name="page" value='{{ page }}' type="hidden">
 <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
-<div class="form-group clear-left">
-    <button ng-show="page > 0" id="next" class='btn graybutton' ng-click="goBack();">Back</button>
+<div class="form-group clear-left btn-top">
+    <button ng-show="page > 0" id="next" class='btn graybutton' ng-click="goBack();" onclick="return false;">Back</button>
 	<button ng-if="questions[0].ANSWERTYPE != 'CONCLUSION'" id="next" class='btn orangebutton' type="submit">Next</button>
 	<button ng-if="questions[0].ANSWERTYPE == 'CONCLUSION'" id="next" class='btn orangebutton' type="submit">Finish</button>
-
 </div>
 </form>
