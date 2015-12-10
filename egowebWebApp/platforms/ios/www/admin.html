@@ -14,7 +14,7 @@
 
     <div  class="panel-body">
         <div ng-if="!studyList[server.ADDRESS]">
-            <form id="serverForm">
+            <form id="serverForm_{{ server.ID }}">
                 <div style="float:left; width:100px;text-align:left">
                     Username
                 </div><input type="text" name="LoginForm[username]"><br style='clear:both'>
@@ -22,10 +22,9 @@
                 <div style="float:left; width:100px;text-align:left">
                     Password
                 </div><input type="password" name="LoginForm[password]"><br style='clear:both'>
-                <button class="btn btn-xs btn-primary" ng-click='connect(server.ADDRESS)'>Connect</button>
+                <button class="btn btn-xs btn-primary" ng-click='connect(server.ID)'>Connect</button>
             </form>
         </div>
-    
         <div class="multi col-sm-12" ng-if="studyList[server.ADDRESS]" ng-repeat="study in studyList[server.ADDRESS]">
             <label class="col-xs-9">{{study.name}}</label>
             <button ng-if="!study.localStudyId" class="btn btn-xs btn-default pull-right margin-top-8" ng-click="importStudy(server.ADDRESS, study.id)">Import</button>

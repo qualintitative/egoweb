@@ -19,13 +19,14 @@ app.config(function($routeProvider) {
 });
 
 app.factory("getStudies", function($http, $q) {
-    var result = function(address) {
-        var url = address + '/mobile/getstudies';
+    var result = function(id) {
+        var server = db.queryRowObject("SELECT * FROM server WHERE id = " + id);
+        var url = server.ADDRESS + '/mobile/getstudies';
         if (!url.match('http') && !url.match('https')) url = "http://" + url;
         return $.ajax({
             url: url,
             type: 'POST',
-            data: $("#serverForm").serialize(),
+            data: $("#serverForm_" + server.ID).serialize(),
             crossDomain: true,
             success: function(data) {
                 if (data != "error") {
@@ -528,11 +529,12 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
     $("#questionMenu").addClass("hidden");
     console.log(studyList);
     $scope.studyList = studyList;
-    $scope.connect = function(address) {
-        getStudies.result(address).then(function(data) {
-            studyList[address] = JSON.parse(data);
-            for(k in studyList[address]){
-                studyList[address][k].localStudyId = db.queryValue("SELECT id FROM serverstudy WHERE address = '" + address + "' AND serverstudyid = " + studyList[address][k].id);
+    $scope.connect = function(id) {
+        getStudies.result(id).then(function(data) {
+            var server = db.queryRowObject("SELECT * FROM server WHERE id = " + id);
+            studyList[server.ADDRESS] = JSON.parse(data);
+            for(k in studyList[server.ADDRESS]){
+                studyList[server.ADDRESS][k].localStudyId = db.queryValue("SELECT id FROM serverstudy WHERE address = '" + server.ADDRESS + "' AND serverstudyid = " + studyList[server.ADDRESS][k].id);
             }
             console.log(studyList);
             $route.reload();
