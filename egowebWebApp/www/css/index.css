@@ -20,6 +20,10 @@
     -webkit-tap-highlight-color: rgba(0,0,0,0); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
 }
 
+#topbar {
+    padding-top:20px;
+}
+
 .admin{
 	border-radius: 5px;
 	background-color: #e58320;
@@ -46,8 +50,6 @@ body {
     -webkit-user-select: none;                  /* prevent copy paste, to allow, change 'none' to 'text' */
     background-color:#FFF;
     background-attachment:fixed;
-    font-family:'HelveticaNeue-Light', 'HelveticaNeue', Helvetica, Arial, sans-serif;
-    font-size:12px;
     height:100%;
     margin:0px;
     padding:0px;
@@ -77,16 +79,6 @@ body {
                                       /* offset horizontal: half of image width and text area width */
     }
 }
-
-h1 {
-    font-size:24px;
-    font-weight:normal;
-    margin:0px;
-    overflow:visible;
-    padding:0px;
-    text-align:center;
-}
-
 .event {
     border-radius:4px;
     -webkit-border-radius:4px;

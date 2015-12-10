@@ -88,7 +88,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         $scope.options[array_id] = $.extend(true,{}, options[$scope.questions[k].ID]);
 
         if($scope.questions[k].ASKINGSTYLELIST == true)
-            $scope.askingStyleList = k;
+            $scope.askingStyleList = $scope.questions[k].array_id;
         if($scope.askingStyleList != false)
             $scope.fixedWidth = "120px";
         else
