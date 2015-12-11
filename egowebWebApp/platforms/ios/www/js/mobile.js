@@ -774,7 +774,10 @@ function getEgoIdValue(interviewId){
 	for(var k in egoIdQs){
 		if(egoId)
 			egoId = egoId + "_";
-		egoId = egoId + db.queryValue("SELECT value FROM answer WHERE questionId = " + egoIdQs[k].ID + " AND interviewId = " + interviewId);
+        if(egoIdQs[k].ANSWERTYPE == "MULTIPLE_SELECTION")
+            egoId = egoId + db.queryValue("SELECT name FROM questionOption where id = (SELECT a.value FROM answer a WHERE a.questionId = " + egoIdQs[k].ID + " AND a.interviewId = " + interviewId + ")");
+        else
+            egoId = egoId + db.queryValue("SELECT value FROM answer WHERE questionId = " + egoIdQs[k].ID + " AND interviewId = " + interviewId);
 	}
 	return egoId;
 }

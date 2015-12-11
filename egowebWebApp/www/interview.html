@@ -70,7 +70,7 @@
         <div ng-repeat="option in options[askingStyleList]" style="width:120px">{{ option.NAME }}</div>
     </div>
 </div>
-<div class="panel" ng-if="hideQ == false" ng-class="{multiBox: askingStyleList != false && subjectType != 'EGO'}">
+<div class="panel" ng-if="hideQ == false" ng-class="{multiBox: askingStyleList != false}">
     <div  ng-class="{multi: question.ASKINGSTYLELIST == true}" ng-repeat="question in questions">
         
         <h4 ng-if="question.SUBJECTTYPE == 'EGO_ID'">{{ question.PROMPT }}</h4>
