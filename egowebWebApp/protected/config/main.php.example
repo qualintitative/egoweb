@@ -45,6 +45,7 @@ return array(
 			'rules'=>array(
 				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
 				'gii/default/login'=>'gii/default/login',
+				'interview/<id:\d+>/<interviewId:\d+>'=>'interview/view',
 				'<controller:\w+>/<action:\w+>/<id:(.*)+>'=>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
 

@@ -505,10 +505,10 @@ td{
 .title {
 	float:left;
 	font-family:Arial;
-	font-size:20px;
+	font-size:16px;
 	color:#eee;
     display:block;
-	margin:8px 0 8px 20px;
+	margin:12px 0 8px 20px;
 	padding-left:20px;
 	border-left: 1px solid #707070;
 }
@@ -833,7 +833,8 @@ label.prompt , .grid-view label {
 
 
 .multiBox {
-height:320px; overflow-y: scroll;
+max-height:400px;
+overflow-y: scroll;
 }
 
 .clear-left {

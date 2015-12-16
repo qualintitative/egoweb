@@ -474,8 +474,8 @@ app.directive('checkAnswer', [function (){
             		console.log("check numeric");
         			var min = ""; var max = ""; var numberErrors = 0; var showError = false;
         			if((value == "" && scope.answers[array_id].SKIPREASON == "NONE") || (value != "" && isNaN(parseInt(value)))){
-                        scope.errors[array_id] = 'Please enter a number';
-                        valid = false;
+                        errorMsg = 'Please enter a number';
+        				showError = true;
                     }
         			if(question.MINLIMITTYPE == "NLT_LITERAL"){
         				min = question.MINLITERAL;
@@ -494,17 +494,19 @@ app.directive('checkAnswer', [function (){
         			if(((max !== "" && parseInt(value) > parseInt(max))  ||  (min !== "" && parseInt(value) < parseInt(min))) && scope.answers[array_id].SKIPREASON == "NONE")
         				showError = true;
         
-        			if(numberErrors == 3 && showError)
+        			if(numberErrors == 3)
         				errorMsg = "The range of valid answers is " + min + " to " + max + ".";
-        			else if (numberErrors == 2 && showError)
+        			else if (numberErrors == 2)
         				errorMsg = "The range of valid answers is " + max + " or fewer.";
-        			else if (numberErrors == 1 && showError)
+        			else if (numberErrors == 1)
         				errorMsg = "The range of valid answers is " + min + " or greater.";
         
         			if(showError){
                         scope.errors[array_id] = errorMsg;
                         valid = false;
-        			}
+        			}else{
+                        delete scope.errors[array_id];
+                    }
         		}
     
                 if(attr.answerType == "DATE"){
