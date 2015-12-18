@@ -126,6 +126,7 @@ class InterviewController extends Controller
         }
         $answers = array();
         $interviewId = false;
+        $interview = false;
         $participantList = array();
         $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
         foreach($results as $result){
@@ -136,6 +137,7 @@ class InterviewController extends Controller
         }
         if(isset($_GET['interviewId'])){
             $interviewId = $_GET['interviewId'];
+            $interview = Interview::model()->findByPk($_GET['interviewId']);
     		$interviewIds = Interview::multiInterviewIds($_GET['interviewId'], $study);
     		$prevIds = array();
     		if(is_array($interviewIds))
@@ -204,6 +206,7 @@ class InterviewController extends Controller
                 "expressions"=>json_encode($expressions),
                 "options"=>json_encode($options),
                 "interviewId" => $interviewId,
+                "interview" => json_encode(mToA($interview)),
                 "answers"=>json_encode($answers),
                 "alterPrompts"=>json_encode($alterPrompts),
                 "alters"=>json_encode($alters),

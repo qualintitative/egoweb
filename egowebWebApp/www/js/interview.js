@@ -40,6 +40,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.audioFiles = {};
     $scope.audio = {};
     $scope.keys = Object.keys;
+    $scope.interview = interview;
 
     for(k in audio){
         $scope.audio[k] = audio[k];
