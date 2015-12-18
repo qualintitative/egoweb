@@ -439,9 +439,11 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
         allNotes = {};
     	if(typeof intId == "undefined"){
         	interviewId = undefined;
+        	interview = false;
             var page = 0;
     	}else{
     		interviewId = intId;
+    		interview = db.queryRowObject("SELECT * FROM interview WHERE id = " + intId);
     		results = db.queryObjects("SELECT * FROM graphs WHERE interviewId = " + interviewId).data;
             for (k in results){
                 graphs[results[k].EXPRESSIONID] = results[k];
