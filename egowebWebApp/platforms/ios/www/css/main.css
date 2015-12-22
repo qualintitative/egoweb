@@ -800,6 +800,7 @@ label.prompt , .grid-view label {
 
 
 #Expression::-webkit-scrollbar-track,
+#second::-webkit-scrollbar-track,
 #alterListBox::-webkit-scrollbar-track,
 .multiBox::-webkit-scrollbar-track,
 .question.ALTER::-webkit-scrollbar-track,
@@ -811,6 +812,7 @@ label.prompt , .grid-view label {
 }
 
 #Expression::-webkit-scrollbar,
+#second::-webkit-scrollbar,
 #alterListBox::-webkit-scrollbar,
 .multiBox::-webkit-scrollbar,
 .question.ALTER::-webkit-scrollbar,
@@ -821,6 +823,7 @@ label.prompt , .grid-view label {
 }
 
 #Expression::-webkit-scrollbar-thumb,
+#second::-webkit-scrollbar-thumb,
 #alterListBox::-webkit-scrollbar-thumb,
 .multiBox::-webkit-scrollbar-thumb,
 .question.ALTER::-webkit-scrollbar-thumb,

@@ -1213,7 +1213,8 @@ fieldset[disabled] .btn-link:focus {
 .navbar .nav li.dropdown.open .dropdown-menu {
   opacity: 1;
   top: 100%;
-  visibility: visible;
+  /*visibility: visible;*/
+  display:block;
   z-index: 1000;
   -webkit-transform: none;
 }
@@ -1237,7 +1238,8 @@ fieldset[disabled] .btn-link:focus {
   background-color: #34495e;
   opacity: 0;
   padding: 0;
-  visibility: hidden;
+  /*visibility: hidden;*/
+  display:none;
 }
 .navbar .nav li.dropdown .dropdown-menu:before {
   display: none;
