@@ -439,9 +439,11 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
         allNotes = {};
     	if(typeof intId == "undefined"){
         	interviewId = undefined;
+        	interview = false;
             var page = 0;
     	}else{
     		interviewId = intId;
+    		interview = db.queryRowObject("SELECT * FROM interview WHERE id = " + intId);
     		results = db.queryObjects("SELECT * FROM graphs WHERE interviewId = " + interviewId).data;
             for (k in results){
                 graphs[results[k].EXPRESSIONID] = results[k];
@@ -605,7 +607,7 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
 baseUrl = "";
 document.addEventListener("deviceready", onDeviceReady, false);
 // PhoneGap is loaded and it is now safe to make calls PhoneGap methods
-//
+
 function onDeviceReady() {
 }
 
@@ -655,7 +657,6 @@ function save(questions, page, url){
         var post = node.objectify($('#answerForm'));
         for(k in post.ANSWER){
             answer = post.ANSWER[k];
-            console.log($("#Answer_" + array_id + "_VALUE").val());
 
             console.log(post);
     		if(answer.QUESTIONTYPE == "ALTER")
@@ -664,6 +665,7 @@ function save(questions, page, url){
     			var array_id = answer.QUESTIONID + "-" + answer.ALTERID1 + "and" + answer.ALTERID2;
     		else
     			var array_id = answer.QUESTIONID;
+            console.log($("#Answer_" + array_id + "_VALUE").val());
 
             answer.VALUE = $("#Answer_" + array_id + "_VALUE").val();
             if(typeof interviewId == "undefined" && answer.QUESTIONTYPE == "EGO_ID" && answer.VALUE != ""){

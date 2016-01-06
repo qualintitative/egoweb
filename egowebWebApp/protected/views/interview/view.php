@@ -10,6 +10,7 @@ network_questions = <?php echo $network_questions ?>;
 expressions = <?php echo $expressions ?>;
 options = <?php echo $options ?>;
 interviewId = <?php echo $interviewId ? $interviewId : "undefined" ?>;
+interview = <?php echo $interview; ?>;
 answers = <?php echo $answers ?>;
 alters = <?php echo $alters ?>;
 prevAlters = <?php echo $prevAlters ?>;

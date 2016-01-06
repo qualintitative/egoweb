@@ -40,6 +40,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.audioFiles = {};
     $scope.audio = {};
     $scope.keys = Object.keys;
+    $scope.interview = interview;
 
     for(k in audio){
         $scope.audio[k] = audio[k];
@@ -53,10 +54,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $('#navbox ul').html("");
     for(k in $scope.nav){
         if(baseUrl == "/www/")
-    	    $('#navbox ul').append("<li><a href='/interview/" + study.ID + (interviewId ? "/" + interviewId  : "") + "#page/" + k + "'>" + $scope.nav[k] + "</a></li>");
+    	    $('#navbox ul').append("<li id='menu_" + k + "'><a href='/interview/" + study.ID + (interviewId ? "/" + interviewId  : "") + "#page/" + k + "'>" + $scope.nav[k] + "</a></li>");
         else
-    	    $('#navbox ul').append("<li><a href='" + $location.absUrl().replace($location.url(),'') + "page/" + k + "'>" + $scope.nav[k] + "</a></li>");
+    	    $('#navbox ul').append("<li id='menu_" + k + "']]><a href='" + $location.absUrl().replace($location.url(),'') + "page/" + k + "'>" + $scope.nav[k] + "</a></li>");
     }
+    $("#second").show();
+    $("#second").scrollTop($("#second").scrollTop() - $("#second").offset().top + $("#menu_" + $scope.page).offset().top); 
     $("#questionMenu").removeClass("hidden");
 
     for(var k in $scope.questions){
@@ -64,9 +67,13 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         if($scope.questions[k].USEALTERLISTFIELD == "name" || $scope.questions[k].USEALTERLISTFIELD == "email"){
             $scope.participants = participantList[$scope.questions[k].USEALTERLISTFIELD];
         }
+        
+        console.log($scope.questions);
+        console.log($scope.questions[k].CITATION );
+        if(typeof $scope.questions[k].CITATION == "string")
+            $scope.questions[k].CITATION = $sce.trustAsHtml($scope.questions[k].CITATION);
 
-        if($scope.questions[k].CITATION)
-            $scope.questions[k].CITATION = $scope.questions[k].CITATION.replace(/(<([^>]+)>)/ig, '');
+        console.log($scope.questions[k].CITATION);
         if($scope.questions[k].ALLBUTTON == true && !$scope.options["all"]){
             $scope.options['all'] = $.extend(true,{}, options[$scope.questions[k].ID]);
             if($scope.questions[k].DONTKNOWBUTTON == true){
@@ -149,7 +156,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 
         if($scope.questions[k].ANSWERTYPE == "DATE"){
             $scope.dates[array_id] = new Object;
-            console.log(answers[array_id].VALUE);
             var date = answers[array_id].VALUE.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
             var time = answers[array_id].VALUE.match(/(\d{1,2}):(\d{1,2}) (AM|PM)/);
 			if(date && date.length > 3){
@@ -236,6 +242,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             function(){
                 if(typeof $(".answerInput")[0] != "undefined")
                     $(".answerInput")[0].focus();
+                $("#second").scrollTop($("#second").scrollTop() - $("#second").offset().top + $("#menu_" + $scope.page).offset().top);
+
             },
         1);
     }
@@ -474,8 +482,8 @@ app.directive('checkAnswer', [function (){
             		console.log("check numeric");
         			var min = ""; var max = ""; var numberErrors = 0; var showError = false;
         			if((value == "" && scope.answers[array_id].SKIPREASON == "NONE") || (value != "" && isNaN(parseInt(value)))){
-                        scope.errors[array_id] = 'Please enter a number';
-                        valid = false;
+                        errorMsg = 'Please enter a number';
+        				showError = true;
                     }
         			if(question.MINLIMITTYPE == "NLT_LITERAL"){
         				min = question.MINLITERAL;
@@ -494,17 +502,19 @@ app.directive('checkAnswer', [function (){
         			if(((max !== "" && parseInt(value) > parseInt(max))  ||  (min !== "" && parseInt(value) < parseInt(min))) && scope.answers[array_id].SKIPREASON == "NONE")
         				showError = true;
         
-        			if(numberErrors == 3 && showError)
+        			if(numberErrors == 3)
         				errorMsg = "The range of valid answers is " + min + " to " + max + ".";
-        			else if (numberErrors == 2 && showError)
+        			else if (numberErrors == 2)
         				errorMsg = "The range of valid answers is " + max + " or fewer.";
-        			else if (numberErrors == 1 && showError)
+        			else if (numberErrors == 1)
         				errorMsg = "The range of valid answers is " + min + " or greater.";
         
         			if(showError){
                         scope.errors[array_id] = errorMsg;
                         valid = false;
-        			}
+        			}else{
+                        delete scope.errors[array_id];
+                    }
         		}
     
                 if(attr.answerType == "DATE"){
@@ -778,7 +788,7 @@ function buildQuestions(pageNumber, interviewId){
 			    if(prompt == "" || prompt == ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
 			    	//console.log('list type question');
 			    	prompt = ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
-			    	ego_question_list[ego_questions[j].ORDERING]=ego_questions[j];
+			    	ego_question_list[ego_questions[j].ORDERING + 1] = ego_questions[j];
 			    }
 			}else{
 			    if(pageNumber == i){

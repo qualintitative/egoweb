@@ -505,10 +505,10 @@ td{
 .title {
 	float:left;
 	font-family:Arial;
-	font-size:20px;
+	font-size:16px;
 	color:#eee;
     display:block;
-	margin:8px 0 8px 20px;
+	margin:12px 0 8px 20px;
 	padding-left:20px;
 	border-left: 1px solid #707070;
 }
@@ -800,6 +800,7 @@ label.prompt , .grid-view label {
 
 
 #Expression::-webkit-scrollbar-track,
+#second::-webkit-scrollbar-track,
 #alterListBox::-webkit-scrollbar-track,
 .multiBox::-webkit-scrollbar-track,
 .question.ALTER::-webkit-scrollbar-track,
@@ -811,6 +812,7 @@ label.prompt , .grid-view label {
 }
 
 #Expression::-webkit-scrollbar,
+#second::-webkit-scrollbar,
 #alterListBox::-webkit-scrollbar,
 .multiBox::-webkit-scrollbar,
 .question.ALTER::-webkit-scrollbar,
@@ -821,6 +823,7 @@ label.prompt , .grid-view label {
 }
 
 #Expression::-webkit-scrollbar-thumb,
+#second::-webkit-scrollbar-thumb,
 #alterListBox::-webkit-scrollbar-thumb,
 .multiBox::-webkit-scrollbar-thumb,
 .question.ALTER::-webkit-scrollbar-thumb,
@@ -833,7 +836,8 @@ label.prompt , .grid-view label {
 
 
 .multiBox {
-height:320px; overflow-y: scroll;
+max-height:400px;
+overflow-y: scroll;
 }
 
 .clear-left {
