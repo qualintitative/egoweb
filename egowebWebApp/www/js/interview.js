@@ -1161,7 +1161,10 @@ function interpretTags(string, alterId1, alterId2)
         else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
         	array_id += 'and' + alterId2;
 	
-		var lastAnswer = answers[array_id].VALUE;
+        if(typeof answers[array_id].VALUE != "undefined")
+		    var lastAnswer = answers[array_id].VALUE;
+        else
+            var lastAnswer = undefined;
 			
 		if(typeof lastAnswer != 'undefined'){
 			if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
@@ -1198,8 +1201,11 @@ function interpretTags(string, alterId1, alterId2)
             else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
             	array_id += 'and' + alterId2;
     	
-			var lastAnswer = answers[array_id].VALUE;
-				
+            if(typeof answers[array_id].VALUE != "undefined")
+    		    var lastAnswer = answers[array_id].VALUE;
+            else
+                var lastAnswer = undefined;
+
 			if(typeof lastAnswer != 'undefined'){
 				if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
 					for(o in options[question.ID]){
@@ -1245,8 +1251,11 @@ function interpretTags(string, alterId1, alterId2)
         else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
         	array_id += 'and' + alterId2;
 	
-		var lastAnswer = answers[array_id].VALUE;
-			
+        if(typeof answers[array_id].VALUE != "undefined")
+		    var lastAnswer = answers[array_id].VALUE;
+        else
+            var lastAnswer = undefined;
+
 		if(typeof lastAnswer != 'undefined'){
 			if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
 				for(o in options[question.ID]){
@@ -1285,7 +1294,10 @@ function interpretTags(string, alterId1, alterId2)
         else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
         	array_id += 'and' + alterId2;
 	
-		var lastAnswer = answers[array_id].VALUE;
+        if(typeof answers[array_id].VALUE != "undefined")
+		    var lastAnswer = answers[array_id].VALUE;
+        else
+            var lastAnswer = undefined;
 			
 		if(typeof lastAnswer != 'undefined'){
 			if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
@@ -1328,7 +1340,10 @@ function interpretTags(string, alterId1, alterId2)
                     else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
                     	array_id += 'and' + alterId2;
             	
-        			var lastAnswer = answers[array_id].VALUE;
+                    if(typeof answers[array_id].VALUE != "undefined")
+            		    var lastAnswer = answers[array_id].VALUE;
+                    else
+                        var lastAnswer = undefined;
         				
         			if(typeof lastAnswer != 'undefined'){
         				if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
