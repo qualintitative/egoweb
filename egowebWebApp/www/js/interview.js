@@ -1171,7 +1171,7 @@ function interpretTags(string, alterId1, alterId2)
         else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
         	array_id += 'and' + alterId2;
 	
-        if(typeof answers[array_id].VALUE != "undefined")
+        if(typeof answers[array_id] != "undefined")
 		    var lastAnswer = answers[array_id].VALUE;
         else
             var lastAnswer = undefined;
@@ -1211,7 +1211,7 @@ function interpretTags(string, alterId1, alterId2)
             else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
             	array_id += 'and' + alterId2;
     	
-            if(typeof answers[array_id].VALUE != "undefined")
+            if(typeof answers[array_id] != "undefined")
     		    var lastAnswer = answers[array_id].VALUE;
             else
                 var lastAnswer = undefined;
@@ -1261,7 +1261,7 @@ function interpretTags(string, alterId1, alterId2)
         else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
         	array_id += 'and' + alterId2;
 	
-        if(typeof answers[array_id].VALUE != "undefined")
+        if(typeof answers[array_id] != "undefined")
 		    var lastAnswer = answers[array_id].VALUE;
         else
             var lastAnswer = undefined;
@@ -1304,7 +1304,7 @@ function interpretTags(string, alterId1, alterId2)
         else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
         	array_id += 'and' + alterId2;
 	
-        if(typeof answers[array_id].VALUE != "undefined")
+        if(typeof answers[array_id] != "undefined")
 		    var lastAnswer = answers[array_id].VALUE;
         else
             var lastAnswer = undefined;
@@ -1350,7 +1350,7 @@ function interpretTags(string, alterId1, alterId2)
                     else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
                     	array_id += 'and' + alterId2;
             	
-                    if(typeof answers[array_id].VALUE != "undefined")
+                    if(typeof answers[array_id] != "undefined")
             		    var lastAnswer = answers[array_id].VALUE;
                     else
                         var lastAnswer = undefined;
