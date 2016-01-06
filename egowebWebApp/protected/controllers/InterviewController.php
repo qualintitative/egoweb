@@ -206,7 +206,7 @@ class InterviewController extends Controller
                 "expressions"=>json_encode($expressions),
                 "options"=>json_encode($options),
                 "interviewId" => $interviewId,
-                "interview" => json_encode(mToA($interview)),
+                "interview" => json_encode($interview ? mToA($interview) : false),
                 "answers"=>json_encode($answers),
                 "alterPrompts"=>json_encode($alterPrompts),
                 "alters"=>json_encode($alters),
