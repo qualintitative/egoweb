@@ -1,7 +1,8 @@
 $(function(){
     setTimeout(function(){
-        $(".answerInput")[0].focus();
-    }, 0);
+        if(typeof $(".answerInput")[0] != "undefined")
+            $(".answerInput")[0].focus();
+    }, 100);
 })
 $(document).keydown(function(e) {
 	if($("textarea").length == 0 &&  e.keyCode == 13){
