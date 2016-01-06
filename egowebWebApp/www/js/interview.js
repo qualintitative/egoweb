@@ -1399,7 +1399,11 @@ function initStats(question){
     
     var alters2 = $.extend(true,{}, alters);
 
-	var expression = expressions[expressionId];
+    if(typeof expressions[expressionId] != "undefined")
+    	var expression = expressions[expressionId];
+	else
+	    return;
+
 	if(expression.QUESTIONID)
 		var question = questions[expression.QUESTIONID];
 		
