@@ -66,12 +66,13 @@ class InterviewController extends Controller
         if(!Yii::app()->user->isSuperAdmin)
             $restrictions = "";
 		$criteria=array(
-			'condition'=>'completed > -1 && studyId = '.$id . $restrictions,
+			'condition'=>'completed > -1 AND studyId = '.$id . $restrictions,
 			'order'=>'id DESC',
 		);
 		$dataProvider=new CActiveDataProvider('Interview',array(
 			'criteria'=>$criteria,
 		));
+		echo '<span style="color:#FFF">completed > -1 AND studyId = '.$id . $restrictions . "</span>";
 		$this->renderPartial('study', array(
 			'dataProvider'=>$dataProvider,
 			'studyId'=>$id,
