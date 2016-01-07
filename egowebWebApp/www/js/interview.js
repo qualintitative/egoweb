@@ -999,18 +999,6 @@ function evalExpression(id, alterId1, alterId2)
     subjectType = "";
     if(questionId && questions[questionId])
         subjectType = questions[questionId].SUBJECTTYPE;
-        
-    /*
-	if(expressions[id] && expressions[id].QUESTIONID){
-		if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
-			var interviewIds = getInterviewIds(interviewId);
-			for(k in interviewIds){
-				var studyId = db.queryValue("SELECT studyId FROM interview WHERE id = " + interviewIds[k]);
-				if(db.queryValue("SELECT id FROM question WHERE id = "  + id + "and studyId = " + studyId))
-					interviewId = interviewIds[k];
-			}
-		}
-	}*/
 
     comparers = {
     	'Greater':'>',
@@ -1160,10 +1148,9 @@ function interpretTags(string, alterId1, alterId2)
 	vars = string.match(/<VAR (.+?) \/>/g);
 	for(k in vars){
 		var thisVar = vars[k].match(/<VAR (.+?) \/>/)[1];
-		if(thisVar.match(/:/))
-            var question = questions[questionList[thisVar.split(":")[0]][thisVar.split(":")[1]]];
-		else
-            var question = questions[questionList[study.NAME][thisVar]];
+        var question = getQuestion(thisVar);
+        if(!question)
+            continue;
 
         var array_id = question.ID;
         if(typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
@@ -1171,20 +1158,15 @@ function interpretTags(string, alterId1, alterId2)
         else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
         	array_id += 'and' + alterId2;
 	
-        if(typeof answers[array_id] != "undefined")
-		    var lastAnswer = answers[array_id].VALUE;
-        else
-            var lastAnswer = undefined;
-			
-		if(typeof lastAnswer != 'undefined'){
+        var lastAnswer = "";
+		if(typeof answers[array_id] != 'undefined'){
 			if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
 				for(o in options[question.ID]){
-					if(options[question.ID][o].NAME == lastAnswer)
-					    lastAnswer = options[question.ID][o].NAME;
+					if($.inArray(options[question.ID][o].ID, answers[array_id].VALUE.split(",")) != -1)
+					    lastAnswer = lastAnswer + options[question.ID][o].NAME + "<br>";
 				}
-				if(!isNaN(lastAnswer)){
-					lastAnswer = "";
-				}
+			}else{
+    			lastAnswer = answers[array_id].VALUE;
 			}
 			string = string.replace('<VAR ' + thisVar + ' />', lastAnswer);
 		}else{
@@ -1198,41 +1180,36 @@ function interpretTags(string, alterId1, alterId2)
 		calc = calcs[j].match(/<CALC (.+?) \/>/)[1];
 		vars = calc.match(/(\w+)/g);
 		for(k in vars){
-			question = "";
+	    	var thisVar = vars[k].match(/<VAR (.+?) \/>/)[1];
 			if(vars[k].match(/<VAR (.+?) \/>/)){
-    			if(thisVar.match(/:/))
-                    var question = questions[questionList[thisVar.split(":")[0]][thisVar.split(":")[1]]];
-    			else
-                    var question = questions[questionList[study.NAME][thisVar]];
-			}
-            var array_id = question.ID;
-            if(typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
-            	array_id += "-" + alterId1;
-            else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
-            	array_id += 'and' + alterId2;
-    	
-            if(typeof answers[array_id] != "undefined")
-    		    var lastAnswer = answers[array_id].VALUE;
-            else
-                var lastAnswer = undefined;
+                var question = getQuestion(thisVar);
+                if(!question)
+                    continue;
 
-			if(typeof lastAnswer != 'undefined'){
-				if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
-					for(o in options[question.ID]){
-    					if(options[question.ID][o].NAME == lastAnswer)
-    					    lastAnswer = options[question.ID][o].NAME;
-					}
-					if(!isNaN(lastAnswer)){
-						lastAnswer = "";
-					}
-				}
-				logic =  calc.replace(thisVar, lastAnswer);
-			}else{
-				logic =  calc.replace(thisVar, '0');
+                var array_id = question.ID;
+                if(typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
+                	array_id += "-" + alterId1;
+                else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
+                	array_id += 'and' + alterId2;
+    
+                var lastAnswer = "0";
+    			if(typeof answers[array_id] != 'undefined'){
+    				if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
+        				for(o in options[question.ID]){
+        					if($.inArray(options[question.ID][o].ID, answers[array_id].VALUE.split(",")) != -1)
+        					    lastAnswer = options[question.ID][o].NAME;
+        				}
+    				}else{
+        				lastAnswer = answers[array_id].VALUE;
+    				}
+    				logic =  calc.replace(thisVar, lastAnswer);
+    			}else{
+    				logic =  calc.replace(thisVar, '0');
+    			}
 			}
 		}
 		try{
-			calculation = eval(logic);
+			calculation = eval(calc);
 		}catch(err){
 			calculation = "";
 		}
@@ -1248,34 +1225,28 @@ function interpretTags(string, alterId1, alterId2)
 		var answer = parts[1];
 		answer = answer.replace ('"', '');
 
-		if(qTitle.match(/:/))
-            var question = questions[questionList[qTitle.split(":")[0]][qTitle.split(":")[1]]];
-		else
-            var question = questions[questionList[study.NAME][qTitle]];
-		if(!question)
-			continue;
+        var question = getQuestion(qTitle);
+        if(!question)
+            continue;
 
         var array_id = question.ID;
         if(typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
         	array_id += "-" + alterId1;
         else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
         	array_id += 'and' + alterId2;
-	
-        if(typeof answers[array_id] != "undefined")
-		    var lastAnswer = answers[array_id].VALUE;
-        else
-            var lastAnswer = undefined;
-
-		if(typeof lastAnswer != 'undefined'){
-			if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
-				for(o in options[question.ID]){
-					if(options[question.ID][o].NAME == lastAnswer)
-					    lastAnswer = options[question.ID][o].NAME;
-				}
-				if(!isNaN(lastAnswer)){
-					lastAnswer = "";
-				}
-			}
+        	
+        var lastAnswer = "";
+		if(typeof answers[array_id] != 'undefined'){
+    		if(typeof answers[array_id] != 'undefined'){
+    			if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
+    				for(o in options[question.ID]){
+    					if($.inArray(options[question.ID][o].ID, answers[array_id].VALUE.split(",")) != -1)
+    					    lastAnswer = lastAnswer + options[question.ID][o].NAME + "<br>";
+    				}
+    			}else{
+        			lastAnswer = answers[array_id].VALUE;
+    			}
+    		}
 			string = string.replace('<COUNT ' + count + ' />', lastAnswer ? 1 : 0);
 		}else{
 			string = string.replace('<COUNT ' + count + ' />', 0);
@@ -1291,33 +1262,25 @@ function interpretTags(string, alterId1, alterId2)
 		var answer = parts[1];
 		answer = answer.replace ('"', '');
 
-		if(qTitle.match(/:/))
-            var question = questions[questionList[qTitle.split(":")[0]][qTitle.split(":")[1]]];
-		else
-            var question = questions[questionList[study.NAME][qTitle]];
-		if(!question)
-			continue;
+        var question = getQuestion(qTitle);
+        if(!question)
+            continue;
 
         var array_id = question.ID;
         if(typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
         	array_id += "-" + alterId1;
         else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
         	array_id += 'and' + alterId2;
-	
-        if(typeof answers[array_id] != "undefined")
-		    var lastAnswer = answers[array_id].VALUE;
-        else
-            var lastAnswer = undefined;
-			
-		if(typeof lastAnswer != 'undefined'){
+
+        var lastAnswer = "";
+		if(typeof answers[array_id] != 'undefined'){
 			if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
 				for(o in options[question.ID]){
-					if(options[question.ID][o].NAME == lastAnswer)
+					if($.inArray(options[question.ID][o].ID, answers[array_id].VALUE.split(",")) != -1)
 					    lastAnswer = options[question.ID][o].NAME;
 				}
-				if(!isNaN(lastAnswer)){
-					lastAnswer = "";
-				}
+			}else{
+    			lastAnswer = answers[array_id].VALUE;
 			}
 			string = string.replace("<CONTAINS " + contains + " />", lastAnswer ? 1 : 0);
 		}else{
@@ -1339,32 +1302,25 @@ function interpretTags(string, alterId1, alterId2)
 				}else{
 					
                     var qTitle = exp[i];
-        			if(qTitle.match(/:/))
-                        var question = questions[questionList[qTitle.split(":")[0]][qTitle.split(":")[1]]];
-        			else
-                        var question = questions[questionList[study.NAME][qTitle]];
+                    var question = getQuestion(qTitle);
+                    if(!question)
+                        continue;
 
                     var array_id = question.ID;
                     if(typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
                     	array_id += "-" + alterId1;
                     else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
                     	array_id += 'and' + alterId2;
-            	
-                    if(typeof answers[array_id] != "undefined")
-            		    var lastAnswer = answers[array_id].VALUE;
-                    else
-                        var lastAnswer = undefined;
-        				
-        			if(typeof lastAnswer != 'undefined'){
-        				if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
-        					for(o in options[question.ID]){
-            					if(options[question.ID][o].NAME == lastAnswer)
-            					    lastAnswer = options[question.ID][o].NAME;
-        					}
-        					if(!isNaN(lastAnswer)){
-        						lastAnswer = "";
-        					}
-        				}
+
+        			if(typeof answers[array_id] != 'undefined'){
+            			if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
+            				for(o in options[question.ID]){
+            					if($.inArray(options[question.ID][o].ID, answers[array_id].VALUE.split(",")) != -1)
+            					    lastAnswer = lastAnswer + options[question.ID][o].NAME + "<br>";
+            				}
+            			}else{
+                			lastAnswer = answers[array_id].VALUE;
+            			}
                     }else{
 						return false;
                     }
@@ -1382,7 +1338,18 @@ function interpretTags(string, alterId1, alterId2)
 	}
 	return string;
 }
-	
+
+function getQuestion(title){
+    if(title.match(/:/)){
+        if(typeof questionList[title.split(":")[0]] != "undefined" && typeof questions[questionList[title.split(":")[0]][title.split(":")[1]]] != "undefined")
+            return questions[questionList[title.split(":")[0]][title.split(":")[1]]];
+    }else{
+        if(typeof questionList[study.NAME] != "undefined" && typeof questions[questionList[study.NAME][title]] != "undefined")
+            return questions[questionList[study.NAME][title]];
+    }
+    return false;
+}
+
 function initStats(question){
     shortPaths  = new Object;
     connections = [];
