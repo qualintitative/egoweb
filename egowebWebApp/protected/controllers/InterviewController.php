@@ -72,7 +72,6 @@ class InterviewController extends Controller
 		$dataProvider=new CActiveDataProvider('Interview',array(
 			'criteria'=>$criteria,
 		));
-		echo '<span style="color:#FFF">completed > -1 AND studyId = '.$id . $restrictions . "</span>";
 		$this->renderPartial('study', array(
 			'dataProvider'=>$dataProvider,
 			'studyId'=>$id,
