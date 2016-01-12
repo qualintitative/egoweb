@@ -425,8 +425,10 @@ class ImportExportController extends Controller
     						}
     						if(!preg_match("/,/", $newGraph->interviewId))
     							$newGraph->interviewId = $newInterview->id;
-    
-    						$newGraph->expressionId = $newExpressionIds[intval($newGraph->expressionId)];
+
+                            if(isset($newExpressionIds[intval($newGraph->expressionId)]))
+        						$newGraph->expressionId = $newExpressionIds[intval($newGraph->expressionId)];
+
     						if(!$newGraph->save()){
         						print_r($newExpressionIds);
         						print_r($newGraph->expressionId);

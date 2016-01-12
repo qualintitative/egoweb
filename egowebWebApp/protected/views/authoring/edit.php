@@ -233,8 +233,8 @@ function deleteAlterList(studyId){
 		<?php echo $form->checkBox($model,'hideEgoIdPage'); ?>
 	</div>
 
-	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array("class"=>"btn btn-primary btn-sm",)); ?>
+	<div class="buttons col-sm-6">
+    <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array("class"=>"btn btn-primary btn-sm",)); ?>
 
 	<?php $this->endWidget(); ?>
 	<?php if(!$model->isNewRecord): ?>
