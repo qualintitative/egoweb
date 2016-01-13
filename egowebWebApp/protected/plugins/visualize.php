@@ -219,7 +219,7 @@ class visualize extends Plugin
 				$label = Alters::getName($note->alterId);
 			else
 				$label = str_replace("graphNote-", "", $note->alterId);
-			echo "<div style='width:50%;float:left;padding-right:20px' class=''><h3>" . $label . " </h3><small>$note->notes</small></div>";
+			echo "<div style='width:50%;float:left;padding-right:20px;clear:both' class=''><h3>" . $label . " </h3><small>$note->notes</small></div>";
 		}
 	}
 

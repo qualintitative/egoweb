@@ -463,7 +463,7 @@ app.directive('checkAnswer', [function (){
         			}
 			    }
 
-                if(attr.answerType == "TEXTUAL" || attr.answerType == "TEXTUAL_PP"){
+                if(attr.answerType == "TEXTUAL"){
                     if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
                         if(value == ""){
                             console.log("DDDDD");
@@ -599,7 +599,7 @@ app.directive('checkAnswer', [function (){
         			}
 			    }
 
-                if(attr.answerType == "TEXTUAL" || attr.answerType == "TEXTUAL_PP"){
+                if(attr.answerType == "TEXTUAL"){
                     if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
                         if(value == ""){
                             scope.errors[array_id] = "Value cannot be blank...";
