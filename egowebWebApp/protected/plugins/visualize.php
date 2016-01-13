@@ -842,7 +842,17 @@ function fullscreen(){
 	} else if (typeof elem.webkitRequestFullscreen != "undefined") {
 		elem.webkitRequestFullscreen();
 	}
+	$("#infovis").height(640);
+    setTimeout( function (){
+    document.addEventListener('webkitfullscreenchange', exitHandler, false);
+    document.addEventListener('mozfullscreenchange', exitHandler, false);
+    document.addEventListener('fullscreenchange', exitHandler, false);
+    document.addEventListener('MSFullscreenChange', exitHandler, false);
+
+    }, 500);
+
 }
+
 
 // transfer graph data from php to javascript
 g = {
