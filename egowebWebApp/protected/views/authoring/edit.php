@@ -9,9 +9,9 @@ $(function(){
 	$('#Study_introduction').summernote({
 		toolbar:noteBar,
 		height:200,
-		onImageUpload: function(files, editor, welEditable) {
+		/*onImageUpload: function(files, editor, welEditable) {
 			uploadImage(files[0], editor, welEditable);
-		},
+		},*/
 		onChange: function(contents, $editable) {
 			$('#Study_introduction').val(contents);
 		},
@@ -30,9 +30,9 @@ $(function(){
 	$('#Study_egoIdPrompt').summernote({
 		toolbar:noteBar,
 		height:200,
-		onImageUpload: function(files, editor, welEditable) {
+		/*onImageUpload: function(files, editor, welEditable) {
 			uploadImage(files[0], editor, welEditable);
-		},
+		},*/
 		onChange: function(contents, $editable) {
 			$('#Study_egoIdPrompt').val(contents);
 		},
@@ -51,9 +51,9 @@ $(function(){
 	$('#Study_alterPrompt').summernote({
 		toolbar:noteBar,
 		height:200,
-		onImageUpload: function(files, editor, welEditable) {
+		/*onImageUpload: function(files, editor, welEditable) {
 			uploadImage(files[0], editor, welEditable);
-		},
+		},*/
 		onChange: function(contents, $editable) {
 			$('#Study_alterPrompt').val(contents);
 		},
@@ -72,9 +72,9 @@ $(function(){
 	$('#Study_conclusion').summernote({
 		toolbar:noteBar,
 		height:200,
-		onImageUpload: function(files, editor, welEditable) {
+		/*onImageUpload: function(files, editor, welEditable) {
 			uploadImage(files[0], editor, welEditable);
-		},
+		},*/
 		onChange: function(contents, $editable) {
 			$('#Study_conclusion').val(contents);
 		},
@@ -120,7 +120,7 @@ function deleteAlterList(studyId){
 </div>
 
 <div class="form-group">
-    
+
 	<div class="col-sm-6">
 		<?php echo $form->labelEx($model,'introduction'); ?>
 		<?php echo $form->textArea($model,'introduction',array('rows'=>6, 'cols'=>50)); ?>

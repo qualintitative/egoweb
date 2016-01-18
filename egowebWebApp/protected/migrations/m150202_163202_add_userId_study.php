@@ -7,7 +7,9 @@ class m150202_163202_add_userId_study extends CDbMigration
         $transaction=$this->getDbConnection()->beginTransaction();
         try
         {
-            $this->addColumn('study', 'userId', 'int');
+            $table = Yii::app()->db->schema->getTable('study');
+			if(!isset($table->columns['userId']))
+                $this->addColumn('study', 'userId', 'int');
             $transaction->commit();
         }
         catch(Exception $e)

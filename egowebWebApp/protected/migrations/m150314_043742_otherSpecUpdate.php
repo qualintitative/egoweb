@@ -8,12 +8,6 @@ class m150314_043742_otherSpecUpdate extends CDbMigration
         try
         {
 		    $table = Yii::app()->db->schema->getTable('questionOption');
-            $this->createTable('otherSpecify', array(
-                'id' => 'pk',
-                'optionId' => 'int(11)',
-                'interviewId' => 'int(11)',
-                'value' => 'string NOT NULL',
-            ));
 			if(!isset($table->columns['otherSpecify']))
 				$this->addColumn('questionOption', 'otherSpecify', 'tinyint(1)');
             $transaction->commit();

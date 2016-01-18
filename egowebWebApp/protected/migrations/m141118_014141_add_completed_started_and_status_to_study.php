@@ -7,9 +7,13 @@ class m141118_014141_add_completed_started_and_status_to_study extends CDbMigrat
         $transaction=$this->getDbConnection()->beginTransaction();
         try
         {
-            $this->addColumn('study', 'completed', 'int');
-            $this->addColumn('study', 'started', 'int');
-            $this->addColumn('study', 'status', 'int');
+            $table = Yii::app()->db->schema->getTable('study');
+			if(!isset($table->columns['completed']))
+                $this->addColumn('study', 'completed', 'int');
+            if(!isset($table->columns['started']))
+                $this->addColumn('study', 'started', 'int');
+            if(!isset($table->columns['status']))
+                $this->addColumn('study', 'status', 'int');
             $transaction->commit();
         }
         catch(Exception $e)

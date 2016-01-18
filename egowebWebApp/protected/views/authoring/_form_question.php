@@ -521,9 +521,9 @@ $(function(){
 	$('#prompt<?php echo $model->id;?>').summernote({
 		toolbar:noteBar,
 		height:200,
-		onImageUpload: function(files, editor, welEditable) {
+		/*onImageUpload: function(files, editor, welEditable) {
 			uploadImage(files[0], editor, welEditable);
-		},
+		},*/
 		onChange: function(contents, $editable) {
 			$('#prompt<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
 		},
@@ -542,9 +542,9 @@ $(function(){
 	$('#preface<?php echo $model->id;?>').summernote({
 		toolbar:noteBar,
 		height:200,
-		onImageUpload: function(files, editor, welEditable) {
+		/*onImageUpload: function(files, editor, welEditable) {
 			uploadImage(files[0], editor, welEditable);
-		},
+		},*/
 		onChange: function(contents, $editable) {
 			$('#preface<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
 		},
@@ -563,9 +563,9 @@ $(function(){
 	$('#citation<?php echo $model->id;?>').summernote({
 		toolbar:noteBar,
 		height:200,
-		onImageUpload: function(files, editor, welEditable) {
+		/*onImageUpload: function(files, editor, welEditable) {
 			uploadImage(files[0], editor, welEditable);
-		},
+		},*/
 		onChange: function(contents, $editable) {
 			$('#citation<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
 		},

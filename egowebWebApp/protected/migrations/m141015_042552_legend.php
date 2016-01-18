@@ -7,16 +7,19 @@ class m141015_042552_legend extends CDbMigration
 		$transaction=$this->getDbConnection()->beginTransaction();
 		try
 		{
-			$this->createTable('legend', array(
-				'id' => 'pk',
-				'studyId' => 'integer NOT NULL',
-				'questionId' => 'integer NOT NULL',
-				'shape' => 'string NOT NULL',
-				'label' => 'string',
-				'color' => 'string',
-				'size' => 'integer',
-				'ordering' => 'integer',
-			));
+            $table = Yii::app()->db->schema->getTable('legend');
+			if(!$table){
+    			$this->createTable('legend', array(
+    				'id' => 'pk',
+    				'studyId' => 'integer NOT NULL',
+    				'questionId' => 'integer NOT NULL',
+    				'shape' => 'string NOT NULL',
+    				'label' => 'string',
+    				'color' => 'string',
+    				'size' => 'integer',
+    				'ordering' => 'integer',
+    			));
+            }
 			$transaction->commit();
 		}
 		catch(Exception $e)
