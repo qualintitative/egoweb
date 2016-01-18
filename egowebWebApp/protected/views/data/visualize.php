@@ -84,7 +84,7 @@ if($interviewId && $expressionId){
     echo "<br clear=all>";
 	$stats = new Statistics;
 	$stats->initComponents($interviewId, $expressionId);
-
+/*
 	foreach($stats->nodes as $node){
 		echo $node . ":" . $stats->names[$node] . ": degrees: ". $stats->getDegree($node). "<br>";
 		echo $node . ":" . $stats->names[$node] . ": betweenness: ". $stats->getBetweenness($node). "<br>";
@@ -101,6 +101,7 @@ if($interviewId && $expressionId){
 	echo "Components:".count($stats->components)."<br>";
 	echo "Dyads:".count($stats->dyads)."<br>";
 	echo "Isolates:".count($stats->isolates)."<br>";
+*/
 }
 
 ?>

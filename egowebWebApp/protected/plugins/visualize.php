@@ -650,6 +650,7 @@ class visualize extends Plugin
 			<div class="col-sm-4 pull-right" id="right-container">
 				<button  onclick="fullscreen()" class="btn btn-info print-button" disabled id="fullscreenButton">Fullscreen</button>
 				<button  onclick="print(<?=$this->id;?>,<?=$this->method;?>)" class="btn btn-primary print-button" style="margin-top:10px">Print Preview</button>
+                <button  onclick="toggleLabels()" class="btn btn-warning print-button" id="toggleLabelsButton" style="margin-top:10px">Toggle Labels</button>
 				<?php
 				if($this->networkTitle){
 					$interviewIds = Interview::multiInterviewIds($this->method, $study);
@@ -787,9 +788,18 @@ class visualize extends Plugin
 			}
 
 			function print(expressionId, interviewId){
-				url = "/data/visualize?print&expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent($("#Graph_params").val());
+				url = "/data/visualize?print&expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent($("#Graph_params").val()) + "&labelThreshold=" + s.renderers[0].settings("labelThreshold");
 				window.open(url);
 			}
+
+            function toggleLabels(){
+                var labelT = s.renderers[0].settings("labelThreshold");
+                if(labelT == 1)
+                    s.renderers[0].settings({labelThreshold:10});
+                else
+                    s.renderers[0].settings({labelThreshold:1});
+                s.refresh();
+            }
 
 function drawLegend(){
 	if(g.legends.length == 0)
@@ -886,7 +896,7 @@ $(function(){
 		},
 		settings: {
 			doubleClickEnabled: false,
-			labelThreshold: 1,
+			labelThreshold: <?php echo (isset($_GET['labelThreshold']) ? $_GET['labelThreshold'] : 1); ?>,
 			minNodeSize: 2,
 			maxNodeSize: max_node_size,
 			minEdgeSize: 0.5,
