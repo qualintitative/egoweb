@@ -1,14 +1,14 @@
 var app = angular.module('egowebApp', ['ngRoute', 'autocomplete']);
 
 app.config(function ($routeProvider) {
-    
+
     $routeProvider
 
     .when('/page/:page', {
         templateUrl: baseUrl + 'interview.html',
         controller: 'interviewController'
     })
-    
+
 });
 
 app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', '$location', '$route', "saveAlter", "deleteAlter", function($scope, $log, $routeParams, $sce, $location, $route, saveAlter, deleteAlter) {
@@ -48,7 +48,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         $scope.audioFiles[k].src = audio[k];
     }
 
-    console.log($scope.questions);    
+    console.log($scope.questions);
     $scope.nav = buildNav($scope.page);
 
     $('#navbox ul').html("");
@@ -59,7 +59,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     	    $('#navbox ul').append("<li id='menu_" + k + "']]><a href='" + $location.absUrl().replace($location.url(),'') + "page/" + k + "'>" + $scope.nav[k] + "</a></li>");
     }
     $("#second").show();
-    $("#second").scrollTop($("#second").scrollTop() - $("#second").offset().top + $("#menu_" + $scope.page).offset().top); 
+    $("#second").scrollTop($("#second").scrollTop() - $("#second").offset().top + $("#menu_" + $scope.page).offset().top);
     $("#questionMenu").removeClass("hidden");
 
     for(var k in $scope.questions){
@@ -67,7 +67,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         if($scope.questions[k].USEALTERLISTFIELD == "name" || $scope.questions[k].USEALTERLISTFIELD == "email"){
             $scope.participants = participantList[$scope.questions[k].USEALTERLISTFIELD];
         }
-        
+
         console.log($scope.questions);
         console.log($scope.questions[k].CITATION );
         if(typeof $scope.questions[k].CITATION == "string")
@@ -83,7 +83,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 button.checked = false;
                 $scope.options['all'][Object.keys($scope.options['all']).length] = button;
             }
-    
+
             if($scope.questions[k].REFUSEBUTTON == true){
                 var button = new Object;
                 button.NAME = "Refuse";
@@ -192,7 +192,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 button.checked = true;
             $scope.options[array_id][Object.keys($scope.options[array_id]).length] = button;
         }
-        
+
         columns = Object.keys($scope.options[array_id]).length;
         if(typeof $scope.answers[array_id].OTHERSPECIFYTEXT != "undefined" && $scope.answers[array_id].OTHERSPECIFYTEXT != null && $scope.answers[array_id].OTHERSPECIFYTEXT != ""){
             var specify = $scope.answers[array_id].OTHERSPECIFYTEXT.split(";;");
@@ -228,13 +228,13 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 $scope.graphExpressionId = graphs[expressionId].EXPRESSIONID;
                 $scope.graphInterviewId = graphs[expressionId].INTERVIEWID;
                 $scope.graphNodes = graphs[expressionId].NODES;
-                $scope.graphParams = graphs[expressionId].PARAMS;
+                $scope.graphParams = $scope.questions[k].NETWORKPARAMS;
                 if(typeof allNotes[expressionId] != "undefined")
                     notes = allNotes[expressionId];
             }else{
                 $scope.graphExpressionId = expressionId;
                 $scope.graphInterviewId = interviewId;
-                
+
             }
             initStats($scope.questions[k]);
         }
@@ -251,10 +251,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.errors = new Object;
 
 	$scope.print = function(){
-		url = "/data/visualize?print&expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent($("#Graph_params").val());
+		url = "/data/visualize?print&expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent($("#Graph_params").val()) + "&labelThreshold=" + s.renderers[0].settings("labelThreshold");
 		window.open(url);
 	}
-			
+
     $scope.playSound = function(file) {
         $scope.audioFiles[file].play();
     }
@@ -391,8 +391,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 $scope.answers[array_id].VALUE = "";
             if(
                 ($scope.answers[array_id].VALUE == "" && $scope.answers[array_id].SKIPREASON == "NONE" && $scope.options['all'][index].checked == true) ||
-                ((($scope.answers[array_id].VALUE != "" && $.inArray(v.toString(), $scope.answers[array_id].VALUE.split(",")) != -1) || ($scope.answers[array_id].SKIPREASON != "" && $.inArray(v.toString(), $scope.answers[array_id].SKIPREASON.split(",")) != -1)) && $scope.options['all'][index].checked == false) 
-            
+                ((($scope.answers[array_id].VALUE != "" && $.inArray(v.toString(), $scope.answers[array_id].VALUE.split(",")) != -1) || ($scope.answers[array_id].SKIPREASON != "" && $.inArray(v.toString(), $scope.answers[array_id].SKIPREASON.split(",")) != -1)) && $scope.options['all'][index].checked == false)
+
             )
             {
                 $scope.options[array_id][index].checked = $scope.options['all'][index].checked;
@@ -400,7 +400,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             }
         }
     }
-    
+
     $scope.timeValue = function (array_id){
     	var date = "";
     	if(!isNaN($scope.time_spans[array_id].YEARS))
@@ -438,12 +438,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     		date += $scope.dates[array_id].AMPM;
     	$scope.answers[array_id].VALUE = date;
     	console.log(date);
-    
+
     }
 
 }]);
 
-app.directive('checkAnswer', [function (){ 
+app.directive('checkAnswer', [function (){
    return {
         require: 'ngModel',
         link: function(scope, elem, attr, ngModel) {
@@ -452,7 +452,7 @@ app.directive('checkAnswer', [function (){
                 var valid = true;
                 var array_id = attr.arrayId;
                 var question = questions[attr.questionId];
-                
+
                 console.log(question);
                 console.log("check:" + value);
 
@@ -501,14 +501,14 @@ app.directive('checkAnswer', [function (){
         				numberErrors = numberErrors + 2;
         			if(((max !== "" && parseInt(value) > parseInt(max))  ||  (min !== "" && parseInt(value) < parseInt(min))) && scope.answers[array_id].SKIPREASON == "NONE")
         				showError = true;
-        
+
         			if(numberErrors == 3)
         				errorMsg = "The range of valid answers is " + min + " to " + max + ".";
         			else if (numberErrors == 2)
         				errorMsg = "The range of valid answers is " + max + " or fewer.";
         			else if (numberErrors == 1)
         				errorMsg = "The range of valid answers is " + min + " or greater.";
-        
+
         			if(showError){
                         scope.errors[array_id] = errorMsg;
                         valid = false;
@@ -516,7 +516,7 @@ app.directive('checkAnswer', [function (){
                         delete scope.errors[array_id];
                     }
         		}
-    
+
                 if(attr.answerType == "DATE"){
                     console.log(attr.answerType);
         			var date = value.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
@@ -542,7 +542,7 @@ app.directive('checkAnswer', [function (){
         			    }
         			}
         		}
-    
+
         		if(attr.answerType == "MULTIPLE_SELECTION"){
             		var showError = false;
         			min = question.MINCHECKABLEBOXES;
@@ -552,11 +552,11 @@ app.directive('checkAnswer', [function (){
         				numberErrors++;
         			if(max !== "")
         				numberErrors = numberErrors + 2;
-        
+
         			checkedBoxes = value.split(',').length;
         			if(!value)
         				checkedBoxes = 0;
-        
+
         			if ((checkedBoxes < min || checkedBoxes > max) && scope.answers[array_id].SKIPREASON == "NONE")
         				showError = true;
         			//console.log('min:' + min + ':max:' + max + ':checked:' + checkedBoxes+ ":answer:" + value + ":showerror:" + showError);
@@ -576,7 +576,7 @@ app.directive('checkAnswer', [function (){
         				errorMsg = "You must select at least " + min + " response" + s + " please.";
         			//if(answer.OTHERSPECIFYTEXT && showError)
         			//	showError = false;
-        
+
         			if(showError){
                         scope.errors[array_id] = errorMsg;
                         valid = false;
@@ -586,7 +586,7 @@ app.directive('checkAnswer', [function (){
                 ngModel.$setValidity('checkAnswer', valid);
                 return valid ? value : undefined;
             });
-          
+
           ngModel.$formatters.unshift(function(value) {
                 var valid = true;
                 var array_id = attr.arrayId;
@@ -634,20 +634,20 @@ app.directive('checkAnswer', [function (){
         				numberErrors = numberErrors + 2;
         			if(((max !== "" && parseInt(value) > parseInt(max))  ||  (min !== "" && parseInt(value) < parseInt(min))) && scope.answers[array_id].SKIPREASON == "NONE")
         				showError = true;
-        
+
         			if(numberErrors == 3 && showError)
         				errorMsg = "The range of valid answers is " + min + " to " + max + ".";
         			else if (numberErrors == 2 && showError)
         				errorMsg = "The range of valid answers is " + max + " or fewer.";
         			else if (numberErrors == 1 && showError)
         				errorMsg = "The range of valid answers is " + min + " or greater.";
-        
+
         			if(showError){
                         scope.errors[array_id] = errorMsg;
                         valid = false;
         			}
         		}
-    
+
                 if(attr.answerType == "DATE"){
                     console.log(attr.answerType);
         			var date = value.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
@@ -683,11 +683,11 @@ app.directive('checkAnswer', [function (){
         				numberErrors++;
         			if(max !== "")
         				numberErrors = numberErrors + 2;
-        
+
         			checkedBoxes = value.split(',').length;
         			if(!value)
         				checkedBoxes = 0;
-        
+
         			if ((checkedBoxes < min || checkedBoxes > max) && scope.answers[array_id].SKIPREASON == "NONE")
         				showError = true;
 
@@ -708,7 +708,7 @@ app.directive('checkAnswer', [function (){
         				errorMsg = "You must select at least " + min + " response" + s + " please.";
         			//if(answer.OTHERSPECIFYTEXT && showError)
         			//	showError = false;
-        
+
         			if(showError){
                         scope.errors[array_id] = errorMsg;
                         valid = false;
@@ -955,7 +955,7 @@ function buildQuestions(pageNumber, interviewId){
 
     			if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID) != true)
     				continue;
-    
+
     			if(network_questions[j].PREFACE != ""){
     				if(pageNumber == i){
     					var preface = new Object;
@@ -1014,12 +1014,12 @@ function evalExpression(id, alterId1, alterId2)
     	array_id += "-" + alterId1;
     else if(typeof alterId2 != 'undefined' && subjectType == 'ALTER_PAIR')
     	array_id += "-" + alterId1 + 'and' + alterId2;
-    
+
     if(typeof answers[array_id] != "undefined")
 		answer = answers[array_id].VALUE;
     else
     	answer = "";
-	
+
     if(expressions[id].TYPE == "Text"){
     	if(!answer)
     		return expressions[id].RESULTFORUNANSWERED;
@@ -1157,7 +1157,7 @@ function interpretTags(string, alterId1, alterId2)
         	array_id += "-" + alterId1;
         else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
         	array_id += 'and' + alterId2;
-	
+
         var lastAnswer = "";
 		if(typeof answers[array_id] != 'undefined'){
 			if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
@@ -1191,7 +1191,7 @@ function interpretTags(string, alterId1, alterId2)
                 	array_id += "-" + alterId1;
                 else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
                 	array_id += 'and' + alterId2;
-    
+
                 var lastAnswer = "0";
     			if(typeof answers[array_id] != 'undefined'){
     				if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
@@ -1234,7 +1234,7 @@ function interpretTags(string, alterId1, alterId2)
         	array_id += "-" + alterId1;
         else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
         	array_id += 'and' + alterId2;
-        	
+
         var lastAnswer = "";
 		if(typeof answers[array_id] != 'undefined'){
     		if(typeof answers[array_id] != 'undefined'){
@@ -1300,7 +1300,7 @@ function interpretTags(string, alterId1, alterId2)
 				if(exp[i].match("/>")){
 					exp[i] = interpretTags(exp[i]);
 				}else{
-					
+
                     var qTitle = exp[i];
                     var question = getQuestion(qTitle);
                     if(!question)
@@ -1363,7 +1363,7 @@ function initStats(question){
     betweennesses = [];
 	if(alters.length == 0)
 		return false;
-    
+
     var alters2 = $.extend(true,{}, alters);
 
     if(typeof expressions[expressionId] != "undefined")
@@ -1373,7 +1373,7 @@ function initStats(question){
 
 	if(expression.QUESTIONID)
 		var question = questions[expression.QUESTIONID];
-		
+
 	for(a in alters){
 		betweennesses[alters[a].ID] = 0;
 		var keys = Object.keys(alters2);
@@ -1399,7 +1399,7 @@ function initStats(question){
 
 	this.getDistance = function (visited, node2){
 		var node1 =  visited[visited.length - 1];
-		
+
 		if($.inArray(node2, connections[node1]) != -1){
     		var trail = visited.slice(0);
 			trail.push(node2);
@@ -1547,7 +1547,7 @@ function initStats(question){
 		}
 		return normalized;
 	}
-	
+
 	this.change = function (vec1, vec2) {
 		var total = 0.0;
 		for(g in vec1) {
@@ -1555,7 +1555,7 @@ function initStats(question){
 		}
 		return total;
 	}
-	
+
 	var tries = (n.length+5)*(n.length+5);
 	var guess = closenesses;
 	while(tries >= 0) {
@@ -1580,7 +1580,7 @@ function initStats(question){
 	}
 	maxEigenvector = Math.max.apply(Math, all);
 	minEigenvector = Math.min.apply(Math, all);
-	
+
 	var all = [];
 	for(k in connections){
     	all.push(connections[k].length);
@@ -1775,7 +1775,7 @@ function initStats(question){
 			}
 		}
 		return 1;
-	}	
+	}
 
     var alters2 = $.extend(true,{}, alters);
 	for(a in alters){
@@ -1822,7 +1822,7 @@ for(y in g.edges){sizes.push(g.edges[y].size)}
 
 setTimeout(function(){
 	sigma.renderers.def = sigma.renderers.canvas;
-	
+
 	s = new sigma({
 		graph: g,
 		renderer: {
@@ -1894,6 +1894,14 @@ function fullscreen(){
 
 }
 
+function toggleLabels(){
+    var labelT = s.renderers[0].settings("labelThreshold");
+    if(labelT == 1)
+        s.renderers[0].settings({labelThreshold:100});
+    else
+        s.renderers[0].settings({labelThreshold:1});
+    s.refresh();
+}
 
 
 function exitHandler()
@@ -2033,7 +2041,7 @@ function buildNav(pageNumber){
 				}
 			}
 		}
-		
+
 		for(j in network_questions){
 		    if(interviewId){
 		    	if(!evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID))
@@ -2050,4 +2058,3 @@ function buildNav(pageNumber){
 	pages[i] = this.checkPage(i, pageNumber, "CONCLUSION");
 	return pages;
 }
-
