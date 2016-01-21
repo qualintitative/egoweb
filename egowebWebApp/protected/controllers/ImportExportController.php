@@ -36,7 +36,7 @@ class ImportExportController extends Controller
     		$newAnswerIds = array();
     		$newAlterIds = array();
     		$merge = false;
-    
+
     		foreach($study->attributes() as $key=>$value){
     			if($key != "id" && $newStudy->hasAttribute($key))
     				$newStudy->$key = $value;
@@ -52,21 +52,21 @@ class ImportExportController extends Controller
     		}
 
     		if(!$merge){
-    
+
     			foreach($study as $key=>$value){
     				if(count($value) == 0 && $key != "answerLists" && $key != "expressions")
     					$newStudy->$key = html_entity_decode ($value);
     			}
     			if(isset($_POST['newName']) && $_POST['newName'])
     				$newStudy->name = $_POST['newName'];
-    
+
     			if(!$newStudy->save()){
     				echo "study: " . print_r($newStudy->getErrors());
     				die();
     			}
-    
+
     			if($study->alterPrompts->alterPrompt){
-    
+
     				foreach($study->alterPrompts->alterPrompt as $alterPrompt){
     					$newAlterPrompt = new AlterPrompt;
     					foreach($alterPrompt->attributes() as $key=>$value){
@@ -83,7 +83,7 @@ class ImportExportController extends Controller
     			}
 
     			if($study->alterLists->alterList){
-    
+
     				foreach($study->alterLists->alterList as $alterList){
     					$newAlterList = new AlterList;
     					foreach($alterList->attributes() as $key=>$value){
@@ -99,7 +99,7 @@ class ImportExportController extends Controller
     						}
     				}
     			}
-    
+
     			foreach($study->questions->question as $question){
     				$newQuestion = new Question;
     				$newQuestion->studyId = $newStudy->id;
@@ -128,7 +128,7 @@ class ImportExportController extends Controller
     					echo "Question: " . print_r($newQuestion->getErrors());
     				else
     					$newQuestionIds[$oldId] = $newQuestion->id;
-    
+
     				if($options > 0){
     					foreach($question->option as $option){
     						$newOption = new QuestionOption;
@@ -149,7 +149,7 @@ class ImportExportController extends Controller
     					}
     				}
     			}
-    
+
     			// loop through the questions and correct linked ids
     			$newQuestions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
     			foreach($newQuestions as $newQuestion){
@@ -157,7 +157,7 @@ class ImportExportController extends Controller
     					$newQuestion->listRangeString = $newOptionIds[intval($newQuestion->listRangeString)];
     				$newQuestion->save();
     			}
-    
+
     			if($newStudy->multiSessionEgoId != 0 && isset($newQuestionIds[intval($newStudy->multiSessionEgoId)])){
     				$newStudy->multiSessionEgoId = $newQuestionIds[intval($newStudy->multiSessionEgoId)];
     				$newStudy->save();
@@ -176,17 +176,17 @@ class ImportExportController extends Controller
     							$newExpression->$key = $value;
     					}
     					// reference the correct question, since we're not using old ids
-    
+
     					if($newExpression->questionId != "" && isset($newQuestionIds[intval($newExpression->questionId)]))
     						$newExpression->questionId = $newQuestionIds[intval($newExpression->questionId)];
-    
+
     					$newExpression->value = $expression->value;
     					if(!$newExpression->save())
     						echo "Expression: " . print_r($newExpression->getErrors());
     					else
     						$newExpressionIds[$oldExpressionId] = $newExpression->id;
     				}
-    
+
     				// second loop to replace old ids in Expression->value
     				foreach($study->expressions->expression as $expression){
     					if(!isset($newExpressionIds[$oldExpressionId]))
@@ -197,7 +197,7 @@ class ImportExportController extends Controller
     							$newExpression = Expression::model()->findByPk($newExpressionIds[$oldExpressionId]);
     						}
     					}
-    
+
     					// reference the correct question, since we're not using old ids
     					if($newExpression->type == "Selection"){
     						$optionIds = explode(',', $newExpression->value);
@@ -241,7 +241,7 @@ class ImportExportController extends Controller
     					}
     					$newExpression->save();
     				}
-    
+
     			}
 
         		// loop through questions and relink network params
@@ -278,7 +278,7 @@ class ImportExportController extends Controller
         				$question->save();
         			}
         		}
-    		
+
     		}else{
                 $questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
                 foreach ($questions as $question) {
@@ -306,9 +306,9 @@ class ImportExportController extends Controller
                     }
                 }
     		}
-    
 
-    
+
+
     		if(count($study->interviews) != 0){
     			foreach($study->interviews->interview as $interview){
     				$newAlterIds = array();
@@ -325,7 +325,7 @@ class ImportExportController extends Controller
     					echo "New interview: " .  print_r($newInterview->errors);
     				else
     					$newInterviewIds[intval($oldInterviewId)] = $newInterview->id;
-    
+
     				if(count($interview->alters->alter) != 0){
     					foreach($interview->alters->alter as $alter){
     						$newAlter = new Alters;
@@ -337,9 +337,9 @@ class ImportExportController extends Controller
     						}
     						if(!preg_match("/,/", $newAlter->interviewId))
     							$newAlter->interviewId = $newInterview->id;
-    
+
     						$newAlter->ordering=1;
-    
+
     						if(!$newAlter->save()){
     							"Alter: " . print_r($newAlter->getErrors());
     							die();
@@ -348,7 +348,7 @@ class ImportExportController extends Controller
     						}
     					}
     				}
-    
+
     				if(count($interview->notes->note) != 0){
     					foreach($interview->notes->note as $note){
     						$newNote = new Note;
@@ -358,17 +358,17 @@ class ImportExportController extends Controller
     						}
     						if(!preg_match("/,/", $newNote->interviewId))
     							$newNote->interviewId = $newInterview->id;
-    
+
     						$newNote->expressionId = $newExpressionIds[intval($newNote->expressionId)];
     						$newNote->alterId = $newAlterIds[intval($newNote->alterId)];
-    
+
     						if(!$newNote->save()){
     							"Note: " . print_r($newNote->errors);
     							die();
     						}
     					}
     				}
-    
+
     				if(count($interview->otherSpecifies->otherSpecify) != 0){
     					foreach($interview->otherSpecifies->otherSpecify as $other){
     						$newOther = new OtherSpecify;
@@ -378,18 +378,23 @@ class ImportExportController extends Controller
     						}
     						if(!preg_match("/,/", $newOther->interviewId))
     							$newOther->interviewId = $newInterview->id;
-    
+
+                            if(!isset($newOptionIds[intval($newOther->optionId)]) || !$newOptionIds[intval($newOther->optionId)])
+                                continue;
+
     						$newOther->optionId = $newOptionIds[intval($newOther->optionId)];
-    
+
     						$newOther->alterId = $newAlterIds[intval($newOther->alterId)];
-    
+
     						if(!$newOther->save()){
-    							"OtherSpecify: " . print_r($newOther->errors);
+    							echo "OtherSpecify: " . print_r($newOther->errors);
+                                print_r($newOptionIds);
+                                echo "<br>this id:" . $newOther->optionId;
     							die();
     						}
     					}
     				}
-    
+
     				if(count($interview->graphs->graph) != 0){
     					foreach($interview->graphs->graph as $graph){
     						$newGraph = new Graph;
@@ -437,11 +442,11 @@ class ImportExportController extends Controller
     						}
     					}
     				}
-    
+
     				if(count($interview->answers->answer) != 0){
     					foreach($interview->answers->answer as $answer){
     						$newAnswer = new Answer;
-    
+
     						foreach($answer->attributes() as $key=>$value){
     							if($key!="key" && $key != "id")
     								$newAnswer->$key = $value;
@@ -449,18 +454,18 @@ class ImportExportController extends Controller
     										$newAnswer->alterId1 = $newAlterIds[intval($value)];
     									if($key == "alterId2" && isset($newAlterIds[intval($value)]))
     										$newAnswer->alterId2 = $newAlterIds[intval($value)];
-    
-    
+
+
     									if($key == "questionId"){
     										$newAnswer->questionId = $newQuestionIds[intval($value)];
     										$oldQId = intval($value);
     									}
-    
+
     									if($key == "answerType")
     										$answerType = $value;
     						}
-    
-    
+
+
 							if($answerType == "MULTIPLE_SELECTION" && !in_array($newAnswer->value, array($newStudy->valueRefusal,$newStudy->valueDontKnow,$newStudy->valueLogicalSkip,$newStudy->valueNotYetAnswered))){
 								$values = explode(',', $newAnswer->value);
 								foreach($values as &$value){
@@ -469,14 +474,14 @@ class ImportExportController extends Controller
 								}
 								$newAnswer->value = implode(',', $values);
 							}
-    
-    
+
+
     						$newAnswer->studyId = $newStudy->id;
     						$newAnswer->interviewId = $newInterview->id;
-    
+
     						if(!isset($newQuestionIds[$oldQId]) || !$newQuestionIds[$oldQId])
     							continue;
-    
+
     						if(!$newAnswer->save()){
         						echo "new answer:";
     							echo $oldQId . "<br>";
@@ -489,7 +494,7 @@ class ImportExportController extends Controller
     				}
     			}
     		}
-    
+
     		foreach($newAlterIds as $oldId=>$newId){
     			$alter = Alters::model()->findByPk($newId);
     			if(preg_match("/,/", $alter->interviewId)){
@@ -502,7 +507,7 @@ class ImportExportController extends Controller
     				$alter->save();
     			}
     		}
-    
+
     		if(count($study->answerLists) != 0){
     			foreach($study->answerLists->answerList as $answerList){
     				$newAnswerList = new AnswerList;
