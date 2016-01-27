@@ -11,7 +11,10 @@ class InterviewController extends Controller
 		$condition = "id != 0";
 		if(!Yii::app()->user->isSuperAdmin){
             #OK FOR SQL INJECTION
-			$studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
+            if(Yii::app()->user->id)
+			    $studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
+            else
+                $studies = false;
 			if($studies)
 				$condition = "id IN (" . implode(",", $studies) . ")";
 			else
@@ -267,7 +270,7 @@ class InterviewController extends Controller
 				$array_id = $Answer['questionId'] . "-" . $Answer['alterId1'] . "and" . $Answer['alterId2'];
 			else
 				$array_id = $Answer['questionId'];
-					
+
 			if($Answer['questionType'] == "EGO_ID" && $Answer['value'] != "" && !$interviewId){
 				if(Yii::app()->user->isGuest){
 					foreach($_POST['Answer'] as $ego_id){
@@ -328,9 +331,9 @@ class InterviewController extends Controller
     		$json[$index] = mToA($answer);
 		}
 		echo json_encode($json);
-        
+
     }
-    
+
 	public function actionAlter(){
 		if(isset($_POST['Alters'])){
             #OK FOR SQL INJECTION
@@ -408,7 +411,7 @@ class InterviewController extends Controller
                             $alter->save();
                             $foundAlter = true;
                         }
-                    
+
                     }
                 }
 			}

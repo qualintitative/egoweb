@@ -187,9 +187,9 @@ class SurveyController extends Controller {
             if( isset( $redirect ) )
                 Yii::app()->session['redirect'] = $redirect;
 
-            self::redirect( Yii::app()->getBaseUrl(true)  .  "/interviewing/".$study->id."?".
-                            "interviewId=".$interview->id."&".
-                            "page=".$interview->completed
+            self::redirect( Yii::app()->getBaseUrl(true)  .  "/interview/".$study->id."/".
+                            $interview->id."/".
+                            "#/page/".$interview->completed
                             );
         }
     }

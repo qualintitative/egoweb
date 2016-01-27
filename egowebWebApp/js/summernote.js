@@ -1828,7 +1828,12 @@ function rebuildEgowebTags(withCode){
 
         // siblings not in paragraph
         var inlineSiblings = dom.listPrev(topAncestor, dom.isParaInline).reverse();
-        inlineSiblings = inlineSiblings.concat(dom.listNext(topAncestor.nextSibling, dom.isParaInline));
+        if(typeof topAncestor != "undefined"){
+            inlineSiblings = inlineSiblings.concat(dom.listNext(topAncestor.nextSibling, dom.isParaInline));
+        }else{
+            sc.innerHTML = dom.emptyPara;
+            return new WrappedRange(sc.firstChild, 0);
+        }
 
         // wrap with paragraph
         if (inlineSiblings.length) {
