@@ -20,6 +20,7 @@ alterPrompts = <?php echo $alterPrompts ?>;
 questionList = <?php echo $questionList ?>;
 participantList = <?php echo $participantList ?>;
 audio = <?php echo $audio; ?>;
+otherGraphs = <?php echo $otherGraphs; ?>;
 csrf = '<?php echo Yii::app()->request->csrfToken; ?>';
 </script>
 <?php

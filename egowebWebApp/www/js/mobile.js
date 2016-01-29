@@ -1,16 +1,16 @@
 app.config(function($routeProvider) {
     $routeProvider
-    
+
     .when('/', {
         templateUrl: baseUrl + 'main.html',
         controller: 'mainController'
     })
-    
+
     .when('/admin', {
         templateUrl: baseUrl + 'admin.html',
         controller: 'adminController'
     })
-    
+
     .when('/studies', {
         templateUrl: baseUrl + 'studies.html',
         controller: 'studiesController'
@@ -437,6 +437,7 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
         prevAlters = {};
         graphs = {};
         allNotes = {};
+        otherGraphs = {};
     	if(typeof intId == "undefined"){
         	interviewId = undefined;
         	interview = false;
@@ -493,11 +494,11 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
         $("#studyTitle").html(study.NAME);
         document.location = url + "/page/" + parseInt(page);
     }
-    
+
     $scope.upload = function(studyId){
         $('#status').html('Uploading...');
     	$("#uploader-" + studyId).prop('disabled', true);
-    
+
     	var serverAddress = db.queryValue("SELECT address FROM serverstudy WHERE id = " + studyId);
     	var url = serverAddress + "/mobile/uploadData";
         if (!url.match('http') && !url.match('https')) url = "http://" + url;
@@ -647,7 +648,7 @@ $(function(){
 			db.catalog.createTable(serverstudy);
 
 		db.commit();
-    		
+
 	}, 500);
 });
 

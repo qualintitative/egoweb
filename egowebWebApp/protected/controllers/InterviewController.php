@@ -131,6 +131,7 @@ class InterviewController extends Controller
         $interviewId = false;
         $interview = false;
         $participantList = array();
+        $otherGraphs = array();
         $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
         foreach($results as $result){
             if($result->name)
@@ -147,6 +148,27 @@ class InterviewController extends Controller
         		$prevIds = array_diff($interviewIds, array($interviewId));
     		if(is_array($interviewIds)){
     		    $answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewIds));
+                foreach($network_questions as $nq){
+                    if(!isset($otherGraphs[$nq['ID']]))
+                        $otherGraphs[$nq['ID']] = array();
+                    foreach($interviewIds as $interviewId){
+                        $graphId = "";
+                        $s = Study::model()->findByPk((int)q("SELECT studyId from interview WHERE id = " . $interviewId)->queryScalar());
+                        #OK FOR SQL INJECTION
+                        $networkExprId = q("SELECT networkRelationshipExprId FROM question WHERE title = '" . $nq['title'] . "' AND studyId = " . $s->id)->queryScalar();
+                        #OK FOR SQL INJECTION
+                        if($networkExprId)
+                            $graphId = q("SELECT id FROM graphs WHERE expressionId = " . $networkExprId  . " AND interviewId = " . $interviewId)->queryScalar();
+                        if($graphId){
+                            $otherGraphs[$nq['ID']][] = array(
+                                "interviewId" => $interviewId,
+                                "expressionId" => $networkExprId,
+                                "studyName" => $s->name,
+                            );
+                        }
+                    }
+                    //echo '<br><a href="#" onclick="print(' . $networkExprId . ','. $interviewId . ')">' . $study->name . '</a>';
+                }
     		}else{
     		    $answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$_GET['interviewId']));
             }
@@ -219,6 +241,7 @@ class InterviewController extends Controller
                 "participantList"=>json_encode($participantList),
                 "questionList"=>json_encode($study->questionList()),
                 "audio"=>json_encode($audio),
+                "otherGraphs"=>json_encode($otherGraphs),
             )
         );
 	}
