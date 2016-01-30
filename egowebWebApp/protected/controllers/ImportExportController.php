@@ -273,8 +273,14 @@ class ImportExportController extends Controller
         				}
                         if(isset($newExpressionIds[$question->answerReasonExpressionId]))
         				    $question->answerReasonExpressionId = $newExpressionIds[$question->answerReasonExpressionId];
+                        else
+                            $question->answerReasonExpressionId = "";
+
         				if(isset($newExpressionIds[$question->networkRelationshipExprId]))
         					$question->networkRelationshipExprId = $newExpressionIds[$question->networkRelationshipExprId];
+                        else
+                            $question->networkRelationshipExprId = "";
+
         				$question->save();
         			}
         		}
@@ -341,7 +347,8 @@ class ImportExportController extends Controller
     						$newAlter->ordering=1;
 
     						if(!$newAlter->save()){
-    							"Alter: " . print_r($newAlter->getErrors());
+    							echo "Alter: ";
+                                print_r($newAlter->getErrors());
     							die();
     						}else{
     							$newAlterIds[intval($thisAlterId)] = $newAlter->id;
@@ -359,11 +366,15 @@ class ImportExportController extends Controller
     						if(!preg_match("/,/", $newNote->interviewId))
     							$newNote->interviewId = $newInterview->id;
 
+                            if(!isset()$newExpressionIds[intval($newNote->expressionId)]) || !isset($newAlterIds[intval($newNote->alterId)]))
+                                continue;
+
     						$newNote->expressionId = $newExpressionIds[intval($newNote->expressionId)];
     						$newNote->alterId = $newAlterIds[intval($newNote->alterId)];
 
     						if(!$newNote->save()){
-    							"Note: " . print_r($newNote->errors);
+    							echo "Note: ";
+                                print_r($newNote->errors);
     							die();
     						}
     					}
