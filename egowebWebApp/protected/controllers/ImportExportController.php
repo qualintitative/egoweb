@@ -366,7 +366,7 @@ class ImportExportController extends Controller
     						if(!preg_match("/,/", $newNote->interviewId))
     							$newNote->interviewId = $newInterview->id;
 
-                            if(!isset()$newExpressionIds[intval($newNote->expressionId)]) || !isset($newAlterIds[intval($newNote->alterId)]))
+                            if(!isset($newExpressionIds[intval($newNote->expressionId)]) || !isset($newAlterIds[intval($newNote->alterId)]))
                                 continue;
 
     						$newNote->expressionId = $newExpressionIds[intval($newNote->expressionId)];
