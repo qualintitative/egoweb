@@ -101,12 +101,17 @@ class InterviewController extends Controller
         if(file_exists(Yii::app()->basePath."/../audio/".$study->id . "/STUDY/ALTERPROMPT.mp3"))
             $audio['ALTERPROMPT'] = "/audio/".$study->id . "/STUDY/ALTERPROMPT.mp3";
         $results = Question::model()->findAllByAttributes(array("studyId"=>$multiIds), array('order'=>'ordering'));
+        $ego_questions = array();
+        $alter_questions = array();
+        $alter_pair_questions = array();
+        $network_questions = array();
         foreach($results as $result){
             $questions[$result->id] = mToA($result);
             if(file_exists(Yii::app()->basePath."/../audio/".$study->id . "/PREFACE/" . $result->id . ".mp3"))
                 $audio['PREFACE_' . $result->id] = "/audio/".$study->id . "/PREFACE/" . $result->id . ".mp3";
             if(file_exists(Yii::app()->basePath."/../audio/".$study->id . "/" . $result->subjectType . "/" . $result->id . ".mp3"))
                 $audio[$result->subjectType . $result->id] = "/audio/".$study->id . "/" . $result->subjectType . "/" . $result->id . ".mp3";
+
             if($id == $result->studyId){
                 if($result->subjectType == "EGO_ID")
                     $ego_id_questions[] = mToA($result);
