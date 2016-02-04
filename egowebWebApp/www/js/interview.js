@@ -48,7 +48,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         $scope.audioFiles[k].src = audio[k];
     }
 
-    console.log($scope.questions);
     $scope.nav = buildNav($scope.page);
 
     $('#navbox ul').html("");
@@ -67,7 +66,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         if($scope.questions[k].USEALTERLISTFIELD == "name" || $scope.questions[k].USEALTERLISTFIELD == "email"){
             $scope.participants = participantList[$scope.questions[k].USEALTERLISTFIELD];
         }
-
+        console.log($routeParams.page +":"+ interviewId);
         console.log($scope.questions);
         console.log($scope.questions[k].CITATION );
         if(typeof $scope.questions[k].CITATION == "string")
@@ -822,6 +821,11 @@ function buildQuestions(pageNumber, interviewId){
 		if(Object.keys(alters).length > 0){
 			for(j in alter_questions){
 				alter_question_list = new Object;
+                var preface = new Object;
+                preface.ID = alter_questions[j].ID;
+                preface.ANSWERTYPE = "PREFACE";
+                preface.SUBJECTTYPE = "PREFACE";
+                preface.PROMPT = alter_questions[j].PREFACE;
 				for(k in alters){
 					if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
 						continue;
@@ -834,17 +838,12 @@ function buildQuestions(pageNumber, interviewId){
 					if(alter_questions[j].ASKINGSTYLELIST == 1){
 						alter_question_list[question.ID + '-' + question.ALTERID1] = question;
 					}else{
-						if(alter_questions[j].PREFACE != ""){
+						if(preface.PROMPT != ""){
 							if(i == pageNumber){
-								var preface = new Object;
-								preface.ID = alter_questions[j].ID;
-								preface.ANSWERTYPE = "PREFACE";
-								preface.SUBJECTTYPE = "PREFACE";
-								preface.PROMPT = alter_questions[j].PREFACE;
 								page[i][0] = preface;
 								return page[i];
 							}
-							alter_questions[j].PREFACE = "";
+							preface.PROMPT = "";
 							i++;
 							page[i] = new Object;
 						}
@@ -859,16 +858,12 @@ function buildQuestions(pageNumber, interviewId){
 				}
 				if(alter_questions[j].ASKINGSTYLELIST == 1){
 					if(Object.keys(alter_question_list).length > 0){
-						if(alter_questions[j].PREFACE != ""){
+						if(preface.PROMPT != ""){
 							if(i == pageNumber){
-								var preface = new Object;
-								preface.ID = alter_questions[j].ID;
-								preface.ANSWERTYPE = "PREFACE";
-								preface.SUBJECTTYPE = "PREFACE";
-								preface.PROMPT = alter_questions[j].PREFACE;
 								page[i][0] = preface;
 								return page[i];
 							}
+                            preface.PROMPT = "";
 							i++;
 							page[i] = new Object;
 						}
@@ -1358,6 +1353,8 @@ function initStats(question){
     var n = [];
     var expressionId = question.NETWORKRELATIONSHIPEXPRID;
     this.params = JSON.parse(question.NETWORKPARAMS);
+    if(this.params == null)
+        this.params = [];
     console.log(this.params);
     alterNames = new Object;
     betweennesses = [];
@@ -1982,18 +1979,21 @@ function buildNav(pageNumber){
 		pages[i] = this.checkPage(i, pageNumber, "ALTER_PROMPT");
 		i++;
 	}
+
 	if(Object.keys(alters).length > 0){
-		prompt = "";
 		for(j in alter_questions){
+            prompt = "";
 			var alter_question_list = '';
 			for(k in alters){
 				if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
 					continue;
+
 				if(parseInt(alter_questions[j].ASKINGSTYLELIST)){
 			    	alter_question_list = alter_questions[j];
 			    }else{
-					if(alter_questions[j].PREFACE != ""){
+					if(alter_questions[j].PREFACE != "" && prompt == ""){
 			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+                        prompt = alter_questions[j].PREFACE;
 			    		i++;
 			    	}
 			    	pages[i] = this.checkPage(i, pageNumber, alter_questions[j].TITLE + " - " + alters[k].NAME);
@@ -2026,8 +2026,9 @@ function buildNav(pageNumber){
 				for(l in alters2){
 		    		if(alters[k].ID == alters2[l].ID)
 		    			continue;
-					if(evalExpression(alter_pair_questions[j].ANSWERREASONEXPRESSIONID, interviewId, alters[k].ID, alters2[l].ID) != true)
+					if(evalExpression(alter_pair_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID, alters2[l].ID) != true)
 		    			continue;
+
 		    		alter_pair_question_list = alter_pair_questions[j];
 		    	}
 		    	if(alter_pair_question_list){
