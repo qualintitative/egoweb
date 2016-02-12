@@ -12,8 +12,8 @@
     <div class="col-sm-4 pull-right">
         <button  onclick="fullscreen()" class="btn btn-info print-button" id="fullscreenButton">Fullscreen</button>
         <button  class="btn btn-primary print-button" style="margin-top:10px" ng-click="print()">Print Preview</button>
-        <div ng-repeat="graph in otherGraphs[qId]">
-            <a href="#" ng-click="print(graph.networkExprId, graph.interviewId)">{{graph.studyName}} graph</a><br>
+        <div ng-repeat="graph in otherGraphs" style="margin-top:10px">
+            <a href="javascript:void(0)" ng-click="print(graph.expressionId, graph.interviewId)">{{graph.studyName}} graph</a><br>
         </div>
         <button  class="btn btn-warning print-button" style="margin-top:10px" onclick="toggleLabels()">Toggle Labels</button>
         <form id="graph-form" method="post">

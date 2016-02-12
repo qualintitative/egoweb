@@ -37,6 +37,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.graphNodes = "";
     $scope.graphParams = "";
     $scope.otherSpecify = {};
+    $scope.otherGraphs = {};
     $scope.audioFiles = {};
     $scope.audio = {};
     $scope.keys = Object.keys;
@@ -222,6 +223,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         if($scope.questions[k].SUBJECTTYPE == "NETWORK"){
             expressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
             notes = [];
+            if(typeof otherGraphs[$scope.questions[k].ID] != "undefined")
+                $scope.otherGraphs = otherGraphs[$scope.qId];
+            console.log(otherGraphs[$scope.qId]);
             if(typeof graphs[expressionId] != "undefined"){
                 $scope.graphId = graphs[expressionId].ID;
                 $scope.graphExpressionId = graphs[expressionId].EXPRESSIONID;
@@ -249,8 +253,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 
     $scope.errors = new Object;
 
-	$scope.print = function(){
-		url = "/data/visualize?print&expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent($("#Graph_params").val()) + "&labelThreshold=" + s.renderers[0].settings("labelThreshold");
+	$scope.print = function(e_Id, i_Id){
+        if(typeof e_Id == "undefined")
+            e_Id = expressionId;
+        if(typeof i_Id == "undefined")
+            i_Id = interviewId;
+		url = "/data/visualize?print&expressionId=" + e_Id + "&interviewId=" + i_Id + "&params=" + encodeURIComponent($("#Graph_params").val()) + "&labelThreshold=" + s.renderers[0].settings("labelThreshold");
 		window.open(url);
 	}
 

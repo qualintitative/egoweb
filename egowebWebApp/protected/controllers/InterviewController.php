@@ -160,7 +160,7 @@ class InterviewController extends Controller
                         $graphId = "";
                         $s = Study::model()->findByPk((int)q("SELECT studyId from interview WHERE id = " . $i_id)->queryScalar());
                         #OK FOR SQL INJECTION
-                        $networkExprId = q("SELECT networkRelationshipExprId FROM question WHERE title = '" . $nq['title'] . "' AND studyId = " . $s->id)->queryScalar();
+                        $networkExprId = q("SELECT networkRelationshipExprId FROM question WHERE title = '" . $nq['TITLE'] . "' AND studyId = " . $s->id)->queryScalar();
                         #OK FOR SQL INJECTION
                         if($networkExprId)
                             $graphId = q("SELECT id FROM graphs WHERE expressionId = " . $networkExprId  . " AND interviewId = " . $i_id)->queryScalar();
