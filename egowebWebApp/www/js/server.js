@@ -46,6 +46,10 @@ $(document).keydown(function(e) {
 	}
 });
 function save (questions, page, url){
+    if(typeof s != "undefined" && s.isForceAtlas2Running()){
+        s.stopForceAtlas2();
+        saveNodes();
+    }
     var saveUrl = document.location.protocol + "//" + document.location.host + "/interview/save";
     if(typeof questions[0] == "undefined"){
         $.post(saveUrl, $('#answerForm').serialize(), function(data){
@@ -75,6 +79,7 @@ function saveNodes()
 	$("#Graph_nodes").val(JSON.stringify(nodes));
 	$.post( "/data/savegraph", $('#graph-form').serialize(), function( data ) {
     	//graphs[expressionId].NODES = JSON.stringify(nodes);
+        graphs = JSON.parse(data);
 		console.log("nodes saved");
 	});
 }
@@ -132,7 +137,7 @@ app.factory("saveAlter", function($http, $q) {
    var getAlters = function() {
        var saveUrl = document.location.protocol + "//" + document.location.host + "/interview/alter";
        return $.post(saveUrl, $("#alterForm").serialize(), function(data) {
-           return data; 
+           return data;
        });
     }
    return {
@@ -144,7 +149,7 @@ app.factory("deleteAlter", function($http, $q) {
    var getAlters = function() {
        var saveUrl = document.location.protocol + "//" + document.location.host + "/interview/deletealter";
        return $.post(saveUrl, $("#deleteAlterForm").serialize(), function(data) {
-           return data; 
+           return data;
        });
     }
    return {

@@ -157,6 +157,8 @@ class InterviewController extends Controller
                     if(!isset($otherGraphs[$nq['ID']]))
                         $otherGraphs[$nq['ID']] = array();
                     foreach($interviewIds as $i_id){
+                        if($i_id == $interviewId)
+                            continue;
                         $graphId = "";
                         $s = Study::model()->findByPk((int)q("SELECT studyId from interview WHERE id = " . $i_id)->queryScalar());
                         #OK FOR SQL INJECTION

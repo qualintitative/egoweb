@@ -45,9 +45,11 @@
 <div id="alterFormBox" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'">
     <div ng-if='alterPrompt != ""'>{{ alterPrompt }}</div>
     <a ng-if='audio["ALTERPROMPT"]' class="play-sound" ng-click='playSound("ALTERPROMPT")' href="javascript:void(0)"><span class="fui-volume"></span></a>
-    <div ng-if='prevAlters.length > 0'>
+    <div ng-if='keys(prevAlters).length > 0'>
         <b>Previous Alters</b><br>
-        <label ng-repeat="pAlter in prevAlters">{{ pAlter }}</label>
+        <div ng-repeat="pAlter in prevAlters">
+            <label>{{ pAlter.NAME }}</label><br>
+        </div>
     </div>
     <form ng-if="keys(alters).length < study.MAXALTERS" id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
         <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">

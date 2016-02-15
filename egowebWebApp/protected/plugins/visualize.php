@@ -632,15 +632,12 @@ class visualize extends Plugin
 			}
 		}
 		Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/modal.js');
-        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/sigma.min.js');
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/1.0.3/sigma.min.js');
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/1.0.3/plugins/sigma.plugins.dragNodes.js');
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/1.0.3/plugins/shape-library.js');
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/1.0.3/plugins/sigma.renderers.customShapes.min.js');
+        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/1.0.3/plugins/sigma.layout.forceAtlas2.min.js');
         Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.notes.js');
-        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.plugins.dragNodes.js');
-        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.plugins.dragEvents.js');
-        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.renderers.customEdgeShapes/shape-library.js');
-        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.renderers.customEdgeShapes/sigma.renderers.customEdgeShapes.js');
-        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.renderers.customShapes/shape-library.js');
-        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.renderers.customShapes/sigma.renderers.customShapes.js');
-        Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.layout.forceAtlas2.min.js');
 		?>
 			<div id="infovis"></div>
 			<div class="col-sm-4 pull-left" id="legend">
@@ -905,8 +902,6 @@ $(function(){
 			sideMargin: 2
 		}
 	});
-	CustomEdgeShapes.init(s);
-	initNotes(s);
 	if($("#Graph_nodes").val()){
 		savedNodes = JSON.parse($("#Graph_nodes").val());
 		for(var k in savedNodes){
@@ -934,7 +929,7 @@ $(function(){
 		setTimeout("s.stopForceAtlas2(); saveNodes(); $('#fullscreenButton').prop('disabled', false);", 5000);
 	}
 	s.refresh();
-	sigma.plugins.dragNodes(s, s.renderers[0]);
+    initNotes(s);
 	drawLegend();
 });
 		</script>

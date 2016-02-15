@@ -129,7 +129,7 @@ class DataController extends Controller
     {
         if(count($_POST['export']) < 2)
             die("You must select at least 2 interviews");
-    
+
         foreach($_POST['export'] as $key=>$value){
             $interviewIds[] = $key;
         }
@@ -148,7 +148,7 @@ class DataController extends Controller
 			'condition'=>"FIND_IN_SET(" . $interview2->id . ", interviewId)",
 		);
 		$result = Alters::model()->findAll($criteria);
-        
+
 
 		foreach($result as $alter){
     		$alters2[$alter->id] = $alter->name;
@@ -209,7 +209,7 @@ class DataController extends Controller
                 echo "<button class='btn btn-xs btn-danger unMatch-" . $_POST['alterId1'] . "' onclick='unMatch(" . $_POST['alterId1'] . ", " . $_POST['alterId2'] . ")'>Unmatch</button>";
             else
                 print_r($match->errors);
-        	
+
     	}
     }
 
@@ -264,7 +264,7 @@ class DataController extends Controller
         $criteria->condition = ("studyId = $study->id and subjectType = 'NETWORK'");
         $criteria->order = "ordering";
         $network_questions = Question::model()->findAll($criteria);
-    
+
 		// start generating export file
 		header("Content-Type: application/octet-stream");
 		header("Content-Disposition: attachment; filename=".seoString($study->name)."-ego-alter-data".".csv");
@@ -705,7 +705,14 @@ class DataController extends Controller
                 $graph = new Graph;
             $graph->attributes = $_POST['Graph'];
             if($graph->save()){
-                echo "success";
+                //echo "success";
+                $graphs = array();
+    			$results = Graph::model()->findAllByAttributes(array('interviewId'=>$_POST['Graph']['interviewId']));
+    			foreach($results as $result){
+        			$graphs[$result->expressionId] = mToA($result);
+    			}
+                echo json_encode($graphs);
+                die();
                 //$url =  "graphId=" . $graph->id . "&interviewId=" . $graph->interviewId . "&expressionId=".$graph->expressionId."&params=".urlencode($graph->params);
                 //Yii::app()->request->redirect($this->createUrl("/data/visualize?" . $url));
             }

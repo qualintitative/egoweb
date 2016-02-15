@@ -1,11 +1,13 @@
-function initNotes(s){
+function initNotes(){
+    console.log("initializing notes..");
     graphNotes = 0;
     s.bind('clickNode',function(e){
         getNote(e.data.node);
     });
-    var _dragListener = new sigma.events.drag(s.renderers[0]);
-    _dragListener.bind('drop', function(e) {
-        if(e.data.node){
+
+    var dragListener = new sigma.plugins.dragNodes(s, s.renderers[0]);
+    dragListener.bind('drop', function(event) {
+        if(event.data.node){
             saveNodes();
         }
     });

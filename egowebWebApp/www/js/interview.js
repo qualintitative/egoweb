@@ -73,7 +73,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         if(typeof $scope.questions[k].CITATION == "string")
             $scope.questions[k].CITATION = $sce.trustAsHtml($scope.questions[k].CITATION);
 
-        console.log($scope.questions[k].CITATION);
+        console.log($scope.prevAlters);
         if($scope.questions[k].ALLBUTTON == true && !$scope.options["all"]){
             $scope.options['all'] = $.extend(true,{}, options[$scope.questions[k].ID]);
             if($scope.questions[k].DONTKNOWBUTTON == true){
@@ -568,19 +568,19 @@ app.directive('checkAnswer', [function (){
         				showError = true;
         			//console.log('min:' + min + ':max:' + max + ':checked:' + checkedBoxes+ ":answer:" + value + ":showerror:" + showError);
 
-        			s='';
+        			adds = '';
         			if(max != 1)
-        				s = 's';
+        				adds = 's';
         			if(parseInt(question.ASKINGSTYLELIST) == 1)
-        				s += ' for each row';
+        				adds += ' for each row';
         			if(numberErrors == 3 && min == max && showError)
-        				errorMsg = "Select " + max  + " response" + s + " please.";
+        				errorMsg = "Select " + max  + " response" + adds + " please.";
         			else if(numberErrors == 3 && min != max && showError)
-        				errorMsg = "Select " + min + " to " + max + " response" + s + " please.";
+        				errorMsg = "Select " + min + " to " + max + " response" + adds + " please.";
         			else if (numberErrors == 2 && showError)
-        				errorMsg = "You may select up to " + max + " response" + s + " please.";
+        				errorMsg = "You may select up to " + max + " response" + adds + " please.";
         			else if (numberErrors == 1 && showError)
-        				errorMsg = "You must select at least " + min + " response" + s + " please.";
+        				errorMsg = "You must select at least " + min + " response" + adds + " please.";
         			//if(answer.OTHERSPECIFYTEXT && showError)
         			//	showError = false;
 
@@ -700,19 +700,19 @@ app.directive('checkAnswer', [function (){
 
         			//console.log('min:' + min + ':max:' + max + ':checked:' + checkedBoxes+ ":answer:" + value + ":showerror:" + showError);
 
-        			s='';
+        			adds = '';
         			if(max != 1)
-        				s = 's';
+        				adds = 's';
         			if(parseInt(question.ASKINGSTYLELIST) == 1)
-        				s += ' for each row';
+        				adds += ' for each row';
         			if(numberErrors == 3 && min == max && showError)
-        				errorMsg = "Select " + max  + " response" + s + " please.";
+        				errorMsg = "Select " + max  + " response" + adds + " please.";
         			else if(numberErrors == 3 && min != max && showError)
-        				errorMsg = "Select " + min + " to " + max + " response" + s + " please.";
+        				errorMsg = "Select " + min + " to " + max + " response" + adds + " please.";
         			else if (numberErrors == 2 && showError)
-        				errorMsg = "You may select up to " + max + " response" + s + " please.";
+        				errorMsg = "You may select up to " + max + " response" + adds + " please.";
         			else if (numberErrors == 1 && showError)
-        				errorMsg = "You must select at least " + min + " response" + s + " please.";
+        				errorMsg = "You must select at least " + min + " response" + adds + " please.";
         			//if(answer.OTHERSPECIFYTEXT && showError)
         			//	showError = false;
 
@@ -984,6 +984,7 @@ function buildQuestions(pageNumber, interviewId){
 		conclusion = new Object;
 		conclusion.ANSWERTYPE = "CONCLUSION";
 		conclusion.PROMPT = study.CONCLUSION;
+        conclusion.array_id = 0;
 		page[i][0] = conclusion;
 		return page[i];
 
@@ -1115,7 +1116,7 @@ function evalExpression(id, alterId1, alterId2)
 
 function countExpression(id)
 {
-    if(evalExpression(id))
+    if(evalExpression(id) == true)
     	return 1;
     else
     	return 0;
@@ -1387,7 +1388,7 @@ function initStats(question){
 		for(b in alters2){
 			if(alters[a].ID == alters2[b].ID)
 				continue;
-			if(evalExpression(expressionId, alters[a].ID, alters2[b].ID)){
+			if(evalExpression(expressionId, alters[a].ID, alters2[b].ID) == true){
 				if($.inArray(alters[a].ID, n) == -1)
 				    n.push(alters[a].ID);
 				if($.inArray(alters2[b].ID, n) == -1)
@@ -1677,7 +1678,7 @@ function initStats(question){
 				return this.gradient[value];
 			}else if(this.params['nodeColor']['questionId'].search("expression") != -1){
 				var qId = this.params['nodeColor']['questionId'].split("_");
-				if(evalExpression(qId[1], nodeId)){
+				if(evalExpression(qId[1], nodeId) == true){
 					for(p in this.params['nodeColor']['options']){
 						if(this.params['nodeColor']['options'][p]['id'] == 1)
 							return this.params['nodeColor']['options'][p]['color'];
@@ -1798,7 +1799,7 @@ function initStats(question){
 		var keys = Object.keys(alters2);
 		delete alters2[keys[0]];
 		for(b in alters2){
-			if(evalExpression(expressionId, alters[a].ID, alters2[b].ID)){
+			if(evalExpression(expressionId, alters[a].ID, alters2[b].ID) == true){
 				edges.push({
 					"id"    : alters[a].ID + "_" + alters2[b].ID,
 					"source": alters2[b].ID.toString(),
@@ -1827,7 +1828,6 @@ for(y in g.edges){sizes.push(g.edges[y].size)}
 
 setTimeout(function(){
 	sigma.renderers.def = sigma.renderers.canvas;
-
 	s = new sigma({
 		graph: g,
 		renderer: {
@@ -1845,8 +1845,6 @@ setTimeout(function(){
 			sideMargin: 2
 		}
 	});
-	CustomEdgeShapes.init(s);
-	initNotes(s);
 	if(typeof graphs[expressionId] != "undefined"){
         savedNodes = JSON.parse(graphs[expressionId].NODES);
 		for(var k in savedNodes){
@@ -1873,7 +1871,7 @@ setTimeout(function(){
 		setTimeout("s.stopForceAtlas2(); saveNodes(); $('#fullscreenButton').prop('disabled', false);", 5000);
     }
 	s.refresh();
-	sigma.plugins.dragNodes(s, s.renderers[0]);
+    initNotes(s);
 	},1);
 }
 
@@ -2053,7 +2051,7 @@ function buildNav(pageNumber){
 
 		for(j in network_questions){
 		    if(interviewId){
-		    	if(!evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID))
+		    	if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID) != true)
 		    		continue;
 		    }
 		    if(network_questions[j].PREFACE != ""){

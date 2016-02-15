@@ -29,15 +29,12 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/angula
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/autocomplete.js');
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/interview.js');
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/server.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/sigma.min.js');
+Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/1.0.3/sigma.min.js');
+Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/1.0.3/plugins/sigma.plugins.dragNodes.js');
+Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/1.0.3/plugins/shape-library.js');
+Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/1.0.3/plugins/sigma.renderers.customShapes.min.js');
+Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/1.0.3/plugins/sigma.layout.forceAtlas2.min.js');
 Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.notes.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.plugins.dragNodes.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.plugins.dragEvents.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.renderers.customEdgeShapes/shape-library.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.renderers.customEdgeShapes/sigma.renderers.customEdgeShapes.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.renderers.customShapes/shape-library.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.renderers.customShapes/sigma.renderers.customShapes.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.layout.forceAtlas2.min.js');
 Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl.'/www/css/autocomplete.css');
 ?>
 <div ng-view></div>
