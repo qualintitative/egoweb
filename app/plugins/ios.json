@@ -1,0 +1,18 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {}
+    },
+    "installed_plugins": {
+        "org.apache.cordova.file": {
+            "PACKAGE_NAME": "com.rand.egowebmoble"
+        },
+        "org.apache.cordova.file-transfer": {
+            "PACKAGE_NAME": "com.rand.egowebmoble"
+        }
+    },
+    "dependent_plugins": {}
+}

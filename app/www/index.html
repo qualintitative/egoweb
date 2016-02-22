@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="egowebApp">
+<head>
+    <meta charset="utf-8">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1">
+    <link rel="stylesheet" type="text/css" href="css/autocomplete.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/flat-ui.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/mobile.css">
+    <title>EgoWeb Mobile</title>
+</head>
+
+<body>
+    <nav class="navbar" id="topbar">
+        <ul class="nav navbar-nav navbar-left">
+            <li class="dropdown">
+                <a id="menu-button" href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
+				    <span class="fui-list"></span>
+				</a>
+                <ul class="dropdown-menu">
+                    <li><a href="#/admin">Admin</a></li>
+                    <li><a href="#/studies">Studies</a></li>
+                </ul>
+
+            </li>
+        </ul>
+        <a class="titlelink" href="#/">EgoWeb Mobile</a><span id="studyTitle" class="title"></span><span class="title" id="questionTitle"></span>
+        <ul id="navbox" class="nav navbar-nav navbar-right">
+            <li id="questionMenu" class="dropdown hidden">
+                <a id="menu-button" href="#" class="dropdown-toggle" data-toggle="dropdown" target="#second"><span class="fui-gear"></span></a>
+                <ul class="dropdown-menu" id="second"></ul>
+            </li>
+        </ul>
+        <span class="interviewee"></span>
+    </nav>
+
+    <div id="content" class="container" ng-view></div>
+
+    <script type="text/javascript" src="../platform_www/cordova.js"></script>
+    <script type="text/javascript" src="../platform_www/cordova_plugins.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/SequelSphereDB.js"></script>
+    <script type="text/javascript" src="js/painlessfs.js"></script>
+    <script type="text/javascript" src="js/angular.min.js"></script>
+    <script type="text/javascript" src="js/angular-route.min.js"></script>
+    <script type="text/javascript" src="js/autocomplete.js"></script>
+    <script type="text/javascript" src="js/interview.js"></script>
+    <script type="text/javascript" src="js/mobile.js"></script>
+    <script type="text/javascript" src="js/sigma.min.js"></script>
+    <script type="text/javascript" src="js/plugins/sigma.notes.js"></script>
+    <script type="text/javascript" src="js/plugins/sigma.plugins.dragNodes.js"></script>
+    <script type="text/javascript" src="js/plugins/sigma.plugins.dragEvents.js"></script>
+    <script type="text/javascript" src="js/plugins/sigma.renderers.customEdgeShapes/shape-library.js"></script>
+    <script type="text/javascript" src="js/plugins/sigma.renderers.customEdgeShapes/sigma.renderers.customEdgeShapes.js"></script>
+    <script type="text/javascript" src="js/plugins/sigma.renderers.customShapes/shape-library.js"></script>
+    <script type="text/javascript" src="js/plugins/sigma.renderers.customShapes/sigma.renderers.customShapes.js"></script>
+    <script type="text/javascript" src="js/plugins/sigma.layout.forceAtlas2.min.js"></script>
+</body>
+</html>
