@@ -15,19 +15,19 @@ Thumbs.db
 
 # Yii Files #
 #############
-egowebWebApp/assets/*
-!egowebWebApp/assets/.gitignore
-egowebWebApp/protected/runtime/*
-!egowebWebApp/protected/runtime/.gitignore
-egowebWebApp/protected/data/*.db
-egowebWebApp/themes/classic/views/
+app/assets/*
+!app/assets/.gitignore
+app/protected/runtime/*
+!app/protected/runtime/.gitignore
+app/protected/data/*.db
+app/themes/classic/views/
 
 # dynamic Egoweb files #
 ########################
-egowebWebApp/protected/config/main.php
-egowebWebApp/protected/config/console.php
-egowebWebApp/protected/runtime/*
+app/protected/config/main.php
+app/protected/config/console.php
+app/protected/runtime/*
 
 # device specific files #
 #########################
-egowebMobile/platforms/*
+app/platforms/*
