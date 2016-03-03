@@ -106,6 +106,9 @@ Network Statistics
         echo "<div class='multiRow' style='width:200px;text-align:left'>".CHtml::checkbox('export[' .$interview['id'].']'). " " . Interview::getEgoId($interview->id)."</div>";
         echo "<div class='multiRow' style='width:120px'>".date("Y-m-d h:i:s", $interview->start_date)."</div>";
         echo "<div class='multiRow' style='width:120px'>".$completed."</div>";
+        if($interview->completed == -1)
+            echo "<div class='multiRow'>".CHtml::button('Edit',array('submit'=>$this->createUrl('/data/edit/' . $interview->id)))."</div>";
+            
         echo "<div class='multiRow'>".CHtml::button('Review',array('submit'=>$this->createUrl('/interview/'.$study->id.'/'.$interview->id.'/#/page/0')))."</div>";
         echo "<div class='multiRow'>".CHtml::button('Visualize',array('submit'=>$this->createUrl('/data/visualize?expressionId=&interviewId='.$interview->id)))."</div>";
         echo "<br style='clear:both'>";

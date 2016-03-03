@@ -24,7 +24,7 @@ class DataController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index', 'exportego', 'savenote', 'noteexists','exportalterpair', 'exportalterlist', 'exportother', 'visualize', 'study', 'ajaxAdjacencies', 'exportinterview' , "savematch" , "unmatch"),
+				'actions'=>array('index', 'exportego', 'savenote', 'noteexists','exportalterpair', 'exportalterlist', 'exportother', 'visualize', 'study', 'ajaxAdjacencies', 'exportinterview' , "savematch" , "unmatch", "edit"),
 				'users'=>array('@'),
 			),
 			array('allow',  // deny all users
@@ -32,6 +32,14 @@ class DataController extends Controller
 			),
 		);
 	}
+
+    public function actionEdit($id)
+    {
+        $interview = Interview::model()->findByPk(array("id"=>$id));
+        $interview->completed = 0;
+        $interview->save();
+		Yii::app()->request->redirect(Yii::app()->request->urlReferrer);
+    }
 
     public function actionStudy($id)
     {

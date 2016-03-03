@@ -2,6 +2,8 @@
 <html lang="en" ng-app="egowebApp">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title><?php echo CHtml::encode($this->pageTitle); ?></title>
 		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/www/css/bootstrap.css" />
 		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/www/css/flat-ui.css" />
