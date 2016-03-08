@@ -718,6 +718,10 @@ a.btn {
 	margin-left:15px;
 }
 
+.nodeColorOptions > div, .nodeShapeOptions > div, .edgeColorOptions > div, .nodeSizeOptions > div, .edgeSizeOptions  > div {
+    overflow-y: hidden;
+}
+
 #visualize-bar .form-group:first-child{
 	margin-top:0;
 }
