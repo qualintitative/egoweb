@@ -1749,7 +1749,7 @@ function initStats(question){
             else
                 var answer = "";
 			for(p in this.params['nodeShape']['options']){
-				if(this.params['nodeShape']['options'][p]['id'] == answer || $.inArray(this.params['nodeShape']['options'][p]['id'], answer))
+				if(this.params['nodeShape']['options'][p]['id'] == answer || $.inArray(this.params['nodeShape']['options'][p]['id'], answer) != -1)
 				    return this.params['nodeShape']['options'][p]['shape'];
 			}
 		}
@@ -1763,7 +1763,7 @@ function initStats(question){
             else
                 var answer = "";
 			for(p in this.params['edgeColor']['options']){
-				if(this.params['edgeColor']['options'][p]['id'] == answer || $.inArray(this.params['edgeColor']['options'][p]['id'], answer))
+				if(this.params['edgeColor']['options'][p]['id'] == answer || $.inArray(this.params['edgeColor']['options'][p]['id'], answer) != -1)
 				    return this.params['edgeColor']['options'][p]['color'];
 			}
 		}
@@ -1777,7 +1777,7 @@ function initStats(question){
             else
                 var answer = "";
 			for(p in this.params['edgeSize']['options']){
-				if(this.params['edgeSize']['options'][p]['id'] == answer || $.inArray(this.params['edgeSize']['options'][p]['id'], answer))
+				if(this.params['edgeSize']['options'][p]['id'] == answer || $.inArray(this.params['edgeSize']['options'][p]['id'], answer) != -1)
 				    return this.params['edgeSize']['options'][p]['size'];
 			}
 		}
