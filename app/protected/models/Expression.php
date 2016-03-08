@@ -293,6 +293,16 @@ class Expression extends CActiveRecord
 				}
 			}
 		}
+		$questions = Question::model()->findAllByAttributes(array("answerReasonExpressionId"=>$this->id));
+		foreach($questions as $question){
+			$question->answerReasonExpressionId = "";
+			$question->save();
+		}
+		$questions = Question::model()->findAllByAttributes(array("networkRelationshipExprId"=>$this->id));
+		foreach($questions as $question){
+			$question->networkRelationshipExprId = "";
+			$question->save();
+		}
 		return true;
 	}
 

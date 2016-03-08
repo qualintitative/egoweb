@@ -994,9 +994,10 @@ function buildQuestions(pageNumber, interviewId){
 
 function evalExpression(id, alterId1, alterId2)
 {
-
 	var array_id;
     if(!id || id == 0)
+        return true;
+    if(typeof expressions[id] == "undefined")
         return true;
 
     questionId = expressions[id].QUESTIONID;
