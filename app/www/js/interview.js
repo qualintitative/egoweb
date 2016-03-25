@@ -42,6 +42,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.audio = {};
     $scope.keys = Object.keys;
     $scope.interview = interview;
+    $scope.footer = $sce.trustAsHtml(study.FOOTER);
 
     for(k in audio){
         $scope.audio[k] = audio[k];
@@ -246,10 +247,13 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 if(typeof $(".answerInput")[0] != "undefined")
                     $(".answerInput")[0].focus();
                 $("#second").scrollTop($("#second").scrollTop() - $("#second").offset().top + $("#menu_" + $scope.page).offset().top);
-
             },
         1);
     }
+
+    setTimeout(function(){
+        eval(study.JAVASCRIPT);
+    },1);
 
     $scope.errors = new Object;
 

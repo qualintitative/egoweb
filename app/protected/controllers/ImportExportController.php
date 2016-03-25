@@ -3,7 +3,7 @@ class ImportExportController extends Controller
 {
 	public function actionImportstudy()
 	{
-        switch( $_FILES['files']['error'] ) {
+        switch( $_FILES['files']['error'][0]) {
             case UPLOAD_ERR_OK:
                 $message = false;;
                 break;
@@ -18,13 +18,14 @@ class ImportExportController extends Controller
                 $message .= ' - zero-length file uploaded.';
                 break;
             default:
-                $message .= ' - internal error #'. $_FILES['files']['error'];
+                $e = print_r($_FILES['files']['error']);
+                $message .= ' - internal error #'. $e;
                 break;
         }
         if($message)
-            echo $message;
+            Yii::log($message);
 		if(!is_uploaded_file($_FILES['files']['tmp_name'][0])) //checks that file is uploaded
-			die("Error importing study");
+			die("Error importing study: " . $message);
 
         foreach($_FILES['files']['tmp_name'] as $tmp_name){
     		$study = simplexml_load_file($tmp_name);
