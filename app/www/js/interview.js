@@ -467,6 +467,9 @@ app.directive('checkAnswer', [function (){
                 console.log(question);
                 console.log("check:" + value);
 
+
+
+		
                 if(attr.answerType == "ALTER_PROMPT"){
         			if(Object.keys(alters).length < study.MINALTERS){
         				scope.errors[array_id] = 'Please list ' + study.MINALTERS + ' people';
@@ -477,7 +480,6 @@ app.directive('checkAnswer', [function (){
                 if(attr.answerType == "TEXTUAL"){
                     if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
                         if(value == ""){
-                            console.log("DDDDD");
                             scope.errors[array_id] = "Value cannot be blank";
                         	valid = false;
                     	}else{
@@ -594,6 +596,41 @@ app.directive('checkAnswer', [function (){
         			}
         		}
 
+    		// check for list range limitations
+    		var checks = 0;
+    		if(typeof question != "undefined" && parseInt(question.WITHLISTRANGE) != 0){
+    			for(i in answers){
+    					console.log(answers[i].VALUE + ":" + question.LISTRANGESTRING);
+    				if(answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1){
+    					checks++;
+    				}
+    			}
+                console.log("check list range: " + checks);
+    
+    			if(checks < question.MINLISTRANGE || checks > question.MAXLISTRANGE){
+    				errorMsg = "";
+    				if(question.MINLISTRANGE && question.MAXLISTRANGE){
+    					if(question.MINLISTRANGE != question.MAXLISTRANGE)
+    						errorMsg = question.MINLISTRANGE + " - " + question.MAXLISTRANGE;
+    					else
+    						errorMsg = "just " + question.MINLISTRANGE;
+    				}else if(!question.MINLISTRANGE && !question.MAXLISTRANGE){
+    						errorMsg = "up to " + question.MAXLISTRANGE;
+    				}else{
+    						errorMsg = "at least " + question.MINLISTRANGE;
+    				}
+    
+                    valid = false;
+                    scope.errors[array_id] = "Please select "  + errorMsg + " response(s).  You selected " + checks;
+    
+    			}else{
+        			for(k in scope.errors){
+            			if(scope.errors[k].match("Please select "))
+            			    delete scope.errors[k];
+        			}
+    			}
+    		}
+		
                 ngModel.$setValidity('checkAnswer', valid);
                 return valid ? value : undefined;
             });
@@ -729,6 +766,44 @@ app.directive('checkAnswer', [function (){
                         valid = true;
         			}
         		}
+
+    		// check for list range limitations
+    		var checks = 0;
+    		if(typeof question != "undefined" && parseInt(question.WITHLISTRANGE) != 0){
+    			for(i in answers){
+    					console.log(answers[i].VALUE + ":" + question.LISTRANGESTRING);
+    				if(answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1){
+    					checks++;
+    				}
+    			}
+    
+                console.log("check list range: " + checks);
+    
+    			if(checks < question.MINLISTRANGE || checks > question.MAXLISTRANGE){
+    				errorMsg = "";
+    				if(question.MINLISTRANGE && question.MAXLISTRANGE){
+    					if(question.MINLISTRANGE != question.MAXLISTRANGE)
+    						errorMsg = question.MINLISTRANGE + " - " + question.MAXLISTRANGE;
+    					else
+    						errorMsg = "just " + question.MINLISTRANGE;
+    				}else if(!question.MINLISTRANGE && !question.MAXLISTRANGE){
+    						errorMsg = "up to " + question.MAXLISTRANGE;
+    				}else{
+    						errorMsg = "at least " + question.MINLISTRANGE;
+    				}
+    
+                    valid = false;
+                    scope.errors[array_id] = "Please select "  + errorMsg + " response(s).  You selected " + checks;
+    
+    
+    			}else{
+        			for(k in scope.errors){
+            			if(scope.errors[k].match("Please select "))
+            			    delete scope.errors[k];
+        			}
+    			}
+    		}
+		
             ngModel.$setValidity('checkAnswer', valid);
             return value;
           });
@@ -799,7 +874,7 @@ function buildQuestions(pageNumber, interviewId){
 			    if(prompt == "" || prompt == ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
 			    	//console.log('list type question');
 			    	prompt = ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
-			    	ego_question_list[ego_questions[j].ORDERING + 1] = ego_questions[j];
+			    	ego_question_list[parseInt(ego_questions[j].ORDERING) + 1] = ego_questions[j];
 			    }
 			}else{
 			    if(pageNumber == i){
