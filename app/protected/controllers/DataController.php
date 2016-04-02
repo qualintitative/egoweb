@@ -261,7 +261,25 @@ class DataController extends Controller
 
 	public function actionIndex()
 	{
-        $studies = Study::model()->findAll();
+		$condition = "id != 0";
+		if(!Yii::app()->user->isSuperAdmin){
+            #OK FOR SQL INJECTION
+            if(Yii::app()->user->id)
+			    $studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
+            else
+                $studies = false;
+			if($studies)
+				$condition = "id IN (" . implode(",", $studies) . ")";
+			else
+				$condition = "id = -1";
+		}
+
+		$criteria = array(
+			'condition'=>$condition,
+			'order'=>'id DESC',
+		);
+
+        $studies = Study::model()->findAll($condition);
 
 		$this->render('index', array(
 			'studies'=>$studies,
