@@ -624,6 +624,7 @@ app.directive('checkAnswer', [function (){
                     scope.errors[array_id] = "Please select "  + errorMsg + " response(s).  You selected " + checks;
     
     			}else{
+        			console.log("pass: " + valid);
         			for(k in scope.errors){
             			if(scope.errors[k].match("Please select "))
             			    delete scope.errors[k];
@@ -797,6 +798,7 @@ app.directive('checkAnswer', [function (){
     
     
     			}else{
+        			console.log("pass: " + valid);
         			for(k in scope.errors){
             			if(scope.errors[k].match("Please select "))
             			    delete scope.errors[k];

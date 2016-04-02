@@ -43,8 +43,37 @@ class DataController extends Controller
 
     public function actionStudy($id)
     {
+		$egoIdQ = q("SELECT * from question where studyId = $id and useAlterListField in ('name','email','id')")->queryRow();
+		$restrictions = "";
+		if($egoIdQ){
+			$participants = q("SELECT " . $egoIdQ['useAlterListField'] . " FROM alterList where interviewerId = " . Yii::app()->user->id)->queryColumn();
+			foreach($participants as &$p){
+    			if(strlen($p) >= 8)
+    			    $p = decrypt($p);
+			}
+			if($participants){
+        		$criteria = array(
+        			'condition'=>"questionId = " .$egoIdQ['id'],
+        		);
+                $answers = Answer::model()->findAll($criteria);
+                foreach($answers as $answer){
+                    if(in_array($answer->value, $participants))
+                        $interviewIds[] = $answer->interviewId;
+                }
+				if($interviewIds)
+					$restrictions = ' and id in (' . implode(",", $interviewIds) . ')';
+				else
+					$restrictions = ' and id = -1';
+			}
+		}
+        if(Yii::app()->user->isSuperAdmin)
+            $restrictions = "";
+		$criteria=array(
+			'condition'=>'completed > -1 AND studyId = '.$id . $restrictions,
+			'order'=>'id DESC',
+		);
 
-        $interviews = Interview::model()->findAllByAttributes(array("studyId"=>$id));
+        $interviews = Interview::model()->findAll($criteria);
         $study = Study::model()->findByPk((int)$id);
         $questionIds = array();
         $questions = Question::model()->findAllByAttributes(array("subjectType"=>"ALTER_PAIR", "studyId"=>$id));
