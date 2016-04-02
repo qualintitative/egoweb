@@ -69,7 +69,7 @@ class DataController extends Controller
         if(Yii::app()->user->isSuperAdmin)
             $restrictions = "";
 		$criteria=array(
-			'condition'=>'completed > -1 AND studyId = '.$id . $restrictions,
+			'condition'=>'studyId = '.$id . $restrictions,
 			'order'=>'id DESC',
 		);
 
