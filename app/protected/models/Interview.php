@@ -113,8 +113,9 @@ class Interview extends CActiveRecord
         $egoQs = Question::model()->findAll($criteria);
         $study = Study::model()->findByPk($studyId);
 
-        if (count($egoQs) == 0)
+        if (count($egoQs) == 0){
             return false;
+        }
 
         $interview = new Interview;
         $interview->studyId = $studyId;
