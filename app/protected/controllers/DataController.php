@@ -43,8 +43,37 @@ class DataController extends Controller
 
     public function actionStudy($id)
     {
+		$egoIdQ = q("SELECT * from question where studyId = $id and useAlterListField in ('name','email','id')")->queryRow();
+		$restrictions = "";
+		if($egoIdQ){
+			$participants = q("SELECT " . $egoIdQ['useAlterListField'] . " FROM alterList where interviewerId = " . Yii::app()->user->id)->queryColumn();
+			foreach($participants as &$p){
+    			if(strlen($p) >= 8)
+    			    $p = decrypt($p);
+			}
+			if($participants){
+        		$criteria = array(
+        			'condition'=>"questionId = " .$egoIdQ['id'],
+        		);
+                $answers = Answer::model()->findAll($criteria);
+                foreach($answers as $answer){
+                    if(in_array($answer->value, $participants))
+                        $interviewIds[] = $answer->interviewId;
+                }
+				if($interviewIds)
+					$restrictions = ' and id in (' . implode(",", $interviewIds) . ')';
+				else
+					$restrictions = ' and id = -1';
+			}
+		}
+        if(Yii::app()->user->isSuperAdmin)
+            $restrictions = "";
+		$criteria=array(
+			'condition'=>'studyId = '.$id . $restrictions,
+			'order'=>'id DESC',
+		);
 
-        $interviews = Interview::model()->findAllByAttributes(array("studyId"=>$id));
+        $interviews = Interview::model()->findAll($criteria);
         $study = Study::model()->findByPk((int)$id);
         $questionIds = array();
         $questions = Question::model()->findAllByAttributes(array("subjectType"=>"ALTER_PAIR", "studyId"=>$id));
@@ -232,7 +261,25 @@ class DataController extends Controller
 
 	public function actionIndex()
 	{
-        $studies = Study::model()->findAll();
+		$condition = "id != 0";
+		if(!Yii::app()->user->isSuperAdmin){
+            #OK FOR SQL INJECTION
+            if(Yii::app()->user->id)
+			    $studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
+            else
+                $studies = false;
+			if($studies)
+				$condition = "id IN (" . implode(",", $studies) . ")";
+			else
+				$condition = "id = -1";
+		}
+
+		$criteria = array(
+			'condition'=>$condition,
+			'order'=>'id DESC',
+		);
+
+        $studies = Study::model()->findAll($condition);
 
 		$this->render('index', array(
 			'studies'=>$studies,
