@@ -22,6 +22,7 @@ participantList = <?php echo $participantList ?>;
 audio = <?php echo $audio; ?>;
 otherGraphs = <?php echo $otherGraphs; ?>;
 csrf = '<?php echo Yii::app()->request->csrfToken; ?>';
+redirect = '<?php echo Yii::app()->session['redirect']; ?>';
 </script>
 <?php
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/angular.min.js');
