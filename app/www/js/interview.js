@@ -924,7 +924,7 @@ function buildQuestions(pageNumber, interviewId){
 					question.ALTERID1 = alters[k].ID;
 			    	question.array_id = question.ID + '-' + question.ALTERID1;
 
-					if(alter_questions[j].ASKINGSTYLELIST == 1){
+					if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1){
 						alter_question_list[question.ID + '-' + question.ALTERID1] = question;
 					}else{
 						if(preface.PROMPT != ""){
@@ -992,7 +992,7 @@ function buildQuestions(pageNumber, interviewId){
 						question.ALTERID2 = alters2[l].ID;
                         question.array_id = question.ID + '-' + question.ALTERID1 + 'and' + question.ALTERID2;
 
-						if(alter_pair_questions[j].ASKINGSTYLELIST){
+						if(parseInt(alter_pair_questions[j].ASKINGSTYLELIST) == 1){
 							alter_pair_question_list[question.ID + '-' + question.ALTERID1 + 'and' + question.ALTERID2] = question;
 						}else{
 							if(preface.PROMPT != ""){
@@ -2079,7 +2079,7 @@ function buildNav(pageNumber){
 				if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
 					continue;
 
-				if(parseInt(alter_questions[j].ASKINGSTYLELIST)){
+				if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1){
 			    	alter_question_list = alter_questions[j];
 			    }else{
 					if(alter_questions[j].PREFACE != "" && prompt == ""){
@@ -2091,7 +2091,7 @@ function buildNav(pageNumber){
 			    	i++;
 			    }
 			}
-			if(parseInt(alter_questions[j].ASKINGSTYLELIST)){
+			if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1){
 			    if(alter_question_list){
 			    	if(alter_questions[j].PREFACE != ""){
 			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
@@ -2120,7 +2120,18 @@ function buildNav(pageNumber){
 					if(evalExpression(alter_pair_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID, alters2[l].ID) != true)
 		    			continue;
 
-		    		alter_pair_question_list = alter_pair_questions[j];
+    				if(parseInt(alter_pair_questions[j].ASKINGSTYLELIST) == 1){
+    			    	alter_pair_question_list = alter_pair_questions[j];
+    			    }else{
+    					if(alter_pair_questions[j].PREFACE != "" && prompt == ""){
+    			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+                            prompt = alter_pair_questions[j].PREFACE;
+    			    		i++;
+    			    	}
+    			    	pages[i] = this.checkPage(i, pageNumber, alter_pair_questions[j].TITLE + " - " + alters[k].NAME + "and" + alters2[l].NAME);
+    			    	i++;
+    			    }
+    			    
 		    	}
 		    	if(alter_pair_question_list){
 					if(preface.PROMPT != ""){
