@@ -1444,6 +1444,8 @@ function initStats(question){
     edges = [];
     var n = [];
     var expressionId = question.NETWORKRELATIONSHIPEXPRID;
+    if(!question.NETWORKPARAMS)
+        question.NETWORKPARAMS = "[]";
     this.params = JSON.parse(question.NETWORKPARAMS);
     if(this.params == null)
         this.params = [];
