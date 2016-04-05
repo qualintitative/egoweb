@@ -1034,33 +1034,34 @@ function buildQuestions(pageNumber, interviewId){
 					}
 				}
 			}
-    		for(j in network_questions){
-                network_questions[j].array_id = network_questions[j].ID;
 
-    			if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID) != true)
-    				continue;
+		}
+		for(j in network_questions){
+            network_questions[j].array_id = network_questions[j].ID;
 
-    			if(network_questions[j].PREFACE != ""){
-    				if(pageNumber == i){
-    					var preface = new Object;
-    					preface.ID = network_questions[j].ID;
-    					preface.ANSWERTYPE = "PREFACE";
-    					preface.SUBJECTTYPE = "PREFACE";
-    					preface.PROMPT = network_questions[j].PREFACE;
-    					page[i][0] = preface;
-    					return page[i];
-    				}
-    				i++;
-    				page[i] = new Object;
-    			}
+			if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID) != true)
+				continue;
 
-    			    if(pageNumber == i){
-    		    		page[i][network_questions[j].ID] = network_questions[j];
-    			    	return page[i];
-    			    }
-    			    i++;
-    			    page[i] = new Object;
-    		}
+			if(network_questions[j].PREFACE != ""){
+				if(pageNumber == i){
+					var preface = new Object;
+					preface.ID = network_questions[j].ID;
+					preface.ANSWERTYPE = "PREFACE";
+					preface.SUBJECTTYPE = "PREFACE";
+					preface.PROMPT = network_questions[j].PREFACE;
+					page[i][0] = preface;
+					return page[i];
+				}
+				i++;
+				page[i] = new Object;
+			}
+
+			    if(pageNumber == i){
+		    		page[i][network_questions[j].ID] = network_questions[j];
+			    	return page[i];
+			    }
+			    i++;
+			    page[i] = new Object;
 		}
 		conclusion = new Object;
 		conclusion.ANSWERTYPE = "CONCLUSION";
@@ -2131,19 +2132,21 @@ function buildNav(pageNumber){
 			}
 		}
 
-		for(j in network_questions){
-		    if(interviewId){
-		    	if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID) != true)
-		    		continue;
-		    }
-		    if(network_questions[j].PREFACE != ""){
-		    	pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-		    	i++;
-		    }
-		    pages[i] = this.checkPage(i, pageNumber, network_questions[j].TITLE);
-		    i++;
-		}
 	}
+
+	for(j in network_questions){
+	    if(interviewId){
+	    	if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID) != true)
+	    		continue;
+	    }
+	    if(network_questions[j].PREFACE != ""){
+	    	pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+	    	i++;
+	    }
+	    pages[i] = this.checkPage(i, pageNumber, network_questions[j].TITLE);
+	    i++;
+	}
+
 	pages[i] = this.checkPage(i, pageNumber, "CONCLUSION");
 	return pages;
 }
