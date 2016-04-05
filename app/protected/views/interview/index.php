@@ -4,6 +4,9 @@
 $this->pageTitle = "Interviewing";
 
 ?>
+<?php if(isset(Yii::app()->session['redirect'])): ?>
+	<?php $this->registerJs("var redirect= "+Yii::app()->session['redirect']+";", self::POS_READY, 'redirect'); ?>
+<?php endif; ?>
 
 <div class="view" style="width:360px;float:left;margin-right:30px">
 <?php if(isset($_GET['studyId'])): ?>
