@@ -64,18 +64,21 @@ class ApiController extends Controller
 		}
 
         $prefill = null;
-
-        if( isset( $_POST['redirect'] ) ){
-            $prefill = $_POST['redirect'];
+        if( isset( $_POST['prefill'] ) ){
+            $prefill = $_POST['prefill'];
         }
 
-        $redirect = null;
-
-        if( isset( $_POST['redirect'] ) ){
-            $redirect = $_POST['redirect'];
+        $questions = null;
+        if( isset( $_POST['questions'] ) ){
+            $questions = $_POST['questions'];
         }
 
-        SurveyController::createSurvey( $_POST['survey_id'], $_POST['user_id'], $prefill, $redirect );
+		$redirect = null;
+		if( isset( $_POST['redirect'] ) ){
+			$redirect = $_POST['redirect'];
+		}
+
+        SurveyController::createSurvey( $_POST['survey_id'], $_POST['user_id'], $prefill, $questions, $redirect );
 	}
 
 	/**
