@@ -25,7 +25,6 @@ if(!is_numeric($model->id))
 ?>
 
 <script>
-
 // loads panel depending on answer type
 jQuery(document).ready(function(){
 	if('<?php echo $model->subjectType; ?>' != '')
@@ -64,97 +63,99 @@ jQuery('input.time-".$model->id."').change(function() {
 
 	<div  style="width:50%; float:left; padding:10px">
 		<div class="form-group">
-		<?php echo $form->labelEx($model,'title', array('for'=>$model->id . "_" . "title", "class"=>"control-label col-sm-3")); ?>
-		<div class="col-sm-9">
-		<?php echo $form->textField($model,'title',array('id'=>$model->id . "_" . "title", "class"=>"form-control")); ?>
-		</div>
+		    <?php echo $form->labelEx($model,'title', array('for'=>$model->id . "_" . "title", "class"=>"control-label col-sm-3")); ?>
+            <div class="col-sm-9">
+                <?php echo $form->textField($model,'title',array('id'=>$model->id . "_" . "title", "class"=>"form-control")); ?>
+		    </div>
 		</div>
 		<div class="form-group">
-		<?php echo $form->labelEx($model,'answerType', array('for'=>'a-'.$model->id, "class"=>"control-label col-sm-3")); ?>
-		<div class="col-sm-9">
-		<?php
-			echo $form->dropDownList(
-				$model,
-				'answerType',
-				$model->answerTypes(),
-				array('class'=>'answerTypeSelect', 'id'=>'a-'.$model->id, 'onchange'=>'changeAType(this)', "class"=>"form-control")
-			);
-		?>
-		</div>
+    		<?php echo $form->labelEx($model,'answerType', array('for'=>'a-'.$model->id, "class"=>"control-label col-sm-3")); ?>
+    		<div class="col-sm-9">
+        		<?php
+        			echo $form->dropDownList(
+        				$model,
+        				'answerType',
+        				$model->answerTypes(),
+        				array('class'=>'answerTypeSelect', 'id'=>'a-'.$model->id, 'onchange'=>'changeAType(this)', "class"=>"form-control")
+        			);
+        		?>
+    		</div>
 		</div>
 
-				<div class="form-group">
-		<?php echo $form->labelEx($model,'Skip Logic Expression', array('for'=>$model->id."_"."answerReasonExpressionId", "class"=>"control-label col-sm-3")); ?>
-		<?php $criteria=new CDbCriteria;
-		$criteria=array(
-			'condition'=>"studyId = " . $model->studyId,
-		);
-		?>
-		<div class="col-sm-9">
-		<?php echo $form->dropdownlist(
-			$model,
-			'answerReasonExpressionId',
-			CHtml::listData(
-				Expression::model()->findAll($criteria),
-				'id',
-				function($post) {return CHtml::encode(substr($post->name,0,40));}
-			),
-			array('empty' => 'Choose One', 'id'=>$model->id."_"."answerReasonExpressionId", "class"=>"form-control")
-		); ?>
-		</div>
-				</div>
+        <div class="form-group">
+    		<?php echo $form->labelEx($model,'Skip Logic Expression', array('for'=>$model->id."_"."answerReasonExpressionId", "class"=>"control-label col-sm-3")); ?>
+    		<?php $criteria=new CDbCriteria;
+    		$criteria=array(
+    			'condition'=>"studyId = " . $model->studyId,
+    		);
+    		?>
+    		<div class="col-sm-9">
+    		<?php echo $form->dropdownlist(
+    			$model,
+    			'answerReasonExpressionId',
+    			CHtml::listData(
+    				Expression::model()->findAll($criteria),
+    				'id',
+    				function($post) {return CHtml::encode(substr($post->name,0,40));}
+    			),
+    			array('empty' => 'Choose One', 'id'=>$model->id."_"."answerReasonExpressionId", "class"=>"form-control")
+    		); ?>
+    		</div>
+        </div>
+
 		<?php if($model->subjectType != "EGO_ID"): ?>
-			<br style="clear:left">
-			<?php echo $form->checkBox($model,'dontKnowButton', array('id'=>$model->id . "_" . "dontKnowButton")); ?>
-			<?php echo $form->labelEx($model,'dontKnowButton', array('for'=>$model->id . "_" . "dontKnowButton")); ?>
-			<?php echo $form->checkBox($model,'refuseButton', array('id'=>$model->id . "_" . "refuseButton")); ?>
-			<?php echo $form->labelEx($model,'refuseButton', array('for'=>$model->id . "_" . "refuseButton")); ?>
-			<br style="clear:left">
-			<?php echo $form->checkBox($model,'askingStyleList', array('id'=>$model->id . "_" . "askingStyleList", 'onchange'=>'changeStyle($(this), '.$model->id.', "' . $model->subjectType.'")')); ?>
-                <?php if($model->subjectType == "EGO" || $model->subjectType == "NETWORK"): ?>
-                <?php echo CHtml::label("Leaf and Stem Question", $model->id . "_" . "askingStyleList"); ?>
-                <?php else: ?>
-    			<?php echo $form->labelEx($model,'askingStyleList', array('for'=>$model->id . "_" . "askingStyleList")); ?>
-    			<?php endif;?>
-			<?php else: ?>
+		<br style="clear:left">
+		<?php echo $form->checkBox($model,'dontKnowButton', array('id'=>$model->id . "_" . "dontKnowButton")); ?>
+		<?php echo $form->labelEx($model,'dontKnowButton', array('for'=>$model->id . "_" . "dontKnowButton")); ?>
+		<?php echo $form->checkBox($model,'refuseButton', array('id'=>$model->id . "_" . "refuseButton")); ?>
+		<?php echo $form->labelEx($model,'refuseButton', array('for'=>$model->id . "_" . "refuseButton")); ?>
+		<br style="clear:left">
+		<?php echo $form->checkBox($model,'askingStyleList', array('id'=>$model->id . "_" . "askingStyleList", 'onchange'=>'changeStyle($(this), '.$model->id.', "' . $model->subjectType.'")')); ?>
+            <?php if($model->subjectType == "EGO" || $model->subjectType == "NETWORK"): ?>
+            <?php echo CHtml::label("Leaf and Stem Question", $model->id . "_" . "askingStyleList"); ?>
+            <?php else: ?>
+			<?php echo $form->labelEx($model,'askingStyleList', array('for'=>$model->id . "_" . "askingStyleList")); ?>
+			<?php endif;?>
+		<?php else: ?>
 
-	<div class="panel-<?php echo $model->id; ?>" id="EGO_ID" style="display:none">
-		<?php echo $form->labelEx($model,'useAlterListField'); ?>
-		<?php echo $form->dropDownList(
-			$model,
-			'useAlterListField',
-			array(
-				''=>'None',
-				'id'=>'ID',
-				'email'=>'Email',
-				'name'=>'Name',
-			)
-		); ?>
-		<?php echo $form->error($model,'useAlterListField'); ?>
-	</div>
-	<?php endif; ?>
-	<div class="panel-<?php echo $model->id; ?>" id="MULTIPLE_SELECTION" style="display:none">
-		<?php echo $form->checkBox($model,'otherSpecify',array('id'=>$model->id . "_" . "otherSpecify")); ?>
-		<?php echo $form->labelEx($model,'otherSpecify',array('for'=>$model->id . "_" . "otherSpecify")); ?>
-		<table border="0" bgcolor="#dddddd" >
-			<tr><td colspan="2">Bounds for MULTIPLE_SELECTION Entry:</td></tr>
-			<tr>
-				<td>
-					<?php echo $form->labelEx($model,'minCheckableBoxes',array('for'=>$model->id . "_" . "minCheckableBoxes")); ?>
-				</td>
-				<td>
-					<?php echo $form->textField($model,'minCheckableBoxes',array('id'=>$model->id . "_" . "minCheckableBoxes")); ?>
-					<?php echo $form->error($model,'minCheckableBoxes'); ?>
-				</td>
-			</tr>
-			<tr>
-				<td><?php echo $form->labelEx($model,'maxCheckableBoxes',array('for'=>$model->id . "_" . "maxCheckableBoxes")); ?></td>
-				<td>
-					<?php echo $form->textField($model,'maxCheckableBoxes',array('id'=>$model->id . "_" . "maxCheckableBoxes")); ?>
-					<?php echo $form->error($model,'maxCheckableBoxes'); ?>
-				</td>
-			</tr>
-		</table>
+    	<div class="panel-<?php echo $model->id; ?>" id="EGO_ID" style="display:none">
+    		<?php echo $form->labelEx($model,'useAlterListField'); ?>
+    		<?php echo $form->dropDownList(
+    			$model,
+    			'useAlterListField',
+    			array(
+    				''=>'None',
+    				'id'=>'ID',
+    				'email'=>'Email',
+    				'name'=>'Name',
+    			)
+    		); ?>
+    		<?php echo $form->error($model,'useAlterListField'); ?>
+    	</div>
+        <?php endif; ?>
+
+        <div class="panel-<?php echo $model->id; ?>" id="MULTIPLE_SELECTION" style="display:none">
+    		<?php echo $form->checkBox($model,'otherSpecify',array('id'=>$model->id . "_" . "otherSpecify")); ?>
+    		<?php echo $form->labelEx($model,'otherSpecify',array('for'=>$model->id . "_" . "otherSpecify")); ?>
+    		<table border="0" bgcolor="#dddddd" >
+    			<tr><td colspan="2">Bounds for MULTIPLE_SELECTION Entry:</td></tr>
+    			<tr>
+    				<td>
+    					<?php echo $form->labelEx($model,'minCheckableBoxes',array('for'=>$model->id . "_" . "minCheckableBoxes")); ?>
+    				</td>
+    				<td>
+    					<?php echo $form->textField($model,'minCheckableBoxes',array('id'=>$model->id . "_" . "minCheckableBoxes")); ?>
+    					<?php echo $form->error($model,'minCheckableBoxes'); ?>
+    				</td>
+    			</tr>
+    			<tr>
+    				<td><?php echo $form->labelEx($model,'maxCheckableBoxes',array('for'=>$model->id . "_" . "maxCheckableBoxes")); ?></td>
+    				<td>
+    					<?php echo $form->textField($model,'maxCheckableBoxes',array('id'=>$model->id . "_" . "maxCheckableBoxes")); ?>
+    					<?php echo $form->error($model,'maxCheckableBoxes'); ?>
+    				</td>
+    			</tr>
+    		</table>
 		</div>
 
 		<div class="panel-<?php echo $model->id; ?>" id="NUMERICAL" style="display:none">
@@ -446,6 +447,10 @@ function refresh(container){
 		<?php echo $form->labelEx($model,'Leaf and Stem'); ?>
 		<?php echo $form->textArea($model,'citation',array('rows'=>6, 'cols'=>50, 'id'=>'citation'.$model->id)); ?>
 		<?php echo $form->error($model,'citation'); ?>
+		<br>
+		<?php echo $form->labelEx($model,'Javascript'); ?>
+		<?php echo $form->textArea($model,'javascript',array('rows'=>6, 'cols'=>50, 'id'=>'javascript'.$model->id)); ?>
+		<?php echo $form->error($model,'javascript'); ?>
 	</div>
 
 <?php /*

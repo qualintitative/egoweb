@@ -247,6 +247,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 if(typeof $(".answerInput")[0] != "undefined")
                     $(".answerInput")[0].focus();
                 $("#second").scrollTop($("#second").scrollTop() - $("#second").offset().top + $("#menu_" + $scope.page).offset().top);
+                eval($scope.questions[k].JAVASCRIPT);
             },
         1);
     }

@@ -3,7 +3,7 @@
         {{ error }}
     </div>
 </span>
-<div id="visualizePlugin" ng-if="subjectType == 'NETWORK' && graphExpressionId != ''" class="col-sm-6 pull-right">
+<div id="visualizePlugin" ng-if="subjectType == 'NETWORK' && graphExpressionId > 0" class="col-sm-6 pull-right">
     <div id="infovis"></div>
 	<div class="col-sm-4 pull-left" id="legend">
 		<canvas id="legend"></canvas>
@@ -206,7 +206,7 @@
 
         <div ng-class="{'bg-danger':answerForm.$submitted && errors[question.array_id]}" ng-if="question.ANSWERTYPE == 'MULTIPLE_SELECTION' || options[question.array_id]">
             <div ng-show="question.ASKINGSTYLELIST == true">
-                <label ng-show="question.SUBJECTTYPE == 'EGO'" ng-bind-html="question.CITATION">{{ question.CITATION }}</label>
+                <label ng-show="question.SUBJECTTYPE == 'EGO' || question.SUBJECTTYPE == 'NETWORK'" ng-bind-html="question.CITATION">{{ question.CITATION }}</label>
                 <label ng-show="question.SUBJECTTYPE == 'ALTER'">{{ alters[question.ALTERID1].NAME }}</label>
                 <label ng-show="question.SUBJECTTYPE == 'ALTER_PAIR'">{{ alters[question.ALTERID2].NAME }}</label>
             </div>
