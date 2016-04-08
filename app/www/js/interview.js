@@ -1041,7 +1041,7 @@ function buildQuestions(pageNumber, interviewId){
 		for(j in network_questions){
             network_questions[j].array_id = network_questions[j].ID;
 
-			if(Object.keys(network_question_list).length > 0 && prompt != network_question_list[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
+			if(Object.keys(network_question_list).length > 0 && prompt != network_question[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
 				if(pageNumber == i){
 					page[i] = network_question_list;
 					return page[i];
