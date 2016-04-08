@@ -841,6 +841,8 @@ function buildQuestions(pageNumber, interviewId){
 		i++;
 		page[i] = new Object;
 		ego_question_list = new Object;
+		network_question_list = new Object;
+
 		prompt = "";
 		for(j in ego_questions){
             ego_questions[j].array_id = ego_questions[j].ID;
@@ -871,7 +873,7 @@ function buildQuestions(pageNumber, interviewId){
 				i++;
 				page[i] = new Object;
 			}
-			if(parseInt(ego_questions[j].ASKINGSTYLELIST)){
+			if(parseInt(ego_questions[j].ASKINGSTYLELIST) == 1){
 			    //console.log(prompt + ":" +ego_questions[j].PROMPT);
 			    if(prompt == "" || prompt == ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
 			    	//console.log('list type question');
@@ -945,7 +947,7 @@ function buildQuestions(pageNumber, interviewId){
 						}
 					}
 				}
-				if(alter_questions[j].ASKINGSTYLELIST == 1){
+				if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1){
 					if(Object.keys(alter_question_list).length > 0){
 						if(preface.PROMPT != ""){
 							if(i == pageNumber){
@@ -1039,8 +1041,21 @@ function buildQuestions(pageNumber, interviewId){
 		for(j in network_questions){
             network_questions[j].array_id = network_questions[j].ID;
 
+			if(Object.keys(network_question_list).length > 0 && prompt != network_question_list[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
+				if(pageNumber == i){
+					page[i] = network_question_list;
+					return page[i];
+				}
+				network_question_list = new Object;
+				prompt = "";
+				i++;
+				page[i] = new Object;
+			}
+
 			if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID) != true)
 				continue;
+
+
 
 			if(network_questions[j].PREFACE != ""){
 				if(pageNumber == i){
@@ -1056,13 +1071,23 @@ function buildQuestions(pageNumber, interviewId){
 				page[i] = new Object;
 			}
 
+			if(parseInt(network_questions[j].ASKINGSTYLELIST) == 1){
+			    //console.log(prompt + ":" +ego_questions[j].PROMPT);
+			    if(prompt == "" || prompt == network_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
+			    	//console.log('list type question');
+			    	prompt = network_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
+			    	network_question_list[parseInt(network_questions[j].ORDERING) + 1] = network_questions[j];
+			    }
+			}else{
 			    if(pageNumber == i){
 		    		page[i][network_questions[j].ID] = network_questions[j];
 			    	return page[i];
 			    }
 			    i++;
 			    page[i] = new Object;
+			}
 		}
+
 		conclusion = new Object;
 		conclusion.ANSWERTYPE = "CONCLUSION";
 		conclusion.PROMPT = study.CONCLUSION;
