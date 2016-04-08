@@ -9,7 +9,7 @@ class m160407_002139_js_question extends CDbMigration
         {
 		    $table = Yii::app()->db->schema->getTable('question');
 			if(!isset($table->columns['javascript']))
-				$this->addColumn('question', 'javascript', 'text');
+				$this->addColumn('question', 'javascript', 'longtext');
             $transaction->commit();
         }
         catch(Exception $e)
