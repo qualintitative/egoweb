@@ -7,7 +7,7 @@ if($question->answerType == "TEXTUAL" || $question->answerType == "TEXTUAL_PP"){
         'Contains'=>'Contains',
         'Equals'=>'Equals',
     );
-} else if ($question->answerType == "NUMERICAL" ) {
+} else if ($question->answerType == "NUMERICAL"  || $question->answerType == "RANDOM_NUMBER") {
     echo CHtml::activeHiddenField($model, 'type', array('value'=>'Number'));
     echo "Expression is true for an answer is";
     $choices = array(

@@ -130,7 +130,7 @@ class Interview extends CActiveRecord
             $egoIdQ->interviewId = $interview->id;
             $egoIdQ->studyId = $studyId;
             $egoIdQ->questionType = "EGO_ID";
-            $egoIdQ->answerType = "TEXTUAL";
+            $egoIdQ->answerType = $egoQ->answerType;
             $egoIdQ->questionId = $egoQ->id;
             $egoIdQ->skipReason = "NONE";
             if (isset($prefill[$egoQ->title]))
@@ -143,6 +143,20 @@ class Interview extends CActiveRecord
             }
             $egoIdQ->save();
         }
+
+		$randoms = Question::model()->findAllByAttributes(array("answerType"=>"RANDOM_NUMBER", "studyId"=>$Answer['studyId']));
+		foreach($randoms as $q){
+		    $a = $q->id;
+            $answer = new Answer;
+            $answer->interviewId = $interview->id;
+            $answer->studyId = $studyId;
+            $answer->questionType = "EGO_ID";
+            $answer->answerType = "RANDOM_NUMBER";
+            $answer->questionId = $q->id;
+            $answer->skipReason = "NONE";
+            $answer->value = mt_rand ($q->minLiteral , $q->maxLiteral);
+            $answer->save();
+		}
 
         if(count($questions) > 0)
             $interview->fillEgoQs($questions);
@@ -222,7 +236,7 @@ class Interview extends CActiveRecord
         $params->dataType = PDO::PARAM_INT;
 
         $interview = q("SELECT * FROM interview where id = :id", array($params))->queryRow();
-        $ego_id_questions = q("SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId = " . $interview['studyId'] . " ORDER BY ordering")->queryAll();
+        $ego_id_questions = q("SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId = " . $interview['studyId'] . " AND answerType NOT IN ('STORED_VALUE', 'RANDOM_NUMBER') ORDER BY ordering")->queryAll();
         $egoId = "";
         foreach ($ego_id_questions as $question)
         {

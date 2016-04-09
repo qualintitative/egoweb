@@ -191,19 +191,6 @@ class Question extends CActiveRecord
 		}
 	}
 
-	public function answerTypes()
-	{
-		return array(
-			'TEXTUAL'=>'TEXTUAL',
-			'NUMERICAL'=>'NUMERICAL',
-			'MULTIPLE_SELECTION'=>'MULTIPLE_SELECTION',
-			'DATE'=>'DATE',
-			'TIME_SPAN'=>'TIME_SPAN',
-			'TEXTUAL_PP'=>'TEXTUAL_PP',
-			'NO_RESPONSE'=>'NO_RESPONSE',
-		);
-	}
-
 	public static function timeBits($timeUnits)
 	{
 		$timeArray = array();

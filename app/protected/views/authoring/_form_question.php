@@ -5,6 +5,23 @@
 ?>
 
 <?php
+
+// create answertypes based on subjecttype
+$answerTypes = array(
+	'TEXTUAL'=>'TEXTUAL',
+	'NUMERICAL'=>'NUMERICAL',
+	'MULTIPLE_SELECTION'=>'MULTIPLE_SELECTION',
+	'DATE'=>'DATE',
+);
+
+if($model->subjectType == "EGO_ID")
+	$answerTypes = array_merge($answerTypes, array('STORED_VALUE'=>'STORED_VALUE', 'RANDOM_NUMBER'=>'RANDOM_NUMBER'));
+else
+	$answerTypes = array_merge($answerTypes, array('TIME_SPAN'=>'TIME_SPAN', 'TEXTUAL_PP'=>'TEXTUAL_PP', 'NO_RESPONSE'=>'NO_RESPONSE'));
+
+?>
+
+<?php
 $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'question-form',
 	'enableAjaxValidation'=>$ajax,
@@ -63,19 +80,19 @@ jQuery('input.time-".$model->id."').change(function() {
 
 	<div  style="width:50%; float:left; padding:10px">
 		<div class="form-group">
-		    <?php echo $form->labelEx($model,'title', array('for'=>$model->id . "_" . "title", "class"=>"control-label col-sm-3")); ?>
-            <div class="col-sm-9">
+		    <?php echo $form->labelEx($model,'title', array('for'=>$model->id . "_" . "title", "class"=>"control-label col-sm-4")); ?>
+            <div class="col-sm-8">
                 <?php echo $form->textField($model,'title',array('id'=>$model->id . "_" . "title", "class"=>"form-control")); ?>
 		    </div>
 		</div>
 		<div class="form-group">
-    		<?php echo $form->labelEx($model,'answerType', array('for'=>'a-'.$model->id, "class"=>"control-label col-sm-3")); ?>
-    		<div class="col-sm-9">
+    		<?php echo $form->labelEx($model,'answerType', array('for'=>'a-'.$model->id, "class"=>"control-label col-sm-4 input-sm")); ?>
+    		<div class="col-sm-8">
         		<?php
         			echo $form->dropDownList(
         				$model,
         				'answerType',
-        				$model->answerTypes(),
+        				$answerTypes,
         				array('class'=>'answerTypeSelect', 'id'=>'a-'.$model->id, 'onchange'=>'changeAType(this)', "class"=>"form-control")
         			);
         		?>
@@ -83,13 +100,13 @@ jQuery('input.time-".$model->id."').change(function() {
 		</div>
 
         <div class="form-group">
-    		<?php echo $form->labelEx($model,'Skip Logic Expression', array('for'=>$model->id."_"."answerReasonExpressionId", "class"=>"control-label col-sm-3")); ?>
+    		<?php echo $form->labelEx($model,'Skip Logic Expression', array('for'=>$model->id."_"."answerReasonExpressionId", "class"=>"control-label col-sm-4 input-sm")); ?>
     		<?php $criteria=new CDbCriteria;
     		$criteria=array(
     			'condition'=>"studyId = " . $model->studyId,
     		);
     		?>
-    		<div class="col-sm-9">
+    		<div class="col-sm-8">
     		<?php echo $form->dropdownlist(
     			$model,
     			'answerReasonExpressionId',
@@ -104,9 +121,9 @@ jQuery('input.time-".$model->id."').change(function() {
         </div>
 
 		<?php if($model->subjectType != "EGO_ID"): ?>
-		<br style="clear:left">
-		<?php echo $form->checkBox($model,'dontKnowButton', array('id'=>$model->id . "_" . "dontKnowButton")); ?>
-		<?php echo $form->labelEx($model,'dontKnowButton', array('for'=>$model->id . "_" . "dontKnowButton")); ?>
+        <div class="checkbox">
+		    <label><?php echo $form->checkBox($model,'dontKnowButton', array('id'=>$model->id . "_" . "dontKnowButton")); ?> Don't Know</label>
+        </div>
 		<?php echo $form->checkBox($model,'refuseButton', array('id'=>$model->id . "_" . "refuseButton")); ?>
 		<?php echo $form->labelEx($model,'refuseButton', array('for'=>$model->id . "_" . "refuseButton")); ?>
 		<br style="clear:left">
@@ -117,21 +134,38 @@ jQuery('input.time-".$model->id."').change(function() {
 			<?php echo $form->labelEx($model,'askingStyleList', array('for'=>$model->id . "_" . "askingStyleList")); ?>
 			<?php endif;?>
 		<?php else: ?>
-
-    	<div class="panel-<?php echo $model->id; ?>" id="EGO_ID" style="display:none">
-    		<?php echo $form->labelEx($model,'useAlterListField'); ?>
-    		<?php echo $form->dropDownList(
-    			$model,
-    			'useAlterListField',
-    			array(
-    				''=>'None',
-    				'id'=>'ID',
-    				'email'=>'Email',
-    				'name'=>'Name',
-    			)
-    		); ?>
-    		<?php echo $form->error($model,'useAlterListField'); ?>
+		<div class="panel-<?php echo $model->id; ?>" id="TEXTUAL" style="display:none">
+            <?php echo $form->labelEx($model,'useAlterListField', array("class"=>"control-label col-sm-8")); ?>
+    		<div class="col-sm-4">
+        		<?php echo $form->dropDownList(
+        			$model,
+        			'useAlterListField',
+        			array(
+        				''=>'None',
+        				'id'=>'ID',
+        				'email'=>'Email',
+        				'name'=>'Name',
+        			),
+        			array("class"=>"form-control")
+        		); ?>
+        		<?php echo $form->error($model,'useAlterListField'); ?>
+    		</div>
     	</div>
+    	
+        <div class="panel-<?php echo $model->id; ?>" id="RANDOM_NUMBER" style="display:none">
+                <div class="form-group">
+                    <label class="control-label col-sm-4">Min</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="minRandom" onchange="$('#<?php echo $model->id; ?>-minLiteral').val($(this).val())" value="<?php echo ($model->minLiteral ? $model->minLiteral : 1); ?>">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-4">Max</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="maxRandom" onchange="$('#<?php echo $model->id; ?>-maxLiteral').val($(this).val())" value="<?php echo ($model->maxLiteral ? $model->maxLiteral : 10); ?>">
+                    </div>
+                </div>
+        </div>
         <?php endif; ?>
 
         <div class="panel-<?php echo $model->id; ?>" id="MULTIPLE_SELECTION" style="display:none">
@@ -188,7 +222,7 @@ jQuery('input.time-".$model->id."').change(function() {
 			); ?>
 			</td><td>
 				<div style="height:30px;">
-					<?php echo $form->textField($model,'minLiteral', array('style'=>'width:60px; margin:0')); ?>
+					<?php echo $form->textField($model,'minLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-minLiteral')); ?>
 				</div>
 				<div style="height:30px;">
 			<?php echo $form->dropdownlist(
@@ -217,7 +251,7 @@ jQuery('input.time-".$model->id."').change(function() {
 			); ?>
 			</td><td>
 				<div style="height:30px;">
-					<?php echo $form->textField($model,'maxLiteral', array('style'=>'width:60px; margin:0')); ?>
+					<?php echo $form->textField($model,'maxLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-maxLiteral')); ?>
 				</div>
 				<div style="height:30px;">
 			<?php echo $form->dropdownlist(
