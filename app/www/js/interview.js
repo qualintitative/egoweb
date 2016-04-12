@@ -835,11 +835,14 @@ function buildQuestions(pageNumber, interviewId){
 		for(j in ego_id_questions){
     		if(ego_id_questions[j].ANSWERTYPE == "STORED_VALUE" || ego_id_questions[j].ANSWERTYPE == "RANDOM_NUMBER")
     		    continue;
-            //ego_id_questions[j].array_id = ego_id_questions[j].ID;
-			//page[i][parseInt(ego_id_questions[j].ORDERING) + 1] = ego_id_questions[j];
+            ego_id_questions[j].array_id = ego_id_questions[j].ID;
+			page[i][parseInt(ego_id_questions[j].ORDERING) + 1] = ego_id_questions[j];
 		}
 		return page[i];
+	}else{
+    	i--;
 	}
+
 	if(interviewId != null){
 		i++;
 		page[i] = new Object;
