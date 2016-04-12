@@ -831,24 +831,24 @@ function buildQuestions(pageNumber, interviewId){
 		i++;
 		page[i] = new Object;
 	}
-	if(pageNumber == i && parseInt(study.HIDEEGOIDPAGE) != 1){
-		for(j in ego_id_questions){
-    		if(ego_id_questions[j].ANSWERTYPE == "STORED_VALUE" || ego_id_questions[j].ANSWERTYPE == "RANDOM_NUMBER")
-    		    continue;
-            ego_id_questions[j].array_id = ego_id_questions[j].ID;
-			page[i][parseInt(ego_id_questions[j].ORDERING) + 1] = ego_id_questions[j];
+	if(pageNumber == i){
+    	if(parseInt(study.HIDEEGOIDPAGE) != 1){
+    		for(j in ego_id_questions){
+        		if(ego_id_questions[j].ANSWERTYPE == "STORED_VALUE" || ego_id_questions[j].ANSWERTYPE == "RANDOM_NUMBER")
+        		    continue;
+                ego_id_questions[j].array_id = ego_id_questions[j].ID;
+    			page[i][parseInt(ego_id_questions[j].ORDERING) + 1] = ego_id_questions[j];
+    		}
+    		return page[i];
+    		i++;
+    		page[i] = new Object;
 		}
-		return page[i];
-	}else{
-    	i--;
 	}
 
 	if(interviewId != null){
-		i++;
-		page[i] = new Object;
+    	console.log("interviewid"+interviewId+i);
 		ego_question_list = new Object;
 		network_question_list = new Object;
-
 		prompt = "";
 		for(j in ego_questions){
             ego_questions[j].array_id = ego_questions[j].ID;
