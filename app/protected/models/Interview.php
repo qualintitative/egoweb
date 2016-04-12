@@ -109,7 +109,7 @@ class Interview extends CActiveRecord
         }
 
         $criteria=new CDbCriteria;
-        $criteria->condition = ("studyId = $studyId and subjectType = 'EGO_ID'");
+        $criteria->condition = ("studyId = $studyId and subjectType = 'EGO_ID' AND answerType != 'RANDOM_NUMBER'");
         $egoQs = Question::model()->findAll($criteria);
         $study = Study::model()->findByPk($studyId);
 
