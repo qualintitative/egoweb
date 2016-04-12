@@ -144,7 +144,7 @@ class Interview extends CActiveRecord
             $egoIdQ->save();
         }
 
-		$randoms = Question::model()->findAllByAttributes(array("answerType"=>"RANDOM_NUMBER", "studyId"=>$Answer['studyId']));
+		$randoms = Question::model()->findAllByAttributes(array("answerType"=>"RANDOM_NUMBER", "studyId"=>$studyId));
 		foreach($randoms as $q){
 		    $a = $q->id;
             $answer = new Answer;
