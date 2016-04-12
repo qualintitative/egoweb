@@ -840,9 +840,10 @@ function buildQuestions(pageNumber, interviewId){
     			page[i][parseInt(ego_id_questions[j].ORDERING) + 1] = ego_id_questions[j];
     		}
     		return page[i];
-    		i++;
-    		page[i] = new Object;
 		}
+	}else{
+        i++;
+        page[i] = new Object;
 	}
 
 	if(interviewId != null){
@@ -2061,8 +2062,10 @@ function buildNav(pageNumber){
 		pages[i] = this.checkPage(i, pageNumber, "INTRODUCTION");
 		i++;
 	}
-	pages[i] = this.checkPage(i, pageNumber, "EGO ID");
-	i++;
+	if(parseInt(study.HIDEEGOIDPAGE) != 1){
+    	pages[i] = this.checkPage(i, pageNumber, "EGO ID");
+        i++;
+    }
 	if(!interviewId){
 		return pages;
 	}
