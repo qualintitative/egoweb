@@ -831,7 +831,7 @@ function buildQuestions(pageNumber, interviewId){
 		i++;
 		page[i] = new Object;
 	}
-	if(pageNumber == i){
+	if(pageNumber == i && parseInt(study.HIDEEGOIDPAGE) != 1){
 		for(j in ego_id_questions){
     		if(ego_id_questions[j].ANSWERTYPE == "STORED_VALUE" || ego_id_questions[j].ANSWERTYPE == "RANDOM_NUMBER")
     		    continue;
