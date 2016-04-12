@@ -833,10 +833,10 @@ function buildQuestions(pageNumber, interviewId){
 	}
 	if(pageNumber == i){
 		for(j in ego_id_questions){
-    		if(study.COMPLETE_DATE == 0 && (ego_id_questions[j].ANSWERTYPE == "STORED_VALUE" || ego_id_questions[j].ANSWERTYPE == "RANDOM_NUMBER"))
+    		if(ego_id_questions[j].ANSWERTYPE == "STORED_VALUE" || ego_id_questions[j].ANSWERTYPE == "RANDOM_NUMBER")
     		    continue;
-            ego_id_questions[j].array_id = ego_id_questions[j].ID;
-			page[i][parseInt(ego_id_questions[j].ORDERING) + 1] = ego_id_questions[j];
+            //ego_id_questions[j].array_id = ego_id_questions[j].ID;
+			//page[i][parseInt(ego_id_questions[j].ORDERING) + 1] = ego_id_questions[j];
 		}
 		return page[i];
 	}

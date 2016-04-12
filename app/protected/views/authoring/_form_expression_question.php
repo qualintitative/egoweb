@@ -1,6 +1,6 @@
 <?php
 $after = "";
-if($question->answerType == "TEXTUAL" || $question->answerType == "TEXTUAL_PP"){
+if($question->answerType == "TEXTUAL" || $question->answerType == "TEXTUAL_PP" || $question->answerType == "STORED_VALUE"){
     echo CHtml::activeHiddenField($model, 'type', array('value'=>'Text'));
     echo "Expression is true for an answer that";
     $choices = array(

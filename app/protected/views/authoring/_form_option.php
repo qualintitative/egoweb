@@ -113,7 +113,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
 ));
 
 ?>
-	<a class='delete' href="<?php echo Yii::app()->createUrl("/authoring/ajaxdelete", array("QuestionOption[id]"=>"all", "questionId"=>$questionId)); ?>">Delete all</a>
+<a class='delete' href="<?php echo Yii::app()->createUrl("/authoring/ajaxdelete", array("QuestionOption[id]"=>"all", "questionId"=>$questionId)); ?>">Delete all</a>
 </div>
 <div class="col-sm-6">
 	<div style="margin-bottom:15px;">
