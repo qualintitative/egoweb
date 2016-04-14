@@ -156,13 +156,13 @@ jQuery('input.time-".$model->id."').change(function() {
                 <div class="form-group">
                     <label class="control-label col-sm-4">Min</label>
                     <div class="col-sm-8">
-                        <input class="form-control" id="minRandom" onchange="$('#<?php echo $model->id; ?>-minLiteral').val($(this).val())" value="<?php echo ($model->minLiteral ? $model->minLiteral : 1); ?>">
+                        <input class="form-control" id="minRandom" onchange="$('#<?php echo $model->id; ?>-minLiteral').val($(this).val())" value="<?php echo $model->minLiteral; ?>">
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="control-label col-sm-4">Max</label>
                     <div class="col-sm-8">
-                        <input class="form-control" id="maxRandom" onchange="$('#<?php echo $model->id; ?>-maxLiteral').val($(this).val())" value="<?php echo ($model->maxLiteral ? $model->maxLiteral : 10); ?>">
+                        <input class="form-control" id="maxRandom" onchange="$('#<?php echo $model->id; ?>-maxLiteral').val($(this).val())" value="<?php echo $model->maxLiteral; ?>">
                     </div>
                 </div>
         </div>
