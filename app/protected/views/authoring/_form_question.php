@@ -121,7 +121,7 @@ jQuery('input.time-".$model->id."').change(function() {
         </div>
 
 		<?php if($model->subjectType != "EGO_ID"): ?>
-        <div class="checkbox">
+        <div>
 		    <label><?php echo $form->checkBox($model,'dontKnowButton', array('id'=>$model->id . "_" . "dontKnowButton")); ?> Don't Know</label>
         </div>
 		<?php echo $form->checkBox($model,'refuseButton', array('id'=>$model->id . "_" . "refuseButton")); ?>
