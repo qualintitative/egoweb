@@ -2085,7 +2085,7 @@ function buildNav(pageNumber){
 			pages[i] = this.checkPage(i, pageNumber, "PREFACE");
 			i++;
 		}
-		if(parseInt(ego_questions[j].ASKINGSTYLELIST)){
+		if(parseInt(ego_questions[j].ASKINGSTYLELIST) == 1){
 		    prompt = ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
 		    if(ego_question_list == '')
 			    ego_question_list = ego_questions[j];
@@ -2181,17 +2181,31 @@ function buildNav(pageNumber){
 
 	}
 
+	var network_question_list = '';
 	for(j in network_questions){
 	    if(interviewId){
 	    	if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID) != true)
 	    		continue;
 	    }
-	    if(network_questions[j].PREFACE != ""){
-	    	pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-	    	i++;
-	    }
-	    pages[i] = this.checkPage(i, pageNumber, network_questions[j].TITLE);
-	    i++;
+
+		if((parseInt(network_questions[j].ASKINGSTYLELIST) != 1 || prompt != network_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")) && network_question_list){
+		    pages[i] = this.checkPage(i, pageNumber, network_question_list.TITLE);
+			prompt = "";
+		    network_question_list = '';
+		    i++;
+		}
+		if(network_questions[j].PREFACE != ""){
+			pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+			i++;
+		}
+		if(parseInt(network_questions[j].ASKINGSTYLELIST) == 1){
+		    prompt = network_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
+		    if(network_question_list == '')
+			    network_question_list = network_questions[j];
+		}else{
+		    pages[i] = this.checkPage(i, pageNumber, network_questions[j].TITLE);
+		    i++;
+		}
 	}
 
 	pages[i] = this.checkPage(i, pageNumber, "CONCLUSION");
