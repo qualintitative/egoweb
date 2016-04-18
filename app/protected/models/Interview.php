@@ -758,7 +758,7 @@ class Interview extends CActiveRecord
                         $answers[] = $study->valueRefusal;
                 } else
                 {
-                    $answers[] = "";
+                    $answers[] = $study->valueLogicalSkip;
                 }
             }
 
@@ -804,7 +804,7 @@ class Interview extends CActiveRecord
                         else
                             $answers[] = $study->valueRefusal;
                     }else{
-                        $answers[] = "";
+                        $answers[] = $study->valueLogicalSkip;
                     }
                 }
             }
@@ -841,7 +841,7 @@ class Interview extends CActiveRecord
                         $answers[] = $study->valueRefusal;
                     } else
                     {
-                        $answers[] = "";
+                        $answers[] = $study->valueLogicalSkip;
                     }
                 }
             if (isset($stats))
