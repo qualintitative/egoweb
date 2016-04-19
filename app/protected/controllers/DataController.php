@@ -564,7 +564,7 @@ class DataController extends Controller
 						if(count($responses) > 0)
 							$response = implode(";; ", $responses);
 						$answer[] = $interview->id;
-						$answer[] = Interview::getRespondant($interview->id);
+						$answer[] = Interview::getEgoId($interview->id);
 						$answer[] = $question['title'];
 						if($alter->name!="")
 						         $answer[] = decrypt($alter->name);
@@ -676,7 +676,7 @@ class DataController extends Controller
                         }
 
 						$answer[] = $interview->id;
-						$answer[] = Interview::getRespondant($interview->id);
+						$answer[] = Interview::getEgoId($interview->id);
 						$answer[] = $question->title;
 						$answer[] = $alter->name;
                         $answer[] = implode("; ", $answerArray);

@@ -452,7 +452,31 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     	console.log(date);
 
     }
+    
+    $scope.timeBits = function(timeUnits, span)
+    {
+        console.log(timeUnits);
+        console.log(span);
+        timeArray = [];
+        bitVals = {
+        	'BIT_YEAR' :1,
+        	'BIT_MONTH' : 2,
+        	'BIT_WEEK': 4,
+        	'BIT_DAY' :8,
+        	'BIT_HOUR' :16,
+        	'BIT_MINUTE': 32,
+        };
+        for (var k in bitVals){
+        	if(timeUnits & bitVals[k]){
+        		timeArray.push(k);
+        	}
+        }
 
+        if($.inArray("BIT_" + span, timeArray) != -1)
+            return true;
+        else
+            return false;
+    }
 }]);
 
 app.directive('checkAnswer', [function (){
