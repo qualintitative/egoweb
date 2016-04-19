@@ -708,12 +708,22 @@ class Interview extends CActiveRecord
             foreach ($ego_id_questions as $question)
             {
                 #OK FOR SQL INJECTION
-                $ego_ids[] = q("SELECT value FROM answer WHERE interviewId = " . $this->id  . " AND questionId = " . $question['id'])->queryScalar();
-            }
-            foreach ($ego_ids as &$ego_id)
-            {
-                if ($ego_id!="")
-                    $ego_id = decrypt($ego_id);
+                $result = Answer::model()->findByAttributes(array("interviewId" => $this->id, "questionId" => $question['id']));
+                $answer = $result->value;
+                if ($question['answerType'] == "MULTIPLE_SELECTION")
+                {
+                    $optionIds = explode(',', $answer);
+                    $list = array();
+                    foreach ($optionIds as $optionId)
+                    {
+                        if (isset($options[$optionId]))
+                            $list[] = $options[$optionId];
+                    }
+                    $ego_ids[] = implode('; ', $list);
+                } else
+                {
+                    $ego_ids[] = str_replace(',', '', $answer);
+                }
             }
             $answers[] = implode("_", $ego_ids);
             foreach ($ego_ids as $eid)
@@ -728,7 +738,7 @@ class Interview extends CActiveRecord
                     $answer = decrypt($answer);
                 #OK FOR SQL INJECTION
                 $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'])->queryScalar();
-                if ($answer !== "" && $skipReason == "NONE")
+                if ($answer !== "" && $skipReason == "NONE" && $answer != $study->valueLogicalSkip)
                 {
                     if ($question['answerType'] == "SELECTION")
                     {
@@ -775,7 +785,7 @@ class Interview extends CActiveRecord
                         $answer = decrypt($answer);
                     #OK FOR SQL INJECTION
                     $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter->id)->queryScalar();
-                    if ($answer != "" && $skipReason == "NONE")
+                    if ($answer != "" && $skipReason == "NONE" && $answer != $study->valueLogicalSkip)
                     {
                         if ($question['answerType'] == "SELECTION")
                         {
@@ -811,7 +821,7 @@ class Interview extends CActiveRecord
                 foreach ($network_questions as $question)
                 {
                     $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question->id));
-                    if ($answer->value !== "" && $answer->skipReason == "NONE")
+                    if ($answer->value !== "" && $answer->skipReason == "NONE" && $answer != $study->valueLogicalSkip)
                     {
                         if ($question->answerType == "SELECTION")
                         {
