@@ -696,14 +696,17 @@ class Interview extends CActiveRecord
             $answers = array();
             $answers[] = $this->id;
             $ego_ids = array();
+            $ego_id_string = array();
             $study = Study::model()->findByPk($this->studyId);
             $optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
 
             // create an array with option ID as key
             $options = array();
+            $optionLabels = array();
             foreach ($optionsRaw as $option)
             {
                 $options[$option['id']] = $option['value'];
+                $optionLabels[$option['id']] = $option['name'];
             }
             foreach ($ego_id_questions as $question)
             {
@@ -717,15 +720,18 @@ class Interview extends CActiveRecord
                     foreach ($optionIds as $optionId)
                     {
                         if (isset($options[$optionId]))
-                            $list[] = $options[$optionId];
+                            $ego_ids[] = $options[$optionId];
+                            $ego_id_string[] = $optionLabels[$optionId];
                     }
-                    $ego_ids[] = implode('; ', $list);
                 } else
                 {
                     $ego_ids[] = str_replace(',', '', $answer);
+                    $ego_id_string[] = str_replace(',', '', $answer);
                 }
             }
-            $answers[] = implode("_", $ego_ids);
+            $answers[] = implode("_", $ego_id_string);
+            $answers[] = date("Y-m-d h:i:s", $this->start_date);
+            $answers[] = date("Y-m-d h:i:s", $this->complete_date);
             foreach ($ego_ids as $eid)
             {
                 $answers[] = $eid;

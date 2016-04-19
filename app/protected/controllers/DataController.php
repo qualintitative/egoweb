@@ -328,13 +328,15 @@ class DataController extends Controller
 		$headers = array();
 		$headers[] = 'Interview ID';
 		$headers[] = "EgoID";
+		$headers[] = 'Start Time';
+		$headers[] = 'End Time';
 		foreach ($ego_id_questions as $question){
 			$headers[] = $question['title'];
 		}
 		foreach ($ego_questions as $question){
 			$headers[] = $question['title'];
 		}
-		$headers[] = "Alter #";
+		$headers[] = "Alter Number";
 		$headers[] = "Alter Name";
 		foreach ($alter_questions as $question){
 			$headers[] = $question['title'];
