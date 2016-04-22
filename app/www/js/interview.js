@@ -1230,11 +1230,10 @@ function evalExpression(id, alterId1, alterId2)
     }
     if(expressions[id].TYPE == "Compound"){
 	    console.log( expressions[id].NAME + ":" + expressions[id].VALUE);
-    	subexpressions = expressions[id].VALUE.split(',');
+    	var subexpressions = expressions[id].VALUE.split(',');
     	var trues = 0;
     	for (var k in subexpressions) {
     		// prevent infinite loops!
-    		console.log(expressions[id].NAME +":subexpression:"+ k +":");
     		if(parseInt(subexpressions[k]) == id)
     			continue;
     		isTrue = evalExpression(parseInt(subexpressions[k]), alterId1, alterId2);
@@ -1243,6 +1242,7 @@ function evalExpression(id, alterId1, alterId2)
     		}
     		if(isTrue)
     			trues++;
+    		console.log(expressions[id].NAME +":subexpression:"+ k +":" + isTrue);
     	}
     	if(expressions[id].OPERATOR == "None" && trues == 0)
     		return true;
