@@ -772,9 +772,11 @@ class Interview extends CActiveRecord
                         $answers[] = $study->valueDontKnow;
                     else
                         $answers[] = $study->valueRefusal;
-                } else
+                } else if($question['answerReasonExpressionId'] && !$answer)
                 {
                     $answers[] = $study->valueLogicalSkip;
+                } else {
+                    $answers[] = "";
                 }
             }
 
@@ -819,8 +821,11 @@ class Interview extends CActiveRecord
                             $answers[] = $study->valueDontKnow;
                         else
                             $answers[] = $study->valueRefusal;
-                    }else{
+                    } else if($question['answerReasonExpressionId'] && !$answer)
+                    {
                         $answers[] = $study->valueLogicalSkip;
+                    } else {
+                        $answers[] = "";
                     }
                 }
             }
@@ -855,9 +860,11 @@ class Interview extends CActiveRecord
                     } else if ( $answer->skipReason == "REFUSE")
                     {
                         $answers[] = $study->valueRefusal;
-                    } else
+                    }  else if($question['answerReasonExpressionId'] && !$answer)
                     {
                         $answers[] = $study->valueLogicalSkip;
+                    } else {
+                        $answers[] = "";
                     }
                 }
             if (isset($stats))
