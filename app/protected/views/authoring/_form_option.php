@@ -1,5 +1,5 @@
 <div style="overflow-y:auto; height:320px">
-<div style="width:300px; float:left; margin-left:20px">
+<div class="col-sm-6">
 <script>
 function ajaxCheck(optionId, checked){
     $.post("/authoring/ajaxupdate",{optionId:optionId, otherSpecify:(checked == true ? 1:0),YII_CSRF_TOKEN:$("input[name='YII_CSRF_TOKEN']").val()}, function(data){
@@ -113,9 +113,9 @@ $this->widget('zii.widgets.grid.CGridView', array(
 ));
 
 ?>
-	<a class='delete' href="<?php echo Yii::app()->createUrl("/authoring/ajaxdelete", array("QuestionOption[id]"=>"all", "questionId"=>$questionId)); ?>">Delete all</a>
+<a class='delete' href="<?php echo Yii::app()->createUrl("/authoring/ajaxdelete", array("QuestionOption[id]"=>"all", "questionId"=>$questionId)); ?>">Delete all</a>
 </div>
-<div style="float:left; width:400px; margin:15px 0 0 30px;">
+<div class="col-sm-6">
 	<div style="margin-bottom:15px;">
 		<span class="smallheader">Add new option</span>
 		<?php

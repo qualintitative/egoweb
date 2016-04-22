@@ -94,9 +94,9 @@ class Answer extends CActiveRecord
 	 * @return bool|void
 	 */
 	public function beforeSave() {
-		if($this->value)
+		if($this->value != "")
 			$this->value = encrypt( $this->value );
-		if($this->otherSpecifyText)
+		if($this->otherSpecifyText != "")
 			$this->otherSpecifyText = encrypt( $this->otherSpecifyText );
 
 		return parent::beforeSave();

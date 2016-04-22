@@ -332,6 +332,19 @@ class InterviewController extends Controller
 					$interview = new Interview;
 					$interview->studyId = $Answer['studyId'];
 					if($interview->save()){
+    					$randoms = Question::model()->findAllByAttributes(array("answerType"=>"RANDOM_NUMBER", "studyId"=>$Answer['studyId']));
+    					foreach($randoms as $q){
+        				    $a = $q->id;
+                            $answers[$a] = new Answer;
+                            $answers[$a]->interviewId = $interview->id;
+                            $answers[$a]->studyId = $Answer['studyId'];
+                            $answers[$a]->questionType = "EGO_ID";
+                            $answers[$a]->answerType = "RANDOM_NUMBER";
+                            $answers[$a]->questionId = $q->id;
+                            $answers[$a]->skipReason = "NONE";
+                            $answers[$a]->value = mt_rand ($q->minLiteral , $q->maxLiteral);
+                            $answers[$a]->save();
+    					}
 						$interviewId = $interview->id;
 					}else{
 						print_r($interview->errors);

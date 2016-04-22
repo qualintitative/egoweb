@@ -50,7 +50,7 @@ class Study extends CActiveRecord
 			array('name', 'filter', 'filter'=>function($param) {return CHtml::encode(strip_tags($param));}),
 			array('active', 'numerical', 'integerOnly'=>true),
 			array('id, active, name, minAlters, maxAlters, multiSessionEgoId', 'length', 'max'=>255),
-			array('introduction, egoIdPrompt, alterPrompt, conclusion, style', 'length', 'max'=>4294967295),
+			array('introduction, egoIdPrompt, alterPrompt, conclusion, style, javascript, footer', 'length', 'max'=>4294967295),
 
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.

@@ -42,6 +42,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.audio = {};
     $scope.keys = Object.keys;
     $scope.interview = interview;
+    $scope.footer = $sce.trustAsHtml(study.FOOTER);
 
     for(k in audio){
         $scope.audio[k] = audio[k];
@@ -246,10 +247,14 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 if(typeof $(".answerInput")[0] != "undefined")
                     $(".answerInput")[0].focus();
                 $("#second").scrollTop($("#second").scrollTop() - $("#second").offset().top + $("#menu_" + $scope.page).offset().top);
-
+                eval($scope.questions[k].JAVASCRIPT);
             },
         1);
     }
+
+    setTimeout(function(){
+        eval(study.JAVASCRIPT);
+    },1);
 
     $scope.errors = new Object;
 
@@ -447,7 +452,31 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     	console.log(date);
 
     }
+    
+    $scope.timeBits = function(timeUnits, span)
+    {
+        console.log(timeUnits);
+        console.log(span);
+        timeArray = [];
+        bitVals = {
+        	'BIT_YEAR' :1,
+        	'BIT_MONTH' : 2,
+        	'BIT_WEEK': 4,
+        	'BIT_DAY' :8,
+        	'BIT_HOUR' :16,
+        	'BIT_MINUTE': 32,
+        };
+        for (var k in bitVals){
+        	if(timeUnits & bitVals[k]){
+        		timeArray.push(k);
+        	}
+        }
 
+        if($.inArray("BIT_" + span, timeArray) != -1)
+            return true;
+        else
+            return false;
+    }
 }]);
 
 app.directive('checkAnswer', [function (){
@@ -463,6 +492,9 @@ app.directive('checkAnswer', [function (){
                 console.log(question);
                 console.log("check:" + value);
 
+
+
+		
                 if(attr.answerType == "ALTER_PROMPT"){
         			if(Object.keys(alters).length < study.MINALTERS){
         				scope.errors[array_id] = 'Please list ' + study.MINALTERS + ' people';
@@ -473,7 +505,6 @@ app.directive('checkAnswer', [function (){
                 if(attr.answerType == "TEXTUAL"){
                     if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
                         if(value == ""){
-                            console.log("DDDDD");
                             scope.errors[array_id] = "Value cannot be blank";
                         	valid = false;
                     	}else{
@@ -590,6 +621,42 @@ app.directive('checkAnswer', [function (){
         			}
         		}
 
+    		// check for list range limitations
+    		var checks = 0;
+    		if(typeof question != "undefined" && parseInt(question.WITHLISTRANGE) != 0){
+    			for(i in answers){
+    					console.log(answers[i].VALUE + ":" + question.LISTRANGESTRING);
+    				if(answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1){
+    					checks++;
+    				}
+    			}
+                console.log("check list range: " + checks);
+    
+    			if(checks < question.MINLISTRANGE || checks > question.MAXLISTRANGE){
+    				errorMsg = "";
+    				if(question.MINLISTRANGE && question.MAXLISTRANGE){
+    					if(question.MINLISTRANGE != question.MAXLISTRANGE)
+    						errorMsg = question.MINLISTRANGE + " - " + question.MAXLISTRANGE;
+    					else
+    						errorMsg = "just " + question.MINLISTRANGE;
+    				}else if(!question.MINLISTRANGE && !question.MAXLISTRANGE){
+    						errorMsg = "up to " + question.MAXLISTRANGE;
+    				}else{
+    						errorMsg = "at least " + question.MINLISTRANGE;
+    				}
+    
+                    valid = false;
+                    scope.errors[array_id] = "Please select "  + errorMsg + " response(s).  You selected " + checks;
+    
+    			}else{
+        			console.log("pass: " + valid);
+        			for(k in scope.errors){
+            			if(scope.errors[k].match("Please select "))
+            			    delete scope.errors[k];
+        			}
+    			}
+    		}
+		
                 ngModel.$setValidity('checkAnswer', valid);
                 return valid ? value : undefined;
             });
@@ -725,6 +792,45 @@ app.directive('checkAnswer', [function (){
                         valid = true;
         			}
         		}
+
+    		// check for list range limitations
+    		var checks = 0;
+    		if(typeof question != "undefined" && parseInt(question.WITHLISTRANGE) != 0){
+    			for(i in answers){
+    					console.log(answers[i].VALUE + ":" + question.LISTRANGESTRING);
+    				if(answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1){
+    					checks++;
+    				}
+    			}
+    
+                console.log("check list range: " + checks);
+    
+    			if(checks < question.MINLISTRANGE || checks > question.MAXLISTRANGE){
+    				errorMsg = "";
+    				if(question.MINLISTRANGE && question.MAXLISTRANGE){
+    					if(question.MINLISTRANGE != question.MAXLISTRANGE)
+    						errorMsg = question.MINLISTRANGE + " - " + question.MAXLISTRANGE;
+    					else
+    						errorMsg = "just " + question.MINLISTRANGE;
+    				}else if(!question.MINLISTRANGE && !question.MAXLISTRANGE){
+    						errorMsg = "up to " + question.MAXLISTRANGE;
+    				}else{
+    						errorMsg = "at least " + question.MINLISTRANGE;
+    				}
+    
+                    valid = false;
+                    scope.errors[array_id] = "Please select "  + errorMsg + " response(s).  You selected " + checks;
+    
+    
+    			}else{
+        			console.log("pass: " + valid);
+        			for(k in scope.errors){
+            			if(scope.errors[k].match("Please select "))
+            			    delete scope.errors[k];
+        			}
+    			}
+    		}
+		
             ngModel.$setValidity('checkAnswer', valid);
             return value;
           });
@@ -750,16 +856,24 @@ function buildQuestions(pageNumber, interviewId){
 		page[i] = new Object;
 	}
 	if(pageNumber == i){
-		for(j in ego_id_questions){
-            ego_id_questions[j].array_id = ego_id_questions[j].ID;
-			page[i][ego_id_questions[j].ORDERING + 1] = ego_id_questions[j];
+    	if(parseInt(study.HIDEEGOIDPAGE) != 1){
+    		for(j in ego_id_questions){
+        		if(ego_id_questions[j].ANSWERTYPE == "STORED_VALUE" || ego_id_questions[j].ANSWERTYPE == "RANDOM_NUMBER")
+        		    continue;
+                ego_id_questions[j].array_id = ego_id_questions[j].ID;
+    			page[i][parseInt(ego_id_questions[j].ORDERING) + 1] = ego_id_questions[j];
+    		}
+    		return page[i];
 		}
-		return page[i];
+	}else{
+        i++;
+        page[i] = new Object;
 	}
+
 	if(interviewId != null){
-		i++;
-		page[i] = new Object;
+    	console.log("interviewid"+interviewId+i);
 		ego_question_list = new Object;
+		network_question_list = new Object;
 		prompt = "";
 		for(j in ego_questions){
             ego_questions[j].array_id = ego_questions[j].ID;
@@ -790,12 +904,12 @@ function buildQuestions(pageNumber, interviewId){
 				i++;
 				page[i] = new Object;
 			}
-			if(parseInt(ego_questions[j].ASKINGSTYLELIST)){
+			if(parseInt(ego_questions[j].ASKINGSTYLELIST) == 1){
 			    //console.log(prompt + ":" +ego_questions[j].PROMPT);
 			    if(prompt == "" || prompt == ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
 			    	//console.log('list type question');
 			    	prompt = ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
-			    	ego_question_list[ego_questions[j].ORDERING + 1] = ego_questions[j];
+			    	ego_question_list[parseInt(ego_questions[j].ORDERING) + 1] = ego_questions[j];
 			    }
 			}else{
 			    if(pageNumber == i){
@@ -843,7 +957,7 @@ function buildQuestions(pageNumber, interviewId){
 					question.ALTERID1 = alters[k].ID;
 			    	question.array_id = question.ID + '-' + question.ALTERID1;
 
-					if(alter_questions[j].ASKINGSTYLELIST == 1){
+					if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1){
 						alter_question_list[question.ID + '-' + question.ALTERID1] = question;
 					}else{
 						if(preface.PROMPT != ""){
@@ -864,7 +978,7 @@ function buildQuestions(pageNumber, interviewId){
 						}
 					}
 				}
-				if(alter_questions[j].ASKINGSTYLELIST == 1){
+				if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1){
 					if(Object.keys(alter_question_list).length > 0){
 						if(preface.PROMPT != ""){
 							if(i == pageNumber){
@@ -911,7 +1025,7 @@ function buildQuestions(pageNumber, interviewId){
 						question.ALTERID2 = alters2[l].ID;
                         question.array_id = question.ID + '-' + question.ALTERID1 + 'and' + question.ALTERID2;
 
-						if(alter_pair_questions[j].ASKINGSTYLELIST){
+						if(parseInt(alter_pair_questions[j].ASKINGSTYLELIST) == 1){
 							alter_pair_question_list[question.ID + '-' + question.ALTERID1 + 'and' + question.ALTERID2] = question;
 						}else{
 							if(preface.PROMPT != ""){
@@ -953,34 +1067,58 @@ function buildQuestions(pageNumber, interviewId){
 					}
 				}
 			}
-    		for(j in network_questions){
-                network_questions[j].array_id = network_questions[j].ID;
 
-    			if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID) != true)
-    				continue;
-
-    			if(network_questions[j].PREFACE != ""){
-    				if(pageNumber == i){
-    					var preface = new Object;
-    					preface.ID = network_questions[j].ID;
-    					preface.ANSWERTYPE = "PREFACE";
-    					preface.SUBJECTTYPE = "PREFACE";
-    					preface.PROMPT = network_questions[j].PREFACE;
-    					page[i][0] = preface;
-    					return page[i];
-    				}
-    				i++;
-    				page[i] = new Object;
-    			}
-
-    			    if(pageNumber == i){
-    		    		page[i][network_questions[j].ID] = network_questions[j];
-    			    	return page[i];
-    			    }
-    			    i++;
-    			    page[i] = new Object;
-    		}
 		}
+		for(j in network_questions){
+            network_questions[j].array_id = network_questions[j].ID;
+
+			if(Object.keys(network_question_list).length > 0 && prompt != network_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
+				if(pageNumber == i){
+					page[i] = network_question_list;
+					return page[i];
+				}
+				network_question_list = new Object;
+				prompt = "";
+				i++;
+				page[i] = new Object;
+			}
+
+			if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID) != true)
+				continue;
+
+
+
+			if(network_questions[j].PREFACE != ""){
+				if(pageNumber == i){
+					var preface = new Object;
+					preface.ID = network_questions[j].ID;
+					preface.ANSWERTYPE = "PREFACE";
+					preface.SUBJECTTYPE = "PREFACE";
+					preface.PROMPT = network_questions[j].PREFACE;
+					page[i][0] = preface;
+					return page[i];
+				}
+				i++;
+				page[i] = new Object;
+			}
+
+			if(parseInt(network_questions[j].ASKINGSTYLELIST) == 1){
+			    //console.log(prompt + ":" +ego_questions[j].PROMPT);
+			    if(prompt == "" || prompt == network_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
+			    	//console.log('list type question');
+			    	prompt = network_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
+			    	network_question_list[parseInt(network_questions[j].ORDERING) + 1] = network_questions[j];
+			    }
+			}else{
+			    if(pageNumber == i){
+		    		page[i][network_questions[j].ID] = network_questions[j];
+			    	return page[i];
+			    }
+			    i++;
+			    page[i] = new Object;
+			}
+		}
+
 		conclusion = new Object;
 		conclusion.ANSWERTYPE = "CONCLUSION";
 		conclusion.PROMPT = study.CONCLUSION;
@@ -1092,11 +1230,10 @@ function evalExpression(id, alterId1, alterId2)
     }
     if(expressions[id].TYPE == "Compound"){
 	    console.log( expressions[id].NAME + ":" + expressions[id].VALUE);
-    	subexpressions = expressions[id].VALUE.split(',');
+    	var subexpressions = expressions[id].VALUE.split(',');
     	var trues = 0;
     	for (var k in subexpressions) {
     		// prevent infinite loops!
-    		console.log(expressions[id].NAME +":subexpression:"+ k +":");
     		if(parseInt(subexpressions[k]) == id)
     			continue;
     		isTrue = evalExpression(parseInt(subexpressions[k]), alterId1, alterId2);
@@ -1105,6 +1242,7 @@ function evalExpression(id, alterId1, alterId2)
     		}
     		if(isTrue)
     			trues++;
+    		console.log(expressions[id].NAME +":subexpression:"+ k +":" + isTrue);
     	}
     	if(expressions[id].OPERATOR == "None" && trues == 0)
     		return true;
@@ -1362,6 +1500,8 @@ function initStats(question){
     edges = [];
     var n = [];
     var expressionId = question.NETWORKRELATIONSHIPEXPRID;
+    if(!question.NETWORKPARAMS)
+        question.NETWORKPARAMS = "[]";
     this.params = JSON.parse(question.NETWORKPARAMS);
     if(this.params == null)
         this.params = [];
@@ -1946,8 +2086,10 @@ function buildNav(pageNumber){
 		pages[i] = this.checkPage(i, pageNumber, "INTRODUCTION");
 		i++;
 	}
-	pages[i] = this.checkPage(i, pageNumber, "EGO ID");
-	i++;
+	if(parseInt(study.HIDEEGOIDPAGE) != 1){
+    	pages[i] = this.checkPage(i, pageNumber, "EGO ID");
+        i++;
+    }
 	if(!interviewId){
 		return pages;
 	}
@@ -1967,7 +2109,7 @@ function buildNav(pageNumber){
 			pages[i] = this.checkPage(i, pageNumber, "PREFACE");
 			i++;
 		}
-		if(parseInt(ego_questions[j].ASKINGSTYLELIST)){
+		if(parseInt(ego_questions[j].ASKINGSTYLELIST) == 1){
 		    prompt = ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
 		    if(ego_question_list == '')
 			    ego_question_list = ego_questions[j];
@@ -1995,7 +2137,7 @@ function buildNav(pageNumber){
 				if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
 					continue;
 
-				if(parseInt(alter_questions[j].ASKINGSTYLELIST)){
+				if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1){
 			    	alter_question_list = alter_questions[j];
 			    }else{
 					if(alter_questions[j].PREFACE != "" && prompt == ""){
@@ -2007,7 +2149,7 @@ function buildNav(pageNumber){
 			    	i++;
 			    }
 			}
-			if(parseInt(alter_questions[j].ASKINGSTYLELIST)){
+			if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1){
 			    if(alter_question_list){
 			    	if(alter_questions[j].PREFACE != ""){
 			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
@@ -2036,7 +2178,18 @@ function buildNav(pageNumber){
 					if(evalExpression(alter_pair_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID, alters2[l].ID) != true)
 		    			continue;
 
-		    		alter_pair_question_list = alter_pair_questions[j];
+    				if(parseInt(alter_pair_questions[j].ASKINGSTYLELIST) == 1){
+    			    	alter_pair_question_list = alter_pair_questions[j];
+    			    }else{
+    					if(alter_pair_questions[j].PREFACE != "" && prompt == ""){
+    			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+                            prompt = alter_pair_questions[j].PREFACE;
+    			    		i++;
+    			    	}
+    			    	pages[i] = this.checkPage(i, pageNumber, alter_pair_questions[j].TITLE + " - " + alters[k].NAME + "and" + alters2[l].NAME);
+    			    	i++;
+    			    }
+    			    
 		    	}
 		    	if(alter_pair_question_list){
 					if(preface.PROMPT != ""){
@@ -2050,19 +2203,35 @@ function buildNav(pageNumber){
 			}
 		}
 
-		for(j in network_questions){
-		    if(interviewId){
-		    	if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID) != true)
-		    		continue;
-		    }
-		    if(network_questions[j].PREFACE != ""){
-		    	pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-		    	i++;
-		    }
+	}
+
+	var network_question_list = '';
+	for(j in network_questions){
+	    if(interviewId){
+	    	if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID) != true)
+	    		continue;
+	    }
+
+		if((parseInt(network_questions[j].ASKINGSTYLELIST) != 1 || prompt != network_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")) && network_question_list){
+		    pages[i] = this.checkPage(i, pageNumber, network_question_list.TITLE);
+			prompt = "";
+		    network_question_list = '';
+		    i++;
+		}
+		if(network_questions[j].PREFACE != ""){
+			pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+			i++;
+		}
+		if(parseInt(network_questions[j].ASKINGSTYLELIST) == 1){
+		    prompt = network_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
+		    if(network_question_list == '')
+			    network_question_list = network_questions[j];
+		}else{
 		    pages[i] = this.checkPage(i, pageNumber, network_questions[j].TITLE);
 		    i++;
 		}
 	}
+
 	pages[i] = this.checkPage(i, pageNumber, "CONCLUSION");
 	return pages;
 }

@@ -109,12 +109,13 @@ class Interview extends CActiveRecord
         }
 
         $criteria=new CDbCriteria;
-        $criteria->condition = ("studyId = $studyId and subjectType = 'EGO_ID'");
+        $criteria->condition = ("studyId = $studyId and subjectType = 'EGO_ID' AND answerType != 'RANDOM_NUMBER'");
         $egoQs = Question::model()->findAll($criteria);
         $study = Study::model()->findByPk($studyId);
 
-        if (count($egoQs) == 0)
+        if (count($egoQs) == 0){
             return false;
+        }
 
         $interview = new Interview;
         $interview->studyId = $studyId;
@@ -129,7 +130,7 @@ class Interview extends CActiveRecord
             $egoIdQ->interviewId = $interview->id;
             $egoIdQ->studyId = $studyId;
             $egoIdQ->questionType = "EGO_ID";
-            $egoIdQ->answerType = "TEXTUAL";
+            $egoIdQ->answerType = $egoQ->answerType;
             $egoIdQ->questionId = $egoQ->id;
             $egoIdQ->skipReason = "NONE";
             if (isset($prefill[$egoQ->title]))
@@ -142,6 +143,20 @@ class Interview extends CActiveRecord
             }
             $egoIdQ->save();
         }
+
+		$randoms = Question::model()->findAllByAttributes(array("answerType"=>"RANDOM_NUMBER", "studyId"=>$studyId));
+		foreach($randoms as $q){
+		    $a = $q->id;
+            $answer = new Answer;
+            $answer->interviewId = $interview->id;
+            $answer->studyId = $studyId;
+            $answer->questionType = "EGO_ID";
+            $answer->answerType = "RANDOM_NUMBER";
+            $answer->questionId = $q->id;
+            $answer->skipReason = "NONE";
+            $answer->value = mt_rand ($q->minLiteral , $q->maxLiteral);
+            $answer->save();
+		}
 
         if(count($questions) > 0)
             $interview->fillEgoQs($questions);
@@ -221,7 +236,7 @@ class Interview extends CActiveRecord
         $params->dataType = PDO::PARAM_INT;
 
         $interview = q("SELECT * FROM interview where id = :id", array($params))->queryRow();
-        $ego_id_questions = q("SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId = " . $interview['studyId'] . " ORDER BY ordering")->queryAll();
+        $ego_id_questions = q("SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId = " . $interview['studyId'] . " AND answerType NOT IN ('STORED_VALUE', 'RANDOM_NUMBER') ORDER BY ordering")->queryAll();
         $egoId = "";
         foreach ($ego_id_questions as $question)
         {
@@ -681,26 +696,42 @@ class Interview extends CActiveRecord
             $answers = array();
             $answers[] = $this->id;
             $ego_ids = array();
+            $ego_id_string = array();
             $study = Study::model()->findByPk($this->studyId);
             $optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
 
             // create an array with option ID as key
             $options = array();
+            $optionLabels = array();
             foreach ($optionsRaw as $option)
             {
                 $options[$option['id']] = $option['value'];
+                $optionLabels[$option['id']] = $option['name'];
             }
             foreach ($ego_id_questions as $question)
             {
                 #OK FOR SQL INJECTION
-                $ego_ids[] = q("SELECT value FROM answer WHERE interviewId = " . $this->id  . " AND questionId = " . $question['id'])->queryScalar();
+                $result = Answer::model()->findByAttributes(array("interviewId" => $this->id, "questionId" => $question['id']));
+                $answer = $result->value;
+                if ($question['answerType'] == "MULTIPLE_SELECTION")
+                {
+                    $optionIds = explode(',', $answer);
+                    $list = array();
+                    foreach ($optionIds as $optionId)
+                    {
+                        if (isset($options[$optionId]))
+                            $ego_ids[] = $options[$optionId];
+                            $ego_id_string[] = $optionLabels[$optionId];
+                    }
+                } else
+                {
+                    $ego_ids[] = str_replace(',', '', $answer);
+                    $ego_id_string[] = str_replace(',', '', $answer);
+                }
             }
-            foreach ($ego_ids as &$ego_id)
-            {
-                if ($ego_id!="")
-                    $ego_id = decrypt($ego_id);
-            }
-            $answers[] = implode("_", $ego_ids);
+            $answers[] = implode("_", $ego_id_string);
+            $answers[] = date("Y-m-d h:i:s", $this->start_date);
+            $answers[] = date("Y-m-d h:i:s", $this->complete_date);
             foreach ($ego_ids as $eid)
             {
                 $answers[] = $eid;
@@ -713,7 +744,7 @@ class Interview extends CActiveRecord
                     $answer = decrypt($answer);
                 #OK FOR SQL INJECTION
                 $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'])->queryScalar();
-                if ($answer !== "" && $skipReason == "NONE")
+                if ($answer !== "" && $skipReason == "NONE" && $answer != $study->valueLogicalSkip)
                 {
                     if ($question['answerType'] == "SELECTION")
                     {
@@ -741,8 +772,10 @@ class Interview extends CActiveRecord
                         $answers[] = $study->valueDontKnow;
                     else
                         $answers[] = $study->valueRefusal;
-                } else
+                } else if($question['answerReasonExpressionId'] && !$answer)
                 {
+                    $answers[] = $study->valueLogicalSkip;
+                } else {
                     $answers[] = "";
                 }
             }
@@ -760,7 +793,7 @@ class Interview extends CActiveRecord
                         $answer = decrypt($answer);
                     #OK FOR SQL INJECTION
                     $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter->id)->queryScalar();
-                    if ($answer != "" && $skipReason == "NONE")
+                    if ($answer != "" && $skipReason == "NONE" && $answer != $study->valueLogicalSkip)
                     {
                         if ($question['answerType'] == "SELECTION")
                         {
@@ -788,7 +821,10 @@ class Interview extends CActiveRecord
                             $answers[] = $study->valueDontKnow;
                         else
                             $answers[] = $study->valueRefusal;
-                    }else{
+                    } else if($question['answerReasonExpressionId'] && !$answer)
+                    {
+                        $answers[] = $study->valueLogicalSkip;
+                    } else {
                         $answers[] = "";
                     }
                 }
@@ -796,7 +832,7 @@ class Interview extends CActiveRecord
                 foreach ($network_questions as $question)
                 {
                     $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question->id));
-                    if ($answer->value !== "" && $answer->skipReason == "NONE")
+                    if ($answer->value !== "" && $answer->skipReason == "NONE" && $answer != $study->valueLogicalSkip)
                     {
                         if ($question->answerType == "SELECTION")
                         {
@@ -824,8 +860,10 @@ class Interview extends CActiveRecord
                     } else if ( $answer->skipReason == "REFUSE")
                     {
                         $answers[] = $study->valueRefusal;
-                    } else
+                    }  else if($question['answerReasonExpressionId'] && !$answer)
                     {
+                        $answers[] = $study->valueLogicalSkip;
+                    } else {
                         $answers[] = "";
                     }
                 }

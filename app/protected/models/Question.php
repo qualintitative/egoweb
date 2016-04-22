@@ -87,7 +87,7 @@ class Question extends CActiveRecord
 				'value'=>1,
 				'setOnEmpty'=>true,'on'=>'insert'
 			),
-            array('prompt, preface, citation', 'length', 'max'=>4294967295),
+            array('prompt, preface, citation, javascript', 'length', 'max'=>4294967295),
 			array('id, active, title, subjectType, answerType, askingStyleList, ordering, otherSpecify, noneButton, allButton, pageLevelDontKnowButton, pageLevelRefuseButton, dontKnowButton, refuseButton, allOptionString, uselfExpression, minLimitType, minLiteral, minPrevQues, maxLimitType, maxLiteral, maxPrevQues, minCheckableBoxes, maxCheckableBoxes, withListRange, listRangeString, minListRange, maxListRange, timeUnits, symmetric, keepOnSamePage, studyId, answerReasonExpressionId, networkRelationshipExprId, networkParams, networkNColorQId, networkNSizeQId, networkEColorQId, networkESizeQId, useAlterListField', 'length', 'max'=>4096),
 			array('id, active, title, prompt, preface, citation, subjectType, answerType, askingStyleList, ordering, otherSpecify, noneButton, allButton, pageLevelDontKnowButton, pageLevelRefuseButton, dontKnowButton, refuseButton, allOptionString, uselfExpression, minLimitType, minLiteral, minPrevQues, maxLimitType, maxLiteral, maxPrevQues, minCheckableBoxes, maxCheckableBoxes, withListRange, listRangeString, minListRange, maxListRange, timeUnits, symmetric, keepOnSamePage, studyId, answerReasonExpressionId, networkRelationshipExprId, networkParams, networkNColorQId, networkNSizeQId, networkEColorQId, networkESizeQId', 'safe', 'on'=>'search'),
 		);
@@ -189,19 +189,6 @@ class Question extends CActiveRecord
 			$model->ordering--;
 			$model->save();
 		}
-	}
-
-	public function answerTypes()
-	{
-		return array(
-			'TEXTUAL'=>'TEXTUAL',
-			'NUMERICAL'=>'NUMERICAL',
-			'MULTIPLE_SELECTION'=>'MULTIPLE_SELECTION',
-			'DATE'=>'DATE',
-			'TIME_SPAN'=>'TIME_SPAN',
-			'TEXTUAL_PP'=>'TEXTUAL_PP',
-			'NO_RESPONSE'=>'NO_RESPONSE',
-		);
 	}
 
 	public static function timeBits($timeUnits)

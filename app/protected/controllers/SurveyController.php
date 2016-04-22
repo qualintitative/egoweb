@@ -120,7 +120,7 @@ class SurveyController extends Controller {
 			if( array_key_exists ( 'prefill', $decoded ) ) $prefill = $decoded['prefill'];
 			if( array_key_exists ( 'questions', $decoded ) ) $questions = $decoded['questions'];
 
-            $this->createSurvey( $decoded['survey_id'], $decoded['user_id'], $prefill, $questions);
+            $this->createSurvey( $decoded['survey_id'], $decoded['user_id'], $prefill, $questions, $decoded['redirect']);
 		}
 	}
 
