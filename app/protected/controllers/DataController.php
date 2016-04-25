@@ -424,7 +424,7 @@ class DataController extends Controller
 		if($alterCount > 0)
 			$idNumber = "Id";
 		else
-			$idNumber = "#";
+			$idNumber = "Number";
 
 		// start generating export file
 		header("Content-Type: application/octet-stream");
