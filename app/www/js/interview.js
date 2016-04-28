@@ -1302,12 +1302,14 @@ function interpretTags(string, alterId1, alterId2)
         	array_id += 'and' + alterId2;
 
         var lastAnswer = "";
+        var lastAnswerOps = [];
 		if(typeof answers[array_id] != 'undefined'){
 			if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
 				for(o in options[question.ID]){
 					if($.inArray(options[question.ID][o].ID, answers[array_id].VALUE.split(",")) != -1)
-					    lastAnswer = lastAnswer + options[question.ID][o].NAME + "<br>";
+					    lastAnswerOps.push(options[question.ID][o].NAME);
 				}
+				lastAnswer = lastAnswerOps.join("<br>")
 			}else{
     			lastAnswer = answers[array_id].VALUE;
 			}
@@ -1379,13 +1381,15 @@ function interpretTags(string, alterId1, alterId2)
         	array_id += 'and' + alterId2;
 
         var lastAnswer = "";
+        var lastAnswerOps = [];
 		if(typeof answers[array_id] != 'undefined'){
     		if(typeof answers[array_id] != 'undefined'){
     			if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
     				for(o in options[question.ID]){
     					if($.inArray(options[question.ID][o].ID, answers[array_id].VALUE.split(",")) != -1)
-    					    lastAnswer = lastAnswer + options[question.ID][o].NAME + "<br>";
-    				}
+    					    lastAnswerOps.push(options[question.ID][o].NAME);
+                    }
+                    lastAnswer = lastAnswerOps.join("<br>")
     			}else{
         			lastAnswer = answers[array_id].VALUE;
     			}
@@ -1455,12 +1459,16 @@ function interpretTags(string, alterId1, alterId2)
                     else if(typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
                     	array_id += 'and' + alterId2;
 
+                    var lastAnswer = "";
+                    var lastAnswerOps = [];
+
         			if(typeof answers[array_id] != 'undefined'){
             			if(question.ANSWERTYPE == "MULTIPLE_SELECTION"){
             				for(o in options[question.ID]){
             					if($.inArray(options[question.ID][o].ID, answers[array_id].VALUE.split(",")) != -1)
-            					    lastAnswer = lastAnswer + options[question.ID][o].NAME + "<br>";
+            					    lastAnswerOps.push(options[question.ID][o].NAME);
             				}
+            				lastAnswer = lastAnswerOps.join("<br>");
             			}else{
                 			lastAnswer = answers[array_id].VALUE;
             			}
