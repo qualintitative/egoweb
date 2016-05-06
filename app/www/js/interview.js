@@ -1119,6 +1119,15 @@ function buildQuestions(pageNumber, interviewId){
 			}
 		}
 
+		if(Object.keys(network_question_list).length > 0){
+			if(pageNumber == i){
+				page[i] = network_question_list;
+				return page[i];
+			}
+			i++;
+			page[i] = new Object;
+		}
+
 		conclusion = new Object;
 		conclusion.ANSWERTYPE = "CONCLUSION";
 		conclusion.PROMPT = study.CONCLUSION;
@@ -2238,6 +2247,12 @@ function buildNav(pageNumber){
 		    pages[i] = this.checkPage(i, pageNumber, network_questions[j].TITLE);
 		    i++;
 		}
+	}
+
+	if(network_question_list){
+		pages[i] = this.checkPage(i, pageNumber, network_question_list.TITLE);
+		network_question_list = '';
+		i++;
 	}
 
 	pages[i] = this.checkPage(i, pageNumber, "CONCLUSION");
