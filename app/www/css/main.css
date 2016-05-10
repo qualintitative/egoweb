@@ -15,6 +15,7 @@ body
 }
 
 .multi-header {
+    margin-top:15px;
     font-size:.9em;
 }
 
@@ -853,12 +854,12 @@ overflow-y: scroll;
 }
 
 .multi {
-    display: table;
+    display: table-row;
     width:100%;
 }
 
 .multi div {
-    display: table-row;
+    display: table-cell;
 }
 
 .multi:nth-child(even) {
@@ -868,8 +869,7 @@ overflow-y: scroll;
     background-color: #efc7c7;
 }
 
-.multi div div {
-    display: table-cell;
+.multi div {
     width:auto;
     padding:8px;
     text-align: center;
