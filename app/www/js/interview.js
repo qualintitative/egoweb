@@ -43,6 +43,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.keys = Object.keys;
     $scope.interview = interview;
     $scope.footer = $sce.trustAsHtml(study.FOOTER);
+    console.clear();
 
     for(k in audio){
         $scope.audio[k] = audio[k];
@@ -68,13 +69,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         if($scope.questions[k].USEALTERLISTFIELD == "name" || $scope.questions[k].USEALTERLISTFIELD == "email"){
             $scope.participants = participantList[$scope.questions[k].USEALTERLISTFIELD];
         }
-        console.log($routeParams.page +":"+ interviewId);
-        console.log($scope.questions);
-        console.log($scope.questions[k].CITATION );
         if(typeof $scope.questions[k].CITATION == "string")
             $scope.questions[k].CITATION = $sce.trustAsHtml($scope.questions[k].CITATION);
 
-        console.log($scope.prevAlters);
         if($scope.questions[k].ALLBUTTON == true && !$scope.options["all"]){
             $scope.options['all'] = $.extend(true,{}, options[$scope.questions[k].ID]);
             if($scope.questions[k].DONTKNOWBUTTON == true){
@@ -202,7 +199,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 $scope.otherSpecify[pair[0]] = pair[1];
             }
         }
-        console.log($scope.otherSpecify);
         for(a in $scope.options[array_id]){
             if($scope.otherSpecify[$scope.options[array_id][a].ID] && $scope.otherSpecify[$scope.options[array_id][a].ID] != "")
                 continue;
@@ -226,7 +222,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             notes = [];
             if(typeof otherGraphs[$scope.questions[k].ID] != "undefined")
                 $scope.otherGraphs = otherGraphs[$scope.qId];
-            console.log(otherGraphs[$scope.qId]);
             if(typeof graphs[expressionId] != "undefined"){
                 $scope.graphId = graphs[expressionId].ID;
                 $scope.graphExpressionId = graphs[expressionId].EXPRESSIONID;
@@ -871,7 +866,6 @@ function buildQuestions(pageNumber, interviewId){
 	}
 
 	if(interviewId != null){
-    	console.log("interviewid"+interviewId+i);
 		ego_question_list = new Object;
 		network_question_list = new Object;
 		prompt = "";
@@ -1176,11 +1170,15 @@ function evalExpression(id, alterId1, alterId2)
     	if(!answer)
     		return expressions[id].RESULTFORUNANSWERED;
     	if(expressions[id].OPERATOR == "Contains"){
-    		if(answer.indexOf(expressions[id].VALUE) != -1)
+    		if(answer.indexOf(expressions[id].VALUE) != -1){
+                console.log(expressions[id].NAME + ":true");
     			return true;
+            }
     	}else if(expressions[id].OPERATOR == "Equals"){
-    		if(answer == expressions[id].VALUE)
+    		if(answer == expressions[id].VALUE){
+                console.log(expressions[id].NAME + ":true");
     			return true;
+            }
     	}
     }
     if(expressions[id].TYPE == "Number"){
@@ -1188,6 +1186,7 @@ function evalExpression(id, alterId1, alterId2)
     		return expressions[id].RESULTFORUNANSWERED;
     	logic = answer + " " + comparers[expressions[id].OPERATOR] + " " + expressions[id].VALUE;
     	result = eval(logic);
+        console.log(expressions[id].NAME + ":" + result);
     	return result;
     }
     if(expressions[id].TYPE == "Selection"){
@@ -1197,15 +1196,21 @@ function evalExpression(id, alterId1, alterId2)
     	var options = expressions[id].VALUE.split(',');
     	trues = 0;
     	for (var k in selectedOptions) {
-    		if(expressions[id].OPERATOR == "Some" && options.indexOf(selectedOptions[k]) != -1)
+    		if(expressions[id].OPERATOR == "Some" && options.indexOf(selectedOptions[k]) != -1){
+                console.log(expressions[id].NAME + ":true");
     			return true;
-    		if(expressions[id].OPERATOR == "None" && options.indexOf(selectedOptions[k]) != -1)
+            }
+    		if(expressions[id].OPERATOR == "None" && options.indexOf(selectedOptions[k]) != -1){
+                console.log(expressions[id].NAME + ":false");
     			return false;
+            }
     		if(options.indexOf(selectedOptions[k]) != -1)
     			trues++;
     	}
-    	if(expressions[id].OPERATOR == "None" || (expressions[id].OPERATOR == "All" && trues >= options.length))
+    	if(expressions[id].OPERATOR == "None" || (expressions[id].OPERATOR == "All" && trues >= options.length)){
+            console.log(expressions[id].NAME + ":true");
     		return true;
+        }
     }
     if(expressions[id].TYPE == "Counting"){
     	countingSplit = expressions[id].VALUE.split(':');
@@ -1226,6 +1231,7 @@ function evalExpression(id, alterId1, alterId2)
     			count = count + countQuestion(questionIds[k], expressions[id].OPERATOR);
     		}
     	}
+        console.log(expressions[id].NAME + ":" + (times * count));
     	return (times * count);
     }
     if(expressions[id].TYPE == "Comparison"){
@@ -1235,29 +1241,34 @@ function evalExpression(id, alterId1, alterId2)
     	result = evalExpression(expressionId, alterId1, alterId2);
     	logic = result + " " + comparers[expressions[id].OPERATOR] + " " + value;
     	result = eval(logic);
+        console.log(expressions[id].NAME + ":" + result);
     	return result;
     }
     if(expressions[id].TYPE == "Compound"){
-	    console.log( expressions[id].NAME + ":" + expressions[id].VALUE);
     	var subexpressions = expressions[id].VALUE.split(',');
     	var trues = 0;
     	for (var k in subexpressions) {
     		// prevent infinite loops!
     		if(parseInt(subexpressions[k]) == id)
     			continue;
-    		isTrue = evalExpression(parseInt(subexpressions[k]), alterId1, alterId2);
-    		if(expressions[id].OPERATOR == "Some" && isTrue){
+    		var isTrue = evalExpression(parseInt(subexpressions[k]), alterId1, alterId2);
+    		if(expressions[id].OPERATOR == "Some" && isTrue == true){
+            	console.log(expressions[id].NAME + ":true");
     			return true;
     		}
-    		if(isTrue)
+    		if(isTrue == true)
     			trues++;
     		console.log(expressions[id].NAME +":subexpression:"+ k +":" + isTrue);
     	}
-    	if(expressions[id].OPERATOR == "None" && trues == 0)
+    	if(expressions[id].OPERATOR == "None" && trues == 0){
+        	console.log(expressions[id].NAME + ":true");
     		return true;
-    	else if (expressions[id].OPERATOR == "All" && trues == subexpressions.length)
+    	}else if (expressions[id].OPERATOR == "All" && trues == subexpressions.length){
+        	console.log(expressions[id].NAME + ":true");
     		return true;
+        }
     }
+    console.log(expressions[id].NAME + ":false");
     return false;
 
 }
@@ -1522,7 +1533,6 @@ function initStats(question){
     this.params = JSON.parse(question.NETWORKPARAMS);
     if(this.params == null)
         this.params = [];
-    console.log(this.params);
     alterNames = new Object;
     betweennesses = [];
 	if(alters.length == 0)
