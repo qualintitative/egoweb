@@ -159,22 +159,22 @@ class Interview extends CActiveRecord
 		}
 
         if(count($questions) > 0)
-            $interview->fillEgoQs($questions);
+            $interview->fillQs($questions, $interview->id, $studyId);
 
         return $interview;
     }
 
-    public function fillEgoQs($qs)
+    public static function fillQs($qs, $interviewId, $studyId)
     {
         foreach ($qs as $title=>$value)
         {
-            $question = Question::model()->findByAttributes(array("title"=>$title, "studyId"=>$this->studyId));
-            $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question->id));
-            if($answer)
+            $question = Question::model()->findByAttributes(array("title"=>$title, "studyId"=>$studyId));
+            $answer = Answer::model()->findByAttributes(array("interviewId"=>$interviewId, "questionId"=>$question->id));
+            if(!$answer)
                 continue;
             $answer = new Answer;
-            $answer->interviewId = $this->id;
-            $answer->studyId = $this->studyId;
+            $answer->interviewId = $interviewId;
+            $answer->studyId = $studyId;
             $answer->questionType = $question->subjectType;
             $answer->answerType = $question->answerType;
             $answer->questionId = $question->id;
@@ -185,7 +185,7 @@ class Interview extends CActiveRecord
             }else
             {
                 $answer->skipReason = "DONT_KNOW";
-                $study = Study::model()->findByPk($this->studyId);
+                $study = Study::model()->findByPk($studyId);
                 $answer->value = $study->valueDontKnow;
             }
             $answer->save();
