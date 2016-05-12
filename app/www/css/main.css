@@ -847,6 +847,8 @@ label.prompt , .grid-view label {
 .multiBox {
 max-height:400px;
 overflow-y: scroll;
+    display: table;
+    width: 100%;
 }
 
 .clear-left {

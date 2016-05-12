@@ -27,11 +27,11 @@
         </form>
     </div>
 </div>
-<div ng-if="prompt != ''" ng-bind-html="prompt" ng-class="{'col-xs-9 no-padding': questions[0].ANSWERTYPE == 'ALTER_PROMPT'}">{{ prompt }}</div>
+<div ng-if="prompt != ''" ng-bind-html="prompt" ng-class="{'col-xs-12 col-sm-9 no-padding': questions[0].ANSWERTYPE == 'ALTER_PROMPT'}">{{ prompt }}</div>
 <a ng-if='audio[subjectType + qId]' class="play-sound" ng-click='playSound(subjectType + qId)' href="javascript:void(0)"><span class="fui-volume"></span></a>
 <a ng-if='audio["PREFACE" + qId]' class="play-sound" ng-click='playSound("PREFACE" + qId)' href="javascript:void(0)"><span class="fui-volume"></span></a>
 
-<div id="alterListBox" class="col-xs-3" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'">
+<div id="alterListBox" class="col-xs-12 col-sm-3" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'">
     <table class="items">
     <tbody>
     <tr class="multi" ng-repeat="alter in alters track by $index">
@@ -70,13 +70,16 @@
 
 <form id="answerForm" name="answerForm" ng-submit="submitForm(answerForm.$valid)" novalidate>
 
+
+    <div ng-class="{multiBox: askingStyleList != false}">
+
     <div class="panel multi multi-header" ng-if="askingStyleList != false">
             <div style="width:180px"></div>
             <div ng-if="answerType == 'TEXTUAL' && askingStyleList != false" style="width:{{ fixedWidth }}"></div>
             <div ng-repeat="option in options[askingStyleList]" style="width:120px">{{ option.NAME }}</div>
     </div>
 
-    <div class="panel" ng-if="hideQ == false" ng-class="{multiBox: askingStyleList != false, multi: question.ASKINGSTYLELIST == true}" ng-repeat="question in questions">
+    <div class="panel" ng-if="hideQ == false" ng-class="{multi: question.ASKINGSTYLELIST == true}" ng-repeat="question in questions">
 
         <h4 ng-if="question.SUBJECTTYPE == 'EGO_ID' && question.ANSWERTYPE != 'RANDOM_NUMBER' && question.ANSWERTYPE != 'STORED_VALUE'">{{ question.PROMPT }}</h4>
         <h4 ng-if="question.SUBJECTTYPE == 'EGO_ID' && (question.ANSWERTYPE == 'RANDOM_NUMBER' || question.ANSWERTYPE == 'STORED_VALUE')">{{ question.TITLE }}</h4>
@@ -244,6 +247,7 @@
         <div class="palette-sun-flower" ng-repeat="option in options['all']" style="width:{{ fixedWidth }}">
             <input class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-model="option.checked" type="checkbox" ng-change="setAll('{{ option.ID }}', '{{$index}}')">
         </div>
+    </div>
     </div>
 
     <input name="Answer[{{ questions[0].array_id }}][value]" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='0' answer-type='{{ questions[0].ANSWERTYPE }}' type="hidden">
