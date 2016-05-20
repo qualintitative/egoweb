@@ -860,9 +860,6 @@ function buildQuestions(pageNumber, interviewId){
     		}
     		return page[i];
 		}
-	}else{
-        i++;
-        page[i] = new Object;
 	}
 
 	if(interviewId != null){
