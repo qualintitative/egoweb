@@ -860,9 +860,9 @@ function buildQuestions(pageNumber, interviewId){
     		}
     		return page[i];
 		}
-		i++;
-		page[i] = new Object;
 	}
+	i++;
+	page[i] = new Object;
 
 	if(interviewId != null){
 		ego_question_list = new Object;
