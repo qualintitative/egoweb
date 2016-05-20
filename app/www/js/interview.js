@@ -860,10 +860,12 @@ function buildQuestions(pageNumber, interviewId){
     		}
     		return page[i];
 		}
-	}else{
+	}
+
+    if(parseInt(study.HIDEEGOIDPAGE) != 1){
         i++;
         page[i] = new Object;
-	}
+    }
 
 	if(interviewId != null){
 		ego_question_list = new Object;
