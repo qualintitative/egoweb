@@ -859,10 +859,11 @@ function buildQuestions(pageNumber, interviewId){
     			page[i][parseInt(ego_id_questions[j].ORDERING) + 1] = ego_id_questions[j];
     		}
     		return page[i];
+		}else{
+            i++;
+            page[i] = new Object;
 		}
 	}
-	i++;
-	page[i] = new Object;
 
 	if(interviewId != null){
 		ego_question_list = new Object;
