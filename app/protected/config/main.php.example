@@ -118,5 +118,6 @@ return array(
 		'apiKey' => 'API_KEY',
 		// file path for study export
 		'exportFilePath' => '',
+		'surveyURL' => 'http://'.$_SERVER['HTTP_HOST'].'/survey'
 	)
 );
