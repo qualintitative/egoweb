@@ -1216,15 +1216,15 @@ function evalExpression(id, alterId1, alterId2)
     }
     if(expressions[id].TYPE == "Counting"){
     	countingSplit = expressions[id].VALUE.split(':');
-		times = countingSplit[0];
-		expressionIds = countingSplit[1];
+		var times = parseInt(countingSplit[0]);
+		var expressionIds = countingSplit[1];
 		var questionIds = countingSplit[2];
 
-    	count = 0;
+    	var count = 0;
     	if(expressionIds != ""){
     		expressionIds = expressionIds.split(',');
     		for (var k in expressionIds) {
-    			count = count + countExpression(expressionIds[k], alterId1, alterId2);
+    			count = count + evalExpression(expressionIds[k], alterId1, alterId2);
     		}
     	}
     	if(questionIds != ""){
@@ -1300,7 +1300,7 @@ function countQuestion(questionId, operator, alterId1, alterId2)
     	return 0;
     }else{
     	if(operator == "Sum")
-    		return answer;
+    		return parseInt(answer);
     	else
     		return 1;
     }
