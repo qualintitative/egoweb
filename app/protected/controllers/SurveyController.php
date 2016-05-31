@@ -144,7 +144,7 @@ class SurveyController extends Controller {
 	 * @return string
 	 */
 	public function generateSurveyURL( ){
-		return 'http://'.$_SERVER['HTTP_HOST'].'/survey';
+		return Yii::app()->params['surveyURL'];
 	}
 
 	/**
