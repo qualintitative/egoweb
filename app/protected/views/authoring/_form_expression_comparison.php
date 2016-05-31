@@ -35,9 +35,9 @@ echo CHtml::dropdownlist(
 </h4>
 <?php
 if($model->value == "")
-	$model->value = "1:" . $expression->id;
+	$model->value = "1:" . $expressionId;
+list($compare, $expressionId) = preg_split('/:/',$model->value);
 
-list($compare, $expression->id) = preg_split('/:/',$model->value);
 $form=$this->beginWidget('CActiveForm', array(
     'id'=>'expression-form',
     'enableAjaxValidation'=>false,
