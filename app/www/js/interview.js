@@ -312,7 +312,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     };
 
     $scope.unSkip = function (array_id){
-        if($scope.answers[array_id].VALUE != "" && $scope.answers[array_id].VALUE != "SKIPREASON"){
+        if(typeof $scope.answers[array_id].VALUE != "undefined" && $scope.answers[array_id].VALUE != "" && $scope.answers[array_id].VALUE != "SKIPREASON"){
     		for(k in $scope.options[array_id]){
             		$scope.options[array_id][k].checked = false;
     		}
