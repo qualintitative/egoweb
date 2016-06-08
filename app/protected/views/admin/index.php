@@ -68,3 +68,4 @@ $this->pageTitle =  "Admin";
 	</td>
 	</tr>
 	</table>
+	<span style="color: #fff"><?php echo Yii::app()->getBaseUrl(true);?></span>
