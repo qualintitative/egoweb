@@ -168,7 +168,8 @@ CREATE TABLE IF NOT EXISTS `question` (
   `networkNSizeQId` int(11) DEFAULT NULL,
   `networkEColorQId` int(11) DEFAULT NULL,
   `networkESizeQId` int(11) DEFAULT NULL,
-  `useAlterListField` text
+  `useAlterListField` text,
+  `javascript` longtext
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `questionOption` (
@@ -212,7 +213,9 @@ CREATE TABLE IF NOT EXISTS `study` (
   `status` int(11) DEFAULT NULL,
   `userId` int(11) NOT NULL,
   `hideEgoIdPage` tinyint(1) NOT NULL,
-  `style` text
+  `style` text,
+  `javascript` longtext,
+  `footer` longtext
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `tbl_migration` (
@@ -344,4 +347,6 @@ INSERT INTO `tbl_migration` (`version`, `apply_time`) VALUES
 ('m150319_063109_add_alter_to_os', 1453112258),
 ('m150506_232010_matchTable', 1453112258),
 ('m160118_100231_image_longtext', 1453112259),
-('m160201_074143_style_css', 1454312829);
+('m160201_074143_style_css', 1454312829),
+('m160325_091242_js_and_footer', 1458898123),
+('m160407_002139_js_question', 1459988879);
