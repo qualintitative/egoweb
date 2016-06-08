@@ -186,8 +186,12 @@ class SurveyController extends Controller {
         else{
             if( isset( $redirect ) )
                 Yii::app()->session['redirect'] = $redirect;
+            
+            $url = Yii::app()->getBaseUrl(true);
+            if(Yii::app()->request->getIsSecureConnection())
+                $url = str_replace("http", "https", $url);
 
-            Yii::app()->request->redirect(Yii::app()->getBaseUrl(true)  .  "/interview/".$study->id."/".
+            Yii::app()->request->redirect($url  .  "/interview/".$study->id."/".
                             $interview->id."/".
                             "#/page/".$interview->completed
                             );
