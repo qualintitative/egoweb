@@ -168,7 +168,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 			if(time && time.length > 3)
 				$scope.dates[array_id].AMPM = time[3];
             else
-				$scope.dates[array_id].AMPM = "AM";
+				$scope.dates[array_id].AMPM = "";
         }
 
         if($scope.questions[k].DONTKNOWBUTTON == true){
@@ -354,6 +354,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         		}
         		$scope.answers[array_id].OTHERSPECIFYTEXT = "";
         		$scope.answers[array_id].SKIPREASON = v;
+        		$scope.dates[array_id].MINUTE = "";
+        		$scope.dates[array_id].HOUR = "";
+        		$scope.dates[array_id].DAY = "";
+        		$scope.dates[array_id].MONTH = "";
+        		$scope.dates[array_id].AMPM = "";
+        		$scope.dates[array_id].YEAR = "";
         		if(typeof $scope.errors[array_id] != "undefined")
                     delete $scope.errors[array_id];
                 $('#Answer_' + array_id + '_VALUE').val("SKIPREASON").change();
@@ -426,6 +432,11 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     	if(!isNaN($scope.time_spans[array_id].MINUTES))
     		date += $scope.time_spans[array_id].MINUTES + ' MINUTES';
     	$scope.answers[array_id].VALUE = date;
+		$scope.answers[array_id].SKIPREASON = "NONE";
+		for(k in $scope.options[array_id]){
+    		if($scope.options[array_id][k].ID == "DONT_KNOW" || $scope.options[array_id][k].ID == "REFUSE")
+        		$scope.options[array_id][k].checked = false;
+		}
     	console.log(date);
     }
 
@@ -447,6 +458,11 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     	if($scope.dates[array_id].AMPM)
     		date += $scope.dates[array_id].AMPM;
     	$scope.answers[array_id].VALUE = date;
+		$scope.answers[array_id].SKIPREASON = "NONE";
+		for(k in $scope.options[array_id]){
+    		if($scope.options[array_id][k].ID == "DONT_KNOW" || $scope.options[array_id][k].ID == "REFUSE")
+        		$scope.options[array_id][k].checked = false;
+		}
     	console.log(date);
 
     }
@@ -567,8 +583,10 @@ app.directive('checkAnswer', [function (){
             				    valid = false;
             			    }
             			}else{
-            		    	scope.errors[array_id] = 'Please enter the time of day';
-            			    valid = false;
+                			if(scope.timeBits(question.TIMEUNITS, 'HOUR')){
+                		    	scope.errors[array_id] = 'Please enter the time of day';
+                			    valid = false;
+            			    }
             			}
             			if(typeof date != "undefined" && date && date.length > 3){
             			    if(parseInt(date[2]) < 1 || parseInt(date[2]) > 31){
@@ -739,8 +757,10 @@ app.directive('checkAnswer', [function (){
             				    valid = false;
             			    }
             			}else{
-            		    	scope.errors[array_id] = 'Please enter the time of day';
-            			    valid = false;
+                			if(scope.timeBits(question.TIMEUNITS, 'HOUR')){
+                		    	scope.errors[array_id] = 'Please enter the time of day';
+                			    valid = false;
+            			    }
             			}
             			if(typeof date != "undefined" && date && date.length > 3){
             			    if(parseInt(date[2]) < 1 || parseInt(date[2]) > 31){

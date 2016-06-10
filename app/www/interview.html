@@ -93,7 +93,7 @@
             <textarea class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'></textarea>
         </div>
         <div ng-if="question.ANSWERTYPE == 'DATE'" class="col-xs-12 no-padding">
-            <div class="multiRow ">
+            <div class="multiRow" ng-if="timeBits(question.TIMEUNITS, 'HOUR')">
                 Time (HH:MM)
             </div>
 
@@ -109,12 +109,12 @@
                 </div>
             </div>
 
-            <div class="multiRow ">
+            <div class="multiRow"  ng-if="timeBits(question.TIMEUNITS, 'HOUR')">
                 <input class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="timeBits(question.TIMEUNITS, 'HOUR')" ng-model="dates[question.array_id].AMPM" ng-change="dateValue(question.array_id)" value="AM" type="radio"> AM <input ng-model="dates[question.array_id].AMPM" ng-change="dateValue(question.array_id)" value="PM" type="radio"> PM
             </div>
 
             <div class="multiRow ">
-                (Month,Day,Year)
+                Date (Month, Day, Year)
             </div>
 
             <div class="multiRow ">
