@@ -193,21 +193,24 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 
         columns = Object.keys($scope.options[array_id]).length;
         if(typeof $scope.answers[array_id].OTHERSPECIFYTEXT != "undefined" && $scope.answers[array_id].OTHERSPECIFYTEXT != null && $scope.answers[array_id].OTHERSPECIFYTEXT != ""){
+            $scope.otherSpecify[array_id] = {};
             var specify = $scope.answers[array_id].OTHERSPECIFYTEXT.split(";;");
             for(s in specify){
                 var pair = specify[s].split(":");
-                $scope.otherSpecify[pair[0]] = pair[1];
+                $scope.otherSpecify[array_id][pair[0]] = pair[1];
             }
         }
         for(a in $scope.options[array_id]){
-            if($scope.otherSpecify[$scope.options[array_id][a].ID] && $scope.otherSpecify[$scope.options[array_id][a].ID] != "")
+            if(typeof $scope.otherSpecify[array_id] == "undefined")
+                $scope.otherSpecify[array_id] = {};
+            if($scope.otherSpecify[array_id][$scope.options[array_id][a].ID] && $scope.otherSpecify[array_id][$scope.options[array_id][a].ID] != "")
                 continue;
             if($scope.options[array_id][a].OTHERSPECIFY == true)
-                $scope.otherSpecify[$scope.options[array_id][a].ID] = "";
+                $scope.otherSpecify[array_id][$scope.options[array_id][a].ID] = "";
             else if($scope.options[array_id][a].NAME.match(/OTHER \(*SPECIFY\)*/i))
-                $scope.otherSpecify[$scope.options[array_id][a].ID] = "";
+                $scope.otherSpecify[array_id][$scope.options[array_id][a].ID] = "";
             else
-                $scope.otherSpecify[$scope.options[array_id][a].ID] = false;
+                $scope.otherSpecify[array_id][$scope.options[array_id][a].ID] = false;
         }
 
         if($scope.questions[k].SUBJECTTYPE != "EGO_ID"){
@@ -323,8 +326,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.changeOther = function (array_id){
         var specify = [];
         for(a in $scope.options[array_id]){
-            if($scope.otherSpecify[$scope.options[array_id][a].ID] != false && $scope.otherSpecify[$scope.options[array_id][a].ID] != ""){
-                specify.push($scope.options[array_id][a].ID + ":" + $scope.otherSpecify[$scope.options[array_id][a].ID])
+            if($scope.otherSpecify[array_id][$scope.options[array_id][a].ID] != false && $scope.otherSpecify[array_id][$scope.options[array_id][a].ID] != ""){
+                specify.push($scope.options[array_id][a].ID + ":" + $scope.otherSpecify[array_id][$scope.options[array_id][a].ID])
             }
         }
         $scope.answers[array_id].OTHERSPECIFYTEXT = specify.join(";;");
@@ -450,8 +453,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     
     $scope.timeBits = function(timeUnits, span)
     {
-        console.log(timeUnits);
-        console.log(span);
         timeArray = [];
         bitVals = {
         	'BIT_YEAR' :1,
@@ -552,28 +553,32 @@ app.directive('checkAnswer', [function (){
 
                 if(attr.answerType == "DATE"){
                     console.log(attr.answerType);
-        			var date = value.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
-        			var time = value.match(/(\d+):(\d+) (AM|PM)/);
-        			if(typeof time != "undefined" && time && time.length > 2){
-        			    if(parseInt(time[1]) < 1 || parseInt(time[1]) > 12){
-                            scope.errors[array_id] = 'Please enter 1 to 12 for HH';
-                        	valid = false;
-        			    }
-        			    console.log(time);
-        			    if(parseInt(time[2]) < 0 || parseInt(time[2]) > 59){
-        			    	scope.errors[array_id] = 'Please enter 0 to 59 for MM';
-        				    valid = false;
-        			    }
+                    if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
+            			var date = value.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
+            			var time = value.match(/(\d+):(\d+) (AM|PM)/);
+            			if(typeof time != "undefined" && time && time.length > 2){
+            			    if(parseInt(time[1]) < 1 || parseInt(time[1]) > 12){
+                                scope.errors[array_id] = 'Please enter 1 to 12 for HH';
+                            	valid = false;
+            			    }
+            			    console.log(time);
+            			    if(parseInt(time[2]) < 0 || parseInt(time[2]) > 59){
+            			    	scope.errors[array_id] = 'Please enter 0 to 59 for MM';
+            				    valid = false;
+            			    }
+            			}else{
+            		    	scope.errors[array_id] = 'Please enter the time of day';
+            			    valid = false;
+            			}
+            			if(typeof date != "undefined" && date && date.length > 3){
+            			    if(parseInt(date[2]) < 1 || parseInt(date[2]) > 31){
+            			    	scope.errors[array_id] = 'Please enter a different number for the day of month';
+            					valid = false;
+            			    }
+            			}
         			}else{
-        		    	scope.errors[array_id] = 'Please enter the time of day';
-        			    valid = false;
-        			}
-        			if(typeof date != "undefined" && date && date.length > 3){
-        			    if(parseInt(date[2]) < 1 || parseInt(date[2]) > 31){
-        			    	scope.errors[array_id] = 'Please enter a different number for the day of month';
-        					valid = false;
-        			    }
-        			}
+                        delete scope.errors[array_id];
+                    }
         		}
 
         		if(attr.answerType == "MULTIPLE_SELECTION"){
@@ -719,28 +724,33 @@ app.directive('checkAnswer', [function (){
 
                 if(attr.answerType == "DATE"){
                     console.log(attr.answerType);
-        			var date = value.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
-        			var time = value.match(/(\d+):(\d+) (AM|PM)/);
-        			if(typeof time != "undefined" && time && time.length > 2){
-        			    if(parseInt(time[1]) < 1 || parseInt(time[1]) > 12){
-                            scope.errors[array_id] = 'Please enter 1 to 12 for HH';
-                        	valid = false;
-        			    }
-        			    console.log(time);
-        			    if(parseInt(time[2]) < 0 || parseInt(time[2]) > 59){
-        			    	scope.errors[array_id] = 'Please enter 0 to 59 for MM';
-        				    valid = false;
-        			    }
+                    if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
+            			var date = value.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
+            			var time = value.match(/(\d+):(\d+) (AM|PM)/);
+            			if(typeof time != "undefined" && time && time.length > 2){
+                            delete scope.errors[array_id];
+            			    if(parseInt(time[1]) < 1 || parseInt(time[1]) > 12){
+                                scope.errors[array_id] = 'Please enter 1 to 12 for HH';
+                            	valid = false;
+            			    }
+            			    console.log(time);
+            			    if(parseInt(time[2]) < 0 || parseInt(time[2]) > 59){
+            			    	scope.errors[array_id] = 'Please enter 0 to 59 for MM';
+            				    valid = false;
+            			    }
+            			}else{
+            		    	scope.errors[array_id] = 'Please enter the time of day';
+            			    valid = false;
+            			}
+            			if(typeof date != "undefined" && date && date.length > 3){
+            			    if(parseInt(date[2]) < 1 || parseInt(date[2]) > 31){
+            			    	scope.errors[array_id] = 'Please enter a different number for the day of month';
+            					valid = false;
+            			    }
+            			}
         			}else{
-        		    	scope.errors[array_id] = 'Please enter the time of day';
-        			    valid = false;
-        			}
-        			if(typeof date != "undefined" && date && date.length > 3){
-        			    if(parseInt(date[2]) < 1 || parseInt(date[2]) > 31){
-        			    	scope.errors[array_id] = 'Please enter a different number for the day of month';
-        					valid = false;
-        			    }
-        			}
+                        delete scope.errors[array_id];
+                    }
         		}
 
         		if(attr.answerType == "MULTIPLE_SELECTION"){
