@@ -674,7 +674,7 @@ class Interview extends CActiveRecord
         $criteria->order = "ordering";
         $network_questions = Question::model()->findAll($criteria);
 
-        $alters = Alters::model()->findAll(array('order'=>'id', 'condition'=>'interviewId=:x', 'params'=>array(':x'=>$this->id)));
+        $alters = Alters::model()->findAll(array('order'=>'id', 'condition'=>'FIND_IN_SET(:x, interviewId)', 'params'=>array(':x'=>$this->id)));
 
         if (!$alters)
         {

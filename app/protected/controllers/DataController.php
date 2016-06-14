@@ -447,7 +447,7 @@ class DataController extends Controller
 			if(!isset($_POST['export'][$interview->id]))
 				continue;
             #OK FOR SQL INJECTION
-			$alters = Alters::model()->findAll(array('order'=>'id', 'condition'=>'interviewId=:x', 'params'=>array(':x'=>$interview->id)));
+			$alters = Alters::model()->findAll(array('order'=>'id', 'condition'=>'FIND_IN_SET(:x, interviewId)', 'params'=>array(':x'=>$interview->id)));
 			//$alterNames = AlterList::model()->findAllByAttributes(array('interviewId'=>$interview->id));
 
 			$i = 1;

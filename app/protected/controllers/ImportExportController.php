@@ -342,8 +342,16 @@ class ImportExportController extends Controller
     							if($key!="key" && $key != "id")
     								$newAlter->$key = $value;
     						}
-    						if(!preg_match("/,/", $newAlter->interviewId))
+    						if(!preg_match("/,/", $newAlter->interviewId)){
     							$newAlter->interviewId = $newInterview->id;
+                            }else{
+                                $interviewIds = explode(",", $newAlter->interviewId);
+                                foreach($interviewIds as &$interviewId){
+                                    if($interviewId == $oldInterviewId)
+                                        $interviewId = $newInterview->id;
+                                }
+                                $newAlter->interviewId = implode(",", $interviewIds);
+                            }
 
     						$newAlter->ordering=1;
 
