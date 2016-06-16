@@ -63,14 +63,14 @@ function save (questions, page, url){
             document.location = document.location.protocol + "//" + document.location.host + "/interview/" + studyId + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
         });
     }else if(questions[0].ANSWERTYPE == "CONCLUSION"){
-        if ( redirect  && typeof redirect !== 'undefined' ){
-            document.location = redirect;
-        }
-        else {
-            $.post(saveUrl, $('#answerForm').serialize(), function (data) {
+        $.post(saveUrl, $('#answerForm').serialize(), function (data) {
+            if ( redirect  && typeof redirect !== 'undefined' ){
+                document.location = redirect;
+            }
+            else {
                 document.location = document.location.protocol + "//" + document.location.host + "/admin";
-            });
-        }
+            }
+        });
     }else{
         document.location = url + "/page/" + (parseInt(page) + 1);
     }
