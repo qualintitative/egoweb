@@ -471,7 +471,7 @@ class DataController extends Controller
 					//	$answers[] = $realId1;
 					//else
 						$answers[] = $alterNum[$alter->id];
-					$answers[] = $alter->name;
+					$answers[] = str_replace(",", ";", $alter->name);
 					if(is_numeric($realId2))
 						$answers[] = $realId2;
 					else

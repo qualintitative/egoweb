@@ -783,7 +783,7 @@ class Interview extends CActiveRecord
             if (isset($alter->id))
             {
                 $answers[] = $count;
-                $answers[] = $alter->name;
+                $answers[] = str_replace(",", ";", $alter->name);
                 foreach ($alter_questions as $question)
                 {
                     $expression = new Expression;
