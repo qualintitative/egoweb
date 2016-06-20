@@ -46,7 +46,7 @@ $(document).keydown(function(e) {
 	}
 });
 function save (questions, page, url){
-    if(typeof s.isForceAtlas2Running != "undefined" && s.isForceAtlas2Running()){
+    if(typeof s != "undefined" && typeof s.isForceAtlas2Running != "undefined" && s.isForceAtlas2Running()){
         s.stopForceAtlas2();
         saveNodes();
     }
