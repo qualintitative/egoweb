@@ -1,5 +1,6 @@
 <?php
 ini_set('memory_limit','3072M');
+ini_set('max_execution_time', 300);
 error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE);
 
 // change the following paths if necessary

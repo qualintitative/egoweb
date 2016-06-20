@@ -354,12 +354,14 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         		}
         		$scope.answers[array_id].OTHERSPECIFYTEXT = "";
         		$scope.answers[array_id].SKIPREASON = v;
-        		$scope.dates[array_id].MINUTE = "";
-        		$scope.dates[array_id].HOUR = "";
-        		$scope.dates[array_id].DAY = "";
-        		$scope.dates[array_id].MONTH = "";
-        		$scope.dates[array_id].AMPM = "";
-        		$scope.dates[array_id].YEAR = "";
+        		if(typeof $scope.dates[array_id] != "undefined"){
+            		$scope.dates[array_id].MINUTE = "";
+            		$scope.dates[array_id].HOUR = "";
+            		$scope.dates[array_id].DAY = "";
+            		$scope.dates[array_id].MONTH = "";
+            		$scope.dates[array_id].AMPM = "";
+            		$scope.dates[array_id].YEAR = "";
+        		}
         		if(typeof $scope.errors[array_id] != "undefined")
                     delete $scope.errors[array_id];
                 $('#Answer_' + array_id + '_VALUE').val("SKIPREASON").change();
