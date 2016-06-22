@@ -661,7 +661,7 @@ class Interview extends CActiveRecord
         return nl2br($string);
     }
 
-    public function exportEgoAlterData()
+    public function exportEgoAlterData($file)
     {
         $ego_id_questions = q("SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId = " . $this->studyId . " ORDER BY ordering")->queryAll();
         #OK FOR SQL INJECTION
@@ -740,8 +740,12 @@ class Interview extends CActiveRecord
             {
                 #OK FOR SQL INJECTION
                 $answer = q("SELECT value FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'])->queryScalar();
-                if ($answer)
+                if ($answer){
                     $answer = decrypt($answer);
+                }else{
+                    $answers[] = $study->valueNotYetAnswered;
+                    continue;
+                }
                 #OK FOR SQL INJECTION
                 $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'])->queryScalar();
                 if ($answer !== "" && $skipReason == "NONE" && $answer != $study->valueLogicalSkip)
@@ -882,10 +886,12 @@ class Interview extends CActiveRecord
                 $answers[] = $stats->getBetweenness($alter->id);
                 $answers[] = $stats->eigenvectorCentrality($alter->id);
             }
-            $text .= implode(',', $answers) . "\n";
+            fputcsv($file, $answers);
+            //$text .= implode(',', $answers) . "\n";
             $count++;
         }
-        return $text;
+        fclose($file);
+        //return $text;
     }
 
     /**

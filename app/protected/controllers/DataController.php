@@ -392,10 +392,9 @@ class DataController extends Controller
 
         $interview = Interview::model()->findByPk($_POST['interviewId']);
         if ($interview) {
-            $text = $interview->exportEgoAlterData();
             $file = fopen($filePath . "/" . $_POST['interviewId'] . ".csv", "w") or die("Unable to open file!");
-	    	fwrite($file, $text);
-    		fclose($file);
+            $interview->exportEgoAlterData($file);
+	    	//fwrite($file, $text);
     		echo "success";
     		Yii::app()->end();
         }
