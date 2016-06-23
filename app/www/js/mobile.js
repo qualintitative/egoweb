@@ -746,6 +746,36 @@ function save(questions, page, url){
     }
 }
 
+function saveSkip(interviewId, questionId, alterId1, alterId2, arrayId)
+{
+    if(typeof answers[arrayId] != "undefined" && answers[arrayId].VALUE == study.VALUELOGICALSKIP)
+        return;
+	answers[array_id] = {
+        ID : '',
+    	ACTIVE : '',
+    	QUESTIONID : questionId,
+    	INTERVIEWID : interviewId,
+    	ALTERID1 : alterId1,
+    	ALTERID2 : alterId2,
+    	VALUE : study.VALUELOGICALSKIP,
+    	OTHERSPECIFYTEXT : "",
+    	SKIPREASON : "NONE",
+    	STUDYID : study.ID,
+    	QUESTIONTYPE : questions[questionId].SUBJECTTYPE,
+    	ANSWERTYPE : questions[questionId].ANSWERTYPE
+    };
+	if(typeof answers[arrayId] == "undefined"){
+    	var newId = parseInt(db.queryValue("SELECT id FROM answer ORDER BY id DESC"));
+    	if(!newId)
+    	    newId = 0;
+    	answers[array_id].ID = newId + 1;
+    	answers[array_id].ACTIVE = "";
+		db.catalog.getTable('answer').insertRow(objToArray(answers[array_id]));
+	}else{
+		db.catalog.getTable('answer').updateRow(objToArray(answers[array_id]));
+	}
+}
+
 function saveNodes()
 {
 	var nodes = {};

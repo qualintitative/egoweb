@@ -916,8 +916,10 @@ function buildQuestions(pageNumber, interviewId){
 				page[i] = new Object;
 			}
 
-			if(evalExpression(ego_questions[j].ANSWERREASONEXPRESSIONID) != true)
+			if(evalExpression(ego_questions[j].ANSWERREASONEXPRESSIONID) != true){
+                saveSkip(interviewId, ego_questions[j].ID, "", "", ego_questions[j].ID);
 				continue;
+            }
 
 			if(ego_questions[j].PREFACE != ""){
 				if(pageNumber == i){
@@ -977,9 +979,10 @@ function buildQuestions(pageNumber, interviewId){
                 preface.SUBJECTTYPE = "PREFACE";
                 preface.PROMPT = alter_questions[j].PREFACE;
 				for(k in alters){
-					if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
+					if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true){
+    					saveSkip(interviewId, alter_questions[j].ID, alters[k].ID, "", alter_questions[j].ID + "-" + alters[k].ID);
 						continue;
-
+                    }
 					var question = $.extend(true,{}, alter_questions[j]);
 					question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
 					question.ALTERID1 = alters[k].ID;
@@ -1044,8 +1047,10 @@ function buildQuestions(pageNumber, interviewId){
 					for(l in alters2){
 						if(alters[k].ID == alters2[l].ID)
 							continue;
-						if(evalExpression(alter_pair_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID, alters2[l].ID) != true)
+						if(evalExpression(alter_pair_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID, alters2[l].ID) != true){
+        					saveSkip(interviewId, alter_pair_questions[j].ID, alters[k].ID, alters2[l].ID, alter_pair_questions[j].ID + "-" + alters[k].ID + "and" + alters2[l].ID);
 							continue;
+				        }
 						var question = $.extend(true,{}, alter_pair_questions[j]);
 						question.PROMPT = question.PROMPT.replace(/\$\$1/g, alters[k].NAME);
 						question.PROMPT = question.PROMPT.replace(/\$\$2/g, alters2[l].NAME);
@@ -1111,10 +1116,10 @@ function buildQuestions(pageNumber, interviewId){
 				page[i] = new Object;
 			}
 
-			if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID) != true)
+			if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID) != true){
+                saveSkip(interviewId, network_questions[j].ID, "", "", network_questions[j].ID);
 				continue;
-
-
+            }
 
 			if(network_questions[j].PREFACE != ""){
 				if(pageNumber == i){

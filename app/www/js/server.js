@@ -45,7 +45,8 @@ $(document).keydown(function(e) {
         });
 	}
 });
-function save (questions, page, url){
+
+function save(questions, page, url){
     if(typeof s != "undefined" && typeof s.isForceAtlas2Running != "undefined" && s.isForceAtlas2Running()){
         s.stopForceAtlas2();
         saveNodes();
@@ -75,6 +76,38 @@ function save (questions, page, url){
         document.location = url + "/page/" + (parseInt(page) + 1);
     }
 }
+
+function saveSkip(interviewId, questionId, alterId1, alterId2, arrayId)
+{
+    if(typeof answers[arrayId] != "undefined" && answers[arrayId].VALUE == study.VALUELOGICALSKIP)
+        return;
+    var skipAnswer = {
+        "Answer":{
+            0:{
+                "value":study.VALUELOGICALSKIP,
+                "otherSpecifyText":"",
+                "skipReason":"NONE",
+                "questionId":questionId,
+                "questionType":questions[questionId].SUBJECTTYPE,
+                "studyId":study.ID,
+                "answerType":questions[questionId].ANSWERTYPE,
+                "alterId1":alterId1,
+                "alterId2":alterId2,
+                "interviewId":interviewId,
+                "id":(typeof answers[arrayId] != "undefined" ? answers[arrayId].ID : "")
+            }
+        },
+        "YII_CSRF_TOKEN":csrf
+    }
+
+    var saveUrl = document.location.protocol + "//" + document.location.host + "/interview/save";
+    $.post(saveUrl, skipAnswer, function(data){
+        answers = JSON.parse(data);
+        console.log("saving skip value");
+        console.log(answers);
+    });
+}
+
 function saveNodes()
 {
 	var nodes = {};

@@ -738,27 +738,23 @@ class Interview extends CActiveRecord
             }
             foreach ($ego_questions as $question)
             {
-                #OK FOR SQL INJECTION
-                $answer = q("SELECT value FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'])->queryScalar();
-                if ($answer){
-                    $answer = decrypt($answer);
-                }else{
+                $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question['id']));
+                if(!$answer){
                     $answers[] = $study->valueNotYetAnswered;
                     continue;
                 }
-                #OK FOR SQL INJECTION
-                $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'])->queryScalar();
-                if ($answer !== "" && $skipReason == "NONE" && $answer != $study->valueLogicalSkip)
+
+                if ($answer->value !== "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip)
                 {
                     if ($question['answerType'] == "SELECTION")
                     {
-                        if (isset($options[$answer]))
-                            $answers[] = $options[$answer];
+                        if (isset($options[$answer->value]))
+                            $answers[] = $options[$answer->value];
                         else
                             $answers[] = "";
                     } else if ($question['answerType'] == "MULTIPLE_SELECTION")
                     {
-                        $optionIds = explode(',', $answer);
+                        $optionIds = explode(',', $answer->value);
                         $list = array();
                         foreach ($optionIds as $optionId)
                         {
@@ -768,15 +764,13 @@ class Interview extends CActiveRecord
                         $answers[] = implode('; ', $list);
                     } else
                     {
-                        $answers[] = str_replace(',', '', $answer);
+                        $answers[] = $answer->value;
                     }
-                } else if (($skipReason == "DONT_KNOW" || $skipReason == "REFUSE"))
-                {
-                    if ($skipReason == "DONT_KNOW")
+                } else if ($answer->skipReason == "DONT_KNOW"){
                         $answers[] = $study->valueDontKnow;
-                    else
+                } else if ($answer->skipReason == "REFUSE"){
                         $answers[] = $study->valueRefusal;
-                } else if($question['answerReasonExpressionId'] && !$answer)
+                } else if($answer->value == $study->valueLogicalSkip)
                 {
                     $answers[] = $study->valueLogicalSkip;
                 } else {
@@ -790,25 +784,19 @@ class Interview extends CActiveRecord
                 $answers[] = $alter->name;
                 foreach ($alter_questions as $question)
                 {
-                    $expression = new Expression;
-                    #OK FOR SQL INJECTION
-                    $answer = q("SELECT value FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter->id)->queryScalar();
-                    if (strlen($answer) >= 8){
-                        $answer = decrypt($answer);
-                    }else{
+                    $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question['id']));
+                    if(!$answer){
                         $answers[] = $study->valueNotYetAnswered;
                         continue;
                     }
-                    #OK FOR SQL INJECTION
-                    $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter->id)->queryScalar();
-                    if ($answer != "" && $skipReason == "NONE" && $answer != $study->valueLogicalSkip)
+                    if ($answer->value != "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip)
                     {
                         if ($question['answerType'] == "SELECTION")
                         {
-                            $answers[] = $options[$answer];
+                            $answers[] = $options[$answer->value];
                         } else if ($question['answerType'] == "MULTIPLE_SELECTION")
                         {
-                            $optionIds = explode(',', $answer);
+                            $optionIds = explode(',', $answer->value);
                             $list = array();
                             foreach ($optionIds as $optionId)
                             {
@@ -821,15 +809,13 @@ class Interview extends CActiveRecord
                                 $answers[] = implode('; ', $list);
                         } else
                         {
-                            $answers[] = $answer;
+                            $answers[] = $answer->value;
                         }
-                    } else if (!$answer && ($skipReason == "DONT_KNOW" || $skipReason == "REFUSE"))
-                    {
-                        if ($skipReason == "DONT_KNOW")
+                    } else if ($answer->skipReason == "DONT_KNOW"){
                             $answers[] = $study->valueDontKnow;
-                        else
+                    } else if ($answer->skipReason == "REFUSE"){
                             $answers[] = $study->valueRefusal;
-                    } else if($question['answerReasonExpressionId'] && !$answer)
+                    } else if($answer->value == $study->valueLogicalSkip)
                     {
                         $answers[] = $study->valueLogicalSkip;
                     } else {
@@ -852,7 +838,7 @@ class Interview extends CActiveRecord
                     $answers[] = $study->valueNotYetAnswered;
                     continue;
                 }
-                if ($answer->value !== "" && $answer->skipReason == "NONE" && $answer != $study->valueLogicalSkip)
+                if ($answer->value !== "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip)
                 {
                     if ($question->answerType == "SELECTION")
                     {
@@ -872,15 +858,15 @@ class Interview extends CActiveRecord
                         $answers[] = implode('; ', $list);
                     } else
                     {
-                        $answers[] = str_replace(',', '', $answer->value);
+                        $answers[] = $answer->value;
                     }
                 } else if ($answer->skipReason == "DONT_KNOW")
                 {
                     $answers[] = $study->valueDontKnow;
-                } else if ( $answer->skipReason == "REFUSE")
+                } else if ($answer->skipReason == "REFUSE")
                 {
                     $answers[] = $study->valueRefusal;
-                }  else if($question['answerReasonExpressionId'] && !$answer)
+                }  else if($answer->value == $study->valueLogicalSkip)
                 {
                     $answers[] = $study->valueLogicalSkip;
                 } else {
@@ -894,7 +880,7 @@ class Interview extends CActiveRecord
                 $answers[] = $stats->maxDegree();
                 $answers[] = $stats->maxBetweenness();
                 $answers[] = $stats->maxEigenvector();
-                $answers[] =  $stats->degreeCentralization();
+                $answers[] = $stats->degreeCentralization();
                 $answers[] = $stats->betweennessCentralization();
                 $answers[] = count($stats->components);
                 $answers[] = count($stats->dyads);
