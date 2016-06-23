@@ -784,7 +784,7 @@ class Interview extends CActiveRecord
                 $answers[] = $alter->name;
                 foreach ($alter_questions as $question)
                 {
-                    $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question['id']));
+                    $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question['id'], "alterId1"=>$alter->id));
                     if(!$answer){
                         $answers[] = $study->valueNotYetAnswered;
                         continue;
