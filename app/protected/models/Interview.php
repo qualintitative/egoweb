@@ -787,14 +787,18 @@ class Interview extends CActiveRecord
             if (isset($alter->id))
             {
                 $answers[] = $count;
-                $answers[] = str_replace(",", ";", $alter->name);
+                $answers[] = $alter->name;
                 foreach ($alter_questions as $question)
                 {
                     $expression = new Expression;
                     #OK FOR SQL INJECTION
                     $answer = q("SELECT value FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter->id)->queryScalar();
-                    if (strlen($answer) >= 8)
+                    if (strlen($answer) >= 8){
                         $answer = decrypt($answer);
+                    }else{
+                        $answers[] = $study->valueNotYetAnswered;
+                        continue;
+                    }
                     #OK FOR SQL INJECTION
                     $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter->id)->queryScalar();
                     if ($answer != "" && $skipReason == "NONE" && $answer != $study->valueLogicalSkip)
@@ -832,45 +836,58 @@ class Interview extends CActiveRecord
                         $answers[] = "";
                     }
                 }
-            }
-                foreach ($network_questions as $question)
+            }else{
+                $answers[] = 0;
+                $answers[] = "";
+                foreach ($alter_questions as $question)
                 {
-                    $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question->id));
-                    if ($answer->value !== "" && $answer->skipReason == "NONE" && $answer != $study->valueLogicalSkip)
-                    {
-                        if ($question->answerType == "SELECTION")
-                        {
-                            if (isset($options[$answer]))
-                                $answers[] = $options[$answer];
-                            else
-                                $answers[] = "";
-                        } else if ($question->answerType == "MULTIPLE_SELECTION")
-                        {
-                            $optionIds = explode(',', $answer->value);
-                            $list = array();
-                            foreach ($optionIds as $optionId)
-                            {
-                                if (isset($options[$optionId]))
-                                    $list[] = $options[$optionId];
-                            }
-                            $answers[] = implode('; ', $list);
-                        } else
-                        {
-                            $answers[] = str_replace(',', '', $answer->value);
-                        }
-                    } else if ($answer->skipReason == "DONT_KNOW")
-                    {
-                        $answers[] = $study->valueDontKnow;
-                    } else if ( $answer->skipReason == "REFUSE")
-                    {
-                        $answers[] = $study->valueRefusal;
-                    }  else if($question['answerReasonExpressionId'] && !$answer)
-                    {
-                        $answers[] = $study->valueLogicalSkip;
-                    } else {
-                        $answers[] = "";
-                    }
+                    $answers[] = $study->valueNotYetAnswered;
                 }
+            }
+
+            foreach ($network_questions as $question)
+            {
+                $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question->id));
+                if(!$answer){
+                    $answers[] = $study->valueNotYetAnswered;
+                    continue;
+                }
+                if ($answer->value !== "" && $answer->skipReason == "NONE" && $answer != $study->valueLogicalSkip)
+                {
+                    if ($question->answerType == "SELECTION")
+                    {
+                        if (isset($options[$answer]))
+                            $answers[] = $options[$answer];
+                        else
+                            $answers[] = "";
+                    } else if ($question->answerType == "MULTIPLE_SELECTION")
+                    {
+                        $optionIds = explode(',', $answer->value);
+                        $list = array();
+                        foreach ($optionIds as $optionId)
+                        {
+                            if (isset($options[$optionId]))
+                                $list[] = $options[$optionId];
+                        }
+                        $answers[] = implode('; ', $list);
+                    } else
+                    {
+                        $answers[] = str_replace(',', '', $answer->value);
+                    }
+                } else if ($answer->skipReason == "DONT_KNOW")
+                {
+                    $answers[] = $study->valueDontKnow;
+                } else if ( $answer->skipReason == "REFUSE")
+                {
+                    $answers[] = $study->valueRefusal;
+                }  else if($question['answerReasonExpressionId'] && !$answer)
+                {
+                    $answers[] = $study->valueLogicalSkip;
+                } else {
+                    $answers[] = "";
+                }
+            }
+
             if (isset($stats))
             {
                 $answers[] = $stats->getDensity();
