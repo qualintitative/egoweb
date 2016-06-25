@@ -255,7 +255,10 @@ class InterviewController extends Controller
 
 	public function actionSave()
 	{
-
+        $errors = 0;
+        $key = "";
+        if(isset($_POST["hashKey"]))
+            $key = $_POST["hashKey"];
 		if(isset($_POST['Answer'][0]) && $_POST['Answer'][0]['answerType'] == "CONCLUSION"){
 			$interview = Interview::model()->findByPk((int)$_POST['Answer'][0]['interviewId']);
 			$interview->completed = -1;
@@ -312,15 +315,15 @@ class InterviewController extends Controller
 							$email_id = $array_id;
 						}
 					}
-					if($key && User::hashPassword($email) != $key){
-						$model[$email_id]->addError('value', 'You do not have the correct email for this survey.');
+					if(!$key || ($key && User::hashPassword($email) != $key)){
+						//$model[$email_id]->addError('value', 'You do not have the correct email for this survey.');
 						$errors++;
 						break;
 					}
 				}
 				if($errors == 0){
 					if(Yii::app()->user->isGuest && isset($email)){
-						$interview = Interview::getInterviewFromEmail($_POST['studyId'],$email);
+						$interview = Interview::getInterviewFromEmail($Answer['studyId'], $email);
 						if($interview){
 							$this->redirect(Yii::app()->createUrl(
 								'interviewing/'.$study->id.'?'.
@@ -373,8 +376,10 @@ class InterviewController extends Controller
 		foreach($answers as $index => $answer){
     		$json[$index] = mToA($answer);
 		}
-		echo json_encode($json);
-
+		if($errors == 0)
+    		echo json_encode($json);
+        else
+            echo "error";
     }
 
 	public function actionAlter(){

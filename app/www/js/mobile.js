@@ -1,3 +1,5 @@
+isGuest = 0;
+
 app.config(function($routeProvider) {
     $routeProvider
 

@@ -46,7 +46,7 @@ $(document).keydown(function(e) {
 	}
 });
 
-function save(questions, page, url){
+function save(questions, page, url, scope){
     if(typeof s != "undefined" && typeof s.isForceAtlas2Running != "undefined" && s.isForceAtlas2Running()){
         s.stopForceAtlas2();
         saveNodes();
@@ -54,14 +54,19 @@ function save(questions, page, url){
     var saveUrl = document.location.protocol + "//" + document.location.host + "/interview/save";
     if(typeof questions[0] == "undefined"){
         $.post(saveUrl, $('#answerForm').serialize(), function(data){
-            answers = JSON.parse(data);
-            console.log(answers);
-            for(k in answers){
-                interviewId = answers[k].INTERVIEWID;
-                studyId = answers[k].STUDYID;
-                break;
+            if(data != "error"){
+                answers = JSON.parse(data);
+                console.log(answers);
+                for(k in answers){
+                    interviewId = answers[k].INTERVIEWID;
+                    studyId = answers[k].STUDYID;
+                    break;
+                }
+                document.location = document.location.protocol + "//" + document.location.host + "/interview/" + studyId + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
+            }else{
+                scope.errors[0] = "Participant not found";
+                scope.$apply();
             }
-            document.location = document.location.protocol + "//" + document.location.host + "/interview/" + studyId + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
         });
     }else if(questions[0].ANSWERTYPE == "CONCLUSION"){
         $.post(saveUrl, $('#answerForm').serialize(), function (data) {

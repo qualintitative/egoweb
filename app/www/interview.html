@@ -253,6 +253,8 @@
     <input name="Answer[{{ questions[0].array_id }}][value]" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='0' answer-type='{{ questions[0].ANSWERTYPE }}' type="hidden">
     <input name="page" value='{{ page }}' type="hidden">
     <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
+    <input name="hashKey" value='{{ hashKey }}' type="hidden">
+
     <div class="form-group clear-left btn-top">
         <button ng-show="page > 0" id="next" class='btn graybutton' ng-click="goBack();" onclick="return false;">Back</button>
     	<button ng-if="questions[0].ANSWERTYPE != 'CONCLUSION'" id="next" class='btn orangebutton' type="submit">Next</button>

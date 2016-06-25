@@ -9,6 +9,11 @@ app.config(function ($routeProvider) {
         controller: 'interviewController'
     })
 
+    .when('/page/:page/:key', {
+        templateUrl: baseUrl + 'interview.html',
+        controller: 'interviewController'
+    })
+
 });
 
 app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', '$location', '$route', "saveAlter", "deleteAlter", function($scope, $log, $routeParams, $sce, $location, $route, saveAlter, deleteAlter) {
@@ -41,9 +46,19 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.audioFiles = {};
     $scope.audio = {};
     $scope.keys = Object.keys;
+    $scope.hashKey = "";
     $scope.interview = interview;
     $scope.footer = $sce.trustAsHtml(study.FOOTER);
     console.clear();
+    
+    if(typeof hashKey != "undefined"){
+        $scope.hashKey = hashKey;
+    }else{
+        if(typeof $routeParams.key != "undefined"){
+            $scope.hashKey = $routeParams.key;
+            hashKey = $routeParams.key;
+        }
+    }
 
     for(k in audio){
         $scope.audio[k] = audio[k];
@@ -53,16 +68,18 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 
     $scope.nav = buildNav($scope.page);
 
-    $('#navbox ul').html("");
-    for(k in $scope.nav){
-        if(baseUrl == "/www/")
-    	    $('#navbox ul').append("<li id='menu_" + k + "'><a href='/interview/" + study.ID + (interviewId ? "/" + interviewId  : "") + "#page/" + k + "'>" + $scope.nav[k] + "</a></li>");
-        else
-    	    $('#navbox ul').append("<li id='menu_" + k + "']]><a href='" + $location.absUrl().replace($location.url(),'') + "page/" + k + "'>" + $scope.nav[k] + "</a></li>");
+    if(!isGuest){
+        $('#navbox ul').html("");
+        for(k in $scope.nav){
+            if(baseUrl == "/www/")
+        	    $('#navbox ul').append("<li id='menu_" + k + "'><a href='/interview/" + study.ID + (interviewId ? "/" + interviewId  : "") + "#page/" + k + "'>" + $scope.nav[k] + "</a></li>");
+            else
+        	    $('#navbox ul').append("<li id='menu_" + k + "']]><a href='" + $location.absUrl().replace($location.url(),'') + "page/" + k + "'>" + $scope.nav[k] + "</a></li>");
+        }
+        $("#second").show();
+        $("#second").scrollTop($("#second").scrollTop() - $("#second").offset().top + $("#menu_" + $scope.page).offset().top);
+        $("#questionMenu").removeClass("hidden");
     }
-    $("#second").show();
-    $("#second").scrollTop($("#second").scrollTop() - $("#second").offset().top + $("#menu_" + $scope.page).offset().top);
-    $("#questionMenu").removeClass("hidden");
 
     for(var k in $scope.questions){
         var array_id = $scope.questions[k].array_id;
@@ -244,7 +261,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             function(){
                 if(typeof $(".answerInput")[0] != "undefined")
                     $(".answerInput")[0].focus();
-                $("#second").scrollTop($("#second").scrollTop() - $("#second").offset().top + $("#menu_" + $scope.page).offset().top);
+                if(!isGuest && typeof $("#second") != "undefined")
+                    $("#second").scrollTop($("#second").scrollTop() - $("#second").offset().top + $("#menu_" + $scope.page).offset().top);
                 eval($scope.questions[k].JAVASCRIPT);
             },
         1);
@@ -277,7 +295,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.submitForm = function(isValid) {
         // check to make sure the form is completely valid
         if (isValid) {
-            save($scope.questions, $routeParams.page, $location.absUrl().replace($location.url(),''));
+            save($scope.questions, $routeParams.page, $location.absUrl().replace($location.url(),''), $scope);
         }
     };
 
@@ -506,9 +524,6 @@ app.directive('checkAnswer', [function (){
                 console.log(question);
                 console.log("check:" + value);
 
-
-
-		
                 if(attr.answerType == "ALTER_PROMPT"){
         			if(Object.keys(alters).length < study.MINALTERS){
         				scope.errors[array_id] = 'Please list ' + study.MINALTERS + ' people';
