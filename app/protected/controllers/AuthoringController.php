@@ -1117,8 +1117,8 @@ class AuthoringController extends Controller
 		if(isset($_GET['alterListId'])){
 
 			$alter = AlterList::model()->findByPk((int)$_GET['alterListId']);
-			$key = "key=".User::hashPassword($alter->email);
-			echo "<div style='clear:both'><label>Authorized Link</label><br>" . Yii::app()->getBaseUrl(true) . "/interviewing/".$alter->studyId."?".$key."</div>";
+			$key = User::hashPassword($alter->email);
+			echo "<div style='clear:both'><label>Authorized Link</label><br>" . Yii::app()->getBaseUrl(true) . "/interview/".$alter->studyId."#/page/0/".$key."</div>";
 		}
 	}
 	public function actionAjaxmoveup()

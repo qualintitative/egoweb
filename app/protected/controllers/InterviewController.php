@@ -326,9 +326,9 @@ class InterviewController extends Controller
 						$interview = Interview::getInterviewFromEmail($Answer['studyId'], $email);
 						if($interview){
 							$this->redirect(Yii::app()->createUrl(
-								'interviewing/'.$study->id.'?'.
-								'interviewId='.$interview->id.'&'.
-								'page='.($interview->completed).'&key=' . $key
+								'interview/'.$study->id.'/'.
+								$interview->id.'#/'.
+								'page/'.$interview->completed
 							));
 						}
 					}
