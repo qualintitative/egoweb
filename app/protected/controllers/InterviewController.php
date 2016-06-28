@@ -268,12 +268,15 @@ class InterviewController extends Controller
 			if(isset(Yii::app()->params['exportFilePath']) && Yii::app()->params['exportFilePath'])
 				$this->exportInterview($interview->id);
 
+            /*
 			if(isset(Yii::app()->session['redirect']))
 				$this->redirect(Yii::app()->session['redirect']);
 			else if(Yii::app()->user->isGuest)
 				$this->redirect(Yii::app()->createUrl(''));
 			else
 				$this->redirect(Yii::app()->createUrl('admin/'));
+            */
+            Yii::app()->end();
 		}
         $interviewId = null;
 		foreach($_POST['Answer'] as $Answer){
