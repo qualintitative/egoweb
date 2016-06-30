@@ -204,6 +204,26 @@ class InterviewController extends Controller
         			$prevAlters[$result->id] = mToA($result);
     			}
             }
+    		if(isset($_GET['interviewId']) && $study->fillAlterList){
+                #OK FOR SQL INJECTION
+                $check = q("SELECT count(id) FROM alters WHERE interviewId = " . $interviewId)->queryScalar();
+    			if(!$check){
+                    #OK FOR SQL INJECTION
+    				$names = q("SELECT name FROM alterList where studyId = " . $study->id)->queryColumn();
+    				$count = 0;
+    				foreach($names as $name){
+    					$alter = new Alters;
+    					if(strlen($name) >= 8)
+        					$alter->name = decrypt($name);
+        				else
+        				    continue;
+    					$alter->ordering = $count;
+    					$alter->interviewId = $interviewId;
+    					$alter->save();
+    					$count++;
+    				}
+    			}
+    		}
     		$alters = array();
 			$criteria = array(
 				'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId)",
