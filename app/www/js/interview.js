@@ -49,6 +49,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.hashKey = "";
     $scope.interview = interview;
     $scope.footer = $sce.trustAsHtml(study.FOOTER);
+    $scope.phrase = "";
     console.clear();
     
     if(typeof hashKey != "undefined"){
@@ -187,6 +188,54 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             else
 				$scope.dates[array_id].AMPM = "";
         }
+
+        if($scope.questions[k].ANSWERTYPE == "MULTIPLE_SELECTION"){
+			$scope.phrase = "Please select ";
+			if($scope.questions[k].MINCHECKABLEBOXES != "" && $scope.questions[k].MAXCHECKABLEBOXES != "" && $scope.questions[k].MINCHECKABLEBOXES == $scope.questions[k].MAXCHECKABLEBOXES)
+				$scope.phrase += $scope.questions[k].MAXCHECKABLEBOXES;
+			else if($scope.questions[k].MINCHECKABLEBOXES != "" && $scope.questions[k].MAXCHECKABLEBOXES != "" && $scope.questions[k].MINCHECKABLEBOXES != $scope.questions[k].MAXCHECKABLEBOXES)
+				$scope.phrase += $scope.questions[k].MINCHECKABLEBOXES + " to " + $scope.questions[k].MAXCHECKABLEBOXES;
+			else if ($scope.questions[k].MINCHECKABLEBOXES == "" && $scope.questions[k].MAXCHECKABLEBOXES != "")
+				$scope.phrase += " up to " + $scope.questions[k].MAXCHECKABLEBOXES ;
+			else if ($scope.questions[k].MINCHECKABLEBOXES != "" && $scope.questions[k].MAXCHECKABLEBOXES == "")
+				$scope.phrase += " at least " + $scope.questions[k].MINCHECKABLEBOXES ;
+
+			if($scope.questions[k].MAXCHECKABLEBOXES == 1)
+				$scope.phrase += " response";
+			else
+				$scope.phrase += " responses";
+			if($scope.questions[k].ASKINGSTYLELIST && $scope.questions[k].WITHLISTRANGE == false)
+				$scope.phrase += " for each row";
+		}
+
+		if ($scope.questions[k].ANSWERTYPE == "NUMERICAL" && $scope.questions[k].SUBJECTTYPE != "EGO_ID"){
+			var min = ""; var max = "";
+			if($scope.questions[k].MINLIMITTYPE == "NLT_LITERAL"){
+				min = $scope.questions[k].MINLITERAL;
+			}else if($scope.questions[k].MINLIMITTYPE == "NLT_PREVQUES"){
+    			if(typeof answers[$scope.questions[k].MINPREVQUES] != "undefined")
+    				min = answers[$scope.questions[k].MINPREVQUES];
+				else
+					min = "";
+			}
+			if($scope.questions[k].MAXLIMITTYPE == "NLT_LITERAL"){
+				max = $scope.questions[k].MAXLITERAL;
+			}else if($scope.questions[k].MAXLIMITTYPE == "NLT_PREVQUES"){
+    			if(typeof answers[$scope.questions[k].MAXPREVQUES] != "undefined")
+					max = answers[$scope.questions[k].MAXPREVQUES];
+				else
+					max = "";
+			}
+
+			if(min != "" && max != "")
+				$scope.phrase = "Please enter a number from " + min + " to " + max + ".";
+			else if (min == "" && max != "")
+				$scope.phrase = "Please enter a number (" + max + " or lower).";
+			else if (min != "" && max == "")
+				$scope.phrase = "Please enter a number (" + min + " or higher).";
+			if($scope.questions[k].ASKINGSTYLELIST && $scope.questions[k].WITHLISTRANGE == false)
+				$scope.phrase += " for each row";
+		}
 
         if($scope.questions[k].DONTKNOWBUTTON == true){
             var button = new Object;
