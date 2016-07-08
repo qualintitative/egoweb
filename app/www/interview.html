@@ -27,10 +27,18 @@
         </form>
     </div>
 </div>
-<div ng-if="prompt != ''" ng-bind-html="prompt" ng-class="{'col-xs-12 col-sm-9 no-padding': questions[0].ANSWERTYPE == 'ALTER_PROMPT'}">{{ prompt }}</div>
-<div ng-if="phrase != ''" class="orangeText col-xs-12 no-padding">{{ phrase }}</div>
-<a ng-if='audio[subjectType + qId]' class="play-sound" ng-click='playSound(subjectType + qId)' href="javascript:void(0)"><span class="fui-volume"></span></a>
-<a ng-if='audio["PREFACE" + qId]' class="play-sound" ng-click='playSound("PREFACE" + qId)' href="javascript:void(0)"><span class="fui-volume"></span></a>
+
+<div id="floatHeader">
+    <div ng-if="prompt != ''" ng-bind-html="prompt" ng-class="{'col-xs-12 col-sm-9 no-padding': questions[0].ANSWERTYPE == 'ALTER_PROMPT'}">{{ prompt }}</div>
+    <a ng-if='audio[subjectType + qId]' class="play-sound" ng-click='playSound(subjectType + qId)' href="javascript:void(0)"><span class="fui-volume"></span></a>
+    <a ng-if='audio["PREFACE" + qId]' class="play-sound" ng-click='playSound("PREFACE" + qId)' href="javascript:void(0)"><span class="fui-volume"></span></a>
+    <div ng-if="phrase != ''" class="orangeText col-xs-12 no-padding">{{ phrase }}</div>
+    <div id="floater" class="panel multi multi-header" ng-if="askingStyleList != false">
+        <div style="width:180px"></div>
+        <div ng-if="(answerType == 'TEXTUAL' || answerType == 'NUMERICAL')" style="width:{{ fixedWidth }}"></div>
+        <div ng-repeat="option in options[askingStyleList]" style="width:120px">{{ option.NAME }}</div>
+    </div>
+</div>
 
 <div id="alterListBox" class="col-xs-12 col-sm-3" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'">
     <table class="items">
@@ -74,7 +82,7 @@
 
     <div ng-class="{multiBox: askingStyleList != false}">
 
-    <div class="panel multi multi-header" ng-if="askingStyleList != false">
+    <div id="realHeader" class="panel multi multi-header" ng-if="askingStyleList != false">
             <div style="width:180px"></div>
             <div ng-if="(answerType == 'TEXTUAL' || answerType == 'NUMERICAL') && askingStyleList != false" style="width:{{ fixedWidth }}"></div>
             <div ng-repeat="option in options[askingStyleList]" style="width:120px">{{ option.NAME }}</div>

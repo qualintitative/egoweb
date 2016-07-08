@@ -308,6 +308,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
         setTimeout(
             function(){
+                if($scope.askingStyleList != false)
+                    fixHeader();
                 if(typeof $(".answerInput")[0] != "undefined")
                     $(".answerInput")[0].focus();
                 if(!isGuest && typeof $("#second") != "undefined")
@@ -2177,7 +2179,6 @@ function toggleLabels(){
     s.refresh();
 }
 
-
 function exitHandler()
 {
     if (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement !== null)
@@ -2190,15 +2191,13 @@ function exitHandler()
     }
 }
 
-			function redraw(params){
-				url = "/data/deleteGraph?id=" + $("#Graph_id").val();
-				$.get(url, function(data){
-					url = "/data/visualize?expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent(JSON.stringify(params));
-					document.location = document.location + "&params=" + encodeURIComponent(JSON.stringify(params));
-				});
-			}
-
-
+function redraw(params){
+	url = "/data/deleteGraph?id=" + $("#Graph_id").val();
+	$.get(url, function(data){
+		url = "/data/visualize?expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent(JSON.stringify(params));
+		document.location = document.location + "&params=" + encodeURIComponent(JSON.stringify(params));
+	});
+}
 
 function buildNav(pageNumber){
 	var i = 0;
@@ -2370,4 +2369,37 @@ function buildNav(pageNumber){
 
 	pages[i] = this.checkPage(i, pageNumber, "CONCLUSION");
 	return pages;
+}
+
+function fixHeader(){
+    var tWidth;
+    var cWidths = [];
+    tWidth = $("#realHeader").width();
+    $("#realHeader").children().each(function(index){
+        cWidths[index] = $(this).width();
+    });
+    $("#floatHeader").width(tWidth);
+    $("#floatHeader").css({"background-color":$("#content").css("background-color")});
+    $("#floater").children().each(function(index){
+        $(this).width(cWidths[index]);
+    });
+	// Set this variable with the height of your sidebar + header
+	var offsetPixels = 50; 
+
+	$(window).scroll(function() {
+		if ($(window).scrollTop() > offsetPixels) {
+			$( "#floatHeader" ).css({
+				"position": "fixed",
+				"top": "0",
+				"padding-top":"15px"
+			});
+            $("#answerForm").css({"margin-top":$("#floatHeader").height() + "px"});
+		} else {
+			$( "#floatHeader" ).css({
+				"padding-top":"0",
+				"position": "static"
+			});
+            $("#answerForm").css({"margin-top":"0"});
+		}
+	});
 }
