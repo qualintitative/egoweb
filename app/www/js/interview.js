@@ -2384,19 +2384,20 @@ function fixHeader(){
         $(this).width(cWidths[index]);
     });
 	// Set this variable with the height of your sidebar + header
-	var offsetPixels = 50; 
+	var offsetPixels = 0; 
 
 	$(window).scroll(function() {
 		if ($(window).scrollTop() > offsetPixels) {
 			$( "#floatHeader" ).css({
 				"position": "fixed",
-				"top": "0",
+				"top": "50px",
 				"padding-top":"15px"
 			});
-            $("#answerForm").css({"margin-top":$("#floatHeader").height() + "px"});
+            $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
 		} else {
 			$( "#floatHeader" ).css({
 				"padding-top":"0",
+				"top": "0",
 				"position": "static"
 			});
             $("#answerForm").css({"margin-top":"0"});

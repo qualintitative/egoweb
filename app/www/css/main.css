@@ -449,6 +449,7 @@ td{
 #home_button{
 	float:right;
 }
+
 #topbar{
 	color:#fff;
 	background:#333;
@@ -902,4 +903,9 @@ input[type=checkbox]{
     height:400px;
     overflow-y:scroll;
     padding-top:0;
+}
+
+#content {
+    margin-top:50px;
+
 }
