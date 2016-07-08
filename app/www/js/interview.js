@@ -204,7 +204,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 				$scope.phrase += " response";
 			else
 				$scope.phrase += " responses";
-			if($scope.questions[k].ASKINGSTYLELIST && $scope.questions[k].WITHLISTRANGE == false)
+			if($scope.questions[k].ASKINGSTYLELIST == 1 && $scope.questions[k].WITHLISTRANGE == false)
 				$scope.phrase += " for each row";
 		}
 
@@ -233,7 +233,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 				$scope.phrase = "Please enter a number (" + max + " or lower).";
 			else if (min != "" && max == "")
 				$scope.phrase = "Please enter a number (" + min + " or higher).";
-			if($scope.questions[k].ASKINGSTYLELIST && $scope.questions[k].WITHLISTRANGE == false)
+			if($scope.questions[k].ASKINGSTYLELIST == 1 && $scope.questions[k].WITHLISTRANGE == false)
 				$scope.phrase += " for each row";
 		}
 
