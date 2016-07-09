@@ -50,6 +50,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.interview = interview;
     $scope.footer = $sce.trustAsHtml(study.FOOTER);
     $scope.phrase = "";
+    $scope.conclusion = false;
     console.clear();
     
     if(typeof hashKey != "undefined"){
@@ -67,7 +68,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         $scope.audioFiles[k].src = audio[k];
     }
 
-    $scope.nav = buildNav($scope.page);
+    $scope.nav = buildNav($scope.page, $scope);
 
     if(!isGuest){
         $('#navbox ul').html("");
@@ -310,6 +311,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             function(){
                 if($scope.askingStyleList != false)
                     fixHeader();
+                else
+                    unfixHeader();
                 if(typeof $(".answerInput")[0] != "undefined")
                     $(".answerInput")[0].focus();
                 if(!isGuest && typeof $("#second") != "undefined")
@@ -2199,7 +2202,7 @@ function redraw(params){
 	});
 }
 
-function buildNav(pageNumber){
+function buildNav(pageNumber, scope){
 	var i = 0;
 	var pages = [];
 
@@ -2208,6 +2211,8 @@ function buildNav(pageNumber){
             $("#questionTitle").html(text);
 			text = "<b>" + text + "</b>";
 		}
+		if(currentPage - 1 == pageNumber && text == "CONCLUSION")
+		    scope.conclusion = true;
 		return text;
 	};
 
@@ -2383,24 +2388,38 @@ function fixHeader(){
     $("#floater").children().each(function(index){
         $(this).width(cWidths[index]);
     });
+
 	// Set this variable with the height of your sidebar + header
 	var offsetPixels = 0; 
 
 	$(window).scroll(function() {
 		if ($(window).scrollTop() > offsetPixels) {
-			$( "#floatHeader" ).css({
-				"position": "fixed",
-				"top": "50px",
-				"padding-top":"15px"
-			});
-            $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
+    		if($("#answerForm").css("margin-top") == "0px"){
+    			$( "#floatHeader" ).css({
+    				"position": "fixed",
+    				"top": "50px",
+    				"padding-top":"15px"
+    			});
+                $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
+            }
 		} else {
-			$( "#floatHeader" ).css({
-				"padding-top":"0",
-				"top": "0",
-				"position": "static"
-			});
-            $("#answerForm").css({"margin-top":"0"});
+    		if($("#answerForm").css("margin-top") != "0px"){
+    			$( "#floatHeader" ).css({
+    				"padding-top":"0",
+    				"top": "0",
+    				"position": "static"
+    			});
+                $("#answerForm").css({"margin-top":"0"});
+            }
 		}
 	});
+}
+
+function unfixHeader(){
+	$( "#floatHeader" ).css({
+		"padding-top":"0",
+		"top": "0",
+		"position": "static"
+	});
+    $("#answerForm").css({"margin-top":"0"});
 }

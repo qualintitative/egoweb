@@ -263,11 +263,13 @@
     <input name="page" value='{{ page }}' type="hidden">
     <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
     <input name="hashKey" value='{{ hashKey }}' type="hidden">
+    <input ng-if="conclusion == true" name="conclusion" value='1' type="hidden">
 
     <div class="form-group clear-left btn-top">
-        <button ng-show="page > 0" id="next" class='btn graybutton' ng-click="goBack();" onclick="return false;">Back</button>
-    	<button ng-if="questions[0].ANSWERTYPE != 'CONCLUSION'" id="next" class='btn orangebutton' type="submit">Next</button>
-    	<button ng-if="questions[0].ANSWERTYPE == 'CONCLUSION'" id="next" class='btn orangebutton' type="submit">Finish</button>
+        <button ng-if="page > 0 && questions[0].ANSWERTYPE != 'CONCLUSION'" id="next" class='btn graybutton' ng-click="goBack();" onclick="return false;">Back</button>
+    	<button ng-if="questions[0].ANSWERTYPE != 'CONCLUSION' && conclusion == false" id="next" class='btn orangebutton' type="submit">Next</button>
+    	<button ng-if="questions[0].ANSWERTYPE == 'CONCLUSION'" id="next" class='btn orangebutton' type="submit">Return</button>
+    	<button ng-if="conclusion == true" id="next" class='btn orangebutton' type="submit">Finish</button>
     </div>
 </form>
 <div class="col-sm-12" ng-if="footer != ''" ng-bind-html="footer">{{ footer }}</div>
