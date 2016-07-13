@@ -747,7 +747,7 @@ class DataController extends Controller
 				$row[] = decrypt($alter['email']);
 			else
 			$row[] = $alter['email'];
-			$row[] =  Yii::app()->getBaseUrl(true) . "/interviewing/".$study->id."?".$key;
+			$row[] =  Yii::app()->getBaseUrl(true) . "/interview/".$study->id."#/page/0/".$key;
 			echo implode(',', $row) . "\n";
 		}
 		Yii::app()->end();

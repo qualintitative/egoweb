@@ -268,7 +268,7 @@
     <div class="form-group clear-left btn-top">
         <button ng-if="page > 0 && questions[0].ANSWERTYPE != 'CONCLUSION'" id="next" class='btn graybutton' ng-click="goBack();" onclick="return false;">Back</button>
     	<button ng-if="questions[0].ANSWERTYPE != 'CONCLUSION' && conclusion == false" id="next" class='btn orangebutton' type="submit">Next</button>
-    	<button ng-if="questions[0].ANSWERTYPE == 'CONCLUSION'" id="next" class='btn orangebutton' type="submit">Return</button>
+    	<button ng-if="questions[0].ANSWERTYPE == 'CONCLUSION' && redirect != false" id="next" class='btn orangebutton' type="submit">Return</button>
     	<button ng-if="conclusion == true" id="next" class='btn orangebutton' type="submit">Finish</button>
     </div>
 </form>

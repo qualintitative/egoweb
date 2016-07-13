@@ -51,6 +51,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.footer = $sce.trustAsHtml(study.FOOTER);
     $scope.phrase = "";
     $scope.conclusion = false;
+    $scope.redirect = false;
     console.clear();
     
     if(typeof hashKey != "undefined"){
@@ -61,6 +62,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             hashKey = $routeParams.key;
         }
     }
+
+    if (typeof redirect !== 'undefined' && redirect)
+        $scope.redirect = redirect;
 
     for(k in audio){
         $scope.audio[k] = audio[k];
