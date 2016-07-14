@@ -70,7 +70,7 @@ function save(questions, page, url, scope){
         });
     }else if(questions[0].ANSWERTYPE == "CONCLUSION"){
         $.post(saveUrl, $('#answerForm').serialize(), function (data) {
-            if ( redirect  && typeof redirect !== 'undefined' ){
+            if (typeof redirect !== 'undefined' && redirect){
                 document.location = redirect;
             }
             else {

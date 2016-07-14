@@ -190,28 +190,28 @@
 
         <div ng-if="question.ANSWERTYPE == 'TIME_SPAN'">
 
-            <div class="singleRow " style="width:180px">
-                <input class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="timeBits(question.TIMEUNITS, 'YEAR')" type="text" ng-model="time_spans[question.array_id].YEARS" ng-change="timeValue(question.array_id)" style="width:30px">
+            <div class="singleRow " style="width:180px" ng-if="timeBits(question.TIMEUNITS, 'YEAR')">
+                <input class="answerInput" ng-disabled="interview.COMPLETED == -1" type="text" ng-model="time_spans[question.array_id].YEARS" ng-change="timeValue(question.array_id)" style="width:30px">
                 Years
             </div>
-            <div class="singleRow " style="width:180px">
-                <input class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="timeBits(question.TIMEUNITS, 'MONTH')" type="text"  ng-model="time_spans[question.array_id].MONTHS" ng-change="timeValue(question.array_id)" style="width:30px">
+            <div class="singleRow " style="width:180px" ng-if="timeBits(question.TIMEUNITS, 'MONTH')">
+                <input class="answerInput" ng-disabled="interview.COMPLETED == -1" type="text"  ng-model="time_spans[question.array_id].MONTHS" ng-change="timeValue(question.array_id)" style="width:30px">
                 Months
             </div>
-            <div class="singleRow " style="width:180px">
-                <input class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="timeBits(question.TIMEUNITS, 'WEEK')" type="text"  ng-model="time_spans[question.array_id].WEEKS" ng-change="timeValue(question.array_id)" style="width:30px">
+            <div class="singleRow " style="width:180px" ng-if="timeBits(question.TIMEUNITS, 'WEEK')">
+                <input class="answerInput" ng-disabled="interview.COMPLETED == -1" type="text"  ng-model="time_spans[question.array_id].WEEKS" ng-change="timeValue(question.array_id)" style="width:30px">
                 Weeks
             </div>
-            <div class="singleRow " style="width:180px">
-                <input class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="timeBits(question.TIMEUNITS, 'DAY')" type="text"  ng-model="time_spans[question.array_id].DAYS" ng-change="timeValue(question.array_id)" style="width:30px">
+            <div class="singleRow " style="width:180px" ng-if="timeBits(question.TIMEUNITS, 'DAY')">
+                <input class="answerInput" ng-disabled="interview.COMPLETED == -1" type="text"  ng-model="time_spans[question.array_id].DAYS" ng-change="timeValue(question.array_id)" style="width:30px">
                 Days
             </div>
-            <div class="singleRow " style="width:180px">
-                <input class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="timeBits(question.TIMEUNITS, 'HOUR')" type="text"  ng-model="time_spans[question.array_id].HOURS" ng-change="timeValue(question.array_id)" style="width:30px">
+            <div class="singleRow " style="width:180px" ng-if="timeBits(question.TIMEUNITS, 'HOUR')">
+                <input class="answerInput" ng-disabled="interview.COMPLETED == -1" type="text"  ng-model="time_spans[question.array_id].HOURS" ng-change="timeValue(question.array_id)" style="width:30px">
                 Hours
             </div>
-            <div class="singleRow " style="width:180px">
-                <input class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="timeBits(question.TIMEUNITS, 'MINUTE')" type="text"  ng-model="time_spans[question.array_id].MINUTES" ng-change="timeValue(question.array_id)" style="width:30px">
+            <div class="singleRow " style="width:180px" ng-if="timeBits(question.TIMEUNITS, 'MINUTE')">
+                <input class="answerInput" ng-disabled="interview.COMPLETED == -1" type="text"  ng-model="time_spans[question.array_id].MINUTES" ng-change="timeValue(question.array_id)" style="width:30px">
                 Minutes
             </div>
         </div>
