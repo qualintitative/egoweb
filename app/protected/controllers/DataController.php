@@ -736,7 +736,7 @@ class DataController extends Controller
 
 		foreach($alters as $alter){
 			$row = array();
-			$key = "key=".User::hashPassword($alter['email']);
+			$key = User::hashPassword($alter['email']);
 			$row[] = $study->id;
 			$row[] = $alter['id'];
 			if($alter['name']!="")
