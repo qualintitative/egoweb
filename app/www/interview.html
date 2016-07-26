@@ -1,8 +1,3 @@
-<span ng-if="(answerForm.$submitted || errors[0] == 'That name is already listed') && errors">
-    <div class="alert alert-danger" role="alert" ng-if="$index == 0" ng-repeat="error in errors">
-        {{ error }}
-    </div>
-</span>
 <div id="visualizePlugin" ng-if="subjectType == 'NETWORK' && graphExpressionId > 0" class="col-sm-6 pull-right">
     <div id="infovis"></div>
 	<div class="col-sm-4 pull-left" id="legend">
@@ -29,6 +24,11 @@
 </div>
 
 <div id="floatHeader">
+    <span ng-if="(answerForm.$submitted || errors[0] == 'That name is already listed') && errors">
+        <div class="alert alert-danger" role="alert" ng-if="$index == 0" ng-repeat="error in errors">
+            {{ error }}
+        </div>
+    </span>
     <div ng-if="prompt != ''" ng-bind-html="prompt" ng-class="{'col-xs-12 col-sm-9 no-padding': questions[0].ANSWERTYPE == 'ALTER_PROMPT'}">{{ prompt }}</div>
     <a ng-if='audio[subjectType + qId]' class="play-sound" ng-click='playSound(subjectType + qId)' href="javascript:void(0)"><span class="fui-volume"></span></a>
     <a ng-if='audio["PREFACE" + qId]' class="play-sound" ng-click='playSound("PREFACE" + qId)' href="javascript:void(0)"><span class="fui-volume"></span></a>
@@ -94,7 +94,7 @@
         <h4 ng-if="question.SUBJECTTYPE == 'EGO_ID' && (question.ANSWERTYPE == 'RANDOM_NUMBER' || question.ANSWERTYPE == 'STORED_VALUE')">{{ question.TITLE }}</h4>
 
         <div ng-if="askingStyleList == false && (question.ANSWERTYPE == 'TEXTUAL' || question.ANSWERTYPE == 'NUMERICAL' || question.ANSWERTYPE == 'STORED_VALUE' || question.ANSWERTYPE == 'RANDOM_NUMBER')">
-            <input ng-if="question.USEALTERLISTFIELD == 'name' || question.USEALTERLISTFIELD == 'email'" name="Answer[{{ question.array_id }}][value]" value="{{answers[question.array_id].VALUE}}" type="hidden">
+            <input ng-if="question.USEALTERLISTFIELD == 'name' || question.USEALTERLISTFIELD == 'email'" name="Answer[{{ question.array_id }}][value]" value="{{answers[question.array_id].VALUE}}" type="hidden" id="Answer_{{ question.array_id }}_VALUE">
             <autocomplete attr-input-class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="question.USEALTERLISTFIELD == 'name' || question.USEALTERLISTFIELD == 'email'" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" data="participants" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'></autocomplete>
             <input class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="question.USEALTERLISTFIELD != 'name'&& question.USEALTERLISTFIELD != 'email'" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'>
         </div>

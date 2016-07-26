@@ -52,7 +52,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.phrase = "";
     $scope.conclusion = false;
     $scope.redirect = false;
-    console.clear();
     
     if(typeof hashKey != "undefined"){
         $scope.hashKey = hashKey;
@@ -313,10 +312,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
         setTimeout(
             function(){
-                if($scope.askingStyleList != false)
+                $(window).scrollTop(0);
+                if($scope.askingStyleList != false){
                     fixHeader();
-                else
+                }else{
                     unfixHeader();
+                }
                 if(typeof $(".answerInput")[0] != "undefined")
                     $(".answerInput")[0].focus();
                 if(!isGuest && typeof $("#second") != "undefined")
@@ -742,7 +743,6 @@ app.directive('checkAnswer', [function (){
                     scope.errors[array_id] = "Please select "  + errorMsg + " response(s).  You selected " + checks;
     
     			}else{
-        			console.log("pass: " + valid);
         			for(k in scope.errors){
             			if(scope.errors[k].match("Please select "))
             			    delete scope.errors[k];
@@ -904,7 +904,7 @@ app.directive('checkAnswer', [function (){
     			}
     
                 console.log("check list range: " + checks);
-    
+
     			if(checks < question.MINLISTRANGE || checks > question.MAXLISTRANGE){
     				errorMsg = "";
     				if(question.MINLISTRANGE && question.MAXLISTRANGE){
@@ -920,14 +920,17 @@ app.directive('checkAnswer', [function (){
     
                     valid = false;
                     scope.errors[array_id] = "Please select "  + errorMsg + " response(s).  You selected " + checks;
-    
-    
+
     			}else{
-        			console.log("pass: " + valid);
         			for(k in scope.errors){
             			if(scope.errors[k].match("Please select "))
             			    delete scope.errors[k];
         			}
+                    for(k in scope.answerForm){
+                        if(k.match("Answer")){
+                            scope.answerForm[k].$setValidity("checkAnswer", true);
+                        }
+                    }
     			}
     		}
 		
@@ -978,7 +981,7 @@ function buildQuestions(pageNumber, interviewId){
 		prompt = "";
 		for(j in ego_questions){
             ego_questions[j].array_id = ego_questions[j].ID;
-			if(Object.keys(ego_question_list).length > 0 && prompt != ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
+			if(Object.keys(ego_question_list).length > 0 && (parseInt(ego_questions[j].ASKINGSTYLELIST) != 1 || prompt != ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,""))){
 				if(pageNumber == i){
 					page[i] = ego_question_list;
 					return page[i];
@@ -1015,6 +1018,7 @@ function buildQuestions(pageNumber, interviewId){
 			    	ego_question_list[parseInt(ego_questions[j].ORDERING) + 1] = ego_questions[j];
 			    }
 			}else{
+    			console.log("iii");
 			    if(pageNumber == i){
 		    		page[i][ego_questions[j].ID] = ego_questions[j];
 			    	return page[i];
@@ -2389,34 +2393,33 @@ function fixHeader(){
     });
     $("#floatHeader").width(tWidth);
     $("#floatHeader").css({"background-color":$("#content").css("background-color")});
+    $("#realHeader").parent().css({"margin-top":"-" + $("#floater").height() + "px"});
     $("#floater").children().each(function(index){
         $(this).width(cWidths[index]);
     });
 
 	// Set this variable with the height of your sidebar + header
-	var offsetPixels = 0; 
+	var offsetPixels = 50; 
 
-	$(window).scroll(function() {
-		if ($(window).scrollTop() > offsetPixels) {
-    		if($("#answerForm").css("margin-top") == "0px"){
-    			$( "#floatHeader" ).css({
-    				"position": "fixed",
-    				"top": "50px",
-    				"padding-top":"15px"
-    			});
-                $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
-            }
-		} else {
-    		if($("#answerForm").css("margin-top") != "0px"){
-    			$( "#floatHeader" ).css({
-    				"padding-top":"0",
-    				"top": "0",
-    				"position": "static"
-    			});
-                $("#answerForm").css({"margin-top":"0"});
-            }
-		}
-	});
+    if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+    	$(window).scroll(function(event) {
+			$( "#floatHeader" ).css({
+				"position": "fixed",
+				"top": "50px",
+				"padding-top":"15px"
+			});
+            $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
+    	});
+    }else{
+    	$(window).on('touchmove', function(event) {
+    		$( "#floatHeader" ).css({
+    			"position": "fixed",
+    			"top": "50px",
+    			"padding-top":"15px"
+    		});
+            $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
+    	});
+    }
 }
 
 function unfixHeader(){
@@ -2426,4 +2429,6 @@ function unfixHeader(){
 		"position": "static"
 	});
     $("#answerForm").css({"margin-top":"0"});
+    $(window).unbind('scroll');
+    $(window).unbind('touchmove');
 }

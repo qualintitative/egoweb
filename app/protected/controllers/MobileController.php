@@ -82,6 +82,8 @@ class MobileController extends Controller
 		foreach($alterList as &$alter){
 			if(strlen($alter[2]) >= 8)
 				$alter[2] = decrypt($alter[2]);
+			if(strlen($alter[3]) >= 8)
+				$alter[3] = decrypt($alter[3]);
 		}
 
 		#OK FOR SQL INJECTION
