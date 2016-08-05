@@ -719,7 +719,7 @@ class DataController extends Controller
 
 		$study = Study::model()->findByPk((int)$_POST['studyId']);
         #OK FOR SQL INJECTION
-		$alters = q("SELECT * FROM alterList WHERE studyId = " . $study->id)->queryAll();
+		$alters = AlterList::model()->findAllByAttributes(array("studyId"=>$study->id));
 
 		// start generating export file
 		header("Content-Type: application/octet-stream");
@@ -734,19 +734,22 @@ class DataController extends Controller
 		$headers[] = "Link With Key";
 		echo implode(',', $headers) . "\n";
 
+        $ego_id = Question::model()->findByAttributes(array("studyId"=>$study->id, "subjectType"=>"EGO_ID", "useAlterListField"=>array("name", "email")));
+
 		foreach($alters as $alter){
 			$row = array();
-			$key = User::hashPassword($alter['email']);
+			if($ego_id->useAlterListField == "name")
+    			$key = User::hashPassword($alter->name);
+			else if($ego_id->useAlterListField == "email")
+    			$key = User::hashPassword($alter->email);
+			else if($ego_id->useAlterListField == "id")
+    			$key = User::hashPassword($alter->id);
+            else
+                $key = "";
 			$row[] = $study->id;
-			$row[] = $alter['id'];
-			if($alter['name']!="")
-				$row[] = decrypt($alter['name']);
-			else
-			$row[] = $alter['name'];
-			if($alter['email']!="")
-				$row[] = decrypt($alter['email']);
-			else
-			$row[] = $alter['email'];
+			$row[] = $alter->id;
+			$row[] = $alter->name;
+			$row[] = $alter->email;
 			$row[] =  Yii::app()->getBaseUrl(true) . "/interview/".$study->id."#/page/0/".$key;
 			echo implode(',', $row) . "\n";
 		}

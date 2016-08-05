@@ -315,12 +315,13 @@ class InterviewController extends Controller
 						$array_id = $ego_id['questionId'];
 						$answers[$array_id] = new Answer;
 						$answers[$array_id]->attributes = $ego_id;
-						if(stristr(Question::getTitle($ego_id['questionId']), 'email')){
-							$email = $ego_id['value'];
-							$email_id = $array_id;
+						$ego_id_q = Question::model()->findByPk($ego_id['questionId']);
+						if(in_array($ego_id_q->useAlterListField, array("name", "email", "id"))){
+							$keystr = $ego_id['value'];
+							//$email_id = $array_id;
 						}
 					}
-					if(!$key || ($key && User::hashPassword($email) != $key)){
+					if(!$key || ($key && User::hashPassword($keystr) != $key)){
 						//$model[$email_id]->addError('value', 'You do not have the correct email for this survey.');
 						$errors++;
 						break;
