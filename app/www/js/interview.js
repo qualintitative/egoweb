@@ -232,12 +232,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 			}
 
 			if(min != "" && max != "")
-				$scope.phrase = "Please enter a number from " + min + " to " + max + ".";
+				$scope.phrase = "Please enter a number from " + min + " to " + max;
 			else if (min == "" && max != "")
-				$scope.phrase = "Please enter a number (" + max + " or lower).";
+				$scope.phrase = "Please enter a number (" + max + " or lower)";
 			else if (min != "" && max == "")
-				$scope.phrase = "Please enter a number (" + min + " or higher).";
-			if($scope.questions[k].ASKINGSTYLELIST == 1 && $scope.questions[k].WITHLISTRANGE == false)
+				$scope.phrase = "Please enter a number (" + min + " or higher)";
+			if($scope.questions[k].ASKINGSTYLELIST == 1 && $scope.questions[k].WITHLISTRANGE == false && $scope.phrase != "" && !$scope.phrase.match("for each row"))
 				$scope.phrase += " for each row";
 		}
 
