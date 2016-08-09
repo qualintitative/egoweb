@@ -262,6 +262,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
 
         columns = Object.keys($scope.options[array_id]).length;
+        if(columns == 0)
+            columns = 1;
         if(typeof $scope.answers[array_id].OTHERSPECIFYTEXT != "undefined" && $scope.answers[array_id].OTHERSPECIFYTEXT != null && $scope.answers[array_id].OTHERSPECIFYTEXT != ""){
             $scope.otherSpecify[array_id] = {};
             var specify = $scope.answers[array_id].OTHERSPECIFYTEXT.split(";;");
@@ -1018,7 +1020,6 @@ function buildQuestions(pageNumber, interviewId){
 			    	ego_question_list[parseInt(ego_questions[j].ORDERING) + 1] = ego_questions[j];
 			    }
 			}else{
-    			console.log("iii");
 			    if(pageNumber == i){
 		    		page[i][ego_questions[j].ID] = ego_questions[j];
 			    	return page[i];
@@ -2384,7 +2385,7 @@ function buildNav(pageNumber, scope){
 	return pages;
 }
 
-function fixHeader(){
+function columnWidths(){
     var tWidth;
     var cWidths = [];
     tWidth = $("#realHeader").width();
@@ -2397,7 +2398,9 @@ function fixHeader(){
     $("#floater").children().each(function(index){
         $(this).width(cWidths[index]);
     });
-
+}
+function fixHeader(){
+    columnWidths();
 	// Set this variable with the height of your sidebar + header
 	var offsetPixels = 50; 
 
@@ -2420,6 +2423,9 @@ function fixHeader(){
             $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
     	});
     }
+    $(window).resize(function() {
+        columnWidths();
+    });
 }
 
 function unfixHeader(){
@@ -2431,4 +2437,5 @@ function unfixHeader(){
     $("#answerForm").css({"margin-top":"0"});
     $(window).unbind('scroll');
     $(window).unbind('touchmove');
+    $(window).unbind('resize');
 }
