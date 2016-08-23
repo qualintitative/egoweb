@@ -1057,7 +1057,7 @@ function buildQuestions(pageNumber, interviewId){
                 preface.SUBJECTTYPE = "PREFACE";
                 preface.PROMPT = alter_questions[j].PREFACE;
 				alter_question_list = new Object;
-				if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1){
+				if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1 || (preface.PROMPT && alter_non_list_qs.length > 0)){
     				if(alter_non_list_qs.length > 0){
         				for(k in alters){
             				for(l in alter_non_list_qs){
@@ -2372,7 +2372,7 @@ function buildNav(pageNumber, scope){
 		for(j in alter_questions){
             prompt = "";
 			var alter_question_list = '';
-			if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1){
+			if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1 || (alter_questions[j].PREFACE && alter_non_list_qs.length > 0)){
     			if(alter_non_list_qs.length > 0){
         			for(k in alters){
             			for(l in alter_non_list_qs){
