@@ -1100,12 +1100,16 @@ function buildQuestions(pageNumber, interviewId){
                             alter_question_list[question.ID + '-' + question.ALTERID1] = question;
                         }
     					if(Object.keys(alter_question_list).length > 0){
+                var preface = new Object;
+                preface.ID = alter_questions[j].ID;
+                preface.ANSWERTYPE = "PREFACE";
+                preface.SUBJECTTYPE = "PREFACE";
+                preface.PROMPT = alter_questions[j].PREFACE;
     						if(preface.PROMPT != ""){
     							if(i == pageNumber){
     								page[i][0] = preface;
     								return page[i];
     							}
-                                preface.PROMPT = "";
     							i++;
     							page[i] = new Object;
     						}
