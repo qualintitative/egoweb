@@ -1051,14 +1051,14 @@ function buildQuestions(pageNumber, interviewId){
 		if(Object.keys(alters).length > 0){
     		var alter_non_list_qs = [];
 			for(j in alter_questions){
-                var preface = new Object;
-                preface.ID = alter_questions[j].ID;
-                preface.ANSWERTYPE = "PREFACE";
-                preface.SUBJECTTYPE = "PREFACE";
-                preface.PROMPT = alter_questions[j].PREFACE;
 				alter_question_list = new Object;
-				if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1 || (alter_non_list_qs.length > 0 && parseInt(alter_questions[j].ASKINGSTYLELIST) != 1 && preface.PROMPT != "")){
+				if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1 || (alter_non_list_qs.length > 0 && parseInt(alter_questions[j].ASKINGSTYLELIST) != 1 && alter_questions[j].PREFACE != "")){
     				if(alter_non_list_qs.length > 0){
+                        var preface = new Object;
+                        preface.ID = alter_non_list_qs[0].ID;
+                        preface.ANSWERTYPE = "PREFACE";
+                        preface.SUBJECTTYPE = "PREFACE";
+                        preface.PROMPT = alter_non_list_qs[0].PREFACE;
         				for(k in alters){
             				for(l in alter_non_list_qs){
             					if(evalExpression(alter_non_list_qs[l].ANSWERREASONEXPRESSIONID, alters[k].ID) != true){
