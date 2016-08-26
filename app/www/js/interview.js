@@ -1091,6 +1091,10 @@ function buildQuestions(pageNumber, interviewId){
                     }
 
                     if(parseInt(alter_questions[j].ASKINGSTYLELIST) != 1){
+                        if(typeof alter_questions[parseInt(j)+1] != "undefined" && alter_questions[parseInt(j)+1].ASKINGSTYLELIST != 1 && alter_questions[parseInt(j)+1].PREFACE == ""){
+                            alter_non_list_qs.push(alter_questions[j]);
+                            continue;
+                        }
                         var preface = new Object;
                         preface.ID = alter_questions[j].ID;
                         preface.ANSWERTYPE = "PREFACE";
@@ -2384,8 +2388,10 @@ function buildNav(pageNumber, scope){
 		for(j in alter_questions){
             prompt = "";
 			var alter_question_list = '';
+			
 			if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1 || (alter_non_list_qs.length > 0 && parseInt(alter_questions[j].ASKINGSTYLELIST) != 1 && alter_questions[j].PREFACE != "")){
     			if(alter_non_list_qs.length > 0){
+        			console.log(alter_non_list_qs);
         			for(k in alters){
             			for(l in alter_non_list_qs){
                             if(evalExpression(alter_non_list_qs[l].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
@@ -2403,6 +2409,10 @@ function buildNav(pageNumber, scope){
         			prompt = "";
                 }
                 if(parseInt(alter_questions[j].ASKINGSTYLELIST) != 1){
+                    if(typeof alter_questions[parseInt(j)+1] != "undefined" && alter_questions[parseInt(j)+1].ASKINGSTYLELIST != 1 && alter_questions[parseInt(j)+1].PREFACE == ""){
+                        alter_non_list_qs.push(alter_questions[j]);
+                        continue;
+                    }
         			for(k in alters){
         				if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
         					continue;
