@@ -336,11 +336,6 @@ class DataController extends Controller
 		foreach ($ego_questions as $question){
 			$headers[] = $question['title'];
 		}
-		$headers[] = "Alter Number";
-		$headers[] = "Alter Name";
-		foreach ($alter_questions as $question){
-			$headers[] = $question['title'];
-		}
 		foreach ($network_questions as $question){
 			$headers[] = $question->title;
 		}
@@ -354,6 +349,14 @@ class DataController extends Controller
 			$headers[] = "Components";
 			$headers[] = "Dyads";
 			$headers[] = "Isolates";
+        }
+		$headers[] = "Alter Number";
+		$headers[] = "Alter Name";
+		foreach ($alter_questions as $question){
+			$headers[] = $question['title'];
+		}
+
+		if($expressionId){
 			$headers[] = "Degree";
 			$headers[] = "Betweenness";
 			$headers[] = "Eigenvector";
