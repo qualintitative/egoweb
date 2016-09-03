@@ -264,6 +264,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         columns = Object.keys($scope.options[array_id]).length;
         if(columns == 0)
             columns = 1;
+        if($scope.askingStyleList ==  false)
+            columns = 1;
         if(typeof $scope.answers[array_id].OTHERSPECIFYTEXT != "undefined" && $scope.answers[array_id].OTHERSPECIFYTEXT != null && $scope.answers[array_id].OTHERSPECIFYTEXT != ""){
             $scope.otherSpecify[array_id] = {};
             var specify = $scope.answers[array_id].OTHERSPECIFYTEXT.split(";;");
