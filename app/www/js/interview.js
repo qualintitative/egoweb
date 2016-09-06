@@ -195,7 +195,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 
         if($scope.questions[k].ANSWERTYPE == "MULTIPLE_SELECTION"){
 			$scope.phrase = "Please select ";
-			if($scope.questions[k].MINCHECKABLEBOXES != "" && $scope.questions[k].MAXCHECKABLEBOXES != "" && $scope.questions[k].MINCHECKABLEBOXES == $scope.questions[k].MAXCHECKABLEBOXES)
+			if($scope.questions[k].MINCHECKABLEBOXES != null && $scope.questions[k].MINCHECKABLEBOXES != "" && $scope.questions[k].MAXCHECKABLEBOXES != "" && $scope.questions[k].MINCHECKABLEBOXES == $scope.questions[k].MAXCHECKABLEBOXES)
 				$scope.phrase += $scope.questions[k].MAXCHECKABLEBOXES;
 			else if($scope.questions[k].MINCHECKABLEBOXES != "" && $scope.questions[k].MAXCHECKABLEBOXES != "" && $scope.questions[k].MINCHECKABLEBOXES != $scope.questions[k].MAXCHECKABLEBOXES)
 				$scope.phrase += $scope.questions[k].MINCHECKABLEBOXES + " to " + $scope.questions[k].MAXCHECKABLEBOXES;
@@ -203,7 +203,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 				$scope.phrase += " up to " + $scope.questions[k].MAXCHECKABLEBOXES ;
 			else if ($scope.questions[k].MINCHECKABLEBOXES != "" && $scope.questions[k].MAXCHECKABLEBOXES == "")
 				$scope.phrase += " at least " + $scope.questions[k].MINCHECKABLEBOXES ;
-
+                
 			if($scope.questions[k].MAXCHECKABLEBOXES == 1)
 				$scope.phrase += " response";
 			else
@@ -471,7 +471,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     				values.splice(values.indexOf(v),1);
                 }
     		}
-        	if(values.length > question.MAXCHECKABLEBOXES){
+        	if(question.MAXCHECKABLEBOXES != null && values.length > question.MAXCHECKABLEBOXES){
         		value = values.shift();
         		for(k in $scope.options[array_id]){
             		if($scope.options[array_id][k].ID == value)
@@ -684,16 +684,16 @@ app.directive('checkAnswer', [function (){
         			min = question.MINCHECKABLEBOXES;
         			max = question.MAXCHECKABLEBOXES;
         			var numberErrors = 0; var showError = false; var errorMsg = "";
-        			if(min !== "")
+        			if(min !== "" && min != null)
         				numberErrors++;
-        			if(max !== "")
+        			if(max !== "" && max != null)
         				numberErrors = numberErrors + 2;
 
         			checkedBoxes = value.split(',').length;
         			if(!value)
         				checkedBoxes = 0;
 
-        			if ((checkedBoxes < min || checkedBoxes > max) && scope.answers[array_id].SKIPREASON == "NONE")
+        			if (numberErrors != 0 && (checkedBoxes < min || checkedBoxes > max) && scope.answers[array_id].SKIPREASON == "NONE")
         				showError = true;
         			//console.log('min:' + min + ':max:' + max + ':checked:' + checkedBoxes+ ":answer:" + value + ":showerror:" + showError);
 
@@ -857,16 +857,18 @@ app.directive('checkAnswer', [function (){
         			min = question.MINCHECKABLEBOXES;
         			max = question.MAXCHECKABLEBOXES;
         			var numberErrors = 0; var showError = false; var errorMsg = "";
-        			if(min !== "")
+        			if(min !== "" && min != null)
         				numberErrors++;
-        			if(max !== "")
+        			if(max !== "" && max != null)
         				numberErrors = numberErrors + 2;
+
+                    console.log(numberErrors);
 
         			checkedBoxes = value.split(',').length;
         			if(!value)
         				checkedBoxes = 0;
 
-        			if ((checkedBoxes < min || checkedBoxes > max) && scope.answers[array_id].SKIPREASON == "NONE")
+        			if (numberErrors != 0 && (checkedBoxes < min || checkedBoxes > max) && scope.answers[array_id].SKIPREASON == "NONE")
         				showError = true;
 
         			//console.log('min:' + min + ':max:' + max + ':checked:' + checkedBoxes+ ":answer:" + value + ":showerror:" + showError);
