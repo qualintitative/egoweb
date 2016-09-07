@@ -14,7 +14,7 @@ describe('Multiple Select', function () {
         IwPage.nextButton.click();
 
         // enter ego id
-        let id = IwPage.inputField(1);
+        let id = IwPage.inputField();
         id.waitForExist(browser.options.egoweb.waitTime);
         id.setValue(IwPage.ewid);
         IwPage.nextButton.click();
@@ -28,11 +28,11 @@ describe('Multiple Select', function () {
             'ms0to5of5' : {
                 type: 'ms',
                 options: {
-                    '1515_0' : true,
-                    '1515_1' : false,
-                    '1515_2' : false,
-                    '1515_3' : false,
-                    '1515_4' : false
+                    1 : true,
+                    2 : false,
+                    3 : false,
+                    4 : false,
+                    5 : false
                 }
             }
         };
@@ -52,11 +52,12 @@ describe('Multiple Select', function () {
 
         // select Option 2 by clicking on label
         IwPage.optionLabel('Option 2').click();
-        expect(browser.element("input#multiselect-1515_1").isSelected()).toBe(true);
+        let selector = IwPage.getOptionSelector(2);
+        expect(browser.element(selector).isSelected()).toBe(true);
 
         // unselect Option 2 by clicking on label
         IwPage.optionLabel('Option 2').click();
-        expect(browser.element("input#multiselect-1515_1").isSelected()).toBe(false);
+        expect(browser.element(selector).isSelected()).toBe(false);
     });
 
     it("should allow 0 to 5 selections for a question with 5 options", function() {
@@ -64,11 +65,11 @@ describe('Multiple Select', function () {
         IwPage.unselectAllOptions(IwPage.fieldValues.ms0to5of5.options);
 
         // no options selected
-        expect(browser.element("input#multiselect-1515_0").isSelected()).toBe(false);
-        expect(browser.element("input#multiselect-1515_1").isSelected()).toBe(false);
-        expect(browser.element("input#multiselect-1515_2").isSelected()).toBe(false);
-        expect(browser.element("input#multiselect-1515_3").isSelected()).toBe(false);
-        expect(browser.element("input#multiselect-1515_4").isSelected()).toBe(false);
+        expect(browser.element(IwPage.getOptionSelector(1)).isSelected()).toBe(false);
+        expect(browser.element(IwPage.getOptionSelector(2)).isSelected()).toBe(false);
+        expect(browser.element(IwPage.getOptionSelector(3)).isSelected()).toBe(false);
+        expect(browser.element(IwPage.getOptionSelector(4)).isSelected()).toBe(false);
+        expect(browser.element(IwPage.getOptionSelector(5)).isSelected()).toBe(false);
         IwPage.next();
 
         // next question
@@ -76,13 +77,14 @@ describe('Multiple Select', function () {
         IwPage.back();
 
         // no options selected
-        expect(browser.element("input#multiselect-1515_0").isSelected()).toBe(false);
-        expect(browser.element("input#multiselect-1515_1").isSelected()).toBe(false);
-        expect(browser.element("input#multiselect-1515_2").isSelected()).toBe(false);
-        expect(browser.element("input#multiselect-1515_3").isSelected()).toBe(false);
-        expect(browser.element("input#multiselect-1515_4").isSelected()).toBe(false);
+        expect(browser.element(IwPage.getOptionSelector(1)).isSelected()).toBe(false);
+        expect(browser.element(IwPage.getOptionSelector(2)).isSelected()).toBe(false);
+        expect(browser.element(IwPage.getOptionSelector(3)).isSelected()).toBe(false);
+        expect(browser.element(IwPage.getOptionSelector(4)).isSelected()).toBe(false);
+        expect(browser.element(IwPage.getOptionSelector(5)).isSelected()).toBe(false);
+
         // select 1st option
-        IwPage.selectOption('1515_0');
+        IwPage.selectOption(1);
         IwPage.next();
 
         // next question
@@ -90,14 +92,14 @@ describe('Multiple Select', function () {
         IwPage.back();
 
         // 1 option selected
-        expect(browser.element("input#multiselect-1515_0").isSelected()).toBe(true);
-        expect(browser.element("input#multiselect-1515_1").isSelected()).toBe(false);
-        expect(browser.element("input#multiselect-1515_2").isSelected()).toBe(false);
-        expect(browser.element("input#multiselect-1515_3").isSelected()).toBe(false);
-        expect(browser.element("input#multiselect-1515_4").isSelected()).toBe(false);
+        expect(browser.element(IwPage.getOptionSelector(1)).isSelected()).toBe(true);
+        expect(browser.element(IwPage.getOptionSelector(2)).isSelected()).toBe(false);
+        expect(browser.element(IwPage.getOptionSelector(3)).isSelected()).toBe(false);
+        expect(browser.element(IwPage.getOptionSelector(4)).isSelected()).toBe(false);
+        expect(browser.element(IwPage.getOptionSelector(5)).isSelected()).toBe(false);
         // select 2 more options
-        IwPage.selectOption('1515_3');
-        IwPage.selectOption('1515_4');
+        IwPage.selectOption(4);
+        IwPage.selectOption(5);
         IwPage.next();
 
         // next question
@@ -105,14 +107,14 @@ describe('Multiple Select', function () {
         IwPage.back();
 
         // 3 options selected
-        expect(browser.element("input#multiselect-1515_0").isSelected()).toBe(true);
-        expect(browser.element("input#multiselect-1515_1").isSelected()).toBe(false);
-        expect(browser.element("input#multiselect-1515_2").isSelected()).toBe(false);
-        expect(browser.element("input#multiselect-1515_3").isSelected()).toBe(true);
-        expect(browser.element("input#multiselect-1515_4").isSelected()).toBe(true);
+        expect(browser.element(IwPage.getOptionSelector(1)).isSelected()).toBe(true);
+        expect(browser.element(IwPage.getOptionSelector(2)).isSelected()).toBe(false);
+        expect(browser.element(IwPage.getOptionSelector(3)).isSelected()).toBe(false);
+        expect(browser.element(IwPage.getOptionSelector(4)).isSelected()).toBe(true);
+        expect(browser.element(IwPage.getOptionSelector(5)).isSelected()).toBe(true);
         // select 2 more options
-        IwPage.selectOption('1515_1');
-        IwPage.selectOption('1515_2');
+        IwPage.selectOption(2);
+        IwPage.selectOption(3);
         IwPage.next();
 
         // next question
@@ -120,10 +122,10 @@ describe('Multiple Select', function () {
         IwPage.back();
 
         // all options selected
-        expect(browser.element("input#multiselect-1515_0").isSelected()).toBe(true);
-        expect(browser.element("input#multiselect-1515_1").isSelected()).toBe(true);
-        expect(browser.element("input#multiselect-1515_2").isSelected()).toBe(true);
-        expect(browser.element("input#multiselect-1515_3").isSelected()).toBe(true);
-        expect(browser.element("input#multiselect-1515_4").isSelected()).toBe(true);
+        expect(browser.element(IwPage.getOptionSelector(1)).isSelected()).toBe(true);
+        expect(browser.element(IwPage.getOptionSelector(2)).isSelected()).toBe(true);
+        expect(browser.element(IwPage.getOptionSelector(3)).isSelected()).toBe(true);
+        expect(browser.element(IwPage.getOptionSelector(4)).isSelected()).toBe(true);
+        expect(browser.element(IwPage.getOptionSelector(5)).isSelected()).toBe(true);
     });
 });

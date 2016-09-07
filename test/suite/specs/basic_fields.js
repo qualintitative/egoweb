@@ -14,7 +14,7 @@ describe('Basic Fields', function () {
         IwPage.nextButton.click();
 
         // enter ego id
-        let id = IwPage.inputField(1);
+        let id = IwPage.inputField();
         id.waitForExist(browser.options.egoweb.waitTime);
         id.setValue(IwPage.ewid);
         IwPage.nextButton.click();
@@ -27,17 +27,14 @@ describe('Basic Fields', function () {
         IwPage.fieldValues = {
             'num' : {
                 type: 'input',
-                field: 2,
                 value: '5'
             },
             'numdkrf' : {
                 type: 'input',
-                field: 6,
                 value: '5'
             },
             'num0to100' : {
                 type: 'input',
-                field: 7,
                 value: '5'
             }
         }
@@ -54,8 +51,8 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['num']['field'];
 
         // num
-        IwPage.inputField(field).waitForExist(browser.options.egoweb.waitTime);
-        IwPage.inputField(field).setValue(55);
+        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
+        IwPage.inputField().setValue(55);
         IwPage.next();
 
         // numdkrf
@@ -63,8 +60,8 @@ describe('Basic Fields', function () {
         IwPage.back();
 
         // num
-        IwPage.inputField(field).waitForExist(browser.options.egoweb.waitTime);
-        expect(IwPage.inputField(field).getValue()).toBe("55");
+        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
+        expect(IwPage.inputField().getValue()).toBe("55");
     });
 
     it("should handle negative numbers in number field", function () {
@@ -72,8 +69,8 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['num']['field'];
 
         // num
-        IwPage.inputField(field).waitForExist(browser.options.egoweb.waitTime);
-        IwPage.inputField(field).setValue(-4);
+        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
+        IwPage.inputField().setValue(-4);
         IwPage.next();
 
         // next question
@@ -81,8 +78,8 @@ describe('Basic Fields', function () {
         IwPage.back();
 
         // num
-        IwPage.inputField(field).waitForExist(browser.options.egoweb.waitTime);
-        expect(IwPage.inputField(field).getValue()).toBe("-4");
+        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
+        expect(IwPage.inputField().getValue()).toBe("-4");
 
     });
 
@@ -91,15 +88,15 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['num']['field'];
 
         // num
-        IwPage.inputField(field).waitForExist(browser.options.egoweb.waitTime);
-        IwPage.inputField(field).setValue("abc");
+        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
+        IwPage.inputField().setValue("abc");
         IwPage.next();
 
         // error message
         browser.element("div.alert=Please enter a number").waitForVisible(browser.options.egoweb.waitTime);
 
         // fix error
-        IwPage.inputField(field).setValue("5");
+        IwPage.inputField().setValue("5");
         IwPage.next();
 
         // numdkrf
@@ -111,24 +108,24 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['numdkrf']['field'];
 
         // numdkrf
-        IwPage.inputField(field).waitForExist(browser.options.egoweb.waitTime);
+        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
 
-        IwPage.inputField(field).setValue("99");
+        IwPage.inputField().setValue("99");
 
         // dk should clear value
         IwPage.dkLabel.click();
-        expect(IwPage.inputField(field).getValue()).toBe("");
+        expect(IwPage.inputField().getValue()).toBe("");
         IwPage.next();
 
         // next page
         expect(IwPage.questionTitle.getText()).not.toBe("numdkrf");
         IwPage.back();
 
-        IwPage.inputField(field).setValue("44");
+        IwPage.inputField().setValue("44");
 
         //rf should clear value
         IwPage.rfLabel.click();
-        expect(IwPage.inputField(field).getValue()).toBe("");
+        expect(IwPage.inputField().getValue()).toBe("");
         IwPage.next();
 
         // next page
@@ -140,10 +137,10 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['num0to100']['field'];
 
         // num0to100
-        IwPage.inputField(field).waitForExist(browser.options.egoweb.waitTime);
+        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
 
         // try min value
-        IwPage.inputField(field).setValue("0");
+        IwPage.inputField().setValue("0");
         IwPage.next();
 
         // next page
@@ -151,7 +148,7 @@ describe('Basic Fields', function () {
         IwPage.back();
 
         // try max value
-        IwPage.inputField(field).setValue("100");
+        IwPage.inputField().setValue("100");
         IwPage.next();
 
         // next page
@@ -159,7 +156,7 @@ describe('Basic Fields', function () {
         IwPage.back();
 
         // try a value inside range
-        IwPage.inputField(field).setValue("73");
+        IwPage.inputField().setValue("73");
         IwPage.next();
 
         expect(IwPage.questionTitle.getText()).not.toBe("num0to100");
@@ -170,17 +167,17 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['num0to100']['field'];
 
         // num0to100
-        IwPage.inputField(field).waitForExist(browser.options.egoweb.waitTime);
+        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
 
         // try value below min
-        IwPage.inputField(field).setValue("-1");
+        IwPage.inputField().setValue("-1");
         IwPage.next();
 
         // error message
         browser.element("div.alert=The range of valid answers is 0 to 100.").waitForVisible(browser.options.egoweb.waitTime);
 
         // fix value
-        IwPage.inputField(field).setValue("0");
+        IwPage.inputField().setValue("0");
         IwPage.next();
 
         // next page
@@ -188,17 +185,17 @@ describe('Basic Fields', function () {
         IwPage.back();
 
         // num0to100
-        IwPage.inputField(field).waitForExist(browser.options.egoweb.waitTime);
+        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
 
         // try value below min
-        IwPage.inputField(field).setValue("101");
+        IwPage.inputField().setValue("101");
         IwPage.next();
 
         // error message
         browser.element("div.alert=The range of valid answers is 0 to 100.").waitForVisible(browser.options.egoweb.waitTime);
 
         // fix value
-        IwPage.inputField(field).setValue("100");
+        IwPage.inputField().setValue("100");
         IwPage.next();
 
         // next page

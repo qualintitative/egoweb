@@ -20,6 +20,11 @@ var IwPage = Object.create(Page, {
             return browser.element('button.orangebutton=Next');
         }
     },
+    alterAddButton: {
+        get: function () {
+            return browser.element('input.alterSubmit');
+        }
+    },
     backButton: {
         get: function () {
             return browser.element('button.graybutton=Back');
@@ -61,8 +66,12 @@ var IwPage = Object.create(Page, {
      * define or overwrite page methods
      */
     inputField: {
-        value: function (id) {
-            return browser.element('input#Answer_' + id + '_VALUE');
+        value: function (id = null) {
+            if (id != null) {
+                return browser.element('input#Answer_' + id + '_VALUE');
+            } else {
+                return browser.element('input[name*="Answer"]');
+            }
         }
     },
 
@@ -83,18 +92,26 @@ var IwPage = Object.create(Page, {
         }
     },
 
+    getOptionSelector: {
+        value: function(num) {
+            return "form#answerForm>div>div.panel>div:nth-child(" + (parseInt(num) + 1) + ")>input.answerInput";
+        }
+    },
+
     selectOption: {
-        value: function (id) {
-            if (!browser.element('input#multiselect-'+id).isSelected()) {
-                browser.element('input#multiselect-'+id).click();
+        value: function (num) {
+            let selector = this.getOptionSelector(num);
+            if (!browser.element(selector).isSelected()) {
+                browser.element(selector).click();
             }
         }
     },
 
     unselectOption: {
-        value: function (id) {
-            if (browser.element('input#multiselect-'+id).isSelected()) {
-                browser.element('input#multiselect-'+id).click();
+        value: function (num) {
+            let selector = this.getOptionSelector(num);
+            if (browser.element(selector).isSelected()) {
+                browser.element(selector).click();
             }
         }
     },
@@ -129,12 +146,9 @@ var IwPage = Object.create(Page, {
                         case 'ms':
                             for (var key in fv.options) {
                                 if (!fv.options.hasOwnProperty(key)) continue;
-                                console.log("key="+key);
                                 if (fv.options[key]) {
-                                    console.log('select');
                                     this.selectOption(key);
                                 } else {
-                                    console.log('unselect');
                                     this.unselectOption(key);
                                 }
                             }
