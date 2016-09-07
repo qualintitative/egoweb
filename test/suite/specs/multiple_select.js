@@ -7,7 +7,7 @@ describe('Multiple Select', function () {
         LoginPage.loginAs(browser.options.egoweb.loginInterviewer.username, browser.options.egoweb.loginInterviewer.password);
 
         // start test1 interview
-        IwPage.openInterview("TEST_WDIO_BASIC");
+        IwPage.openInterview("TEST_WDIO_MS");
 
         // TODO: validate welcome page
         IwPage.nextButton.waitForExist(browser.options.egoweb.waitTime);
@@ -25,22 +25,7 @@ describe('Multiple Select', function () {
 
         // set valid field values for moving forward through survey
         IwPage.fieldValues = {
-            'num' : {
-                type: 'input',
-                field: 2,
-                value: '5'
-            },
-            'numdkrf' : {
-                type: 'input',
-                field: 6,
-                value: '5'
-            },
-            'num0to100' : {
-                type: 'input',
-                field: 7,
-                value: '5'
-            },
-            'ms' : {
+            'ms0to5of5' : {
                 type: 'ms',
                 options: {
                     '1515_0' : true,
@@ -62,8 +47,8 @@ describe('Multiple Select', function () {
     });
 
     it("should select option when label is clicked", function () {
-        IwPage.goForwardToQuestion('ms');
-        IwPage.unselectAllOptions(IwPage.fieldValues.ms.options);
+        IwPage.goForwardToQuestion('ms0to5of5');
+        IwPage.unselectAllOptions(IwPage.fieldValues.ms0to5of5.options);
 
         // select Option 2 by clicking on label
         IwPage.optionLabel('Option 2').click();
@@ -74,4 +59,71 @@ describe('Multiple Select', function () {
         expect(browser.element("input#multiselect-1515_1").isSelected()).toBe(false);
     });
 
+    it("should allow 0 to 5 selections for a question with 5 options", function() {
+        IwPage.goForwardToQuestion('ms0to5of5');
+        IwPage.unselectAllOptions(IwPage.fieldValues.ms0to5of5.options);
+
+        // no options selected
+        expect(browser.element("input#multiselect-1515_0").isSelected()).toBe(false);
+        expect(browser.element("input#multiselect-1515_1").isSelected()).toBe(false);
+        expect(browser.element("input#multiselect-1515_2").isSelected()).toBe(false);
+        expect(browser.element("input#multiselect-1515_3").isSelected()).toBe(false);
+        expect(browser.element("input#multiselect-1515_4").isSelected()).toBe(false);
+        IwPage.next();
+
+        // next question
+        expect(IwPage.questionTitle.getText()).not.toBe("num");
+        IwPage.back();
+
+        // no options selected
+        expect(browser.element("input#multiselect-1515_0").isSelected()).toBe(false);
+        expect(browser.element("input#multiselect-1515_1").isSelected()).toBe(false);
+        expect(browser.element("input#multiselect-1515_2").isSelected()).toBe(false);
+        expect(browser.element("input#multiselect-1515_3").isSelected()).toBe(false);
+        expect(browser.element("input#multiselect-1515_4").isSelected()).toBe(false);
+        // select 1st option
+        IwPage.selectOption('1515_0');
+        IwPage.next();
+
+        // next question
+        expect(IwPage.questionTitle.getText()).not.toBe("num");
+        IwPage.back();
+
+        // 1 option selected
+        expect(browser.element("input#multiselect-1515_0").isSelected()).toBe(true);
+        expect(browser.element("input#multiselect-1515_1").isSelected()).toBe(false);
+        expect(browser.element("input#multiselect-1515_2").isSelected()).toBe(false);
+        expect(browser.element("input#multiselect-1515_3").isSelected()).toBe(false);
+        expect(browser.element("input#multiselect-1515_4").isSelected()).toBe(false);
+        // select 2 more options
+        IwPage.selectOption('1515_3');
+        IwPage.selectOption('1515_4');
+        IwPage.next();
+
+        // next question
+        expect(IwPage.questionTitle.getText()).not.toBe("num");
+        IwPage.back();
+
+        // 3 options selected
+        expect(browser.element("input#multiselect-1515_0").isSelected()).toBe(true);
+        expect(browser.element("input#multiselect-1515_1").isSelected()).toBe(false);
+        expect(browser.element("input#multiselect-1515_2").isSelected()).toBe(false);
+        expect(browser.element("input#multiselect-1515_3").isSelected()).toBe(true);
+        expect(browser.element("input#multiselect-1515_4").isSelected()).toBe(true);
+        // select 2 more options
+        IwPage.selectOption('1515_1');
+        IwPage.selectOption('1515_2');
+        IwPage.next();
+
+        // next question
+        expect(IwPage.questionTitle.getText()).not.toBe("num");
+        IwPage.back();
+
+        // all options selected
+        expect(browser.element("input#multiselect-1515_0").isSelected()).toBe(true);
+        expect(browser.element("input#multiselect-1515_1").isSelected()).toBe(true);
+        expect(browser.element("input#multiselect-1515_2").isSelected()).toBe(true);
+        expect(browser.element("input#multiselect-1515_3").isSelected()).toBe(true);
+        expect(browser.element("input#multiselect-1515_4").isSelected()).toBe(true);
+    });
 });
