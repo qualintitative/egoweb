@@ -94,7 +94,16 @@ var IwPage = Object.create(Page, {
 
     getOptionSelector: {
         value: function(num) {
+            // add 1 to num because of hidden row with labels for ego/alter/alter_pair
             return "form#answerForm>div>div.panel>div:nth-child(" + (parseInt(num) + 1) + ")>input.answerInput";
+        }
+    },
+
+    getOptionSpecifySelector: {
+        value: function(num) {
+            // add 1 to num because of hidden row with labels for ego/alter/alter_pair
+            // use 3rd child because of checkbox, label, then textbox
+            return "form#answerForm>div>div.panel>div:nth-child(" + (parseInt(num) + 1) + ")>input:nth-child(3)";
         }
     },
 
