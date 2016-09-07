@@ -18,16 +18,16 @@ The following instructions are for a Mac. For Windows/Linux, please adjust the c
 npm install
 ```
 5. Install Chomedriver and set it up on your path
-* Download Chromedriver from https://sites.google.com/a/chromium.org/chromedriver/getting-started
-* Add the location of Chromedriver to your path
+  * Download Chromedriver from https://sites.google.com/a/chromium.org/chromedriver/getting-started
+  * Add the location of Chromedriver to your path
 6. Configure WebdriverIO
-* In this test/ directory, copy wdio.conf.TEMPLATE.js to wdio.conf.js
-* In wdio.conf.js, change the configuration options to match your EgoWeb installation. In particular, configuration
+  * In this test/ directory, copy wdio.conf.TEMPLATE.js to wdio.conf.js
+  * In wdio.conf.js, change the configuration options to match your EgoWeb installation. In particular, configuration
 the URL for EgoWeb, as well as the username/passwords for EgoWeb administrator and interviewer accounts.
 7. Import tests
-* Import each of the studies in the suite/studies/ directory into your EgoWeb installation. Ensure that the name of the
+  * Import each of the studies in the suite/studies/ directory into your EgoWeb installation. Ensure that the name of the
  study in EgoWeb is the same as the file, without the ".study" extension.
-* Set the permissions of the interviewer account (configured in your wdio.conf.js) to allow them to take each of the surveys
+  * Set the permissions of the interviewer account (configured in your wdio.conf.js) to allow them to take each of the surveys
 in the test suite.
 
 
