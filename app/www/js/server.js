@@ -26,8 +26,8 @@ $(document).keydown(function(e) {
             if($(this).is(":focus")){
                 if(typeof $(".answerInput")[index-columns] != "undefined")
                     $(".answerInput")[index-columns].focus();
-                else
-                    $(".answerInput:focus").parent().prev().find(".answerInput").focus();
+                //else
+                //    $(".answerInput:focus").parent().prev().find(".answerInput").focus();
                 return false;
             }
         });
@@ -38,8 +38,8 @@ $(document).keydown(function(e) {
             if($(this).is(":focus")){
                 if(typeof $(".answerInput")[index+columns] != "undefined")
                     $(".answerInput")[index+columns].focus();
-                else
-                    $(".answerInput:focus").parent().next().find(".answerInput").focus();
+                //else
+                //    $(".answerInput:focus").parent().next().find(".answerInput").focus();
                 return false;
             }
         });
