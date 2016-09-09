@@ -20,11 +20,6 @@ var IwPage = Object.create(Page, {
             return browser.element('button.orangebutton=Next');
         }
     },
-    alterAddButton: {
-        get: function () {
-            return browser.element('input.alterSubmit');
-        }
-    },
     backButton: {
         get: function () {
             return browser.element('button.graybutton=Back');
@@ -43,6 +38,16 @@ var IwPage = Object.create(Page, {
     questionTitle: {
         get: function () {
             return browser.element('span#questionTitle')
+        }
+    },
+    alterTextBox: {
+        get: function () {
+            return browser.element("form#alterForm div autocomplete div input");
+        }
+    },
+    alterAddButton: {
+        get: function () {
+            return browser.element('input.alterSubmit');
         }
     },
 
@@ -188,6 +193,46 @@ var IwPage = Object.create(Page, {
     pause: {
         value: function () {
             browser.pause(browser.options.egoweb.pauseTime);
+        }
+    },
+
+    addAlter: {
+        value: function(name) {
+            this.alterTextBox.setValue(name);
+            this.alterAddButton.click();
+            this.pause();
+        }
+    },
+
+    removeNthAlterButton: {
+        value: function(num) {
+            return browser.element("div#alterListBox>table.items>tbody>tr:nth-child("+parseInt(num)+")>td>a.alter-delete");
+        }
+    },
+
+    removeNthAlter: {
+        value: function(num) {
+            this.removeNthAlterButton(num).click();
+            this.pause();
+        }
+    },
+
+    removeAllAlters: {
+        value: function() {
+            let btn = this.removeNthAlterButton(1);
+
+            while (btn.isExisting()) {
+                btn.click();
+                this.pause();
+                btn = this.removeNthAlterButton(1);
+            }
+        }
+    },
+
+    getAlterCount: {
+        value: function() {
+            let alters = browser.elements("div#alterListBox>table.items>tbody>tr");
+            return alters.value.length;
         }
     },
 

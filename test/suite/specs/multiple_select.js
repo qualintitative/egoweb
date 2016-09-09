@@ -10,7 +10,7 @@ describe('Multiple Select', function () {
         IwPage.openInterview("TEST_WDIO_MS");
 
         // welcome page
-        //expect(IwPage.questionTitle.getText()).toBe("TEST_WDIO_MS");
+        expect(IwPage.questionTitle.getText()).toBe("INTRODUCTION");
         IwPage.nextButton.waitForExist(browser.options.egoweb.waitTime);
         IwPage.nextButton.click();
 
