@@ -46,6 +46,13 @@ $(document).keydown(function(e) {
 	}
 });
 
+function redraw(params){
+	url = "/data/deleteGraph?id=" + $("#Graph_id").val();
+	$.get(url, function(data){
+		document.location.reload();
+	});
+}
+
 function save(questions, page, url, scope){
     if(typeof s != "undefined" && typeof s.isForceAtlas2Running != "undefined" && s.isForceAtlas2Running()){
         s.stopForceAtlas2();

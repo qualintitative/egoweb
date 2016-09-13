@@ -2351,19 +2351,11 @@ function exitHandler()
     if (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement !== null)
     {
     	$("#infovis").height(480);
-    document.removeEventListener('webkitfullscreenchange', exitHandler, false);
-    document.removeEventListener('mozfullscreenchange', exitHandler, false);
-    document.removeEventListener('fullscreenchange', exitHandler, false);
-    document.removeEventListener('MSFullscreenChange', exitHandler, false);
+        document.removeEventListener('webkitfullscreenchange', exitHandler, false);
+        document.removeEventListener('mozfullscreenchange', exitHandler, false);
+        document.removeEventListener('fullscreenchange', exitHandler, false);
+        document.removeEventListener('MSFullscreenChange', exitHandler, false);
     }
-}
-
-function redraw(params){
-	url = "/data/deleteGraph?id=" + $("#Graph_id").val();
-	$.get(url, function(data){
-		url = "/data/visualize?expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent(JSON.stringify(params));
-		document.location = document.location + "&params=" + encodeURIComponent(JSON.stringify(params));
-	});
 }
 
 function buildNav(pageNumber, scope){
