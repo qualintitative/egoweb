@@ -167,6 +167,12 @@ var IwPage = Object.create(Page, {
                                 }
                             }
                             break;
+                        case 'alters':
+                            this.removeAllAlters();
+                            for (i=0;i<fv.values.length;i++) {
+                                this.addAlter(fv.values[i]);
+                            }
+                            break;
                     }
                 }
                 this.next();
@@ -233,6 +239,42 @@ var IwPage = Object.create(Page, {
         value: function() {
             let alters = browser.elements("div#alterListBox>table.items>tbody>tr");
             return alters.value.length;
+        }
+    },
+
+    getTableCellSelector: {
+        value: function(row, col) {
+            return "form#answerForm>div.multiBox>div.multi:nth-child("+parseInt(row)+")>div:nth-child("+parseInt(col)+")";
+        }
+    },
+
+    getTableRowSelector: {
+        value: function(row) {
+            return "form#answerForm>div.multiBox>div.multi:nth-child("+parseInt(row)+")";
+        }
+    },
+
+    getTableHeaderText: {
+        value: function(col) {
+            let selector = this.getTableCellSelector(1,col);
+            return browser.element(selector).getText();
+        }
+    },
+
+    getTableCellInputElement: {
+        value: function(row,col) {
+            let selector = this.getTableCellSelector(row,col);
+            selector += ">input";
+            return browser.element(selector);
+        }
+    },
+
+    getTableRowHighlight: {
+        value: function(row) {
+            let selector = this.getTableCellSelector(row, 1);
+            let el = browser.element(selector);
+            let foo = el.getAttribute("class");
+            return (foo.indexOf("bg-danger") !== -1);
         }
     },
 
