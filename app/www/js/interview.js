@@ -318,6 +318,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
         setTimeout(
             function(){
+                eval($scope.questions[k].JAVASCRIPT);
                 $(window).scrollTop(0);
                 if($scope.askingStyleList != false){
                     fixHeader();
@@ -328,7 +329,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                     $(".answerInput")[0].focus();
                 if(!isGuest && typeof $("#second") != "undefined")
                     $("#second").scrollTop($("#second").scrollTop() - $("#second").offset().top + $("#menu_" + $scope.page).offset().top);
-                eval($scope.questions[k].JAVASCRIPT);
             },
         1);
     }
