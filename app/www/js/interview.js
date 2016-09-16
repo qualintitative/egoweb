@@ -2615,8 +2615,8 @@ function columnWidths(){
 function fixHeader(){
     columnWidths();
 	// Set this variable with the height of your sidebar + header
-	if(typeof offsetPixels == "undefined")
-	    offsetPixels = $(".navbar").height(); 
+	
+	var offsetPixels = $(".navbar").height() + parseInt($("#ngView").css("margin-top")); 
     $("#content").css({"background-attachment":"fixed"});
     if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
     	$(window).scroll(function(event) {

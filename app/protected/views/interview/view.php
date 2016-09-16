@@ -39,4 +39,4 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/1
 Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.notes.js');
 Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl.'/www/css/autocomplete.css');
 ?>
-<div ng-view></div>
+<div id="ngView" ng-view></div>
