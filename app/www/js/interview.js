@@ -2615,7 +2615,7 @@ function columnWidths(){
 function fixHeader(){
     columnWidths();
 	// Set this variable with the height of your sidebar + header
-	var offsetPixels = 50; 
+	var offsetPixels = $(".navbar").height(); 
 
     if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
     	$(window).scroll(function(event) {
