@@ -2621,7 +2621,7 @@ function fixHeader(){
     	$(window).scroll(function(event) {
 			$( "#floatHeader" ).css({
 				"position": "fixed",
-				"top": "50px",
+				"top": offsetPixels + "px",
 				"padding-top":"15px"
 			});
             $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
@@ -2630,7 +2630,7 @@ function fixHeader(){
     	$(window).on('touchmove', function(event) {
     		$( "#floatHeader" ).css({
     			"position": "fixed",
-    			"top": "50px",
+    			"top": offsetPixels + "px",
     			"padding-top":"15px"
     		});
             $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
