@@ -48,6 +48,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.keys = Object.keys;
     $scope.hashKey = "";
     $scope.interview = interview;
+    $scope.header = $sce.trustAsHtml(study.HEADER);
     $scope.footer = $sce.trustAsHtml(study.FOOTER);
     $scope.phrase = "";
     $scope.conclusion = false;

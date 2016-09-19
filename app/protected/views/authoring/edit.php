@@ -111,6 +111,27 @@ $(function(){
 			}, 10);
 		}
 	});
+	$('#Study_header').summernote({
+		toolbar:noteBar,
+		height:200,
+		/*onImageUpload: function(files, editor, welEditable) {
+			uploadImage(files[0], editor, welEditable);
+		},*/
+		onChange: function(contents, $editable) {
+			$('#Study_header').val(contents);
+		},
+		onpaste: function(e) {
+			var thisNote = $(this);
+			var updatePastedText = function(someNote){
+				var original = someNote.code();
+				var cleaned = CleanPastedHTML(original);
+				someNote.code('').html(cleaned);
+			};
+			setTimeout(function () {
+				updatePastedText(thisNote);
+			}, 10);
+		}
+	});
 });
 function deleteAlterList(studyId){
     if(confirm("Are you sure you want to delete all the participants in the list?")){
@@ -170,10 +191,12 @@ function deleteAlterList(studyId){
 		<?php echo $form->error($model,'conclusion'); ?>
 	</div>
 
+
+
 	<div class="col-sm-6">
-		<?php echo $form->labelEx($model,'javascript'); ?>
-		<?php echo $form->textArea($model,'javascript',array('rows'=>6, 'cols'=>50)); ?>
-		<?php echo $form->error($model,'javascript'); ?>
+		<?php echo $form->labelEx($model,'header'); ?>
+		<?php echo $form->textArea($model,'header',array('rows'=>6, 'cols'=>50)); ?>
+		<?php echo $form->error($model,'header'); ?>
 	</div>
 
 	<div class="col-sm-6">
@@ -181,7 +204,18 @@ function deleteAlterList(studyId){
 		<?php echo $form->textArea($model,'footer',array('rows'=>6, 'cols'=>50)); ?>
 		<?php echo $form->error($model,'footer'); ?>
 	</div>
-	
+
+	<div class="col-sm-6">
+		<?php echo $form->labelEx($model,'javascript'); ?>
+		<?php echo $form->textArea($model,'javascript',array('rows'=>6, 'cols'=>50)); ?>
+		<?php echo $form->error($model,'javascript'); ?>
+	</div>
+
+    <div class="col-sm-6">
+        <label>Style CSS</label>
+        <?php echo $form->textarea($model,'style',array('rows'=>6, 'cols'=>50)); ?>
+    </div>
+
 </div>
 
 <div class="col-sm-6">
@@ -265,10 +299,6 @@ function deleteAlterList(studyId){
 		<label>Hide Ego Id Page (for studies will Ego Id prefills)</label>
 		<?php echo $form->checkBox($model,'hideEgoIdPage'); ?>
 
-        <div>
-            <label>Style CSS</label>
-            <?php echo $form->textarea($model,'style', array("style"=>"height:6em")); ?>
-        </div>
 
 	</div>
 
