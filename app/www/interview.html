@@ -1,5 +1,3 @@
-<div class="col-sm-12 no-padding" ng-if="header != ''" ng-bind-html="header">{{ header }}</div>
-
 <div id="visualizePlugin" ng-if="subjectType == 'NETWORK' && graphExpressionId > 0" class="col-sm-6 pull-right">
     <div id="infovis"></div>
 	<div class="col-sm-4 pull-left" id="legend">
@@ -26,6 +24,7 @@
 </div>
 
 <div id="floatHeader">
+    <div class="col-sm-12 no-padding" ng-if="header != ''" ng-bind-html="header">{{ header }}</div>
     <span ng-if="(answerForm.$submitted || errors[0] == 'That name is already listed') && errors">
         <div class="alert alert-danger" role="alert" ng-if="$index == 0" ng-repeat="error in errors">
             {{ error }}
