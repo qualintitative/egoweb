@@ -384,10 +384,11 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
     $scope.startSurvey = function(studyId, intId) {
 	    study = db.queryRowObject("SELECT * FROM study WHERE id = " + studyId);
         if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
-        	var column = db.queryObjects("SELECT ID FROM question WHERE title = (SELECT q.title FROM question q WHERE q.ID = " + study.MULTISESSIONEGOID + ")").data;
+            var qTitle = db.queryValue("SELECT title FROM question WHERE ID = " + study.MULTISESSIONEGOID);
+        	var column = db.queryObjects("SELECT STUDYID FROM question WHERE title = '" + qTitle + "'").data;
         	var multiIds = [];
         	for (var k in column){
-        		multiIds.push(column[k].ID)
+        		multiIds.push(column[k].STUDYID)
         	}
     	}else{
             var multiIds = [studyId];

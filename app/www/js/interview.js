@@ -2624,7 +2624,7 @@ function fixHeader(){
 			$( "#floatHeader" ).css({
 				"position": "fixed",
 				"top": offsetPixels + "px",
-				"padding-top":"15px"
+				//"padding-top":"15px"
 			});
             $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
     	});
@@ -2633,7 +2633,7 @@ function fixHeader(){
     		$( "#floatHeader" ).css({
     			"position": "fixed",
     			"top": offsetPixels + "px",
-    			"padding-top":"15px"
+    			//"padding-top":"15px"
     		});
             $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
     	});
