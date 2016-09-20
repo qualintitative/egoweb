@@ -61,6 +61,8 @@ class ImportExportController extends Controller
     			if(isset($_POST['newName']) && $_POST['newName'])
     				$newStudy->name = $_POST['newName'];
 
+                $newStudy->userId = Yii::app()->user->id;
+
     			if(!$newStudy->save()){
     				echo "study: " . print_r($newStudy->getErrors());
     				die();

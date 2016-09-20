@@ -279,25 +279,7 @@ class InterviewController extends Controller
         $key = "";
         if(isset($_POST["hashKey"]))
             $key = $_POST["hashKey"];
-		if(isset($_POST['Answer'][0]) && $_POST['Answer'][0]['answerType'] == "CONCLUSION"){
-			$interview = Interview::model()->findByPk((int)$_POST['Answer'][0]['interviewId']);
-			$interview->completed = -1;
-			$interview->complete_date = time();
-			$interview->save();
 
-			if(isset(Yii::app()->params['exportFilePath']) && Yii::app()->params['exportFilePath'])
-				$this->exportInterview($interview->id);
-
-            /*
-			if(isset(Yii::app()->session['redirect']))
-				$this->redirect(Yii::app()->session['redirect']);
-			else if(Yii::app()->user->isGuest)
-				$this->redirect(Yii::app()->createUrl(''));
-			else
-				$this->redirect(Yii::app()->createUrl('admin/'));
-            */
-            Yii::app()->end();
-		}
         $interviewId = null;
 		foreach($_POST['Answer'] as $Answer){
 
@@ -333,12 +315,13 @@ class InterviewController extends Controller
 						$array_id = $ego_id['questionId'];
 						$answers[$array_id] = new Answer;
 						$answers[$array_id]->attributes = $ego_id;
-						if(stristr(Question::getTitle($ego_id['questionId']), 'email')){
-							$email = $ego_id['value'];
-							$email_id = $array_id;
+						$ego_id_q = Question::model()->findByPk($ego_id['questionId']);
+						if(in_array($ego_id_q->useAlterListField, array("name", "email", "id"))){
+							$keystr = $ego_id['value'];
+							//$email_id = $array_id;
 						}
 					}
-					if(!$key || ($key && User::hashPassword($email) != $key)){
+					if(!$key || ($key && User::hashPassword($keystr) != $key)){
 						//$model[$email_id]->addError('value', 'You do not have the correct email for this survey.');
 						$errors++;
 						break;
@@ -399,6 +382,17 @@ class InterviewController extends Controller
 		foreach($answers as $index => $answer){
     		$json[$index] = mToA($answer);
 		}
+
+		if(isset($_POST['conclusion'])){
+			$interview = Interview::model()->findByPk((int)$interviewId);
+			$interview->completed = -1;
+			$interview->complete_date = time();
+			$interview->save();
+
+			if(isset(Yii::app()->params['exportFilePath']) && Yii::app()->params['exportFilePath'])
+				$this->exportInterview($interview->id);
+		}
+
 		if($errors == 0)
     		echo json_encode($json);
         else

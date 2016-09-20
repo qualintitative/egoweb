@@ -305,12 +305,14 @@ app.factory("importStudy", function($http, $q) {
                     primaryKey: ["id"]
                 };
                 if ($.inArray('NOTES', tableNames) == -1) db.catalog.createTable(notes);
+                console.log("tables created...");
                 for (k in data.questions) {
                     data.questions[k][0] = parseInt(data.questions[k][0]);
                     data.questions[k][34] = newId;
                     data.questions[k][9] = parseInt(data.questions[k][9]);
                     db.catalog.getTable('question').insertRow(data.questions[k]);
                 }
+                console.log("questions imported...");
                 for (k in data.options) {
                     data.options[k][0] = parseInt(data.options[k][0]);
                     data.options[k][6] = parseInt(data.options[k][6]);
@@ -321,21 +323,25 @@ app.factory("importStudy", function($http, $q) {
                         console.log(data.options[k]);
                     }
                 }
+                console.log("options imported...");
                 for (k in data.expressions) {
                     data.expressions[k][0] = parseInt(data.expressions[k][0]);
                     data.expressions[k][7] = newId;
                     db.catalog.getTable('expression').insertRow(data.expressions[k]);
                 }
+                console.log("expressions imported...");
                 for (k in data.alterList) {
                     data.alterList[k][0] = parseInt(data.alterList[k][0]);
                     data.alterList[k][1] = newId;
                     db.catalog.getTable('alterList').insertRow(data.alterList[k]);
                 }
+                console.log("alterList imported...");
                 for (k in data.alterPrompts) {
                     data.alterPrompts[k][0] = parseInt(data.alterPrompts[k][0]);
                     data.alterPrompts[k][1] = newId;
                     db.catalog.getTable('alterPrompt').insertRow(data.alterPrompts[k]);
                 }
+                console.log("alter prompts imported...");
                 db.commit();
                 //$('#status').html($('#status').html()+"DONE!");
             }
@@ -374,13 +380,15 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
         }
         $scope.interviews[$scope.studies[k].ID] = interviews;
     }
+    console.log($scope.interviews);
     $scope.startSurvey = function(studyId, intId) {
 	    study = db.queryRowObject("SELECT * FROM study WHERE id = " + studyId);
         if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
-        	var column = db.queryObjects("SELECT ID FROM question WHERE title = (SELECT q.title FROM question q WHERE q.ID = " + study.MULTISESSIONEGOID + ")").data;
+            var qTitle = db.queryValue("SELECT title FROM question WHERE ID = " + study.MULTISESSIONEGOID);
+        	var column = db.queryObjects("SELECT STUDYID FROM question WHERE title = '" + qTitle + "'").data;
         	var multiIds = [];
         	for (var k in column){
-        		multiIds.push(column[k].ID)
+        		multiIds.push(column[k].STUDYID)
         	}
     	}else{
             var multiIds = [studyId];
@@ -390,7 +398,7 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
         for(k in studies){
             studyNames[studies[k].ID] = studies[k].NAME;
         }
-    	results = db.queryObjects("SELECT * FROM question WHERE studyId in (" + multiIds + ") ORDER BY ORDERING").data;
+    	results = db.queryObjects("SELECT * FROM question WHERE studyId in (" + multiIds.join(",") + ") ORDER BY ORDERING").data;
     	questions = [];
     	questionList = [];
         for(k in results){
@@ -595,6 +603,14 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
         		for(t in expressions){
         			db.catalog.getTable("expression").deleteRow(expressions[t]);
         		}
+        		var alterList = db.query("SELECT * FROM alterList WHERE studyId = " + id).data;
+        		for(t in alterList){
+        			db.catalog.getTable("alterList").deleteRow(alterList[t]);
+        		}
+        		var alterPrompt = db.query("SELECT * FROM alterPrompt WHERE studyId = " + id).data;
+        		for(t in alterPrompt){
+        			db.catalog.getTable("alterPrompt").deleteRow(alterPrompt[t]);
+        		}
         		db.commit();
         		deleteInterviews(id, true);
                 $route.reload();
@@ -654,10 +670,9 @@ $(function(){
 	}, 500);
 });
 
-function save(questions, page, url){
-    console.log(questions);
+function save(questions, page, url, scope){
+    var post = node.objectify($('#answerForm'));
     if(typeof questions[0] == "undefined"){
-        var post = node.objectify($('#answerForm'));
         for(k in post.ANSWER){
             answer = post.ANSWER[k];
 
@@ -730,7 +745,7 @@ function save(questions, page, url){
     	}
     	db.commit();
 	}
-	if(typeof questions[0] != "undefined" && questions[0].ANSWERTYPE == "CONCLUSION"){
+	if(typeof post.CONCLUSION != "undefined" && post.CONCLUSION == 1){
 		interview = db.queryRow("SELECT * FROM interview WHERE id = " + interviewId);
 		interview = [
 			interviewId,
@@ -742,6 +757,9 @@ function save(questions, page, url){
 		]
         db.catalog.getTable('interview').updateRow(interview);
 		db.commit();
+
+	}
+	if(typeof questions[0] != "undefined" && questions[0].ANSWERTYPE == "CONCLUSION"){
 		document.location = url + "/";
 	}else{
         document.location = url + "/page/" + (parseInt(page) + 1);
@@ -752,7 +770,7 @@ function saveSkip(interviewId, questionId, alterId1, alterId2, arrayId)
 {
     if(typeof answers[arrayId] != "undefined" && answers[arrayId].VALUE == study.VALUELOGICALSKIP)
         return;
-	answers[array_id] = {
+	answers[arrayId] = {
         ID : '',
     	ACTIVE : '',
     	QUESTIONID : questionId,
@@ -770,11 +788,11 @@ function saveSkip(interviewId, questionId, alterId1, alterId2, arrayId)
     	var newId = parseInt(db.queryValue("SELECT id FROM answer ORDER BY id DESC"));
     	if(!newId)
     	    newId = 0;
-    	answers[array_id].ID = newId + 1;
-    	answers[array_id].ACTIVE = "";
-		db.catalog.getTable('answer').insertRow(objToArray(answers[array_id]));
+    	answers[arrayId].ID = newId + 1;
+    	answers[arrayId].ACTIVE = "";
+		db.catalog.getTable('answer').insertRow(objToArray(answers[arrayId]));
 	}else{
-		db.catalog.getTable('answer').updateRow(objToArray(answers[array_id]));
+		db.catalog.getTable('answer').updateRow(objToArray(answers[arrayId]));
 	}
 }
 
@@ -805,6 +823,8 @@ function saveNodes()
 function getEgoIdValue(interviewId){
 	var studyId = db.queryValue("SELECT studyID FROM interview WHERE id = " + interviewId);
 	var egoIdQs = db.queryObjects("SELECT * FROM question WHERE studyId = " + studyId + " AND subjectType = 'EGO_ID' ORDER BY ORDERING").data;
+    console.log(studyId);
+    console.log(egoIdQs);
 	var egoId = "";
 	for(var k in egoIdQs){
 		if(egoId)
