@@ -169,7 +169,7 @@ var IwPage = Object.create(Page, {
                             break;
                         case 'alters':
                             this.removeAllAlters();
-                            for (i=0;i<fv.values.length;i++) {
+                            for (let i=0;i<fv.values.length;i++) {
                                 this.addAlter(fv.values[i]);
                             }
                             break;
@@ -205,6 +205,7 @@ var IwPage = Object.create(Page, {
     addAlter: {
         value: function(name) {
             this.alterTextBox.setValue(name);
+            this.pause();
             this.alterAddButton.click();
             this.pause();
         }
