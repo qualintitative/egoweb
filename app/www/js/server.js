@@ -26,8 +26,8 @@ $(document).keydown(function(e) {
             if($(this).is(":focus")){
                 if(typeof $(".answerInput")[index-columns] != "undefined")
                     $(".answerInput")[index-columns].focus();
-                else
-                    $(".answerInput:focus").parent().prev().find(".answerInput").focus();
+                //else
+                //    $(".answerInput:focus").parent().prev().find(".answerInput").focus();
                 return false;
             }
         });
@@ -38,13 +38,20 @@ $(document).keydown(function(e) {
             if($(this).is(":focus")){
                 if(typeof $(".answerInput")[index+columns] != "undefined")
                     $(".answerInput")[index+columns].focus();
-                else
-                    $(".answerInput:focus").parent().next().find(".answerInput").focus();
+                //else
+                //    $(".answerInput:focus").parent().next().find(".answerInput").focus();
                 return false;
             }
         });
 	}
 });
+
+function redraw(params){
+	url = "/data/deleteGraph?id=" + $("#Graph_id").val();
+	$.get(url, function(data){
+		document.location.reload();
+	});
+}
 
 function save(questions, page, url, scope){
     if(typeof s != "undefined" && typeof s.isForceAtlas2Running != "undefined" && s.isForceAtlas2Running()){
@@ -70,7 +77,7 @@ function save(questions, page, url, scope){
         });
     }else if(questions[0].ANSWERTYPE == "CONCLUSION"){
         $.post(saveUrl, $('#answerForm').serialize(), function (data) {
-            if ( redirect  && typeof redirect !== 'undefined' ){
+            if (typeof redirect !== 'undefined' && redirect){
                 document.location = redirect;
             }
             else {

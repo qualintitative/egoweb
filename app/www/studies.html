@@ -9,7 +9,7 @@
             <button class="btn btn-xs btn-warning pull-right" ng-if="done[study.ID].length > 0" ng-click="upload(study.ID)">Upload Data ({{ done[study.ID].length }})</button>
     </div>
     <div class="panel-body" ng-if="interviews[study.ID].length > 0">
-        <div class="multi" id="interviewList" ng-repeat="interview in interviews[study.ID]">{{ interview.egoValue }}
+        <div class="multi col-sm-12" id="interviewList" ng-repeat="interview in interviews[study.ID]">{{ interview.egoValue }}
              <button ng-if="done[study.ID].indexOf(interview.ID) == -1" class="btn btn-xs btn-success pull-right" ng-click="startSurvey(study.ID, interview.ID)">Continue</button>
              <span ng-if="done[study.ID].indexOf(interview.ID) != -1" class="label label-default pull-right">Done</span>
         </div>

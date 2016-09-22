@@ -7,7 +7,3 @@ EgoWeb is designed to be run on a webserver where data can be collected by inter
 Refer to the Wiki in this repository for more information about the history of EgoWeb and installation instructions.  Please report any issues with installation or use of EgoWeb here in this repository. 
 
 The website egoweb.info provides information on how to use EgoWeb including screen shots. It is not complete documentation but it is being updated periodically. 
-
-How to cite EgoWeb:
-
-	EgoWeb 2.0, computer software, http://github.com/qualintitative/egoweb
