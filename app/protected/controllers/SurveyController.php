@@ -180,6 +180,9 @@ class SurveyController extends Controller {
             return ApiController::sendResponse( 404, $msg );
         }
         else if( $interview->completed == -1 ){
+			if ($redirect){
+				self::redirect($redirect);
+			}
             $msg = "User already completed survey";
             return ApiController::sendResponse( 420, $msg );
         }
