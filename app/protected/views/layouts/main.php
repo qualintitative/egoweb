@@ -28,7 +28,7 @@
         </style>
 	</head>
 	<body>
-        <nav class="navbar" id="topbar">
+        <nav class="navbar navbar-fixed-top" id="topbar">
 				<?php if(!Yii::app()->user->isGuest): ?>
 				<?php
 				$condition = "id != 0";

@@ -449,6 +449,7 @@ td{
 #home_button{
 	float:right;
 }
+
 #topbar{
 	color:#fff;
 	background:#333;
@@ -539,9 +540,7 @@ td{
 }
 
 .orangeText{
-	width:300px;
 	margin-right:40px;
-	float:left;
 	color:#DB6C3E;
 	margin-top:10px;
 	margin-bottom:10px;
@@ -845,10 +844,13 @@ label.prompt , .grid-view label {
 
 
 .multiBox {
-max-height:400px;
-overflow-y: scroll;
+    overflow-y: scroll;
     display: table;
     width: 100%;
+}
+
+.multiBox .multi-header {
+    visibility: hidden;
 }
 
 .clear-left {
@@ -900,4 +902,8 @@ input[type=checkbox]{
     height:400px;
     overflow-y:scroll;
     padding-top:0;
+}
+
+#content {
+    margin-top:50px;
 }

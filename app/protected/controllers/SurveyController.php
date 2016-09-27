@@ -180,6 +180,9 @@ class SurveyController extends Controller {
             return ApiController::sendResponse( 404, $msg );
         }
         else if( $interview->completed == -1 ){
+			if ($redirect){
+				self::redirect($redirect);
+			}
             $msg = "User already completed survey";
             return ApiController::sendResponse( 420, $msg );
         }
@@ -188,7 +191,7 @@ class SurveyController extends Controller {
                 Yii::app()->session['redirect'] = $redirect;
             
             $url = Yii::app()->getBaseUrl(true);
-            if(Yii::app()->request->getIsSecureConnection() || $url == "http://egoweb.rand.org")
+            if(Yii::app()->request->getIsSecureConnection() || $url == "http://egoweb.rand.org" || $url == "http://alpegoweb.rand.org")
                 $url = str_replace("http", "https", $url);
 
             Yii::app()->request->redirect($url  .  "/interview/".$study->id."/".
