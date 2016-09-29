@@ -1,12 +1,11 @@
 Egoweb
 =========
-EgoWeb 2.0 is an ongoing project lead by RAND Corporation. EgoWeb facilitates social network data collection and processing.  In the past it has emphasized personal network data collection but can now do whole network and cognitive network data collection. EgoWeb has some basic analysis procedures but also produces basic data output for analysis in other programs outside of EgoWeb. 
+EgoWeb 2.0 is an ongoing project led by RAND Corporation. EgoWeb facilitates social network data collection and processing of personal networks, whole networks, and cognitive networks. EgoWeb has basic analysis procedures and can produce data output files for analysis in other programs. 
 
-EgoWeb is designed to be run on a webserver where data can be collected by interviewers with live internet connections or by respondents themselves. Respondents can be sent links to unique surveys associated with their email addresses. Interviewers can also collect data in the field without a live internet connection with iPads and android tablets. The data are stored locally temporarily and then synced with a web server / removed from the tablet.  EgoWeb can also be installed on Windows and Mac machines and be used without any webserver connection at all.
+EgoWeb can be run on a webserver or installed on Windows and Mac machines. If run from a webserver, data can be collected by interviewers or by respondents themselves. Respondents can be sent links to unique surveys associated with their email addresses. Interviewers can also collect data in the field without a live internet connection with iPads and android tablets; the data are stored locally temporarily and then synced with a web server / removed from the tablet. EgoWeb can also be installed on Windows and Mac machines and be used without any webserver connection at all.
 
-Refer to http://egoweb.wikispaces.com for more information about the history of EgoWeb, installation instructions, and a user guide.  Please report any issues with installation or use of EgoWeb here in this repository. 
-
-The wiki website egoweb.wikispaces.com is an update of the information that was on egoweb.info.  There is more updated information on how to use EgoWeb with more screen shots. It is not complete documentation but it is being updated periodically. The new wikispaces site allows others to create accounts and contribute to documentation. 
+Refer to http://egoweb.wikispaces.com for more information about the history of EgoWeb, installation instructions, and a user guide. Please report any issues with installation or use of EgoWeb here in this repository. 
+The wikispaces site allows you to create accounts and contribute to the documentation of this open source project. 
 
 How to cite EgoWeb:
 
