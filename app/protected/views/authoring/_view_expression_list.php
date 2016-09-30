@@ -17,7 +17,7 @@
     CHtml::ajaxLink (CHtml::encode($data->name),
         CController::createUrl('ajaxload'),
         array('update' => '#Expression', 'data'=>'form='.$form.'&studyId='.$data->studyId.'&id='.$data->id.'&questionId='.$data->questionId.$expressionId),
-        array('id'=>uniqid(), 'live'=>false)
+        array('id'=>'expression_'.$data->id, 'live'=>false)
 
     );
 ?>
