@@ -2461,12 +2461,19 @@ function buildNav(pageNumber, scope){
     			    	i++;
 			        }
                 }else{
-    		    	if(alter_questions[j].PREFACE != ""){
-    		    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-    		    		i++;
+        			for(k in alters){
+        				if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
+        					continue;
+                        alter_question_list = alter_questions[j];
+                    }
+                    if(alter_question_list){
+        		    	if(alter_questions[j].PREFACE != ""){
+        		    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+        		    		i++;
+        		    	}
+        		    	pages[i] = this.checkPage(i, pageNumber, alter_questions[j].TITLE);
+        		    	i++;
     		    	}
-    		    	pages[i] = this.checkPage(i, pageNumber, alter_questions[j].TITLE);
-    		    	i++;
 		    	}
             }else{
                 alter_non_list_qs.push(alter_questions[j]);
@@ -2617,14 +2624,14 @@ function fixHeader(){
     columnWidths();
 	// Set this variable with the height of your sidebar + header
 	
-	var offsetPixels = $(".navbar").height() + parseInt($("#content").css("padding-top")); 
+	var offsetPixels = $(".navbar").height(); 
     $("#content").css({"background-attachment":"fixed"});
     if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
     	$(window).scroll(function(event) {
 			$( "#floatHeader" ).css({
 				"position": "fixed",
 				"top": offsetPixels + "px",
-				//"padding-top":"15px"
+    			"padding-top":  parseInt($("#content").css("padding-top")) + "px"
 			});
             $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
     	});
@@ -2633,7 +2640,7 @@ function fixHeader(){
     		$( "#floatHeader" ).css({
     			"position": "fixed",
     			"top": offsetPixels + "px",
-    			//"padding-top":"15px"
+    			"padding-top":  parseInt($("#content").css("padding-top")) + "px"
     		});
             $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
     	});

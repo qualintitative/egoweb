@@ -1,0 +1,20 @@
+{
+  "name": "egowebtest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "wdio.conf.js",
+  "directories": {
+    "test": "suite"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/wdio wdio.conf.js"
+  },
+  "author": "RAND Corporation",
+  "license": "GNU GPL Version 2",
+  "devDependencies": {
+    "wdio-jasmine-framework": "^0.2.5",
+    "wdio-junit-reporter": "^0.1.0",
+    "wdio-phantomjs-service": "^0.1.0",
+    "webdriverio": "^4.2.5"
+  }
+}

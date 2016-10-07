@@ -214,6 +214,7 @@ class AuthoringController extends Controller
 				$condition = "id = -1";
 		}
 
+
 		$criteria = array(
 			'condition'=>$condition . " AND multiSessionEgoId = 0 AND active = 1",
 			'order'=>'id DESC',

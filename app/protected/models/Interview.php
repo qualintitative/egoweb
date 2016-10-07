@@ -716,12 +716,19 @@ class Interview extends CActiveRecord
                 if ($question['answerType'] == "MULTIPLE_SELECTION")
                 {
                     $optionIds = explode(',', $answer);
-                    $list = array();
                     foreach ($optionIds as $optionId)
                     {
-                        if (isset($options[$optionId]))
+                        if (isset($options[$optionId])){
                             $ego_ids[] = $options[$optionId];
                             $ego_id_string[] = $optionLabels[$optionId];
+                        }else{
+                            $ego_ids[] = "MISSING_OPTION ($optionId)";
+                            $ego_id_string[] = "MISSING_OPTION ($optionId)";
+                        }
+                    }
+                    if(!$optionIds){
+                        $ego_ids[] = "";
+                        $ego_id_string[] = "";
                     }
                 } else
                 {
