@@ -434,7 +434,7 @@ class InterviewController extends Controller
                     #OK FOR SQL INJECTION
                     $params = new stdClass();
                     $params->name = ':name';
-                    $params->value = $_POST['Alters']['name'];
+                    $params->value = encrypt($_POST['Alters']['name']);
                     $params->dataType = PDO::PARAM_STR;
 					$nameInList = q('SELECT name FROM alterList WHERE name = :name AND studyId = '. $studyId, array($params))->queryScalar();
 					if(!$nameInList && $study->restrictAlters){
