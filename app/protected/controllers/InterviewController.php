@@ -422,24 +422,33 @@ class InterviewController extends Controller
 			if(in_array($_POST['Alters']['name'], $alterNames)){
 				$model->addError('name', $_POST['Alters']['name']. ' has already been added!');
 			}
-
+			
+            $pre_names = array();
+            $preset_alters = AlterList::model()->findAllByAttributes(array("studyId"=>$studyId));
+            foreach($preset_alters as $alter){
+                $pre_names[] = $alter->name;
+            }
             #OK FOR SQL INJECTION
 			$study = Study::model()->findByPk((int)$studyId);
 
 			// check to see if pre-defined alters exist.  If they do exist, check name against list
 			if($study->useAsAlters){
                 #OK FOR SQL INJECTION
-				$alterCount = q("SELECT count(id) FROM alterList WHERE studyId = ".$studyId)->queryScalar();
-				if($alterCount > 0){
+				//$alterCount = q("SELECT count(id) FROM alterList WHERE studyId = ".$studyId)->queryScalar();
+				if(count($pre_names) > 0){
                     #OK FOR SQL INJECTION
                     $params = new stdClass();
                     $params->name = ':name';
                     $params->value = encrypt($_POST['Alters']['name']);
+                    //echo encrypt($_POST['Alters']['name']);
+                
                     $params->dataType = PDO::PARAM_STR;
-					$nameInList = q('SELECT name FROM alterList WHERE name = :name AND studyId = '. $studyId, array($params))->queryScalar();
-					if(!$nameInList && $study->restrictAlters){
+        			if(!in_array($_POST['Alters']['name'], $pre_names)){
 						$model->addError('name', $_POST['Alters']['name']. ' is not in our list of participants');
-					}
+                    }
+					//$nameInList = q('SELECT name FROM alterList WHERE name = :name AND studyId = '. $studyId, array($params))->queryScalar();
+					//if(!$nameInList && $study->restrictAlters){
+					//}
 				}
 			}
 

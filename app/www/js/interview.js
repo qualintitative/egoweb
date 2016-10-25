@@ -53,6 +53,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.phrase = "";
     $scope.conclusion = false;
     $scope.redirect = false;
+    $scope.participants = false;
     
     if(typeof hashKey != "undefined"){
         $scope.hashKey = hashKey;
@@ -372,9 +373,21 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 $scope.errors[0] = 'That name is already listed';
             }
         }
+
+        // check pre-defined participant list
+        if($scope.participants != false){
+            if($scope.participants.indexOf($("#Alters_name").val().trim()) == -1){
+                console.log($scope.participants.indexOf($("#Alters_name").val().trim()));
+                $scope.errors[0] = 'Name not found in list';
+            }
+        }
+
         if($("#Alters_name").val().trim() == ""){
             $scope.errors[0] = 'Name cannot be blank';
         }
+
+        console.log($scope.errors[0]);
+
         // check to make sure the form is completely valid
         if($scope.errors[0] == false){
             saveAlter.getAlters().then(function(data){
