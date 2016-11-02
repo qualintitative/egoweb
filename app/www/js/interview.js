@@ -53,6 +53,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.phrase = "";
     $scope.conclusion = false;
     $scope.redirect = false;
+    $scope.participants = false;
     
     if(typeof hashKey != "undefined"){
         $scope.hashKey = hashKey;
@@ -372,9 +373,21 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 $scope.errors[0] = 'That name is already listed';
             }
         }
+
+        // check pre-defined participant list
+        if($scope.participants != false){
+            if($scope.participants.indexOf($("#Alters_name").val().trim()) == -1){
+                console.log($scope.participants.indexOf($("#Alters_name").val().trim()));
+                $scope.errors[0] = 'Name not found in list';
+            }
+        }
+
         if($("#Alters_name").val().trim() == ""){
             $scope.errors[0] = 'Name cannot be blank';
         }
+
+        console.log($scope.errors[0]);
+
         // check to make sure the form is completely valid
         if($scope.errors[0] == false){
             saveAlter.getAlters().then(function(data){
@@ -2461,12 +2474,19 @@ function buildNav(pageNumber, scope){
     			    	i++;
 			        }
                 }else{
-    		    	if(alter_questions[j].PREFACE != ""){
-    		    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-    		    		i++;
+        			for(k in alters){
+        				if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
+        					continue;
+                        alter_question_list = alter_questions[j];
+                    }
+                    if(alter_question_list){
+        		    	if(alter_questions[j].PREFACE != ""){
+        		    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+        		    		i++;
+        		    	}
+        		    	pages[i] = this.checkPage(i, pageNumber, alter_questions[j].TITLE);
+        		    	i++;
     		    	}
-    		    	pages[i] = this.checkPage(i, pageNumber, alter_questions[j].TITLE);
-    		    	i++;
 		    	}
             }else{
                 alter_non_list_qs.push(alter_questions[j]);
@@ -2617,14 +2637,14 @@ function fixHeader(){
     columnWidths();
 	// Set this variable with the height of your sidebar + header
 	
-	var offsetPixels = $(".navbar").height() + parseInt($("#content").css("padding-top")); 
+	var offsetPixels = $(".navbar").height(); 
     $("#content").css({"background-attachment":"fixed"});
     if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
     	$(window).scroll(function(event) {
 			$( "#floatHeader" ).css({
 				"position": "fixed",
 				"top": offsetPixels + "px",
-				//"padding-top":"15px"
+    			"padding-top":  parseInt($("#content").css("padding-top")) + "px"
 			});
             $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
     	});
@@ -2633,7 +2653,7 @@ function fixHeader(){
     		$( "#floatHeader" ).css({
     			"position": "fixed",
     			"top": offsetPixels + "px",
-    			//"padding-top":"15px"
+    			"padding-top":  parseInt($("#content").css("padding-top")) + "px"
     		});
             $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
     	});
@@ -2654,4 +2674,3 @@ function unfixHeader(){
     $(window).unbind('scroll');
     $(window).unbind('touchmove');
     $(window).unbind('resize');
-}

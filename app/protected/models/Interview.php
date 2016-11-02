@@ -720,12 +720,18 @@ class Interview extends CActiveRecord
 					foreach ($optionIds as $optionId)
 					{
 						if (isset($options[$optionId]))
+                        if (isset($options[$optionId])){
 							$ego_ids[] = $options[$optionId];
 							$ego_id_string[] = $optionLabels[$optionId];
-					}
-				} elseif ($question['answerType'] == "RANDOM_NUMBER"){
-					$ego_ids[] = str_replace(',', '', $answer);
-					//skip appending the random number to the EgoID column
+                        }else{
+                            $ego_ids[] = "MISSING_OPTION ($optionId)";
+                            $ego_id_string[] = "MISSING_OPTION ($optionId)";
+                        }
+                    }
+                    if(!$optionIds){
+                        $ego_ids[] = "";
+                        $ego_id_string[] = "";
+                    }
 				} else
 				{
 					$ego_ids[] = str_replace(',', '', $answer);
