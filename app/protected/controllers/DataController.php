@@ -500,6 +500,8 @@ class DataController extends Controller
 								else
 									$answers[] = implode('; ', $list);
 							}else{
+    							if(!$answer)
+    							    $answer = $study->valueNotYetAnswered;
 								$answers[] = $answer;
 							}
 						} else if (!$answer && ($skipReason == "DONT_KNOW" || $skipReason == "REFUSE")) {
