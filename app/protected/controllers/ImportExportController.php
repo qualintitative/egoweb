@@ -9,6 +9,7 @@ class ImportExportController extends Controller
                 break;
             case UPLOAD_ERR_INI_SIZE:
                 $message .= ' - file(s) too large.  upload size defined in php.ini exceeded';
+                break;
             case UPLOAD_ERR_FORM_SIZE:
                 $message .= ' - file(s) too large.  upload size defined in html exceeded';
                 break;
