@@ -14,12 +14,12 @@
 		$expressionId = "";
 	}
 	echo
-	CHtml::ajaxLink (CHtml::encode($data->name),
-		CController::createUrl('ajaxload'),
-		array('update' => '#Expression', 'data'=>'form='.$form.'&studyId='.$data->studyId.'&id='.$data->id.'&questionId='.$data->questionId.$expressionId),
+    CHtml::ajaxLink (CHtml::encode($data->name),
+        CController::createUrl('ajaxload'),
+        array('update' => '#Expression', 'data'=>'form='.$form.'&studyId='.$data->studyId.'&id='.$data->id.'&questionId='.$data->questionId.$expressionId),
 		array('id'=>'expression_'.$data->id, 'live'=>false)
 
-	);
+    );
 ?>
 </b>
 <br />
