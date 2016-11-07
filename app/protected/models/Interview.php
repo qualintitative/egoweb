@@ -710,9 +710,13 @@ class Interview extends CActiveRecord
             }
             foreach ($ego_id_questions as $question)
             {
+                if($question['answerType'] == "STORED_VALUE" || $question['answerType'] == "RANDOM_NUMBER")
+                    continue;
+
                 #OK FOR SQL INJECTION
                 $result = Answer::model()->findByAttributes(array("interviewId" => $this->id, "questionId" => $question['id']));
                 $answer = $result->value;
+
                 if ($question['answerType'] == "MULTIPLE_SELECTION")
                 {
                     $optionIds = explode(',', $answer);
