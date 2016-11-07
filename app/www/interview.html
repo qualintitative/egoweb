@@ -27,7 +27,7 @@
 
 <div id="floatHeader">
     <div class="col-sm-12 no-padding" ng-if="header != '' && subjectType != 'NETWORK'" ng-bind-html="header">{{ header }}</div>
-    <span ng-if="(answerForm.$submitted || errors[0] == 'That name is already listed') && errors">
+    <span ng-if="(answerForm.$submitted || errors[0] == 'That name is already listed' || errors[0] == 'Name cannot be blank' || errors[0] == 'Name not found in list') && errors">
         <div class="alert alert-danger" role="alert" ng-if="$index == 0" ng-repeat="error in errors">
             {{ error }}
         </div>
@@ -271,9 +271,13 @@
     <div class="form-group clear-left btn-top">
         <button ng-if="page > 0 && questions[0].ANSWERTYPE != 'CONCLUSION'" id="next" class='btn graybutton' ng-click="goBack();" onclick="return false;">Back</button>
     	<button ng-if="questions[0].ANSWERTYPE != 'CONCLUSION' && conclusion == false" id="next" class='btn orangebutton' type="submit">Next</button>
+<<<<<<< HEAD
     	<button ng-if="questions[0].ANSWERTYPE == 'CONCLUSION' && redirect != false" id="next" class='btn orangebutton' type="submit">Finish</button>
     	<button ng-if="conclusion == true" id="next" class='btn orangebutton' type="submit">Next</button>
+=======
+    	<button ng-if="questions[0].ANSWERTYPE == 'CONCLUSION' && redirect != false" id="next" class='btn orangebutton' type="submit">Return</button>
+    	<button ng-if="conclusion == true" id="next" class='btn orangebutton' type="submit">Finish</button>
+>>>>>>> dev
     </div>
 </form>
 <div class="col-sm-12" ng-if="footer != ''" ng-bind-html="footer">{{ footer }}</div>
-
