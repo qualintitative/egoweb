@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<study id="4" name="TEST_WDIO_SKIP1" minAlters="0" maxAlters="20" valueDontKnow="-2" valueLogicalSkip="-3" valueNotYetAnswered="-4" valueRefusal="-1" modified="2016-09-27 12:27:44" multiSessionEgoId="0" useAsAlters="0" restrictAlters="0" fillAlterList="0" hideEgoIdPage="0">
+	<introduction>Welcome to test1!&lt;br&gt;</introduction>
+	<egoIdPrompt>What is the ego id?</egoIdPrompt>
+	<alterPrompt>Having it over there would be more confusing for the rest of the instructions. It displays how many are left to enter, so having that right above the text box is the best spot. As they enter each name they are shown the &lt;a href=&quot;https://www.yammer.com/egoweb/topics/6999052&quot; class=&quot;yammer-object&quot; data-yammer-object=&quot;tag:4956205&quot; data-resource-id=&quot;4956205&quot; data-resource-model=&quot;tag&quot; dir=&quot;auto&quot;&gt;#s&lt;/a&gt; entered going up and the &lt;a href=&quot;https://www.yammer.com/egoweb/topics/6999052&quot; class=&quot;yammer-object&quot; data-yammer-object=&quot;tag:4956205&quot; data-resource-id=&quot;4956205&quot; data-resource-model=&quot;tag&quot; dir=&quot;auto&quot;&gt;#s&lt;/a&gt; left to enter going down. They would have to move their eyes back and forth for each name and it would keep drawing their eye to the &quot;Next&quot; button. I feel like that would make them even more inclined to hit the next button. If we make that text when they are at 0 alters say &quot;Click the +Add button&quot; that will reduce accidental &quot;next&quot; button clicks.&lt;br&gt;&lt;br&gt;We could add an additional text display over the &quot;Next&quot; button that goes away after they enter 1 name I guess but I don&#039;t want to change the other text location. It would make it weird for the other studies without the ALP style. Who are the alters?</alterPrompt>
+	<conclusion>Thank you!</conclusion>
+	<alterPrompts>
+			<alterPrompt id="19" studyId="4" afterAltersEntered="0" display="Please enter a name and click the &quot;add&quot; button!"/>
+			<alterPrompt id="20" studyId="4" afterAltersEntered="1" display="Click the Next button when you are done adding alters"/>
+	</alterPrompts>
+	<questions>
+		<question id="20" title="id" answerType="TEXTUAL" subjectType="EGO_ID" askingStyleList="0" ordering="0" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>id</prompt>
+			<citation></citation>
+		</question>
+		<question id="22" title="alter1" answerType="TEXTUAL" subjectType="ALTER" askingStyleList="0" ordering="0" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>What do you think about that alter?</prompt>
+			<citation></citation>
+		</question>
+		<question id="23" title="first" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="0" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>First Question</prompt>
+			<citation></citation>
+		</question>
+		<question id="28" title="Simple Skip Source 1" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="1" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>Enter a number between 1-10&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="29" title="Show if Less than or equal to 5" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="2" answerReasonExpressionId="1" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>You entered a small value&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="30" title="Show if more than 5" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="4" answerReasonExpressionId="2" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>You entered a big number&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="31" title="Question after skip" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="5" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>Question after skip&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="32" title="Simple Skip Source 2" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="6" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="5" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>Pick some options&lt;br&gt;</prompt>
+			<citation></citation>
+			<option id="20" name="opt1" value="1" ordering="0" otherSpecify=""/>
+			<option id="21" name="opt2" value="2" ordering="1" otherSpecify=""/>
+			<option id="22" name="opt3" value="3" ordering="2" otherSpecify=""/>
+			<option id="23" name="opt4" value="4" ordering="3" otherSpecify=""/>
+			<option id="24" name="opt5" value="5" ordering="4" otherSpecify=""/>
+		</question>
+		<question id="33" title="At least one option selected" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="7" answerReasonExpressionId="4" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>At least one option selected&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="34" title="Several multiple selection responses are selected" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="8" answerReasonExpressionId="5" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>several multiple selection responses are selected</prompt>
+			<citation></citation>
+		</question>
+		<question id="35" title="always show" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="9" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>show this page&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="36" title="Show if equal to 5" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="3" answerReasonExpressionId="6" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>it is five&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="37" title="base number" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="10" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="NLT_LITERAL" minLiteral="1" minPrevQues="" maxLimitType="NLT_LITERAL" maxLiteral="100" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>Please enter a number between 1-100&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="38" title="compare number" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="11" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="NLT_LITERAL" minLiteral="1" minPrevQues="" maxLimitType="NLT_LITERAL" maxLiteral="100" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>Please enter another number between 1-100&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="39" title="base higher than compare" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="12" answerReasonExpressionId="9" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>base higher than compare</prompt>
+			<citation></citation>
+		</question>
+		<question id="40" title="base is lower than compare" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="13" answerReasonExpressionId="10" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>base is lower than compare</prompt>
+			<citation></citation>
+		</question>
+		<question id="41" title="base is equal to compare" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="14" answerReasonExpressionId="11" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>base is equal to compare</prompt>
+			<citation></citation>
+		</question>
+		<question id="43" title="base is Less or Equal" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="16" answerReasonExpressionId="13" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>It&#039;s 50 or less&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="44" title="base is More or Equal" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="17" answerReasonExpressionId="12" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>it&#039;s 50 or more</prompt>
+			<citation></citation>
+		</question>
+		<question id="45" title="reference number" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="15" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="NLT_LITERAL" minLiteral="1" minPrevQues="" maxLimitType="NLT_LITERAL" maxLiteral="100" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>reference number</prompt>
+			<citation></citation>
+		</question>
+		<question id="46" title="landing" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="18" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>always show&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="47" title="compound 1" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="19" answerReasonExpressionId="14" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>either source 1 is lower than 5 or equal to 5 or base number is &gt;= 50&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="48" title="landing 2" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="20" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>always show&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="49" title="compound 2" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="21" answerReasonExpressionId="15" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>both source 1 is greater than 5 and base number is &lt;= 50&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="50" title="landing 3" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="22" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>always show&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="51" title="compound 3" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="23" answerReasonExpressionId="16" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>expression is true if NONE of the selected expressions below are true</prompt>
+			<citation></citation>
+		</question>
+		<question id="52" title="landing 4" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="24" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>always show&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="53" title="compare 2" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="25" answerReasonExpressionId="18" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>one numeric question is greater than the the sum of more than one other question</prompt>
+			<citation></citation>
+		</question>
+		<question id="54" title="landing 5" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="26" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>always show landing 5&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+	</questions>
+	<expressions>
+		<expression id="1" name="source 1 less than 5" questionId="28" resultForUnanswered="1" type="Number" operator="Less">
+			<value>5</value>
+		</expression>
+		<expression id="2" name="source 1 greater than 5" questionId="28" resultForUnanswered="0" type="Number" operator="Greater">
+			<value>5</value>
+		</expression>
+		<expression id="4" name="one or more responses in multiple selection question is selected" questionId="32" resultForUnanswered="0" type="Selection" operator="Some">
+			<value>20,21,22,23,24</value>
+		</expression>
+		<expression id="5" name="several multiple selection responses are selected" questionId="32" resultForUnanswered="0" type="Selection" operator="All">
+			<value>21,22,24</value>
+		</expression>
+		<expression id="6" name="source is equal to 5" questionId="28" resultForUnanswered="0" type="Number" operator="Equals">
+			<value>5</value>
+		</expression>
+		<expression id="7" name="substracted compare number" questionId="" resultForUnanswered="" type="Counting" operator="Sum">
+			<value>-1::38</value>
+		</expression>
+		<expression id="8" name="base - compare" questionId="" resultForUnanswered="" type="Counting" operator="Sum">
+			<value>1:7:37</value>
+		</expression>
+		<expression id="9" name="base is higher" questionId="" resultForUnanswered="" type="Comparison" operator="Greater">
+			<value>0:8</value>
+		</expression>
+		<expression id="10" name="base is lower" questionId="" resultForUnanswered="" type="Comparison" operator="Less">
+			<value>0:8</value>
+		</expression>
+		<expression id="11" name="base and compare are equal" questionId="" resultForUnanswered="" type="Comparison" operator="Equals">
+			<value>0:8</value>
+		</expression>
+		<expression id="12" name="GE" questionId="45" resultForUnanswered="0" type="Number" operator="GreaterOrEqual">
+			<value>50</value>
+		</expression>
+		<expression id="13" name="LE" questionId="45" resultForUnanswered="0" type="Number" operator="LessOrEqual">
+			<value>50</value>
+		</expression>
+		<expression id="14" name="compound 1" questionId="" resultForUnanswered="" type="Compound" operator="Some">
+			<value>1,6,12</value>
+		</expression>
+		<expression id="15" name="compound 2" questionId="" resultForUnanswered="" type="Compound" operator="All">
+			<value>2,13</value>
+		</expression>
+		<expression id="16" name="compound 3" questionId="" resultForUnanswered="" type="Compound" operator="None">
+			<value>6,11</value>
+		</expression>
+		<expression id="17" name="base sum" questionId="" resultForUnanswered="" type="Counting" operator="Sum">
+			<value>-1::28,37</value>
+		</expression>
+		<expression id="18" name="base sum greater than compare" questionId="" resultForUnanswered="" type="Comparison" operator="Greater">
+			<value>0:19</value>
+		</expression>
+		<expression id="19" name="compare - base sum" questionId="" resultForUnanswered="" type="Counting" operator="Sum">
+			<value>1:17:38</value>
+		</expression>
+	</expressions>
+</study>
