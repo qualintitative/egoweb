@@ -74,30 +74,9 @@ describe('Alters', function () {
 
         IwPage.addAlter(alters[1]);
         expect(IwPage.getAlterCount()).toBe(2);
-<<<<<<< HEAD
-<<<<<<< HEAD
         for (let i=2; i<=13; i++) {
             IwPage.addAlter(alters[i]);
         }
-=======
-=======
->>>>>>> 15092d6962f0958137ed5aa85e2eac8622f7e089
-        IwPage.addAlter(alters[2]);
-        IwPage.addAlter(alters[3]);
-        IwPage.addAlter(alters[4]);
-        IwPage.addAlter(alters[5]);
-        IwPage.addAlter(alters[6]);
-        IwPage.addAlter(alters[7]);
-        IwPage.addAlter(alters[8]);
-        IwPage.addAlter(alters[9]);
-        IwPage.addAlter(alters[10]);
-        IwPage.addAlter(alters[11]);
-        IwPage.addAlter(alters[12]);
-        IwPage.addAlter(alters[13]);
-<<<<<<< HEAD
->>>>>>> dev
-=======
->>>>>>> 15092d6962f0958137ed5aa85e2eac8622f7e089
         browser.element("div=Please enter another name, then click the Add button").waitForVisible(browser.options.egoweb.waitTime);
         expect(IwPage.getAlterCount()).toBe(14);
 
@@ -139,15 +118,7 @@ describe('Alters', function () {
         alters = IwPage.fieldValues['ALTER_PROMPT']['values'];
 
         // clear all data in the table, using "Set All" checkboxes at bottom
-<<<<<<< HEAD
-<<<<<<< HEAD
         for (let i=2; i<=6; i++) {
-=======
-        for (i=2; i<=6; i++) {
->>>>>>> dev
-=======
-        for (i=2; i<=6; i++) {
->>>>>>> 15092d6962f0958137ed5aa85e2eac8622f7e089
             let opt1 = IwPage.getTableCellInputElement(17,i);
             if (!(opt1.isSelected())) {
                 // if Set All is off, turn it on to select the entire column
@@ -161,15 +132,7 @@ describe('Alters', function () {
         }
 
         // check that table has 15 rows, one per alter. Skip header/SetAll rows
-<<<<<<< HEAD
-<<<<<<< HEAD
         for (let i=0; i<15; i++) {
-=======
-        for (i=0; i<15; i++) {
->>>>>>> dev
-=======
-        for (i=0; i<15; i++) {
->>>>>>> 15092d6962f0958137ed5aa85e2eac8622f7e089
             // check that 1st col has alter name
             expect(browser.element(IwPage.getTableCellSelector(i+2,1)).getText()).toBe(alters[i]);
         }
@@ -188,15 +151,7 @@ describe('Alters', function () {
         expect(IwPage.questionTitle.getText()).toBe("alter1");
         browser.element("div.alert=Select 1 response for each row please.").waitForVisible(browser.options.egoweb.waitTime);
         // check that all rows are highlighted
-<<<<<<< HEAD
-<<<<<<< HEAD
         for (let i=0; i<15; i++) {
-=======
-        for (i=0; i<15; i++) {
->>>>>>> dev
-=======
-        for (i=0; i<15; i++) {
->>>>>>> 15092d6962f0958137ed5aa85e2eac8622f7e089
             expect(IwPage.getTableRowHighlight(i+2)).toBe(true);
         }
 
@@ -224,15 +179,7 @@ describe('Alters', function () {
         IwPage.getTableCellInputElement(17,3).click();
 
         // check that no rows are highlighted
-<<<<<<< HEAD
-<<<<<<< HEAD
         for (let i=0; i<15; i++) {
-=======
-        for (i=0; i<15; i++) {
->>>>>>> dev
-=======
-        for (i=0; i<15; i++) {
->>>>>>> 15092d6962f0958137ed5aa85e2eac8622f7e089
             expect(IwPage.getTableRowHighlight(i+2)).toBe(false);
         }
 
@@ -244,15 +191,7 @@ describe('Alters', function () {
         IwPage.back();
         expect(IwPage.questionTitle.getText()).toBe("alter1");
         // check that no rows are highlighted
-<<<<<<< HEAD
-<<<<<<< HEAD
         for (let i=0; i<15; i++) {
-=======
-        for (i=0; i<15; i++) {
->>>>>>> dev
-=======
-        for (i=0; i<15; i++) {
->>>>>>> 15092d6962f0958137ed5aa85e2eac8622f7e089
             expect(IwPage.getTableRowHighlight(i+2)).toBe(false);
         }
     });
