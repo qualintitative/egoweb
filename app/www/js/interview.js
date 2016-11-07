@@ -54,11 +54,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.conclusion = false;
     $scope.redirect = false;
     $scope.participants = false;
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> 15092d6962f0958137ed5aa85e2eac8622f7e089
     if(typeof hashKey != "undefined"){
         $scope.hashKey = hashKey;
     }else{
@@ -2491,11 +2487,7 @@ function buildNav(pageNumber, scope){
         		    	pages[i] = this.checkPage(i, pageNumber, alter_questions[j].TITLE);
         		    	i++;
     		    	}
-<<<<<<< HEAD
 		    	}
-=======
-		    	}
->>>>>>> 15092d6962f0958137ed5aa85e2eac8622f7e089
             }else{
                 alter_non_list_qs.push(alter_questions[j]);
             }
@@ -2644,26 +2636,15 @@ function columnWidths(){
 function fixHeader(){
     columnWidths();
 	// Set this variable with the height of your sidebar + header
-<<<<<<< HEAD
-
 	var offsetPixels = $(".navbar").height();
     $("#content").css({"background-attachment":"fixed"});
-=======
-	
-	var offsetPixels = $(".navbar").height(); 
-    $("#content").css({"background-attachment":"fixed"});
->>>>>>> 15092d6962f0958137ed5aa85e2eac8622f7e089
     if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
     	$(window).scroll(function(event) {
 			$( "#floatHeader" ).css({
 				"position": "fixed",
 				"top": offsetPixels + "px",
     			"padding-top":  parseInt($("#content").css("padding-top")) + "px"
-<<<<<<< HEAD
 			});
-=======
-			});
->>>>>>> 15092d6962f0958137ed5aa85e2eac8622f7e089
             $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
     	});
     }else{
@@ -2672,11 +2653,7 @@ function fixHeader(){
     			"position": "fixed",
     			"top": offsetPixels + "px",
     			"padding-top":  parseInt($("#content").css("padding-top")) + "px"
-<<<<<<< HEAD
     		});
-=======
-    		});
->>>>>>> 15092d6962f0958137ed5aa85e2eac8622f7e089
             $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
     	});
     }
@@ -2696,7 +2673,4 @@ function unfixHeader(){
     $(window).unbind('scroll');
     $(window).unbind('touchmove');
     $(window).unbind('resize');
-<<<<<<< HEAD
 }
-=======
->>>>>>> 15092d6962f0958137ed5aa85e2eac8622f7e089
