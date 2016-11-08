@@ -710,8 +710,6 @@ class Interview extends CActiveRecord
             }
             foreach ($ego_id_questions as $question)
             {
-                if($question['answerType'] == "STORED_VALUE" || $question['answerType'] == "RANDOM_NUMBER")
-                    continue;
 
                 #OK FOR SQL INJECTION
                 $result = Answer::model()->findByAttributes(array("interviewId" => $this->id, "questionId" => $question['id']));
@@ -724,20 +722,24 @@ class Interview extends CActiveRecord
                     {
                         if (isset($options[$optionId])){
                             $ego_ids[] = $options[$optionId];
-                            $ego_id_string[] = $optionLabels[$optionId];
+                            if($question['answerType'] != "STORED_VALUE" && $question['answerType'] != "RANDOM_NUMBER")
+                                $ego_id_string[] = $optionLabels[$optionId];
                         }else{
                             $ego_ids[] = "MISSING_OPTION ($optionId)";
-                            $ego_id_string[] = "MISSING_OPTION ($optionId)";
+                            if($question['answerType'] != "STORED_VALUE" && $question['answerType'] != "RANDOM_NUMBER")
+                                $ego_id_string[] = "MISSING_OPTION ($optionId)";
                         }
                     }
                     if(!$optionIds){
                         $ego_ids[] = "";
-                        $ego_id_string[] = "";
+                        if($question['answerType'] != "STORED_VALUE" && $question['answerType'] != "RANDOM_NUMBER")
+                            $ego_id_string[] = "";
                     }
                 } else
                 {
                     $ego_ids[] = str_replace(',', '', $answer);
-                    $ego_id_string[] = str_replace(',', '', $answer);
+                    if($question['answerType'] != "STORED_VALUE" && $question['answerType'] != "RANDOM_NUMBER")
+                        $ego_id_string[] = str_replace(',', '', $answer);
                 }
             }
             $answers[] = implode("_", $ego_id_string);
