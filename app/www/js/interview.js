@@ -162,18 +162,18 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 
         if($scope.questions[k].ANSWERTYPE == "TIME_SPAN"){
             $scope.time_spans[array_id] = new Object;
-			if(answers[array_id].VALUE.match(/(\d*)\sYEARS/))
-                $scope.time_spans[array_id].YEARS = answers[array_id].VALUE.match(/(\d*)\sYEARS/)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sMONTHS/))
-                $scope.time_spans[array_id].MONTHS = answers[array_id].VALUE.match(/(\d*)\sMONTHS/)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sWEEKS/))
-                $scope.time_spans[array_id].WEEKS = answers[array_id].VALUE.match(/(\d*)\sWEEKS/)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sDAYS/))
-                $scope.time_spans[array_id].DAYS = answers[array_id].VALUE.match(/(\d*)\sDAYS/)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sHOURS/))
-                $scope.time_spans[array_id].HOURS = answers[array_id].VALUE.match(/(\d*)\sHOURS/)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sMINUTES/))
-                $scope.time_spans[array_id].MINUTES = answers[array_id].VALUE.match(/(\d*)\sMINUTES/)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sYEARS/i))
+                $scope.time_spans[array_id].YEARS = answers[array_id].VALUE.match(/(\d*)\sYEARS/i)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sMONTHS/i))
+                $scope.time_spans[array_id].MONTHS = answers[array_id].VALUE.match(/(\d*)\sMONTHS/i)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sWEEKS/i))
+                $scope.time_spans[array_id].WEEKS = answers[array_id].VALUE.match(/(\d*)\sWEEKS/i)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sDAYS/i))
+                $scope.time_spans[array_id].DAYS = answers[array_id].VALUE.match(/(\d*)\sDAYS/i)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sHOURS/i))
+                $scope.time_spans[array_id].HOURS = answers[array_id].VALUE.match(/(\d*)\sHOURS/i)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sMINUTES/i))
+                $scope.time_spans[array_id].MINUTES = answers[array_id].VALUE.match(/(\d*)\sMINUTES/i)[1];
         }
 
         if($scope.questions[k].ANSWERTYPE == "DATE"){
