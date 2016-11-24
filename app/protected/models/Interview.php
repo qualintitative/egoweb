@@ -775,6 +775,25 @@ class Interview extends CActiveRecord
                                 $list[] = $options[$optionId];
                         }
                         $answers[] = implode('; ', $list);
+                    } else if ($question['answerType'] == "TIME_SPAN")
+                    {
+                        if(!strstr($answer->value, ";")){
+                            $times = array();
+                            if(preg_match("/(\d*)\sYEARS/i", $answer->value, $test))
+                                $times[] = $test[0];
+                            if(preg_match("/(\d*)\sMONTHS/i", $answer->value, $test))
+                                $times[] = $test[0];
+                            if(preg_match("/(\d*)\sWEEKS/i", $answer->value, $test))
+                                $times[] = $test[0];
+                            if(preg_match("/(\d*)\sDAYS/i", $answer->value, $test))
+                                $times[] = $test[0];
+                            if(preg_match("/(\d*)\sHOURS/i", $answer->value, $test))
+                                $times[] = $test[0];
+                            if(preg_match("/(\d*)\sMINUTES/i", $answer->value, $test))
+                                $times[] = $test[0];
+                            $answer->value = implode("; ", $times);
+                        }
+                        $answers[] = $answer->value;
                     } else
                     {
                         $answers[] = $answer->value;

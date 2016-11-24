@@ -517,20 +517,20 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     }
 
     $scope.timeValue = function (array_id){
-    	var date = "";
+    	var date = [];
     	if(!isNaN($scope.time_spans[array_id].YEARS))
-    	    date = $scope.time_spans[array_id].YEARS + ' YEARS ';
+    	    date.push($scope.time_spans[array_id].YEARS + ' YEARS');
     	if(!isNaN($scope.time_spans[array_id].MONTHS))
-    		date += $scope.time_spans[array_id].MONTHS + ' MONTHS ';
+    		date.push($scope.time_spans[array_id].MONTHS + ' MONTHS');
     	if(!isNaN($scope.time_spans[array_id].WEEKS))
-    		date += $scope.time_spans[array_id].WEEKS + ' WEEKS ';
+    		date.push($scope.time_spans[array_id].WEEKS + ' WEEKS');
     	if(!isNaN($scope.time_spans[array_id].DAYS))
-    		date += $scope.time_spans[array_id].DAYS + ' DAYS ';
+    		date.push($scope.time_spans[array_id].DAYS + ' DAYS');
     	if(!isNaN($scope.time_spans[array_id].HOURS))
-    		date += $scope.time_spans[array_id].HOURS + ' HOURS ';
+    		date.push($scope.time_spans[array_id].HOURS + ' HOURS');
     	if(!isNaN($scope.time_spans[array_id].MINUTES))
-    		date += $scope.time_spans[array_id].MINUTES + ' MINUTES';
-    	$scope.answers[array_id].VALUE = date;
+    		date.push($scope.time_spans[array_id].MINUTES + ' MINUTES');
+    	$scope.answers[array_id].VALUE = date.join("; ");
 		$scope.answers[array_id].SKIPREASON = "NONE";
 		for(k in $scope.options[array_id]){
     		if($scope.options[array_id][k].ID == "DONT_KNOW" || $scope.options[array_id][k].ID == "REFUSE")
