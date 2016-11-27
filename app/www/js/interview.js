@@ -53,7 +53,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.phrase = "";
     $scope.conclusion = false;
     $scope.redirect = false;
-    $scope.participants = false;
+    $scope.participants = [];
     
     if(typeof hashKey != "undefined"){
         $scope.hashKey = hashKey;
@@ -375,7 +375,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
 
         // check pre-defined participant list
-        if($scope.participants != false){
+        if($scope.participants.length > 0){
             if($scope.participants.indexOf($("#Alters_name").val().trim()) == -1){
                 console.log($scope.participants.indexOf($("#Alters_name").val().trim()));
                 $scope.errors[0] = 'Name not found in list';
@@ -667,29 +667,48 @@ app.directive('checkAnswer', [function (){
                     console.log(attr.answerType);
                     if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
             			var date = value.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
+            			var month = value.match(/January|February|March|April|May|June|July|August|September|October|November|December/);
+            			var year = value.match(/\d{4}/);
             			var time = value.match(/(\d+):(\d+) (AM|PM)/);
-            			if(typeof time != "undefined" && time && time.length > 2){
+            			if(time && time.length > 2){
             			    if(parseInt(time[1]) < 1 || parseInt(time[1]) > 12){
                                 scope.errors[array_id] = 'Please enter 1 to 12 for HH';
                             	valid = false;
             			    }
-            			    console.log(time);
             			    if(parseInt(time[2]) < 0 || parseInt(time[2]) > 59){
             			    	scope.errors[array_id] = 'Please enter 0 to 59 for MM';
             				    valid = false;
             			    }
             			}else{
+                			if(scope.timeBits(question.TIMEUNITS, 'MINUTE')){
+                		    	scope.errors[array_id] = 'Please enter the minutes';
+                			    valid = false;
+            			    }
                 			if(scope.timeBits(question.TIMEUNITS, 'HOUR')){
                 		    	scope.errors[array_id] = 'Please enter the time of day';
                 			    valid = false;
             			    }
             			}
-            			if(typeof date != "undefined" && date && date.length > 3){
+            			if(scope.timeBits(question.TIMEUNITS, 'YEAR') && !year){
+                            scope.errors[array_id] = 'Please enter a valid year';
+            				valid = false;
+            			}
+            			if(scope.timeBits(question.TIMEUNITS, 'MONTH') && !month){
+                            scope.errors[array_id] = 'Please enter a month';
+            				valid = false;
+            			}
+            			if(scope.timeBits(question.TIMEUNITS, 'MONTH') && scope.timeBits(question.TIMEUNITS, 'YEAR') && year && !date){
+                            scope.errors[array_id] = 'Please enter a day of the month';
+            				valid = false;
+            			}
+            			if(date){
             			    if(parseInt(date[2]) < 1 || parseInt(date[2]) > 31){
             			    	scope.errors[array_id] = 'Please enter a different number for the day of month';
             					valid = false;
             			    }
             			}
+            			if(valid == true)
+                            delete scope.errors[array_id];
         			}else{
                         delete scope.errors[array_id];
                     }
@@ -789,7 +808,7 @@ app.directive('checkAnswer', [function (){
                 if(attr.answerType == "TEXTUAL"){
                     if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
                         if(value == ""){
-                            scope.errors[array_id] = "Value cannot be blank...";
+                            scope.errors[array_id] = "Value cannot be blank";
                         	valid = false;
                     	}else{
                             delete scope.errors[array_id];
@@ -836,33 +855,51 @@ app.directive('checkAnswer', [function (){
         		}
 
                 if(attr.answerType == "DATE"){
-                    console.log(attr.answerType);
+                    console.log(scope.timeUnits);
                     if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
             			var date = value.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
+            			var month = value.match(/January|February|March|April|May|June|July|August|September|October|November|December/);
+            			var year = value.match(/\d{4}/);
             			var time = value.match(/(\d+):(\d+) (AM|PM)/);
-            			if(typeof time != "undefined" && time && time.length > 2){
-                            delete scope.errors[array_id];
+            			if(time && time.length > 2){
             			    if(parseInt(time[1]) < 1 || parseInt(time[1]) > 12){
                                 scope.errors[array_id] = 'Please enter 1 to 12 for HH';
                             	valid = false;
             			    }
-            			    console.log(time);
             			    if(parseInt(time[2]) < 0 || parseInt(time[2]) > 59){
             			    	scope.errors[array_id] = 'Please enter 0 to 59 for MM';
             				    valid = false;
             			    }
             			}else{
+                			if(scope.timeBits(question.TIMEUNITS, 'MINUTE')){
+                		    	scope.errors[array_id] = 'Please enter the minutes';
+                			    valid = false;
+            			    }
                 			if(scope.timeBits(question.TIMEUNITS, 'HOUR')){
                 		    	scope.errors[array_id] = 'Please enter the time of day';
                 			    valid = false;
             			    }
             			}
-            			if(typeof date != "undefined" && date && date.length > 3){
+            			if(scope.timeBits(question.TIMEUNITS, 'YEAR') && !year){
+                            scope.errors[array_id] = 'Please enter a valid year';
+            				valid = false;
+            			}
+            			if(scope.timeBits(question.TIMEUNITS, 'MONTH') && !month){
+                            scope.errors[array_id] = 'Please enter a month';
+            				valid = false;
+            			}
+            			if(scope.timeBits(question.TIMEUNITS, 'MONTH') && scope.timeBits(question.TIMEUNITS, 'YEAR') && year && !date){
+                            scope.errors[array_id] = 'Please enter a day of the month';
+            				valid = false;
+            			}
+            			if(date){
             			    if(parseInt(date[2]) < 1 || parseInt(date[2]) > 31){
             			    	scope.errors[array_id] = 'Please enter a different number for the day of month';
             					valid = false;
             			    }
             			}
+            			if(valid == true)
+                            delete scope.errors[array_id];
         			}else{
                         delete scope.errors[array_id];
                     }

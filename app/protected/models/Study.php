@@ -876,7 +876,7 @@ class Study extends CActiveRecord
 
 	public function export($interviewIds = array()){
 
-		$questions = Question::model()->findAllByAttributes(array('studyId'=>$this->id));
+		$questions = Question::model()->findAllByAttributes(array('studyId'=>$this->id),array('order'=>'subjectType, ordering'));
 		$expressions = Expression::model()->findAllByAttributes(array('studyId'=>$this->id));
 		//$answerLists = AnswerList::model()->findAllByAttributes(array('studyId'=>$this->id));
 		$alterLists = AlterList::model()->findAllByAttributes(array("studyId"=>$this->id));

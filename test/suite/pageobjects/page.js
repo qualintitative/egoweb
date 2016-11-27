@@ -3,7 +3,10 @@ function Page () {
 }
 
 Page.prototype.open = function (path = '') {
-    browser.url('/' + path)
+    if(path.match("http://"))
+        browser.url(path)
+    else
+        browser.url('/' + path)
 };
 
 module.exports = new Page();

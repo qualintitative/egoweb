@@ -25,6 +25,11 @@ var IwPage = Object.create(Page, {
             return browser.element('button.graybutton=Back');
         }
     },
+    finishButton: {
+        get: function () {
+            return browser.element('button.orangebutton=Finish');
+        }
+    },
     dkLabel: {
         get: function () {
             return browser.element('label=Don\'t Know')
@@ -67,6 +72,14 @@ var IwPage = Object.create(Page, {
         configurable: false
     },
 
+    // fake data to use in survey questions
+    navLinks: {
+        value: {},
+        enumerable: false,
+        writable: true,
+        configurable: false
+    },    
+    
     /**
      * define or overwrite page methods
      */
@@ -77,6 +90,48 @@ var IwPage = Object.create(Page, {
             } else {
                 return browser.element('input[name*="Answer"]');
             }
+        }
+    },
+
+    monthField: {
+        value: function () {
+            return browser.element('select');
+        }
+    },
+
+    dayField: {
+        value: function () {
+            return browser.element('input.day');
+        }
+    },
+
+    yearField: {
+        value: function () {
+            return browser.element('input.year');
+        }
+    },
+
+    hourField: {
+        value: function () {
+            return browser.element('input.hour');
+        }
+    },
+
+    minuteField: {
+        value: function () {
+            return browser.element('input.minute');
+        }
+    },
+
+    amField: {
+        value: function () {
+            return browser.element('input.am');
+        }
+    },
+
+    pmField: {
+        value: function () {
+            return browser.element('input.pm');
         }
     },
 
@@ -93,6 +148,13 @@ var IwPage = Object.create(Page, {
             while ((foo = IwPage.questionTitle.getText()) != question) {
                 this.back();
             }
+            this.pause();
+        }
+    },
+
+    goToQuestion: {
+        value: function (question) {
+            this.open(this.navLinks[question]);
             this.pause();
         }
     },
@@ -196,6 +258,13 @@ var IwPage = Object.create(Page, {
         }
     },
 
+    finish: {
+        value: function () {
+            this.finishButton.waitForVisible(browser.options.egoweb.waitTime);
+            this.finishButton.click();
+        }
+    },
+
     pause: {
         value: function () {
             browser.pause(browser.options.egoweb.pauseTime);
@@ -257,7 +326,7 @@ var IwPage = Object.create(Page, {
     getTableHeaderText: {
         value: function(col) {
             let selector = this.getTableCellSelector(1,col);
-            return browser.element(selector).getText();
+            return browser.element(selector).getHTML(false);
         }
     },
 
@@ -279,9 +348,8 @@ var IwPage = Object.create(Page, {
     },
 
     openInterview: {
-        value: function (interview) {
+        value: function (interview, startPage) {
             this.open('interview');
-
             browser.element("=" + interview).click();
 
             // search existing IDs to find max
@@ -289,21 +357,46 @@ var IwPage = Object.create(Page, {
             ids = browser.elements("table.items tr td");
 
             max = 0;
+            vals =  []
             ids.value.forEach(function (el) {
                 val = parseInt(browser.elementIdText(el.ELEMENT).value);
+                vals.push(val);
                 if (val > max) {
                     max = val;
                 }
             });
+    
+            if(browser.options.egoweb.reuseInterview == true && max != 0){
+                
+                // opens most recent interview
+                this.ewid = max;
+                browser.element('='+this.ewid).click();
+                
+                // set up nav links to be referenced by question title
+                let links = browser.getAttribute("#second li a","href");
+                let titles = browser.getHTML("#second li a", false);
+                for(i = 0; i < links.length; i++){
+                    this.navLinks[titles[i].replace(/<(?:.|\n)*?>/gm, '')] = links[i];
+                }
+                if(startPage != null)
+                    this.open(this.navLinks[startPage]);
+                else
+                    this.open(this.navLinks["INTRODUCTION"]);
+            }else{
+                this.ewid = max + 1 + Math.floor(Math.random() * 100);
+                this.startInterviewLink.click();
 
-            // pick a random ID higher than max, in case multiple tests/threads are running simultaneously
-            newid = max + 1 + Math.floor(Math.random() * 100);
-
-            // save ID
-            this.ewid = newid;
-
-            // start interview
-            this.startInterviewLink.click();
+                this.goForwardToQuestion("EGO_ID");
+        
+                // enter ego id
+                let id = this.inputField();
+                id.waitForExist(browser.options.egoweb.waitTime);
+                id.setValue(this.ewid);
+                this.nextButton.click();
+        
+                if(startPage != null)
+                    this.open(this.navLinks[startPage]);
+            }
 
             return this;
         }
