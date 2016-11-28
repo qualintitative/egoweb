@@ -74,6 +74,7 @@ describe('Alters', function () {
         browser.element("div=Please click the Next button").waitForVisible(browser.options.egoweb.waitTime);
         expect(IwPage.getAlterCount()).toBe(15);
         expect(IwPage.alterAddButton.isVisible()).toBe(false);
+        IwPage.updateNavLinks();
     });
 
     it("should add and remove alters", function() {
@@ -196,5 +197,39 @@ describe('Alters', function () {
         for (i=0; i<15; i++) {
             expect(IwPage.getTableRowHighlight(i+2)).toBe(false);
         }
+    });
+
+    it("should be able to cycle through alter pair pages and create network graph", function() {
+        IwPage.goToQuestion('alterpair1 - alpha');
+        var alter_pair_pages = 0;
+        for(k in IwPage.navLinks){
+            if(k.match("alterpair1")){
+                alter_pair_pages++;
+            }
+        }
+
+        expect(alter_pair_pages).toBe(IwPage.fieldValues.ALTER_PROMPT.values.length - 1);
+
+        // iterates through alter pair questions and fills them out randomly
+        for(i = 0; i < alter_pair_pages; i++){
+            browser.scroll(0,0);
+            browser.pause();
+            browser.element("div=Please select 1 response for each row").waitForVisible(browser.options.egoweb.waitTime);
+            for (j=2; j<16-i; j++) {
+                browser.scroll(0, (j-2)*56);
+                IwPage.pause();
+                let x = Math.floor(Math.random()*(4-2+1)+2);
+                IwPage.getTableCellInputElement(j,x).click();
+            }
+            IwPage.next();
+        }
+        
+        //see if graph has right number of nodes
+        browser.pause(5000);
+        let result = browser.execute(function() {
+            return s.graph.nodes().length;
+        })
+        
+        expect(result.value).toBe(15);
     });
 });

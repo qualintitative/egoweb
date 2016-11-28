@@ -347,6 +347,18 @@ var IwPage = Object.create(Page, {
         }
     },
 
+
+    updateNavLinks: {
+        value: function() {
+            // set up nav links to be referenced by question title
+            let links = browser.getAttribute("#second li a","href");
+            let titles = browser.getHTML("#second li a", false);
+            for(i = 0; i < links.length; i++){
+                this.navLinks[titles[i].replace(/<(?:.|\n)*?>/gm, '')] = links[i];
+            }
+        }
+    },
+
     openInterview: {
         value: function (interview, startPage) {
             this.open('interview');
@@ -371,13 +383,9 @@ var IwPage = Object.create(Page, {
                 // opens most recent interview
                 this.ewid = max;
                 browser.element('='+this.ewid).click();
-                
-                // set up nav links to be referenced by question title
-                let links = browser.getAttribute("#second li a","href");
-                let titles = browser.getHTML("#second li a", false);
-                for(i = 0; i < links.length; i++){
-                    this.navLinks[titles[i].replace(/<(?:.|\n)*?>/gm, '')] = links[i];
-                }
+
+                this.updateNavLinks();
+
                 if(startPage != null)
                     this.open(this.navLinks[startPage]);
                 else
@@ -386,14 +394,15 @@ var IwPage = Object.create(Page, {
                 this.ewid = max + 1 + Math.floor(Math.random() * 100);
                 this.startInterviewLink.click();
 
-                this.goForwardToQuestion("EGO_ID");
+                this.goForwardToQuestion("EGO ID");
         
                 // enter ego id
                 let id = this.inputField();
                 id.waitForExist(browser.options.egoweb.waitTime);
                 id.setValue(this.ewid);
-                this.nextButton.click();
-        
+                this.next();
+                this.updateNavLinks();
+
                 if(startPage != null)
                     this.open(this.navLinks[startPage]);
             }
