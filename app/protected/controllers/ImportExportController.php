@@ -276,6 +276,7 @@ class ImportExportController extends Controller
             				}
             				$question->networkParams = json_encode($params);
         				}
+
                         if(isset($newExpressionIds[$question->answerReasonExpressionId]))
         				    $question->answerReasonExpressionId = $newExpressionIds[$question->answerReasonExpressionId];
                         else
@@ -499,7 +500,21 @@ class ImportExportController extends Controller
 								$newAnswer->value = implode(',', $values);
 							}
 
-
+    						if($newAnswer->otherSpecifyText != ""){
+        						$otherSpecifies = array();
+        						foreach(preg_split('/;;/', $newAnswer->otherSpecifyText) as $otherSpecify){
+                                    if(strstr($otherSpecify, ':')){
+        						    	list($optionId, $val) = preg_split('/:/', $otherSpecify);
+        						    	if(isset($newOptionIds[intval($optionId)]))
+            						    	$optionId = $newOptionIds[intval($optionId)];
+                                        $otherSpecifies[] = $optionId.":".$val;
+            						}
+        						}
+        						if(count($otherSpecifies) > 0){
+            						$newAnswer->otherSpecifyText = implode(";;", $otherSpecifies);
+        						}
+    						}
+						
     						$newAnswer->studyId = $newStudy->id;
     						$newAnswer->interviewId = $newInterview->id;
 

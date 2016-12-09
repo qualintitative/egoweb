@@ -3,6 +3,9 @@
 /* @var $this AdminController */
 $this->pageTitle =  "Admin";
 
+echo  decrypt("G7dAopA6940OzyQ4bgd2ug==");
+echo "<br>";
+echo decrypt("wXetk+J7/bsaLxW99xNXLsz863HKvAc9bD4pabhjhTjpzvHjMustZZYUr6nzpLti");
 ?>
 	<table cellspacing=0 cellpadding=0 class="admin">
 	<tr>
