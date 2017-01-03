@@ -50,7 +50,7 @@ class Study extends CActiveRecord
 			array('name', 'filter', 'filter'=>function($param) {return CHtml::encode(strip_tags($param));}),
 			array('active', 'numerical', 'integerOnly'=>true),
 			array('id, active, name, minAlters, maxAlters, multiSessionEgoId', 'length', 'max'=>255),
-			array('introduction, egoIdPrompt, alterPrompt, conclusion, style, javascript, footer', 'length', 'max'=>4294967295),
+			array('introduction, egoIdPrompt, alterPrompt, conclusion, style, javascript, footer, header', 'length', 'max'=>4294967295),
 
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -876,7 +876,7 @@ class Study extends CActiveRecord
 
 	public function export($interviewIds = array()){
 
-		$questions = Question::model()->findAllByAttributes(array('studyId'=>$this->id));
+		$questions = Question::model()->findAllByAttributes(array('studyId'=>$this->id),array('order'=>'subjectType, ordering'));
 		$expressions = Expression::model()->findAllByAttributes(array('studyId'=>$this->id));
 		//$answerLists = AnswerList::model()->findAllByAttributes(array('studyId'=>$this->id));
 		$alterLists = AlterList::model()->findAllByAttributes(array("studyId"=>$this->id));

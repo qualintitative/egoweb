@@ -5,15 +5,9 @@ Latest Build: <b><?= $date ?></b>
 <br><br>
 <ul>
 
-<li>Download the <a href="/egowebmobile.mobileprovision">provision file</a></li>
+<li>In the App Store, search for Egoweb Mobile</li>
 
-<li>Download the <a href="/EgoWebMobile.ipa">app</a></li>
-
-<li>Open both files in iTunes.</li>
-
-<li>Connect your device, and click on the Apps tab.  EgoWeb Mobile should appear on the list.</li>
-
-<li>Click on "Install" to the right of EgoWeb Mobile, then click on "Done" on top of the page to download and install the App on your device.</li>
+<li>Download and install app.  <font color="#ff0000">App will only work with the latest egoweb servers.</font></li>
 
 </ul>
 

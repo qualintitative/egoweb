@@ -38,7 +38,7 @@ function exportOther(){
 	$('#analysis').submit();
 }
 function exportOtherLegacy(){
-	$('#analysis').attr('action', '/data/oldexportother');
+	$('#analysis').attr('action', '/data/legacyexportother');
 	$('#analysis').submit();
 }
 function exportAlterList(){

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<study id="1" name="TEST_WDIO_BASIC" minAlters="0" maxAlters="20" valueDontKnow="-2" valueLogicalSkip="-3" valueNotYetAnswered="-4" valueRefusal="-1" modified="2016-09-06 16:38:17" multiSessionEgoId="0" useAsAlters="0" restrictAlters="0" fillAlterList="0" hideEgoIdPage="0">
+	<introduction>Welcome to test1!&lt;br&gt;</introduction>
+	<egoIdPrompt>What is the ego id?</egoIdPrompt>
+	<alterPrompt>Having it over there would be more confusing for the rest of the instructions. It displays how many are left to enter, so having that right above the text box is the best spot. As they enter each name they are shown the &lt;a href=&quot;https://www.yammer.com/egoweb/topics/6999052&quot; class=&quot;yammer-object&quot; data-yammer-object=&quot;tag:4956205&quot; data-resource-id=&quot;4956205&quot; data-resource-model=&quot;tag&quot; dir=&quot;auto&quot;&gt;#s&lt;/a&gt; entered going up and the &lt;a href=&quot;https://www.yammer.com/egoweb/topics/6999052&quot; class=&quot;yammer-object&quot; data-yammer-object=&quot;tag:4956205&quot; data-resource-id=&quot;4956205&quot; data-resource-model=&quot;tag&quot; dir=&quot;auto&quot;&gt;#s&lt;/a&gt; left to enter going down. They would have to move their eyes back and forth for each name and it would keep drawing their eye to the &quot;Next&quot; button. I feel like that would make them even more inclined to hit the next button. If we make that text when they are at 0 alters say &quot;Click the +Add button&quot; that will reduce accidental &quot;next&quot; button clicks.&lt;br&gt;&lt;br&gt;We could add an additional text display over the &quot;Next&quot; button that goes away after they enter 1 name I guess but I don&#039;t want to change the other text location. It would make it weird for the other studies without the ALP style. Who are the alters?</alterPrompt>
+	<conclusion>Thank you!</conclusion>
+	<alterPrompts>
+			<alterPrompt id="2" studyId="1" afterAltersEntered="0" display="Please enter a name and click the &quot;add&quot; button!"/>
+			<alterPrompt id="3" studyId="1" afterAltersEntered="1" display="Click the Next button when you are done adding alters"/>
+	</alterPrompts>
+	<questions>
+		<question id="1" title="id" answerType="TEXTUAL" subjectType="EGO_ID" askingStyleList="" ordering="0" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="" networkRelationshipExprId="" networkParams="" refuseButton="" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>id</prompt>
+			<citation></citation>
+		</question>
+		<question id="2" title="num" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="1" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>basic number&lt;br&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="4" title="alter1" answerType="TEXTUAL" subjectType="ALTER" askingStyleList="0" ordering="0" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>What do you think about that alter?</prompt>
+			<citation></citation>
+		</question>
+		<question id="5" title="first" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="0" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>First Question</prompt>
+			<citation></citation>
+		</question>
+		<question id="6" title="numdkrf" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="2" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>basic number with dk/rf</prompt>
+			<citation></citation>
+		</question>
+		<question id="7" title="num0to100" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="3" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="NLT_LITERAL" minLiteral="0" minPrevQues="" maxLimitType="NLT_LITERAL" maxLiteral="100" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>number with range of min 0, max 100</prompt>
+			<citation></citation>
+		</question>
+		<question id="8" title="nr" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="4" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>no response</prompt>
+			<citation></citation>
+		</question>
+		<question id="9" title="nrdkrf" answerType="NO_RESPONSE" subjectType="EGO" askingStyleList="0" ordering="5" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="" minPrevQues="" maxLimitType="" maxLiteral="" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="" maxListRange="" timeUnits="" symmetric="0" keepOnSamePage="" useAlterListField="">
+			<preface></preface>
+			<prompt>no response, with dk/rf</prompt>
+			<citation></citation>
+		</question>
+	</questions>
+</study>

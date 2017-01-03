@@ -8,8 +8,10 @@ class ImportExportController extends Controller
                 $message = false;;
                 break;
             case UPLOAD_ERR_INI_SIZE:
+                $message .= ' - file(s) too large.  upload size defined in php.ini exceeded';
+                break;
             case UPLOAD_ERR_FORM_SIZE:
-                $message .= ' - file too large (limit of '.get_max_upload().' bytes).';
+                $message .= ' - file(s) too large.  upload size defined in html exceeded';
                 break;
             case UPLOAD_ERR_PARTIAL:
                 $message .= ' - file upload was not completed.';
@@ -60,6 +62,8 @@ class ImportExportController extends Controller
     			}
     			if(isset($_POST['newName']) && $_POST['newName'])
     				$newStudy->name = $_POST['newName'];
+
+                $newStudy->userId = Yii::app()->user->id;
 
     			if(!$newStudy->save()){
     				echo "study: " . print_r($newStudy->getErrors());
@@ -272,6 +276,7 @@ class ImportExportController extends Controller
             				}
             				$question->networkParams = json_encode($params);
         				}
+
                         if(isset($newExpressionIds[$question->answerReasonExpressionId]))
         				    $question->answerReasonExpressionId = $newExpressionIds[$question->answerReasonExpressionId];
                         else
@@ -495,7 +500,21 @@ class ImportExportController extends Controller
 								$newAnswer->value = implode(',', $values);
 							}
 
-
+    						if($newAnswer->otherSpecifyText != ""){
+        						$otherSpecifies = array();
+        						foreach(preg_split('/;;/', $newAnswer->otherSpecifyText) as $otherSpecify){
+                                    if(strstr($otherSpecify, ':')){
+        						    	list($optionId, $val) = preg_split('/:/', $otherSpecify);
+        						    	if(isset($newOptionIds[intval($optionId)]))
+            						    	$optionId = $newOptionIds[intval($optionId)];
+                                        $otherSpecifies[] = $optionId.":".$val;
+            						}
+        						}
+        						if(count($otherSpecifies) > 0){
+            						$newAnswer->otherSpecifyText = implode(";;", $otherSpecifies);
+        						}
+    						}
+						
     						$newAnswer->studyId = $newStudy->id;
     						$newAnswer->interviewId = $newInterview->id;
 

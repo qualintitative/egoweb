@@ -279,25 +279,7 @@ class InterviewController extends Controller
         $key = "";
         if(isset($_POST["hashKey"]))
             $key = $_POST["hashKey"];
-		if(isset($_POST['Answer'][0]) && $_POST['Answer'][0]['answerType'] == "CONCLUSION"){
-			$interview = Interview::model()->findByPk((int)$_POST['Answer'][0]['interviewId']);
-			$interview->completed = -1;
-			$interview->complete_date = time();
-			$interview->save();
 
-			if(isset(Yii::app()->params['exportFilePath']) && Yii::app()->params['exportFilePath'])
-				$this->exportInterview($interview->id);
-
-            /*
-			if(isset(Yii::app()->session['redirect']))
-				$this->redirect(Yii::app()->session['redirect']);
-			else if(Yii::app()->user->isGuest)
-				$this->redirect(Yii::app()->createUrl(''));
-			else
-				$this->redirect(Yii::app()->createUrl('admin/'));
-            */
-            Yii::app()->end();
-		}
         $interviewId = null;
 		foreach($_POST['Answer'] as $Answer){
 
@@ -333,12 +315,13 @@ class InterviewController extends Controller
 						$array_id = $ego_id['questionId'];
 						$answers[$array_id] = new Answer;
 						$answers[$array_id]->attributes = $ego_id;
-						if(stristr(Question::getTitle($ego_id['questionId']), 'email')){
-							$email = $ego_id['value'];
-							$email_id = $array_id;
+						$ego_id_q = Question::model()->findByPk($ego_id['questionId']);
+						if(in_array($ego_id_q->useAlterListField, array("name", "email", "id"))){
+							$keystr = $ego_id['value'];
+							//$email_id = $array_id;
 						}
 					}
-					if(!$key || ($key && User::hashPassword($email) != $key)){
+					if(!$key || ($key && User::hashPassword($keystr) != $key)){
 						//$model[$email_id]->addError('value', 'You do not have the correct email for this survey.');
 						$errors++;
 						break;
@@ -399,6 +382,17 @@ class InterviewController extends Controller
 		foreach($answers as $index => $answer){
     		$json[$index] = mToA($answer);
 		}
+
+		if(isset($_POST['conclusion'])){
+			$interview = Interview::model()->findByPk((int)$interviewId);
+			$interview->completed = -1;
+			$interview->complete_date = time();
+			$interview->save();
+
+			if(isset(Yii::app()->params['exportFilePath']) && Yii::app()->params['exportFilePath'])
+				$this->exportInterview($interview->id);
+		}
+
 		if($errors == 0)
     		echo json_encode($json);
         else
@@ -428,24 +422,33 @@ class InterviewController extends Controller
 			if(in_array($_POST['Alters']['name'], $alterNames)){
 				$model->addError('name', $_POST['Alters']['name']. ' has already been added!');
 			}
-
+			
+            $pre_names = array();
+            $preset_alters = AlterList::model()->findAllByAttributes(array("studyId"=>$studyId));
+            foreach($preset_alters as $alter){
+                $pre_names[] = $alter->name;
+            }
             #OK FOR SQL INJECTION
 			$study = Study::model()->findByPk((int)$studyId);
 
 			// check to see if pre-defined alters exist.  If they do exist, check name against list
 			if($study->useAsAlters){
                 #OK FOR SQL INJECTION
-				$alterCount = q("SELECT count(id) FROM alterList WHERE studyId = ".$studyId)->queryScalar();
-				if($alterCount > 0){
+				//$alterCount = q("SELECT count(id) FROM alterList WHERE studyId = ".$studyId)->queryScalar();
+				if(count($pre_names) > 0){
                     #OK FOR SQL INJECTION
                     $params = new stdClass();
                     $params->name = ':name';
-                    $params->value = $_POST['Alters']['name'];
+                    $params->value = encrypt($_POST['Alters']['name']);
+                    //echo encrypt($_POST['Alters']['name']);
+                
                     $params->dataType = PDO::PARAM_STR;
-					$nameInList = q('SELECT name FROM alterList WHERE name = :name AND studyId = '. $studyId, array($params))->queryScalar();
-					if(!$nameInList && $study->restrictAlters){
+        			if(!in_array($_POST['Alters']['name'], $pre_names)){
 						$model->addError('name', $_POST['Alters']['name']. ' is not in our list of participants');
-					}
+                    }
+					//$nameInList = q('SELECT name FROM alterList WHERE name = :name AND studyId = '. $studyId, array($params))->queryScalar();
+					//if(!$nameInList && $study->restrictAlters){
+					//}
 				}
 			}
 

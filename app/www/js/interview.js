@@ -48,8 +48,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.keys = Object.keys;
     $scope.hashKey = "";
     $scope.interview = interview;
+    $scope.header = $sce.trustAsHtml(study.HEADER);
     $scope.footer = $sce.trustAsHtml(study.FOOTER);
-    console.clear();
+    $scope.phrase = "";
+    $scope.conclusion = false;
+    $scope.redirect = false;
+    $scope.participants = [];
     
     if(typeof hashKey != "undefined"){
         $scope.hashKey = hashKey;
@@ -60,13 +64,16 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
     }
 
+    if (typeof redirect !== 'undefined' && redirect)
+        $scope.redirect = redirect;
+
     for(k in audio){
         $scope.audio[k] = audio[k];
         $scope.audioFiles[k] = new Audio();
         $scope.audioFiles[k].src = audio[k];
     }
 
-    $scope.nav = buildNav($scope.page);
+    $scope.nav = buildNav($scope.page, $scope);
 
     if(!isGuest){
         $('#navbox ul').html("");
@@ -155,18 +162,18 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 
         if($scope.questions[k].ANSWERTYPE == "TIME_SPAN"){
             $scope.time_spans[array_id] = new Object;
-			if(answers[array_id].VALUE.match(/(\d*)\sYEARS/))
-                $scope.time_spans[array_id].YEARS = answers[array_id].VALUE.match(/(\d*)\sYEARS/)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sMONTHS/))
-                $scope.time_spans[array_id].MONTHS = answers[array_id].VALUE.match(/(\d*)\sMONTHS/)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sWEEKS/))
-                $scope.time_spans[array_id].WEEKS = answers[array_id].VALUE.match(/(\d*)\sWEEKS/)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sDAYS/))
-                $scope.time_spans[array_id].DAYS = answers[array_id].VALUE.match(/(\d*)\sDAYS/)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sHOURS/))
-                $scope.time_spans[array_id].HOURS = answers[array_id].VALUE.match(/(\d*)\sHOURS/)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sMINUTES/))
-                $scope.time_spans[array_id].MINUTES = answers[array_id].VALUE.match(/(\d*)\sMINUTES/)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sYEARS/i))
+                $scope.time_spans[array_id].YEARS = answers[array_id].VALUE.match(/(\d*)\sYEARS/i)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sMONTHS/i))
+                $scope.time_spans[array_id].MONTHS = answers[array_id].VALUE.match(/(\d*)\sMONTHS/i)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sWEEKS/i))
+                $scope.time_spans[array_id].WEEKS = answers[array_id].VALUE.match(/(\d*)\sWEEKS/i)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sDAYS/i))
+                $scope.time_spans[array_id].DAYS = answers[array_id].VALUE.match(/(\d*)\sDAYS/i)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sHOURS/i))
+                $scope.time_spans[array_id].HOURS = answers[array_id].VALUE.match(/(\d*)\sHOURS/i)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sMINUTES/i))
+                $scope.time_spans[array_id].MINUTES = answers[array_id].VALUE.match(/(\d*)\sMINUTES/i)[1];
         }
 
         if($scope.questions[k].ANSWERTYPE == "DATE"){
@@ -187,6 +194,54 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             else
 				$scope.dates[array_id].AMPM = "";
         }
+
+        if($scope.questions[k].ANSWERTYPE == "MULTIPLE_SELECTION"){
+			$scope.phrase = "Please select ";
+			if($scope.questions[k].MINCHECKABLEBOXES != null && $scope.questions[k].MINCHECKABLEBOXES != "" && $scope.questions[k].MAXCHECKABLEBOXES != "" && $scope.questions[k].MINCHECKABLEBOXES == $scope.questions[k].MAXCHECKABLEBOXES)
+				$scope.phrase += $scope.questions[k].MAXCHECKABLEBOXES;
+			else if($scope.questions[k].MINCHECKABLEBOXES != "" && $scope.questions[k].MAXCHECKABLEBOXES != "" && $scope.questions[k].MINCHECKABLEBOXES != $scope.questions[k].MAXCHECKABLEBOXES)
+				$scope.phrase += $scope.questions[k].MINCHECKABLEBOXES + " to " + $scope.questions[k].MAXCHECKABLEBOXES;
+			else if ($scope.questions[k].MINCHECKABLEBOXES == "" && $scope.questions[k].MAXCHECKABLEBOXES != "")
+				$scope.phrase += " up to " + $scope.questions[k].MAXCHECKABLEBOXES ;
+			else if ($scope.questions[k].MINCHECKABLEBOXES != "" && $scope.questions[k].MAXCHECKABLEBOXES == "")
+				$scope.phrase += " at least " + $scope.questions[k].MINCHECKABLEBOXES ;
+                
+			if($scope.questions[k].MAXCHECKABLEBOXES == 1)
+				$scope.phrase += " response";
+			else
+				$scope.phrase += " responses";
+			if($scope.questions[k].ASKINGSTYLELIST == 1 && $scope.questions[k].WITHLISTRANGE == false)
+				$scope.phrase += " for each row";
+		}
+
+		if ($scope.questions[k].ANSWERTYPE == "NUMERICAL" && $scope.questions[k].SUBJECTTYPE != "EGO_ID"){
+			var min = ""; var max = "";
+			if($scope.questions[k].MINLIMITTYPE == "NLT_LITERAL"){
+				min = $scope.questions[k].MINLITERAL;
+			}else if($scope.questions[k].MINLIMITTYPE == "NLT_PREVQUES"){
+    			if(typeof answers[$scope.questions[k].MINPREVQUES] != "undefined")
+    				min = answers[$scope.questions[k].MINPREVQUES];
+				else
+					min = "";
+			}
+			if($scope.questions[k].MAXLIMITTYPE == "NLT_LITERAL"){
+				max = $scope.questions[k].MAXLITERAL;
+			}else if($scope.questions[k].MAXLIMITTYPE == "NLT_PREVQUES"){
+    			if(typeof answers[$scope.questions[k].MAXPREVQUES] != "undefined")
+					max = answers[$scope.questions[k].MAXPREVQUES];
+				else
+					max = "";
+			}
+
+			if(min != "" && max != "")
+				$scope.phrase = "Please enter a number from " + min + " to " + max;
+			else if (min == "" && max != "")
+				$scope.phrase = "Please enter a number (" + max + " or lower)";
+			else if (min != "" && max == "")
+				$scope.phrase = "Please enter a number (" + min + " or higher)";
+			if($scope.questions[k].ASKINGSTYLELIST == 1 && $scope.questions[k].WITHLISTRANGE == false && $scope.phrase != "" && !$scope.phrase.match("for each row"))
+				$scope.phrase += " for each row";
+		}
 
         if($scope.questions[k].DONTKNOWBUTTON == true){
             var button = new Object;
@@ -209,6 +264,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
 
         columns = Object.keys($scope.options[array_id]).length;
+        if(columns == 0)
+            columns = 1;
+        if($scope.askingStyleList == false)
+            columns = 1;
+        if($scope.askingStyleList != false && ($scope.questions[k].ANSWERTYPE == "NUMERICAL" || $scope.questions[k].ANSWERTYPE == "TEXTUal"))
+            columns = columns + 1;
         if(typeof $scope.answers[array_id].OTHERSPECIFYTEXT != "undefined" && $scope.answers[array_id].OTHERSPECIFYTEXT != null && $scope.answers[array_id].OTHERSPECIFYTEXT != ""){
             $scope.otherSpecify[array_id] = {};
             var specify = $scope.answers[array_id].OTHERSPECIFYTEXT.split(";;");
@@ -259,11 +320,17 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
         setTimeout(
             function(){
+                eval($scope.questions[k].JAVASCRIPT);
+                $(window).scrollTop(0);
+                if($scope.askingStyleList != false){
+                    fixHeader();
+                }else{
+                    unfixHeader();
+                }
                 if(typeof $(".answerInput")[0] != "undefined")
                     $(".answerInput")[0].focus();
                 if(!isGuest && typeof $("#second") != "undefined")
                     $("#second").scrollTop($("#second").scrollTop() - $("#second").offset().top + $("#menu_" + $scope.page).offset().top);
-                eval($scope.questions[k].JAVASCRIPT);
             },
         1);
     }
@@ -306,9 +373,21 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 $scope.errors[0] = 'That name is already listed';
             }
         }
+
+        // check pre-defined participant list
+        if($scope.participants.length > 0){
+            if($scope.participants.indexOf($("#Alters_name").val().trim()) == -1){
+                console.log($scope.participants.indexOf($("#Alters_name").val().trim()));
+                $scope.errors[0] = 'Name not found in list';
+            }
+        }
+
         if($("#Alters_name").val().trim() == ""){
             $scope.errors[0] = 'Name cannot be blank';
         }
+
+        console.log($scope.errors[0]);
+
         // check to make sure the form is completely valid
         if($scope.errors[0] == false){
             saveAlter.getAlters().then(function(data){
@@ -408,7 +487,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     				values.splice(values.indexOf(v),1);
                 }
     		}
-        	if(values.length > question.MAXCHECKABLEBOXES){
+        	if(question.MAXCHECKABLEBOXES != null && values.length > question.MAXCHECKABLEBOXES){
         		value = values.shift();
         		for(k in $scope.options[array_id]){
             		if($scope.options[array_id][k].ID == value)
@@ -438,20 +517,20 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     }
 
     $scope.timeValue = function (array_id){
-    	var date = "";
+    	var date = [];
     	if(!isNaN($scope.time_spans[array_id].YEARS))
-    	    date = $scope.time_spans[array_id].YEARS + ' YEARS ';
+    	    date.push($scope.time_spans[array_id].YEARS + ' YEARS');
     	if(!isNaN($scope.time_spans[array_id].MONTHS))
-    		date += $scope.time_spans[array_id].MONTHS + ' MONTHS ';
+    		date.push($scope.time_spans[array_id].MONTHS + ' MONTHS');
     	if(!isNaN($scope.time_spans[array_id].WEEKS))
-    		date += $scope.time_spans[array_id].WEEKS + ' WEEKS ';
+    		date.push($scope.time_spans[array_id].WEEKS + ' WEEKS');
     	if(!isNaN($scope.time_spans[array_id].DAYS))
-    		date += $scope.time_spans[array_id].DAYS + ' DAYS ';
+    		date.push($scope.time_spans[array_id].DAYS + ' DAYS');
     	if(!isNaN($scope.time_spans[array_id].HOURS))
-    		date += $scope.time_spans[array_id].HOURS + ' HOURS ';
+    		date.push($scope.time_spans[array_id].HOURS + ' HOURS');
     	if(!isNaN($scope.time_spans[array_id].MINUTES))
-    		date += $scope.time_spans[array_id].MINUTES + ' MINUTES';
-    	$scope.answers[array_id].VALUE = date;
+    		date.push($scope.time_spans[array_id].MINUTES + ' MINUTES');
+    	$scope.answers[array_id].VALUE = date.join("; ");
 		$scope.answers[array_id].SKIPREASON = "NONE";
 		for(k in $scope.options[array_id]){
     		if($scope.options[array_id][k].ID == "DONT_KNOW" || $scope.options[array_id][k].ID == "REFUSE")
@@ -588,29 +667,48 @@ app.directive('checkAnswer', [function (){
                     console.log(attr.answerType);
                     if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
             			var date = value.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
+            			var month = value.match(/January|February|March|April|May|June|July|August|September|October|November|December/);
+            			var year = value.match(/\d{4}/);
             			var time = value.match(/(\d+):(\d+) (AM|PM)/);
-            			if(typeof time != "undefined" && time && time.length > 2){
+            			if(time && time.length > 2){
             			    if(parseInt(time[1]) < 1 || parseInt(time[1]) > 12){
                                 scope.errors[array_id] = 'Please enter 1 to 12 for HH';
                             	valid = false;
             			    }
-            			    console.log(time);
             			    if(parseInt(time[2]) < 0 || parseInt(time[2]) > 59){
             			    	scope.errors[array_id] = 'Please enter 0 to 59 for MM';
             				    valid = false;
             			    }
             			}else{
+                			if(scope.timeBits(question.TIMEUNITS, 'MINUTE')){
+                		    	scope.errors[array_id] = 'Please enter the minutes';
+                			    valid = false;
+            			    }
                 			if(scope.timeBits(question.TIMEUNITS, 'HOUR')){
                 		    	scope.errors[array_id] = 'Please enter the time of day';
                 			    valid = false;
             			    }
             			}
-            			if(typeof date != "undefined" && date && date.length > 3){
+            			if(scope.timeBits(question.TIMEUNITS, 'YEAR') && !year){
+                            scope.errors[array_id] = 'Please enter a valid year';
+            				valid = false;
+            			}
+            			if(scope.timeBits(question.TIMEUNITS, 'MONTH') && !month){
+                            scope.errors[array_id] = 'Please enter a month';
+            				valid = false;
+            			}
+            			if(scope.timeBits(question.TIMEUNITS, 'MONTH') && scope.timeBits(question.TIMEUNITS, 'YEAR') && year && !date){
+                            scope.errors[array_id] = 'Please enter a day of the month';
+            				valid = false;
+            			}
+            			if(date){
             			    if(parseInt(date[2]) < 1 || parseInt(date[2]) > 31){
             			    	scope.errors[array_id] = 'Please enter a different number for the day of month';
             					valid = false;
             			    }
             			}
+            			if(valid == true)
+                            delete scope.errors[array_id];
         			}else{
                         delete scope.errors[array_id];
                     }
@@ -621,16 +719,16 @@ app.directive('checkAnswer', [function (){
         			min = question.MINCHECKABLEBOXES;
         			max = question.MAXCHECKABLEBOXES;
         			var numberErrors = 0; var showError = false; var errorMsg = "";
-        			if(min !== "")
+        			if(min !== "" && min != null)
         				numberErrors++;
-        			if(max !== "")
+        			if(max !== "" && max != null)
         				numberErrors = numberErrors + 2;
 
         			checkedBoxes = value.split(',').length;
         			if(!value)
         				checkedBoxes = 0;
 
-        			if ((checkedBoxes < min || checkedBoxes > max) && scope.answers[array_id].SKIPREASON == "NONE")
+        			if (numberErrors != 0 && (checkedBoxes < min || checkedBoxes > max) && scope.answers[array_id].SKIPREASON == "NONE")
         				showError = true;
         			//console.log('min:' + min + ':max:' + max + ':checked:' + checkedBoxes+ ":answer:" + value + ":showerror:" + showError);
 
@@ -684,7 +782,6 @@ app.directive('checkAnswer', [function (){
                     scope.errors[array_id] = "Please select "  + errorMsg + " response(s).  You selected " + checks;
     
     			}else{
-        			console.log("pass: " + valid);
         			for(k in scope.errors){
             			if(scope.errors[k].match("Please select "))
             			    delete scope.errors[k];
@@ -711,7 +808,7 @@ app.directive('checkAnswer', [function (){
                 if(attr.answerType == "TEXTUAL"){
                     if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
                         if(value == ""){
-                            scope.errors[array_id] = "Value cannot be blank...";
+                            scope.errors[array_id] = "Value cannot be blank";
                         	valid = false;
                     	}else{
                             delete scope.errors[array_id];
@@ -758,33 +855,51 @@ app.directive('checkAnswer', [function (){
         		}
 
                 if(attr.answerType == "DATE"){
-                    console.log(attr.answerType);
+                    console.log(scope.timeUnits);
                     if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
             			var date = value.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
+            			var month = value.match(/January|February|March|April|May|June|July|August|September|October|November|December/);
+            			var year = value.match(/\d{4}/);
             			var time = value.match(/(\d+):(\d+) (AM|PM)/);
-            			if(typeof time != "undefined" && time && time.length > 2){
-                            delete scope.errors[array_id];
+            			if(time && time.length > 2){
             			    if(parseInt(time[1]) < 1 || parseInt(time[1]) > 12){
                                 scope.errors[array_id] = 'Please enter 1 to 12 for HH';
                             	valid = false;
             			    }
-            			    console.log(time);
             			    if(parseInt(time[2]) < 0 || parseInt(time[2]) > 59){
             			    	scope.errors[array_id] = 'Please enter 0 to 59 for MM';
             				    valid = false;
             			    }
             			}else{
+                			if(scope.timeBits(question.TIMEUNITS, 'MINUTE')){
+                		    	scope.errors[array_id] = 'Please enter the minutes';
+                			    valid = false;
+            			    }
                 			if(scope.timeBits(question.TIMEUNITS, 'HOUR')){
                 		    	scope.errors[array_id] = 'Please enter the time of day';
                 			    valid = false;
             			    }
             			}
-            			if(typeof date != "undefined" && date && date.length > 3){
+            			if(scope.timeBits(question.TIMEUNITS, 'YEAR') && !year){
+                            scope.errors[array_id] = 'Please enter a valid year';
+            				valid = false;
+            			}
+            			if(scope.timeBits(question.TIMEUNITS, 'MONTH') && !month){
+                            scope.errors[array_id] = 'Please enter a month';
+            				valid = false;
+            			}
+            			if(scope.timeBits(question.TIMEUNITS, 'MONTH') && scope.timeBits(question.TIMEUNITS, 'YEAR') && year && !date){
+                            scope.errors[array_id] = 'Please enter a day of the month';
+            				valid = false;
+            			}
+            			if(date){
             			    if(parseInt(date[2]) < 1 || parseInt(date[2]) > 31){
             			    	scope.errors[array_id] = 'Please enter a different number for the day of month';
             					valid = false;
             			    }
             			}
+            			if(valid == true)
+                            delete scope.errors[array_id];
         			}else{
                         delete scope.errors[array_id];
                     }
@@ -795,16 +910,18 @@ app.directive('checkAnswer', [function (){
         			min = question.MINCHECKABLEBOXES;
         			max = question.MAXCHECKABLEBOXES;
         			var numberErrors = 0; var showError = false; var errorMsg = "";
-        			if(min !== "")
+        			if(min !== "" && min != null)
         				numberErrors++;
-        			if(max !== "")
+        			if(max !== "" && max != null)
         				numberErrors = numberErrors + 2;
+
+                    console.log(numberErrors);
 
         			checkedBoxes = value.split(',').length;
         			if(!value)
         				checkedBoxes = 0;
 
-        			if ((checkedBoxes < min || checkedBoxes > max) && scope.answers[array_id].SKIPREASON == "NONE")
+        			if (numberErrors != 0 && (checkedBoxes < min || checkedBoxes > max) && scope.answers[array_id].SKIPREASON == "NONE")
         				showError = true;
 
         			//console.log('min:' + min + ':max:' + max + ':checked:' + checkedBoxes+ ":answer:" + value + ":showerror:" + showError);
@@ -846,7 +963,7 @@ app.directive('checkAnswer', [function (){
     			}
     
                 console.log("check list range: " + checks);
-    
+
     			if(checks < question.MINLISTRANGE || checks > question.MAXLISTRANGE){
     				errorMsg = "";
     				if(question.MINLISTRANGE && question.MAXLISTRANGE){
@@ -862,14 +979,17 @@ app.directive('checkAnswer', [function (){
     
                     valid = false;
                     scope.errors[array_id] = "Please select "  + errorMsg + " response(s).  You selected " + checks;
-    
-    
+
     			}else{
-        			console.log("pass: " + valid);
         			for(k in scope.errors){
             			if(scope.errors[k].match("Please select "))
             			    delete scope.errors[k];
         			}
+                    for(k in scope.answerForm){
+                        if(k.match("Answer")){
+                            scope.answerForm[k].$setValidity("checkAnswer", true);
+                        }
+                    }
     			}
     		}
 		
@@ -920,7 +1040,7 @@ function buildQuestions(pageNumber, interviewId){
 		prompt = "";
 		for(j in ego_questions){
             ego_questions[j].array_id = ego_questions[j].ID;
-			if(Object.keys(ego_question_list).length > 0 && prompt != ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
+			if(Object.keys(ego_question_list).length > 0 && (parseInt(ego_questions[j].ASKINGSTYLELIST) != 1 || prompt != ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,""))){
 				if(pageNumber == i){
 					page[i] = ego_question_list;
 					return page[i];
@@ -986,13 +1106,124 @@ function buildQuestions(pageNumber, interviewId){
 		i++;
 		page[i] = new Object;
 		if(Object.keys(alters).length > 0){
+    		var alter_non_list_qs = [];
 			for(j in alter_questions){
 				alter_question_list = new Object;
-                var preface = new Object;
-                preface.ID = alter_questions[j].ID;
-                preface.ANSWERTYPE = "PREFACE";
-                preface.SUBJECTTYPE = "PREFACE";
-                preface.PROMPT = alter_questions[j].PREFACE;
+				if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1 || (alter_non_list_qs.length > 0 && parseInt(alter_questions[j].ASKINGSTYLELIST) != 1 && alter_questions[j].PREFACE != "")){
+    				if(alter_non_list_qs.length > 0){
+                        var preface = new Object;
+                        preface.ID = alter_non_list_qs[0].ID;
+                        preface.ANSWERTYPE = "PREFACE";
+                        preface.SUBJECTTYPE = "PREFACE";
+                        preface.PROMPT = alter_non_list_qs[0].PREFACE;
+        				for(k in alters){
+            				for(l in alter_non_list_qs){
+            					if(evalExpression(alter_non_list_qs[l].ANSWERREASONEXPRESSIONID, alters[k].ID) != true){
+                					saveSkip(interviewId, alter_non_list_qs[l].ID, alters[k].ID, "", alter_non_list_qs[l].ID + "-" + alters[k].ID);
+            						continue;
+                                }
+            					var question = $.extend(true,{}, alter_non_list_qs[l]);
+            					question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
+            					question.ALTERID1 = alters[k].ID;
+            			    	question.array_id = question.ID + '-' + question.ALTERID1;
+        						if(preface.PROMPT != ""){
+        							if(i == pageNumber){
+        								page[i][0] = preface;
+        								return page[i];
+        							}
+        							preface.PROMPT = "";
+        							i++;
+        							page[i] = new Object;
+        						}
+        						if(i == pageNumber){
+        							page[i][question.ID + '-' + question.ALTERID1] = question;
+        							return page[i];
+        						}else {
+        							i++;
+        							page[i] = new Object;
+        						}
+            				}
+        				}
+                        alter_non_list_qs = [];
+                    }
+
+                    if(parseInt(alter_questions[j].ASKINGSTYLELIST) != 1){
+                        if(typeof alter_questions[parseInt(j)+1] != "undefined" && alter_questions[parseInt(j)+1].ASKINGSTYLELIST != 1 && alter_questions[parseInt(j)+1].PREFACE == ""){
+                            alter_non_list_qs.push(alter_questions[j]);
+                            continue;
+                        }
+                        var preface = new Object;
+                        preface.ID = alter_questions[j].ID;
+                        preface.ANSWERTYPE = "PREFACE";
+                        preface.SUBJECTTYPE = "PREFACE";
+                        preface.PROMPT = alter_questions[j].PREFACE;
+        				for(k in alters){
+        					if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true){
+            					saveSkip(interviewId, alter_questions[j].ID, alters[k].ID, "", alter_questions[j].ID + "-" + alters[k].ID);
+        						continue;
+                            }
+        					var question = $.extend(true,{}, alter_questions[j]);
+        					question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
+        					question.ALTERID1 = alters[k].ID;
+        			    	question.array_id = question.ID + '-' + question.ALTERID1;
+
+    						if(preface.PROMPT != ""){
+    							if(i == pageNumber){
+    								page[i][0] = preface;
+    								return page[i];
+    							}
+    							preface.PROMPT = "";
+    							i++;
+    							page[i] = new Object;
+    						}
+    						if(i == pageNumber){
+    							page[i][question.ID + '-' + question.ALTERID1] = question;
+    							return page[i];
+    						}else {
+    							i++;
+    							page[i] = new Object;
+    						}
+        				}
+    				}else{
+        				for(k in alters){
+        					if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true){
+            					saveSkip(interviewId, alter_questions[j].ID, alters[k].ID, "", alter_questions[j].ID + "-" + alters[k].ID);
+        						continue;
+                            }
+        					var question = $.extend(true,{}, alter_questions[j]);
+        					question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
+        					question.ALTERID1 = alters[k].ID;
+        			    	question.array_id = question.ID + '-' + question.ALTERID1;
+                            alter_question_list[question.ID + '-' + question.ALTERID1] = question;
+                        }
+    					if(Object.keys(alter_question_list).length > 0){
+                            var preface = new Object;
+                            preface.ID = alter_questions[j].ID;
+                            preface.ANSWERTYPE = "PREFACE";
+                            preface.SUBJECTTYPE = "PREFACE";
+                            preface.PROMPT = alter_questions[j].PREFACE;
+    						if(preface.PROMPT != ""){
+    							if(i == pageNumber){
+    								page[i][0] = preface;
+    								return page[i];
+    							}
+                                preface.PROMPT = "";
+    							i++;
+    							page[i] = new Object;
+    						}
+    						if(i == pageNumber){
+    							page[i] = alter_question_list;
+    							return page[i];
+    						}
+    						i++;
+    						page[i] = new Object;
+    					}
+                    }
+                }else{
+                    alter_non_list_qs.push(alter_questions[j]);
+                }
+
+                /*
 				for(k in alters){
 					if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true){
     					saveSkip(interviewId, alter_questions[j].ID, alters[k].ID, "", alter_questions[j].ID + "-" + alters[k].ID);
@@ -1043,7 +1274,45 @@ function buildQuestions(pageNumber, interviewId){
 						page[i] = new Object;
 					}
 				}
+				*/
 			}
+
+			if(alter_non_list_qs.length > 0){
+                var preface = new Object;
+                preface.ID = alter_non_list_qs[0].ID;
+                preface.ANSWERTYPE = "PREFACE";
+                preface.SUBJECTTYPE = "PREFACE";
+                preface.PROMPT = alter_non_list_qs[0].PREFACE;
+				for(k in alters){
+    				for(l in alter_non_list_qs){
+    					if(evalExpression(alter_non_list_qs[l].ANSWERREASONEXPRESSIONID, alters[k].ID) != true){
+        					saveSkip(interviewId, alter_non_list_qs[l].ID, alters[k].ID, "", alter_non_list_qs[l].ID + "-" + alters[k].ID);
+    						continue;
+                        }
+    					var question = $.extend(true,{}, alter_non_list_qs[l]);
+    					question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
+    					question.ALTERID1 = alters[k].ID;
+    			    	question.array_id = question.ID + '-' + question.ALTERID1;
+						if(preface.PROMPT != ""){
+							if(i == pageNumber){
+								page[i][0] = preface;
+								return page[i];
+							}
+							preface.PROMPT = "";
+							i++;
+							page[i] = new Object;
+						}
+						if(i == pageNumber){
+							page[i][question.ID + '-' + question.ALTERID1] = question;
+							return page[i];
+						}else {
+							i++;
+							page[i] = new Object;
+						}
+    				}
+				}
+                alter_non_list_qs = [];
+            }
 
 			for(j in alter_pair_questions){
 				var alters2 = $.extend(true,{}, alters);
@@ -2128,30 +2397,19 @@ function toggleLabels(){
     s.refresh();
 }
 
-
 function exitHandler()
 {
     if (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement !== null)
     {
     	$("#infovis").height(480);
-    document.removeEventListener('webkitfullscreenchange', exitHandler, false);
-    document.removeEventListener('mozfullscreenchange', exitHandler, false);
-    document.removeEventListener('fullscreenchange', exitHandler, false);
-    document.removeEventListener('MSFullscreenChange', exitHandler, false);
+        document.removeEventListener('webkitfullscreenchange', exitHandler, false);
+        document.removeEventListener('mozfullscreenchange', exitHandler, false);
+        document.removeEventListener('fullscreenchange', exitHandler, false);
+        document.removeEventListener('MSFullscreenChange', exitHandler, false);
     }
 }
 
-			function redraw(params){
-				url = "/data/deleteGraph?id=" + $("#Graph_id").val();
-				$.get(url, function(data){
-					url = "/data/visualize?expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent(JSON.stringify(params));
-					document.location = document.location + "&params=" + encodeURIComponent(JSON.stringify(params));
-				});
-			}
-
-
-
-function buildNav(pageNumber){
+function buildNav(pageNumber, scope){
 	var i = 0;
 	var pages = [];
 
@@ -2160,6 +2418,8 @@ function buildNav(pageNumber){
             $("#questionTitle").html(text);
 			text = "<b>" + text + "</b>";
 		}
+		if(currentPage - 1 == pageNumber && text == "CONCLUSION")
+		    scope.conclusion = true;
 		return text;
 	};
 
@@ -2211,9 +2471,64 @@ function buildNav(pageNumber){
 	}
 
 	if(Object.keys(alters).length > 0){
+    	var alter_non_list_qs = [];
 		for(j in alter_questions){
             prompt = "";
 			var alter_question_list = '';
+			
+			if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1 || (alter_non_list_qs.length > 0 && parseInt(alter_questions[j].ASKINGSTYLELIST) != 1 && alter_questions[j].PREFACE != "")){
+    			if(alter_non_list_qs.length > 0){
+        			for(k in alters){
+            			for(l in alter_non_list_qs){
+                            if(evalExpression(alter_non_list_qs[l].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
+                                continue;
+        					if(alter_non_list_qs[l].PREFACE != "" && prompt == ""){
+        			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+                                prompt = alter_non_list_qs[l].PREFACE;
+        			    		i++;
+        			    	}
+        			    	pages[i] = this.checkPage(i, pageNumber, alter_non_list_qs[l].TITLE + " - " + alters[k].NAME);
+        			    	i++;
+            			}
+        			}
+        			alter_non_list_qs = [];
+        			prompt = "";
+                }
+                if(parseInt(alter_questions[j].ASKINGSTYLELIST) != 1){
+                    if(typeof alter_questions[parseInt(j)+1] != "undefined" && alter_questions[parseInt(j)+1].ASKINGSTYLELIST != 1 && alter_questions[parseInt(j)+1].PREFACE == ""){
+                        alter_non_list_qs.push(alter_questions[j]);
+                        continue;
+                    }
+        			for(k in alters){
+        				if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
+        					continue;
+    					if(alter_questions[j].PREFACE != "" && prompt == ""){
+    			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+                            prompt = alter_questions[j].PREFACE;
+    			    		i++;
+    			    	}
+    			    	pages[i] = this.checkPage(i, pageNumber, alter_questions[j].TITLE + " - " + alters[k].NAME);
+    			    	i++;
+			        }
+                }else{
+        			for(k in alters){
+        				if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
+        					continue;
+                        alter_question_list = alter_questions[j];
+                    }
+                    if(alter_question_list){
+        		    	if(alter_questions[j].PREFACE != ""){
+        		    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+        		    		i++;
+        		    	}
+        		    	pages[i] = this.checkPage(i, pageNumber, alter_questions[j].TITLE);
+        		    	i++;
+    		    	}
+		    	}
+            }else{
+                alter_non_list_qs.push(alter_questions[j]);
+            }
+			/*
 			for(k in alters){
 				if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
 					continue;
@@ -2240,7 +2555,25 @@ function buildNav(pageNumber){
 			    	i++;
 			    }
 			}
+			*/
 		}
+		if(alter_non_list_qs.length > 0){
+			for(k in alters){
+    			for(l in alter_non_list_qs){
+                    if(evalExpression(alter_non_list_qs[l].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
+                        continue;
+					if(alter_non_list_qs[l].PREFACE != "" && prompt == ""){
+			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+                        prompt = alter_non_list_qs[l].PREFACE;
+			    		i++;
+			    	}
+			    	pages[i] = this.checkPage(i, pageNumber, alter_non_list_qs[l].TITLE + " - " + alters[k].NAME);
+			    	i++;
+    			}
+			}
+			alter_non_list_qs = [];
+			prompt = "";
+        }
 		prompt = "";
 		for(j in alter_pair_questions){
 			var alters2 = $.extend(true,{}, alters);
@@ -2321,4 +2654,61 @@ function buildNav(pageNumber){
 
 	pages[i] = this.checkPage(i, pageNumber, "CONCLUSION");
 	return pages;
+}
+
+function columnWidths(){
+    var tWidth;
+    var cWidths = [];
+    tWidth = $("#realHeader").width();
+    $("#realHeader").children().each(function(index){
+        cWidths[index] = $(this).width();
+    });
+    $("#floatHeader").width(tWidth);
+    $("#floatHeader").css({"background-color":$("#content").css("background-color")});
+    $("#realHeader").parent().css({"margin-top":"-" + $("#floater").height() + "px"});
+    $("#floater").children().each(function(index){
+        $(this).width(cWidths[index]);
+    });
+}
+function fixHeader(){
+    columnWidths();
+	// Set this variable with the height of your sidebar + header
+	
+	var offsetPixels = $(".navbar").height(); 
+    $("#content").css({"background-attachment":"fixed"});
+    if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+    	$(window).scroll(function(event) {
+			$( "#floatHeader" ).css({
+				"position": "fixed",
+				"top": offsetPixels + "px",
+    			"padding-top":  parseInt($("#content").css("padding-top")) + "px"
+			});
+            $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
+    	});
+    }else{
+    	$(window).on('touchmove', function(event) {
+    		$( "#floatHeader" ).css({
+    			"position": "fixed",
+    			"top": offsetPixels + "px",
+    			"padding-top":  parseInt($("#content").css("padding-top")) + "px"
+    		});
+            $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
+    	});
+    }
+    $(window).resize(function() {
+        columnWidths();
+    });
+}
+
+function unfixHeader(){
+    $("#content").css({"background-attachment":"initial"});
+	$( "#floatHeader" ).css({
+		"padding-top":"0",
+		"top": "0",
+		"position": "static"
+	});
+    $("#answerForm").css({"margin-top":"0"});
+    $(window).unbind('scroll');
+    $(window).unbind('touchmove');
+    $(window).unbind('resize');
 }

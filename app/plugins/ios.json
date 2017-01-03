@@ -7,10 +7,7 @@
         "files": {}
     },
     "installed_plugins": {
-        "org.apache.cordova.file": {
-            "PACKAGE_NAME": "com.rand.egowebmoble"
-        },
-        "org.apache.cordova.file-transfer": {
+        "cordova-plugin-statusbar": {
             "PACKAGE_NAME": "com.rand.egowebmoble"
         }
     },
