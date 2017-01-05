@@ -20,11 +20,15 @@ for(j in alters1){
     for(k in alters2){
         name1 = alters1[j].split(" ");
         name2 = alters2[k].split(" ");
-        last1 = name1[name1.length-1].charAt(0).toLowerCase();
-        last2 = name2[name2.length-1].charAt(0).toLowerCase();
+        last1 = false;
+        last2 = false;
+        if(name1.length > 1)
+            last1 = name1[name1.length-1].charAt(0).toLowerCase();
+        if(name2.length > 1)
+            last2 = name2[name2.length-1].charAt(0).toLowerCase();
         ls = new Levenshtein(name1[0], name2[0]);
         if(ls.distance < altersL[j]){
-            if(last1 == last2){
+            if(!last1 || !last2 || last1 == last2){
                 altersL[j] = ls.distance;
                 altersLId[j] = k;
             }
@@ -33,7 +37,7 @@ for(j in alters1){
         d2 = dm.doubleMetaphone(name2[0]).primary;
         ls = new Levenshtein(d1, d2);
         if(ls.distance < altersD[j]){
-            if(last1 == last2){
+            if(!last1 || !last2 || last1 == last2){
                 altersD[j] = ls.distance;
                 altersDId[j] = k;
             }
