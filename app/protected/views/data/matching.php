@@ -11,10 +11,6 @@ altersD = new Object;
 altersL = new Object;
 altersLId = new Object;
 altersDId = new Object;
-fnames1 = [];
-fnames2 = [];
-lnames1 = [];
-lnames2 = [];
 
 dm = new DoubleMetaphone;
 dm.maxCodeLen = 64;
@@ -22,18 +18,14 @@ for(j in alters1){
     altersL[j] = 999;
     altersD[j] = 999;
     for(k in alters2){
-        name1 = alters1[j].split(" ");
-        name2 = alters2[k].split(" ");
-        fnames1.push(name1[0]);
-        fnames2.push(name2[0]);
+        name1 = alters1[j].toLowerCase().split(" ");
+        name2 = alters2[k].toLowerCase().split(" ");
         last1 = false;
         last2 = false;
         if(name1.length > 1)
             last1 = name1[name1.length-1].charAt(0).toLowerCase();
         if(name2.length > 1)
             last2 = name2[name2.length-1].charAt(0).toLowerCase();
-        lnames1.push(last1);
-        lnames2.push(last2);
 
         ls = new Levenshtein(name1[0], name2[0]);
         if(ls.distance < altersL[j]){
