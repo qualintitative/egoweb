@@ -145,8 +145,6 @@ function exportMatches(){
     </div>
 </div>
 
-<button onclick="exportMatches()">Export Matches</button>
-
 <table class="table table-condensed">
     <tr>
         <th>Interview 1</th>
@@ -195,3 +193,6 @@ function exportMatches(){
         </td>
     </tr><?php endforeach; ?>
 </table>
+
+<button onclick="exportMatches()" class="btn btn-success">Export Matches</button>
+
