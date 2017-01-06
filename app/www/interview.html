@@ -230,7 +230,7 @@
 
         <div ng-repeat="option in options[question.array_id]" style="width:{{ fixedWidth }}" ng-class="{'bg-danger':answerForm.$submitted && errors[question.array_id]}" ng-if="question.ANSWERTYPE == 'MULTIPLE_SELECTION' || options[question.array_id]">
             <input id="multiselect-1515_{{ $index }}" class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-model="option.checked" type="checkbox" ng-change="multiSelect('{{ option.ID }}', '{{$index}}', '{{question.array_id}}')">
-            <label ng-show="question.ASKINGSTYLELIST == false" for="multiselect-1515_{{ $index }}">{{ option.NAME }}</label>
+            <label ng-show="question.ASKINGSTYLELIST == false || !question.ASKINGSTYLELIST" for="multiselect-1515_{{ $index }}">{{ option.NAME }}</label>
             <input ng-if="(otherSpecify[question.array_id][option.ID] === '' || otherSpecify[question.array_id][option.ID] != false)" ng-show="option.checked" ng-model="otherSpecify[question.array_id][option.ID]" ng-change="changeOther(question.array_id)">
             <a ng-if='audio["OPTION" + option.ID]' class="play-sound" ng-click='playSound("OPTION" + option.ID)' href="javascript:void(0)"><span class="fui-volume"></span></a>
             <br>
