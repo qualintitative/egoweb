@@ -237,6 +237,45 @@ class DataController extends Controller
 		));
     }
 
+    public function actionExportmatches(){
+        $interviewIds = explode(",", $_GET['interviewIds']);
+        $study = Study::model()->findByPk($_GET['studyId']);
+        $file = fopen(getcwd() . "/assets/" . $study->id . "-matched-alters.csv", "w") or die("Unable to open file!");
+
+		$headers = array();
+		$headers[] = 'Interview Ego ID';
+		$headers[] = "Alter Name";
+		$headers[] = "Alter Match Id";
+        
+        fputcsv($file, $headers);
+        foreach($interviewIds as $interviewId){
+            $alters = Alters::model()->findAllByAttributes(array("interviewId"=>$interviewId));
+            $egoId = Interview::getEgoId($interviewId);
+            foreach($alters as $alter){
+        		$criteria = array(
+        			'condition'=>"alterId1 = $alter->id OR alterId2 = $alter->id",
+        		);
+        		$matchId = "";
+        		$match = MatchedAlters::model()->find($criteria);
+                if($match)
+                    $matchId = $match->id;
+                fputcsv($file, array($egoId,$alter->name,$matchId));
+            }
+        }
+
+		header("Content-Type: application/octet-stream");
+		header("Content-Disposition: attachment; filename=".seoString($study->name)."-matched-alters-data".".csv");
+		header("Content-Type: application/force-download");
+
+		$filePath = getcwd() . "/assets/" . $study->id. "-matched-alters.csv";
+        if (file_exists($filePath)) {
+            echo file_get_contents($filePath);
+            unlink($filePath);
+        }
+
+		Yii::app()->end();
+    }
+
 	public function actionSavematch()
 	{
     	if(isset($_POST)){

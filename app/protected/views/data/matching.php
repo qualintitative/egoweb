@@ -6,7 +6,7 @@ alters2 = <?php echo json_encode($alters2); ?>;
 answers = <?php echo json_encode($answers); ?>;
 prompts = <?php echo json_encode($prompts); ?>;
 studyId = <?php echo $study->id; ?>;
-
+interviewIds = [<?php echo $interview1->id; ?>,<?php echo $interview2->id; ?>];
 altersD = new Object;
 altersL = new Object;
 altersLId = new Object;
@@ -105,6 +105,10 @@ function unMatch(id1, id2){
         $("#" + id1).change();
     })
 }
+
+function exportMatches(){
+    document.location = "/data/exportmatches?studyId=" + studyId + "&interviewIds=" + interviewIds.join(",");
+}
 </script>
 <div class="panel panel-success">
     <div class="panel-heading">
@@ -141,6 +145,7 @@ function unMatch(id1, id2){
     </div>
 </div>
 
+<button onclick="exportMatches()">Export Matches</button>
 
 <table class="table table-condensed">
     <tr>
