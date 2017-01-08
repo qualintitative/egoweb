@@ -305,16 +305,19 @@ class ImportExportController extends Controller
                     $eIds[$expression->name] = $expression->id;
                 }
         		foreach($study->questions->question as $question){
-            		$newQuestionIds[intval($question->attributes()['id'])] = $qIds[strval($question->attributes()['title'])];
+            		$q_attributes = $question->attributes();
+            		$newQuestionIds[intval($q_attributes['id'])] = $qIds[strval($q_attributes['title'])];
             		if(isset($question->option)){
                 		foreach($question->option as $option){
-                            $newOptionIds[intval($option->attributes()['id'])] = $oIds[strval($qIds[strval($question->attributes()['title'])] . "-" .$option->attributes()['name'])];
+                            $o_attributes = $question->attributes();
+                            $newOptionIds[intval($o_attributes['id'])] = $oIds[strval($qIds[strval($q_attributes['title'])] . "-" .$o_attributes['name'])];
                         }
                     }
                 }
     			if(count($study->expressions) != 0){
     				foreach($study->expressions->expression as $expression){
-        				$newExpressionIds[intval($expression->attributes()['id'])] = $eIds[strval($expression->attributes()['name'])];
+        				$e_attributes = $expression->attributes();
+        				$newExpressionIds[intval($e_attributes['id'])] = $eIds[strval($e_attributes['name'])];
                     }
                 }
     		}

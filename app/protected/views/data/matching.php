@@ -6,7 +6,7 @@ alters2 = <?php echo json_encode($alters2); ?>;
 answers = <?php echo json_encode($answers); ?>;
 prompts = <?php echo json_encode($prompts); ?>;
 studyId = <?php echo $study->id; ?>;
-
+interviewIds = [<?php echo $interview1->id; ?>,<?php echo $interview2->id; ?>];
 altersD = new Object;
 altersL = new Object;
 altersLId = new Object;
@@ -18,17 +18,30 @@ for(j in alters1){
     altersL[j] = 999;
     altersD[j] = 999;
     for(k in alters2){
-        ls = new Levenshtein(alters1[j], alters2[k]);
+        name1 = alters1[j].toLowerCase().split(" ");
+        name2 = alters2[k].toLowerCase().split(" ");
+        last1 = false;
+        last2 = false;
+        if(name1.length > 1)
+            last1 = name1[name1.length-1].charAt(0).toLowerCase();
+        if(name2.length > 1)
+            last2 = name2[name2.length-1].charAt(0).toLowerCase();
+
+        ls = new Levenshtein(name1[0], name2[0]);
         if(ls.distance < altersL[j]){
-            altersL[j] = ls.distance;
-            altersLId[j] = k;
+            if(!last1 || !last2 || last1 == last2){
+                altersL[j] = ls.distance;
+                altersLId[j] = k;
+            }
         }
-        d1 = dm.doubleMetaphone(alters1[j]).primary;
-        d2 = dm.doubleMetaphone(alters2[k]).primary;
+        d1 = dm.doubleMetaphone(name1[0]).primary;
+        d2 = dm.doubleMetaphone(name2[0]).primary;
         ls = new Levenshtein(d1, d2);
         if(ls.distance < altersD[j]){
-            altersD[j] = ls.distance;
-            altersDId[j] = k;
+            if(!last1 || !last2 || last1 == last2){
+                altersD[j] = ls.distance;
+                altersDId[j] = k;
+            }
         }
     }
 
@@ -92,6 +105,10 @@ function unMatch(id1, id2){
         $("#" + id1).change();
     })
 }
+
+function exportMatches(){
+    document.location = "/data/exportmatches?studyId=" + studyId + "&interviewIds=" + interviewIds.join(",");
+}
 </script>
 <div class="panel panel-success">
     <div class="panel-heading">
@@ -102,11 +119,11 @@ function unMatch(id1, id2){
         <div class="form-group">
             <label class="control-label col-lg-1">Metaphone Tolerence</label>
             <div class="col-lg-3">
-            <input class="form-control" id="dTol" type="number" value="2">
+            <input class="form-control" id="dTol" type="number" value="1">
             </div>
             <label class="control-label col-lg-1">Levenshtein Tolerence</label>
             <div class="col-lg-3">
-                <input class="form-control" id="lTol" type="number" value="5">
+                <input class="form-control" id="lTol" type="number" value="2">
             </div>
             <div class="col-lg-4">
                 <button class="btn btn-primary" onclick="autoMatch();">Match</button>
@@ -127,7 +144,6 @@ function unMatch(id1, id2){
     <div id="prompt">Display Alter Question Response</div>
     </div>
 </div>
-
 
 <table class="table table-condensed">
     <tr>
@@ -177,3 +193,6 @@ function unMatch(id1, id2){
         </td>
     </tr><?php endforeach; ?>
 </table>
+
+<button onclick="exportMatches()" class="btn btn-success">Export Matches</button>
+
