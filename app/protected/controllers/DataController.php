@@ -391,6 +391,7 @@ class DataController extends Controller
         }
 		$headers[] = "Alter Number";
 		$headers[] = "Alter Name";
+		$headers[] = "Match ID";
 		foreach ($alter_questions as $question){
 			$headers[] = $question['title'];
 		}

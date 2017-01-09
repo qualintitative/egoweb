@@ -870,6 +870,14 @@ class Interview extends CActiveRecord
             {
                 $answers[] = $count;
                 $answers[] = $alter->name;
+        		$criteria = array(
+        			'condition'=>"alterId1 = $alter->id OR alterId2 = $alter->id",
+        		);
+        		$matchId = "";
+        		$match = MatchedAlters::model()->find($criteria);
+                if($match)
+                    $matchId = $match->id;
+                $answers[] = $matchId;
                 foreach ($alter_questions as $question)
                 {
                     $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question['id'], "alterId1"=>$alter->id));
