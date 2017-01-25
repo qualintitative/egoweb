@@ -697,7 +697,7 @@ app.directive('checkAnswer', [function (){
                             scope.errors[array_id] = 'Please enter a month';
             				valid = false;
             			}
-            			if(scope.timeBits(question.TIMEUNITS, 'MONTH') && scope.timeBits(question.TIMEUNITS, 'YEAR') && year && !date){
+            			if(scope.timeBits(question.TIMEUNITS, 'MONTH') && scope.timeBits(question.TIMEUNITS, 'YEAR') && scope.timeBits(question.TIMEUNITS, 'DAY') && year && !date){
                             scope.errors[array_id] = 'Please enter a day of the month';
             				valid = false;
             			}
@@ -888,7 +888,7 @@ app.directive('checkAnswer', [function (){
                             scope.errors[array_id] = 'Please enter a month';
             				valid = false;
             			}
-            			if(scope.timeBits(question.TIMEUNITS, 'MONTH') && scope.timeBits(question.TIMEUNITS, 'YEAR') && year && !date){
+            			if(scope.timeBits(question.TIMEUNITS, 'MONTH') && scope.timeBits(question.TIMEUNITS, 'YEAR') && scope.timeBits(question.TIMEUNITS, 'DAY') && year && !date){
                             scope.errors[array_id] = 'Please enter a day of the month';
             				valid = false;
             			}

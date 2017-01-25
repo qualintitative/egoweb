@@ -17,11 +17,11 @@
             <form id="serverForm_{{ server.ID }}">
                 <div style="float:left; width:100px;text-align:left">
                     Username
-                </div><input type="text" name="LoginForm[username]"><br style='clear:both'>
+                </div><input type="email" name="LoginForm[username]"><br style='clear:both'>
     
                 <div style="float:left; width:100px;text-align:left">
                     Password
-                </div><input type="password" name="LoginForm[password]"><br style='clear:both'>
+                </div><input type="password" autocapitalize="none" name="LoginForm[password]"><br style='clear:both'>
                 <button class="btn btn-xs btn-primary" ng-click='connect(server.ID)'>Connect</button>
             </form>
         </div>
