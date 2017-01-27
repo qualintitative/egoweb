@@ -2673,7 +2673,7 @@ function columnWidths(){
 function fixHeader(){
     columnWidths();
 	// Set this variable with the height of your sidebar + header
-	
+	var offsetLeft = parseInt($("#content").css("margin-left")) + parseInt($("#content").css("padding-left"))
 	var offsetPixels = $(".navbar").height(); 
     $("#content").css({"background-attachment":"fixed"});
     if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
@@ -2681,6 +2681,7 @@ function fixHeader(){
 			$( "#floatHeader" ).css({
 				"position": "fixed",
 				"top": offsetPixels + "px",
+				"left": offsetLeft - $(window).scrollLeft() + "px",
     			"padding-top":  parseInt($("#content").css("padding-top")) + "px"
 			});
             $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
@@ -2690,6 +2691,7 @@ function fixHeader(){
     		$( "#floatHeader" ).css({
     			"position": "fixed",
     			"top": offsetPixels + "px",
+				"left": offsetLeft - $(window).scrollLeft() + "px",
     			"padding-top":  parseInt($("#content").css("padding-top")) + "px"
     		});
             $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});

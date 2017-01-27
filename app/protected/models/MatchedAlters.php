@@ -9,6 +9,7 @@
  * @property integer $alterId1
  * @property integer $alterId2
  * @property string $matchedName
+ * @property string $interviewIds
  */
 class MatchedAlters extends CActiveRecord
 {
@@ -59,6 +60,7 @@ class MatchedAlters extends CActiveRecord
 			'alterId1' => 'Alter Id1',
 			'alterId2' => 'Alter Id2',
 			'matchedName' => 'Matched Name',
+			'interviewIds' => 'Interview Ids',
 		);
 	}
 
