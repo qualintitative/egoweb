@@ -91,14 +91,19 @@ Network Statistics
 
 
 <br style='clear:both'>
-
+<?php
+    echo CHtml::form('', 'post', array('id'=>'analysis'));
+    echo CHtml::form('', 'post', array('id'=>'analysis'));
+    echo CHtml::hiddenField('studyId', $study->id);
+    echo CHtml::hiddenField('expressionId', "");
+?>
                 <table class="table table-striped table-bordered table-list">
                   <thead>
                     <tr>
                         <th><input type="checkbox" onclick="$('input[type=checkbox]').prop('checked', $(this).prop('checked'))" data-toggle="tooltip" data-placement="top" title="Select All"></th>
                         <th>Ego ID</th>
-                        <th>Started</th>
-                        <th>Completed</th>
+                        <th class="hidden-xs">Started</th>
+                        <th class="hidden-xs">Completed</th>
                         <th><em class="fa fa-cog"></em></th>
 
                     </tr> 
@@ -106,9 +111,7 @@ Network Statistics
                   <tbody>
 
 <?php
-    echo CHtml::form('', 'post', array('id'=>'analysis'));
-    echo CHtml::hiddenField('studyId', $study->id);
-    echo CHtml::hiddenField('expressionId', "");
+
     foreach($interviews as $interview){
         if($interview->completed == -1)
             $completed = "<span style='color:#0B0'>". date("Y-m-d h:i:s", $interview->complete_date) . "</span>";
@@ -119,8 +122,8 @@ Network Statistics
             $mark = "class='success'";
         echo "<tr $mark>";
         echo "<td>".CHtml::checkbox('export[' .$interview['id'].']'). "</td><td>" . Interview::getEgoId($interview->id)."</td>";
-        echo "<td>".date("Y-m-d h:i:s", $interview->start_date)."</td>";
-        echo "<td>".$completed."</td>";
+        echo "<td class='hidden-xs'>".date("Y-m-d h:i:s", $interview->start_date)."</td>";
+        echo "<td class='hidden-xs'>".$completed."</td>";
         echo "<td>";
         if($interview->completed == -1)
             echo CHtml::button('Edit',array('submit'=>$this->createUrl('/data/edit/' . $interview->id)));
