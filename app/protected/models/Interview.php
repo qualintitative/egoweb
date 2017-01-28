@@ -52,6 +52,17 @@ class Interview extends CActiveRecord
         );
     }
 
+    public function getHasMatches()
+    {
+        $criteria = array(
+			'condition'=>"interviewId1 = $this->id OR interviewId2 = $this->id",
+		);
+        $matches = MatchedAlters::model()->findAll($criteria);
+        if(count($matches) > 0)
+            return true;
+        return false;
+    }
+
     /**
      * @return array relational rules.
      */

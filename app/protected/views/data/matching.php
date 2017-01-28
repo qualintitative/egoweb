@@ -92,7 +92,7 @@ function matchUp(s){
 }
 function save(sId, id1, id2){
     var alterName = $("#" + id1 + "-name").val();
-    $.post("/data/savematch", {studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>}, function(data){
+    $.post("/data/savematch", {studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
         $("#" + id1 + "-buttons").html(data);
     })
 }

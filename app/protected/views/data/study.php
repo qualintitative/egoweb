@@ -91,8 +91,19 @@ Network Statistics
 
 
 <br style='clear:both'>
-<a href="javascript:void(0)" onclick="$('input[type=checkbox]').prop('checked', true)">Select All</a> ::
-<a href="javascript:void(0)" onclick="$('input[type=checkbox]').prop('checked', false)">De-select All</a>
+
+                <table class="table table-striped table-bordered table-list">
+                  <thead>
+                    <tr>
+                        <th><input type="checkbox" onclick="$('input[type=checkbox]').prop('checked', $(this).prop('checked'))" data-toggle="tooltip" data-placement="top" title="Select All"></th>
+                        <th>Ego ID</th>
+                        <th>Started</th>
+                        <th>Completed</th>
+                        <th><em class="fa fa-cog"></em></th>
+
+                    </tr> 
+                  </thead>
+                  <tbody>
 
 <?php
     echo CHtml::form('', 'post', array('id'=>'analysis'));
@@ -103,15 +114,23 @@ Network Statistics
             $completed = "<span style='color:#0B0'>". date("Y-m-d h:i:s", $interview->complete_date) . "</span>";
         else
             $completed = "";
-        echo "<div class='multiRow' style='width:200px;text-align:left'>".CHtml::checkbox('export[' .$interview['id'].']'). " " . Interview::getEgoId($interview->id)."</div>";
-        echo "<div class='multiRow' style='width:120px'>".date("Y-m-d h:i:s", $interview->start_date)."</div>";
-        echo "<div class='multiRow' style='width:120px'>".$completed."</div>";
+        $mark = "";
+        if($interview->hasMatches)
+            $mark = "class='success'";
+        echo "<tr $mark>";
+        echo "<td>".CHtml::checkbox('export[' .$interview['id'].']'). "</td><td>" . Interview::getEgoId($interview->id)."</td>";
+        echo "<td>".date("Y-m-d h:i:s", $interview->start_date)."</td>";
+        echo "<td>".$completed."</td>";
+        echo "<td>";
         if($interview->completed == -1)
-            echo "<div class='multiRow'>".CHtml::button('Edit',array('submit'=>$this->createUrl('/data/edit/' . $interview->id)))."</div>";
+            echo CHtml::button('Edit',array('submit'=>$this->createUrl('/data/edit/' . $interview->id)));
             
-        echo "<div class='multiRow'>".CHtml::button('Review',array('submit'=>$this->createUrl('/interview/'.$study->id.'/'.$interview->id.'/#/page/0')))."</div>";
-        echo "<div class='multiRow'>".CHtml::button('Visualize',array('submit'=>$this->createUrl('/data/visualize?expressionId=&interviewId='.$interview->id)))."</div>";
-        echo "<br style='clear:both'>";
+        echo CHtml::button('Review',array('submit'=>$this->createUrl('/interview/'.$study->id.'/'.$interview->id.'/#/page/0')));
+        echo CHtml::button('Visualize',array('submit'=>$this->createUrl('/data/visualize?expressionId=&interviewId='.$interview->id)))."</td>";
+        echo "</tr>";
     }
 ?>
+                        </tbody>
+                </table>
+
 </form>

@@ -9,7 +9,6 @@
  * @property integer $alterId1
  * @property integer $alterId2
  * @property string $matchedName
- * @property string $interviewIds
  */
 class MatchedAlters extends CActiveRecord
 {
@@ -30,7 +29,7 @@ class MatchedAlters extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('matchedName', 'required'),
-			array('studyId, alterId1, alterId2', 'numerical', 'integerOnly'=>true),
+			array('studyId, alterId1, alterId2, interviewId1, interviewId2', 'numerical', 'integerOnly'=>true),
 			array('matchedName', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -60,7 +59,6 @@ class MatchedAlters extends CActiveRecord
 			'alterId1' => 'Alter Id1',
 			'alterId2' => 'Alter Id2',
 			'matchedName' => 'Matched Name',
-			'interviewIds' => 'Interview Ids',
 		);
 	}
 
