@@ -1,11 +1,13 @@
 <h2><?php echo $study->name; ?></h2>
 <script>
 function exportEgo(){
-    var total = $("input[type='checkbox']:checked").length;
+    var total = $("input[type='checkbox'][name*='export']:checked").length;
     var finished = 0;
 
     $(".progress-bar").width(0);
     $("input[type='checkbox']:checked").each(function(index){
+        if(!$(this).attr("id"))
+            return true;
         var interviewId = $(this).attr("id").match(/\d+/g)[0];
         var d = new Date();
         start = d.getTime();
