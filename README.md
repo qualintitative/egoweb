@@ -10,3 +10,6 @@ The wikispaces site allows you to create accounts and contribute to the document
 How to cite EgoWeb:
 
 	EgoWeb 2.0, computer software, http://github.com/qualintitative/egoweb
+
+
+EgoWeb code is provided on an "as is" basis and the user assumes responsibility for its use. This code has not been peer-reviewed or otherwise evaluated beyond the development team, and is made available here without guarantee.  EgoWeb developers are not responsible for errors and is not committed to maintenance, updates or support.
