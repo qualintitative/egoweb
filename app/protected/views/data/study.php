@@ -87,7 +87,7 @@ Network Statistics
 <button onclick='exportOther()' class='authorButton'>Export Other Specify Data</button><br style='clear:both'>
 <button onclick='exportOtherLegacy()' class='authorButton'>Export Legacy Other Specify Data</button><br style='clear:both'>
 <button onclick='exportAlterList()' class='authorButton'>Export Pre-defined Alter List</button><br style='clear:both'>
-<button onclick='matchAlters()' class='authorButton'>Match Alters</button><br style='clear:both'>
+<button onclick='matchAlters()' class='authorButton'>Dyad Match</button><br style='clear:both'>
 <button onclick='deleteInterviews()' class='authorButton'>Delete Interviews</button><br style='clear:both'>
 
 
@@ -106,6 +106,7 @@ Network Statistics
                         <th>Ego ID</th>
                         <th class="hidden-xs">Started</th>
                         <th class="hidden-xs">Completed</th>
+                        <th class="hidden-xs">Dyad Match ID</th>
                         <th><em class="fa fa-cog"></em></th>
 
                     </tr> 
@@ -120,12 +121,24 @@ Network Statistics
         else
             $completed = "";
         $mark = "";
-        if($interview->hasMatches)
+        if($interview->hasMatches){
             $mark = "class='success'";
+    		$criteria = array(
+    			'condition'=>"interviewId1 = $interview->id OR interviewId2 = $interview->id",
+    		);
+    		$matchId = "";
+    		$match = MatchedAlters::model()->find($criteria);
+            if($interview->id == $match->interviewId1)
+                $matchInt = Interview::model()->findByPk($match->interviewId2);
+            else
+                $matchInt = Interview::model()->findByPk($match->interviewId1);
+            $matchId = Interview::getEgoId($matchInt->id);
+        }
         echo "<tr $mark>";
         echo "<td>".CHtml::checkbox('export[' .$interview['id'].']'). "</td><td>" . Interview::getEgoId($interview->id)."</td>";
         echo "<td class='hidden-xs'>".date("Y-m-d h:i:s", $interview->start_date)."</td>";
         echo "<td class='hidden-xs'>".$completed."</td>";
+        echo "<td class='hidden-xs'>".$matchId."</td>";
         echo "<td>";
         if($interview->completed == -1)
             echo CHtml::button('Edit',array('submit'=>$this->createUrl('/data/edit/' . $interview->id)));
