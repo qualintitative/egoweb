@@ -82,10 +82,12 @@ function matchUp(s){
     var id2 = $(s).val();
     $(s).parent().next().attr("alterId",$(s).val());
     if($(s).val() != ""){
+        $("#" + id + "-name").show();
         $("#" + id + "-name").val($("option:selected", s).text());
         $("#" + id + "-buttons").html("<button class='btn btn-xs btn-success' onclick='save(" + studyId + "," +id + "," + id2 +")'>save</button>");;
     }else{
-        $("#" + id + "-name").val("");
+        $("#" + id + "-name").hide();
+        $("#" + id + "-buttons").html("");
     }
     loadR($("#question").val());
 
@@ -183,7 +185,7 @@ function exportMatches(){
                     }
                 ?></td>
         <td class="responses" alterId=<?php echo $selected; ?>></td>
-        <td><?php echo CHtml::textField("name",$selectedName ,array("id"=>$alterId."-name")); ?></td>
+        <td><?php echo CHtml::textField("name",$selectedName ,array("id"=>$alterId."-name", "style"=>"display:none;")); ?></td>
         <td id="<?php echo $alterId; ?>-buttons">
             <?php
                 if(isset($match))
