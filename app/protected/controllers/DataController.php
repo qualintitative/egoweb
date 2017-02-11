@@ -24,7 +24,7 @@ class DataController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('index', 'exportego', 'savenote', 'noteexists','exportalterpair', 'exportalterlist', 'exportother', 'visualize', 'study', 'ajaxAdjacencies', 'exportinterview' , "savematch" , "unmatch", "edit"),
+				'actions'=>array('index', 'exportegoalterall', 'savenote', 'noteexists','exportalterpair', 'exportalterpairall', 'exportalterlist', 'exportother', 'visualize', 'study', 'ajaxAdjacencies', 'exportegoalter' , "savematch" , "unmatch", "edit"),
 				'users'=>array('@'),
 			),
 			array('allow',  // deny all users
@@ -237,6 +237,45 @@ class DataController extends Controller
 		));
     }
 
+    public function actionExportmatches(){
+        $interviewIds = explode(",", $_GET['interviewIds']);
+        $study = Study::model()->findByPk($_GET['studyId']);
+        $file = fopen(getcwd() . "/assets/" . $study->id . "-matched-alters.csv", "w") or die("Unable to open file!");
+
+		$headers = array();
+		$headers[] = 'Interview Ego ID';
+		$headers[] = "Alter Name";
+		$headers[] = "Alter Match Id";
+        
+        fputcsv($file, $headers);
+        foreach($interviewIds as $interviewId){
+            $alters = Alters::model()->findAllByAttributes(array("interviewId"=>$interviewId));
+            $egoId = Interview::getEgoId($interviewId);
+            foreach($alters as $alter){
+        		$criteria = array(
+        			'condition'=>"alterId1 = $alter->id OR alterId2 = $alter->id",
+        		);
+        		$matchId = "";
+        		$match = MatchedAlters::model()->find($criteria);
+                if($match)
+                    $matchId = $match->id;
+                fputcsv($file, array($egoId,$alter->name,$matchId));
+            }
+        }
+
+		header("Content-Type: application/octet-stream");
+		header("Content-Disposition: attachment; filename=".seoString($study->name)."-matched-alters-data".".csv");
+		header("Content-Type: application/force-download");
+
+		$filePath = getcwd() . "/assets/" . $study->id. "-matched-alters.csv";
+        if (file_exists($filePath)) {
+            echo file_get_contents($filePath);
+            unlink($filePath);
+        }
+
+		Yii::app()->end();
+    }
+
 	public function actionSavematch()
 	{
     	if(isset($_POST)){
@@ -286,7 +325,7 @@ class DataController extends Controller
 		));
 	}
 
-	public function actionExportego()
+	public function actionExportegoalterall()
 	{
 		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
 			die("nothing to export");
@@ -320,11 +359,6 @@ class DataController extends Controller
         $criteria->order = "ordering";
         $network_questions = Question::model()->findAll($criteria);
 
-		// start generating export file
-		header("Content-Type: application/octet-stream");
-		header("Content-Disposition: attachment; filename=".seoString($study->name)."-ego-alter-data".".csv");
-		header("Content-Type: application/force-download");
-
 		$headers = array();
 		$headers[] = 'Interview ID';
 		$headers[] = "EgoID";
@@ -352,6 +386,7 @@ class DataController extends Controller
         }
 		$headers[] = "Alter Number";
 		$headers[] = "Alter Name";
+		$headers[] = "Match ID";
 		foreach ($alter_questions as $question){
 			$headers[] = $question['title'];
 		}
@@ -366,10 +401,14 @@ class DataController extends Controller
         foreach($_POST['export'] as $key=>$value){
             $interviewIds[] = $key;
         }
-		echo implode(',', $headers) . "\n";
 
+		// start generating export file
+		header("Content-Type: application/octet-stream");
+		header("Content-Disposition: attachment; filename=".seoString($study->name)."-ego-alter-data".".csv");
+		header("Content-Type: application/force-download");
+		echo implode(',', $headers) . "\n";
 		foreach ($interviewIds as $interviewId){
-    		$filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . ".csv";
+    		$filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . "-ego-alter.csv";
     		  if (file_exists($filePath)) {
                 echo file_get_contents($filePath);
                 unlink($filePath);
@@ -379,13 +418,13 @@ class DataController extends Controller
 
 	}
 
-    public function actionExportinterview()
+    public function actionExportegoalter()
     {
         if (!isset($_POST['studyId']))
             die("no study selected");
 
         $filePath = getcwd()."/assets/".$_POST['studyId'];
-        if(file_exists($filePath . "/" . $_POST['interviewId'] . ".csv")){
+        if(file_exists($filePath . "/" . $_POST['interviewId'] . "-ego-alter.csv")){
             echo "success";
             Yii::app()->end();
         }
@@ -395,7 +434,7 @@ class DataController extends Controller
 
         $interview = Interview::model()->findByPk($_POST['interviewId']);
         if ($interview) {
-            $file = fopen($filePath . "/" . $_POST['interviewId'] . ".csv", "w") or die("Unable to open file!");
+            $file = fopen($filePath . "/" . $_POST['interviewId'] . "-ego-alter.csv", "w") or die("Unable to open file!");
             $interview->exportEgoAlterData($file);
 	    	//fwrite($file, $text);
     		echo "success";
@@ -404,32 +443,25 @@ class DataController extends Controller
         echo "fail";
     }
 
-	public function actionExportalterpair()
+	public function actionExportalterpairall()
 	{
 		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
-			die("nothing to export");
+            die("no study selected");
 
+        $filePath = getcwd()."/assets/".$_POST['studyId'];
+        if(file_exists($filePath . "/" . $_POST['interviewId'] . ".csv")){
+            echo "success";
+            Yii::app()->end();
+        }
+    
 		$study = Study::model()->findByPk((int)$_POST['studyId']);
         #OK FOR SQL INJECTION
 		//$optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
-		$optionsRaw = QuestionOption::model()->findAllByAttributes(array('studyId'=>$study->id));
-		// create an array with option ID as key
-		$options = array();
-		foreach ($optionsRaw as $option){
-			$options[$option->id] = $option->value;
-		}
 
         #OK FOR SQL INJECTION
 		$alter_pair_questions = q("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = " . $study->id . " ORDER BY ordering")->queryAll();
-        #OK FOR SQL INJECTION
-        $alterCount = q("SELECT count(id) FROM `alterList` WHERE studyId = " . $study->id)->queryScalar();
-		//if($alterCount > 0)
-		//	$idNumber = "Id";
-		//else
-			$idNumber = "Number";
 
-        $file = fopen(getcwd() . "/assets/" . $study->id . "-alter-pair.csv", "w") or die("Unable to open file!");
-
+        $idNumber = "Number";
 
 		$headers = array();
 		$headers[] = 'Interview ID';
@@ -441,185 +473,53 @@ class DataController extends Controller
 		foreach ($alter_pair_questions as $question){
 			$headers[] = $question['title'];
 		}
-        
-        fputcsv($file, $headers);
-		//echo implode(',', $headers) . "\n";
 
-		$interviews = Interview::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
-		foreach ($interviews as $interview){
-			if(!isset($_POST['export'][$interview->id]))
-				continue;
-            #OK FOR SQL INJECTION
-			$alters = Alters::model()->findAll(array('order'=>'id', 'condition'=>'FIND_IN_SET(:x, interviewId)', 'params'=>array(':x'=>$interview->id)));
-			//$alterNames = AlterList::model()->findAllByAttributes(array('interviewId'=>$interview->id));
-
-			$i = 1;
-			$alterNum = array();
-			foreach($alters as $alter){
-				$alterNum[$alter->id] = $i;
-				$i++;
-			}
-			$alters2 = $alters;
-			foreach ($alters as $alter){
-				array_shift($alters2);
-				foreach ($alters2 as $alter2){
-					$answers = array();
-                    #OK FOR SQL INJECTION
-					$realId1 = q("SELECT id FROM alterList WHERE studyId = " . $study->id . " AND name = '" . addslashes($alter['name']) . "'")->queryScalar();
-                    #OK FOR SQL INJECTION
-                    $realId2 = q("SELECT id FROM alterList WHERE studyId = " . $study->id . " AND name = '" . addslashes($alter2['name']) . "'")->queryScalar();
-					$answers[] = $interview->id;
-					$answers[] = Interview::getEgoId($interview->id);
-					//if(is_numeric($realId1))
-					//	$answers[] = $realId1;
-					//else
-						$answers[] = $alterNum[$alter->id];
-					$answers[] = str_replace(",", ";", $alter->name);
-					//if(is_numeric($realId2))
-					//	$answers[] = $realId2;
-					//else
-						$answers[] = $alterNum[$alter2->id];
-					$answers[] = $alter2->name;
-					foreach ($alter_pair_questions as $question){
-                        #OK FOR SQL INJECTION
-						$answer = decrypt(q("SELECT value FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter->id . " AND alterId2 = " . $alter2->id)->queryScalar());
-                        #OK FOR SQL INJECTION
-                        $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $interview->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter->id . " AND alterId2 = " . $alter2->id)->queryScalar();
-						if($answer != "" && $skipReason == "NONE"){
-							if($question['answerType'] == "SELECTION"){
-								$answers[] = $options[$answer];
-							}else if($question['answerType'] == "MULTIPLE_SELECTION"){
-								$optionIds = explode(',', $answer);
-								$list = array();
-								foreach($optionIds as $optionId){
-									if(isset($options[$optionId]))
-									$list[] = $options[$optionId];
-								}
-								if(count($list) == 0)
-									$answers[] = $study->valueNotYetAnswered;
-								else
-									$answers[] = implode('; ', $list);
-							}else{
-    							if(!$answer)
-    							    $answer = $study->valueNotYetAnswered;
-								$answers[] = $answer;
-							}
-						} else if (!$answer && ($skipReason == "DONT_KNOW" || $skipReason == "REFUSE")) {
-							if($skipReason == "DONT_KNOW")
-								$answers[] = $study->valueDontKnow;
-							else
-								$answers[] = $study->valueRefusal;
-						}
-					}
-                    fputcsv($file, $answers);
-					//echo implode(',', $answers) . "\n";
-					//flush();
-				}
-			}
-		}
-
+        $interviewIds = array();
+        foreach($_POST['export'] as $key=>$value){
+            $interviewIds[] = $key;
+        }
 
 		// start generating export file
 		header("Content-Type: application/octet-stream");
 		header("Content-Disposition: attachment; filename=".seoString($study->name)."-alter-pair-data".".csv");
 		header("Content-Type: application/force-download");
-
-		$filePath = getcwd() . "/assets/" . $_POST['studyId'] . "-alter-pair.csv";
-		  if (file_exists($filePath)) {
-            echo file_get_contents($filePath);
-            unlink($filePath);
-        }
-
+		echo implode(',', $headers) . "\n";
+		foreach ($interviewIds as $interviewId){
+    		$filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . "-alter-pair.csv";
+    		  if (file_exists($filePath)) {
+                echo file_get_contents($filePath);
+                unlink($filePath);
+            }
+		}
 		Yii::app()->end();
 	}
 
-	public function actionOldexportother()
-	{
-		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
-			die("nothing to export");
+    public function actionExportalterpair()
+    {
+        if (!isset($_POST['studyId']))
+            die("no study selected");
 
 		$study = Study::model()->findByPk((int)$_POST['studyId']);
-        #OK FOR SQL INJECTION
-		$optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
 
-		// create an array with option ID as key
-		$options = array();
-		foreach ($optionsRaw as $option){
-			$options[$option['id']] = $option['value'];
-		}
+        $filePath = getcwd()."/assets/".$_POST['studyId'];
+        if(file_exists($filePath . "/" . $_POST['interviewId'] . "-alter-pair.csv")){
+            echo "success";
+            Yii::app()->end();
+        }
 
-		header("Content-Type: application/octet-stream");
-		header("Content-Disposition: attachment; filename=".seoString($study->name)."-other-specify-data".".csv");
-		header("Content-Type: application/force-download");
-		$headers = array();
-		$headers[] = 'INTERVIEW ID';
-		$headers[] = "EGO ID";
-		$headers[] = "QUESTION";
-		$headers[] = "ALTER ID";
-		$headers[] = "RESPONSE";
-		echo implode(',', $headers) . "\n";
+        if (!is_dir($filePath))
+            mkdir($filePath, 0777, true);
 
-        #OK FOR SQL INJECTION
-		$other_qs = q("SELECT * FROM question WHERE otherSpecify = 1 AND studyId = ".$study->id)->queryAll();
-		$interviews = Interview::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
-
-		foreach ($interviews as $interview){
-			if(!isset($_POST['export'][$interview->id]))
-				continue;
-			foreach($other_qs as $question){
-				$answer = array();
-				if($question['subjectType'] == "ALTER"){
-					$alters = Alters::model()->findAllByAttributes(array('interviewId'=>$interview->id));
-					foreach($alters as $alter){
-                        #OK FOR SQL INJECTION
-						$response = q("SELECT otherSpecifyText FROM answer WHERE questionId = " . $question['id'] . " AND interviewId = " . $interview->id . "AND alterId1 = " . $alter->id)->queryScalar();
-						$responses = array();
-						foreach(preg_split('/;;/', $response) as $other){
-					    	if($other && strstr($other, ':')){
-						    	list($key, $val) = preg_split('/:/', $other);
-						    	$responses[] = $options[$key] . ":" . '"'.$val.'"';
-						    }
-						}
-						if(count($responses) > 0)
-							$response = implode(";; ", $responses);
-						$answer[] = $interview->id;
-						$answer[] = Interview::getEgoId($interview->id);
-						$answer[] = $question['title'];
-						if($alter->name!="")
-						         $answer[] = decrypt($alter->name);
-						//$answer[] = $alter->name;
-						if($response!="")
-						         $answer[] = decrypt($response);
-						//$answer[] = $response;
-						echo implode(',', $answer) . "\n";
-						flush();
-					}
-				}else{
-                    #OK FOR SQL INJECTION
-					$response = q("SELECT otherSpecifyText FROM answer WHERE questionId = " . $question['id'] . " AND interviewId = " . $interview->id)->queryScalar();
-					$responses = array();
-					foreach(preg_split('/;;/', $response) as $other){
-					    if($other && strstr($other, ':')){
-					    	list($key, $val) = preg_split('/:/', $other);
-					    	$responses[] = $options[$key] . ":" . '"'.$val.'"';
-					    }
-					}
-					if(count($responses) > 0)
-						$response = implode("; ", $responses);
-					$answer[] = $interview->id;
-					$answer[] = Interview::getRespondant($interview->id);
-					$answer[] = $question['title'];
-					$answer[] = "";
-						if($response!="")
-						         $answer[] = decrypt($response);
-					//$answer[] = $response;
-					echo implode(',', $answer) . "\n";
-					flush();
-				}
-			}
-		}
-		Yii::app()->end();
-	}
+        $interview = Interview::model()->findByPk($_POST['interviewId']);
+        if ($interview) {
+            $file = fopen($filePath . "/" . $_POST['interviewId'] . "-alter-pair.csv", "w") or die("Unable to open file!");
+            $interview->exportAlterPairData($file, $study);
+	    	//fwrite($file, $text);
+    		echo "success";
+    		Yii::app()->end();
+        }
+        echo "fail";
+    }
 
 	public function actionExportother()
 	{
@@ -628,16 +528,17 @@ class DataController extends Controller
 
 		$study = Study::model()->findByPk((int)$_POST['studyId']);
 
-		header("Content-Type: application/octet-stream");
-		header("Content-Disposition: attachment; filename=".seoString($study->name)."-other-specify-data".".csv");
-		header("Content-Type: application/force-download");
+        $file = fopen(getcwd() . "/assets/" . $study->id . "-other-specify.csv", "w") or die("Unable to open file!");
+
 		$headers = array();
 		$headers[] = 'INTERVIEW ID';
 		$headers[] = "EGO ID";
 		$headers[] = "QUESTION";
 		$headers[] = "ALTER ID";
-		$headers[] = "RESPONSE";
-		echo implode(',', $headers) . "\n";
+		$headers[] = "RESPONSE OPTION";
+		$headers[] = "TEXT";
+
+        fputcsv($file, $headers);
 
         #OK FOR SQL INJECTION
 		$options = QuestionOption::model()->findAllByAttributes(array("otherSpecify"=>true, "studyId"=>$study->id));
@@ -673,7 +574,6 @@ class DataController extends Controller
 				if($question->subjectType == "ALTER"){
 					$alters = Alters::model()->findAllByAttributes(array('interviewId'=>$interview->id));
 					foreach($alters as $alter){
-    					$answer = array();
                         $answerArray = array();
                         $otherSpecifies = array();
 						$response = $answers[$question->id . "-" . $alter->id]->otherSpecifyText;
@@ -690,25 +590,26 @@ class DataController extends Controller
                         {
                             if (isset($otherSpecifies[$optionId])){
                                 if(count($optionIds) == 1 && preg_match("/OTHER \(*SPECIFY\)*/i", $other_options[$optionId]->name))
-                                    $answerArray[] = $otherSpecifies[$optionId];
+                                    $answerArray["OTHER SPECIFY"] = $otherSpecifies[$optionId];
                                 else
-                                    $answerArray[] = $other_options[$optionId]->name . " (\"" . $otherSpecifies[$optionId] . "\")";
+                                    $answerArray[$other_options[$optionId]->name] = $otherSpecifies[$optionId];
                             }else{
-                                $answerArray[] = $other_options[$optionId]->name;
+                                $answerArray[$other_options[$optionId]->name] = "";
                             }
                         }
 
-						$answer[] = $interview->id;
-						$answer[] = Interview::getEgoId($interview->id);
-						$answer[] = $question->title;
-						$answer[] = $alter->name;
-                        $answer[] = implode("; ", $answerArray);
-
-						echo implode(',', $answer) . "\n";
-						flush();
+                        foreach($answerArray as $i=>$a){
+        					$answer = array();
+    						$answer[] = $interview->id;
+    						$answer[] = Interview::getEgoId($interview->id);
+    						$answer[] = $question->title;
+    						$answer[] = $alter->name;
+                            $answer[] = $i;
+                            $answer[] = $a;
+                            fputcsv($file, $answer);
+						}
 					}
 				} else {
-					$answer = array();
                     $answerArray = array();
                     $otherSpecifies = array();
 					$response = $answers[$question->id]->otherSpecifyText;
@@ -726,26 +627,39 @@ class DataController extends Controller
                         if (isset($other_options[$optionId])) {
                             if (isset($otherSpecifies[$optionId])){
                                 if(count($optionIds) == 1 && preg_match("/OTHER \(*SPECIFY\)*/i", $other_options[$optionId]->name))
-                                    $answerArray[] = $otherSpecifies[$optionId];
+                                    $answerArray["OTHER SPECIFY"] = $otherSpecifies[$optionId];
                                 else
-                                    $answerArray[] = $other_options[$optionId]->name . " (\"" . $otherSpecifies[$optionId] . "\")";
+                                    $answerArray[$other_options[$optionId]->name] = $otherSpecifies[$optionId];
                             }else{
-                                $answerArray[] = $other_options[$optionId]->name;
+                                $answerArray[$other_options[$optionId]->name] = "";
                             }
                         }
                     }
 
-					$answer[] = $interview->id;
-					$answer[] = Interview::getEgoId($interview->id);
-					$answer[] = $question->title;
-					$answer[] = "";
-                    $answer[] = implode("; ", $answerArray);
-
-					echo implode(',', $answer) . "\n";
-					flush();
+                    foreach($answerArray as $i=>$a){
+    					$answer = array();
+    					$answer[] = $interview->id;
+    					$answer[] = Interview::getEgoId($interview->id);
+    					$answer[] = $question->title;
+    					$answer[] = "";
+                        $answer[] = $i;
+                        $answer[] = $a;
+                        fputcsv($file, $answer);
+					}
 				}
 			}
 		}
+
+		// start generating export file
+		header("Content-Type: application/octet-stream");
+		header("Content-Disposition: attachment; filename=".seoString($study->name)."-other-specify-data".".csv");
+		header("Content-Type: application/force-download");
+
+		$filePath = getcwd() . "/assets/" . $_POST['studyId'] . "-other-specify.csv";
+		  if (file_exists($filePath)) {
+            echo file_get_contents($filePath);
+            unlink($filePath);
+        }
 		Yii::app()->end();
 	}
 
@@ -756,16 +670,17 @@ class DataController extends Controller
 
 		$study = Study::model()->findByPk((int)$_POST['studyId']);
 
-		header("Content-Type: application/octet-stream");
-		header("Content-Disposition: attachment; filename=".seoString($study->name)."-other-specify-data".".csv");
-		header("Content-Type: application/force-download");
+
+        $file = fopen(getcwd() . "/assets/" . $study->id . "-other-specify.csv", "w") or die("Unable to open file!");
+
 		$headers = array();
 		$headers[] = 'INTERVIEW ID';
 		$headers[] = "EGO ID";
 		$headers[] = "QUESTION";
 		$headers[] = "ALTER ID";
-		$headers[] = "RESPONSE";
-		echo implode(',', $headers) . "\n";
+		$headers[] = "RESPONSE OPTION";
+		$headers[] = "TEXT";
+        fputcsv($file, $headers);
 
         #OK FOR SQL INJECTION
 		$options = QuestionOption::model()->findAllByAttributes(array("otherSpecify"=>true, "studyId"=>$study->id));
@@ -802,20 +717,32 @@ class DataController extends Controller
                             if (isset($other_options[$optionId])) {
                                 $otherSpecify = OtherSpecify::model()->findByAttributes(array("optionId"=>$optionId, "interviewId"=>$interview->id, "alterId"=>$alter->id));
                                 if ($otherSpecify)
-                                    $answerArray[] = $other_options[$optionId]->name . " (\"" . $otherSpecify->value . "\")";
+                                    $answerArray[$other_options[$optionId]->name] =  $otherSpecify->value;
                                 else
-                                    $answerArray[] = $other_options[$optionId]->name;
+                                    $answerArray[$other_options[$optionId]->name] = "";
                             }
                         }
 
+                        foreach($answerArray as $i=>$a){
+        					$answer = array();
+    						$answer[] = $interview->id;
+    						$answer[] = Interview::getEgoId($interview->id);
+    						$answer[] = $question->title;
+    						$answer[] = $alter->name;
+                            $answer[] = $i;
+                            $answer[] = $a;
+                            echo implode(',', $answer) . "\n";
+                            fputcsv($file, $answer);
+						}
+						/*
 						$answer[] = $interview->id;
 						$answer[] = Interview::getEgoId($interview->id);
 						$answer[] = $question->title;
 						$answer[] = $alter->name;
                         $answer[] = implode("; ", $answerArray);
+                        */
 
-						echo implode(',', $answer) . "\n";
-						flush();
+						//echo implode(',', $answer) . "\n";
 					}
 				} else {
     				$answer = array();
@@ -826,23 +753,37 @@ class DataController extends Controller
                         if (isset($other_options[$optionId])) {
                             $otherSpecify = OtherSpecify::model()->findByAttributes(array("optionId"=>$optionId, "interviewId"=>$interview->id));
                             if ($otherSpecify)
-                                $answerArray[] = $other_options[$optionId]->name . " (\"" . $otherSpecify->value . "\")";
+                                $answerArray[$other_options[$optionId]->name] =  $otherSpecify->value;
                             else
-                                $answerArray[] = $other_options[$optionId]->name;
+                                $answerArray[$other_options[$optionId]->name] = "";
                         }
                     }
 
-					$answer[] = $interview->id;
-					$answer[] = Interview::getRespondant($interview->id);
-					$answer[] = $question->title;
-					$answer[] = "";
-                    $answer[] = implode("; ", $answerArray);
-
-					echo implode(',', $answer) . "\n";
-					flush();
+                        foreach($answerArray as $i=>$a){
+        					$answer = array();
+    						$answer[] = $interview->id;
+    						$answer[] = Interview::getEgoId($interview->id);
+    						$answer[] = $question->title;
+    						$answer[] = $alter->name;
+                            $answer[] = $i;
+                            $answer[] = $a;
+                            fputcsv($file, $answer);
+						}
 				}
 			}
 		}
+
+		// start generating export file
+		header("Content-Type: application/octet-stream");
+		header("Content-Disposition: attachment; filename=".seoString($study->name)."-other-specify-data".".csv");
+		header("Content-Type: application/force-download");
+
+		$filePath = getcwd() . "/assets/" . $_POST['studyId'] . "-other-specify.csv";
+		  if (file_exists($filePath)) {
+            echo file_get_contents($filePath);
+            unlink($filePath);
+        }
+    
 		Yii::app()->end();
 	}
 

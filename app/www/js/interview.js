@@ -53,8 +53,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.phrase = "";
     $scope.conclusion = false;
     $scope.redirect = false;
-    $scope.participants = false;
-
+    $scope.participants = [];
+    
     if(typeof hashKey != "undefined"){
         $scope.hashKey = hashKey;
     }else{
@@ -162,18 +162,18 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 
         if($scope.questions[k].ANSWERTYPE == "TIME_SPAN"){
             $scope.time_spans[array_id] = new Object;
-			if(answers[array_id].VALUE.match(/(\d*)\sYEARS/))
-                $scope.time_spans[array_id].YEARS = answers[array_id].VALUE.match(/(\d*)\sYEARS/)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sMONTHS/))
-                $scope.time_spans[array_id].MONTHS = answers[array_id].VALUE.match(/(\d*)\sMONTHS/)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sWEEKS/))
-                $scope.time_spans[array_id].WEEKS = answers[array_id].VALUE.match(/(\d*)\sWEEKS/)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sDAYS/))
-                $scope.time_spans[array_id].DAYS = answers[array_id].VALUE.match(/(\d*)\sDAYS/)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sHOURS/))
-                $scope.time_spans[array_id].HOURS = answers[array_id].VALUE.match(/(\d*)\sHOURS/)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sMINUTES/))
-                $scope.time_spans[array_id].MINUTES = answers[array_id].VALUE.match(/(\d*)\sMINUTES/)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sYEARS/i))
+                $scope.time_spans[array_id].YEARS = answers[array_id].VALUE.match(/(\d*)\sYEARS/i)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sMONTHS/i))
+                $scope.time_spans[array_id].MONTHS = answers[array_id].VALUE.match(/(\d*)\sMONTHS/i)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sWEEKS/i))
+                $scope.time_spans[array_id].WEEKS = answers[array_id].VALUE.match(/(\d*)\sWEEKS/i)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sDAYS/i))
+                $scope.time_spans[array_id].DAYS = answers[array_id].VALUE.match(/(\d*)\sDAYS/i)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sHOURS/i))
+                $scope.time_spans[array_id].HOURS = answers[array_id].VALUE.match(/(\d*)\sHOURS/i)[1];
+			if(answers[array_id].VALUE.match(/(\d*)\sMINUTES/i))
+                $scope.time_spans[array_id].MINUTES = answers[array_id].VALUE.match(/(\d*)\sMINUTES/i)[1];
         }
 
         if($scope.questions[k].ANSWERTYPE == "DATE"){
@@ -375,7 +375,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
 
         // check pre-defined participant list
-        if($scope.participants != false){
+        if($scope.participants.length > 0){
             if($scope.participants.indexOf($("#Alters_name").val().trim()) == -1){
                 console.log($scope.participants.indexOf($("#Alters_name").val().trim()));
                 $scope.errors[0] = 'Name not found in list';
@@ -517,20 +517,20 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     }
 
     $scope.timeValue = function (array_id){
-    	var date = "";
+    	var date = [];
     	if(!isNaN($scope.time_spans[array_id].YEARS))
-    	    date = $scope.time_spans[array_id].YEARS + ' YEARS ';
+    	    date.push($scope.time_spans[array_id].YEARS + ' YEARS');
     	if(!isNaN($scope.time_spans[array_id].MONTHS))
-    		date += $scope.time_spans[array_id].MONTHS + ' MONTHS ';
+    		date.push($scope.time_spans[array_id].MONTHS + ' MONTHS');
     	if(!isNaN($scope.time_spans[array_id].WEEKS))
-    		date += $scope.time_spans[array_id].WEEKS + ' WEEKS ';
+    		date.push($scope.time_spans[array_id].WEEKS + ' WEEKS');
     	if(!isNaN($scope.time_spans[array_id].DAYS))
-    		date += $scope.time_spans[array_id].DAYS + ' DAYS ';
+    		date.push($scope.time_spans[array_id].DAYS + ' DAYS');
     	if(!isNaN($scope.time_spans[array_id].HOURS))
-    		date += $scope.time_spans[array_id].HOURS + ' HOURS ';
+    		date.push($scope.time_spans[array_id].HOURS + ' HOURS');
     	if(!isNaN($scope.time_spans[array_id].MINUTES))
-    		date += $scope.time_spans[array_id].MINUTES + ' MINUTES';
-    	$scope.answers[array_id].VALUE = date;
+    		date.push($scope.time_spans[array_id].MINUTES + ' MINUTES');
+    	$scope.answers[array_id].VALUE = date.join("; ");
 		$scope.answers[array_id].SKIPREASON = "NONE";
 		for(k in $scope.options[array_id]){
     		if($scope.options[array_id][k].ID == "DONT_KNOW" || $scope.options[array_id][k].ID == "REFUSE")
@@ -667,29 +667,48 @@ app.directive('checkAnswer', [function (){
                     console.log(attr.answerType);
                     if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
             			var date = value.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
+            			var month = value.match(/January|February|March|April|May|June|July|August|September|October|November|December/);
+            			var year = value.match(/\d{4}/);
             			var time = value.match(/(\d+):(\d+) (AM|PM)/);
-            			if(typeof time != "undefined" && time && time.length > 2){
+            			if(time && time.length > 2){
             			    if(parseInt(time[1]) < 1 || parseInt(time[1]) > 12){
                                 scope.errors[array_id] = 'Please enter 1 to 12 for HH';
                             	valid = false;
             			    }
-            			    console.log(time);
             			    if(parseInt(time[2]) < 0 || parseInt(time[2]) > 59){
             			    	scope.errors[array_id] = 'Please enter 0 to 59 for MM';
             				    valid = false;
             			    }
             			}else{
+                			if(scope.timeBits(question.TIMEUNITS, 'MINUTE')){
+                		    	scope.errors[array_id] = 'Please enter the minutes';
+                			    valid = false;
+            			    }
                 			if(scope.timeBits(question.TIMEUNITS, 'HOUR')){
                 		    	scope.errors[array_id] = 'Please enter the time of day';
                 			    valid = false;
             			    }
             			}
-            			if(typeof date != "undefined" && date && date.length > 3){
+            			if(scope.timeBits(question.TIMEUNITS, 'YEAR') && !year){
+                            scope.errors[array_id] = 'Please enter a valid year';
+            				valid = false;
+            			}
+            			if(scope.timeBits(question.TIMEUNITS, 'MONTH') && !month){
+                            scope.errors[array_id] = 'Please enter a month';
+            				valid = false;
+            			}
+            			if(scope.timeBits(question.TIMEUNITS, 'MONTH') && scope.timeBits(question.TIMEUNITS, 'YEAR') && scope.timeBits(question.TIMEUNITS, 'DAY') && year && !date){
+                            scope.errors[array_id] = 'Please enter a day of the month';
+            				valid = false;
+            			}
+            			if(date){
             			    if(parseInt(date[2]) < 1 || parseInt(date[2]) > 31){
             			    	scope.errors[array_id] = 'Please enter a different number for the day of month';
             					valid = false;
             			    }
             			}
+            			if(valid == true)
+                            delete scope.errors[array_id];
         			}else{
                         delete scope.errors[array_id];
                     }
@@ -789,7 +808,7 @@ app.directive('checkAnswer', [function (){
                 if(attr.answerType == "TEXTUAL"){
                     if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
                         if(value == ""){
-                            scope.errors[array_id] = "Value cannot be blank...";
+                            scope.errors[array_id] = "Value cannot be blank";
                         	valid = false;
                     	}else{
                             delete scope.errors[array_id];
@@ -836,33 +855,51 @@ app.directive('checkAnswer', [function (){
         		}
 
                 if(attr.answerType == "DATE"){
-                    console.log(attr.answerType);
+                    console.log(scope.timeUnits);
                     if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
             			var date = value.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
+            			var month = value.match(/January|February|March|April|May|June|July|August|September|October|November|December/);
+            			var year = value.match(/\d{4}/);
             			var time = value.match(/(\d+):(\d+) (AM|PM)/);
-            			if(typeof time != "undefined" && time && time.length > 2){
-                            delete scope.errors[array_id];
+            			if(time && time.length > 2){
             			    if(parseInt(time[1]) < 1 || parseInt(time[1]) > 12){
                                 scope.errors[array_id] = 'Please enter 1 to 12 for HH';
                             	valid = false;
             			    }
-            			    console.log(time);
             			    if(parseInt(time[2]) < 0 || parseInt(time[2]) > 59){
             			    	scope.errors[array_id] = 'Please enter 0 to 59 for MM';
             				    valid = false;
             			    }
             			}else{
+                			if(scope.timeBits(question.TIMEUNITS, 'MINUTE')){
+                		    	scope.errors[array_id] = 'Please enter the minutes';
+                			    valid = false;
+            			    }
                 			if(scope.timeBits(question.TIMEUNITS, 'HOUR')){
                 		    	scope.errors[array_id] = 'Please enter the time of day';
                 			    valid = false;
             			    }
             			}
-            			if(typeof date != "undefined" && date && date.length > 3){
+            			if(scope.timeBits(question.TIMEUNITS, 'YEAR') && !year){
+                            scope.errors[array_id] = 'Please enter a valid year';
+            				valid = false;
+            			}
+            			if(scope.timeBits(question.TIMEUNITS, 'MONTH') && !month){
+                            scope.errors[array_id] = 'Please enter a month';
+            				valid = false;
+            			}
+            			if(scope.timeBits(question.TIMEUNITS, 'MONTH') && scope.timeBits(question.TIMEUNITS, 'YEAR') && scope.timeBits(question.TIMEUNITS, 'DAY') && year && !date){
+                            scope.errors[array_id] = 'Please enter a day of the month';
+            				valid = false;
+            			}
+            			if(date){
             			    if(parseInt(date[2]) < 1 || parseInt(date[2]) > 31){
             			    	scope.errors[array_id] = 'Please enter a different number for the day of month';
             					valid = false;
             			    }
             			}
+            			if(valid == true)
+                            delete scope.errors[array_id];
         			}else{
                         delete scope.errors[array_id];
                     }
@@ -2636,13 +2673,15 @@ function columnWidths(){
 function fixHeader(){
     columnWidths();
 	// Set this variable with the height of your sidebar + header
-	var offsetPixels = $(".navbar").height();
+	var offsetLeft = parseInt($("#content").css("margin-left")) + parseInt($("#content").css("padding-left"))
+	var offsetPixels = $(".navbar").height(); 
     $("#content").css({"background-attachment":"fixed"});
     if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
     	$(window).scroll(function(event) {
 			$( "#floatHeader" ).css({
 				"position": "fixed",
 				"top": offsetPixels + "px",
+				"left": offsetLeft - $(window).scrollLeft() + "px",
     			"padding-top":  parseInt($("#content").css("padding-top")) + "px"
 			});
             $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});
@@ -2652,6 +2691,7 @@ function fixHeader(){
     		$( "#floatHeader" ).css({
     			"position": "fixed",
     			"top": offsetPixels + "px",
+				"left": offsetLeft - $(window).scrollLeft() + "px",
     			"padding-top":  parseInt($("#content").css("padding-top")) + "px"
     		});
             $("#answerForm").css({"margin-top":$("#floatHeader").height()  + "px"});

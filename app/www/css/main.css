@@ -454,6 +454,16 @@ td{
 	color:#fff;
 	background:#333;
 	border-radius: 0;
+	height:50px;
+}
+.open > .dropdown-menu {
+    margin-top:0px!important;
+}
+
+@media (max-width: 768px) {
+  .nav {
+    margin-left:0;
+  }
 }
 
 #topbar h3{
