@@ -457,20 +457,10 @@ class DataController extends Controller
 		$study = Study::model()->findByPk((int)$_POST['studyId']);
         #OK FOR SQL INJECTION
 		//$optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
-		$optionsRaw = QuestionOption::model()->findAllByAttributes(array('studyId'=>$study->id));
-		// create an array with option ID as key
-		$options = array();
-		foreach ($optionsRaw as $option){
-			$options[$option->id] = $option->value;
-		}
 
         #OK FOR SQL INJECTION
 		$alter_pair_questions = q("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = " . $study->id . " ORDER BY ordering")->queryAll();
-        #OK FOR SQL INJECTION
-        $alterCount = q("SELECT count(id) FROM `alterList` WHERE studyId = " . $study->id)->queryScalar();
-		//if($alterCount > 0)
-		//	$idNumber = "Id";
-		//else
+
         $idNumber = "Number";
 
 		$headers = array();

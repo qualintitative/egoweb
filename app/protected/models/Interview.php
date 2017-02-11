@@ -966,7 +966,14 @@ class Interview extends CActiveRecord
 		$alters2 = $alters;
 
 		$alter_pair_questions = q("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = " . $study->id . " ORDER BY ordering")->queryAll();
-    
+
+		$optionsRaw = QuestionOption::model()->findAllByAttributes(array('studyId'=>$study->id));
+		// create an array with option ID as key
+		$options = array();
+		foreach ($optionsRaw as $option){
+			$options[$option->id] = $option->value;
+		}
+
 		foreach ($alters as $alter){
 			array_shift($alters2);
 			foreach ($alters2 as $alter2){
