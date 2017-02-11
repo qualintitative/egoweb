@@ -12,7 +12,7 @@ function exportEgo(){
         var d = new Date();
         start = d.getTime();
         $.post(
-            "/data/exportinterview",
+            "/data/exportegoalter",
             {studyId: $("#studyId").val(), interviewId:  interviewId, expressionId: $("#expressionId").val(), YII_CSRF_TOKEN:$("input[name='YII_CSRF_TOKEN']").val()},
             function(data){
                 if(data == "success"){
@@ -23,7 +23,7 @@ function exportEgo(){
                     $(".progress-bar").width((finished / total * 100) + "%");
                     if(finished == total){
                         $("#status").html("Done!");
-                    	$('#analysis').attr('action', '/data/exportego');
+                    	$('#analysis').attr('action', '/data/exportegoalterall');
                         $('#analysis').submit();
                     }
                 }
@@ -32,8 +32,35 @@ function exportEgo(){
     });
 }
 function exportAlterPair(){
-	$('#analysis').attr('action', '/data/exportalterpair');
-	$('#analysis').submit();
+    var total = $("input[type='checkbox'][name*='export']:checked").length;
+    var finished = 0;
+
+    $(".progress-bar").width(0);
+    $("input[type='checkbox']:checked").each(function(index){
+        if(!$(this).attr("id"))
+            return true;
+        var interviewId = $(this).attr("id").match(/\d+/g)[0];
+        var d = new Date();
+        start = d.getTime();
+        $.post(
+            "/data/exportalterpair",
+            {studyId: $("#studyId").val(), interviewId:  interviewId, expressionId: $("#expressionId").val(), YII_CSRF_TOKEN:$("input[name='YII_CSRF_TOKEN']").val()},
+            function(data){
+                if(data == "success"){
+                    finished++;
+                    $("#status").html(
+                        "Processed " + finished + " / " + total + " interviews"
+                    );
+                    $(".progress-bar").width((finished / total * 100) + "%");
+                    if(finished == total){
+                        $("#status").html("Done!");
+                    	$('#analysis').attr('action', '/data/exportalterpairall');
+                        $('#analysis').submit();
+                    }
+                }
+            }
+        );
+    });
 }
 function exportOther(){
 	$('#analysis').attr('action', '/data/exportother');

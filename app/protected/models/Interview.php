@@ -952,6 +952,71 @@ class Interview extends CActiveRecord
         //return $text;
     }
 
+    public function exportAlterPairData($file, $study)
+    {
+		$alters = Alters::model()->findAll(array('order'=>'id', 'condition'=>'FIND_IN_SET(:x, interviewId)', 'params'=>array(':x'=>$this->id)));
+		//$alterNames = AlterList::model()->findAllByAttributes(array('interviewId'=>$interview->id));
+
+		$i = 1;
+		$alterNum = array();
+		foreach($alters as $alter){
+			$alterNum[$alter->id] = $i;
+			$i++;
+		}
+		$alters2 = $alters;
+
+		$alter_pair_questions = q("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = " . $study->id . " ORDER BY ordering")->queryAll();
+    
+		foreach ($alters as $alter){
+			array_shift($alters2);
+			foreach ($alters2 as $alter2){
+				$answers = array();
+                #OK FOR SQL INJECTION
+				$realId1 = q("SELECT id FROM alterList WHERE studyId = " . $study->id . " AND name = '" . addslashes($alter['name']) . "'")->queryScalar();
+                #OK FOR SQL INJECTION
+                $realId2 = q("SELECT id FROM alterList WHERE studyId = " . $study->id . " AND name = '" . addslashes($alter2['name']) . "'")->queryScalar();
+				$answers[] = $interview->id;
+				$answers[] = Interview::getEgoId($this->id);
+                $answers[] = $alterNum[$alter->id];
+				$answers[] = str_replace(",", ";", $alter->name);
+                $answers[] = $alterNum[$alter2->id];
+				$answers[] = $alter2->name;
+				foreach ($alter_pair_questions as $question){
+                    #OK FOR SQL INJECTION
+					$answer = decrypt(q("SELECT value FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter->id . " AND alterId2 = " . $alter2->id)->queryScalar());
+                    #OK FOR SQL INJECTION
+                    $skipReason =  q("SELECT skipReason FROM answer WHERE interviewId = " . $this->id . " AND questionId = " . $question['id'] . " AND alterId1 = " . $alter->id . " AND alterId2 = " . $alter2->id)->queryScalar();
+					if($answer != "" && $skipReason == "NONE"){
+						if($question['answerType'] == "SELECTION"){
+							$answers[] = $options[$answer];
+						}else if($question['answerType'] == "MULTIPLE_SELECTION"){
+							$optionIds = explode(',', $answer);
+							$list = array();
+							foreach($optionIds as $optionId){
+								if(isset($options[$optionId]))
+								$list[] = $options[$optionId];
+							}
+							if(count($list) == 0)
+								$answers[] = $study->valueNotYetAnswered;
+							else
+								$answers[] = implode('; ', $list);
+						}else{
+							if(!$answer)
+							    $answer = $study->valueNotYetAnswered;
+							$answers[] = $answer;
+						}
+					} else if (!$answer && ($skipReason == "DONT_KNOW" || $skipReason == "REFUSE")) {
+						if($skipReason == "DONT_KNOW")
+							$answers[] = $study->valueDontKnow;
+						else
+							$answers[] = $study->valueRefusal;
+					}
+				}
+                fputcsv($file, $answers);
+			}
+		}
+    }
+
     /**
      * Retrieves a list of models based on the current search/filter conditions.
      * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
