@@ -982,7 +982,7 @@ class Interview extends CActiveRecord
 				$realId1 = q("SELECT id FROM alterList WHERE studyId = " . $study->id . " AND name = '" . addslashes($alter['name']) . "'")->queryScalar();
                 #OK FOR SQL INJECTION
                 $realId2 = q("SELECT id FROM alterList WHERE studyId = " . $study->id . " AND name = '" . addslashes($alter2['name']) . "'")->queryScalar();
-				$answers[] = $interview->id;
+				$answers[] = $this->id;
 				$answers[] = Interview::getEgoId($this->id);
                 $answers[] = $alterNum[$alter->id];
 				$answers[] = str_replace(",", ";", $alter->name);
