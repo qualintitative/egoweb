@@ -136,7 +136,7 @@ Network Statistics
                         <th class="hidden-xs">Dyad Match ID</th>
                         <th><em class="fa fa-cog"></em></th>
 
-                    </tr> 
+                    </tr>
                   </thead>
                   <tbody>
 
@@ -148,12 +148,12 @@ Network Statistics
         else
             $completed = "";
         $mark = "";
+        $matchId = "";
         if($interview->hasMatches){
             $mark = "class='success'";
     		$criteria = array(
     			'condition'=>"interviewId1 = $interview->id OR interviewId2 = $interview->id",
     		);
-    		$matchId = "";
     		$match = MatchedAlters::model()->find($criteria);
             if($interview->id == $match->interviewId1)
                 $matchInt = Interview::model()->findByPk($match->interviewId2);
@@ -169,7 +169,7 @@ Network Statistics
         echo "<td>";
         if($interview->completed == -1)
             echo CHtml::button('Edit',array('submit'=>$this->createUrl('/data/edit/' . $interview->id)));
-            
+
         echo CHtml::button('Review',array('submit'=>$this->createUrl('/interview/'.$study->id.'/'.$interview->id.'/#/page/0')));
         echo CHtml::button('Visualize',array('submit'=>$this->createUrl('/data/visualize?expressionId=&interviewId='.$interview->id)))."</td>";
         echo "</tr>";
