@@ -80,15 +80,16 @@ function loadR(questionId){
 function matchUp(s){
     var id = $(s).attr("id");
     var id2 = $(s).val();
-    $(s).parent().next().attr("alterId",$(s).val());
     if($(s).val() != ""){
         $("#" + id + "-name").show();
         $("#" + id + "-name").val($("option:selected", s).text());
         $("#" + id + "-buttons").html("<button class='btn btn-xs btn-success' onclick='save(" + studyId + "," +id + "," + id2 +")'>save</button>");;
     }else{
+        $("#" + id + "-alter2").html("");
         $("#" + id + "-name").hide();
         $("#" + id + "-buttons").html("");
     }
+    $(s).parent().next().attr("alterId",$(s).val());
     loadR($("#question").val());
 
 }
@@ -164,9 +165,9 @@ function exportMatches(){
         <td><?php
             foreach($alters2 as $aid=>$name)
                 $alterIds2[] = $aid;
-            
+
             $match = MatchedAlters::model()->findByAttributes(array("alterId1"=>$alterId),
-            
+
             array("condition"=>"alterId2 IN (" . implode(",", $alterIds2). ")"));
             if($match){
                 $selected = $match->alterId2;
@@ -184,17 +185,16 @@ function exportMatches(){
                         );
                     }
                 ?></td>
-        <td class="responses" alterId=<?php echo $selected; ?>></td>
+        <td id="<?php echo $alterId; ?>-alter2" class="responses" alterId=<?php echo $selected; ?>></td>
         <td><?php echo CHtml::textField("name",$selectedName ,array("id"=>$alterId."-name", "style"=>"display:none;")); ?></td>
         <td id="<?php echo $alterId; ?>-buttons">
             <?php
                 if(isset($match))
                     echo "<button class='btn btn-xs btn-danger unMatch-$alterId' onclick='unMatch($alterId, $selected)'>Unmatch</button>";
             ?>
-            
+
         </td>
     </tr><?php endforeach; ?>
 </table>
 
 <button onclick="exportMatches()" class="btn btn-success">Export Matches</button>
-
