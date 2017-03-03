@@ -701,6 +701,22 @@ class Interview extends CActiveRecord
 
         $text = "";
         $count = 1;
+        $matchId = "";
+        $matchIntId = "";
+		$criteria = array(
+			'condition'=>"interviewId1 = $this->id OR interviewId2 = $this->id",
+		);
+
+		$match = MatchedAlters::model()->find($criteria);
+
+        if($match){
+            $matchId = $match->id;
+            if($this->id == $match->interviewId1)
+                $matchInt = Interview::model()->findByPk($match->interviewId2);
+            else
+                $matchInt = Interview::model()->findByPk($match->interviewId1);
+            $matchIntId = Interview::getEgoId($matchInt->id);
+        }
 
         foreach ($alters as $alter)
         {
@@ -710,6 +726,7 @@ class Interview extends CActiveRecord
             $ego_id_string = array();
             $study = Study::model()->findByPk($this->studyId);
             $optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
+
 
             // create an array with option ID as key
             $options = array();
@@ -879,25 +896,9 @@ class Interview extends CActiveRecord
 
             if (isset($alter->id))
             {
+                $answers[] = $matchIntId;
                 $answers[] = $count;
                 $answers[] = $alter->name;
-        		$criteria = array(
-        			'condition'=>"alterId1 = $alter->id OR alterId2 = $alter->id",
-        		);
-        		$matchId = "";
-        		$match = MatchedAlters::model()->find($criteria);
-
-                if($match)
-                    $matchId = $match->id;
-                $answers[] = $matchId;
-
-                if($match){
-                    if($this->id == $match->interviewId1)
-                        $matchInt = Interview::model()->findByPk($match->interviewId2);
-                    else
-                        $matchInt = Interview::model()->findByPk($match->interviewId1);
-                    $matchId = Interview::getEgoId($matchInt->id);
-                }
                 $answers[] = $matchId;
 
                 foreach ($alter_questions as $question)

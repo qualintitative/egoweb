@@ -384,10 +384,10 @@ class DataController extends Controller
 			$headers[] = "Dyads";
 			$headers[] = "Isolates";
         }
+		$headers[] = "Dyad Match ID";
 		$headers[] = "Alter Number";
 		$headers[] = "Alter Name";
 		$headers[] = "Alter Pair ID";
-		$headers[] = "Dyad Match ID";
 
 		foreach ($alter_questions as $question){
 			$headers[] = $question['title'];
