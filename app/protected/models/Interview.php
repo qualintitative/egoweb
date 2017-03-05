@@ -701,22 +701,6 @@ class Interview extends CActiveRecord
 
         $text = "";
         $count = 1;
-        $matchId = "";
-        $matchIntId = "";
-		$criteria = array(
-			'condition'=>"interviewId1 = $this->id OR interviewId2 = $this->id",
-		);
-
-		$match = MatchedAlters::model()->find($criteria);
-
-        if($match){
-            $matchId = $match->id;
-            if($this->id == $match->interviewId1)
-                $matchInt = Interview::model()->findByPk($match->interviewId2);
-            else
-                $matchInt = Interview::model()->findByPk($match->interviewId1);
-            $matchIntId = Interview::getEgoId($matchInt->id);
-        }
 
         foreach ($alters as $alter)
         {
@@ -896,6 +880,22 @@ class Interview extends CActiveRecord
 
             if (isset($alter->id))
             {
+                $matchId = "";
+                $matchIntId = "";
+        		$criteria = array(
+        			'condition'=>"alterId1 = $alter->id OR alterId2 = $alter->id",
+        		);
+        
+        		$match = MatchedAlters::model()->find($criteria);
+        
+                if($match){
+                    $matchId = $match->id;
+                    if($this->id == $match->interviewId1)
+                        $matchInt = Interview::model()->findByPk($match->interviewId2);
+                    else
+                        $matchInt = Interview::model()->findByPk($match->interviewId1);
+                    $matchIntId = Interview::getEgoId($matchInt->id);
+                }
                 $answers[] = $matchIntId;
                 $answers[] = $count;
                 $answers[] = $alter->name;
