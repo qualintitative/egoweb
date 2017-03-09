@@ -83,7 +83,7 @@ function matchUp(s){
     if($(s).val() != ""){
         $("#" + id + "-name").show();
         $("#" + id + "-name").val($("option:selected", s).text());
-        $("#" + id + "-buttons").html("<button class='btn btn-xs btn-success' onclick='save(" + studyId + "," +id + "," + id2 +")'>save</button>");;
+        $("#" + id + "-buttons").html("<button class='btn btn-xs btn-success btn-xs' onclick='save(" + studyId + "," +id + "," + id2 +")'>save</button>");;
     }else{
         $("#" + id + "-alter2").html("");
         $("#" + id + "-name").hide();
@@ -96,16 +96,23 @@ function matchUp(s){
 function save(sId, id1, id2){
     var alterName = $("#" + id1 + "-name").val();
     $.post("/data/savematch", {studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
-        $("#" + id1 + "-buttons").html(data);
+        if(id1 == "0")
+            $("#markMatch").html(data);
+        else
+            $("#" + id1 + "-buttons").html(data);
     })
 }
 
 function unMatch(id1, id2){
     $.post("/data/unmatch", {alterId1:id1, alterId2:id2, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>}, function(data){
-        $("#" + id1 + "-buttons").html("");
-        $("#" + id1 + "-name").val("");
-        $("#" + id1).val("");
-        $("#" + id1).change();
+        if(id1 == 0){
+            $("#markMatch").html("<button onclick='save(studyId, 0, 0)' class='btn btn-success'>Mark as matched</button>");
+        }else{
+            $("#" + id1 + "-buttons").html("");
+            $("#" + id1 + "-name").val("");
+            $("#" + id1).val("");
+            $("#" + id1).change();
+        }
     })
 }
 
@@ -113,6 +120,12 @@ function exportMatches(){
     document.location = "/data/exportmatches?studyId=" + studyId + "&interviewIds=" + interviewIds.join(",");
 }
 </script>
+<?php
+    		$criteria = array(
+    			'condition'=>"interviewId1 = $interview1->id OR interviewId2 = $interview1->id",
+    		);
+    		$marked = MatchedAlters::model()->find($criteria);
+?>
 <div class="panel panel-success">
     <div class="panel-heading">
         Automatic Matching
@@ -196,5 +209,10 @@ function exportMatches(){
         </td>
     </tr><?php endforeach; ?>
 </table>
-
-<button onclick="exportMatches()" class="btn btn-success">Export Matches</button>
+<div id="markMatch">
+<?php if($marked): ?>
+<button onclick="unMatch('0', '0')" class="btn btn-danger btn-xs">Remove Mark</button>
+<?php else: ?>
+<button onclick="save(studyId, '0', '0')" class="btn btn-success btn-xs">Mark as matched</button>
+<?php endif; ?>
+</div>
