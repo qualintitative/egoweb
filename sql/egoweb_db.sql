@@ -106,7 +106,9 @@ CREATE TABLE IF NOT EXISTS `matchedAlters` (
   `studyId` int(11) DEFAULT NULL,
   `alterId1` int(11) DEFAULT NULL,
   `alterId2` int(11) DEFAULT NULL,
-  `matchedName` varchar(255) NOT NULL
+  `matchedName` varchar(255) NOT NULL,
+  `interviewId1` int(11) DEFAULT NULL,
+  `interviewId2` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `notes` (
@@ -215,7 +217,8 @@ CREATE TABLE IF NOT EXISTS `study` (
   `hideEgoIdPage` tinyint(1) NOT NULL,
   `style` text,
   `javascript` longtext,
-  `footer` longtext
+  `footer` longtext,
+  `header` longtext
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `tbl_migration` (
@@ -349,4 +352,6 @@ INSERT INTO `tbl_migration` (`version`, `apply_time`) VALUES
 ('m160118_100231_image_longtext', 1453112259),
 ('m160201_074143_style_css', 1454312829),
 ('m160325_091242_js_and_footer', 1458898123),
-('m160407_002139_js_question', 1459988879);
+('m160407_002139_js_question', 1459988879),
+('m160919_094624_header', 1474279347),
+('m170127_113542_add_matched_interviews', 1485613302);
