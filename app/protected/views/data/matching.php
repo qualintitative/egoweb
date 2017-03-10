@@ -80,29 +80,39 @@ function loadR(questionId){
 function matchUp(s){
     var id = $(s).attr("id");
     var id2 = $(s).val();
-    $(s).parent().next().attr("alterId",$(s).val());
     if($(s).val() != ""){
+        $("#" + id + "-name").show();
         $("#" + id + "-name").val($("option:selected", s).text());
-        $("#" + id + "-buttons").html("<button class='btn btn-xs btn-success' onclick='save(" + studyId + "," +id + "," + id2 +")'>save</button>");;
+        $("#" + id + "-buttons").html("<button class='btn btn-xs btn-success btn-xs' onclick='save(" + studyId + "," +id + "," + id2 +")'>save</button>");;
     }else{
-        $("#" + id + "-name").val("");
+        $("#" + id + "-alter2").html("");
+        $("#" + id + "-name").hide();
+        $("#" + id + "-buttons").html("");
     }
+    $(s).parent().next().attr("alterId",$(s).val());
     loadR($("#question").val());
 
 }
 function save(sId, id1, id2){
     var alterName = $("#" + id1 + "-name").val();
-    $.post("/data/savematch", {studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>}, function(data){
-        $("#" + id1 + "-buttons").html(data);
+    $.post("/data/savematch", {studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
+        if(id1 == "0")
+            $("#markMatch").html(data);
+        else
+            $("#" + id1 + "-buttons").html(data);
     })
 }
 
 function unMatch(id1, id2){
     $.post("/data/unmatch", {alterId1:id1, alterId2:id2, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>}, function(data){
-        $("#" + id1 + "-buttons").html("");
-        $("#" + id1 + "-name").val("");
-        $("#" + id1).val("");
-        $("#" + id1).change();
+        if(id1 == 0){
+            $("#markMatch").html("<button onclick='save(studyId, 0, 0)' class='btn btn-success'>Mark as matched</button>");
+        }else{
+            $("#" + id1 + "-buttons").html("");
+            $("#" + id1 + "-name").val("");
+            $("#" + id1).val("");
+            $("#" + id1).change();
+        }
     })
 }
 
@@ -110,6 +120,12 @@ function exportMatches(){
     document.location = "/data/exportmatches?studyId=" + studyId + "&interviewIds=" + interviewIds.join(",");
 }
 </script>
+<?php
+    		$criteria = array(
+    			'condition'=>"interviewId1 = $interview1->id OR interviewId2 = $interview1->id",
+    		);
+    		$marked = MatchedAlters::model()->find($criteria);
+?>
 <div class="panel panel-success">
     <div class="panel-heading">
         Automatic Matching
@@ -162,9 +178,9 @@ function exportMatches(){
         <td><?php
             foreach($alters2 as $aid=>$name)
                 $alterIds2[] = $aid;
-            
+
             $match = MatchedAlters::model()->findByAttributes(array("alterId1"=>$alterId),
-            
+
             array("condition"=>"alterId2 IN (" . implode(",", $alterIds2). ")"));
             if($match){
                 $selected = $match->alterId2;
@@ -182,17 +198,21 @@ function exportMatches(){
                         );
                     }
                 ?></td>
-        <td class="responses" alterId=<?php echo $selected; ?>></td>
-        <td><?php echo CHtml::textField("name",$selectedName ,array("id"=>$alterId."-name")); ?></td>
+        <td id="<?php echo $alterId; ?>-alter2" class="responses" alterId=<?php echo $selected; ?>></td>
+        <td><?php echo CHtml::textField("name",$selectedName ,array("id"=>$alterId."-name", "style"=>"display:none;")); ?></td>
         <td id="<?php echo $alterId; ?>-buttons">
             <?php
                 if(isset($match))
                     echo "<button class='btn btn-xs btn-danger unMatch-$alterId' onclick='unMatch($alterId, $selected)'>Unmatch</button>";
             ?>
-            
+
         </td>
     </tr><?php endforeach; ?>
 </table>
-
-<button onclick="exportMatches()" class="btn btn-success">Export Matches</button>
-
+<div id="markMatch">
+<?php if($marked): ?>
+<button onclick="unMatch('0', '0')" class="btn btn-danger btn-xs">Remove Mark</button>
+<?php else: ?>
+<button onclick="save(studyId, '0', '0')" class="btn btn-success btn-xs">Mark as matched</button>
+<?php endif; ?>
+</div>
