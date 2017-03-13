@@ -443,7 +443,7 @@ class InterviewController extends Controller
                     //echo encrypt($_POST['Alters']['name']);
                 
                     $params->dataType = PDO::PARAM_STR;
-        			if(!in_array($_POST['Alters']['name'], $pre_names)){
+        			if(!in_array($_POST['Alters']['name'], $pre_names) && $study->restrictAlters){
 						$model->addError('name', $_POST['Alters']['name']. ' is not in our list of participants');
                     }
 					//$nameInList = q('SELECT name FROM alterList WHERE name = :name AND studyId = '. $studyId, array($params))->queryScalar();
