@@ -27,7 +27,7 @@ class DataController extends Controller
 				'actions'=>array('index', 'exportegoalterall', 'savenote', 'noteexists','exportalterpair', 'exportalterpairall', 'exportalterlist', 'exportother', 'visualize', 'study', 'ajaxAdjacencies', 'exportegoalter' , "savematch" , "unmatch", "edit"),
 				'users'=>array('@'),
 			),
-			array('allow',  // deny all users
+			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
 		);
@@ -246,7 +246,7 @@ class DataController extends Controller
 		$headers[] = 'Interview Ego ID';
 		$headers[] = "Alter Name";
 		$headers[] = "Alter Match Id";
-        
+
         fputcsv($file, $headers);
         foreach($interviewIds as $interviewId){
             $alters = Alters::model()->findAllByAttributes(array("interviewId"=>$interviewId));
@@ -461,7 +461,7 @@ class DataController extends Controller
             echo "success";
             Yii::app()->end();
         }
-    
+
 		$study = Study::model()->findByPk((int)$_POST['studyId']);
         #OK FOR SQL INJECTION
 		//$optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
@@ -791,7 +791,7 @@ class DataController extends Controller
             echo file_get_contents($filePath);
             unlink($filePath);
         }
-    
+
 		Yii::app()->end();
 	}
 
