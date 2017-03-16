@@ -309,7 +309,7 @@ class ImportExportController extends Controller
             		$newQuestionIds[intval($q_attributes['id'])] = $qIds[strval($q_attributes['title'])];
             		if(isset($question->option)){
                 		foreach($question->option as $option){
-                            $o_attributes = $question->attributes();
+                            $o_attributes = $option->attributes();
                             $newOptionIds[intval($o_attributes['id'])] = $oIds[strval($qIds[strval($q_attributes['title'])] . "-" .$o_attributes['name'])];
                         }
                     }
@@ -517,7 +517,7 @@ class ImportExportController extends Controller
             						$newAnswer->otherSpecifyText = implode(";;", $otherSpecifies);
         						}
     						}
-						
+
     						$newAnswer->studyId = $newStudy->id;
     						$newAnswer->interviewId = $newInterview->id;
 
