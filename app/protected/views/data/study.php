@@ -134,6 +134,7 @@ Network Statistics
                         <th class="hidden-xs">Started</th>
                         <th class="hidden-xs">Completed</th>
                         <th class="hidden-xs">Dyad Match ID</th>
+                        <th class="hidden-xs">Match User</th>
                         <th><em class="fa fa-cog"></em></th>
 
                     </tr>
@@ -149,6 +150,7 @@ Network Statistics
             $completed = "";
         $mark = "";
         $matchId = "";
+        $matchUser = "";
         if($interview->hasMatches){
             $mark = "class='success'";
     		$criteria = array(
@@ -160,12 +162,14 @@ Network Statistics
             else
                 $matchInt = Interview::model()->findByPk($match->interviewId1);
             $matchId = Interview::getEgoId($matchInt->id);
+            $matchUser = User::getName($match->userId);
         }
         echo "<tr $mark>";
         echo "<td>".CHtml::checkbox('export[' .$interview['id'].']'). "</td><td>" . Interview::getEgoId($interview->id)."</td>";
         echo "<td class='hidden-xs'>".date("Y-m-d h:i:s", $interview->start_date)."</td>";
         echo "<td class='hidden-xs'>".$completed."</td>";
         echo "<td class='hidden-xs'>".$matchId."</td>";
+        echo "<td class='hidden-xs'>".$matchUser."</td>";
         echo "<td>";
         if($interview->completed == -1)
             echo CHtml::button('Edit',array('submit'=>$this->createUrl('/data/edit/' . $interview->id)));

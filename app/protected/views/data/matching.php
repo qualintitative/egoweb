@@ -95,7 +95,7 @@ function matchUp(s){
 }
 function save(sId, id1, id2){
     var alterName = $("#" + id1 + "-name").val();
-    $.post("/data/savematch", {studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
+    $.post("/data/savematch", {studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, userId: <?php echo Yii::app()->user->id; ?>, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
         if(id1 == "0")
             $("#markMatch").html(data);
         else
@@ -163,10 +163,10 @@ function exportMatches(){
 
 <table class="table table-condensed">
     <tr>
-        <th>Interview 1</th>
+        <th><?php echo Interview::getEgoId($interview1->id); ?></th>
         <th>Responses</th>
 
-        <th>Interview 2</th>
+        <th><?php echo Interview::getEgoId($interview2->id); ?></th>
         <th>Responses</th>
 
         <th>Matched Alter name</th>

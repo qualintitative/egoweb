@@ -29,7 +29,7 @@ class MatchedAlters extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('matchedName', 'required'),
-			array('studyId, alterId1, alterId2, interviewId1, interviewId2', 'numerical', 'integerOnly'=>true),
+			array('studyId, alterId1, alterId2, interviewId1, interviewId2, userId', 'numerical', 'integerOnly'=>true),
 			array('matchedName', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
