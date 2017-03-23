@@ -108,7 +108,8 @@ CREATE TABLE IF NOT EXISTS `matchedAlters` (
   `alterId2` int(11) DEFAULT NULL,
   `matchedName` varchar(255) NOT NULL,
   `interviewId1` int(11) DEFAULT NULL,
-  `interviewId2` int(11) DEFAULT NULL
+  `interviewId2` int(11) DEFAULT NULL,
+  `userId` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `notes` (
@@ -354,4 +355,5 @@ INSERT INTO `tbl_migration` (`version`, `apply_time`) VALUES
 ('m160325_091242_js_and_footer', 1458898123),
 ('m160407_002139_js_question', 1459988879),
 ('m160919_094624_header', 1474279347),
-('m170127_113542_add_matched_interviews', 1485613302);
+('m170127_113542_add_matched_interviews', 1485613302),
+('m170317_083540_add_alter_matcher', 1489740523);
