@@ -73,7 +73,8 @@ function loadR(questionId){
     if(!questionId)
         return false;
     $(".responses").each(function(){
-        $(this).html(answers[questionId][$(this).attr("alterId")]);
+        if(typeof answers[questionId][$(this).attr("alterId")] != "undefined")
+            $(this).html(answers[questionId][$(this).attr("alterId")]);
     });
 }
 

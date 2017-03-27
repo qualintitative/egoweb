@@ -713,7 +713,7 @@ class Interview extends CActiveRecord
                 $matchInt = Interview::model()->findByPk($match->interviewId2);
             else
                 $matchInt = Interview::model()->findByPk($match->interviewId1);
-            $matchIntId = Interview::getEgoId($matchInt->id);
+            $matchIntId = $match->getMatchId();
             $matchUser = User::getName($match->userId);
         }
 

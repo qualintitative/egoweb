@@ -199,6 +199,28 @@ class DataController extends Controller
                     $optionIds = explode(",", $answer->value);
                     $answer->value = "";
                     $answerArray = array();
+                    $otherSpecifies = array();
+                    $response = $answers[$question->id . "-" . $alter->id]->otherSpecifyText;
+                    foreach(preg_split('/;;/', $response) as $otherSpecify){
+                        if(strstr($otherSpecify, ':')){
+                            list($optionId, $val) = preg_split('/:/', $otherSpecify);
+                            $otherSpecifies[$optionId] = $val;
+                        }
+                    }
+                    $optionIds = explode(",", $answers[$question->id . "-" . $alter->id]->value);
+                    foreach  ($optionIds as $optionId)
+                    {
+                        $option = QuestionOption::model()->findbyPk($optionId);
+                        if (isset($otherSpecifies[$optionId])){
+                            if(count($optionIds) == 1 && preg_match("/OTHER \(*SPECIFY\)*/i", $other_options[$optionId]->name))
+                                $answerArray["OTHER SPECIFY"] = $otherSpecifies[$optionId];
+                            else
+                                $answerArray[] = $otherSpecifies[$optionId];
+                        }else{
+                            $answerArray[] = $option->name;
+                        }
+                    }
+                    /*
                     foreach  ($optionIds as $optionId)
                     {
                         $option = QuestionOption::model()->findbyPk($optionId);
@@ -214,7 +236,7 @@ class DataController extends Controller
                             else
                                 $answerArray[] = $option->name;
                         }
-                    }
+                    }*/
                     $answer->value = implode("; ", $answerArray);
 
     		}
@@ -223,7 +245,7 @@ class DataController extends Controller
         $result = Question::model()->findAllByAttributes(array("subjectType"=>"ALTER", "studyId"=>$interview1->studyId));
         foreach($result as $question){
             $questions[$question->id] = $question->title;
-            $prompts[$question->id] = substr($question->prompt,0,80);
+            $prompts[$question->id] = $question->prompt;
         }
 		$this->render('matching', array(
 			'interview1'=>$interview1,
