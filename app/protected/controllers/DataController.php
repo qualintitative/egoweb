@@ -197,25 +197,27 @@ class DataController extends Controller
 		foreach($result as $answer){
     		if($answer->answerType == "MULTIPLE_SELECTION"){
                     $optionIds = explode(",", $answer->value);
-                    $answer->value = "";
+                    //$answer->value = "";
                     $answerArray = array();
                     $otherSpecifies = array();
-                    $response = $answers[$question->id . "-" . $alter->id]->otherSpecifyText;
+                    $response = $answer->otherSpecifyText;
                     foreach(preg_split('/;;/', $response) as $otherSpecify){
                         if(strstr($otherSpecify, ':')){
                             list($optionId, $val) = preg_split('/:/', $otherSpecify);
                             $otherSpecifies[$optionId] = $val;
                         }
                     }
-                    $optionIds = explode(",", $answers[$question->id . "-" . $alter->id]->value);
+                    $optionIds = explode(",", $answer->value);
                     foreach  ($optionIds as $optionId)
                     {
+                        if(!$optionId)
+                            continue;
                         $option = QuestionOption::model()->findbyPk($optionId);
                         if (isset($otherSpecifies[$optionId])){
-                            if(count($optionIds) == 1 && preg_match("/OTHER \(*SPECIFY\)*/i", $other_options[$optionId]->name))
-                                $answerArray["OTHER SPECIFY"] = $otherSpecifies[$optionId];
-                            else
+                            //if(count($optionIds) == 1 && preg_match("/OTHER \(*SPECIFY\)*/i", $other_options[$optionId]->name))
                                 $answerArray[] = $otherSpecifies[$optionId];
+                            //else
+                            //    $answerArray[] = $otherSpecifies[$optionId];
                         }else{
                             $answerArray[] = $option->name;
                         }
