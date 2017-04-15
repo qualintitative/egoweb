@@ -73,7 +73,8 @@ function loadR(questionId){
     if(!questionId)
         return false;
     $(".responses").each(function(){
-        $(this).html(answers[questionId][$(this).attr("alterId")]);
+        if(typeof answers[questionId][$(this).attr("alterId")] != "undefined")
+            $(this).html(answers[questionId][$(this).attr("alterId")]);
     });
 }
 
@@ -97,7 +98,7 @@ function save(sId, id1, id2){
     var alterName = $("#" + id1 + "-name").val();
     $.post("/data/savematch", {studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, userId: <?php echo Yii::app()->user->id; ?>, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
         if(id1 == "0")
-            $("#markMatch").html(data);
+            document.location.href = "/data/study/" + sId; //$("#markMatch").html(data);
         else
             $("#" + id1 + "-buttons").html(data);
     })

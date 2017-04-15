@@ -161,7 +161,7 @@ Network Statistics
                 $matchInt = Interview::model()->findByPk($match->interviewId2);
             else
                 $matchInt = Interview::model()->findByPk($match->interviewId1);
-            $matchId = Interview::getEgoId($matchInt->id);
+            $matchId = $match->getMatchId();
             $matchUser = User::getName($match->userId);
         }
         echo "<tr $mark>";

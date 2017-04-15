@@ -91,6 +91,17 @@ class MatchedAlters extends CActiveRecord
 		));
 	}
 
+    public function getMatchId()
+    {
+        $interview1 = Interview::getEgoId($this->interviewId1);
+        $interview2 = Interview::getEgoId($this->interviewId2);
+
+        if($this->interviewId1 > $this->interviewId2)
+            return $interview2  . "_" . $interview1;
+        else
+            return $interview1  . "_" . $interview2;
+    }
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
