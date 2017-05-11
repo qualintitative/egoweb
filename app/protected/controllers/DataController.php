@@ -843,7 +843,7 @@ class DataController extends Controller
 		$headers[] = "Link With Key";
 		echo implode(',', $headers) . "\n";
 
-        $ego_id = Question::model()->findByAttributes(array("studyId"=>$study->id, "subjectType"=>"EGO_ID", "useAlterListField"=>array("name", "email")));
+        $ego_id = Question::model()->findByAttributes(array("studyId"=>$study->id, "subjectType"=>"EGO_ID", "useAlterListField"=>array("name", "email", "id")));
 
 		foreach($alters as $alter){
 			$row = array();
