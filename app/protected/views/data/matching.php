@@ -104,8 +104,8 @@ function save(sId, id1, id2){
     })
 }
 
-function unMatch(id1, id2){
-    $.post("/data/unmatch", {alterId1:id1, alterId2:id2, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>}, function(data){
+function unMatch(sId, id1, id2){
+    $.post("/data/unmatch", {studyId:sId, alterId1:id1, alterId2:id2, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>}, function(data){
         if(id1 == 0){
             $("#markMatch").html("<button onclick='save(studyId, 0, 0)' class='btn btn-success'>Mark as matched</button>");
         }else{
@@ -123,7 +123,7 @@ function exportMatches(){
 </script>
 <?php
     		$criteria = array(
-    			'condition'=>"interviewId1 = $interview1->id OR interviewId2 = $interview1->id",
+    			'condition'=>"(interviewId1 = $interview1->id OR interviewId2 = $interview1->id) AND alterId1 = 0 AND alterId2 = 0",
     		);
     		$marked = MatchedAlters::model()->find($criteria);
 ?>
@@ -212,7 +212,7 @@ function exportMatches(){
 </table>
 <div id="markMatch">
 <?php if($marked): ?>
-<button onclick="unMatch('0', '0')" class="btn btn-danger btn-xs">Remove Mark</button>
+<button onclick="unMatch(studyId, '0', '0')" class="btn btn-danger btn-xs">Remove Mark</button>
 <?php else: ?>
 <button onclick="save(studyId, '0', '0')" class="btn btn-success btn-xs">Mark as matched</button>
 <?php endif; ?>

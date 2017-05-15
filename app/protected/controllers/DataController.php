@@ -414,13 +414,20 @@ class DataController extends Controller
 			$headers[] = "Dyads";
 			$headers[] = "Isolates";
         }
-		$headers[] = "Dyad Match ID";
-        $headers[] = "Match User";
-		$headers[] = "Alter Number";
-		$headers[] = "Alter Name";
-        $headers[] = "Matched Alter Name";
-		$headers[] = "Alter Pair ID";
-
+        $matchAtAll = MatchedAlters::model()->find( array(
+            'condition'=>"studyId = " . $study->id,
+        ));
+        if($matchAtAll){
+    		$headers[] = "Dyad Match ID";
+            $headers[] = "Match User";
+    		$headers[] = "Alter Number";
+    		$headers[] = "Alter Name";
+            $headers[] = "Matched Alter Name";
+    		$headers[] = "Alter Pair ID";
+        }else{
+            $headers[] = "Alter Number";
+    		$headers[] = "Alter Name";    
+        }
 		foreach ($alter_questions as $question){
 			$headers[] = $question['title'];
 		}

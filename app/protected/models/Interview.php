@@ -704,19 +704,24 @@ class Interview extends CActiveRecord
 
         $matchIntId = "";
         $matchUser = "";
-		$criteria = array(
-			'condition'=>"interviewId1 = $this->id OR interviewId2 = $this->id",
-		);
-		$match = MatchedAlters::model()->find($criteria);
-		if($match){
-            if($this->id == $match->interviewId1)
-                $matchInt = Interview::model()->findByPk($match->interviewId2);
-            else
-                $matchInt = Interview::model()->findByPk($match->interviewId1);
-            $matchIntId = $match->getMatchId();
-            $matchUser = User::getName($match->userId);
+        $criteria = array(
+            'condition'=>"studyId = $this->studyId",
+        );
+        $matchAtAll = MatchedAlters::model()->find($criteria);
+        if($matchAtAll){
+    		$criteria = array(
+    			'condition'=>"interviewId1 = $this->id OR interviewId2 = $this->id",
+    		);
+    		$match = MatchedAlters::model()->find($criteria);
+    		if($match){
+                if($this->id == $match->interviewId1)
+                    $matchInt = Interview::model()->findByPk($match->interviewId2);
+                else
+                    $matchInt = Interview::model()->findByPk($match->interviewId1);
+                $matchIntId = $match->getMatchId();
+                $matchUser = User::getName($match->userId);
+            }
         }
-
         foreach ($alters as $alter)
         {
             $answers = array();
@@ -895,26 +900,27 @@ class Interview extends CActiveRecord
 
             if (isset($alter->id))
             {
-                $matchId = "";
-                $matchName = "";
-        		$criteria = array(
-        			'condition'=>"alterId1 = $alter->id OR alterId2 = $alter->id",
-        		);
-
-        		$match = MatchedAlters::model()->find($criteria);
-
-                if($match){
-                    $matchId = $match->id;
-                    $matchName = $match->matchedName;
+                if($matchAtAll){
+                    $matchId = "";
+                    $matchName = "";
+            		$criteria = array(
+            			'condition'=>"alterId1 = $alter->id OR alterId2 = $alter->id",
+            		);
+            		$match = MatchedAlters::model()->find($criteria);
+                    if($match){
+                        $matchId = $match->id;
+                        $matchName = $match->matchedName;
+                    }
+                    $answers[] = $matchIntId;
+                    $answers[] = $matchUser;
+                    $answers[] = $count;
+                    $answers[] = $alter->name;
+                    $answers[] = $matchName;
+                    $answers[] = $matchId;
+                }else{
+                    $answers[] = $count;
+                    $answers[] = $alter->name;
                 }
-
-                $answers[] = $matchIntId;
-                $answers[] = $matchUser;
-                $answers[] = $count;
-                $answers[] = $alter->name;
-                $answers[] = $matchName;
-                $answers[] = $matchId;
-
                 foreach ($alter_questions as $question)
                 {
                     $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question['id'], "alterId1"=>$alter->id));
