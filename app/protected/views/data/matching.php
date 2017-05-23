@@ -96,12 +96,16 @@ function matchUp(s){
 }
 function save(sId, id1, id2){
     var alterName = $("#" + id1 + "-name").val();
-    $.post("/data/savematch", {studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, userId: <?php echo Yii::app()->user->id; ?>, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
-        if(id1 == "0")
-            document.location.href = "/data/study/" + sId; //$("#markMatch").html(data);
-        else
-            $("#" + id1 + "-buttons").html(data);
-    })
+    if(alterName.trim() == ""){
+        alert ("Please enter a name!");
+    }else{
+        $.post("/data/savematch", {studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, userId: <?php echo Yii::app()->user->id; ?>, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
+            if(id1 == "0")
+                document.location.href = "/data/study/" + sId; //$("#markMatch").html(data);
+            else
+                $("#" + id1 + "-buttons").html(data);
+        })
+    }
 }
 
 function unMatch(sId, id1, id2){
@@ -200,11 +204,11 @@ function exportMatches(){
                     }
                 ?></td>
         <td id="<?php echo $alterId; ?>-alter2" class="responses" alterId=<?php echo $selected; ?>></td>
-        <td><?php echo CHtml::textField("name",$selectedName ,array("id"=>$alterId."-name", "style"=>"display:none;")); ?></td>
+        <td><?php echo CHtml::textField("name",$selectedName ,array("id"=>$alterId."-name", "style"=>($selectedName == "" ? "display:none;": ""))); ?></td>
         <td id="<?php echo $alterId; ?>-buttons">
             <?php
                 if(isset($match))
-                    echo "<button class='btn btn-xs btn-danger unMatch-$alterId' onclick='unMatch($alterId, $selected)'>Unmatch</button>";
+                    echo "<button class='btn btn-xs btn-danger unMatch-$alterId' onclick='unMatch(studyId, $alterId, $selected)'>Unmatch</button>";
             ?>
 
         </td>
