@@ -96,7 +96,7 @@ function matchUp(s){
 }
 function save(sId, id1, id2){
     var alterName = $("#" + id1 + "-name").val();
-    if(alterName.trim() == ""){
+    if(typeof alterName != "undefined" && alterName.trim() == ""){
         alert ("Please enter a name!");
     }else{
         $.post("/data/savematch", {studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, userId: <?php echo Yii::app()->user->id; ?>, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
