@@ -1034,11 +1034,16 @@ function buildQuestions(pageNumber, interviewId){
         page[i] = new Object;
     }
 
+    // first pass at ego questions
 	if(interviewId != null){
 		ego_question_list = new Object;
 		network_question_list = new Object;
 		prompt = "";
+                        
 		for(j in ego_questions){
+            if (ego_questions[j].TITLE.indexOf("VS3.") >= 0){
+                break;                
+            }
             ego_questions[j].array_id = ego_questions[j].ID;
 			if(Object.keys(ego_question_list).length > 0 && (parseInt(ego_questions[j].ASKINGSTYLELIST) != 1 || prompt != ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,""))){
 				if(pageNumber == i){
@@ -1445,6 +1450,74 @@ function buildQuestions(pageNumber, interviewId){
 			page[i] = new Object;
 		}
 
+        // second ego round - DSM 032217
+        var second_ego_q = 0;
+        for(j in ego_questions){
+
+            if (ego_questions[j].TITLE.indexOf("VS3.") >= 0){
+                second_ego_q++;                
+            }
+        
+            if (second_ego_q < 1){
+                continue;                
+            }
+                    
+            ego_questions[j].array_id = ego_questions[j].ID;
+			if(Object.keys(ego_question_list).length > 0 && (parseInt(ego_questions[j].ASKINGSTYLELIST) != 1 || prompt != ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,""))){
+				if(pageNumber == i){
+					page[i] = ego_question_list;
+					return page[i];
+				}
+				ego_question_list = new Object;
+				prompt = "";
+				i++;
+				page[i] = new Object;
+			}
+
+			if(evalExpression(ego_questions[j].ANSWERREASONEXPRESSIONID) != true){
+                saveSkip(interviewId, ego_questions[j].ID, "", "", ego_questions[j].ID);
+				continue;
+            }
+
+			if(ego_questions[j].PREFACE != ""){
+				if(pageNumber == i){
+					preface = new Object;
+					preface.ID = ego_questions[j].ID;
+					preface.ANSWERTYPE = "PREFACE";
+					preface.SUBJECTTYPE = "PREFACE";
+					preface.PROMPT = ego_questions[j].PREFACE;
+					page[i][0] = preface;
+					return page[i];
+				}
+				i++;
+				page[i] = new Object;
+			}
+			if(parseInt(ego_questions[j].ASKINGSTYLELIST) == 1){
+			    //console.log(prompt + ":" +ego_questions[j].PROMPT);
+			    if(prompt == "" || prompt == ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
+			    	//console.log('list type question');
+			    	prompt = ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
+			    	ego_question_list[parseInt(ego_questions[j].ORDERING) + 1] = ego_questions[j];
+			    }
+			}else{
+			    if(pageNumber == i){
+		    		page[i][ego_questions[j].ID] = ego_questions[j];
+			    	return page[i];
+			    }
+			    i++;
+			    page[i] = new Object;
+			}
+		}
+
+		if(Object.keys(ego_question_list).length > 0){
+			if(pageNumber == i){
+				page[i] = ego_question_list;
+				return page[i];
+			}
+			i++;
+			page[i] = new Object;
+		}        
+        
 		conclusion = new Object;
 		conclusion.ANSWERTYPE = "CONCLUSION";
 		conclusion.PROMPT = study.CONCLUSION;
@@ -2436,7 +2509,17 @@ function buildNav(pageNumber, scope){
 	}
 	var prompt = "";
 	var ego_question_list = '';
-	for(j in ego_questions){
+    var skip_ego_questions = 0;
+    for(j in ego_questions){
+        if (ego_questions[j].TITLE.indexOf("VS3.") >= 0)
+            skip_ego_questions = j;
+    }        
+
+    // first pass at ego questions
+    for(j in ego_questions){
+        if (ego_questions[j].TITLE.indexOf("VS3.") >= 0){
+            break;                
+        }
 		if(evalExpression(ego_questions[j].ANSWERREASONEXPRESSIONID, interviewId) != true)
 			continue;
 
@@ -2652,6 +2735,47 @@ function buildNav(pageNumber, scope){
 		i++;
 	}
 
+    // second ego round - DSM 032217
+    var second_ego_nav = 0;
+	for(j in ego_questions){
+                
+        if (ego_questions[j].TITLE.indexOf("VS3.") >= 0){
+            second_ego_nav++;                
+        }
+        
+        if (second_ego_nav < 1){
+            continue;                
+        }
+        
+		if(evalExpression(ego_questions[j].ANSWERREASONEXPRESSIONID, interviewId) != true)
+			continue;
+
+		if((parseInt(ego_questions[j].ASKINGSTYLELIST) != 1 || prompt != ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")) && ego_question_list){
+		    pages[i] = this.checkPage(i, pageNumber, ego_question_list.TITLE);
+			prompt = "";
+		    ego_question_list = '';
+		    i++;
+		}
+		if(ego_questions[j].PREFACE != ""){
+			pages[i] = this.checkPage(i, pageNumber, "PREFACE");
+			i++;
+		}
+		if(parseInt(ego_questions[j].ASKINGSTYLELIST) == 1){
+		    prompt = ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
+		    if(ego_question_list == '')
+			    ego_question_list = ego_questions[j];
+		}else{
+		    pages[i] = this.checkPage(i, pageNumber, ego_questions[j].TITLE);
+		    i++;
+		}
+
+	}
+	if(ego_question_list){
+		pages[i] = this.checkPage(i, pageNumber, ego_question_list.TITLE);
+		ego_question_list = '';
+		i++;
+	}    
+    
 	pages[i] = this.checkPage(i, pageNumber, "CONCLUSION");
 	return pages;
 }
