@@ -407,6 +407,11 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         // check to make sure the form is completely valid
         deleteAlter.getAlters().then(function(data){
             alters = JSON.parse(data);
+	    for(k in alters){
+                if (alters[k].ID == alterId ){
+                    delete alters[k];
+                }
+            }
             $route.reload();
         });
     };
