@@ -54,7 +54,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.conclusion = false;
     $scope.redirect = false;
     $scope.participants = [];
-    
+
     if(typeof hashKey != "undefined"){
         $scope.hashKey = hashKey;
     }else{
@@ -205,7 +205,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 				$scope.phrase += " up to " + $scope.questions[k].MAXCHECKABLEBOXES ;
 			else if ($scope.questions[k].MINCHECKABLEBOXES != "" && $scope.questions[k].MAXCHECKABLEBOXES == "")
 				$scope.phrase += " at least " + $scope.questions[k].MINCHECKABLEBOXES ;
-                
+
 			if($scope.questions[k].MAXCHECKABLEBOXES == 1)
 				$scope.phrase += " response";
 			else
@@ -445,7 +445,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         if(v == "DONT_KNOW" || v == "REFUSE"){
             if($scope.options[array_id][index].checked){
         		for(k in $scope.options[array_id]){
-            		console.log(k + ":" + index)
+            		//console.log(k + ":" + index)
             		if(k != index)
                 		$scope.options[array_id][k].checked = false;
         		}
@@ -536,7 +536,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     		if($scope.options[array_id][k].ID == "DONT_KNOW" || $scope.options[array_id][k].ID == "REFUSE")
         		$scope.options[array_id][k].checked = false;
 		}
-    	console.log(date);
+    	//console.log(date);
     }
 
     $scope.dateValue = function (array_id){
@@ -562,10 +562,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     		if($scope.options[array_id][k].ID == "DONT_KNOW" || $scope.options[array_id][k].ID == "REFUSE")
         		$scope.options[array_id][k].checked = false;
 		}
-    	console.log(date);
+    	//console.log(date);
 
     }
-    
+
     $scope.timeBits = function(timeUnits, span)
     {
         timeArray = [];
@@ -621,11 +621,11 @@ app.directive('checkAnswer', [function (){
                     }else{
                         delete scope.errors[array_id];
                     }
-                    console.log(scope.answers[array_id].SKIPREASON +  ":" + value + ":" + valid + ":" + scope.errors[array_id]);
+                    //console.log(scope.answers[array_id].SKIPREASON +  ":" + value + ":" + valid + ":" + scope.errors[array_id]);
                 }
 
         		if(attr.answerType == "NUMERICAL"){
-            		console.log("check numeric");
+            		//console.log("check numeric");
         			var min = ""; var max = ""; var numberErrors = 0; var showError = false;
         			if((value == "" && scope.answers[array_id].SKIPREASON == "NONE") || (value != "" && isNaN(parseInt(value)))){
                         errorMsg = 'Please enter a number';
@@ -664,7 +664,7 @@ app.directive('checkAnswer', [function (){
         		}
 
                 if(attr.answerType == "DATE"){
-                    console.log(attr.answerType);
+                    //console.log(attr.answerType);
                     if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
             			var date = value.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
             			var month = value.match(/January|February|March|April|May|June|July|August|September|October|November|December/);
@@ -758,13 +758,13 @@ app.directive('checkAnswer', [function (){
     		var checks = 0;
     		if(typeof question != "undefined" && parseInt(question.WITHLISTRANGE) != 0){
     			for(i in answers){
-    					console.log(answers[i].VALUE + ":" + question.LISTRANGESTRING);
+    				//console.log(answers[i].VALUE + ":" + question.LISTRANGESTRING);
     				if(answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1){
     					checks++;
     				}
     			}
-                console.log("check list range: " + checks);
-    
+                //console.log("check list range: " + checks);
+
     			if(checks < question.MINLISTRANGE || checks > question.MAXLISTRANGE){
     				errorMsg = "";
     				if(question.MINLISTRANGE && question.MAXLISTRANGE){
@@ -777,10 +777,10 @@ app.directive('checkAnswer', [function (){
     				}else{
     						errorMsg = "at least " + question.MINLISTRANGE;
     				}
-    
+
                     valid = false;
                     scope.errors[array_id] = "Please select "  + errorMsg + " response(s).  You selected " + checks;
-    
+
     			}else{
         			for(k in scope.errors){
             			if(scope.errors[k].match("Please select "))
@@ -788,7 +788,7 @@ app.directive('checkAnswer', [function (){
         			}
     			}
     		}
-		
+
                 ngModel.$setValidity('checkAnswer', valid);
                 return valid ? value : undefined;
             });
@@ -816,7 +816,7 @@ app.directive('checkAnswer', [function (){
                     }else{
                         delete scope.errors[array_id];
                     }
-                    console.log(scope.answers[array_id].SKIPREASON +  ":" + value + ":" + valid);
+                    //console.log(scope.answers[array_id].SKIPREASON +  ":" + value + ":" + valid);
                 }
                 if(attr.answerType == "NUMERICAL"){
         			var min = ""; var max = ""; var numberErrors = 0; var showError = false;
@@ -855,7 +855,7 @@ app.directive('checkAnswer', [function (){
         		}
 
                 if(attr.answerType == "DATE"){
-                    console.log(scope.timeUnits);
+                    //console.log(scope.timeUnits);
                     if(scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW"){
             			var date = value.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
             			var month = value.match(/January|February|March|April|May|June|July|August|September|October|November|December/);
@@ -915,7 +915,7 @@ app.directive('checkAnswer', [function (){
         			if(max !== "" && max != null)
         				numberErrors = numberErrors + 2;
 
-                    console.log(numberErrors);
+                    //console.log(numberErrors);
 
         			checkedBoxes = value.split(',').length;
         			if(!value)
@@ -956,13 +956,13 @@ app.directive('checkAnswer', [function (){
     		var checks = 0;
     		if(typeof question != "undefined" && parseInt(question.WITHLISTRANGE) != 0){
     			for(i in answers){
-    					console.log(answers[i].VALUE + ":" + question.LISTRANGESTRING);
+    				//console.log(answers[i].VALUE + ":" + question.LISTRANGESTRING);
     				if(answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1){
     					checks++;
     				}
     			}
-    
-                console.log("check list range: " + checks);
+
+                //console.log("check list range: " + checks);
 
     			if(checks < question.MINLISTRANGE || checks > question.MAXLISTRANGE){
     				errorMsg = "";
@@ -976,7 +976,7 @@ app.directive('checkAnswer', [function (){
     				}else{
     						errorMsg = "at least " + question.MINLISTRANGE;
     				}
-    
+
                     valid = false;
                     scope.errors[array_id] = "Please select "  + errorMsg + " response(s).  You selected " + checks;
 
@@ -992,7 +992,7 @@ app.directive('checkAnswer', [function (){
                     }
     			}
     		}
-		
+
             ngModel.$setValidity('checkAnswer', valid);
             return value;
           });
@@ -1745,17 +1745,16 @@ function interpretTags(string, alterId1, alterId2)
 
 	// same as count, but limited to specific alter / alter pair questions
 	containers  = string.match(/<CONTAINS (.+?) \/>/g);
+    console.log(containers);
 	for(k in containers){
 		var contains = containers[k].match(/<CONTAINS (.+?) \/>/)[1];
 		var parts = contains.split(/\s/);
 		var qTitle = parts[0];
 		var answer = parts[1];
-		answer = answer.replace ('"', '');
-
+		answer = answer.replace (/"/g, '');
         var question = getQuestion(qTitle);
         if(!question)
             continue;
-
         var array_id = question.ID;
         if(typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
         	array_id += "-" + alterId1;
@@ -1772,7 +1771,8 @@ function interpretTags(string, alterId1, alterId2)
 			}else{
     			lastAnswer = answers[array_id].VALUE;
 			}
-			string = string.replace("<CONTAINS " + contains + " />", lastAnswer ? 1 : 0);
+			string = string.replace("<CONTAINS " + contains + " />", lastAnswer == answer ? 1 : 0);
+            console.log(answer + ":" + lastAnswer);
 		}else{
 			string = string.replace("<CONTAINS " + contains + " />", 0);
 		}
@@ -1780,6 +1780,7 @@ function interpretTags(string, alterId1, alterId2)
 
 	// parse out and show logics
 	showlogics = string.match(/<IF (.+?) (==|!=|<|>|<=|>=)+ (.+?) \"(.+?)\" \/>/g);
+    console.log(showlogics);
 	for(k in showlogics){
 		showlogic = showlogics[k];
 		exp = showlogic.match(/\<IF (.+?) (==|!=|<|>|<=|>=)+ (.+?) \"(.+?)\"/);
@@ -1822,6 +1823,7 @@ function interpretTags(string, alterId1, alterId2)
 				}
 			}
 			logic = exp[1] + ' ' + exp[2] + ' ' + exp[3];
+            console.log("logic: " + logic);
 			show = eval(logic);
 			if(show){
 				string =  string.replace(showlogic, exp[4]);
@@ -2475,7 +2477,7 @@ function buildNav(pageNumber, scope){
 		for(j in alter_questions){
             prompt = "";
 			var alter_question_list = '';
-			
+
 			if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1 || (alter_non_list_qs.length > 0 && parseInt(alter_questions[j].ASKINGSTYLELIST) != 1 && alter_questions[j].PREFACE != "")){
     			if(alter_non_list_qs.length > 0){
         			for(k in alters){
@@ -2603,7 +2605,7 @@ function buildNav(pageNumber, scope){
     			    	pages[i] = this.checkPage(i, pageNumber, alter_pair_questions[j].TITLE + " - " + alters[k].NAME + "and" + alters2[l].NAME);
     			    	i++;
     			    }
-    			    
+
 		    	}
 		    	if(alter_pair_question_list){
 					if(preface.PROMPT != ""){
@@ -2674,7 +2676,7 @@ function fixHeader(){
     columnWidths();
 	// Set this variable with the height of your sidebar + header
 	var offsetLeft = parseInt($("#content").css("margin-left")) + parseInt($("#content").css("padding-left"))
-	var offsetPixels = $(".navbar").height(); 
+	var offsetPixels = $(".navbar").height();
     $("#content").css({"background-attachment":"fixed"});
     if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
     	$(window).scroll(function(event) {

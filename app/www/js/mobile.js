@@ -701,6 +701,24 @@ function save(questions, page, url, scope){
     				''
     			]
                 db.catalog.getTable('interview').insertRow(interview);
+                if(study.FILLALTERLIST == true){
+                    var names = db.queryObjects("SELECT * FROM alterList WHERE studyId = " + study.ID).data;
+                    for(k in names){
+                        var newId = db.queryValue("SELECT id FROM alters ORDER BY id DESC");
+                        if(!newId)
+                            newId = 0;
+                        newId = parseInt(newId) + 1;
+                        alters[newId] = {
+                            ID: newId,
+                            ACTIVE:1,
+                            ORDERING: parseInt(db.queryValue("SELECT ordering FROM alters WHERE CONCAT(',', interviewId, ',') LIKE '%," + interviewId + ",%' ORDER BY ordering DESC")) + 1,
+                            NAME: names[k].NAME,
+                            INTERVIEWID: interviewId,
+                            ALTERLISTID: ''
+                        };
+                        db.catalog.getTable('alters').insertRow(objToArray(alters[newId]));
+                    }
+                }
             }
             answer.INTERVIEWID = interviewId;
     		if(!answer.ID){
