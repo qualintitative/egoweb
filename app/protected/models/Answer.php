@@ -48,7 +48,7 @@ class Answer extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('questionId, interviewId, studyId, questionType, answerType', 'required'),
-			array('active, questionId, interviewId, alterId1, alterId2, value, otherSpecifyText, skipReason, studyId, questionType, answerType', 'length', 'max'=>2048),
+			array('active, questionId, interviewId, alterId1, alterId2, value, otherSpecifyText, skipReason, studyId, questionType, answerType', 'length', 'max'=>4096),
 			array('value, otherSpecifyText', 'filter', 'filter'=>function($param) {return CHtml::encode(strip_tags($param));}),
 			array('active, questionId, interviewId, studyId', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
