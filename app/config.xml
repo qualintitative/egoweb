@@ -1,10 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<access origin="*" />
-<allow-intent href="http://*/*" />
-<allow-intent href="https://*/*" />
-<allow-navigation href="http://*/*" />
-<allow-navigation href="https://*/*" />
-<widget id="com.rand.egowebmoble" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.rand.egowebmoble" version="0.0.8" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>EgoWeb Mobile</name>
     <description>
         A sample Apache Cordova application that responds to the deviceready event.
@@ -13,31 +8,17 @@
         Apache Cordova Team
     </author>
     <content src="index.html" />
-    <preference name="permissions"                value="none"/>
-
-<preference name="BackupWebStorage" value="local"/>
-
-<preference name="StatusBarOverlaysWebView" value="false" />
-<preference name="StatusBarBackgroundColor" value="#000000" />
-<preference name="StatusBarStyle" value="lightcontent" />
-
-      
-<preference name="iosPersistentFileLocation" value="Library" />
+    <preference name="StatusBarOverlaysWebView" value="false" />
+    <preference name="StatusBarBackgroundColor" value="#000000" />
+    <preference name="StatusBarStyle" value="lightcontent" />
+    <preference name="Orientation" value="landscape" />
+    <preference name="android-targetSdkVersion" value="23" />
+    <preference name="android-minSdkVersion" value="18" />
     <access origin="*" />
-
-<preference name="android-targetSdkVersion" value="18" />
-<preference name="android-minSdkVersion" value="18" />
-
-<platform name="ios">
-<config-file target="*-Info.plist" parent="NSAppTransportSecurity">
-<array>
-    <dict>
-        <key>NSAllowsArbitraryLoads</key>
-        <boolean>YES</boolean>
-    </dict>
-</array>
-</config-file>
-</platform>
-
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-navigation href="http://*/*" />
+    <allow-navigation href="https://*/*" />
+    <engine name="android" spec="^6.2.3" />
+    <plugin name="cordova-plugin-whitelist" spec="~1.3.2" />
 </widget>
-

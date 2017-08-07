@@ -1,5 +1,6 @@
 isGuest = 0;
-
+console.log("TEST");
+console.debug("boot");
 app.config(function($routeProvider) {
     $routeProvider
 
@@ -21,8 +22,15 @@ app.config(function($routeProvider) {
 });
 
 app.factory("getStudies", function($http, $q) {
+    console.log(JSON.stringify(db.queryObjects("SELECT * FROM serverstudy").data));
     var result = function(id) {
+
+    console.log(JSON.stringify(db.queryObjects("SELECT * FROM serverstudy").data));
+        try {
+
         var server = db.queryRowObject("SELECT * FROM server WHERE id = " + id);
+        console.log("Server: " + server);
+        console.log("getStudies");
         var url = server.ADDRESS + '/mobile/getstudies';
         if (!url.match('http') && !url.match('https')) url = "http://" + url;
         return $.ajax({
@@ -31,17 +39,26 @@ app.factory("getStudies", function($http, $q) {
             data: $("#serverForm_" + server.ID).serialize(),
             crossDomain: true,
             success: function(data) {
+
+
                 if (data != "error") {
                     return data;
                     $('#addServerButton').show();
                 } else {
                     $('#status').html($('#status').html() + 'validation failed');
                 }
+
+                console.log(JSON.stringify(db.queryObjects("SELECT * FROM serverstudy").data));
+
             },
             error: function(data) {
                 $('#status').html($('#status').html() + 'error');
             }
         });
+
+        } catch(err){
+                console.log(JSON.stringify(err));
+            }
     }
     return {
         result: result
@@ -76,7 +93,9 @@ app.factory("uploadData", function($http, $q) {
 });
 
 app.factory("getServer", function($http, $q) {
+    console.log(JSON.stringify(db.queryObjects("SELECT * FROM serverstudy").data));
     var result = function(address) {
+        console.log("getServer");
         var url = address + '/mobile/check';
         if (!url.match('http') && !url.match('https')) url = "http://" + url;
         return $.ajax({
@@ -85,7 +104,7 @@ app.factory("getServer", function($http, $q) {
             crossDomain: true,
             success: function(data) {
                 if (data == "success") {
-                    newId = db.queryValue("SELECT id FROM server ORDER BY id DESC");
+                    try { newId = db.queryValue("SELECT id FROM server ORDER BY id DESC");
                     if (!newId) newId = 0;
                     server = [parseInt(newId) + 1, address];
                     db.catalog.getTable('server').insertRow(server);
@@ -94,6 +113,9 @@ app.factory("getServer", function($http, $q) {
                     //$('#status').html('successfully added server');
                     //$("#page").html($("#serverList").html());
                     //listServers($("#list"));
+                    } catch(err){
+                                                      console.log(JSON.stringify(err));
+                                                  }
                 } else {
                     $('#status').html($('#status').html() + 'no response from server');
                 }
@@ -186,9 +208,12 @@ app.factory("deleteAlter", function($http, $q) {
 
 
 app.factory("importStudy", function($http, $q) {
+    console.log(JSON.stringify(db.queryObjects("SELECT * FROM serverstudy").data));
     var result = function(address, studyId) {
         loadedAudioFiles = 0;
         totalAudioFiles = 0;
+
+    console.log(JSON.stringify(db.queryObjects("SELECT * FROM serverstudy").data));
 
         var server = db.queryRowObject("SELECT * FROM server WHERE address = '" + address + "'");
         $('#status').html("Importing study...");
@@ -344,6 +369,7 @@ app.factory("importStudy", function($http, $q) {
                 console.log("alter prompts imported...");
                 db.commit();
                 //$('#status').html($('#status').html()+"DONE!");
+    console.log(JSON.stringify(db.queryObjects("SELECT * FROM serverstudy").data));
             }
         });
     }
@@ -354,16 +380,48 @@ app.factory("importStudy", function($http, $q) {
 
 app.controller('mainController', ['$scope', '$log', '$routeParams', '$sce', '$location', '$route', function($scope, $log, $routeParams, $sce, $location, $route) {
     studyList = {};
+    if(loaded)
+    {
+        $("#main_buttons").show();
+        $("#loading_indicator").hide();
+    }
     $("#questionMenu").addClass("hidden");
     $("#studyTitle").html("");
     $("#questionTitle").html("");
+    // console.log(JSON.stringify(db));
+    try{
+        console.log(JSON.stringify(db.queryObjects("SELECT * FROM serverstudy").data));
+    } catch(err){
+        console.log(JSON.stringify(err));
+    }
+//    console.log("MainController " + db.queryObjects("SELECT * FROM study"));
+    console.log("Looking for storage - main Controller");
+    navigator.webkitTemporaryStorage.queryUsageAndQuota( function(a, b, c){ console.log(a);
+     console.log(b); });
+    navigator.webkitPersistentStorage.queryUsageAndQuota( function(a, b, c){ console.log(a);
+    console.log(b); });
+
 }]);
 
 app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '$location', '$route', function($scope, $log, $routeParams, $sce, $location, $route) {
+
+    console.log(JSON.stringify(db.queryObjects("SELECT * FROM serverstudy").data));
     $("#questionMenu").addClass("hidden");
     $("#studyTitle").html("Studies");
     $("#questionTitle").html("");
-    $scope.studies = db.queryObjects("SELECT * FROM study").data;
+    try{
+        $scope.studies = db.queryObjects("SELECT * FROM study").data;
+    }
+    catch(err)
+    {
+        $scope.studies = [];
+        console.log(err.getMessage());
+        console.log(JSON.stringify(err));
+    }
+
+//    console.log("studiesController: " + JSON.stringify(db.queryObjects("SELECT * FROM study").data));
+    $("#questionMenu").addClass("hidden");
+
     $scope.interviews = [];
     $scope.done = [];
     justUploaded = [];
@@ -381,6 +439,8 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
         $scope.interviews[$scope.studies[k].ID] = interviews;
     }
     console.log($scope.interviews);
+
+
     $scope.startSurvey = function(studyId, intId) {
 	    study = db.queryRowObject("SELECT * FROM study WHERE id = " + studyId);
         if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
@@ -540,7 +600,10 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
     $("#studyTitle").html("Admin");
     $("#questionTitle").html("");
     $("#questionMenu").addClass("hidden");
-    console.log(studyList);
+    console.log(JSON.stringify(studyList));
+    console.log(JSON.stringify(db.queryObjects("SELECT * FROM serverstudy").data));
+
+
     $scope.studyList = studyList;
     $scope.connect = function(id) {
         getStudies.result(id).then(function(data) {
@@ -555,7 +618,7 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
     }
     $scope.importStudy = function(address, studyId) {
         importStudy.result(address, studyId).then(function(data) {
-            console.log("done");
+            console.log("importStudy done");
             for(k in studyList[address]){
                 studyList[address][k].localStudyId = db.queryValue("SELECT id FROM serverstudy WHERE address = '" + address + "' AND serverstudyid = " + studyList[address][k].id);
             }
@@ -620,7 +683,8 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
     	}
     }
     $scope.servers = db.queryObjects("SELECT * FROM server").data;
-    console.log($scope.servers);
+    console.log(JSON.stringify($scope.servers));
+    console.log(JSON.stringify(db.queryObjects("SELECT * FROM serverstudy").data));
 }]);
 
 baseUrl = "";
@@ -629,45 +693,71 @@ document.addEventListener("deviceready", onDeviceReady, false);
 
 function onDeviceReady() {
 }
-
+var loaded = false;
 $(function(){
-	setTimeout(function(){
-        db.catalog.setPersistenceScope(db.SCOPE_LOCAL);
-		tableNames = new Array();
-		for(i=0; i<db.catalog.getAllTables().length; i++){
-			tableNames.push(db.catalog.getAllTables()[i].tableName);
-		}
 
-		console.log(tableNames);
+    db.onready(function(){
+        console.log("Database is ready");
 
-		var server = {
-			tableName: "SERVER",
-			columns:[
-				"id",
-				"address",
-			],
-			primaryKey: [ "address" ],
-		};
+    	setTimeout(function(){
+            console.log("Waited a half second before trying to reconstruct tables.");
+            // try { console.log(JSON.stringify(db)); } catch(err){ console.log(JSON.stringify(err.message)); }
+            db.catalog.setPersistenceScope(db.SCOPE_LOCAL);
+    		tableNames = new Array();
+    		var catalogTables = db.catalog.getAllTables();
+    		for(i=0; i<catalogTables.length; i++){
+    			tableNames.push(catalogTables[i].tableName);
+    		}
 
-		if($.inArray('SERVER', tableNames) == -1)
-			db.catalog.createTable(server);
+            try {
+            console.log((catalogTables));
+    		console.log(tableNames);
 
-		var serverstudy = {
-			tableName: "SERVERSTUDY",
-			columns:[
-				"id",
-				"address",
-				"serverStudyId",
-			],
-			primaryKey: [ "id" ],
-		};
+            console.log("Looking for storage - Timeout Controller");
+            navigator.webkitTemporaryStorage.queryUsageAndQuota( function(a, b, c){ console.log(a);
+            console.log(b); });
+            navigator.webkitPersistentStorage.queryUsageAndQuota( function(a, b, c){ console.log(a);
+            console.log(b); });
 
-		if($.inArray('SERVERSTUDY', tableNames) == -1)
-			db.catalog.createTable(serverstudy);
+            try {
+    		var server = {
+    			tableName: "SERVER",
+    			columns:[
+    				"id",
+    				"address",
+    			],
+    			primaryKey: [ "address" ],
+    		};
 
-		db.commit();
+    		if($.inArray('SERVER', tableNames) == -1)
+    			db.catalog.createTable(server);
 
-	}, 500);
+            } catch(err){ console.log("Server Table Error: " + JSON.stringify(err.message)); }
+
+            try {
+    		var serverstudy = {
+    			tableName: "SERVERSTUDY",
+    			columns:[
+    				"id",
+    				"address",
+    				"serverStudyId",
+    			],
+    			primaryKey: [ "id" ],
+    		};
+
+    		if($.inArray('SERVERSTUDY', tableNames) == -1)
+    			db.catalog.createTable(serverstudy);
+    		} catch(err){ console.log("ServerStudy table error: " + JSON.stringify(err.message)); }
+    		db.commit();
+            } catch(err){ console.log("Commit error: " + JSON.stringify(err.message)); }
+
+            console.log("Loaded...");
+            $("#main_buttons").show();
+            $("#loading_indicator").hide();
+            loaded = true;
+    	}, 500);
+
+    });
 });
 
 function save(questions, page, url, scope){
