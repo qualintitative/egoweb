@@ -380,6 +380,11 @@ app.factory("importStudy", function($http, $q) {
 
 app.controller('mainController', ['$scope', '$log', '$routeParams', '$sce', '$location', '$route', function($scope, $log, $routeParams, $sce, $location, $route) {
     studyList = {};
+    if(loaded)
+    {
+        $("#main_buttons").show();
+        $("#loading_indicator").hide();
+    }
     $("#questionMenu").addClass("hidden");
     $("#studyTitle").html("");
     $("#questionTitle").html("");
@@ -688,7 +693,7 @@ document.addEventListener("deviceready", onDeviceReady, false);
 
 function onDeviceReady() {
 }
-
+var loaded = false;
 $(function(){
 
     db.onready(function(){
@@ -749,6 +754,7 @@ $(function(){
             console.log("Loaded...");
             $("#main_buttons").show();
             $("#loading_indicator").hide();
+            loaded = true;
     	}, 500);
 
     });
