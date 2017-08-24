@@ -325,6 +325,47 @@ class AuthoringController extends Controller
 		));
 	}
 
+    /**
+	 * Lists all models.
+	 */
+	public function actionQuestions($id)
+	{
+		$this->studyId=$id;
+		$study = Study::model()->findByPk($id);
+		if(isset($_POST['Question'])){
+			$model = new Question;
+			$model->attributes=$_POST['Question'];
+			$criteria=new CDbCriteria;
+			$criteria->condition = ('studyId = '.$_POST['Question']['studyId'] . ' AND subjectType != "EGO_ID"');
+			$criteria->select='count(ordering) AS ordering';
+			$row = Question::model()->find($criteria);
+			$model->ordering = $row['ordering'];
+			$model->save();
+			$this->redirect(array('questions','id'=>$id));
+		}
+
+			$model = new Question;
+			$model->studyId = $id;
+
+		// Uncomment the following line if AJAX validation is needed
+
+		$criteria=new CDbCriteria;
+		$criteria=array(
+			'condition'=>"studyId = " . $id . ' AND subjectType != "EGO_ID"',
+			'order'=>'ordering',
+		);
+		$dataProvider=new CActiveDataProvider('Question',array(
+			'criteria'=>$criteria,
+			'pagination'=>false,
+		));
+
+		$this->render('view_question',array(
+			'model'=>$model,
+			'dataProvider'=>$dataProvider,
+			'study'=>$study,
+		));
+	}
+
 	/**
 	 * Lists all models.
 	 */

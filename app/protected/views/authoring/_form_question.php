@@ -14,10 +14,18 @@ $answerTypes = array(
 	'DATE'=>'DATE',
 );
 
-if($model->subjectType == "EGO_ID")
+if($model->subjectType == "EGO_ID"){
 	$answerTypes = array_merge($answerTypes, array('STORED_VALUE'=>'STORED_VALUE', 'RANDOM_NUMBER'=>'RANDOM_NUMBER'));
-else
+}else{
 	$answerTypes = array_merge($answerTypes, array('TIME_SPAN'=>'TIME_SPAN', 'TEXTUAL_PP'=>'TEXTUAL_PP', 'NO_RESPONSE'=>'NO_RESPONSE'));
+}
+$subjectTypes = array(
+	'EGO'=>'EGO',
+	'ALTER_PROMPT'=>'ALTER_PROMPT',
+	'ALTER'=>'ALTER',
+	'ALTER_PAIR'=>'ALTER_PAIR',
+    'NETWORK'=>'NETWORK',
+);
 
 ?>
 
@@ -85,6 +93,23 @@ jQuery('input.time-".$model->id."').change(function() {
                 <?php echo $form->textField($model,'title',array('id'=>$model->id . "_" . "title", "class"=>"form-control")); ?>
 		    </div>
 		</div>
+
+<?php if($model->subjectType != "EGO_ID"): ?>
+        <div class="form-group">
+            <?php echo $form->labelEx($model,'subjectType', array('for'=>'s-'.$model->id, "class"=>"control-label col-sm-4 input-sm")); ?>
+            <div class="col-sm-8">
+                <?php
+                    echo $form->dropDownList(
+                        $model,
+                        'subjectType',
+                        $subjectTypes,
+                        array('class'=>'subjectTypeSelect', 'id'=>'s-'.$model->id, 'onchange'=>'changeAType(this)', "class"=>"form-control")
+                    );
+                ?>
+            </div>
+        </div>
+<?php endif; ?>
+
 		<div class="form-group">
     		<?php echo $form->labelEx($model,'answerType', array('for'=>'a-'.$model->id, "class"=>"control-label col-sm-4 input-sm")); ?>
     		<div class="col-sm-8">
@@ -151,7 +176,7 @@ jQuery('input.time-".$model->id."').change(function() {
         		<?php echo $form->error($model,'useAlterListField'); ?>
     		</div>
     	</div>
-    	
+
         <div class="panel-<?php echo $model->id; ?>" id="RANDOM_NUMBER" style="display:none">
                 <div class="form-group">
                     <label class="control-label col-sm-4">Min</label>

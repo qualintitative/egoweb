@@ -73,7 +73,7 @@ class Study extends CActiveRecord
 			);
 	}
 
-    public function questionList()
+    public function questionTitles()
     {
 
         if ($this->multiSessionEgoId)
@@ -85,12 +85,12 @@ class Study extends CActiveRecord
             $studyNames[$study->id] = $study->name;
         }
         $questions = Question::model()->findAllByAttributes(array('studyId'=>$multiIds));
-        $questionList = array();
+        $questionTitles = array();
         foreach ($questions as $question)
         {
-            $questionList[$studyNames[$question->studyId]][$question->title] = $question->id;
+            $questionTitles[$studyNames[$question->studyId]][$question->title] = $question->id;
         }
-        return $questionList;
+        return $questionTitles;
     }
 
 	/**
@@ -134,7 +134,7 @@ class Study extends CActiveRecord
 	public static function nav($study, $pageNumber, $interviewId = null, $answers = null){
 
 		$expressionList = Expression::model()->findAllByAttributes(array('studyId'=>$study->id));
-		$questionList = Question::model()->findAllByAttributes(array('studyId'=>$study->id),array('order'=>'ordering'));
+		$questions = Question::model()->findAllByAttributes(array('studyId'=>$study->id),array('order'=>'ordering'));
 		$egoQuestions = array();
 		$alterQuestions = array();
 		$alterPairQuestions = array();
@@ -143,7 +143,7 @@ class Study extends CActiveRecord
 		$page = array();
 		$i = 0;
 
-		foreach($questionList as $question){
+		foreach($questions as $question){
 			$questions[$question->id] = $question;
 			if($question->subjectType == "EGO_ID")
 				$ego_id_questions[$question->id] = $question;
@@ -366,7 +366,7 @@ class Study extends CActiveRecord
 	public static function buildQuestions($study, $pageNumber = null, $interviewId = null, $answers = null){
 
 		$expressionList = Expression::model()->findAllByAttributes(array('studyId'=>$study->id));
-		$questionList = Question::model()->findAllByAttributes(array('studyId'=>$study->id),array('order'=>'ordering'));
+		$questions = Question::model()->findAllByAttributes(array('studyId'=>$study->id),array('order'=>'ordering'));
 		$egoQuestions = array();
 		$alterQuestions = array();
 		$alterPairQuestions = array();
@@ -374,7 +374,7 @@ class Study extends CActiveRecord
 		$page = array();
 		$i = 0;
 
-		foreach($questionList as $question){
+		foreach($questions as $question){
 			$questions[$question->id] = $question;
 			if($question->subjectType == "EGO_ID")
 				$ego_id_questions[$question->id] = $question;

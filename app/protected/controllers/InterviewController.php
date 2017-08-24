@@ -105,8 +105,10 @@ class InterviewController extends Controller
         $alter_questions = array();
         $alter_pair_questions = array();
         $network_questions = array();
+        $questionList = array();
         foreach($results as $result){
             $questions[$result->id] = mToA($result);
+            $questionList[] = mToA($result);
             if(file_exists(Yii::app()->basePath."/../audio/".$study->id . "/PREFACE/" . $result->id . ".mp3"))
                 $audio['PREFACE_' . $result->id] = "/audio/".$study->id . "/PREFACE/" . $result->id . ".mp3";
             if(file_exists(Yii::app()->basePath."/../audio/".$study->id . "/" . $result->subjectType . "/" . $result->id . ".mp3"))
@@ -266,7 +268,8 @@ class InterviewController extends Controller
                 "graphs"=>json_encode($graphs),
                 "allNotes"=>json_encode($notes),
                 "participantList"=>json_encode($participantList),
-                "questionList"=>json_encode($study->questionList()),
+                "questionList"=>json_encode($questionList),
+                "questionTitles"=>json_encode($study->questionTitles()),
                 "audio"=>json_encode($audio),
                 "otherGraphs"=>json_encode($otherGraphs),
             )
@@ -422,7 +425,7 @@ class InterviewController extends Controller
 			if(in_array($_POST['Alters']['name'], $alterNames)){
 				$model->addError('name', $_POST['Alters']['name']. ' has already been added!');
 			}
-			
+
             $pre_names = array();
             $preset_alters = AlterList::model()->findAllByAttributes(array("studyId"=>$studyId));
             foreach($preset_alters as $alter){
@@ -441,7 +444,7 @@ class InterviewController extends Controller
                     $params->name = ':name';
                     $params->value = encrypt($_POST['Alters']['name']);
                     //echo encrypt($_POST['Alters']['name']);
-                
+
                     $params->dataType = PDO::PARAM_STR;
         			if(!in_array($_POST['Alters']['name'], $pre_names) && $study->restrictAlters){
 						$model->addError('name', $_POST['Alters']['name']. ' is not in our list of participants');

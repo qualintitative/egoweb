@@ -17,6 +17,7 @@ prevAlters = <?php echo $prevAlters ?>;
 graphs = <?php echo $graphs; ?>;
 allNotes = <?php echo $allNotes; ?>;
 alterPrompts = <?php echo $alterPrompts ?>;
+questionTitles = <?php echo $questionTitles ?>;
 questionList = <?php echo $questionList ?>;
 participantList = <?php echo $participantList ?>;
 audio = <?php echo $audio; ?>;
