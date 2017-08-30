@@ -1,4 +1,8 @@
 var app = angular.module('egowebApp', ['ngRoute', 'autocomplete']);
+var masterList = [];
+var evalQList = {};
+var evalQIndex = [];
+var currentPage = 0;
 
 app.config(function ($routeProvider) {
 
@@ -17,13 +21,16 @@ app.config(function ($routeProvider) {
 });
 
 app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', '$location', '$route', "saveAlter", "deleteAlter", function($scope, $log, $routeParams, $sce, $location, $route, saveAlter, deleteAlter) {
-    buildQuestions($routeParams.page, interviewId, $scope);
-    console.log($scope.questions);
+    if(masterList.length == 0){
+        buildList();
+        evalQuestions();
+    }
+    $scope.questions = qFromList($routeParams.page)
     $scope.page = $routeParams.page;
     $scope.study = study;
     $scope.csrf = csrf;
     $scope.interviewId = interviewId;
-    $scope.answers = answers;
+    $scope.answers =  $.extend(true,{}, answers);;
     $scope.options = new Object;
     $scope.alters = alters;
     $scope.prevAlters = prevAlters;
@@ -74,7 +81,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         $scope.audioFiles[k].src = audio[k];
     }
 
-    $scope.nav = ""//buildNav($scope.page, $scope);
+    navFromList($scope.page, $scope);
+    //$scope.nav = buildNav($scope.page, $scope);
 
     if(!isGuest){
         $('#navbox ul').html("");
@@ -151,7 +159,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                     $scope.options[array_id][o].checked = true;
             }
         }
-
         if(typeof $scope.answers[array_id] == "undefined"){
             $scope.answers[array_id] = new Object;
             $scope.answers[array_id].VALUE = "";
@@ -161,7 +168,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             if($scope.answers[array_id].VALUE == "-4")
                 $scope.answers[array_id].VALUE = "";
         }
-
         if($scope.questions[k].ANSWERTYPE == "TIME_SPAN"){
             $scope.time_spans[array_id] = new Object;
 			if(answers[array_id].VALUE.match(/(\d*)\sYEARS/i))
@@ -331,7 +337,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 }
                 if(typeof $(".answerInput")[0] != "undefined")
                     $(".answerInput")[0].focus();
-                if(!isGuest && typeof $("#second") != "undefined")
+                if(!isGuest && $("#menu_" + $scope.page).length != 0)
                     $("#second").scrollTop($("#second").scrollTop() - $("#second").offset().top + $("#menu_" + $scope.page).offset().top);
             },
         1);
@@ -1003,153 +1009,130 @@ app.directive('checkAnswer', [function (){
    };
 }]);
 
-
-function buildQuestions(pageNumber, interviewId, $scope){
-	var page = [];
+function buildList() {
+    console.log ("building master list..");
 	i = 0;
-	page[i] = new Object;
-    $scope.questions = false;
+	masterList[i] = new Object;
 	if(study.INTRODUCTION != ""){
-		if(i == pageNumber){
-			introduction = new Object;
-			introduction.ANSWERTYPE = "INTRODUCTION";
-			introduction.PROMPT = study.INTRODUCTION;
-			page[i][0] = introduction;
-			$scope.questions = page[i];
-		}
+		introduction = new Object;
+        introduction.TITLE = "INTRODUCTION";
+		introduction.ANSWERTYPE = "INTRODUCTION";
+		introduction.PROMPT = study.INTRODUCTION;
+		masterList[i][0] = introduction;
 		i++;
-		page[i] = new Object;
+		masterList[i] = new Object;
 	}
-	if(pageNumber == i){
-    	if(parseInt(study.HIDEEGOIDPAGE) != 1){
-    		for(j in ego_id_questions){
-        		if(ego_id_questions[j].ANSWERTYPE == "STORED_VALUE" || ego_id_questions[j].ANSWERTYPE == "RANDOM_NUMBER")
-        		    continue;
-                ego_id_questions[j].array_id = ego_id_questions[j].ID;
-    			page[i][parseInt(ego_id_questions[j].ORDERING) + 1] = ego_id_questions[j];
-    		}
-    		$scope.questions = page[i];
+	if(parseInt(study.HIDEEGOIDPAGE) != 1){
+		for(j in ego_id_questions){
+    		if(ego_id_questions[j].ANSWERTYPE == "STORED_VALUE" || ego_id_questions[j].ANSWERTYPE == "RANDOM_NUMBER")
+    		    continue;
+            ego_id_questions[j].array_id = ego_id_questions[j].ID;
+			masterList[i][parseInt(ego_id_questions[j].ORDERING) + 1] = ego_id_questions[j];
 		}
 	}
-
     if(parseInt(study.HIDEEGOIDPAGE) != 1){
         i++;
-        page[i] = new Object;
+        masterList[i] = new Object;
     }
 
 	if(interviewId != null){
 		ego_question_list = new Object;
 		prompt = "";
 		for(j in questionList){
-            console.log("i" + i);
+            // loop through EGO questions
+            console.log(Object.keys(ego_question_list).length);
             if(questionList[j].SUBJECTTYPE == "EGO"){
+                console.log(Object.keys(ego_question_list).length > 0 && (parseInt(questionList[j].ASKINGSTYLELIST) != 1 || prompt != questionList[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")));
                 questionList[j].array_id = questionList[j].ID;
     			if(Object.keys(ego_question_list).length > 0 && (parseInt(questionList[j].ASKINGSTYLELIST) != 1 || prompt != questionList[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,""))){
-    				if(pageNumber == i){
-    					page[i] = ego_question_list;
-    					$scope.questions = page[i];
-    				}
+                    console.log("wait over " + Object.keys(ego_question_list).length);
+                    if(ego_question_list[Object.keys(ego_question_list)[0]].ANSWERREASONEXPRESSIONID > 0)
+                        evalQIndex.push(i);
+                    masterList[i] = ego_question_list;
     				ego_question_list = new Object;
     				prompt = "";
     				i++;
-    				page[i] = new Object;
+    				masterList[i] = new Object;
     			}
-
-    			if(evalExpression(questionList[j].ANSWERREASONEXPRESSIONID) != true){
-                    saveSkip(interviewId, questionList[j].ID, "", "", questionList[j].ID);
-    				continue;
-                }
-
     			if(questionList[j].PREFACE != ""){
-    				if(pageNumber == i){
-    					preface = new Object;
-    					preface.ID = questionList[j].ID;
-    					preface.ANSWERTYPE = "PREFACE";
-    					preface.SUBJECTTYPE = "PREFACE";
-    					preface.PROMPT = questionList[j].PREFACE;
-    					page[i][0] = preface;
-    					$scope.questions = page[i];
-    				}
+					preface = new Object;
+					preface.ID = questionList[j].ID;
+					preface.ANSWERTYPE = "PREFACE";
+					preface.SUBJECTTYPE = "PREFACE";
+                    preface.TITLE = "PREFACE";
+					preface.PROMPT = questionList[j].PREFACE;
+                    if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                        evalQIndex.push(i);
+					masterList[i][0] = preface;
     				i++;
-    				page[i] = new Object;
+    				masterList[i] = new Object;
     			}
     			if(parseInt(questionList[j].ASKINGSTYLELIST) == 1){
     			    if(prompt == "" || prompt == questionList[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
-    			    	prompt = questionList[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
+                        console.log("adding question")
+                        prompt = questionList[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
     			    	ego_question_list[parseInt(questionList[j].ORDERING) + 1] = questionList[j];
     			    }
     			}else{
-    			    if(pageNumber == i){
-    		    		page[i][questionList[j].ID] = questionList[j];
-    			    	$scope.questions = page[i];
-    			    }
+                    if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                        evalQIndex.push(i);
+		    		masterList[i][questionList[j].ID] = questionList[j];
     			    i++;
-    			    page[i] = new Object;
+    			    masterList[i] = new Object;
     			}
             }
+            /*
             if(Object.keys(ego_question_list).length > 0){
-                if(pageNumber == i){
-                    page[i] = ego_question_list;
-                    $scope.questions = page[i];
-                }
+                if(ego_question_list[Object.keys(ego_question_list)[0]].ANSWERREASONEXPRESSIONID > 0)
+                    evalQIndex.push(i);
+                masterList[i] = ego_question_list;
+                ego_question_list = new Object;
                 i++;
-                page[i] = new Object;
-            }
-            console.log("a_p:" + i +":" + pageNumber + ":" + questionList[j].TITLE)
+                masterList[i] = new Object;
+            }*/
             if(questionList[j].SUBJECTTYPE == "ALTER_PROMPT"){
-        		if(pageNumber == i){
-        			questionList[j].ANSWERTYPE = "ALTER_PROMPT";
-        			page[i][0] = questionList[j];
-        			$scope.questions = page[i];
-        		}
+        		questionList[j].ANSWERTYPE = "ALTER_PROMPT";
+        		masterList[i][0] = questionList[j];
         		i++;
-        		page[i] = new Object;
+        		masterList[i] = new Object;
             }
             if(Object.keys(alters).length == 0)
                 continue;
-
             var alter_non_list_qs = [];
             if(questionList[j].SUBJECTTYPE == "ALTER"){
 				alter_question_list = new Object;
-                console.log("alter q section")
 				if(parseInt(questionList[j].ASKINGSTYLELIST) == 1 || (alter_non_list_qs.length > 0 && parseInt(questionList[j].ASKINGSTYLELIST) != 1 && questionList[j].PREFACE != "")){
     				if(alter_non_list_qs.length > 0){
                         var preface = new Object;
                         preface.ID = alter_non_list_qs[0].ID;
                         preface.ANSWERTYPE = "PREFACE";
                         preface.SUBJECTTYPE = "PREFACE";
+                        preface.TITLE = "PREFACE";
                         preface.PROMPT = alter_non_list_qs[0].PREFACE;
         				for(k in alters){
             				for(l in alter_non_list_qs){
-            					if(evalExpression(alter_non_list_qs[l].ANSWERREASONEXPRESSIONID, alters[k].ID) != true){
-                					saveSkip(interviewId, alter_non_list_qs[l].ID, alters[k].ID, "", alter_non_list_qs[l].ID + "-" + alters[k].ID);
-            						continue;
-                                }
             					var question = $.extend(true,{}, alter_non_list_qs[l]);
             					question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
+                                question.TITLE = question.TITLE + " - " + alters[k].NAME;
             					question.ALTERID1 = alters[k].ID;
             			    	question.array_id = question.ID + '-' + question.ALTERID1;
         						if(preface.PROMPT != ""){
-        							if(i == pageNumber){
-        								page[i][0] = preface;
-        								$scope.questions = page[i];
-        							}
+                                    if(alter_non_list_qs[l].ANSWERREASONEXPRESSIONID > 0)
+                                        evalQIndex.push(i);
+        							masterList[i][0] = preface;
         							preface.PROMPT = "";
         							i++;
-        							page[i] = new Object;
+        							masterList[i] = new Object;
         						}
-        						if(i == pageNumber){
-        							page[i][question.ID + '-' + question.ALTERID1] = question;
-        							$scope.questions = page[i];
-        						}else {
-        							i++;
-        							page[i] = new Object;
-        						}
+                                if(alter_non_list_qs[l].ANSWERREASONEXPRESSIONID > 0)
+                                    evalQIndex.push(i);
+    							masterList[i][question.array_id] = question;
+    							i++;
+    							masterList[i] = new Object;
             				}
         				}
                         alter_non_list_qs = [];
                     }
-
                     if(parseInt(questionList[j].ASKINGSTYLELIST) != 1){
                         console.log("non list alter qs")
                         if(typeof questionList[parseInt(j)+1] != "undefined" && questionList[parseInt(j)+1].ASKINGSTYLELIST != 1 && questionList[parseInt(j)+1].PREFACE == ""){
@@ -1160,68 +1143,56 @@ function buildQuestions(pageNumber, interviewId, $scope){
                         preface.ID = questionList[j].ID;
                         preface.ANSWERTYPE = "PREFACE";
                         preface.SUBJECTTYPE = "PREFACE";
+                        preface.TITLE = "PREFACE";
                         preface.PROMPT = questionList[j].PREFACE;
         				for(k in alters){
-        					if(evalExpression(questionList[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true){
-            					saveSkip(interviewId, questionList[j].ID, alters[k].ID, "", questionList[j].ID + "-" + alters[k].ID);
-        						continue;
-                            }
         					var question = $.extend(true,{}, questionList[j]);
         					question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
         					question.ALTERID1 = alters[k].ID;
         			    	question.array_id = question.ID + '-' + question.ALTERID1;
-
     						if(preface.PROMPT != ""){
-    							if(i == pageNumber){
-    								page[i][0] = preface;
-    								$scope.questions = page[i];
-    							}
+                                if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                                    evalQIndex.push(i);
+                                masterList[i][0] = preface;
     							preface.PROMPT = "";
     							i++;
-    							page[i] = new Object;
+    							masterList[i] = new Object;
     						}
-    						if(i == pageNumber){
-    							page[i][question.ID + '-' + question.ALTERID1] = question;
-    							$scope.questions = page[i];
-    						}else {
-    							i++;
-    							page[i] = new Object;
-    						}
+                            if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                                evalQIndex.push(i);
+							masterList[i][question.array_id] = question;
+							i++;
+							masterList[i] = new Object;
         				}
     				}else{
-                        console.log("alter qs")
         				for(k in alters){
-        					if(evalExpression(questionList[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true){
-            					saveSkip(interviewId, questionList[j].ID, alters[k].ID, "", questionList[j].ID + "-" + alters[k].ID);
-        						continue;
-                            }
         					var question = $.extend(true,{}, questionList[j]);
         					question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
         					question.ALTERID1 = alters[k].ID;
         			    	question.array_id = question.ID + '-' + question.ALTERID1;
-                            alter_question_list[question.ID + '-' + question.ALTERID1] = question;
+                            alter_question_list[question.array_id] = question;
                         }
     					if(Object.keys(alter_question_list).length > 0){
                             var preface = new Object;
                             preface.ID = questionList[j].ID;
                             preface.ANSWERTYPE = "PREFACE";
                             preface.SUBJECTTYPE = "PREFACE";
+                            preface.TITLE = "PREFACE";
                             preface.PROMPT = questionList[j].PREFACE;
     						if(preface.PROMPT != ""){
-    							if(i == pageNumber){
-    								page[i][0] = preface;
-    								$scope.questions = page[i];
-    							}
+                                if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                                    evalQIndex.push(i);
+    							masterList[i][0] = $.extend(true,{}, preface);
+                                console.log(preface);
                                 preface.PROMPT = "";
     							i++;
-    							page[i] = new Object;
+    							masterList[i] = new Object;
     						}
-    						if(i == pageNumber){
-    							page[i] = alter_question_list;
-    							$scope.questions = page[i];
-    						}
+                            if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                                evalQIndex.push(i);
+    						masterList[i] = alter_question_list;
     						i++;
-    						page[i] = new Object;
+    						masterList[i] = new Object;
     					}
                     }
                 }else{
@@ -1229,109 +1200,63 @@ function buildQuestions(pageNumber, interviewId, $scope){
                 }
 			}
 
-			if(alter_non_list_qs.length > 0){
-                var preface = new Object;
-                preface.ID = alter_non_list_qs[0].ID;
-                preface.ANSWERTYPE = "PREFACE";
-                preface.SUBJECTTYPE = "PREFACE";
-                preface.PROMPT = alter_non_list_qs[0].PREFACE;
-				for(k in alters){
-    				for(l in alter_non_list_qs){
-    					if(evalExpression(alter_non_list_qs[l].ANSWERREASONEXPRESSIONID, alters[k].ID) != true){
-        					saveSkip(interviewId, alter_non_list_qs[l].ID, alters[k].ID, "", alter_non_list_qs[l].ID + "-" + alters[k].ID);
-    						continue;
-                        }
-    					var question = $.extend(true,{}, alter_non_list_qs[l]);
-    					question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
-    					question.ALTERID1 = alters[k].ID;
-    			    	question.array_id = question.ID + '-' + question.ALTERID1;
-						if(preface.PROMPT != ""){
-							if(i == pageNumber){
-								page[i][0] = preface;
-								$scope.questions = page[i];
-							}
-							preface.PROMPT = "";
-							i++;
-							page[i] = new Object;
-						}
-						if(i == pageNumber){
-							page[i][question.ID + '-' + question.ALTERID1] = question;
-							$scope.questions = page[i];
-						}else {
-							i++;
-							page[i] = new Object;
-						}
-    				}
-				}
-                alter_non_list_qs = [];
-            }
-
             if(questionList[j].SUBJECTTYPE == "ALTER_PAIR"){
 				var alters2 = $.extend(true,{}, alters);
 				var preface = new Object;
 				preface.ID = questionList[j].ID;
 				preface.ANSWERTYPE = "PREFACE";
 				preface.SUBJECTTYPE = "PREFACE";
+                preface.TITLE = "PREFACE";
 				preface.PROMPT = questionList[j].PREFACE;
 				for(k in alters){
 					if(questionList[j].SYMMETRIC){
     					var keys = Object.keys(alters2);
     					delete alters2[keys[0]];
 					}
-						//alters2.shift();
 					alter_pair_question_list = new Object;
 					for(l in alters2){
 						if(alters[k].ID == alters2[l].ID)
 							continue;
-						if(evalExpression(questionList[j].ANSWERREASONEXPRESSIONID, alters[k].ID, alters2[l].ID) != true){
-        					saveSkip(interviewId, questionList[j].ID, alters[k].ID, alters2[l].ID, questionList[j].ID + "-" + alters[k].ID + "and" + alters2[l].ID);
-							continue;
-				        }
 						var question = $.extend(true,{}, questionList[j]);
 						question.PROMPT = question.PROMPT.replace(/\$\$1/g, alters[k].NAME);
 						question.PROMPT = question.PROMPT.replace(/\$\$2/g, alters2[l].NAME);
+                        question.TITLE = question.TITLE + " - " + alters[k].NAME;
 						question.ALTERID1 = alters[k].ID;
 						question.ALTERID2 = alters2[l].ID;
                         question.array_id = question.ID + '-' + question.ALTERID1 + 'and' + question.ALTERID2;
-
 						if(parseInt(questionList[j].ASKINGSTYLELIST) == 1){
-							alter_pair_question_list[question.ID + '-' + question.ALTERID1 + 'and' + question.ALTERID2] = question;
+							alter_pair_question_list[question.array_id] = question;
 						}else{
 							if(preface.PROMPT != ""){
-								if(i == pageNumber){
-									page[i][0] = preface;
-									$scope.questions = page[i];
-								}
+                                if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                                    evalQIndex.push(i);
+								masterList[i][0] = $.extend(true,{}, preface);
 								preface.PROMPT = "";
 								i++;
-								page[i] = new Object;
+								masterList[i] = new Object;
 							}
-							if(i == pageNumber){
-								page[i][question.ID + '-' + question.ALTERID1 + 'and' + question.ALTERID2] = question;
-								$scope.questions = page[i];
-							}else{
-								i++;
-								page[i] = new Object;
-							}
+                            if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                                evalQIndex.push(i);
+							masterList[i][question.array_id] = question;
+							i++;
+							masterList[i] = new Object;
 						}
 					}
-					if(questionList[j].ASKINGSTYLELIST){
+					if(questionList[j].ASKINGSTYLELIST == 1){
 						if(Object.keys(alter_pair_question_list).length > 0){
 							if(preface.PROMPT != ""){
-								if(i == pageNumber){
-									page[i][0] = preface;
-									$scope.questions = page[i];
-								}
+                                if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                                    evalQIndex.push(i);
+								masterList[i][0] = $.extend(true,{}, preface);
 								preface.PROMPT = "";
 								i++;
-								page[i] = new Object;
+								masterList[i] = new Object;
 							}
-							if(i == pageNumber){
-								page[i] = alter_pair_question_list;
-								$scope.questions = page[i];
-							}
+                            if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                                evalQIndex.push(i);
+							masterList[i] = alter_pair_question_list;
 							i++;
-							page[i] = new Object;
+							masterList[i] = new Object;
 						}
 					}
 				}
@@ -1339,72 +1264,76 @@ function buildQuestions(pageNumber, interviewId, $scope){
 
             if(questionList[j].SUBJECTTYPE == "NETWORK"){
                 questionList[j].array_id = questionList[j].ID;
-
-    			if(Object.keys(network_question_list).length > 0 && prompt != questionList[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
-    				if(pageNumber == i){
-    					page[i] = network_question_list;
-    					$scope.questions = page[i];
-    				}
-    				network_question_list = new Object;
-    				prompt = "";
-    				i++;
-    				page[i] = new Object;
-    			}
-
-    			if(evalExpression(questionList[j].ANSWERREASONEXPRESSIONID) != true){
-                    saveSkip(interviewId, questionList[j].ID, "", "", questionList[j].ID);
-    				continue;
-                }
-
     			if(questionList[j].PREFACE != ""){
-    				if(pageNumber == i){
-    					var preface = new Object;
-    					preface.ID = questionList[j].ID;
-    					preface.ANSWERTYPE = "PREFACE";
-    					preface.SUBJECTTYPE = "PREFACE";
-    					preface.PROMPT = questionList[j].PREFACE;
-    					page[i][0] = preface;
-    					$scope.questions = page[i];
-    				}
+					var preface = new Object;
+					preface.ID = questionList[j].ID;
+					preface.ANSWERTYPE = "PREFACE";
+					preface.SUBJECTTYPE = "PREFACE";
+                    preface.TITLE = "PREFACE";
+					preface.PROMPT = questionList[j].PREFACE;
+                    if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                        evalQIndex.push(i);
+					masterList[i][0] = $.extend(true,{}, preface);
     				i++;
-    				page[i] = new Object;
+    				masterList[i] = new Object;
     			}
-
-    			if(parseInt(questionList[j].ASKINGSTYLELIST) == 1){
-    			    if(prompt == "" || prompt == questionList[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
-    			    	prompt = questionList[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
-    			    	network_question_list[parseInt(questionList[j].ORDERING) + 1] = questionList[j];
-    			    }
-    			}else{
-    			    if(pageNumber == i){
-    		    		page[i][questionList[j].ID] = questionList[j];
-    			    	$scope.questions = page[i];
-    			    }
-    			    i++;
-    			    page[i] = new Object;
-    			}
+                if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                    evalQIndex.push(i);
+                masterList[i][questionList[j].ID] = questionList[j];
+    			i++;
+    			masterList[i] = new Object;
     		}
-
 		}
-/*
-		if(Object.keys(network_question_list).length > 0){
-			if(pageNumber == i){
-				page[i] = network_question_list;
-				return page[i];
-			}
-			i++;
-			page[i] = new Object;
-		}
-*/
 		conclusion = new Object;
+        conclusion.TITLE = "CONCLUSION";
 		conclusion.ANSWERTYPE = "CONCLUSION";
 		conclusion.PROMPT = study.CONCLUSION;
         conclusion.array_id = 0;
-		page[i][0] = conclusion;
-        if($scope.questions == false)
-            $scope.questions = page[i];
+		masterList[i][0] = conclusion;
 	}
-	return false;
+}
+
+function evalQuestions(){
+    for(i in evalQIndex){
+        if(evalQIndex[i] < currentPage)
+            continue;
+        for(j in masterList[evalQIndex[i]]){
+            console.log(masterList[evalQIndex[i]][j]);
+            evalQList[masterList[evalQIndex[i]][j].array_id]  = evalExpression(masterList[evalQIndex[i]][j].ANSWERREASONEXPRESSIONID, masterList[evalQIndex[i]][j].ALTERID1, masterList[evalQIndex[i]][j].ALTERID2);
+            if(evalQList[masterList[evalQIndex[i]][j].array_id] != true)
+                saveSkip(interviewId, masterList[evalQIndex[i]][j].ID, masterList[evalQIndex[i]][j].ALTERID1, masterList[evalQIndex[i]][j].ALTERID2, masterList[evalQIndex[i]][j].array_id);
+        }
+    }
+}
+
+function qFromList(pageNumber){
+    var i = 0;
+    var questions = {};
+    if(pageNumber == 0){
+        currentPage = i;
+        return masterList[0];
+    }
+    for(k in masterList){
+        questions = {};
+        var proceed = false;
+        if(!!~jQuery.inArray(parseInt(k), evalQIndex)){
+            for(j in masterList[k]){
+                if(evalQList[masterList[k][j].array_id] == true){
+                    proceed = true;
+                    questions[j] = masterList[k][j];
+                }
+            }
+        }else{
+            proceed = true;
+            questions = masterList[k];
+        }
+        if(pageNumber == i && proceed == true){
+            currentPage = i;
+            return questions;
+        }
+        if(proceed == true)
+            i++;
+    }
 }
 
 function evalExpression(id, alterId1, alterId2)
@@ -1580,7 +1509,6 @@ function countQuestion(questionId, operator, alterId1, alterId2)
 
 function interpretTags(string, alterId1, alterId2)
 {
-
 	// parse out and replace variables
 	vars = string.match(/<VAR (.+?) \/>/g);
 	for(k in vars){
@@ -1696,7 +1624,6 @@ function interpretTags(string, alterId1, alterId2)
 
 	// same as count, but limited to specific alter / alter pair questions
 	containers  = string.match(/<CONTAINS (.+?) \/>/g);
-    console.log(containers);
 	for(k in containers){
 		var contains = containers[k].match(/<CONTAINS (.+?) \/>/)[1];
 		var parts = contains.split(/\s/);
@@ -1731,7 +1658,6 @@ function interpretTags(string, alterId1, alterId2)
 
 	// parse out and show logics
 	showlogics = string.match(/<IF (.+?) (==|!=|<|>|<=|>=)+ (.+?) \"(.+?)\" \/>/g);
-    console.log(showlogics);
 	for(k in showlogics){
 		showlogic = showlogics[k];
 		exp = showlogic.match(/\<IF (.+?) (==|!=|<|>|<=|>=)+ (.+?) \"(.+?)\"/);
@@ -2362,251 +2288,39 @@ function exitHandler()
     }
 }
 
-function buildNav(pageNumber, scope){
-	var i = 0;
-	var pages = [];
-
-	this.checkPage = function (currentPage, pageNumber, text){
-		if(currentPage == pageNumber){
+function navFromList(pageNumber, scope){
+    var i = 0;
+    var pages = [];
+    this.checkPage = function (iPage, pageNumber, text){
+		if(iPage == pageNumber){
             $("#questionTitle").html(text);
 			text = "<b>" + text + "</b>";
 		}
-		if(currentPage - 1 == pageNumber && text == "CONCLUSION")
-		    scope.conclusion = true;
+		//if(iPage - 1 == pageNumber && text == "CONCLUSION")
+		 //   scope.conclusion = true;
 		return text;
 	};
-
-	if(study.INTRODUCTION != ""){
-		pages[i] = this.checkPage(i, pageNumber, "INTRODUCTION");
-		i++;
-	}
-	if(parseInt(study.HIDEEGOIDPAGE) != 1){
-    	pages[i] = this.checkPage(i, pageNumber, "EGO ID");
-        i++;
-    }
-	if(!interviewId){
-		return pages;
-	}
-	var prompt = "";
-	var ego_question_list = '';
-	for(j in ego_questions){
-		if(evalExpression(ego_questions[j].ANSWERREASONEXPRESSIONID, interviewId) != true)
-			continue;
-
-		if((parseInt(ego_questions[j].ASKINGSTYLELIST) != 1 || prompt != ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")) && ego_question_list){
-		    pages[i] = this.checkPage(i, pageNumber, ego_question_list.TITLE);
-			prompt = "";
-		    ego_question_list = '';
-		    i++;
-		}
-		if(ego_questions[j].PREFACE != ""){
-			pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-			i++;
-		}
-		if(parseInt(ego_questions[j].ASKINGSTYLELIST) == 1){
-		    prompt = ego_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
-		    if(ego_question_list == '')
-			    ego_question_list = ego_questions[j];
-		}else{
-		    pages[i] = this.checkPage(i, pageNumber, ego_questions[j].TITLE);
-		    i++;
-		}
-
-	}
-	if(ego_question_list){
-		pages[i] = this.checkPage(i, pageNumber, ego_question_list.TITLE);
-		ego_question_list = '';
-		i++;
-	}
-	if(study.ALTERPROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")){
-		pages[i] = this.checkPage(i, pageNumber, "ALTER_PROMPT");
-		i++;
-	}
-
-	if(Object.keys(alters).length > 0){
-    	var alter_non_list_qs = [];
-		for(j in alter_questions){
-            prompt = "";
-			var alter_question_list = '';
-
-			if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1 || (alter_non_list_qs.length > 0 && parseInt(alter_questions[j].ASKINGSTYLELIST) != 1 && alter_questions[j].PREFACE != "")){
-    			if(alter_non_list_qs.length > 0){
-        			for(k in alters){
-            			for(l in alter_non_list_qs){
-                            if(evalExpression(alter_non_list_qs[l].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
-                                continue;
-        					if(alter_non_list_qs[l].PREFACE != "" && prompt == ""){
-        			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-                                prompt = alter_non_list_qs[l].PREFACE;
-        			    		i++;
-        			    	}
-        			    	pages[i] = this.checkPage(i, pageNumber, alter_non_list_qs[l].TITLE + " - " + alters[k].NAME);
-        			    	i++;
-            			}
-        			}
-        			alter_non_list_qs = [];
-        			prompt = "";
+    for(k in masterList){
+        var proceed = false;
+        if(jQuery.inArray(parseInt(k), evalQIndex ) != -1){
+            for(j in masterList[k]){
+                if(evalQList[masterList[k][j].array_id] == true){
+                    proceed = true;
+                    pages[i] = this.checkPage(i, pageNumber, masterList[k][j].TITLE);
+                    continue;
                 }
-                if(parseInt(alter_questions[j].ASKINGSTYLELIST) != 1){
-                    if(typeof alter_questions[parseInt(j)+1] != "undefined" && alter_questions[parseInt(j)+1].ASKINGSTYLELIST != 1 && alter_questions[parseInt(j)+1].PREFACE == ""){
-                        alter_non_list_qs.push(alter_questions[j]);
-                        continue;
-                    }
-        			for(k in alters){
-        				if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
-        					continue;
-    					if(alter_questions[j].PREFACE != "" && prompt == ""){
-    			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-                            prompt = alter_questions[j].PREFACE;
-    			    		i++;
-    			    	}
-    			    	pages[i] = this.checkPage(i, pageNumber, alter_questions[j].TITLE + " - " + alters[k].NAME);
-    			    	i++;
-			        }
-                }else{
-        			for(k in alters){
-        				if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
-        					continue;
-                        alter_question_list = alter_questions[j];
-                    }
-                    if(alter_question_list){
-        		    	if(alter_questions[j].PREFACE != ""){
-        		    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-        		    		i++;
-        		    	}
-        		    	pages[i] = this.checkPage(i, pageNumber, alter_questions[j].TITLE);
-        		    	i++;
-    		    	}
-		    	}
-            }else{
-                alter_non_list_qs.push(alter_questions[j]);
             }
-			/*
-			for(k in alters){
-				if(evalExpression(alter_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
-					continue;
-
-				if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1){
-			    	alter_question_list = alter_questions[j];
-			    }else{
-					if(alter_questions[j].PREFACE != "" && prompt == ""){
-			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-                        prompt = alter_questions[j].PREFACE;
-			    		i++;
-			    	}
-			    	pages[i] = this.checkPage(i, pageNumber, alter_questions[j].TITLE + " - " + alters[k].NAME);
-			    	i++;
-			    }
-			}
-			if(parseInt(alter_questions[j].ASKINGSTYLELIST) == 1){
-			    if(alter_question_list){
-			    	if(alter_questions[j].PREFACE != ""){
-			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-			    		i++;
-			    	}
-			    	pages[i] = this.checkPage(i, pageNumber, alter_question_list.TITLE);
-			    	i++;
-			    }
-			}
-			*/
-		}
-		if(alter_non_list_qs.length > 0){
-			for(k in alters){
-    			for(l in alter_non_list_qs){
-                    if(evalExpression(alter_non_list_qs[l].ANSWERREASONEXPRESSIONID, alters[k].ID) != true)
-                        continue;
-					if(alter_non_list_qs[l].PREFACE != "" && prompt == ""){
-			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-                        prompt = alter_non_list_qs[l].PREFACE;
-			    		i++;
-			    	}
-			    	pages[i] = this.checkPage(i, pageNumber, alter_non_list_qs[l].TITLE + " - " + alters[k].NAME);
-			    	i++;
-    			}
-			}
-			alter_non_list_qs = [];
-			prompt = "";
+        }else{
+            for(j in masterList[k]){
+                proceed = true;
+                pages[i] = this.checkPage(i, pageNumber, masterList[k][j].TITLE);
+                continue;
+            }
         }
-		prompt = "";
-		for(j in alter_pair_questions){
-			var alters2 = $.extend(true,{}, alters);
-			preface = new Object;
-			preface.ANSWERTYPE = "PREFACE";
-			preface.PROMPT = alter_pair_questions[j].PREFACE;
-			for(k in alters){
-				if(alter_pair_questions[j].SYMMETRIC){
-					var keys = Object.keys(alters2);
-					delete alters2[keys[0]];
-				}
-				var alter_pair_question_list = '';
-				for(l in alters2){
-		    		if(alters[k].ID == alters2[l].ID)
-		    			continue;
-					if(evalExpression(alter_pair_questions[j].ANSWERREASONEXPRESSIONID, alters[k].ID, alters2[l].ID) != true)
-		    			continue;
-
-    				if(parseInt(alter_pair_questions[j].ASKINGSTYLELIST) == 1){
-    			    	alter_pair_question_list = alter_pair_questions[j];
-    			    }else{
-    					if(alter_pair_questions[j].PREFACE != "" && prompt == ""){
-    			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-                            prompt = alter_pair_questions[j].PREFACE;
-    			    		i++;
-    			    	}
-    			    	pages[i] = this.checkPage(i, pageNumber, alter_pair_questions[j].TITLE + " - " + alters[k].NAME + "and" + alters2[l].NAME);
-    			    	i++;
-    			    }
-
-		    	}
-		    	if(alter_pair_question_list){
-					if(preface.PROMPT != ""){
-			    		pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-						preface.PROMPT = "";
-			    		i++;
-			    	}
-			    	pages[i] = this.checkPage(i, pageNumber, alter_pair_question_list.TITLE + " - " + alters[k].NAME);
-			    	i++;
-				}
-			}
-		}
-
-	}
-
-	var network_question_list = '';
-	for(j in network_questions){
-	    if(interviewId){
-	    	if(evalExpression(network_questions[j].ANSWERREASONEXPRESSIONID) != true)
-	    		continue;
-	    }
-
-		if((parseInt(network_questions[j].ASKINGSTYLELIST) != 1 || prompt != network_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"")) && network_question_list){
-		    pages[i] = this.checkPage(i, pageNumber, network_question_list.TITLE);
-			prompt = "";
-		    network_question_list = '';
-		    i++;
-		}
-		if(network_questions[j].PREFACE != ""){
-			pages[i] = this.checkPage(i, pageNumber, "PREFACE");
-			i++;
-		}
-		if(parseInt(network_questions[j].ASKINGSTYLELIST) == 1){
-		    prompt = network_questions[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm,"");
-		    if(network_question_list == '')
-			    network_question_list = network_questions[j];
-		}else{
-		    pages[i] = this.checkPage(i, pageNumber, network_questions[j].TITLE);
-		    i++;
-		}
-	}
-
-	if(network_question_list){
-		pages[i] = this.checkPage(i, pageNumber, network_question_list.TITLE);
-		network_question_list = '';
-		i++;
-	}
-
-	pages[i] = this.checkPage(i, pageNumber, "CONCLUSION");
-	return pages;
+        if(proceed == true)
+            i++;
+    }
+    scope.nav = pages;
 }
 
 function columnWidths(){

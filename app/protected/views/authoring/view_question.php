@@ -3,6 +3,25 @@
 ?>
 <h1><?php echo $model->subjectType; ?> Questions</h1>
 
+
+<?php
+$ap = Question::model()->findByAttributes(array("studyId"=>$study->id, "subjectType" => "ALTER_PROMPT"));
+if(!$ap){
+?>
+<div class="alert">
+    This is study is using the old format.  
+<?php
+    echo CHtml::button(
+        CHtml::encode('Convert'),
+        array("onclick"=>"document.location.href='" . CController::createUrl('convert', array('id'=>$study->id)) ."'", 'class'=>"btn btn-danger btn-sm")
+    );
+?>
+</div>
+<?php
+}
+ ?>
+
+
 <?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/summernote.js'); ?>
 
 <script>

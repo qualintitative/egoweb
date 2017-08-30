@@ -60,21 +60,31 @@ function save(questions, page, url, scope){
     }
     var saveUrl = document.location.protocol + "//" + document.location.host + "/interview/save";
     if(typeof questions[0] == "undefined"){
-        $.post(saveUrl, $('#answerForm').serialize(), function(data){
-            if(data != "error"){
-                answers = JSON.parse(data);
-                console.log(answers);
-                for(k in answers){
-                    interviewId = answers[k].INTERVIEWID;
-                    studyId = answers[k].STUDYID;
-                    break;
+        if(scope.answerForm.$pristine == false){
+            $.post(saveUrl, $('#answerForm').serialize(), function(data){
+                if(data != "error"){
+                    answers = JSON.parse(data);
+                    console.log(answers);
+                    evalQuestions();
+                    for(k in answers){
+                        interviewId = answers[k].INTERVIEWID;
+                        studyId = answers[k].STUDYID;
+                        break;
+                    }
+                    document.location = document.location.protocol + "//" + document.location.host + "/interview/" + studyId + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
+                }else{
+                    scope.errors[0] = "Participant not found";
+                    scope.$apply();
                 }
-                document.location = document.location.protocol + "//" + document.location.host + "/interview/" + studyId + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
-            }else{
-                scope.errors[0] = "Participant not found";
-                scope.$apply();
+            });
+        }else{
+            for(k in answers){
+                interviewId = answers[k].INTERVIEWID;
+                studyId = answers[k].STUDYID;
+                break;
             }
-        });
+            document.location = document.location.protocol + "//" + document.location.host + "/interview/" + studyId + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
+        }
     }else if(questions[0].ANSWERTYPE == "CONCLUSION"){
         $.post(saveUrl, $('#answerForm').serialize(), function (data) {
             if (typeof redirect !== 'undefined' && redirect){
@@ -85,6 +95,8 @@ function save(questions, page, url, scope){
             }
         });
     }else{
+        if(questions[0].ANSWERTYPE == "ALTER_PROMPT")
+            buildList();
         document.location = url + "/page/" + (parseInt(page) + 1);
     }
 }

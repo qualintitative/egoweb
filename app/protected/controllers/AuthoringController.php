@@ -325,6 +325,55 @@ class AuthoringController extends Controller
 		));
 	}
 
+    // convertss to new master list format from older format
+    public function actionConvert($id)
+	{
+        $study = Study::model()->findByPk($id);
+        $criteria=new CDbCriteria;
+		$criteria=array(
+			'condition'=>"studyId = " . $id . ' AND subjectType != "EGO_ID"',
+			'order'=>'ordering',
+		);
+        $questions = Question::model()->findAll($criteria);
+        foreach($questions as $question){
+            if($question->subjectType == "EGO")
+                $ego_questions[] = $question;
+            if($question->subjectType == "ALTER")
+                $alter_questions[] = $question;
+            if($question->subjectType == "ALTER_PAIR")
+                $alter_pair_questions[] = $question;
+            if($question->subjectType == "NETWORK")
+                $network_questions[] = $question;
+        }
+        $i = count($ego_questions);
+        $model = new Question;
+        $model->attributes = array(
+            'subjectType' => "ALTER_PROMPT",
+            'prompt' => $study->alterPrompt,
+            'studyId' => $id,
+            'title' => "ALTER_PROMPT",
+            'answerType' => "ALTER_PROMPT",
+            'ordering' => $i,
+        );
+        $model->save();
+        $i++;
+        foreach($alter_questions as $question){
+            $question->ordering = $i + $question->ordering;
+            $question->save();
+        }
+        $i = $i + count($alter_questions);
+        foreach($alter_pair_questions as $question){
+            $question->ordering = $i + $question->ordering;
+            $question->save();
+        }
+        $i = $i + count($alter_pair_questions);
+        foreach($network_questions as $question){
+            $question->ordering = $i + $question->ordering;
+            $question->save();
+        }
+        Yii::app()->request->redirect("/authoring/questions/" . $id);
+    }
+
     /**
 	 * Lists all models.
 	 */
