@@ -46,7 +46,7 @@
 <div id="alterListBox" class="col-xs-12 col-sm-3" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'">
     <table class="items">
     <tbody>
-    <tr class="multi" ng-repeat="alter in alters track by $index">
+    <tr class="multi" ng-repeat="alter in alters track by $index" ng-if="alter.NAMEGENQIDS.indexOf(questions[0].ID) > -1">
     <td style="width:25px;" id="ordering">{{ $index + 1 }}</td>
     <td style="width:auto;">{{ alter.NAME }}</td>
     <td style="width:25px;"><a class="alter-delete" title="Delete" ng-click="removeAlter(alter.ID)"><span class="fui-cross"></span></a></td>
@@ -69,6 +69,7 @@
             <input name="Alters[name]" id="Alters_name" type="hidden" value="{{ alterName }}">
             <autocomplete attr-input-class="answerInput" ng-disabled="interview.COMPLETED == -1" style="float:left" ng-model="alterName" data="participants"></autocomplete>
             <input value="{{ interviewId }}" name="Alters[interviewId]" id="Alters_interviewId" type="hidden">
+            <input value="{{ questions[0].ID }}" name="Alters[nameGenQIds]" id="Alters_nameGenQIds" type="hidden">
             <input class="btn orangebutton alterSubmit" type="submit" name="yt0" value="+ Add">
         </div>
     </form>

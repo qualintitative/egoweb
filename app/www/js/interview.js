@@ -30,9 +30,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.study = study;
     $scope.csrf = csrf;
     $scope.interviewId = interviewId;
-    $scope.answers =  $.extend(true,{}, answers);;
+    $scope.answers =  $.extend(true,{}, answers);
     $scope.options = new Object;
-    $scope.alters = alters;
+    $scope.alters =  $.extend(true,{}, alters);
     $scope.prevAlters = prevAlters;
     $scope.alterPrompt = "";
     $scope.askingStyleList = false;
@@ -62,6 +62,13 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.conclusion = false;
     $scope.redirect = false;
     $scope.participants = [];
+    for(k in $scope.alters){
+        if($scope.alters[k].NAMEGENQIDS != null && !Array.isArray($scope.alters[k].NAMEGENQIDS)){
+            console.log($scope.alters[k].NAMEGENQIDS)
+            $scope.alters[k].NAMEGENQIDS = $scope.alters[k].NAMEGENQIDS.split(",");
+        }
+    }
+    console.log($scope.alters);
 
     if(typeof hashKey != "undefined"){
         $scope.hashKey = hashKey;
@@ -378,7 +385,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         $scope.errors[0] = false;
         for(k in alters){
             if($("#Alters_name").val() == alters[k].NAME){
-                $scope.errors[0] = 'That name is already listed';
+                if(alters[k].NAMEGENQIDS != null)
+                    var nameGenQIds = alters[k].NAMEGENQIDS.split(",");
+                if(nameGenQIds.indexOf($("#Alters_nameGenQIds").val()) > -1)
+                    $scope.errors[0] = 'That name is already listed';
             }
         }
 

@@ -417,14 +417,22 @@ class InterviewController extends Controller
 			);
 			$alters = Alters::model()->findAll($criteria);
 			$alterNames = array();
+            $alterGroups = array();
 			foreach($alters as $alter){
-				$alterNames[] = $alter->name;
+				$alterNames[$alter->id] = $alter->name;
+                $alterGroups[$alter->name] = explode(",", $alter->nameGenQIds);
 			}
 			$model = new Alters;
 			$model->attributes = $_POST['Alters'];
 			if(in_array($_POST['Alters']['name'], $alterNames)){
-				$model->addError('name', $_POST['Alters']['name']. ' has already been added!');
-			}
+                if(!in_array($_POST['Alters']['nameGenQIds'], $alterGroups[$_POST['Alters']['name']])){
+                    $model = Alters::model()->findByPk(array_search($_POST['Alters']['name'], $alterNames));
+                    $alterGroups[$_POST['Alters']['name']][] = $_POST['Alters']['nameGenQIds'];
+                    $model->nameGenQIds = implode(",", $alterGroups[$_POST['Alters']['name']]);
+                }else{
+                    $model->addError('name', $_POST['Alters']['name']. ' has already been added!');
+                }
+            }
 
             $pre_names = array();
             $preset_alters = AlterList::model()->findAllByAttributes(array("studyId"=>$studyId));
