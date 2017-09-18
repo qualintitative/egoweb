@@ -348,11 +348,11 @@ class AuthoringController extends Controller
         $i = count($ego_questions);
         $model = new Question;
         $model->attributes = array(
-            'subjectType' => "ALTER_PROMPT",
+            'subjectType' => "NAME_GENERATOR",
             'prompt' => $study->alterPrompt,
             'studyId' => $id,
             'title' => "ALTER_PROMPT",
-            'answerType' => "ALTER_PROMPT",
+            'answerType' => "NAME_GENERATOR",
             'ordering' => $i,
         );
         $model->save();
@@ -1145,7 +1145,13 @@ class AuthoringController extends Controller
 				}
 				$question = Question::model()->findByPk($_GET['questionId']);
 				$this->renderPartial("_form_expression_question", array('model'=>$model, 'question'=>$question), false, true);
-			}else if($_GET['form'] == "_form_option"){
+            }else if($_GET['form'] == "_form_expression_name_gen"){
+                if(isset($_GET['id']) && $_GET['id'])
+                    $model = Expression::model()->findbyPk((int)$_GET['id']);
+                else
+                    $model = new Expression;
+                $this->renderPartial("_form_expression_name_gen", array('model'=>$model, 'studyId'=>$_GET['studyId']), false, true);
+            }else if($_GET['form'] == "_form_option"){
 
 				$criteria=new CDbCriteria;
 				$criteria=array(

@@ -224,7 +224,7 @@ class InterviewingController extends Controller
 
 				}
 
-				if($Answer['questionType'] == "ALTER_PROMPT"){
+				if($Answer['questionType'] == "NAME_GENERATOR"){
 					// no Answer to save, go to next page
 					if(Interview::countAlters($Answer['interviewId']) < $_POST['minAlters']){
 						$model[$Answer['questionId']]->addError('value', 'Please list ' . $_POST['minAlters'] . ' people');
@@ -473,7 +473,7 @@ class InterviewingController extends Controller
     			}
     		}
 
-    		if(isset($questions[0]) && $questions[0]->answerType == 'ALTER_PROMPT' && $study->fillAlterList){
+    		if(isset($questions[0]) && $questions[0]->answerType == 'NAME_GENERATOR' && $study->fillAlterList){
                 #OK FOR SQL INJECTION
                 $check = q("SELECT count(id) FROM alters WHERE interviewId = " . $interviewId)->queryScalar();
     			if(!$check){
@@ -615,7 +615,7 @@ class InterviewingController extends Controller
 		}else if(isset($_GET['studyId']) && isset($_GET['interviewId'])){
 			$study = Study::model()->findByPk((int)$_GET['studyId']);
 			$alter_prompt = new Question;
-			$alter_prompt->answerType = "ALTER_PROMPT";
+			$alter_prompt->answerType = "NAME_GENERATOR";
 			$alter_prompt->prompt = $study->alterPrompt;
 			$alter_prompt->studyId = $study->id;
 			$alter = new Alters;

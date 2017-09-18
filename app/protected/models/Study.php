@@ -212,7 +212,7 @@ class Study extends CActiveRecord
 			$i++;
 		}
 		if(trim(preg_replace('/<\/*[^>]*>/', '', $study->alterPrompt)) != ""){
-			$page[$i] = Study::checkPage($i, $pageNumber, "ALTER_PROMPT");
+			$page[$i] = Study::checkPage($i, $pageNumber, "NAME_GENERATOR");
 			$i++;
 		}
 		$criteria = array(
@@ -468,7 +468,7 @@ class Study extends CActiveRecord
 
 			if($pageNumber == $i && trim(preg_replace('/<\/*[^>]*>/', '', $study->alterPrompt)) != ""){
 				$alter_prompt = new Question;
-				$alter_prompt->answerType = "ALTER_PROMPT";
+				$alter_prompt->answerType = "NAME_GENERATOR";
 				$alter_prompt->prompt = $study->alterPrompt;
 				$alter_prompt->studyId = $study->id;
 				$alter_prompt->id = 0;

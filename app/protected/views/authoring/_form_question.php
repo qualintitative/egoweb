@@ -21,7 +21,7 @@ if($model->subjectType == "EGO_ID"){
 }
 $subjectTypes = array(
 	'EGO'=>'EGO',
-	'ALTER_PROMPT'=>'ALTER_PROMPT',
+	'NAME_GENERATOR'=>'NAME_GENERATOR',
 	'ALTER'=>'ALTER',
 	'ALTER_PAIR'=>'ALTER_PAIR',
     'NETWORK'=>'NETWORK',

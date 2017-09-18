@@ -26,7 +26,7 @@ describe('Alters', function () {
 
         // set valid field values for moving forward through survey
         IwPage.fieldValues = {
-            'ALTER_PROMPT' : {
+            'NAME_GENERATOR' : {
                 type: 'alters',
                 values: [
                     'alpha',
@@ -48,24 +48,24 @@ describe('Alters', function () {
             }
         };
 
-        // go forward to ALTER_PROMPT - first question for ms tests
-        IwPage.goForwardToQuestion("ALTER_PROMPT");
+        // go forward to NAME_GENERATOR - first question for ms tests
+        IwPage.goForwardToQuestion("NAME_GENERATOR");
     });
 
     beforeEach(function () {
-        // every test starts at ALTER_PROMPT
-        IwPage.goBackToQuestion("ALTER_PROMPT");
+        // every test starts at NAME_GENERATOR
+        IwPage.goBackToQuestion("NAME_GENERATOR");
     });
 
     it("should show correct Variable Alter Prompt while adding alters ", function () {
-        IwPage.goForwardToQuestion('ALTER_PROMPT');
+        IwPage.goForwardToQuestion('NAME_GENERATOR');
 
         // clear any alters that are already entered
         IwPage.removeAllAlters();
 
         expect(IwPage.getAlterCount()).toBe(0);
 
-        alters = IwPage.fieldValues['ALTER_PROMPT']['values'];
+        alters = IwPage.fieldValues['NAME_GENERATOR']['values'];
         browser.element("div=Please enter a name, then click the Add button").waitForVisible(browser.options.egoweb.waitTime);
 
         IwPage.addAlter(alters[0]);
@@ -97,12 +97,12 @@ describe('Alters', function () {
     });
 
     it("should add and remove alters", function() {
-        IwPage.goForwardToQuestion('ALTER_PROMPT');
+        IwPage.goForwardToQuestion('NAME_GENERATOR');
 
         // clear any alters that are already entered
         IwPage.removeAllAlters();
 
-        alters = IwPage.fieldValues['ALTER_PROMPT']['values'];
+        alters = IwPage.fieldValues['NAME_GENERATOR']['values'];
 
         // add some alters
         IwPage.addAlter(alters[0]);
@@ -124,7 +124,7 @@ describe('Alters', function () {
     it("should show table for alter questions with 1 row per alter", function() {
         IwPage.goForwardToQuestion('alter1');
 
-        alters = IwPage.fieldValues['ALTER_PROMPT']['values'];
+        alters = IwPage.fieldValues['NAME_GENERATOR']['values'];
 
         // clear all data in the table, using "Set All" checkboxes at bottom
         for (i=2; i<=6; i++) {

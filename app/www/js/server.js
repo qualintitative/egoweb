@@ -95,7 +95,7 @@ function save(questions, page, url, scope){
             }
         });
     }else{
-        if(questions[0].ANSWERTYPE == "ALTER_PROMPT")
+        if(questions[0].ANSWERTYPE == "NAME_GENERATOR")
             buildList();
         document.location = url + "/page/" + (parseInt(page) + 1);
     }

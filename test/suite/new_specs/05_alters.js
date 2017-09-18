@@ -7,11 +7,11 @@ describe('Alters', function () {
         LoginPage.loginAs(browser.options.egoweb.loginInterviewer.username, browser.options.egoweb.loginInterviewer.password);
 
         // start test1 interview
-        IwPage.openInterview("TEST_WDIO", "ALTER_PROMPT");
+        IwPage.openInterview("TEST_WDIO", "NAME_GENERATOR");
 
         // set valid field values for moving forward through survey
         IwPage.fieldValues = {
-            'ALTER_PROMPT' : {
+            'NAME_GENERATOR' : {
                 type: 'alters',
                 values: [
                     'alpha',
@@ -35,8 +35,8 @@ describe('Alters', function () {
     });
 
     beforeEach(function () {
-        // every test starts at ALTER_PROMPT
-        IwPage.goToQuestion("ALTER_PROMPT");
+        // every test starts at NAME_GENERATOR
+        IwPage.goToQuestion("NAME_GENERATOR");
     });
 
     it("should show correct Variable Alter Prompt while adding alters ", function () {
@@ -45,7 +45,7 @@ describe('Alters', function () {
 
         expect(IwPage.getAlterCount()).toBe(0);
 
-        alters = IwPage.fieldValues['ALTER_PROMPT']['values'];
+        alters = IwPage.fieldValues['NAME_GENERATOR']['values'];
         browser.element("div=Please enter a name, then click the Add button").waitForVisible(browser.options.egoweb.waitTime);
 
         IwPage.addAlter(alters[0]);
@@ -81,7 +81,7 @@ describe('Alters', function () {
         // clear any alters that are already entered
         IwPage.removeAllAlters();
 
-        alters = IwPage.fieldValues['ALTER_PROMPT']['values'];
+        alters = IwPage.fieldValues['NAME_GENERATOR']['values'];
 
         // add some alters
         IwPage.addAlter(alters[0]);
@@ -108,7 +108,7 @@ describe('Alters', function () {
         IwPage.goToQuestion('alter1');
         browser.element("span=alter1").waitForVisible(browser.options.egoweb.waitTime);
 
-        alters = IwPage.fieldValues['ALTER_PROMPT']['values'];
+        alters = IwPage.fieldValues['NAME_GENERATOR']['values'];
 
         // clear all data in the table, using "Set All" checkboxes at bottom
         for (i=2; i<=6; i++) {
@@ -208,7 +208,7 @@ describe('Alters', function () {
             }
         }
 
-        expect(alter_pair_pages).toBe(IwPage.fieldValues.ALTER_PROMPT.values.length - 1);
+        expect(alter_pair_pages).toBe(IwPage.fieldValues.NAME_GENERATOR.values.length - 1);
 
         // iterates through alter pair questions and fills them out randomly
         for(i = 0; i < alter_pair_pages; i++){

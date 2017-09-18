@@ -5,11 +5,11 @@
 
 
 <?php
-$ap = Question::model()->findByAttributes(array("studyId"=>$study->id, "subjectType" => "ALTER_PROMPT"));
+$ap = Question::model()->findByAttributes(array("studyId"=>$study->id, "subjectType" => "NAME_GENERATOR"));
 if(!$ap){
 ?>
 <div class="alert">
-    This is study is using the old format.  
+    This is study is using the old format.
 <?php
     echo CHtml::button(
         CHtml::encode('Convert'),

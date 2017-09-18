@@ -32,7 +32,7 @@
             {{ error }}
         </div>
     </span>
-    <div ng-if="prompt != ''" ng-bind-html="prompt" ng-class="{'col-xs-12 col-sm-9 no-padding': questions[0].ANSWERTYPE == 'ALTER_PROMPT'}">{{ prompt }}</div>
+    <div ng-if="prompt != ''" ng-bind-html="prompt" ng-class="{'col-xs-12 col-sm-9 no-padding': questions[0].ANSWERTYPE == 'NAME_GENERATOR'}">{{ prompt }}</div>
     <a ng-if='audio[subjectType + qId]' class="play-sound" ng-click='playSound(subjectType + qId)' href="javascript:void(0)"><span class="fui-volume"></span></a>
     <a ng-if='audio["PREFACE" + qId]' class="play-sound" ng-click='playSound("PREFACE" + qId)' href="javascript:void(0)"><span class="fui-volume"></span></a>
     <div ng-if="phrase != ''" class="orangeText col-xs-12 no-padding">{{ phrase }}</div>
@@ -43,7 +43,7 @@
     </div>
 </div>
 
-<div id="alterListBox" class="col-xs-12 col-sm-3" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'">
+<div id="alterListBox" class="col-xs-12 col-sm-3" ng-if="questions[0].ANSWERTYPE == 'NAME_GENERATOR'">
     <table class="items">
     <tbody>
     <tr class="multi" ng-repeat="alter in alters track by $index" ng-if="alter.NAMEGENQIDS.indexOf(questions[0].ID) > -1">
@@ -54,7 +54,7 @@
     </tbody>
     </table>
 </div>
-<div id="alterFormBox" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'">
+<div id="alterFormBox" ng-if="questions[0].ANSWERTYPE == 'NAME_GENERATOR'">
     <div ng-if='alterPrompt != ""'>{{ alterPrompt }}</div>
     <a ng-if='audio["ALTERPROMPT"]' class="play-sound" ng-click='playSound("ALTERPROMPT")' href="javascript:void(0)"><span class="fui-volume"></span></a>
     <div ng-if='keys(prevAlters).length > 0'>
@@ -261,7 +261,7 @@
     </div>
     </div>
 
-    <input name="Answer[{{ questions[0].array_id }}][value]" ng-if="questions[0].ANSWERTYPE == 'ALTER_PROMPT'" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='0' answer-type='{{ questions[0].ANSWERTYPE }}' type="hidden">
+    <input name="Answer[{{ questions[0].array_id }}][value]" ng-if="questions[0].ANSWERTYPE == 'NAME_GENERATOR'" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='0' answer-type='{{ questions[0].ANSWERTYPE }}' type="hidden">
     <input name="page" value='{{ page }}' type="hidden">
     <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
     <input name="hashKey" value='{{ hashKey }}' type="hidden">

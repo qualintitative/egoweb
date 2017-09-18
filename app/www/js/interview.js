@@ -147,14 +147,14 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 $scope.qId = $scope.questions[k].ID;
         }
 
-        if($scope.questions[k].ANSWERTYPE == "PREFACE" || $scope.questions[k].ANSWERTYPE == "ALTER_PROMPT"){
+        if($scope.questions[k].ANSWERTYPE == "PREFACE" || $scope.questions[k].ANSWERTYPE == "NAME_GENERATOR"){
             $scope.hideQ = true;
             if(study.USEASALTERS == true){
                 $scope.participants = participantList['name'];
             }
         }
 
-        if($scope.questions[k].ANSWERTYPE == "ALTER_PROMPT"){
+        if($scope.questions[k].ANSWERTYPE == "NAME_GENERATOR"){
             if(typeof alterPrompts[Object.keys(alters).length] != "undefined")
                 $scope.alterPrompt = alterPrompts[Object.keys(alters).length];
         }
@@ -621,7 +621,7 @@ app.directive('checkAnswer', [function (){
                 console.log(question);
                 console.log("check:" + value);
 
-                if(attr.answerType == "ALTER_PROMPT"){
+                if(attr.answerType == "NAME_GENERATOR"){
         			if(Object.keys(alters).length < study.MINALTERS){
         				scope.errors[array_id] = 'Please list ' + study.MINALTERS + ' people';
                     	valid = false;
@@ -816,7 +816,7 @@ app.directive('checkAnswer', [function (){
                 var array_id = attr.arrayId;
                 var question = questions[attr.questionId];
 
-                if(attr.answerType == "ALTER_PROMPT"){
+                if(attr.answerType == "NAME_GENERATOR"){
         			if(Object.keys(alters).length < study.MINALTERS){
         				scope.errors[array_id] = 'Please list ' + study.MINALTERS + ' people';
                     	valid = false;
@@ -1100,8 +1100,8 @@ function buildList() {
                 i++;
                 masterList[i] = new Object;
             }*/
-            if(questionList[j].SUBJECTTYPE == "ALTER_PROMPT"){
-        		questionList[j].ANSWERTYPE = "ALTER_PROMPT";
+            if(questionList[j].SUBJECTTYPE == "NAME_GENERATOR"){
+        		questionList[j].ANSWERTYPE = "NAME_GENERATOR";
         		masterList[i][0] = questionList[j];
         		i++;
         		masterList[i] = new Object;
@@ -1480,6 +1480,24 @@ function evalExpression(id, alterId1, alterId2)
         	console.log(expressions[id].NAME + ":true");
     		return true;
         }
+    }
+    if(expressions[id].TYPE == "Name Generator"){
+        console.log("Name Generator Experssion");
+        if(expressions[id].VALUE.match(","))
+            var genList = expressions[id].VALUE.split(",");
+        else
+            var genList = [expressions[id].VALUE];
+        console.log(genList);
+        if(alters[alterId1].NAMEGENQIDS.match(","))
+            var aList = alters[alterId1].NAMEGENQIDS.split(",");
+        else
+            var aList = [alters[alterId1].NAMEGENQIDS];
+        console.log(aList);
+        for(n in aList){
+            if(genList.indexOf(aList[n]) > -1)
+                return true;
+        }
+        return false;
     }
     console.log(expressions[id].NAME + ":false");
     return false;
