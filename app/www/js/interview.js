@@ -775,9 +775,9 @@ app.directive('checkAnswer', [function (){
     		// check for list range limitations
     		var checks = 0;
     		if(typeof question != "undefined" && parseInt(question.WITHLISTRANGE) != 0){
-    			for(i in answers){
-    				//console.log(answers[i].VALUE + ":" + question.LISTRANGESTRING);
-    				if(answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1){
+    			for(i in scope.answers){
+    				console.log(scope.answers[i].VALUE + ":" + question.LISTRANGESTRING);
+    				if(scope.answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1){
     					checks++;
     				}
     			}
@@ -973,9 +973,9 @@ app.directive('checkAnswer', [function (){
     		// check for list range limitations
     		var checks = 0;
     		if(typeof question != "undefined" && parseInt(question.WITHLISTRANGE) != 0){
-    			for(i in answers){
-    				//console.log(answers[i].VALUE + ":" + question.LISTRANGESTRING);
-    				if(answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1){
+    			for(i in scope.answers){
+    				console.log(scope.answers[i].VALUE + ":" + question.LISTRANGESTRING);
+    				if(scope.answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1){
     					checks++;
     				}
     			}
@@ -1023,6 +1023,7 @@ function buildList() {
     console.log ("building master list..");
 	i = 0;
 	masterList[i] = new Object;
+    var alter_non_list_qs = [];
 	if(study.INTRODUCTION != ""){
 		introduction = new Object;
         introduction.TITLE = "INTRODUCTION";
@@ -1069,7 +1070,7 @@ function buildList() {
 					preface.ID = questionList[j].ID;
 					preface.ANSWERTYPE = "PREFACE";
 					preface.SUBJECTTYPE = "PREFACE";
-                    preface.TITLE = "PREFACE";
+                    preface.TITLE = questionList[j].TITLE + " - PREFACE";
 					preface.PROMPT = questionList[j].PREFACE;
                     if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
                         evalQIndex.push(i);
@@ -1108,73 +1109,43 @@ function buildList() {
             }
             if(Object.keys(alters).length == 0)
                 continue;
-            var alter_non_list_qs = [];
-            if(questionList[j].SUBJECTTYPE == "ALTER"){
-				alter_question_list = new Object;
-				if(parseInt(questionList[j].ASKINGSTYLELIST) == 1 || (alter_non_list_qs.length > 0 && parseInt(questionList[j].ASKINGSTYLELIST) != 1 && questionList[j].PREFACE != "")){
-    				if(alter_non_list_qs.length > 0){
-                        var preface = new Object;
-                        preface.ID = alter_non_list_qs[0].ID;
-                        preface.ANSWERTYPE = "PREFACE";
-                        preface.SUBJECTTYPE = "PREFACE";
-                        preface.TITLE = "PREFACE";
-                        preface.PROMPT = alter_non_list_qs[0].PREFACE;
-        				for(k in alters){
-            				for(l in alter_non_list_qs){
-            					var question = $.extend(true,{}, alter_non_list_qs[l]);
-            					question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
-                                question.TITLE = question.TITLE + " - " + alters[k].NAME;
-            					question.ALTERID1 = alters[k].ID;
-            			    	question.array_id = question.ID + '-' + question.ALTERID1;
-        						if(preface.PROMPT != ""){
-                                    if(alter_non_list_qs[l].ANSWERREASONEXPRESSIONID > 0)
-                                        evalQIndex.push(i);
-        							masterList[i][0] = preface;
-        							preface.PROMPT = "";
-        							i++;
-        							masterList[i] = new Object;
-        						}
+            if(alter_non_list_qs.length > 0 && (questionList[j].SUBJECTTYPE != "ALTER"  ||  parseInt(questionList[j].ASKINGSTYLELIST) == 1 )) {
+                    var preface = new Object;
+                    preface.ID = alter_non_list_qs[0].ID;
+                    preface.ANSWERTYPE = "PREFACE";
+                    preface.SUBJECTTYPE = "PREFACE";
+                    preface.TITLE =  alter_non_list_qs[0].TITLE + " - PREFACE";
+                    preface.PROMPT = alter_non_list_qs[0].PREFACE;
+                    for(k in alters){
+                        for(l in alter_non_list_qs){
+                            var question = $.extend(true,{}, alter_non_list_qs[l]);
+                            question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
+                            question.TITLE = question.TITLE + " - " + alters[k].NAME;
+                            question.ALTERID1 = alters[k].ID;
+                            question.array_id = question.ID + '-' + question.ALTERID1;
+                            if(alter_non_list_qs[0].PREFACE != ""){
                                 if(alter_non_list_qs[l].ANSWERREASONEXPRESSIONID > 0)
                                     evalQIndex.push(i);
-    							masterList[i][question.array_id] = question;
-    							i++;
-    							masterList[i] = new Object;
-            				}
-        				}
-                        alter_non_list_qs = [];
+                                masterList[i][0] = preface;
+                                alter_non_list_qs[0].PREFACE = "";
+                                i++;
+                                masterList[i] = new Object;
+                            }
+                            if(alter_non_list_qs[l].ANSWERREASONEXPRESSIONID > 0)
+                                evalQIndex.push(i);
+                            masterList[i][question.array_id] = question;
+                            i++;
+                            masterList[i] = new Object;
+                        }
                     }
+                    alter_non_list_qs = [];
+            }
+            if(questionList[j].SUBJECTTYPE == "ALTER"){
+				alter_question_list = new Object;
                     if(parseInt(questionList[j].ASKINGSTYLELIST) != 1){
                         console.log("non list alter qs")
-                        if(typeof questionList[parseInt(j)+1] != "undefined" && questionList[parseInt(j)+1].ASKINGSTYLELIST != 1 && questionList[parseInt(j)+1].PREFACE == ""){
-                            alter_non_list_qs.push(questionList[j]);
-                            continue;
-                        }
-                        var preface = new Object;
-                        preface.ID = questionList[j].ID;
-                        preface.ANSWERTYPE = "PREFACE";
-                        preface.SUBJECTTYPE = "PREFACE";
-                        preface.TITLE = "PREFACE";
-                        preface.PROMPT = questionList[j].PREFACE;
-        				for(k in alters){
-        					var question = $.extend(true,{}, questionList[j]);
-        					question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
-        					question.ALTERID1 = alters[k].ID;
-        			    	question.array_id = question.ID + '-' + question.ALTERID1;
-    						if(preface.PROMPT != ""){
-                                if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
-                                    evalQIndex.push(i);
-                                masterList[i][0] = preface;
-    							preface.PROMPT = "";
-    							i++;
-    							masterList[i] = new Object;
-    						}
-                            if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
-                                evalQIndex.push(i);
-							masterList[i][question.array_id] = question;
-							i++;
-							masterList[i] = new Object;
-        				}
-    				}else{
+                        alter_non_list_qs.push(questionList[j]);
+                    }else{
         				for(k in alters){
         					var question = $.extend(true,{}, questionList[j]);
         					question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
@@ -1187,7 +1158,7 @@ function buildList() {
                             preface.ID = questionList[j].ID;
                             preface.ANSWERTYPE = "PREFACE";
                             preface.SUBJECTTYPE = "PREFACE";
-                            preface.TITLE = "PREFACE";
+                            preface.TITLE = questionList[j].TITLE + " - PREFACE";
                             preface.PROMPT = questionList[j].PREFACE;
     						if(preface.PROMPT != ""){
                                 if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
@@ -1205,9 +1176,7 @@ function buildList() {
     						masterList[i] = new Object;
     					}
                     }
-                }else{
-                    alter_non_list_qs.push(questionList[j]);
-                }
+
 			}
 
             if(questionList[j].SUBJECTTYPE == "ALTER_PAIR"){
@@ -1216,7 +1185,7 @@ function buildList() {
 				preface.ID = questionList[j].ID;
 				preface.ANSWERTYPE = "PREFACE";
 				preface.SUBJECTTYPE = "PREFACE";
-                preface.TITLE = "PREFACE";
+                preface.TITLE = questionList[j].TITLE + " - PREFACE";
 				preface.PROMPT = questionList[j].PREFACE;
 				for(k in alters){
 					if(questionList[j].SYMMETRIC){
@@ -1279,7 +1248,7 @@ function buildList() {
 					preface.ID = questionList[j].ID;
 					preface.ANSWERTYPE = "PREFACE";
 					preface.SUBJECTTYPE = "PREFACE";
-                    preface.TITLE = "PREFACE";
+                    preface.TITLE = questionList[j].TITLE +  " - PREFACE";
 					preface.PROMPT = questionList[j].PREFACE;
                     if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
                         evalQIndex.push(i);
