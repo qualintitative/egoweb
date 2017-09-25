@@ -248,6 +248,8 @@ class InterviewController extends Controller
     			$notes[$result->expressionId][$result->alterId] = $result->notes;
     		}
         }
+        if(count($prevAlters) == 0)
+            $prevAlters = new stdClass();
         $this->render('view', array(
                 "study"=>json_encode(mToA($study)),
                 "questions"=>json_encode($questions),
@@ -536,6 +538,7 @@ class InterviewController extends Controller
 		if(isset($_POST['Alters'])){
 			$model = Alters::model()->findByPk((int)$_POST['Alters']['id']);
 			$interviewId = $_POST['Alters']['interviewId'];
+            $nameGenQId = $_POST['Alters']['nameGenQId'];
 			if($model){
 				$ordering = $model->ordering;
 				if(strstr($model->interviewId, ",")){
@@ -543,7 +546,12 @@ class InterviewController extends Controller
 					$interviewIds = array_diff($interviewIds,array($interviewId));
 					$model->interviewId = implode(",", $interviewIds);
 					$model->save();
-				}else{
+				}else if(strstr($model->nameGenQIds, ",")){
+                    $nameGenQIds = explode(",", $model->nameGenQIds);
+					$nameGenQIds = array_diff($nameGenQIds,array($nameGenQId));
+					$model->nameGenQIds = implode(",", $nameGenQIds);
+					$model->save();
+                }else{
 					$model->delete();
 				}
 				Alters::sortOrder($ordering, $interviewId);

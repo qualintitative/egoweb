@@ -33,7 +33,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.answers =  $.extend(true,{}, answers);
     $scope.options = new Object;
     $scope.alters =  $.extend(true,{}, alters);
-    $scope.prevAlters = prevAlters;
     $scope.alterPrompt = "";
     $scope.askingStyleList = false;
     $scope.hideQ = false;
@@ -62,12 +61,21 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.conclusion = false;
     $scope.redirect = false;
     $scope.participants = [];
+    if(typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR")
+        prevAlters = {};
     for(k in $scope.alters){
         if($scope.alters[k].NAMEGENQIDS != null && !Array.isArray($scope.alters[k].NAMEGENQIDS)){
             console.log($scope.alters[k].NAMEGENQIDS)
             $scope.alters[k].NAMEGENQIDS = $scope.alters[k].NAMEGENQIDS.split(",");
+            if(typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR" &&  $scope.alters[k].NAMEGENQIDS.indexOf($scope.questions[0].ID) == -1){
+                if(typeof prevAlters[k] == "undefined")
+                    prevAlters[k] = alters[k];
+                delete $scope.alters[k];
+            }
         }
     }
+    $scope.prevAlters = prevAlters;
+    console.log($scope.prevAlters);
     console.log($scope.alters);
 
     if(typeof hashKey != "undefined"){
@@ -414,17 +422,20 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                     if(typeof prevAlters[k] != "undefined")
                         delete prevAlters[k];
                 }
+                masterList = [];
                 $route.reload();
             });
         }
     };
 
-    $scope.removeAlter = function(alterId) {
+    $scope.removeAlter = function(alterId, nameGenQId) {
         $("#deleteAlterId").val(alterId);
+        $("#deleteNameGenQId").val(nameGenQId);
         console.log(alterId);
         // check to make sure the form is completely valid
         deleteAlter.getAlters().then(function(data){
             alters = JSON.parse(data);
+            masterList = [];
             $route.reload();
         });
     };
@@ -622,8 +633,8 @@ app.directive('checkAnswer', [function (){
                 console.log("check:" + value);
 
                 if(attr.answerType == "NAME_GENERATOR"){
-        			if(Object.keys(alters).length < study.MINALTERS){
-        				scope.errors[array_id] = 'Please list ' + study.MINALTERS + ' people';
+                    if(Object.keys(scope.alters).length < scope.questions[0].MINLITERAL){
+        				scope.errors[array_id] = 'Please list ' + scope.questions[0].MINLITERAL + ' people';
                     	valid = false;
         			}
 			    }
@@ -817,8 +828,8 @@ app.directive('checkAnswer', [function (){
                 var question = questions[attr.questionId];
 
                 if(attr.answerType == "NAME_GENERATOR"){
-        			if(Object.keys(alters).length < study.MINALTERS){
-        				scope.errors[array_id] = 'Please list ' + study.MINALTERS + ' people';
+                    if(Object.keys(scope.alters).length < scope.questions[0].MINLITERAL){
+        				scope.errors[array_id] = 'Please list ' + scope.questions[0].MINLITERAL + ' people';
                     	valid = false;
         			}
 			    }

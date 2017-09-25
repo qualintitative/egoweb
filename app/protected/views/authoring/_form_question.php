@@ -60,6 +60,8 @@ jQuery(document).ready(function(){
 		jQuery('.panel-<?php echo $model->id; ?>#SELECTION').show();
 	if('<?php echo $model->subjectType; ?>' == 'NETWORK')
 		jQuery('.panel-<?php echo $model->id; ?>#NETWORK').show();
+    if('<?php echo $model->subjectType; ?>' == 'NAME_GENERATOR')
+    	jQuery('.panel-<?php echo $model->id; ?>#NAME_GENERATOR').show();
 	if('<?php echo $model->askingStyleList; ?>' == true)
 		jQuery('.panel-<?php echo $model->id; ?>#ALTER_STYLE').show();
 	if('<?php echo $model->answerType; ?>' == 'TIME_SPAN'){
@@ -316,7 +318,10 @@ jQuery('input.time-".$model->id."').change(function() {
 		</table>
 		</div>
 
-
+        <div class="panel-<?php echo $model->id; ?>" id="NAME_GENERATOR" style="<?php if(!strstr($model->subjectType, "ALTER_PAIR")){ ?>display:none<?php } ?>">
+            Minimum Alters: <?php echo $form->textField($model,'minLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-minLiteral')); ?>
+            Minimum Alters: <?php echo $form->textField($model,'maxLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-maxLiteral')); ?>
+        </div>
 	<div id="ALTER" style="<?php if(!strstr($model->subjectType, "ALTER")){ ?>display:none<?php } ?>">
 
 		<div id="ALTER_PAIR" style="<?php if(!strstr($model->subjectType, "ALTER_PAIR")){ ?>display:none<?php } ?>">

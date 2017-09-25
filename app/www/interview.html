@@ -46,10 +46,10 @@
 <div id="alterListBox" class="col-xs-12 col-sm-3" ng-if="questions[0].ANSWERTYPE == 'NAME_GENERATOR'">
     <table class="items">
     <tbody>
-    <tr class="multi" ng-repeat="alter in alters track by $index" ng-if="alter.NAMEGENQIDS.indexOf(questions[0].ID) > -1">
+    <tr class="multi" ng-repeat="alter in alters track by $index">
     <td style="width:25px;" id="ordering">{{ $index + 1 }}</td>
     <td style="width:auto;">{{ alter.NAME }}</td>
-    <td style="width:25px;"><a class="alter-delete" title="Delete" ng-click="removeAlter(alter.ID)"><span class="fui-cross"></span></a></td>
+    <td style="width:25px;"><a class="alter-delete" title="Delete" ng-click="removeAlter(alter.ID, questions[0].ID)"><span class="fui-cross"></span></a></td>
     </tr>
     </tbody>
     </table>
@@ -63,7 +63,7 @@
             <label>{{ pAlter.NAME }}</label><br>
         </div>
     </div>
-    <form ng-if="keys(alters).length < study.MAXALTERS" id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
+    <form ng-if="keys(alters).length < questions[0].MAXLITERAL" id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
         <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
         <div class="form-group">
             <input name="Alters[name]" id="Alters_name" type="hidden" value="{{ alterName }}">
@@ -77,6 +77,7 @@
     <form id="deleteAlterForm" name="deleteAlterForm">
         <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
         <input id="deleteAlterId" name="Alters[id]" type="hidden">
+        <input id="deleteNameGenQId" name="Alters[nameGenQId]" type="hidden">
         <input value="{{ interviewId }}" name="Alters[interviewId]" type="hidden">
     </form>
 </div>
