@@ -18,27 +18,14 @@ echo $form->hiddenField($model, 'type', array('value'=>'Name Generator'));
         <?php echo $form->textField($model,'name', array('value'=>$model->name, 'class'=>'form-control')); ?>
     </div>
 </div>
-<?php
-$after = "";
-    echo "Expression is true for an answer that contains ";
-    $choices = array(
-         'All'=>'All',
-        'None'=>'None',
-    );
-    $after = " of the selected options below:";
 
-
-echo CHtml::activeDropDownList($model,
-    'operator',
-    $choices
-);
-echo $after . "<br>";
-?>
+Expression is true for an answer that contains any of the selected options below:
+<br>
 <?php
 
 echo CHtml::activeHiddenField($model, 'questionId', array('value'=>$question->id));
 
-if($after != ""){
+
     $selected = explode(',', $model->value);
     echo CHtml::CheckboxList(
         'valueList',
@@ -50,9 +37,7 @@ if($after != ""){
         )
     );
 
-}else{
-    echo CHtml::activeTextField($model, 'value', array('style'=>'width:100px'));
-}
+
 // converts multiple selection checkboxes into answer value
 echo "
 <script>
