@@ -118,6 +118,11 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         if($scope.questions[k].USEALTERLISTFIELD == "name" || $scope.questions[k].USEALTERLISTFIELD == "email"){
             $scope.participants = participantList[$scope.questions[k].USEALTERLISTFIELD];
         }
+        if(Object.keys($scope.prevAlters).length > 0){
+            for(n in $scope.prevAlters){
+                $scope.participants.push($scope.prevAlters[n].NAME);
+            }
+        }
         if(typeof $scope.questions[k].CITATION == "string")
             $scope.questions[k].CITATION = $sce.trustAsHtml($scope.questions[k].CITATION);
 
@@ -155,7 +160,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 $scope.qId = $scope.questions[k].ID;
         }
 
-        if($scope.questions[k].ANSWERTYPE == "PREFACE" || $scope.questions[k].ANSWERTYPE == "NAME_GENERATOR"){
+        if($scope.questions[k].ANSWERTYPE == "PREFACE" ){
             $scope.hideQ = true;
             if(study.USEASALTERS == true){
                 $scope.participants = participantList['name'];
@@ -633,7 +638,7 @@ app.directive('checkAnswer', [function (){
                 console.log("check:" + value);
 
                 if(attr.answerType == "NAME_GENERATOR"){
-                    if(Object.keys(scope.alters).length < scope.questions[0].MINLITERAL){
+                    if(scope.answers[array_id].SKIPREASON != "REFUSE" && Object.keys(scope.alters).length < scope.questions[0].MINLITERAL){
         				scope.errors[array_id] = 'Please list ' + scope.questions[0].MINLITERAL + ' people';
                     	valid = false;
         			}
@@ -828,7 +833,7 @@ app.directive('checkAnswer', [function (){
                 var question = questions[attr.questionId];
 
                 if(attr.answerType == "NAME_GENERATOR"){
-                    if(Object.keys(scope.alters).length < scope.questions[0].MINLITERAL){
+                    if(scope.answers[array_id].SKIPREASON != "REFUSE" && Object.keys(scope.alters).length < scope.questions[0].MINLITERAL){
         				scope.errors[array_id] = 'Please list ' + scope.questions[0].MINLITERAL + ' people';
                     	valid = false;
         			}
@@ -1114,6 +1119,7 @@ function buildList() {
             }*/
             if(questionList[j].SUBJECTTYPE == "NAME_GENERATOR"){
         		questionList[j].ANSWERTYPE = "NAME_GENERATOR";
+                questionList[j].array_id = questionList[j].ID;
         		masterList[i][0] = questionList[j];
         		i++;
         		masterList[i] = new Object;

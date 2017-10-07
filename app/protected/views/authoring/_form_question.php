@@ -322,6 +322,7 @@ jQuery('input.time-".$model->id."').change(function() {
             Minimum Alters: <?php echo $form->textField($model,'minLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-minLiteral')); ?>
             Minimum Alters: <?php echo $form->textField($model,'maxLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-maxLiteral')); ?>
         </div>
+
 	<div id="ALTER" style="<?php if(!strstr($model->subjectType, "ALTER")){ ?>display:none<?php } ?>">
 
 		<div id="ALTER_PAIR" style="<?php if(!strstr($model->subjectType, "ALTER_PAIR")){ ?>display:none<?php } ?>">
@@ -331,6 +332,8 @@ jQuery('input.time-".$model->id."').change(function() {
 				<?php echo $form->error($model,'symmetric'); ?>
 			</div>
 		</div>
+
+
 
 		<div class="panel-<?php echo $model->id; ?>" id="ALTER_STYLE" style="display:none">
 				<table border="0" bgcolor="#dddddd" >
@@ -566,6 +569,12 @@ function refresh(container){
 		CController::createUrl('preview', array('questionId'=>$model->id)),
 		array('update' => '#data-'.$model->id),
 		array('id' => uniqid(), 'live'=>false, 'class'=>"btn btn-info btn-xs")
+	);
+
+    echo CHtml::ajaxButton (CHtml::encode('Alter Prompts'),
+		CController::createUrl('alterprompt', array('questionId'=>$model->id)),
+		array('update' => '#data-'.$model->id),
+		array('id' => uniqid(), 'live'=>false, 'class'=>"btn btn-default btn-xs")
 	);
 
 	echo CHtml::button(

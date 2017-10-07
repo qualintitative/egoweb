@@ -538,6 +538,13 @@ class AuthoringController extends Controller
 		));
 	}
 
+    public function actionAlterprompt(){
+        if(isset($_GET['questionId'])){
+        }
+        $this->renderPartial('_view_alter_prompt', array('rowColor'=>'', 'question'=>$question, 'interviewId'=>'', 'form'=>$form, 'array_id'=>$array_id, 'model'=>$model, 'ajax'=>true), false, false);
+
+    }
+
 	public function actionPreview(){
 		if(isset($_GET['questionId'])){
 			$question = Question::model()->findByPk((int)$_GET['questionId']);
