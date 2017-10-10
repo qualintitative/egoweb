@@ -168,8 +168,11 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
 
         if($scope.questions[k].ANSWERTYPE == "NAME_GENERATOR"){
-            if(typeof alterPrompts[Object.keys(alters).length] != "undefined")
-                $scope.alterPrompt = alterPrompts[Object.keys(alters).length];
+            console.log(alterPrompts[$scope.questions[k].ID]);
+            console.log(Object.keys($scope.alters).length);
+
+            if(typeof alterPrompts[$scope.questions[k].ID][Object.keys($scope.alters).length] != "undefined")
+                $scope.alterPrompt = alterPrompts[$scope.questions[k].ID][Object.keys($scope.alters).length];
         }
         for(o in $scope.options[array_id]){
             $scope.options[array_id][o].checked = false;

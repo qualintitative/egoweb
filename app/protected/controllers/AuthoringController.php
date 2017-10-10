@@ -539,9 +539,11 @@ class AuthoringController extends Controller
 	}
 
     public function actionAlterprompt(){
-        if(isset($_GET['questionId'])){
-        }
-        $this->renderPartial('_view_alter_prompt', array('rowColor'=>'', 'question'=>$question, 'interviewId'=>'', 'form'=>$form, 'array_id'=>$array_id, 'model'=>$model, 'ajax'=>true), false, false);
+        Yii::app()->clientScript->scriptMap['jquery.js'] = false;
+		Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
+        $study = Study::model()->findByPk($_GET['studyId']);
+        $question = Question::model()->findByPk($_GET['questionId']);
+        $this->renderPartial('_form_alter_prompt', array('question'=>$question, 'study'=>$study, 'ajax'=>true), false, true);
 
     }
 
@@ -878,7 +880,7 @@ class AuthoringController extends Controller
 			$studyId = $model->studyId;
 			$criteria=new CDbCriteria;
 			$criteria=array(
-				'condition'=>"studyId = " . $studyId,
+				'condition'=>"studyId = " . $studyId . " AND questionId = " . $model->questionId,
 			);
 			$dataProvider=new CActiveDataProvider('AlterPrompt',array(
 				'criteria'=>$criteria,

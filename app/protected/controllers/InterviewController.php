@@ -184,7 +184,9 @@ class InterviewController extends Controller
             $alterPrompts = array();
             $results = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$id));
             foreach($results as $result){
-                $alterPrompts[$result->afterAltersEntered] = $result->display;
+                if(!$result->questionId)
+                    $result->questionId = 0;
+                $alterPrompts[$result->questionId][$result->afterAltersEntered] = $result->display;
             }
     		foreach($answerList as $answer){
     			if($answer->alterId1 && $answer->alterId2)

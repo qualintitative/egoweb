@@ -571,11 +571,13 @@ function refresh(container){
 		array('id' => uniqid(), 'live'=>false, 'class'=>"btn btn-info btn-xs")
 	);
 
-    echo CHtml::ajaxButton (CHtml::encode('Alter Prompts'),
-		CController::createUrl('alterprompt', array('questionId'=>$model->id)),
-		array('update' => '#data-'.$model->id),
-		array('id' => uniqid(), 'live'=>false, 'class'=>"btn btn-default btn-xs")
-	);
+    if($model->subjectType == "NAME_GENERATOR"){
+        echo CHtml::ajaxButton (CHtml::encode('Alter Prompts'),
+    		CController::createUrl('alterprompt', array('questionId'=>$model->id, 'studyId'=>$model->studyId)),
+    		array('update' => '#data-'.$model->id),
+    		array('id' => uniqid(), 'live'=>false, 'class'=>"btn btn-default btn-xs")
+    	);
+    }
 
 	echo CHtml::button(
 		CHtml::encode('Duplicate'),

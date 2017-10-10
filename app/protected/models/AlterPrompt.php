@@ -38,7 +38,7 @@ class AlterPrompt extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('studyId, afterAltersEntered, display', 'required'),
-			array('studyId', 'numerical', 'integerOnly'=>true),
+			array('studyId, questionId', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
 			array('id, studyId, afterAltersEntered, display', 'safe', 'on'=>'search'),
@@ -84,6 +84,7 @@ class AlterPrompt extends CActiveRecord
 			'studyId' => 'Study',
 			'afterAltersEntered' => 'After Alters Entered',
 			'display' => 'Display',
+            'questionId' => 'Question',
 		);
 	}
 
