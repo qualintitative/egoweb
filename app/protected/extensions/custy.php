@@ -138,4 +138,27 @@ function mToA($models) {
     }
     return $result;
 }
+
+function check_file_is_audio( $tmp )
+{
+    $allowed = array(
+        'audio/mpeg', 'audio/x-mpeg', 'audio/mpeg3', 'audio/x-mpeg-3', 'audio/aiff',
+        'audio/mid', 'audio/x-aiff', 'audio/x-mpequrl','audio/midi', 'audio/x-mid',
+        'audio/x-midi','audio/wav','audio/x-wav','audio/xm','audio/x-aac','audio/basic',
+        'audio/flac','audio/mp4','audio/x-matroska','audio/ogg','audio/s3m','audio/x-ms-wax',
+        'audio/xm'
+    );
+
+    // check REAL MIME type
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $type = finfo_file($finfo, $tmp );
+    finfo_close($finfo);
+
+    // check to see if REAL MIME type is inside $allowed array
+    if( in_array($type, $allowed) ) {
+        return true;
+    } else {
+        return false;
+    }
+}
 ?>

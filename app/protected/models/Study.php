@@ -76,10 +76,18 @@ class Study extends CActiveRecord
     public function questionTitles()
     {
 
-        if ($this->multiSessionEgoId)
-            $multiIds = q("SELECT studyId FROM question WHERE title = (SELECT title FROM question WHERE id = " . $this->multiSessionEgoId . ")")->queryColumn();
-        else
+        if ($this->multiSessionEgoId){
+            $criteria = array(
+                "condition"=>"title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")",
+            );
+            $questions = Question::model()->findAll($criteria);
+            $multiIds = array();
+            foreach($questions as $question){
+                $multiIds[] = $question->studyId;
+            }
+        }else{
             $multiIds = $this->id;
+        }
         $studies = Study::model()->findAllByAttributes(array('id'=>$multiIds));
         foreach($studies as $study){
             $studyNames[$study->id] = $study->name;
@@ -902,7 +910,8 @@ class Study extends CActiveRecord
 				$graphs[$result->id] = $graph;
 				$note = Note::model()->findAllByAttributes(array("interviewId"=>$result->id));
 				$notes[$result->id] = $note;
-				$other = OtherSpecify::model()->findAllByAttributes(array("interviewId"=>$result->id));
+				$other = array();
+				//$other = OtherSpecify::model()->findAllByAttributes(array("interviewId"=>$result->id));
 				$others[$result->id] = $other;
 			}
 		}

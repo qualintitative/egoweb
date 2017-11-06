@@ -375,11 +375,10 @@ function deleteAlterList(studyId){
 				<?php echo $form->textField($alterList,'email', array('style'=>'width:100px')); ?>
 				<?php echo $form->error($alterList,'email'); ?>
 				<?php
-				#OK FOR SQL INJECTION
-				$interviewerIds = q("SELECT interviewerId FROM interviewers WHERE studyId = " . $model->id)->queryColumn();
-				$interviewers = array();
-				foreach($interviewerIds as $interviewerId){
-					$interviewers[$interviewerId] = User::getName($interviewerId);
+                $result = Interviewer::model()->findAllByAttributes(array("studyId"=>$model->id));
+                $interviewers = array();
+                foreach($result as $interviewer){
+					$interviewers[$interviewer->id] = User::getName($interviewer->id);
 				}
 				?>
 				<?php echo $form->dropdownlist(

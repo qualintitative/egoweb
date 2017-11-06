@@ -10,11 +10,17 @@ class InterviewController extends Controller
 	{
 		$condition = "id != 0";
 		if(!Yii::app()->user->isSuperAdmin){
-            #OK FOR SQL INJECTION
-            if(Yii::app()->user->id)
-			    $studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
-            else
+            if(Yii::app()->user->id){
+                $studies = array();
+                $criteria = new CDbCriteria;
+                $criteria->condition = "interviewerId = " . Yii::app()->user->id;
+                $interviewers = Interviewer::model()->findAll($criteria);
+                foreach($interviewers as $interviewer){
+                    $studies[] = $interviewer->studyId;
+                }
+            }else{
                 $studies = false;
+            }
 			if($studies)
 				$condition = "id IN (" . implode(",", $studies) . ")";
 			else
@@ -43,29 +49,39 @@ class InterviewController extends Controller
 
 	public function actionStudy($id)
 	{
-		$egoIdQ = q("SELECT * from question where studyId = $id and useAlterListField in ('name','email','id')")->queryRow();
-		$restrictions = "";
-		if($egoIdQ){
-			$participants = q("SELECT " . $egoIdQ['useAlterListField'] . " FROM alterList where interviewerId = " . Yii::app()->user->id)->queryColumn();
-			foreach($participants as &$p){
-    			if(strlen($p) >= 8)
-    			    $p = decrypt($p);
-			}
-			if($participants){
-        		$criteria = array(
-        			'condition'=>"questionId = " .$egoIdQ['id'],
-        		);
+        $criteria = array(
+            'condition'=>"studyId = $id and useAlterListField in ('name','email','id')",
+        );
+        $egoIdQ = Question::model()->find($criteria);
+        $restrictions = "";
+        if($egoIdQ){
+            $criteria = new CDbCriteria;
+            $criteria = array(
+                'condition'=>"interviewerId = " . Yii::app()->user->id,
+            );
+            $participantList =  AlterList::model()->findAll($criteria);
+            $participants = array();
+            foreach($participantList as $p){
+                if($egoIdQ->useAlterListField == "email")
+                    $participants[] = $p->email;
+                elseif($egoIdQ->useAlterListField == "name")
+                    $participants[] = $p->name;
+            }
+            if($participants){
+                $criteria = array(
+                    'condition'=>"questionId = " .$egoIdQ->id,
+                );
                 $answers = Answer::model()->findAll($criteria);
                 foreach($answers as $answer){
                     if(in_array($answer->value, $participants))
                         $interviewIds[] = $answer->interviewId;
                 }
-				if($interviewIds)
-					$restrictions = ' and id in (' . implode(",", $interviewIds) . ')';
-				else
-					$restrictions = ' and id = -1';
-			}
-		}
+                if($interviewIds)
+                    $restrictions = ' and id in (' . implode(",", $interviewIds) . ')';
+                else
+                    $restrictions = ' and id = -1';
+            }
+        }
         if(Yii::app()->user->isSuperAdmin)
             $restrictions = "";
 		$criteria=array(
@@ -87,10 +103,18 @@ class InterviewController extends Controller
 	public function actionView($id)
 	{
         $study = Study::model()->findByPk($id);
-        if ($study->multiSessionEgoId)
-            $multiIds = q("SELECT studyId FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-        else
+        if ($study->multiSessionEgoId){
+            $criteria = array(
+                "condition"=>"title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")",
+            );
+            $questions = Question::model()->findAll($criteria);
+            $multiIds = array();
+            foreach($questions as $question){
+                $multiIds[] = $question->studyId;
+            }
+        }else{
             $multiIds = $study->id;
+        }
         $this->pageTitle = $study->name;
         $expressions = array();
         $results = Expression::model()->findAllByAttributes(array("studyId"=>$multiIds));
@@ -162,12 +186,18 @@ class InterviewController extends Controller
                         if($i_id == $interviewId)
                             continue;
                         $graphId = "";
-                        $s = Study::model()->findByPk((int)q("SELECT studyId from interview WHERE id = " . $i_id)->queryScalar());
-                        #OK FOR SQL INJECTION
-                        $networkExprId = q("SELECT networkRelationshipExprId FROM question WHERE title = '" . $nq['TITLE'] . "' AND studyId = " . $s->id)->queryScalar();
-                        #OK FOR SQL INJECTION
-                        if($networkExprId)
-                            $graphId = q("SELECT id FROM graphs WHERE expressionId = " . $networkExprId  . " AND interviewId = " . $i_id)->queryScalar();
+                        $s = Study::model()->findByPk($interview->studyId);
+                        $criteria = array(
+                            "condition"=>"title = '" . $nq['TITLE'] . "' AND studyId = " . $s->id,
+                        );
+                        $question = Question::model()->find($criteria);
+                        $networkExprId = $question->networkRelationshipExprId;
+                        if($networkExprId){
+                            $criteria = array(
+                                "condition"=>"expressionId = " . $networkExprId  . " AND interviewId = " . $i_id,
+                            );
+                            $graphId = Graph::model()->find($criteria);
+                        }
                         if($graphId){
                             $otherGraphs[$nq['ID']][] = array(
                                 "interviewId" => $i_id,
@@ -209,11 +239,19 @@ class InterviewController extends Controller
     			}
             }
     		if(isset($_GET['interviewId']) && $study->fillAlterList){
-                #OK FOR SQL INJECTION
-                $check = q("SELECT count(id) FROM alters WHERE interviewId = " . $interviewId)->queryScalar();
-    			if(!$check){
-                    #OK FOR SQL INJECTION
-    				$names = q("SELECT name FROM alterList where studyId = " . $study->id)->queryColumn();
+                $criteria = array(
+                    "condition"=>"interviewId = " . $interviewId,
+                );
+                $check = Alters::model()->findAll($criteria);
+    			if(count($check) > 0){
+                    $criteria = array(
+                        "condition"=>"studyId = " . $study->id,
+                    );
+                    $alterList = AlterList::model()->findAll($criteria);
+                    $names = array();
+                    foreach($alterList as $a){
+                        $names[] = $a->name;
+                    }
     				$count = 0;
     				foreach($names as $name){
     					$alter = new Alters;
@@ -408,13 +446,8 @@ class InterviewController extends Controller
 
 	public function actionAlter(){
 		if(isset($_POST['Alters'])){
-            #OK FOR SQL INJECTION
-            $params = new stdClass();
-            $params->name = ':interviewId';
-            $params->value = $_POST['Alters']['interviewId'];
-            $params->dataType = PDO::PARAM_INT;
-
-			$studyId = q("SELECT studyId FROM interview WHERE id = :interviewId", array($params))->queryScalar();
+            $interview = Interview::model()->findByPk($_POST['Alters']['interviewId']);
+			$studyId = $interview->studyId;
 			$criteria=array(
 				'condition'=>"FIND_IN_SET(" . $_POST['Alters']['interviewId'] .", interviewId)",
 				'order'=>'ordering',
@@ -449,7 +482,6 @@ class InterviewController extends Controller
 			// check to see if pre-defined alters exist.  If they do exist, check name against list
 			if($study->useAsAlters){
                 #OK FOR SQL INJECTION
-				//$alterCount = q("SELECT count(id) FROM alterList WHERE studyId = ".$studyId)->queryScalar();
 				if(count($pre_names) > 0){
                     #OK FOR SQL INJECTION
                     $params = new stdClass();
@@ -461,21 +493,22 @@ class InterviewController extends Controller
         			if(!in_array($_POST['Alters']['name'], $pre_names) && $study->restrictAlters){
 						$model->addError('name', $_POST['Alters']['name']. ' is not in our list of participants');
                     }
-					//$nameInList = q('SELECT name FROM alterList WHERE name = :name AND studyId = '. $studyId, array($params))->queryScalar();
-					//if(!$nameInList && $study->restrictAlters){
-					//}
 				}
 			}
 
             $foundAlter = false;
 			if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
-                #OK FOR SQL INJECTION
-                #OK FOR SQL INJECTION
-                $multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-                #OK FOR SQL INJECTION
+                $criteria = array(
+                    "condition"=>"title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")",
+                );
+                $questions = Question::model()->findAll($criteria);
+                $multiQIds = array();
+                foreach($questions as $question){
+                    $multiQIds[] = $question->id;
+                }
 
     			$criteria=array(
-    				'condition'=>"interviewId = ". $_POST['Alters']['interviewId']." AND questionId IN (" . implode(",", $multiIds) . ")",
+    				'condition'=>"interviewId = ". $_POST['Alters']['interviewId']." AND questionId IN (" . implode(",", $multiQIds) . ")",
     			);
                 $egoValue = Answer::model()->find($criteria);
     			$criteria=array(

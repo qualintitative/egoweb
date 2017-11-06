@@ -36,7 +36,7 @@ echo "<h3 class='margin-top-10'>".CHtml::link("Analysis &nbsp| &nbsp", $this->cr
                 <?php
                 $list = array();
                 foreach($alter_pair_expressions as $expression){
-                    $list[$expression['id']] = substr($expression['name'], 0 , 30);
+                    $list[$expression->id] = substr($expression->name, 0 , 30);
                 }
                 echo CHtml::dropDownList(
                     'loadAdj',

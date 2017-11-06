@@ -46,21 +46,15 @@ class AlterPrompt extends CActiveRecord
 	}
 
 	public static function getPrompt($studyId, $alters){
-        #OK FOR SQL INJECTION
-        $params1 = new stdClass();
-        $params1->name = ':studyId';
-        $params1->value = $studyId;
-        $params1->dataType = PDO::PARAM_INT;
-
-        $params2 = new stdClass();
-        $params2->name = ':afterAltersEntered';
-        $params2->value = $alters;
-        $params2->dataType = PDO::PARAM_INT;
-
-        $params = array($params1, $params2);
-
-		$sql = "SELECT display FROM alterPrompt WHERE studyId = :studyId AND afterAltersEntered <= :afterAltersEntered ORDER BY afterAltersEntered DESC";
-		return q($sql, $params)->queryScalar();
+        $criteria = array(
+            "condition"=>"studyId = $studyId AND afterAltersEntered <= $alters",
+            "order"=>"afterAltersEntered DESC",
+        );
+        $alterPrompt = AlterPrompt::model()->find($criteria);
+        if($alterPrompt)
+    	    return $alterPrompt->display;
+        else
+            return false;
 	}
 
 	/**

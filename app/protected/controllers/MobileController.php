@@ -35,30 +35,33 @@ class MobileController extends Controller
 	}
 	public function actionAjaxstudies(){
 		if(isset($_POST['userId'])){
-			#OK FOR SQL INJECTION
-			$params = new stdClass();
-			$params->name = ':userId';
-			$params->value = $_POST['userId'];
-			$params->dataType = PDO::PARAM_INT;
-
-			$permission = q("SELECT permissions FROM user WHERE id = :userId",array($params))->queryScalar();
-			if($permission != 11)
-				#OK FOR SQL INJECTION
-				$studyIds = q("SELECT studyId FROM interviewers WHERE interviewerId = :userId",array($params))->queryColumn();
-			else
+            $user = User::model()->findByPK($_POST['userId']);
+			$permission = $user->permissions;
+			if($permission != 11){
+                $studyIds = array();
+                $criteria = new CDbCriteria;
+                $criteria->condition = "interviewerId = " . $user->id;
+                $interviewers = Interviewer::model()->findAll($criteria);
+                foreach($interviewers as $interviewer){
+                    $studyIds[] = $interviewer->studyId;
+                }
+			}else{
 				$studyIds = "";
+            }
 		}else{
 			$studyIds = "";
 		}
-		if($studyIds)
-			#OK FOR SQL INJECTION
-			$studies = q("SELECT id,name FROM study WHERE id IN (" . implode(",", $studyIds) . ")")->queryAll();
-		else
-			#OK FOR SQL INJECTION
-			$studies = q("SELECT id,name FROM study")->queryAll();
+		if($studyIds){
+            $criteria = array(
+                "condition"=>"id IN (" . implode(",", $studyIds) . ")",
+            );
+            $studies = Study::model()->findAll($criteria);
+		}else{
+			$studies =  Study::model()->findAll();
+        }
 
 		foreach($studies as $study){
-			$json[$study['id']] = $study['name'];
+			$json[$study->id] = $study->name;
 		}
 		header("Access-Control-Allow-Origin: *");
 		header('Access-Control-Allow-Credentials: true');
@@ -69,36 +72,35 @@ class MobileController extends Controller
 
 	public function actionAjaxdata($id){
         Yii::log("begin import");
-		#OK FOR SQL INJECTION
-		$study = q("SELECT * FROM study WHERE id = " . $id)->queryRow(false);
-		#OK FOR SQL INJECTION
-		$questions = q("SELECT * FROM question WHERE studyId = ".$id)->queryAll(false);
-		#OK FOR SQL INJECTION
-		$options = q("SELECT * FROM questionOption WHERE studyId = " . $id)->queryAll(false);
-		#OK FOR SQL INJECTION
-		$expressions = q("SELECT * FROM expression WHERE studyId = " . $id)->queryAll(false);
-		#OK FOR SQL INJECTION
-		$alterList = q("SELECT * FROM alterList WHERE studyId = " . $id)->queryAll(false);
-		foreach($alterList as &$alter){
-			if(strlen($alter[2]) >= 8)
-				$alter[2] = decrypt($alter[2]);
-			if(strlen($alter[3]) >= 8)
-				$alter[3] = decrypt($alter[3]);
-		}
-
-		#OK FOR SQL INJECTION
-		$alterPrompts = q("SELECT * FROM alterPrompt WHERE studyId = " . $id)->queryAll(false);
-
-		//$answers = q("SELECT * FROM answer WHERE studyId = " . $id)->queryAll(false);
-
-		//foreach($answers as &$answer){
-		//	if(strlen($answer[6]) >= 8)
-		//		$answer[6] = decrypt($answer[6]);
-		//}
+		$study = mToA(Study::model()->findByPK($id));
+		$results = Question::model()->findAllByAttributes(array("studyId"=>$id));
+        $questions = array();
+        foreach($results as $result){
+            $questions[] = mToA($result);
+        }
+        $results = QuestionOption::model()->findAllByAttributes(array("studyId"=>$id));
+        $options = array();
+        foreach($results as $result){
+            $options[] = mToA($result);
+        }
+        $results = Expression::model()->findAllByAttributes(array("studyId"=>$id));
+        $expressions = array();
+        foreach($results as $result){
+            $expressions[] = mToA($result);
+        }
+        $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
+        $alterList = array();
+        foreach($results as $result){
+            $alterList[] = mToA($result);
+        }
+        $results = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$id));
+        $alterPrompts = array();
+        foreach($results as $result){
+            $alterPrompts[] = mToA($result);
+        }
 
 		$interviewIds = array();
 		#OK FOR SQL INJECTION
-		$interviews = q("SELECT * FROM interview WHERE studyId = " . $id)->queryAll(false);
 		$audioFiles = array();
 
 		$columns = array();
@@ -158,7 +160,6 @@ class MobileController extends Controller
 		if($interviewIds){
 			$interviewIds = implode(',', $interviewIds);
 			#OK FOR SQL INJECTION
-			$alters = q("SELECT * FROM alters WHERE interviewId  in (" . $interviewIds . ")")->queryAll(false);
 			foreach($alters as &$alter){
 				if(strlen($alter[3]) >= 8)
 					$alter[3] = decrypt($alter[3]);
@@ -223,30 +224,32 @@ class MobileController extends Controller
 			// validate user input and redirect to the previous page if valid
 			if($model->validate() && $model->login()){
         		if(Yii::app()->user->id){
-        			#OK FOR SQL INJECTION
-        			$params = new stdClass();
-        			$params->name = ':userId';
-        			$params->value = Yii::app()->user->id;
-        			$params->dataType = PDO::PARAM_INT;
-        
-        			$permission = q("SELECT permissions FROM user WHERE id = :userId",array($params))->queryScalar();
-        			if($permission != 11)
-        				#OK FOR SQL INJECTION
-        				$studyIds = q("SELECT studyId FROM interviewers WHERE interviewerId = :userId",array($params))->queryColumn();
-        			else
+                    $user = User::model()->findByPK(Yii::app()->user->id);
+        			$permission = $user->permissions;
+        			if($permission != 11){
+                        $studyIds = array();
+                        $criteria = new CDbCriteria;
+                        $criteria->condition = "interviewerId = " . $user->id;
+                        $interviewers = Interviewer::model()->findAll($criteria);
+                        foreach($interviewers as $interviewer){
+                            $studyIds[] = $interviewer->studyId;
+                        };
+        			}else{
         				$studyIds = "";
+                    }
         		}else{
         			$studyIds = "";
         		}
-        		if($studyIds)
-        			#OK FOR SQL INJECTION
-        			$studies = q("SELECT id,name FROM study WHERE id IN (" . implode(",", $studyIds) . ")")->queryAll();
-        		else
-        			#OK FOR SQL INJECTION
-        			$studies = q("SELECT id,name FROM study")->queryAll();
-        
+                if($studyIds){
+                    $criteria = array(
+                        "condition"=>"id IN (" . implode(",", $studyIds) . ")",
+                    );
+                    $studies = Study::model()->findAll($criteria);
+        		}else{
+        			$studies =  Study::model()->findAll();
+                }
         		foreach($studies as $study){
-        			$json[] = array("id"=>$study['id'], "name"=>$study['name']);
+        			$json[] = array("id"=>$study->id, "name"=>$study->name);
         		}
         		echo json_encode($json);
 				Yii::app()->end();
@@ -275,14 +278,8 @@ class MobileController extends Controller
 				header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
 				die();
 			}
-			#OK FOR SQL INJECTION
-			$params = new stdClass();
-			$params->name = ':studyId';
-			$params->value = $data['study']['ID'];
-			$params->dataType = PDO::PARAM_INT;
-
-			$oldStudy = q("SELECT * FROM study WHERE id = :studyId", array($params))->queryRow();
-			if($oldStudy['modified'] == $data['study']['MODIFIED']){
+            $oldStudy == Study::model()->findByPK($data['study']['ID']);
+			if($oldStudy->modified == $data['study']['MODIFIED']){
 				$this->saveAnswers($data);
 			}else{
 				$study = new Study;
@@ -327,36 +324,6 @@ class MobileController extends Controller
 			else
 				echo "Errors encountered!";
 		}
-	}
-
-	private function compare($data){
-		#OK FOR SQL INJECTION
-		$oldStudy = q("SELECT * FROM study WHERE id = " . $data['study']['ID'])->queryRow();
-
-		foreach($oldStudy as $key=>$value){
-		$oldStudy[strtoupper($key)] = $value;
-		unset($oldStudy[$key]);
-		}
-
-		if($data['study'] != $oldStudy)
-		return false;
-
-		#OK FOR SQL INJECTION
-		$oldQuestions = q("SELECT * FROM question WHERE studyId = " . $data['study']['ID'])->queryAll();
-		if(count($data['questions']) != count($oldQuestions))
-		return false;
-
-		#OK FOR SQL INJECTION
-		$oldQuestionOptions = q("SELECT * FROM questionOption WHERE studyId = " . $data['study']['ID'])->queryAll();
-		if(count($data['questionOptions']) != count($oldQuestionOptions))
-		return false;
-
-		#OK FOR SQL INJECTION
-		$oldExpressions = q("SELECT * FROM expression WHERE studyId = " . $data['study']['ID'])->queryAll();
-		if(count($data['expressions']) != count($oldExpressions))
-		return false;
-
-		return true;
 	}
 
 	private function saveAnswers($data, $newData = null)

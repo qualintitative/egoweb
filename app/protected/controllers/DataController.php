@@ -43,17 +43,28 @@ class DataController extends Controller
 
     public function actionStudy($id)
     {
-		$egoIdQ = q("SELECT * from question where studyId = $id and useAlterListField in ('name','email','id')")->queryRow();
+        $criteria = new CDbCriteria;
+        $criteria = array(
+            'condition'=>"studyId = $id and useAlterListField in ('name','email','id')",
+        );
+        $egoIdQ = Question::model()->find($criteria);
 		$restrictions = "";
 		if($egoIdQ){
-			$participants = q("SELECT " . $egoIdQ['useAlterListField'] . " FROM alterList where interviewerId = " . Yii::app()->user->id)->queryColumn();
-			foreach($participants as &$p){
-    			if(strlen($p) >= 8)
-    			    $p = decrypt($p);
+            $criteria = new CDbCriteria;
+            $criteria = array(
+                'condition'=>"interviewerId = " . Yii::app()->user->id,
+            );
+			$participantList =  AlterList::model()->findAll($criteria);
+            $participants = array();
+            foreach($participantList as $p){
+    			if($egoIdQ->useAlterListField == "email")
+                    $participants[] = $p->email;
+                elseif($egoIdQ->useAlterListField == "name")
+                    $participants[] = $p->name;
 			}
 			if($participants){
         		$criteria = array(
-        			'condition'=>"questionId = " .$egoIdQ['id'],
+        			'condition'=>"questionId = " .$egoIdQ->id,
         		);
                 $answers = Answer::model()->findAll($criteria);
                 foreach($answers as $answer){
@@ -102,28 +113,31 @@ class DataController extends Controller
     {
         $graphs = array();
         if(isset($_GET['interviewId'])){
-            #OK FOR SQL INJECTION
-            $params = new stdClass();
-            $params->name = ':id';
-            $params->value = $_GET["interviewId"];
-            $params->dataType = PDO::PARAM_INT;
-
-            $studyId = q("SELECT studyId FROM interview WHERE id = :id",array($params))->queryScalar();
-            $params->value = $studyId;
-
+            $interview = Interview::model()->findByPK($_GET['interviewId']);
+            $studyId = $interview->studyId;
             if( !$studyId ){
                 echo "No studyId found for interviewId = ".$_GET['interviewId'];
                 return;
             }
-
-            #OK FOR SQL INJECTION
-            $questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = :id",array($params))->queryColumn();
-
+            $criteria = array(
+                'condition'=>"subjectType = 'ALTER_PAIR' AND studyId = $studyId",
+            );
+            $questions = Question::model()->findAll($criteria);
+            $questionIds = array();
+            foreach($questions as $question){
+                $questionIds[] = $question->id;
+            }
             $questionIds = implode(",", $questionIds);
             if(!$questionIds)
                 $questionIds = 0;
-            $alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId = :id AND questionId in (" . $questionIds . ")",array($params))->queryColumn();
-
+            $criteria = array(
+                'condition'=>"studyId = $studyId AND questionId in (" . $questionIds . ")",
+            );
+            $alter_pair_expression = Expression::model()->findAll($criteria);
+            $alter_pair_expression_ids = array();
+            foreach($alter_pair_expression as $expression){
+                $alter_pair_expression_ids[] = $expression->id;
+            }
             if (count($alter_pair_expression_ids) < 1 ) {
                 echo "NO ALTER PAIR EXPRESSION IDS FOUND FOR QUESTION IDS ".(string)$questionIds;
                 $alter_pair_expressions = array();
@@ -131,11 +145,18 @@ class DataController extends Controller
             else{
                 $all_expression_ids = $alter_pair_expression_ids;
                 foreach($alter_pair_expression_ids as $id){
-                    #OK FOR SQL INJECTION
-                    $all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
+                    $criteria = array(
+                        'condition'=>"FIND_IN_SET($id, value)",
+                    );
+                    $expressions = Expression::model()->findAll($criteria);
+                    foreach($expressions as $e){
+                        $all_expression_ids[] = $e->id;
+                    }
                 }
-                #OK FOR SQL INJECTION
-                $alter_pair_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
+                $criteria = array(
+                    'condition'=>"id in (" . implode(",",$all_expression_ids) . ")",
+                );
+                $alter_pair_expressions = Expression::model()->findAll($criteria);
             }
 
             if(isset($_GET['print'])){
@@ -333,10 +354,18 @@ class DataController extends Controller
 		$condition = "id != 0";
 		if(!Yii::app()->user->isSuperAdmin){
             #OK FOR SQL INJECTION
-            if(Yii::app()->user->id)
-			    $studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
-            else
+            if(Yii::app()->user->id){
+                $criteria = array(
+        			'condition'=>"interviewerId = " . Yii::app()->user->id,
+                );
+                $interviewers = Interviewer::model()->findAll($criteria);
+                $studies = array();
+                foreach($interviewers as $i){
+                    $studies[] = $i->studyId;
+                }
+            }else{
                 $studies = false;
+            }
 			if($studies)
 				$condition = "id IN (" . implode(",", $studies) . ")";
 			else
@@ -365,24 +394,33 @@ class DataController extends Controller
 		else
 			$expressionId = '';
 
-        #OK FOR SQL INJECTION
 		$study = Study::model()->findByPk((int)$_POST['studyId']);
-        #OK FOR SQL INJECTION
-        $optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
+        $criteria = array(
+            "condition"=>"studyId = " . $study->id,
+        );
+        $optionsRaw = QuestionOption::model()->findAll($criteria);
 
 		// create an array with option ID as key
 		$options = array();
 		foreach ($optionsRaw as $option){
-			$options[$option['id']] = $option['value'];
+			$options[$option->id] = $option->value;
 		}
 
 		// fetch questions
-        #OK FOR SQL INJECTION
-		$ego_id_questions = q("SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId = " . $study->id . " ORDER BY ordering")->queryAll();
-        #OK FOR SQL INJECTION
-        $ego_questions = q("SELECT * FROM question WHERE subjectType = 'EGO' AND studyId = " . $study->id . " ORDER BY ordering")->queryAll();
-        #OK FOR SQL INJECTION
-        $alter_questions = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND studyId = " . $study->id . " ORDER BY ordering")->queryAll();
+        $criteria=new CDbCriteria;
+        $criteria->condition = ("studyId = $study->id and subjectType = 'EGO_ID'");
+        $criteria->order = "ordering";
+        $ego_id_questions = Question::model()->findAll($criteria);
+
+        $criteria=new CDbCriteria;
+        $criteria->condition = ("studyId = $study->id and subjectType = 'EGO'");
+        $criteria->order = "ordering";
+        $ego_questions = Question::model()->findAll($criteria);
+
+        $criteria=new CDbCriteria;
+        $criteria->condition = ("studyId = $study->id and subjectType = 'ALTER'");
+        $criteria->order = "ordering";
+        $alter_questions = Question::model()->findAll($criteria);
 
         $criteria=new CDbCriteria;
         $criteria->condition = ("studyId = $study->id and subjectType = 'NETWORK'");
@@ -395,10 +433,10 @@ class DataController extends Controller
 		$headers[] = 'Start Time';
 		$headers[] = 'End Time';
 		foreach ($ego_id_questions as $question){
-			$headers[] = $question['title'];
+			$headers[] = $question->title;
 		}
 		foreach ($ego_questions as $question){
-			$headers[] = $question['title'];
+			$headers[] = $question->title;
 		}
 		foreach ($network_questions as $question){
 			$headers[] = $question->title;
@@ -426,10 +464,10 @@ class DataController extends Controller
     		$headers[] = "Alter Pair ID";
         }else{
             $headers[] = "Alter Number";
-    		$headers[] = "Alter Name";    
+    		$headers[] = "Alter Name";
         }
 		foreach ($alter_questions as $question){
-			$headers[] = $question['title'];
+			$headers[] = $question->title;
 		}
 
 		if($expressionId){
@@ -496,11 +534,11 @@ class DataController extends Controller
         }
 
 		$study = Study::model()->findByPk((int)$_POST['studyId']);
-        #OK FOR SQL INJECTION
-		//$optionsRaw = q("SELECT * FROM questionOption WHERE studyId = " . $study->id)->queryAll();
 
-        #OK FOR SQL INJECTION
-		$alter_pair_questions = q("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = " . $study->id . " ORDER BY ordering")->queryAll();
+        $criteria=new CDbCriteria;
+        $criteria->condition = ("studyId = $study->id and subjectType = 'ALTER_PAIR'");
+        $criteria->order = "ordering";
+        $alter_pair_questions = Question::model()->findAll($criteria);
 
         $idNumber = "Number";
 
@@ -512,7 +550,7 @@ class DataController extends Controller
 		$headers[] = "Alter 2 " . $idNumber;
 		$headers[] = "Alter 2 Name";
 		foreach ($alter_pair_questions as $question){
-			$headers[] = $question['title'];
+			$headers[] = $question->title;
 		}
 
         $interviewIds = array();

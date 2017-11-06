@@ -391,6 +391,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     }
 
     $scope.submitForm = function(isValid) {
+        console.log(isValid);
         // check to make sure the form is completely valid
         if (isValid) {
             save($scope.questions, $routeParams.page, $location.absUrl().replace($location.url(),''), $scope);
@@ -636,15 +637,22 @@ app.directive('checkAnswer', [function (){
                 var valid = true;
                 var array_id = attr.arrayId;
                 var question = questions[attr.questionId];
-
                 console.log(question);
                 console.log("check:" + value);
 
                 if(attr.answerType == "NAME_GENERATOR"){
-                    if(scope.answers[array_id].SKIPREASON != "REFUSE" && Object.keys(scope.alters).length < scope.questions[0].MINLITERAL){
-        				scope.errors[array_id] = 'Please list ' + scope.questions[0].MINLITERAL + ' people';
+                    console.log(scope.answers[array_id].SKIPREASON);
+                    if((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.alters).length < scope.questions[0].MINLITERAL){
+                        console.log(typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE");
+                        scope.errors[array_id] = 'Please list ' + scope.questions[0].MINLITERAL + ' people';
                     	valid = false;
-        			}
+        			}else{
+                        delete scope.errors[0];
+                        delete scope.errors[array_id];
+
+                        delete scope.answerForm.$error.checkAnswer;
+                        console.log(scope.answerForm);
+                    }
 			    }
 
                 if(attr.answerType == "TEXTUAL"){
@@ -836,10 +844,13 @@ app.directive('checkAnswer', [function (){
                 var question = questions[attr.questionId];
 
                 if(attr.answerType == "NAME_GENERATOR"){
-                    if(scope.answers[array_id].SKIPREASON != "REFUSE" && Object.keys(scope.alters).length < scope.questions[0].MINLITERAL){
-        				scope.errors[array_id] = 'Please list ' + scope.questions[0].MINLITERAL + ' people';
+                    if((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.alters).length < scope.questions[0].MINLITERAL){
+                        console.log(typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE");
+                		scope.errors[array_id] = 'Please list ' + scope.questions[0].MINLITERAL + ' people';
                     	valid = false;
-        			}
+        			}else{
+                        delete scope.errors[array_id];
+                    }
 			    }
 
                 if(attr.answerType == "TEXTUAL"){

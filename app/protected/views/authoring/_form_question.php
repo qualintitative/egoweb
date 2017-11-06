@@ -385,21 +385,40 @@ jQuery('input.time-".$model->id."').change(function() {
 		<div class="row">
 			Alters are adjacent when:
 		<?php
-            #OK FOR SQL INJECTION
-			$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$model->studyId)->queryColumn();
+			$questionIds = array();
+            $criteria = array(
+                "condition"=>"subjectType = 'ALTER_PAIR' AND studyId = ".$model->studyId,
+            );
+            $questions = Question::model()->findAll($criteria);
+            foreach($questions as $question){
+                $questionIds[] = $question->id;
+            }
 			$questionIds = implode(",", $questionIds);
 			if(!$questionIds)
 				$questionIds = 0;
-            #OK FOR SQL INJECTION
-			$alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId = " . $model->studyId . " AND questionId in (" . $questionIds . ")")->queryColumn();
+            $criteria = array(
+                'condition'=>"studyId = $model->studyId AND questionId in (" . $questionIds . ")",
+            );
+            $alter_pair_expression = Expression::model()->findAll($criteria);
+            $alter_pair_expression_ids = array();
+            foreach($alter_pair_expression as $expression){
+                $alter_pair_expression_ids[] = $expression->id;
+            }
 			$all_expression_ids = $alter_pair_expression_ids;
-			foreach($alter_pair_expression_ids as $id){
-                #OK FOR SQL INJECTION
-				$all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
-			}
+            foreach($alter_pair_expression_ids as $id){
+                $criteria = array(
+                    'condition'=>"FIND_IN_SET($id, value)",
+                );
+                $expressions = Expression::model()->findAll($criteria);
+                foreach($expressions as $e){
+                    $all_expression_ids[] = $e->id;
+                }
+            }
 			if($all_expression_ids){
-			$alter_pair_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
-				$list = array();
+                $criteria = array(
+                    'condition'=>"id in (" . implode(",",$all_expression_ids) . ")",
+                );
+                $alter_pair_expressions = Expression::model()->findAll($criteria);				$list = array();
 				foreach($alter_pair_expressions as $expression){
 					$list[$expression['id']] = substr($expression['name'], 0 , 30);
 				}

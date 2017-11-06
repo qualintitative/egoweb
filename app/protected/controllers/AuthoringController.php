@@ -28,7 +28,6 @@ class AuthoringController extends Controller
 	{
 		return array(
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array(Yii::app()->controller->action->id),
 				'users'=>array('@'),
 			),
 			array('deny',  // deny all users
@@ -97,6 +96,11 @@ class AuthoringController extends Controller
 
 			if(!is_dir(Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type']))
 				mkdir(Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type'], 0777, true);
+
+            if(!check_file_is_audio($_FILES['userfile']['tmp_name'])){
+                echo "error";
+                die();
+            }
 
 			if(move_uploaded_file($_FILES['userfile']['tmp_name'], Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type'] . "/". $_POST['id'] . ".mp3"))
 				echo "<a class=\"playSound\" onclick=\"playSound($(this).attr('file'))\" href=\"#\" file=\"/audio/".$_POST['studyId'] . "/" . $_POST['type'] . "/". $_POST['id'] . ".mp3\"><span class=\"fui-volume play-sound\"></span></a>";
@@ -198,15 +202,22 @@ class AuthoringController extends Controller
 
 		$condition = "id != 0";
 		if(!Yii::app()->user->isSuperAdmin){
-			#OK FOR SQL INJECTION
 			$studies = array();
+            $criteria = new CDbCriteria;
+            $criteria->condition = "interviewerId = " . Yii::app()->user->id;
+            $interviewers = Interviewer::model()->findAll($criteria);
+            foreach($interviewers as $interviewer){
+                $studies[] = $interviewer->studyId;
+            }
 			if(Yii::app()->user->isAdmin){
-				$studies = q("SELECT id FROM study WHERE userId = " . Yii::app()->user->id)->queryColumn();
-				$addedStudies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
-				if(count($addedStudies) > 0)
+                $criteria = new CDbCriteria;
+                $criteria->condition = "userId = " . Yii::app()->user->id;
+                $allStudies = Study::model()->findAll($criteria);
+                foreach($allStudies as $study){
+                    $addedStudies[] = $study->id;
+                }
+			    if(count($addedStudies) > 0)
 					$studies = array_merge($studies, $addedStudies);
-			}else{
-				$studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
 			}
 			if($studies)
 				$condition = "id IN (" . implode(",", $studies) . ")";
@@ -593,7 +604,7 @@ class AuthoringController extends Controller
 
 		$model = new Expression;
 		$criteria=new CDbCriteria;
-		$multi = q("SELECT multiSessionEgoId FROM study WHERE id = " . $id)->queryScalar();
+		$multi = $study->multiSessionEgoId;
 
 			$criteria=array(
 				'condition'=>"studyId = " . $id,
@@ -688,25 +699,6 @@ class AuthoringController extends Controller
 				print_r($model->getErrors());
 			else
 				$this->redirect(Yii::app()->request->getUrlReferrer());
-		}
-	}
-
-	public function actionImage()
-	{
-		if ($_FILES['file']['name']) {
-			if (!$_FILES['file']['error']) {
-				$name = md5(rand(100, 200));
-				$ext = explode('.', $_FILES['file']['name']);
-				$filename = $name . '.' . $ext[1];
-				$destination = Yii::app()->basePath .'/../assets/' . $filename; //change this directory
-				$location = $_FILES["file"]["tmp_name"];
-				move_uploaded_file($location, $destination);
-				echo '/assets/' . $filename;
-			}
-			else
-			{
-			  echo  $message = 'Ooops!  Your upload triggered the following error:  '.$_FILES['file']['error'];
-			}
 		}
 	}
 
@@ -977,15 +969,16 @@ class AuthoringController extends Controller
 					QuestionOption::sortOrder($ordering, $questionId);
 				}
 			}else{
+
 				$this->deleteAllOptions($_GET['questionId']);
 				$questionId = $_GET['questionId'];
+                $question = Question::model()->findByPk((int)$_GET['questionId']);
 				#OK FOR SQL INJECTION
 				$params = new stdClass();
 				$params->name = ':questionId';
 				$params->value = $_GET['questionId'];
 				$params->dataType = PDO::PARAM_INT;
-				$studyId = q("SELECT studyId FROM question WHERE id = :questionId", array($params) )->queryScalar();
-				Study::updated($studyId);
+				Study::updated($question->studyId);
 			}
 
 			$criteria=new CDbCriteria;
@@ -1181,7 +1174,8 @@ class AuthoringController extends Controller
 					'condition'=>"questionId = " . $_GET['questionId'],
 					'order'=>'ordering',
 				);
-				$studyId = q("SELECT studyId FROM question WHERE id = " . $_GET['questionId'])->queryScalar();
+                $question = Question::model()->findByPK( $_GET['questionId']);
+                $studyId = $question->studyId;
 
 				$dataProvider=new CActiveDataProvider('Legend',array(
 					'criteria'=>$criteria,

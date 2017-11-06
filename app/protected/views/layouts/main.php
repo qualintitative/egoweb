@@ -33,8 +33,14 @@
 				<?php
 				$condition = "id != 0";
 				if(!Yii::app()->user->isSuperAdmin){
-                    #OK FOR SQL INJECTION
-					$studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
+                    $criteria = array(
+            			'condition'=>"interviewerId = " . Yii::app()->user->id,
+                    );
+                    $interviewers = Interviewer::model()->findAll($criteria);
+                    $studies = array();
+                    foreach($interviewers as $i){
+                        $studies[] = $i->studyId;
+                    }
 					if($studies)
 						$condition = "id IN (" . implode(",", $studies) . ")";
 					else
