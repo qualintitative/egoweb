@@ -55,6 +55,7 @@ class AuthoringController extends Controller
 				$model->name = trim($data[0]);
 				$model->email = isset($data[1]) ? $data[1] : "";
 				$model->studyId = $_POST['studyId'];
+                $model->questionId = $_POST['questionId'];
 				$model->save();
 			}
 

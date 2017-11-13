@@ -1,4 +1,4 @@
-<div id="alterPrompt" >
+<div id="alterPrompt" style="padding:20px">
 <?php
     $criteria=new CDbCriteria;
     $criteria=array(
@@ -51,7 +51,6 @@
     ?>
     </div>
 
-</div>
 
 <div style="float:left; width:100%;margin-top:15px;">
     <span class="smallheader">Add new alter prompt</span>
@@ -77,5 +76,49 @@
         array('id'=>uniqid(), 'live'=>false, 'style'=>'float:left; margin:3px 5px;', "class"=>"btn btn-primary btn-xs"));
     ?>
     <?php $this->endWidget(); ?>
+    <br>
+    <br>
+    <br>
+    <?php echo CHtml::form('/authoring/importprompts', 'post', array('id'=>'importListForm', 'enctype'=>'multipart/form-data')) ?>
+        <!-- MAX_FILE_SIZE must precede the file input field -->
+        <!-- Name of input element determines name in $_FILES array -->
+        <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo 'MAX = ' + Yii::app()->params['maxUploadFileSize']; ?>" />
+        <input name="userfile" type="file" />
+        <input type="hidden" name="studyId" value="<?= $study->id; ?>" />
+        <input type="hidden" name="questionId" value="<?= $question->id; ?>" />
+        <input class="btn btn-primary btn-xs" type="submit" value="Import Variable Prompts" />
+    </form>
     <div id="edit-alterPrompt" style="margin-top:15px;float:left;clear:both;"></div>
 </div>
+<script type="text/javascript">
+    //On import study form submit
+    $( "#importListForm" ).submit(function( event) {
+        var userfile = document.getElementById('userfile').files[0];
+
+        if(userfile && userfile.size < <?php echo 'MAX = ' + Yii::app()->params['maxUploadFileSize']; ?> ) { //This size is in bytes.
+
+            var res_field = document.getElementById('userfile').value;
+            var extension = res_field.substr(res_field.lastIndexOf('.') + 1).toLowerCase();
+            var allowedExtensions = ['csv'];
+            event.preventDefault();
+            if (res_field.length > 0)
+            {
+                if( allowedExtensions.indexOf(extension) === -1 )
+                {
+                    event.preventDefault();
+                    alert('Invalid file Format. Only ' + allowedExtensions.join(', ') + ' allowed.');
+                    return false;
+                }
+            }
+            else{
+                //Submit form
+                $("#importListForm").submit();
+            }
+        } else {
+            //Prevent default and display error
+            event.preventDefault();
+            alert("Upload file cannot exceed <?php echo number_format(Yii::app()->params['maxUploadFileSize'] / 1048576, 1) . ' MB'; ?>");
+            return false;
+        }
+    });
+</script>
