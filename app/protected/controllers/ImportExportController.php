@@ -349,7 +349,13 @@ class ImportExportController extends Controller
     								$thisAlterId = $value;
     							if($key!="key" && $key != "id")
     								$newAlter->$key = $value;
+                                if($key == "nameGenQIds"){
+                                    if(isset($newQuestionIds[$value]))
+                                        $newAlter->$key = $newQuestionIds[$value];
+                                }
     						}
+                            if(!$newAlter->nameGenQIds)
+                                $newAlter->nameGenQIds = 0;
     						if(!preg_match("/,/", $newAlter->interviewId)){
     							$newAlter->interviewId = $newInterview->id;
                             }else{

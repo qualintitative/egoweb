@@ -55,7 +55,6 @@ class AuthoringController extends Controller
 				$model->name = trim($data[0]);
 				$model->email = isset($data[1]) ? $data[1] : "";
 				$model->studyId = $_POST['studyId'];
-                $model->questionId = $_POST['questionId'];
 				$model->save();
 			}
 
@@ -346,6 +345,10 @@ class AuthoringController extends Controller
 			'condition'=>"studyId = " . $id . ' AND subjectType != "EGO_ID"',
 			'order'=>'ordering',
 		);
+        $ego_questions = array();
+        $alter_questions = array();
+        $alter_pair_questions = array();
+        $network_questions = array();
         $questions = Question::model()->findAll($criteria);
         foreach($questions as $question){
             if($question->subjectType == "EGO")
@@ -368,6 +371,8 @@ class AuthoringController extends Controller
             'ordering' => $i,
         );
         $model->save();
+        $nameGenQId = $model->id;
+
         $i++;
         foreach($alter_questions as $question){
             $question->ordering = $i + $question->ordering;
