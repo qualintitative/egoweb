@@ -34,7 +34,15 @@ function changeAType(answerSelect) {
 		value = 'TIME_SPAN';
 		$(".weeks").hide();
 	}
-	var model_id = $(answerSelect).attr('id').substring(2);
+    var model_id = $(answerSelect).attr('id').substring(2);
+    if(value == 'NAME_GENERATOR'){
+        $(".askingStyle").hide();
+        $('#a-' + model_id).val("TEXTUAL");
+        $('#a-' + model_id).prop('disabled', true);
+    }else{
+        $(".askingStyle").show();
+        $('#a-' + model_id).prop('disabled', false);
+    }
 	$('.panel-' + model_id).hide();
 	$('.panel-' + model_id + "#" +value).show();
 }

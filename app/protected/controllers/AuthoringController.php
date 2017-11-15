@@ -75,6 +75,7 @@ class AuthoringController extends Controller
 			if(isset($data[0]) && $data[0]){
 				$model = new AlterPrompt;
 				$model->studyId = $_POST['studyId'];
+                $model->questionId = $_POST['questionId'];
 				$model->afterAltersEntered = trim($data[0]);
 				$model->display = isset($data[1]) ? $data[1] : "";
 				$model->save();

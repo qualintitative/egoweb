@@ -154,11 +154,11 @@ jQuery('input.time-".$model->id."').change(function() {
 		<?php echo $form->checkBox($model,'refuseButton', array('id'=>$model->id . "_" . "refuseButton")); ?>
 		<?php echo $form->labelEx($model,'refuseButton', array('for'=>$model->id . "_" . "refuseButton")); ?>
 		<br style="clear:left">
-		<?php echo $form->checkBox($model,'askingStyleList', array('id'=>$model->id . "_" . "askingStyleList", 'onchange'=>'changeStyle($(this), '.$model->id.', "' . $model->subjectType.'")')); ?>
+		<?php echo $form->checkBox($model,'askingStyleList', array('id'=>$model->id . "_" . "askingStyleList", 'class'=>'askingStyle', 'onchange'=>'changeStyle($(this), '.$model->id.', "' . $model->subjectType.'")')); ?>
             <?php if($model->subjectType == "EGO" || $model->subjectType == "NETWORK"): ?>
-            <?php echo CHtml::label("Leaf and Stem Question", $model->id . "_" . "askingStyleList"); ?>
+            <?php echo CHtml::label("Leaf and Stem Question", $model->id . "_" . "askingStyleList", array('class'=>'askingStyle')); ?>
             <?php else: ?>
-			<?php echo $form->labelEx($model,'askingStyleList', array('for'=>$model->id . "_" . "askingStyleList")); ?>
+			<?php echo $form->labelEx($model,'askingStyleList', array('for'=>$model->id . "_" . "askingStyleList", 'class'=>'askingStyle')); ?>
 			<?php endif;?>
 		<?php else: ?>
 		<div class="panel-<?php echo $model->id; ?>" id="TEXTUAL" style="display:none">
