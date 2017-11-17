@@ -680,5 +680,6 @@ $(function(){
 			}, 10);
 		}
 	});
+    $("#s-<?php echo $model->id;?>").change();
 });
 </script>
