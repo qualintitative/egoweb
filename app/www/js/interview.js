@@ -1337,7 +1337,7 @@ function qFromList(pageNumber){
                 }else{
                     if(typeof answers[masterList[k][j].array_id] == "undefined" || answers[masterList[k][j].array_id] != study.VALUELOGICALSKIP){
                         console.log("saving skip of " + masterList[k][j].TITLE);
-                        saveSkip(interviewId, masterList[evalQIndex[i]][j].ID, masterList[evalQIndex[i]][j].ALTERID1, masterList[evalQIndex[i]][j].ALTERID2, masterList[evalQIndex[i]][j].array_id);
+                        saveSkip(interviewId, masterList[k][j].ID, masterList[k][j].ALTERID1, masterList[k][j].ALTERID2, masterList[k][j].array_id);
                     }
                 }
             }
