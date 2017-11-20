@@ -212,7 +212,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 $scope.time_spans[array_id].MINUTES = answers[array_id].VALUE.match(/(\d*)\sMINUTES/i)[1];
         }
 
-        if($scope.questions[k].ANSWERTYPE == "DATE"){
+        if($scope.questions[k].ANSWERTYPE == "DATE" && typeof answers[array_id] != "undefined"){
             $scope.dates[array_id] = new Object;
             var date = answers[array_id].VALUE.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
             var time = answers[array_id].VALUE.match(/(\d{1,2}):(\d{1,2}) (AM|PM)/);
@@ -1314,9 +1314,7 @@ function evalQuestions(){
             continue;
         for(j in masterList[evalQIndex[i]]){
             console.log(masterList[evalQIndex[i]][j]);
-            evalQList[masterList[evalQIndex[i]][j].array_id]  = evalExpression(masterList[evalQIndex[i]][j].ANSWERREASONEXPRESSIONID, masterList[evalQIndex[i]][j].ALTERID1, masterList[evalQIndex[i]][j].ALTERID2);
-            if(evalQList[masterList[evalQIndex[i]][j].array_id] != true)
-                saveSkip(interviewId, masterList[evalQIndex[i]][j].ID, masterList[evalQIndex[i]][j].ALTERID1, masterList[evalQIndex[i]][j].ALTERID2, masterList[evalQIndex[i]][j].array_id);
+            evalQList[masterList[evalQIndex[i]][j].array_id] = evalExpression(masterList[evalQIndex[i]][j].ANSWERREASONEXPRESSIONID, masterList[evalQIndex[i]][j].ALTERID1, masterList[evalQIndex[i]][j].ALTERID2);
         }
     }
 }
@@ -1336,6 +1334,11 @@ function qFromList(pageNumber){
                 if(evalQList[masterList[k][j].array_id] == true){
                     proceed = true;
                     questions[j] = masterList[k][j];
+                }else{
+                    if(typeof answers[masterList[k][j].array_id] == "undefined" || answers[masterList[k][j].array_id] != study.VALUELOGICALSKIP){
+                        console.log("saving skip of " + masterList[k][j].TITLE);
+                        saveSkip(interviewId, masterList[evalQIndex[i]][j].ID, masterList[evalQIndex[i]][j].ALTERID1, masterList[evalQIndex[i]][j].ALTERID2, masterList[evalQIndex[i]][j].array_id);
+                    }
                 }
             }
         }else{
