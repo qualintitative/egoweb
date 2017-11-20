@@ -12,38 +12,40 @@ $(document).keydown(function(e) {
 		else
 			$('.orangebutton')[0].click();
 	}
-	if (e.keyCode == 37){
-		e.preventDefault();
-		$(".answerInput:focus").parent().prev().find(".answerInput").focus();
-	}
-	if (e.keyCode == 39){
-		e.preventDefault();
-		$(".answerInput:focus").parent().next().find(".answerInput").focus();
-	}
-	if (e.keyCode == 38){
-		e.preventDefault();
-        $(".answerInput").each(function(index){
-            if($(this).is(":focus")){
-                if(typeof $(".answerInput")[index-columns] != "undefined")
-                    $(".answerInput")[index-columns].focus();
-                //else
-                //    $(".answerInput:focus").parent().prev().find(".answerInput").focus();
-                return false;
-            }
-        });
-	}
-	if (e.keyCode == 40){
-		e.preventDefault();
-        $(".answerInput").each(function(index){
-            if($(this).is(":focus")){
-                if(typeof $(".answerInput")[index+columns] != "undefined")
-                    $(".answerInput")[index+columns].focus();
-                //else
-                //    $(".answerInput:focus").parent().next().find(".answerInput").focus();
-                return false;
-            }
-        });
-	}
+    if(alterPromptPage == false){
+    	if (e.keyCode == 37){
+    		e.preventDefault();
+    		$(".answerInput:focus").parent().prev().find(".answerInput").focus();
+    	}
+    	if (e.keyCode == 39){
+    		e.preventDefault();
+    		$(".answerInput:focus").parent().next().find(".answerInput").focus();
+    	}
+    	if (e.keyCode == 38){
+    		e.preventDefault();
+            $(".answerInput").each(function(index){
+                if($(this).is(":focus")){
+                    if(typeof $(".answerInput")[index-columns] != "undefined")
+                        $(".answerInput")[index-columns].focus();
+                    //else
+                    //    $(".answerInput:focus").parent().prev().find(".answerInput").focus();
+                    return false;
+                }
+            });
+    	}
+    	if (e.keyCode == 40){
+    		e.preventDefault();
+            $(".answerInput").each(function(index){
+                if($(this).is(":focus")){
+                    if(typeof $(".answerInput")[index+columns] != "undefined")
+                        $(".answerInput")[index+columns].focus();
+                    //else
+                    //    $(".answerInput:focus").parent().next().find(".answerInput").focus();
+                    return false;
+                }
+            });
+    	}
+    }
 });
 
 function redraw(params){

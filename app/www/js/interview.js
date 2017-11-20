@@ -3,6 +3,7 @@ var masterList = [];
 var evalQList = {};
 var evalQIndex = [];
 var currentPage = 0;
+var alterPromptPage = false;
 
 app.config(function ($routeProvider) {
 
@@ -61,8 +62,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.conclusion = false;
     $scope.redirect = false;
     $scope.participants = [];
-    if(typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR")
+    if(typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR"){
         prevAlters = {};
+        alterPromptPage = true;
+    }else{
+        alterPromptPage = false;
+    }
     for(k in $scope.alters){
         if($scope.alters[k].NAMEGENQIDS != null && !Array.isArray($scope.alters[k].NAMEGENQIDS)){
             console.log($scope.alters[k].NAMEGENQIDS)
