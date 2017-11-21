@@ -661,7 +661,7 @@ class Interview extends CActiveRecord
         return nl2br($string);
     }
 
-    public function exportEgoAlterData($file)
+    public function exportEgoAlterData_other($file)
     {
         $criteria=new CDbCriteria;
         $criteria->condition = ("studyId = $this->studyId and subjectType = 'EGO_ID'");
@@ -735,7 +735,6 @@ class Interview extends CActiveRecord
             foreach ($ego_id_questions as $question)
             {
 
-                #OK FOR SQL INJECTION
                 $result = Answer::model()->findByAttributes(array("interviewId" => $this->id, "questionId" => $question->id));
                 $answer = $result->value;
 
@@ -907,7 +906,7 @@ class Interview extends CActiveRecord
         //return $text;
     }
 
-    public function exportEgoAlterData_old($file)
+    public function exportEgoAlterData($file)
     {
         $criteria=new CDbCriteria;
         $criteria->condition = ("studyId = $this->studyId and subjectType = 'EGO_ID'");
@@ -928,6 +927,11 @@ class Interview extends CActiveRecord
         $criteria->condition = ("studyId = $this->studyId and subjectType = 'NETWORK'");
         $criteria->order = "ordering";
         $network_questions = Question::model()->findAll($criteria);
+
+        $criteria=new CDbCriteria;
+        $criteria->condition = ("studyId = $this->studyId and subjectType = 'NAME_GENERATOR'");
+        $criteria->order = "ordering";
+        $name_gen_questions = Question::model()->findAll($criteria);
 
         $alters = Alters::model()->findAll(array('order'=>'id', 'condition'=>'FIND_IN_SET(:x, interviewId)', 'params'=>array(':x'=>$this->id)));
 
@@ -1163,6 +1167,19 @@ class Interview extends CActiveRecord
                 }else{
                     $answers[] = $count;
                     $answers[] = $alter->name;
+                }
+                foreach ($name_gen_questions as $question)
+                {
+                    if(count($name_gen_questions) == 1){
+                        $answers[]  = 1;
+                        continue;
+                    }
+                    $nameGenQIds = explode(",",$alter->nameGenQIds);
+                    if(in_array($question->id, $nameGenQIds)){
+                        $answers[]  = 1;
+                    }else{
+                        $answers[]  = 0;
+                    }
                 }
                 foreach ($alter_questions as $question)
                 {

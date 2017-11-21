@@ -384,7 +384,7 @@ class DataController extends Controller
 		));
 	}
 
-	public function actionExportegoalterall()
+	public function actionExportegoalterall_other()
 	{
 		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
 			die("nothing to export");
@@ -488,7 +488,7 @@ class DataController extends Controller
 
 	}
 
-    public function actionExportegoalterall_old()
+    public function actionExportegoalterall()
 	{
 		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
 			die("nothing to export");
@@ -531,6 +531,11 @@ class DataController extends Controller
         $criteria->order = "ordering";
         $network_questions = Question::model()->findAll($criteria);
 
+        $criteria=new CDbCriteria;
+        $criteria->condition = ("studyId = $study->id and subjectType = 'NAME_GENERATOR'");
+        $criteria->order = "ordering";
+        $name_gen_questions = Question::model()->findAll($criteria);
+
 		$headers = array();
 		$headers[] = 'Interview ID';
 		$headers[] = "EgoID";
@@ -569,6 +574,9 @@ class DataController extends Controller
         }else{
             $headers[] = "Alter Number";
     		$headers[] = "Alter Name";
+        }
+        foreach($name_gen_questions as $question){
+            $headers[] = $question->title;
         }
 		foreach ($alter_questions as $question){
 			$headers[] = $question->title;
