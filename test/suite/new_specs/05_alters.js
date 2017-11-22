@@ -7,11 +7,11 @@ describe('Alters', function () {
         LoginPage.loginAs(browser.options.egoweb.loginInterviewer.username, browser.options.egoweb.loginInterviewer.password);
 
         // start test1 interview
-        IwPage.openInterview("TEST_WDIO", "NAME_GENERATOR");
+        IwPage.openInterview("TEST_WDIO", "ALTER_PROMPT");
 
         // set valid field values for moving forward through survey
         IwPage.fieldValues = {
-            'NAME_GENERATOR' : {
+            'ALTER_PROMPT' : {
                 type: 'alters',
                 values: [
                     'alpha',
@@ -36,7 +36,7 @@ describe('Alters', function () {
 
     beforeEach(function () {
         // every test starts at NAME_GENERATOR
-        IwPage.goToQuestion("NAME_GENERATOR");
+        IwPage.goToQuestion("ALTER_PROMPT");
     });
 
     it("should show correct Variable Alter Prompt while adding alters ", function () {
@@ -45,7 +45,7 @@ describe('Alters', function () {
 
         expect(IwPage.getAlterCount()).toBe(0);
 
-        alters = IwPage.fieldValues['NAME_GENERATOR']['values'];
+        alters = IwPage.fieldValues['ALTER_PROMPT']['values'];
         browser.element("div=Please enter a name, then click the Add button").waitForVisible(browser.options.egoweb.waitTime);
 
         IwPage.addAlter(alters[0]);
@@ -153,7 +153,7 @@ describe('Alters', function () {
         // select answers in some rows
 
         browser.scroll(0, 0);
- 
+
         for (i=2; i<6; i++) {
             browser.scroll(0, (i-2)*56);
             IwPage.pause();
@@ -223,13 +223,13 @@ describe('Alters', function () {
             }
             IwPage.next();
         }
-        
+
         //see if graph has right number of nodes
         browser.pause(5000);
         let result = browser.execute(function() {
             return s.graph.nodes().length;
         })
-        
+
         expect(result.value).toBe(15);
     });
 });

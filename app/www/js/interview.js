@@ -176,7 +176,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             console.log(alterPrompts[$scope.questions[k].ID]);
             console.log(Object.keys($scope.alters).length);
 
-            if(typeof alterPrompts[$scope.questions[k].ID][Object.keys($scope.alters).length] != "undefined")
+            if(typeof alterPrompts[$scope.questions[k].ID] != "undefined" && typeof alterPrompts[$scope.questions[k].ID][Object.keys($scope.alters).length] != "undefined")
                 $scope.alterPrompt = alterPrompts[$scope.questions[k].ID][Object.keys($scope.alters).length];
         }
         for(o in $scope.options[array_id]){
@@ -198,17 +198,17 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
         if($scope.questions[k].ANSWERTYPE == "TIME_SPAN"){
             $scope.time_spans[array_id] = new Object;
-			if(answers[array_id].VALUE.match(/(\d*)\sYEARS/i))
+			if(answers[array_id] && answers[array_id].VALUE.match(/(\d*)\sYEARS/i))
                 $scope.time_spans[array_id].YEARS = answers[array_id].VALUE.match(/(\d*)\sYEARS/i)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sMONTHS/i))
+			if(answers[array_id] && answers[array_id].VALUE.match(/(\d*)\sMONTHS/i))
                 $scope.time_spans[array_id].MONTHS = answers[array_id].VALUE.match(/(\d*)\sMONTHS/i)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sWEEKS/i))
+			if(answers[array_id] && answers[array_id].VALUE.match(/(\d*)\sWEEKS/i))
                 $scope.time_spans[array_id].WEEKS = answers[array_id].VALUE.match(/(\d*)\sWEEKS/i)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sDAYS/i))
+			if(answers[array_id] && answers[array_id].VALUE.match(/(\d*)\sDAYS/i))
                 $scope.time_spans[array_id].DAYS = answers[array_id].VALUE.match(/(\d*)\sDAYS/i)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sHOURS/i))
+			if(answers[array_id] && answers[array_id].VALUE.match(/(\d*)\sHOURS/i))
                 $scope.time_spans[array_id].HOURS = answers[array_id].VALUE.match(/(\d*)\sHOURS/i)[1];
-			if(answers[array_id].VALUE.match(/(\d*)\sMINUTES/i))
+			if(answers[array_id] && answers[array_id].VALUE.match(/(\d*)\sMINUTES/i))
                 $scope.time_spans[array_id].MINUTES = answers[array_id].VALUE.match(/(\d*)\sMINUTES/i)[1];
         }
 
@@ -2332,8 +2332,8 @@ function navFromList(pageNumber, scope){
             $("#questionTitle").html(text);
 			text = "<b>" + text + "</b>";
 		}
-		//if(iPage - 1 == pageNumber && text == "CONCLUSION")
-		 //   scope.conclusion = true;
+		if(iPage - 1 == pageNumber && text == "CONCLUSION")
+		    scope.conclusion = true;
 		return text;
 	};
     for(k in masterList){
