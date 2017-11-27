@@ -118,13 +118,13 @@ describe('Skip Logic 1', function () {
 		expect(IwPage.questionTitle.getText()).toBe("Show if Less than or equal to 5");
 
 	});
-	
+
 	it("should allow question to be shown if previous question condition is met: one, two or multiple selection response is selected in previous question.", function () {
 		IwPage.goToQuestion('Simple Skip Source 2');
 		let selector = IwPage.getOptionSelector(2);
 		// Simple Skip Source 2
 		IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
-		
+
 		// select Option 2 by clicking on label
         IwPage.optionLabel('opt2').click();
 		IwPage.next();
@@ -132,13 +132,13 @@ describe('Skip Logic 1', function () {
 		expect(IwPage.questionTitle.getText()).toBe("At least one option selected");
 		IwPage.back();
 		IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
-		
+
 		//show if 2 options selected
 		IwPage.optionLabel('opt4').click();
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("At least one option selected");
 		IwPage.back();
-		
+
 		//show if multiple options selected
 		IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
 		IwPage.unselectAllOptions(IwPage.fieldValues['Simple Skip Source 2'].options);
@@ -148,19 +148,19 @@ describe('Skip Logic 1', function () {
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("At least one option selected");
 	});
-	
+
 	it("should allow question to be shown if previous question condition is met: several multiple selection responses are selected in previous question.", function () {
 		IwPage.goToQuestion('Simple Skip Source 2');
 		let selector = IwPage.getOptionSelector(2);
 		// Simple Skip Source 2
 		IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
-		
+
 		// no options selected
 		IwPage.dkLabel.click();
 		IwPage.next();
 
 		expect(IwPage.questionTitle.getText()).toBe("base number");
-		
+
 		IwPage.back();
 		IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
 		IwPage.unselectAllOptions(IwPage.fieldValues['Simple Skip Source 2'].options);
@@ -168,11 +168,12 @@ describe('Skip Logic 1', function () {
 		IwPage.optionLabel('opt2').click();
 		IwPage.optionLabel('opt3').click();
 		IwPage.next();
+        browser.pause(5000);
 		expect(IwPage.questionTitle.getText()).toBe("At least one option selected");
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("Several multiple selection responses are selected");
 	});
-	
+
 	it("should show question if one numeric question is greater than the other", function () {
 		IwPage.goForwardToQuestion('base number');
 		let field = IwPage.fieldValues['base number']['field'];
@@ -182,39 +183,39 @@ describe('Skip Logic 1', function () {
 		IwPage.inputField().setValue(75);
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("compare number");
-		
+
 		// set compare number
 		IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
 		IwPage.inputField().setValue(25);
 		IwPage.next();
-		
+
 		//base > compare
 		expect(IwPage.questionTitle.getText()).toBe("base higher than compare");
-		
+
 		//change compare to be higher than base
 		IwPage.back();
 		IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
 		expect(IwPage.questionTitle.getText()).toBe("compare number");
 		IwPage.inputField().setValue(85);
-		
+
 		IwPage.next();
-		
+
 		//base < compare
 		expect(IwPage.questionTitle.getText()).toBe("base is lower than compare");
-		
+
 		//change compare to be equal to base
 		IwPage.back();
 		IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
 		expect(IwPage.questionTitle.getText()).toBe("compare number");
 		IwPage.inputField().setValue(75);
-		
+
 		IwPage.next();
-		
+
 		//base = compare
 		expect(IwPage.questionTitle.getText()).toBe("base is equal to compare");
-		
-	});	
-	
+
+	});
+
 	it("should allow question to be shown if previous question condition is met: one numeric question is GE/LE a number", function () {
 		IwPage.goForwardToQuestion('reference number');
 		let field = IwPage.fieldValues['base number']['field'];
@@ -225,11 +226,11 @@ describe('Skip Logic 1', function () {
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("base is Less or Equal");
 		IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
-		
+
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("base is More or Equal");
 		IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
-		
+
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("landing");
 		IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
@@ -240,8 +241,8 @@ describe('Skip Logic 1', function () {
 		IwPage.back();
 		IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
 		IwPage.inputField().setValue(49);
-		
-		
+
+
 		// check lower
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("base is Less or Equal");
@@ -260,9 +261,9 @@ describe('Skip Logic 1', function () {
 		IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("landing");
-	
-	});	
-		
+
+	});
+
 	it("should show question if one numeric question is greater than the the sum of more than one other question", function () {
 		IwPage.goToQuestion('Simple Skip Source 1');
 		let field = IwPage.fieldValues['Simple Skip Source 1']['field'];
@@ -271,32 +272,32 @@ describe('Skip Logic 1', function () {
 		IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
 		IwPage.inputField().setValue(5);
 		IwPage.next();
-		
+
 		//set base number 2
 		IwPage.goForwardToQuestion('base number');
 		IwPage.inputField().setValue(50);
 		IwPage.next();
-		
+
 		IwPage.goForwardToQuestion('compare number');
 		IwPage.inputField().setValue(50);
 		IwPage.next();
-		
+
 		//50 < 5+50 : negative test
 		IwPage.goForwardToQuestion('landing 4');
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("landing 5");
-		
-		
+
+
 		IwPage.goBackToQuestion('compare number');
 		IwPage.inputField().setValue(60);
 		IwPage.next();
-		
+
 		//60 > 5+45 : positive test
 		IwPage.goForwardToQuestion('landing 4');
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("compare 2");
-	
-	});	
-	
-	
+
+	});
+
+
 });

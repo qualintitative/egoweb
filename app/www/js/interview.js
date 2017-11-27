@@ -392,7 +392,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 
     $scope.goBack = function() {
         var url = $location.absUrl().replace($location.url(),'');
-        document.location = url + "page/" + (parseInt($routeParams.page) - 1);
+        url = url + "page/" + (parseInt($routeParams.page) - 1);
+        if(typeof hashKey != "undefined")
+            url = url + "/" + hashKey;
+        document.location = url;
     }
 
     $scope.submitForm = function(isValid) {

@@ -31,7 +31,7 @@ if($study->multiSessionEgoId){
 } else {
 	$criteria=array(
 		'condition'=>"studyId = " . $studyId,
-		'order'=>'Fordering',
+		'order'=>'ordering',
 	);
 }
 $questions = Question::model()->findAll($criteria);

@@ -73,7 +73,10 @@ function save(questions, page, url, scope){
                         studyId = answers[k].STUDYID;
                         break;
                     }
-                    document.location = document.location.protocol + "//" + document.location.host + "/interview/" + studyId + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
+                    var nextUrl = document.location.protocol + "//" + document.location.host + "/interview/" + studyId + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
+                    if(typeof hashKey != "undefined")
+                        nextUrl = nextUrl + "/" + hashKey;
+                    document.location = nextUrl;
                 }else{
                     scope.errors[0] = "Participant not found";
                     scope.$apply();
@@ -85,7 +88,10 @@ function save(questions, page, url, scope){
                 studyId = answers[k].STUDYID;
                 break;
             }
-            document.location = document.location.protocol + "//" + document.location.host + "/interview/" + studyId + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
+            var nextUrl = document.location.protocol + "//" + document.location.host + "/interview/" + studyId + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
+            if(typeof hashKey != "undefined")
+                nextUrl = nextUrl + "/" + hashKey;
+            document.location = nextUrl;
         }
     }else if(questions[0].ANSWERTYPE == "CONCLUSION"){
         $.post(saveUrl, $('#answerForm').serialize(), function (data) {
@@ -99,7 +105,10 @@ function save(questions, page, url, scope){
     }else{
         if(questions[0].ANSWERTYPE == "NAME_GENERATOR")
             buildList();
-        document.location = url + "/page/" + (parseInt(page) + 1);
+        var nextUrl = url + "/page/" + (parseInt(page) + 1);
+        if(typeof hashKey != "undefined")
+            nextUrl = nextUrl + "/" + hashKey;
+        document.location = nextUrl;
     }
 }
 

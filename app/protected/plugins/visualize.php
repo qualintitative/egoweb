@@ -122,9 +122,11 @@ class visualize extends Plugin
                     "condition"=>"questionId = ".$this->params['nodeColor']['questionId']. " AND alterId1 = " .$nodeId,
                 );
 				$answer = Answer::model()->find($criteria);
-				$answer = explode(',', $answer->value);
+				$answerV = explode(',', $answer->value);
 				foreach($this->params['nodeColor']['options'] as $option){
-					if($option->id == $answer || in_array($option->id, $answer))
+                    if($option['id'] == 0 && $answer->skipReason != "NONE")
+                        return $option['color'];
+					if($option->id == $answerV || in_array($option->id, $answerV))
 						return $option['color'];
 				}
 			}
@@ -139,9 +141,11 @@ class visualize extends Plugin
                 "condition"=>"questionId = ".$this->params['nodeShape']['questionId']. " AND alterId1 = " .$nodeId,
             );
             $answer = Answer::model()->find($criteria);
-            $answer = explode(',', $answer->value);
+            $answerV = explode(',', $answer->value);
 			foreach($this->params['nodeShape']['options'] as $option){
-				if($option->id == $answer || in_array($option->id, $answer))
+                if($option['id'] == 0 && $answer->skipReason != "NONE")
+                    return $option['shape'];
+				if($option->id == $answerV || in_array($option->id, $answerV))
 					return $option['shape'];
 			}
 		}
@@ -178,9 +182,11 @@ class visualize extends Plugin
                     "condition"=>"questionId = ".$this->params['nodeSize']['questionId']. " AND alterId1 = " .$nodeId,
                 );
                 $answer = Answer::model()->find($criteria);
-                $answer = explode(',', $answer->value);
+                $answerV = explode(',', $answer->value);
 				foreach($this->params['nodeSize']['options'] as $option){
-					if($option->id == $answer || in_array($option->id, $answer))
+                    if($option['id'] == 0 && $answer->skipReason != "NONE")
+                        return intval($option['size']);
+					if($option->id == $answerV || in_array($option->id, $answerV))
 						$default = intval($option['size']);
 				}
 			}
@@ -196,9 +202,11 @@ class visualize extends Plugin
                 "condition"=>"questionId = ".$this->params['edgeColor']['questionId']. " AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2,
             );
             $answer = Answer::model()->find($criteria);
-            $answer = explode(',', $answer->value);
+            $answerV = explode(',', $answer->value);
 			foreach($this->params['edgeColor']['options'] as $option){
-				if($option->id == $answer || in_array($option->id, $answer))
+                if($option['id'] == 0 && $answer->skipReason != "NONE")
+                    return $option['color'];
+				if($option->id == $answerV || in_array($option->id, $answerV))
 					return $option['color'];
 			}
 		}
@@ -212,9 +220,11 @@ class visualize extends Plugin
                 "condition"=>"questionId = ".$this->params['edgeSize']['questionId']. " AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2,
             );
             $answer = Answer::model()->find($criteria);
-            $answer = explode(',', $answer->value);
+            $answerV = explode(',', $answer->value);
 			foreach($this->params['edgeSize']['options'] as $option){
-				if($option->id == $answer || in_array($option->id, $answer))
+                if($option['id'] == 0 && $answer->skipReason != "NONE")
+                    return floatval($option['size']);
+				if($option->id == $answerV || in_array($option->id, $answerV))
 					$default = floatval($option['size']);
 			}
 		}
@@ -241,7 +251,7 @@ class visualize extends Plugin
 		if(isset($params['nodeColor'])){
 			$nodeColorId = $params['nodeColor']['questionId'];
 			foreach($params['nodeColor']['options'] as $option){
-				$nodeColors[$option->id] = $option['color'];
+				$nodeColors[$option['id']] = $option['color'];
 			}
 		}
 		echo "<div class='form-group'>";
@@ -319,6 +329,12 @@ class visualize extends Plugin
 						$this->nodeColors
 					). "</div>";
 			}
+            echo "<div><label style='width:200px;float:left;font-size: .7em;'>Missing value</label>";
+            echo CHtml::dropDownList(
+                    "0",
+                    (isset($nodeColors[0]) ? $nodeColors[0] : ''),
+                    $this->nodeColors
+                ). "</div>";
 			echo "</div>";
 		}
 
@@ -352,7 +368,7 @@ class visualize extends Plugin
 		if(isset($params['nodeShape'])){
 			$nodeShapeId = $params['nodeShape']['questionId'];
 			foreach($params['nodeShape']['options'] as $option){
-				$nodeShapes[$option->id] = $option['shape'];
+				$nodeShapes[$option['id']] = $option['shape'];
 			}
 		}
         $criteria = array(
@@ -382,6 +398,12 @@ class visualize extends Plugin
 						$this->nodeShapes
 					). "</div>";
 			}
+            echo "<div><label style='width:200px;float:left;font-size: .7em;'>Missing value</label>";
+            echo CHtml::dropDownList(
+                    0,
+                    (isset($nodeShapes[0]) ? $nodeShapes[0] : ''),
+                    $this->nodeShapes
+                ). "</div>";
 			echo "</div>";
 		}
 	}
@@ -394,7 +416,7 @@ class visualize extends Plugin
 		if(isset($params['nodeSize'])){
 			$nodeSizeId = $params['nodeSize']['questionId'];
 			foreach($params['nodeSize']['options'] as $option){
-				$nodeSizes[$option->id] = $option['size'];
+				$nodeSizes[$option['id']] = $option['size'];
 			}
 		}
         $criteria = array(
@@ -431,6 +453,12 @@ class visualize extends Plugin
 						$this->nodeSizes
 					). "</div>";
 			}
+            echo "<div><label style='width:200px;float:left;font-size: .7em;'>Missing value</label>";
+            echo CHtml::dropDownList(
+                    0,
+                    (isset($nodeSizes[0]) ? $nodeSizes[0] : ''),
+                    $this->nodeSizes
+                ). "</div>";
 			echo "</div>";
 		}
 
@@ -446,7 +474,7 @@ class visualize extends Plugin
 		if(isset($params['edgeColor'])){
 			$edgeColorId = $params['edgeColor']['questionId'];
 			foreach($params['edgeColor']['options'] as $option){
-				$edgeColors[$option->id] = $option['color'];
+				$edgeColors[$option['id']] = $option['color'];
 			}
 		}
         $criteria = array(
@@ -477,6 +505,12 @@ class visualize extends Plugin
 						$this->edgeColors
 					). "</div>";
 			}
+            echo "<div><label style='width:200px;float:left;font-size: .7em;'>Missing value</label>";
+            echo CHtml::dropDownList(
+                    0,
+                    (isset($edgeColors[0]) ? $edgeColors[0] : ''),
+                    $this->edgeColors
+                ). "</div>";
 			echo "</div>";
 		}
 	}
@@ -487,7 +521,7 @@ class visualize extends Plugin
 		if(isset($params['edgeSize'])){
 			$edgeSizeId = $params['edgeSize']['questionId'];
 			foreach($params['edgeSize']['options'] as $option){
-				$edgeSizes[$option->id] = $option['size'];
+				$edgeSizes[$option['id']] = $option['size'];
 			}
 		}
         $criteria = array(
@@ -520,6 +554,12 @@ class visualize extends Plugin
 						$this->edgeSizes
 					). "</div>";
 			}
+            echo "<div><label style='width:200px;float:left;font-size: .7em;'>Missing value</label>";
+            echo CHtml::dropDownList(
+                    0,
+                    (isset($edgeSizes[0]) ? $edgeSizes[0] : ''),
+                    $this->edgeSizes
+                ). "</div>";
 			echo "</div>";
 		}
 	}
