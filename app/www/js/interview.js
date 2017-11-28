@@ -173,9 +173,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
 
         if($scope.questions[k].ANSWERTYPE == "NAME_GENERATOR"){
-            console.log(alterPrompts[$scope.questions[k].ID]);
-            console.log(Object.keys($scope.alters).length);
-
             if(typeof alterPrompts[$scope.questions[k].ID] != "undefined" && typeof alterPrompts[$scope.questions[k].ID][Object.keys($scope.alters).length] != "undefined")
                 $scope.alterPrompt = alterPrompts[$scope.questions[k].ID][Object.keys($scope.alters).length];
         }
@@ -649,17 +646,13 @@ app.directive('checkAnswer', [function (){
                 console.log("check:" + value);
 
                 if(attr.answerType == "NAME_GENERATOR"){
-                    console.log(scope.answers[array_id].SKIPREASON);
-                    if((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.alters).length < scope.questions[0].MINLITERAL){
-                        console.log(typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE");
+                    if((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.alters).length < scope.questions[0].MINLITERAL){
                         scope.errors[array_id] = 'Please list at keast ' + scope.questions[0].MINLITERAL + ' people';
                     	valid = false;
         			}else{
                         delete scope.errors[0];
                         delete scope.errors[array_id];
-
                         delete scope.answerForm.$error.checkAnswer;
-                        console.log(scope.answerForm);
                     }
 			    }
 
@@ -852,12 +845,13 @@ app.directive('checkAnswer', [function (){
                 var question = questions[attr.questionId];
 
                 if(attr.answerType == "NAME_GENERATOR"){
-                    if((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.alters).length < scope.questions[0].MINLITERAL){
-                        console.log(typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE");
+                    if((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE"  && scope.answers[array_id].SKIPREASON != "DONT_KNOW" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.alters).length < scope.questions[0].MINLITERAL){
                 		scope.errors[array_id] = 'Please list at least ' + scope.questions[0].MINLITERAL + ' people';
                     	valid = false;
         			}else{
+                        delete scope.errors[0];
                         delete scope.errors[array_id];
+                        delete scope.answerForm.$error.checkAnswer;
                     }
 			    }
 
