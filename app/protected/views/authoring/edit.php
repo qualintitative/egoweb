@@ -176,22 +176,10 @@ function deleteAlterList(studyId){
 	</div>
 
 	<div class="col-sm-6">
-		<?php echo $form->labelEx($model,'alterPrompt'); ?>
-		<div class="audioPlay" id="STUDY_ALTERPROMPT"><?php if(file_exists(Yii::app()->basePath."/../audio/".$model->id . "/STUDY/ALTERPROMPT.mp3")): ?><a class="play-sound" onclick="playSound($(this).attr('file'))" href="#" file="/audio/<?= $model->id . "/STUDY/ALTERPROMPT.mp3"; ?>"><span class="fui-volume"></span></a><?php endif; ?></div>
-		<?php if(!$model->isNewRecord):?>
-		<a class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#myModal" href="/authoring/uploadaudio?type=STUDY&id=ALTERPROMPT&studyId=<?= $model->id; ?>">Upload Audio</a>
-		<?php endif;?>
-		<?php echo $form->textArea($model,'alterPrompt',array('rows'=>6, 'cols'=>50)); ?>
-		<?php echo $form->error($model,'alterPrompt'); ?>
-	</div>
-
-	<div class="col-sm-6">
 		<?php echo $form->labelEx($model,'conclusion'); ?>
 		<?php echo $form->textArea($model,'conclusion',array('rows'=>6, 'cols'=>50)); ?>
 		<?php echo $form->error($model,'conclusion'); ?>
 	</div>
-
-
 
 	<div class="col-sm-6">
 		<?php echo $form->labelEx($model,'header'); ?>
@@ -219,19 +207,6 @@ function deleteAlterList(studyId){
 </div>
 
 <div class="col-sm-6">
-	<div class="form-group">
-		<?php echo $form->labelEx($model,'minAlters', array('class'=>'control-label col-sm-6')); ?>
-		<div class='col-sm-6'>
-		    <?php echo $form->textField($model,'minAlters', array('class'=>'form-control')); ?>
-		</div>
-	</div>
-
-	<div class="form-group">
-		<?php echo $form->labelEx($model,'maxAlters', array('class'=>'control-label col-sm-6')); ?>
-		<div class='col-sm-6'>
-		    <?php echo $form->textField($model,'maxAlters', array('class'=>'form-control')); ?>
-		</div>
-	</div>
 
 	<div class="form-group">
 		<?php echo $form->labelEx($model,'valueRefusal', array('class'=>'control-label col-sm-6')); ?>
@@ -408,53 +383,6 @@ function deleteAlterList(studyId){
             	<input class="btn btn-primary" type="submit" value="Import Participant List" />
             </form>
 	    </div>
-		<div id="alterPrompt" >
-		<?php
-			$criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"studyId = " . $model->id,
-			);
-			$dataProvider=new CActiveDataProvider('AlterPrompt',array(
-				'criteria'=>$criteria,
-			));
-			$this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$model->id, 'ajax'=>true), false, false);
-		?>
-		</div>
-		<div style="float:left; width:100%;margin-top:15px;">
-			<span class="smallheader">Add new alter prompt</span>
-			<?php
-				$alterPrompt = new AlterPrompt;
-				$form=$this->beginWidget('CActiveForm', array(
-					'id'=>'add-alter-prompt-form',
-					'enableAjaxValidation'=>true,
-				));
-			?>
-			<?php echo $form->hiddenField($alterPrompt,'id',array('value'=>$alterPrompt->id)); ?>
-			<?php echo $form->hiddenField($alterPrompt,'studyId',array('value'=>$model->id)); ?>
-			<label style="float:left; padding:5px;">After</label>
-			<?php echo $form->textField($alterPrompt,'afterAltersEntered', array('style'=>'width:20px;float:left')); ?>
-			<label style="float:left; padding:5px;">alters, display </label>
-			<?php echo $form->textField($alterPrompt,'display', array('style'=>'width:100px;float:left')); ?>
-			<?php echo $form->error($alterPrompt,'afterAltersEntered'); ?>
-			<?php echo $form->error($alterPrompt,'display'); ?>
-			<?php echo CHtml::ajaxSubmitButton ("Add",
-				CController::createUrl('ajaxupdate'),
-				array('update' => '#alterPrompt'),
-				array('id'=>uniqid(), 'live'=>false, 'style'=>'float:left; margin:3px 5px;', "class"=>"btn btn-primary btn-xs"));
-			?>
-			<?php $this->endWidget(); ?>
-			<div id="edit-alterPrompt" style="margin-top:15px;float:left;clear:both;"></div>
-		<div style="float:left; width:400px; clear:left">
-            <?php echo CHtml::form('/authoring/importprompts', 'post', array('id'=>'importListForm', 'enctype'=>'multipart/form-data')) ?>
-            	<!-- MAX_FILE_SIZE must precede the file input field -->
-            	<!-- Name of input element determines name in $_FILES array -->
-            	<input type="hidden" name="MAX_FILE_SIZE" value="<?php echo 'MAX = ' + Yii::app()->params['maxUploadFileSize']; ?>" />
-            	<input name="userfile" type="file" />
-            	<input type="hidden" name="studyId" value="<?= $model->id; ?>" />
-            	<input class="btn btn-primary" type="submit" value="Import Variable Prompts" />
-            </form>
-	    </div>
-		</div>
 	</div>
 	<script type="text/javascript">
 		//On import study form submit

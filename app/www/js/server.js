@@ -62,7 +62,7 @@ function save(questions, page, url, scope){
     }
     var saveUrl = document.location.protocol + "//" + document.location.host + "/interview/save";
     if(typeof questions[0] == "undefined"){
-        if(scope.answerForm.$pristine == false){
+        if(scope.answerForm.$pristine == false || scope.conclusion == true){
             $.post(saveUrl, $('#answerForm').serialize(), function(data){
                 if(data != "error"){
                     answers = JSON.parse(data);
