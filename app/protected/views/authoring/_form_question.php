@@ -382,7 +382,7 @@ jQuery('input.time-".$model->id."').change(function() {
 	<?php if($model->subjectType == "NETWORK"): ?>
 
 
-		<div class="row">
+		<div class="col-sm-12">
 			Alters are adjacent when:
 		<?php
 			$questionIds = array();
@@ -429,15 +429,15 @@ jQuery('input.time-".$model->id."').change(function() {
 			$model,
 			'networkRelationshipExprId',
 			$list,
-			array('empty' => 'Choose One')
+			array('empty' => 'Choose One', "class"=>"form-control")
 		); ?>
 		<?php echo $form->error($model,'networkRelationshipExprId'); ?>
 		</div>
 
-	<div id="visualize-bar" class="col-sm-8 pull-left">
+	<div id="visualize-bar" class="pull-left">
 
 	<?php
-	$this->widget('plugins.visualize', array('method'=>'nodecolor', 'id'=>$model->studyId, 'params'=>$model->networkParams));
+	    $this->widget('plugins.visualize', array('method'=>'nodecolor', 'id'=>$model->studyId, 'params'=>$model->networkParams));
 		$this->widget('plugins.visualize', array('method'=>'nodeshape', 'id'=>$model->studyId, 'params'=>$model->networkParams));
 		$this->widget('plugins.visualize', array('method'=>'nodesize', 'id'=>$model->studyId, 'params'=>$model->networkParams));
 		$this->widget('plugins.visualize', array('method'=>'edgecolor', 'id'=>$model->studyId, 'params'=>$model->networkParams));

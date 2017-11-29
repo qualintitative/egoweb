@@ -254,8 +254,16 @@ class visualize extends Plugin
 				$nodeColors[$option['id']] = $option['color'];
 			}
 		}
-		echo "<div class='form-group'>";
-		echo "<label class='control-label'>Node Color</label>";
+		echo "<div class='form-horizontal'>";
+		echo "<label class='control-label col-sm-6'>Node Color</label>";
+        echo "<div class='col-sm-6'>";
+        echo CHtml::dropDownList(
+                "0",
+                (isset($nodeColors[0]) ? $nodeColors[0] : ''),
+                $this->nodeColors,
+                array("class"=>"form-control")
+            );
+        echo "</div>";
 		echo "<select id='nodeColorSelect' class='form-control' onchange='$(\".nodeColorOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle();'>";
 		echo "<option value=''> Select </option>";
 
@@ -329,13 +337,6 @@ class visualize extends Plugin
 						$this->nodeColors
 					). "</div>";
 			}
-            echo "<div><label style='width:200px;float:left;font-size: .7em;'>Missing value</label>";
-            echo CHtml::dropDownList(
-                    "0",
-                    (isset($nodeColors[0]) ? $nodeColors[0] : ''),
-                    $this->nodeColors
-                ). "</div>";
-			echo "</div>";
 		}
 
 		foreach($alter_expressions as $expression){
@@ -360,6 +361,8 @@ class visualize extends Plugin
 			}
 			echo "</div>";
 		}
+        echo "</div>";
+
 	}
 
 	public function actionNodeshape(){
@@ -375,9 +378,17 @@ class visualize extends Plugin
             "condition"=>"subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id,
         );
         $alter_qs = Question::model()->findAll($criteria);
-		echo "<div class='form-group'>";
-		echo "<label class='control-label'>Node Shape</label>";
-		echo "<select id='nodeShapeSelect' class='form-control' onchange='$(\".nodeShapeOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
+        echo "<div class='form-horizontal'>";
+		echo "<label class='control-label col-sm-6'>Node Shape</label>";
+        echo "<div class='col-sm-6'>";
+        echo CHtml::dropDownList(
+                0,
+                (isset($nodeShapes[0]) ? $nodeShapes[0] : ''),
+                $this->nodeShapes,
+                array("class"=>"form-control")
+            ). "</div>";
+
+        echo "<select id='nodeShapeSelect' class='form-control' onchange='$(\".nodeShapeOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
 		echo "<option value=''> Select </option>";
 
 		foreach($alter_qs as $question){
@@ -398,12 +409,6 @@ class visualize extends Plugin
 						$this->nodeShapes
 					). "</div>";
 			}
-            echo "<div><label style='width:200px;float:left;font-size: .7em;'>Missing value</label>";
-            echo CHtml::dropDownList(
-                    0,
-                    (isset($nodeShapes[0]) ? $nodeShapes[0] : ''),
-                    $this->nodeShapes
-                ). "</div>";
 			echo "</div>";
 		}
 	}
@@ -423,8 +428,16 @@ class visualize extends Plugin
             "condition"=>"subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id,
         );
         $alter_qs = Question::model()->findAll($criteria);
-	    echo "<div class='form-group'>";
-		echo "<label class='control-label'>Node Size</label>";
+	    echo "<div class='form-horizontal'>";
+		echo "<label class='control-label col-sm-6'>Node Size</label>";
+        echo "<div class='col-sm-6'>";
+        echo CHtml::dropDownList(
+                0,
+                (isset($nodeSizes[0]) ? $nodeSizes[0] : ''),
+                $this->nodeSizes,
+                array("class"=>"form-control")
+            ). "</div>";
+
 		echo "<select id='nodeSizeSelect' class='form-control' onchange='$(\".nodeSizeOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
 		echo "<option value=''> Select </option>";
 
@@ -453,12 +466,6 @@ class visualize extends Plugin
 						$this->nodeSizes
 					). "</div>";
 			}
-            echo "<div><label style='width:200px;float:left;font-size: .7em;'>Missing value</label>";
-            echo CHtml::dropDownList(
-                    0,
-                    (isset($nodeSizes[0]) ? $nodeSizes[0] : ''),
-                    $this->nodeSizes
-                ). "</div>";
 			echo "</div>";
 		}
 
@@ -481,10 +488,17 @@ class visualize extends Plugin
             "condition"=>"subjectType = 'ALTER_PAIR' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id,
         );
         $alter_pair_qs = Question::model()->findAll($criteria);
-		echo "<div class='form-group'>";
-		echo "<label class='control-label'>Edge Color</label>";
-		echo "<select id='edgeColorSelect' class='form-control' onchange='$(\".edgeColorOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
+		echo "<div class='form-horizontal'>";
+		echo "<label class='control-label col-sm-6'>Edge Color</label>";
+        echo "<div class='col-sm-6'>";
+        echo CHtml::dropDownList(
+                0,
+                (isset($edgeColors[0]) ? $edgeColors[0] : ''),
+                $this->edgeColors,
+                array("class"=>"form-control")
+            ). "</div>";
 
+		echo "<select id='edgeColorSelect' class='form-control' onchange='$(\".edgeColorOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
 		echo "<option value=''> Select </option>";
 
 		foreach($alter_pair_qs as $question){
@@ -505,12 +519,6 @@ class visualize extends Plugin
 						$this->edgeColors
 					). "</div>";
 			}
-            echo "<div><label style='width:200px;float:left;font-size: .7em;'>Missing value</label>";
-            echo CHtml::dropDownList(
-                    0,
-                    (isset($edgeColors[0]) ? $edgeColors[0] : ''),
-                    $this->edgeColors
-                ). "</div>";
 			echo "</div>";
 		}
 	}
@@ -528,9 +536,15 @@ class visualize extends Plugin
             "condition"=>"subjectType = 'ALTER_PAIR' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id,
         );
         $alter_pair_qs = Question::model()->findAll($criteria);
-        echo "<div class='form-group'>";
-		echo "<label class='control-label'>Edge Size</label>";
-
+        echo "<div class='form-horizontal'>";
+		echo "<label class='control-label col-sm-6'>Edge Size</label>";
+        echo "<div class='col-sm-6'>";
+        echo CHtml::dropDownList(
+                0,
+                (isset($edgeSizes[0]) ? $edgeSizes[0] : ''),
+                $this->edgeSizes,
+                array("class"=>"form-control")
+            ). "</div>";
 		echo "<select id='edgeSizeSelect' class='form-control' onchange='$(\".edgeSizeOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
 		echo "<option value=''> Select </option>";
 
@@ -554,12 +568,6 @@ class visualize extends Plugin
 						$this->edgeSizes
 					). "</div>";
 			}
-            echo "<div><label style='width:200px;float:left;font-size: .7em;'>Missing value</label>";
-            echo CHtml::dropDownList(
-                    0,
-                    (isset($edgeSizes[0]) ? $edgeSizes[0] : ''),
-                    $this->edgeSizes
-                ). "</div>";
 			echo "</div>";
 		}
 	}

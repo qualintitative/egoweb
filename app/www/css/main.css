@@ -727,6 +727,11 @@ a.btn {
 #visualize-bar label, #expression-bar label, #load-bar label,#inner-details label {
 	margin-bottom: 0;
 	padding-top:0;
+    text-align: left;
+}
+
+#visualize-bar .form-horizontal {
+    padding:15px 10px;
 }
 
 .nodeColorOptions, .nodeShapeOptions, .edgeColorOptions, .nodeSizeOptions, .edgeSizeOptions {
