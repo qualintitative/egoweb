@@ -58,7 +58,7 @@
     <div ng-if='alterPrompt != ""'>{{ alterPrompt }}</div>
     <a ng-if='audio["ALTERPROMPT"]' class="play-sound" ng-click='playSound("ALTERPROMPT")' href="javascript:void(0)"><span class="fui-volume"></span></a>
     <div ng-if='keys(prevAlters).length > 0' class="col-sm-3 prev-alters">
-        <b>Previous Alters</b><br>
+        <b>Previous Names</b><br>
         <div ng-repeat="pAlter in prevAlters">
             <label>{{ pAlter.NAME }}</label><br>
         </div>
