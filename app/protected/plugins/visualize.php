@@ -143,7 +143,7 @@ class visualize extends Plugin
             $answer = Answer::model()->find($criteria);
             $answerV = explode(',', $answer->value);
 			foreach($this->params['nodeShape']['options'] as $option){
-                if($option['id'] == 0 && $answer->skipReason != "NONE")
+                if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
                     return $option['shape'];
 				if($option->id == $answerV || in_array($option->id, $answerV))
 					return $option['shape'];
@@ -261,7 +261,7 @@ class visualize extends Plugin
                 "0",
                 (isset($nodeColors[0]) ? $nodeColors[0] : ''),
                 $this->nodeColors,
-                array("class"=>"form-control")
+                array("class"=>"form-control", "id"=>"defaultNodeColor")
             );
         echo "</div>";
 		echo "<select id='nodeColorSelect' class='form-control' onchange='$(\".nodeColorOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle();'>";
@@ -385,7 +385,7 @@ class visualize extends Plugin
                 0,
                 (isset($nodeShapes[0]) ? $nodeShapes[0] : ''),
                 $this->nodeShapes,
-                array("class"=>"form-control")
+                array("class"=>"form-control", "id"=>"defaultNodeShape")
             ). "</div>";
 
         echo "<select id='nodeShapeSelect' class='form-control' onchange='$(\".nodeShapeOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
@@ -435,7 +435,7 @@ class visualize extends Plugin
                 0,
                 (isset($nodeSizes[0]) ? $nodeSizes[0] : ''),
                 $this->nodeSizes,
-                array("class"=>"form-control")
+                array("class"=>"form-control", "id"=>"defaultNodeSize")
             ). "</div>";
 
 		echo "<select id='nodeSizeSelect' class='form-control' onchange='$(\".nodeSizeOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
@@ -495,7 +495,7 @@ class visualize extends Plugin
                 0,
                 (isset($edgeColors[0]) ? $edgeColors[0] : ''),
                 $this->edgeColors,
-                array("class"=>"form-control")
+                array("class"=>"form-control", "id"=>"defaultEdgeColor")
             ). "</div>";
 
 		echo "<select id='edgeColorSelect' class='form-control' onchange='$(\".edgeColorOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
@@ -543,7 +543,7 @@ class visualize extends Plugin
                 0,
                 (isset($edgeSizes[0]) ? $edgeSizes[0] : ''),
                 $this->edgeSizes,
-                array("class"=>"form-control")
+                array("class"=>"form-control", "id"=>"defaultEdgeSize")
             ). "</div>";
 		echo "<select id='edgeSizeSelect' class='form-control' onchange='$(\".edgeSizeOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
 		echo "<option value=''> Select </option>";

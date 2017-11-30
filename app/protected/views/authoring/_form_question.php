@@ -460,6 +460,15 @@ function refresh(container){
 		});
 		params['nodeColor'] = nodeColor;
 	}
+    if($("#defaultNodeColor option:selected", container).val()){
+        var nodeColor = new Object;
+        if(typeof params['nodeColor'] != "undefined")
+            nodeColor = params['nodeColor'];
+        else
+            nodeColor['options'] = [];
+        nodeColor["options"].push({"id":0, "color" :$("#defaultNodeColor option:selected", container).val()});
+        params['nodeColor'] = nodeColor;
+    }
 	if($('#nodeShapeSelect option:selected', container).val()){
 		var nodeShape = new Object;
 		var question = $('#nodeShapeSelect option:selected', container).val();
@@ -470,6 +479,15 @@ function refresh(container){
 		});
 		params['nodeShape'] = nodeShape;
 	}
+    if($("#defaultNodeShape option:selected", container).val()){
+        var nodeShape = new Object;
+        if(typeof params['nodeShape'] != "undefined")
+            nodeShape = params['nodeShape'];
+        else
+            nodeShape['options'] = [];
+        nodeShape["options"].push({"id":0, "shape" :$("#defaultNodeShape option:selected", container).val()});
+        params['nodeShape'] = nodeShape;
+    }
 	if($('#nodeSizeSelect option:selected', container).val()){
 		var nodeSize = new Object;
 		var question = $('#nodeSizeSelect option:selected', container).val();
@@ -480,6 +498,15 @@ function refresh(container){
 		});
 		params['nodeSize'] = nodeSize;
 	}
+    if($("#defaultNodeSize option:selected", container).val()){
+        var nodeSize = new Object;
+        if(typeof params['nodeSize'] != "undefined")
+            nodeSize = params['nodeSize'];
+        else
+            nodeSize['options'] = [];
+        nodeSize["options"].push({"id":0, "size" :$("#defaultNodeSize option:selected", container).val()});
+        params['nodeSize'] = nodeSize;
+    }
 	if($('#edgeColorSelect option:selected', container).val()){
 		var edgeColor = new Object;
 		var question = $('#edgeColorSelect option:selected', container).val();
@@ -490,6 +517,15 @@ function refresh(container){
 		});
 		params['edgeColor'] = edgeColor;
 	}
+    if($("#defaultEdgeColor option:selected", container).val()){
+        var edgeColor = new Object;
+        if(typeof params['edgeColor'] != "undefined")
+            edgeColor = params['edgeColor'];
+        else
+            edgeColor['options'] = [];
+        edgeColor["options"].push({"id":0, "color" :$("#defaultEdgeColor option:selected", container).val()});
+        params['edgeColor'] = edgeColor;
+    }
 	if($('#edgeSizeSelect option:selected', container).val()){
 		var edgeSize = new Object;
 		var question = $('#edgeSizeSelect option:selected', container).val();
@@ -500,6 +536,15 @@ function refresh(container){
 		});
 		params['edgeSize'] = edgeSize;
 	}
+    if($("#defaultEdgeSize option:selected", container).val()){
+        var edgeSize = new Object;
+        if(typeof params['edgeSize'] != "undefined")
+            edgeSize = params['edgeSize'];
+        else
+            edgeSize['options'] = [];
+        edgeSize["options"].push({"id":0, "size" :$("#defaultEdgeSize option:selected", container).val()});
+        params['edgeSize'] = edgeSize;
+    }
 	console.log(JSON.stringify(params));
 
 	$("#Graph_params").val(JSON.stringify(params));
