@@ -65,13 +65,19 @@ function save(questions, page, url, scope){
         if(scope.answerForm.$pristine == false || scope.conclusion == true){
             $.post(saveUrl, $('#answerForm').serialize(), function(data){
                 if(data != "error"){
-                    answers = JSON.parse(data);
+                    data = JSON.parse(data);
+                    answers = data.answers;
+                    interview = data.interview;
                     console.log(answers);
+                    console.log(interview);
                     evalQuestions();
                     for(k in answers){
                         interviewId = answers[k].INTERVIEWID;
                         studyId = answers[k].STUDYID;
                         break;
+                    }
+                    if(typeof hashKey != "undefined"){
+                        page = parseInt(interview.COMPLETED);
                     }
                     var nextUrl = document.location.protocol + "//" + document.location.host + "/interview/" + studyId + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
                     if(typeof hashKey != "undefined")

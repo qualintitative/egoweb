@@ -90,10 +90,12 @@ class Interview extends CActiveRecord
 
     public static function getInterviewFromEmail($studyId, $email)
     {
-        $criteria = array(
-            "condition"=>"value='$email' AND questionType = 'EGO_ID' AND studyId = $studyId",
-        );
-        $interview = Interview::model()->find($criteria);
+        $answers = Answer::model()->findAllByAttributes(array('questionType' => "EGO_ID", "studyId"=>$studyId));
+        $interview = false;
+        foreach($answers as $answer){
+            if($answer->value == $email)
+                $interview = Interview::model()->findByPK($answer->interviewId);
+        }
         return $interview;
     }
 
