@@ -337,6 +337,7 @@ class visualize extends Plugin
 						$this->nodeColors
 					). "</div>";
 			}
+            echo "</div>";
 		}
 
 		foreach($alter_expressions as $expression){
