@@ -352,7 +352,6 @@ class visualize extends Plugin
 					). "</div>";
 			}
 			echo "</div>";
-
 		}
 
 		foreach($centralities as $centrality){
@@ -362,8 +361,6 @@ class visualize extends Plugin
 			}
 			echo "</div>";
 		}
-        echo "</div>";
-
 	}
 
 	public function actionNodeshape(){
