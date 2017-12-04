@@ -80,6 +80,8 @@ class visualize extends Plugin
 
 	private function getNodeColor($nodeId){
 		$default = "#07f";
+        if(isset($this->params['nodeColor']['options'][0]))
+            $default = $this->params['nodeColor']['options'][0]['color'];
 		if(isset($this->params['nodeColor'])){
 			if(in_array($this->params['nodeColor']['questionId'], array("degree", "betweenness", "eigenvector"))){
 				if($this->params['nodeColor']['questionId'] == "degree"){
@@ -119,13 +121,13 @@ class visualize extends Plugin
 
 			}else if($this->params['nodeColor']['questionId']){
                 $criteria = array(
-                    "condition"=>"questionId = ".$this->params['nodeColor']['questionId']. " AND alterId1 = " .$nodeId,
+                    "condition"=>"questionId = '".$this->params['nodeColor']['questionId']. "' AND alterId1 = " .$nodeId,
                 );
 				$answer = Answer::model()->find($criteria);
 				$answerV = explode(',', $answer->value);
 				foreach($this->params['nodeColor']['options'] as $option){
-                    if($option['id'] == 0 && $answer->skipReason != "NONE")
-                        return $option['color'];
+                    if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
+                        return $option['color'];    
 					if($option->id == $answerV || in_array($option->id, $answerV))
 						return $option['color'];
 				}
@@ -138,7 +140,7 @@ class visualize extends Plugin
 		$default = "circle";
 		if(isset($this->params['nodeShape'])){
             $criteria = array(
-                "condition"=>"questionId = ".$this->params['nodeShape']['questionId']. " AND alterId1 = " .$nodeId,
+                "condition"=>"questionId = '".$this->params['nodeShape']['questionId']. "' AND alterId1 = " .$nodeId,
             );
             $answer = Answer::model()->find($criteria);
             $answerV = explode(',', $answer->value);
@@ -179,7 +181,7 @@ class visualize extends Plugin
 				$default = current(array_keys($this->nodeSizes, $value));
 			}else{
                 $criteria = array(
-                    "condition"=>"questionId = ".$this->params['nodeSize']['questionId']. " AND alterId1 = " .$nodeId,
+                    "condition"=>"questionId = '".$this->params['nodeSize']['questionId']. "' AND alterId1 = " .$nodeId,
                 );
                 $answer = Answer::model()->find($criteria);
                 $answerV = explode(',', $answer->value);
@@ -199,7 +201,7 @@ class visualize extends Plugin
 		$default = "#ccc";
 		if(isset($this->params['edgeColor'])){
             $criteria = array(
-                "condition"=>"questionId = ".$this->params['edgeColor']['questionId']. " AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2,
+                "condition"=>"questionId = '".$this->params['edgeColor']['questionId']. "' AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2,
             );
             $answer = Answer::model()->find($criteria);
             $answerV = explode(',', $answer->value);
@@ -217,7 +219,7 @@ class visualize extends Plugin
 		$default = 1;
 		if(isset($this->params['edgeSize'])){
             $criteria = array(
-                "condition"=>"questionId = ".$this->params['edgeSize']['questionId']. " AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2,
+                "condition"=>"questionId = '".$this->params['edgeSize']['questionId']. "' AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2,
             );
             $answer = Answer::model()->find($criteria);
             $answerV = explode(',', $answer->value);
@@ -800,6 +802,111 @@ class visualize extends Plugin
 				});
 			}
 
+            function resetParams(container){
+            	var params = new Object;
+            	if(typeof container == "undefined")
+            		container = $('body');
+            	if($('#nodeColorSelect option:selected', container).val()){
+            		var nodeColor = new Object;
+            		var question = $('#nodeColorSelect option:selected', container).val();
+            		nodeColor['questionId'] = question.replace('_nodeColor','');
+            		nodeColor['options'] = [];
+            		$("#" + question + " select", container).each(function(index){
+            			nodeColor['options'].push({"id":$(this).attr('id'),"color":$("option:selected", this).val()});
+            		});
+            		params['nodeColor'] = nodeColor;
+            	}
+                if($("#defaultNodeColor option:selected", container).val()){
+                    var nodeColor = new Object;
+                    if(typeof params['nodeColor'] != "undefined")
+                        nodeColor = params['nodeColor'];
+                    else
+                        nodeColor['options'] = [];
+                    nodeColor["options"].push({"id":0, "color" :$("#defaultNodeColor option:selected", container).val()});
+                    params['nodeColor'] = nodeColor;
+                }
+            	if($('#nodeShapeSelect option:selected', container).val()){
+            		var nodeShape = new Object;
+            		var question = $('#nodeShapeSelect option:selected', container).val();
+            		nodeShape['questionId'] = question.replace('_nodeShape','');
+            		nodeShape['options'] = [];
+            		$("#" + question + " select", container).each(function(index){
+            			nodeShape['options'].push({"id":$(this).attr('id'),"shape":$("option:selected", this).val()});
+            		});
+            		params['nodeShape'] = nodeShape;
+            	}
+                if($("#defaultNodeShape option:selected", container).val()){
+                    var nodeShape = new Object;
+                    if(typeof params['nodeShape'] != "undefined")
+                        nodeShape = params['nodeShape'];
+                    else
+                        nodeShape['options'] = [];
+                    nodeShape["options"].push({"id":0, "shape" :$("#defaultNodeShape option:selected", container).val()});
+                    params['nodeShape'] = nodeShape;
+                }
+            	if($('#nodeSizeSelect option:selected', container).val()){
+            		var nodeSize = new Object;
+            		var question = $('#nodeSizeSelect option:selected', container).val();
+            		nodeSize['questionId'] = question.replace('_nodeSize','');
+            		nodeSize['options'] = [];
+            		$( "#" + question + " select", container).each(function(index){
+            			nodeSize['options'].push({"id":$(this).attr('id'),"size":$("option:selected", this).val()});
+            		});
+            		params['nodeSize'] = nodeSize;
+            	}
+                if($("#defaultNodeSize option:selected", container).val()){
+                    var nodeSize = new Object;
+                    if(typeof params['nodeSize'] != "undefined")
+                        nodeSize = params['nodeSize'];
+                    else
+                        nodeSize['options'] = [];
+                    nodeSize["options"].push({"id":0, "size" :$("#defaultNodeSize option:selected", container).val()});
+                    params['nodeSize'] = nodeSize;
+                }
+            	if($('#edgeColorSelect option:selected', container).val()){
+            		var edgeColor = new Object;
+            		var question = $('#edgeColorSelect option:selected', container).val();
+            		edgeColor['questionId'] = question.replace('_edgeColor','');
+            		edgeColor['options'] = [];
+            		$("#" + question + " select", container).each(function(index){
+            			edgeColor['options'].push({"id":$(this).attr('id'),"color":$("option:selected", this).val()});
+            		});
+            		params['edgeColor'] = edgeColor;
+            	}
+                if($("#defaultEdgeColor option:selected", container).val()){
+                    var edgeColor = new Object;
+                    if(typeof params['edgeColor'] != "undefined")
+                        edgeColor = params['edgeColor'];
+                    else
+                        edgeColor['options'] = [];
+                    edgeColor["options"].push({"id":0, "color" :$("#defaultEdgeColor option:selected", container).val()});
+                    params['edgeColor'] = edgeColor;
+                }
+            	if($('#edgeSizeSelect option:selected', container).val()){
+            		var edgeSize = new Object;
+            		var question = $('#edgeSizeSelect option:selected', container).val();
+            		edgeSize['questionId'] = question.replace('_edgeSize','');
+            		edgeSize['options'] = [];
+            		$("#" + question + " select", container).each(function(index){
+            			edgeSize['options'].push({"id":$(this).attr('id'),"size":$("option:selected", this).val()});
+            		});
+            		params['edgeSize'] = edgeSize;
+            	}
+                if($("#defaultEdgeSize option:selected", container).val()){
+                    var edgeSize = new Object;
+                    if(typeof params['edgeSize'] != "undefined")
+                        edgeSize = params['edgeSize'];
+                    else
+                        edgeSize['options'] = [];
+                    edgeSize["options"].push({"id":0, "size" :$("#defaultEdgeSize option:selected", container).val()});
+                    params['edgeSize'] = edgeSize;
+                }
+            	console.log(JSON.stringify(params));
+
+            	$("#Graph_params").val(JSON.stringify(params));
+            	return params;
+            }
+            /*
 			function resetParams(container){
 				var params = new Object;
 				if(typeof container == "undefined")
@@ -859,7 +966,7 @@ class visualize extends Plugin
 				$("#Graph_params").val(JSON.stringify(params));
 				return params;
 			}
-
+*/
 			function refresh(params){
 				url = "/data/visualize?expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent(JSON.stringify(params));
 				document.location = url;

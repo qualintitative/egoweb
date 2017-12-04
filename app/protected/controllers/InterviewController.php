@@ -361,45 +361,48 @@ class InterviewController extends Controller
 						$answers[$array_id] = new Answer;
 						$answers[$array_id]->attributes = $ego_id;
 						$ego_id_q = Question::model()->findByPk($ego_id['questionId']);
-						if(in_array($ego_id_q->useAlterListField, array("name", "email", "id"))){
+						if(in_array($ego_id_q->useAlterListField, array("name", "email"))){
 							$keystr = $ego_id['value'];
-							//$email_id = $array_id;
 						}
 					}
 					if(!$key || ($key && User::hashPassword($keystr) != $key)){
-						//$model[$email_id]->addError('value', 'You do not have the correct email for this survey.');
+
 						$errors++;
 						break;
 					}
 				}
+
 				if($errors == 0){
 
 					if(Yii::app()->user->isGuest && isset($keystr)){
 						$interview = Interview::getInterviewFromEmail($Answer['studyId'], $keystr);
-						$interviewId = $interview->id;
+                        if(!$interview){
+                            $interview = new Interview;
+                            $interview->studyId = $Answer['studyId'];
+                        }
 					}else{
     					$interview = new Interview;
     					$interview->studyId = $Answer['studyId'];
-    					if($interview->save()){
-        					$randoms = Question::model()->findAllByAttributes(array("answerType"=>"RANDOM_NUMBER", "studyId"=>$Answer['studyId']));
-        					foreach($randoms as $q){
-            				    $a = $q->id;
-                                $answers[$a] = new Answer;
-                                $answers[$a]->interviewId = $interview->id;
-                                $answers[$a]->studyId = $Answer['studyId'];
-                                $answers[$a]->questionType = "EGO_ID";
-                                $answers[$a]->answerType = "RANDOM_NUMBER";
-                                $answers[$a]->questionId = $q->id;
-                                $answers[$a]->skipReason = "NONE";
-                                $answers[$a]->value = mt_rand ($q->minLiteral , $q->maxLiteral);
-                                $answers[$a]->save();
-        					}
-    						$interviewId = $interview->id;
-    					}else{
-    						print_r($interview->errors);
-    						die();
-    					}
                     }
+					if($interview->save()){
+    					$randoms = Question::model()->findAllByAttributes(array("answerType"=>"RANDOM_NUMBER", "studyId"=>$Answer['studyId']));
+    					foreach($randoms as $q){
+        				    $a = $q->id;
+                            $answers[$a] = new Answer;
+                            $answers[$a]->interviewId = $interview->id;
+                            $answers[$a]->studyId = $Answer['studyId'];
+                            $answers[$a]->questionType = "EGO_ID";
+                            $answers[$a]->answerType = "RANDOM_NUMBER";
+                            $answers[$a]->questionId = $q->id;
+                            $answers[$a]->skipReason = "NONE";
+                            $answers[$a]->value = mt_rand ($q->minLiteral , $q->maxLiteral);
+                            $answers[$a]->save();
+    					}
+						$interviewId = $interview->id;
+					}else{
+						print_r($interview->errors);
+						die();
+					}
 				}
 			}
 			if(!isset($answers[$array_id]))
@@ -416,8 +419,8 @@ class InterviewController extends Controller
 			}
         }
 		$interview = Interview::model()->findByPk((int)$interviewId);
-		if($interview &&$interview->completed != -1 && is_numeric($_POST['page']) && !isset($keystr)){
-			$interview->completed = (int)$_POST['page'] + 1;
+		if($interview && $interview->completed != -1 && is_numeric($_POST['page'])){
+			$interview->completed = (int)$_POST['page'];
 			$interview->save();
 		}
         if($interview)
