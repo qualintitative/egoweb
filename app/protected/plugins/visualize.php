@@ -127,8 +127,8 @@ class visualize extends Plugin
 				$answerV = explode(',', $answer->value);
 				foreach($this->params['nodeColor']['options'] as $option){
                     if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
-                        return $option['color'];    
-					if($option->id == $answerV || in_array($option->id, $answerV))
+                        return $option['color'];
+					if($option['id'] == $answerV || in_array($option['id'], $answerV))
 						return $option['color'];
 				}
 			}
@@ -147,7 +147,7 @@ class visualize extends Plugin
 			foreach($this->params['nodeShape']['options'] as $option){
                 if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
                     return $option['shape'];
-				if($option->id == $answerV || in_array($option->id, $answerV))
+				if($option['id'] == $answerV || in_array($option['id'], $answerV))
 					return $option['shape'];
 			}
 		}
@@ -188,7 +188,7 @@ class visualize extends Plugin
 				foreach($this->params['nodeSize']['options'] as $option){
                     if($option['id'] == 0 && $answer->skipReason != "NONE")
                         return intval($option['size']);
-					if($option->id == $answerV || in_array($option->id, $answerV))
+					if($option['id']== $answerV || in_array($option['id'], $answerV))
 						$default = intval($option['size']);
 				}
 			}
@@ -208,7 +208,7 @@ class visualize extends Plugin
 			foreach($this->params['edgeColor']['options'] as $option){
                 if($option['id'] == 0 && $answer->skipReason != "NONE")
                     return $option['color'];
-				if($option->id == $answerV || in_array($option->id, $answerV))
+				if($option['id']== $answerV || in_array($option['id'], $answerV))
 					return $option['color'];
 			}
 		}
@@ -226,7 +226,7 @@ class visualize extends Plugin
 			foreach($this->params['edgeSize']['options'] as $option){
                 if($option['id'] == 0 && $answer->skipReason != "NONE")
                     return floatval($option['size']);
-				if($option->id == $answerV || in_array($option->id, $answerV))
+				if($option['id'] == $answerV || in_array($option['id'], $answerV))
 					$default = floatval($option['size']);
 			}
 		}
