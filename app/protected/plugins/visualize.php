@@ -123,8 +123,10 @@ class visualize extends Plugin
                 $criteria = array(
                     "condition"=>"questionId = '".$this->params['nodeColor']['questionId']. "' AND alterId1 = " .$nodeId,
                 );
+                $answerV = "";
 				$answer = Answer::model()->find($criteria);
-				$answerV = explode(',', $answer->value);
+                if($answer)
+				    $answerV = explode(',', $answer->value);
 				foreach($this->params['nodeColor']['options'] as $option){
                     if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
                         return $option['color'];
@@ -142,8 +144,10 @@ class visualize extends Plugin
             $criteria = array(
                 "condition"=>"questionId = '".$this->params['nodeShape']['questionId']. "' AND alterId1 = " .$nodeId,
             );
+            $answerV = "";
             $answer = Answer::model()->find($criteria);
-            $answerV = explode(',', $answer->value);
+            if($answer)
+                $answerV = explode(',', $answer->value);
 			foreach($this->params['nodeShape']['options'] as $option){
                 if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
                     return $option['shape'];
@@ -183,10 +187,12 @@ class visualize extends Plugin
                 $criteria = array(
                     "condition"=>"questionId = '".$this->params['nodeSize']['questionId']. "' AND alterId1 = " .$nodeId,
                 );
+                $answerV = "";
                 $answer = Answer::model()->find($criteria);
-                $answerV = explode(',', $answer->value);
+                if($answer)
+                    $answerV = explode(',', $answer->value);
 				foreach($this->params['nodeSize']['options'] as $option){
-                    if($option['id'] == 0 && $answer->skipReason != "NONE")
+                    if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
                         return intval($option['size']);
 					if($option['id']== $answerV || in_array($option['id'], $answerV))
 						$default = intval($option['size']);
@@ -203,10 +209,12 @@ class visualize extends Plugin
             $criteria = array(
                 "condition"=>"questionId = '".$this->params['edgeColor']['questionId']. "' AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2,
             );
+            $answerV = "";
             $answer = Answer::model()->find($criteria);
-            $answerV = explode(',', $answer->value);
+            if($answer)
+                $answerV = explode(',', $answer->value);
 			foreach($this->params['edgeColor']['options'] as $option){
-                if($option['id'] == 0 && $answer->skipReason != "NONE")
+                if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
                     return $option['color'];
 				if($option['id']== $answerV || in_array($option['id'], $answerV))
 					return $option['color'];
@@ -221,10 +229,12 @@ class visualize extends Plugin
             $criteria = array(
                 "condition"=>"questionId = '".$this->params['edgeSize']['questionId']. "' AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2,
             );
+            $answerV = "";
             $answer = Answer::model()->find($criteria);
-            $answerV = explode(',', $answer->value);
+            if($answer)
+                $answerV = explode(',', $answer->value);
 			foreach($this->params['edgeSize']['options'] as $option){
-                if($option['id'] == 0 && $answer->skipReason != "NONE")
+                if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
                     return floatval($option['size']);
 				if($option['id'] == $answerV || in_array($option['id'], $answerV))
 					$default = floatval($option['size']);
