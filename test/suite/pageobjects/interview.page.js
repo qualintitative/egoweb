@@ -351,6 +351,7 @@ var IwPage = Object.create(Page, {
     updateNavLinks: {
         value: function() {
             // set up nav links to be referenced by question title
+            browser.element("#second li a").waitForExist(browser.options.egoweb.waitTime);
             let links = browser.getAttribute("#second li a","href");
             let titles = browser.getHTML("#second li a", false);
             for(i = 0; i < links.length; i++){
@@ -383,7 +384,6 @@ var IwPage = Object.create(Page, {
                 // opens most recent interview
                 this.ewid = max;
                 browser.element('='+this.ewid).click();
-
                 this.updateNavLinks();
 
                 if(startPage != null)

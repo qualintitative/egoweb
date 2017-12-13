@@ -1133,15 +1133,6 @@ function buildList() {
                 i++;
                 masterList[i] = new Object;
             }*/
-            if(questionList[j].SUBJECTTYPE == "NAME_GENERATOR"){
-        		questionList[j].ANSWERTYPE = "NAME_GENERATOR";
-                questionList[j].array_id = questionList[j].ID;
-        		masterList[i][0] = questionList[j];
-        		i++;
-        		masterList[i] = new Object;
-            }
-            if(Object.keys(alters).length == 0)
-                continue;
             if(alter_non_list_qs.length > 0 && (questionList[j].SUBJECTTYPE != "ALTER"  ||  parseInt(questionList[j].ASKINGSTYLELIST) == 1 )) {
                     var preface = new Object;
                     preface.ID = alter_non_list_qs[0].ID;
@@ -1173,42 +1164,51 @@ function buildList() {
                     }
                     alter_non_list_qs = [];
             }
+            if(questionList[j].SUBJECTTYPE == "NAME_GENERATOR"){
+        		questionList[j].ANSWERTYPE = "NAME_GENERATOR";
+                questionList[j].array_id = questionList[j].ID;
+        		masterList[i][0] = questionList[j];
+        		i++;
+        		masterList[i] = new Object;
+            }
+            if(Object.keys(alters).length == 0)
+                continue;
             if(questionList[j].SUBJECTTYPE == "ALTER"){
 				alter_question_list = new Object;
-                    if(parseInt(questionList[j].ASKINGSTYLELIST) != 1){
-                        console.log("non list alter qs")
-                        alter_non_list_qs.push(questionList[j]);
-                    }else{
-        				for(k in alters){
-        					var question = $.extend(true,{}, questionList[j]);
-        					question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
-        					question.ALTERID1 = alters[k].ID;
-        			    	question.array_id = question.ID + '-' + question.ALTERID1;
-                            alter_question_list[question.array_id] = question;
-                        }
-    					if(Object.keys(alter_question_list).length > 0){
-                            var preface = new Object;
-                            preface.ID = questionList[j].ID;
-                            preface.ANSWERTYPE = "PREFACE";
-                            preface.SUBJECTTYPE = "PREFACE";
-                            preface.TITLE = questionList[j].TITLE + " - PREFACE";
-                            preface.PROMPT = questionList[j].PREFACE;
-    						if(preface.PROMPT != ""){
-                                if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
-                                    evalQIndex.push(i);
-    							masterList[i][0] = $.extend(true,{}, preface);
-                                console.log(preface);
-                                preface.PROMPT = "";
-    							i++;
-    							masterList[i] = new Object;
-    						}
+                if(parseInt(questionList[j].ASKINGSTYLELIST) != 1){
+                    console.log("non list alter qs")
+                    alter_non_list_qs.push(questionList[j]);
+                }else{
+    				for(k in alters){
+    					var question = $.extend(true,{}, questionList[j]);
+    					question.PROMPT = question.PROMPT.replace(/\$\$/g, alters[k].NAME);
+    					question.ALTERID1 = alters[k].ID;
+    			    	question.array_id = question.ID + '-' + question.ALTERID1;
+                        alter_question_list[question.array_id] = question;
+                    }
+					if(Object.keys(alter_question_list).length > 0){
+                        var preface = new Object;
+                        preface.ID = questionList[j].ID;
+                        preface.ANSWERTYPE = "PREFACE";
+                        preface.SUBJECTTYPE = "PREFACE";
+                        preface.TITLE = questionList[j].TITLE + " - PREFACE";
+                        preface.PROMPT = questionList[j].PREFACE;
+						if(preface.PROMPT != ""){
                             if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
                                 evalQIndex.push(i);
-    						masterList[i] = alter_question_list;
-    						i++;
-    						masterList[i] = new Object;
-    					}
-                    }
+							masterList[i][0] = $.extend(true,{}, preface);
+                            console.log(preface);
+                            preface.PROMPT = "";
+							i++;
+							masterList[i] = new Object;
+						}
+                        if(questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                            evalQIndex.push(i);
+						masterList[i] = alter_question_list;
+						i++;
+						masterList[i] = new Object;
+					}
+                }
 
 			}
 
@@ -2111,28 +2111,37 @@ function initStats(question){
 
 	this,getNodeSize = function(nodeId){
         var defaultNodeSize = 4;
-		if(typeof this.params['nodeSize']['questionId'] != "undefined" && $.inArray(this.params['nodeSize']['questionId'], ["degree", "betweenness", "eigenvector"]) != -1){
-			if(this.params['nodeSize']['questionId'] == "degree"){
+		if(typeof this.params['nodeSize'] != "undefined"){
+			if(typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "degree"){
 				max = maxDegree;
 				min = minDegree;
 				value = connections[nodeId].length;
+                range = max - min;
+    			if(range == 0)
+    				range = 1;
+    			value = Math.round(((value-min) / (range)) * 9) + 1;
+    			return value * 2;
 			}
-			if(this.params['nodeSize']['questionId'] == "betweenness"){
+			if(typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "betweenness"){
 				max = maxBetweenness;
 				min = minBetweenness;
 				value = betweennesses[nodeId];
+                range = max - min;
+    			if(range == 0)
+    				range = 1;
+    			value = Math.round(((value-min) / (range)) * 9) + 1;
+    			return value * 2;
 			}
-			if(this.params['nodeSize']['questionId'] == "eigenvector"){
+			if(typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "eigenvector"){
 				max = maxEigenvector;
 				min = minEigenvector;
 				value = eigenvectors[nodeId];
+                range = max - min;
+    			if(range == 0)
+    				range = 1;
+    			value = Math.round(((value-min) / (range)) * 9) + 1;
+    			return value * 2;
 			}
-			range = max - min;
-			if(range == 0)
-				range = 1;
-			value = Math.round(((value-min) / (range)) * 9) + 1;
-			return value * 2;
-		}else{
 			if(typeof this.params['nodeSize']['questionId'] != "undefined" &&  typeof answers[this.params['nodeSize']['questionId'] + "-" + nodeId] != "undefined")
 			    var answer = answers[this.params['nodeSize']['questionId'] + "-" + nodeId].VALUE.split(",");
 			else
@@ -2166,31 +2175,35 @@ function initStats(question){
 
 	this.getEdgeColor = function(nodeId1, nodeId2){
         var defaultEdgeColor = "#ccc";
-        if(typeof this.params['edgeColor']['questionId'] != "undefined" && typeof answers[this.params['edgeColor']['questionId'] + "-" + nodeId1 + "and" + nodeId2] != "undefined")
-            var answer = answers[this.params['edgeColor']['questionId'] + "-" + nodeId1 + "and" + nodeId2].VALUE.split(",");
-        else
-            var answer = "";
-		for(p in this.params['edgeColor']['options']){
-            if(this.params['edgeColor']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
-                defaultEdgeColor = this.params['edgeColor']['options'][p]['color'];
-			if(this.params['edgeColor']['options'][p]['id'] == answer || $.inArray(this.params['edgeColor']['options'][p]['id'], answer) != -1)
-			    return this.params['edgeColor']['options'][p]['color'];
-		}
+        if(typeof this.params['edgeColor'] != "undefined"){
+            if(typeof this.params['edgeColor']['questionId'] != "undefined" && typeof answers[this.params['edgeColor']['questionId'] + "-" + nodeId1 + "and" + nodeId2] != "undefined")
+                var answer = answers[this.params['edgeColor']['questionId'] + "-" + nodeId1 + "and" + nodeId2].VALUE.split(",");
+            else
+                var answer = "";
+    		for(p in this.params['edgeColor']['options']){
+                if(this.params['edgeColor']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+                    defaultEdgeColor = this.params['edgeColor']['options'][p]['color'];
+    			if(this.params['edgeColor']['options'][p]['id'] == answer || $.inArray(this.params['edgeColor']['options'][p]['id'], answer) != -1)
+    			    return this.params['edgeColor']['options'][p]['color'];
+    		}
+        }
 		return defaultEdgeColor;
 	}
 
 	this.getEdgeSize = function(nodeId1, nodeId2){
         var defaultEdgeSize  = 1;
-        if(typeof this.params['edgeSize']['questionId'] != "undefined" && typeof answers[this.params['edgeSize']['questionId'] + "-" + nodeId1 + "and" + nodeId2] != "undefined")
-            var answer = answers[this.params['edgeSize']['questionId'] + "-" + nodeId1 + "and" + nodeId2].VALUE.split(",");
-        else
-            var answer = "";
-		for(p in this.params['edgeSize']['options']){
-            if(this.params['edgeSize']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
-                defaultEdgeSize = this.params['edgeSize']['options'][p]['size'];
-			if(this.params['edgeSize']['options'][p]['id'] == answer || $.inArray(this.params['edgeSize']['options'][p]['id'], answer) != -1)
-			    return this.params['edgeSize']['options'][p]['size'];
-		}
+        if(typeof this.params['edgeSize'] != "undefined"){
+            if(typeof this.params['edgeSize']['questionId'] != "undefined" && typeof answers[this.params['edgeSize']['questionId'] + "-" + nodeId1 + "and" + nodeId2] != "undefined")
+                var answer = answers[this.params['edgeSize']['questionId'] + "-" + nodeId1 + "and" + nodeId2].VALUE.split(",");
+            else
+                var answer = "";
+    		for(p in this.params['edgeSize']['options']){
+                if(this.params['edgeSize']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+                    defaultEdgeSize = this.params['edgeSize']['options'][p]['size'];
+    			if(this.params['edgeSize']['options'][p]['id'] == answer || $.inArray(this.params['edgeSize']['options'][p]['id'], answer) != -1)
+    			    return this.params['edgeSize']['options'][p]['size'];
+    		}
+        }
 		return defaultEdgeSize;
 	}
 
