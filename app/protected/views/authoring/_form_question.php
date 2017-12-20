@@ -560,18 +560,22 @@ function refresh(container){
 
 	<div class="row" style="width:50%; float:left; padding:10px 20px">
 		<?php echo $form->labelEx($model,'prompt', array('onclick'=>'$(".nicEdit-main", this.parentNode)[0].focus()')); ?>
+        <?php if(isset(Yii::app()->params['enableAudioUpload']) && Yii::app()->params['enableAudioUpload']): ?>
 		<div class="audioPlay" id="<?= $model->subjectType; ?>_<?= $model->id; ?>"><?php if(file_exists(Yii::app()->basePath."/../audio/".$model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3")): ?><a class="play-sound" onclick="playSound($(this).attr('file'))" href="#" file="/audio/<?= $model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3"; ?>"><span class="fui-volume"></span></a><?php endif; ?></div>
 		<?php if(!$model->isNewRecord):?>
 		<a class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#myModal" href="/authoring/uploadaudio?type=<?= $model->subjectType; ?>&id=<?= $model->id; ?>&studyId=<?= $model->studyId; ?>">Upload Audio</a>
 		<?php endif;?>
+        <?php endif;?>
 		<?php echo $form->textArea($model,'prompt',array('rows'=>6, 'cols'=>50, 'id'=>'prompt'.$model->id)); ?>
 		<?php echo $form->error($model,'prompt'); ?>
 		<br>
 		<?php echo $form->labelEx($model,'preface', array('onclick'=>'$(".nicEdit-main", this.parentNode)[1].focus()')); ?>
+        <?php if(isset(Yii::app()->params['enableAudioUpload']) && Yii::app()->params['enableAudioUpload']): ?>
 		<div class="audioPlay" id="preface_<?= $model->id; ?>"><?php if(file_exists(Yii::app()->basePath."/../audio/".$model->studyId . "/PREFACE/" . $model->id . ".mp3")): ?><a class="play-sound" onclick="playSound($(this).attr('file'))" href="#" file="/audio/<?= $model->studyId . "/PREFACE/" . $model->id . ".mp3"; ?>"><span class="fui-volume"></span></a><?php endif; ?></div>
 		<?php if(!$model->isNewRecord):?>
 		<a class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#myModal" href="/authoring/uploadaudio?type=PREFACE&id=<?= $model->id; ?>&studyId=<?= $model->studyId; ?>">Upload Audio</a>
 		<?php endif;?>
+        <?php endif;?>
 		<?php echo $form->textArea($model,'preface',array('rows'=>6, 'cols'=>50, 'id'=>'preface'.$model->id)); ?>
 		<?php echo $form->error($model,'preface'); ?>
 		<br>
@@ -665,9 +669,6 @@ $(function(){
 	$('#prompt<?php echo $model->id;?>').summernote({
 		toolbar:noteBar,
 		height:200,
-		/*onImageUpload: function(files, editor, welEditable) {
-			uploadImage(files[0], editor, welEditable);
-		},*/
 		onChange: function(contents, $editable) {
 			$('#prompt<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
 		},
@@ -686,9 +687,6 @@ $(function(){
 	$('#preface<?php echo $model->id;?>').summernote({
 		toolbar:noteBar,
 		height:200,
-		/*onImageUpload: function(files, editor, welEditable) {
-			uploadImage(files[0], editor, welEditable);
-		},*/
 		onChange: function(contents, $editable) {
 			$('#preface<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
 		},
@@ -707,9 +705,6 @@ $(function(){
 	$('#citation<?php echo $model->id;?>').summernote({
 		toolbar:noteBar,
 		height:200,
-		/*onImageUpload: function(files, editor, welEditable) {
-			uploadImage(files[0], editor, welEditable);
-		},*/
 		onChange: function(contents, $editable) {
 			$('#citation<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
 		},

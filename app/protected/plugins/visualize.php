@@ -80,8 +80,6 @@ class visualize extends Plugin
 
 	private function getNodeColor($nodeId){
 		$default = "#07f";
-        if(isset($this->params['nodeColor']['options'][0]))
-            $default = $this->params['nodeColor']['options'][0]['color'];
 		if(isset($this->params['nodeColor'])){
 			if(in_array($this->params['nodeColor']['questionId'], array("degree", "betweenness", "eigenvector"))){
 				if($this->params['nodeColor']['questionId'] == "degree"){
@@ -119,18 +117,22 @@ class visualize extends Plugin
 					}
 				}
 
-			}else if($this->params['nodeColor']['questionId']){
-                $criteria = array(
-                    "condition"=>"questionId = '".$this->params['nodeColor']['questionId']. "' AND alterId1 = " .$nodeId,
-                );
+			}else{
                 $answerV = "";
-				$answer = Answer::model()->find($criteria);
-                if($answer)
-				    $answerV = explode(',', $answer->value);
+                if($this->params['nodeColor']['questionId']){
+                    $criteria = array(
+                        "condition"=>"questionId = '".$this->params['nodeColor']['questionId']. "' AND alterId1 = " .$nodeId,
+                    );
+    				$answer = Answer::model()->find($criteria);
+                    if($answer)
+                    	$answerV = explode(',', $answer->value);
+                    if($answerV == array())
+                        $answerV = "";
+                }
 				foreach($this->params['nodeColor']['options'] as $option){
-                    if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
+                    if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE" || $answer->value < 0))
                         return $option['color'];
-					if($option['id'] == $answerV || in_array($option['id'], $answerV))
+					if($option['id'] == $answerV || (is_array($answerV) && in_array($option['id'], $answerV)))
 						return $option['color'];
 				}
 			}

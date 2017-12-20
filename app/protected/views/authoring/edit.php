@@ -9,9 +9,6 @@ $(function(){
 	$('#Study_introduction').summernote({
 		toolbar:noteBar,
 		height:200,
-		/*onImageUpload: function(files, editor, welEditable) {
-			uploadImage(files[0], editor, welEditable);
-		},*/
 		onChange: function(contents, $editable) {
 			$('#Study_introduction').val(contents);
 		},
@@ -30,9 +27,6 @@ $(function(){
 	$('#Study_egoIdPrompt').summernote({
 		toolbar:noteBar,
 		height:200,
-		/*onImageUpload: function(files, editor, welEditable) {
-			uploadImage(files[0], editor, welEditable);
-		},*/
 		onChange: function(contents, $editable) {
 			$('#Study_egoIdPrompt').val(contents);
 		},
@@ -51,9 +45,6 @@ $(function(){
 	$('#Study_alterPrompt').summernote({
 		toolbar:noteBar,
 		height:200,
-		/*onImageUpload: function(files, editor, welEditable) {
-			uploadImage(files[0], editor, welEditable);
-		},*/
 		onChange: function(contents, $editable) {
 			$('#Study_alterPrompt').val(contents);
 		},
@@ -72,9 +63,6 @@ $(function(){
 	$('#Study_conclusion').summernote({
 		toolbar:noteBar,
 		height:200,
-		/*onImageUpload: function(files, editor, welEditable) {
-			uploadImage(files[0], editor, welEditable);
-		},*/
 		onChange: function(contents, $editable) {
 			$('#Study_conclusion').val(contents);
 		},
@@ -93,9 +81,6 @@ $(function(){
 	$('#Study_footer').summernote({
 		toolbar:noteBar,
 		height:200,
-		/*onImageUpload: function(files, editor, welEditable) {
-			uploadImage(files[0], editor, welEditable);
-		},*/
 		onChange: function(contents, $editable) {
 			$('#Study_footer').val(contents);
 		},
@@ -114,9 +99,6 @@ $(function(){
 	$('#Study_header').summernote({
 		toolbar:noteBar,
 		height:200,
-		/*onImageUpload: function(files, editor, welEditable) {
-			uploadImage(files[0], editor, welEditable);
-		},*/
 		onChange: function(contents, $editable) {
 			$('#Study_header').val(contents);
 		},

@@ -88,6 +88,8 @@ class AuthoringController extends Controller
 
 	public function actionUploadaudio()
 	{
+        if(!isset(Yii::app()->params['enableAudioUpload']) || !Yii::app()->params['enableAudioUpload'])
+            die();
 		if(isset($_POST['studyId']) && isset($_POST['type']) && isset($_POST['id'])){
 			if(!is_uploaded_file($_FILES['userfile']['tmp_name'])) //checks that file is uploaded
 				die("Error importing Audio");
