@@ -117,6 +117,11 @@ class MobileController extends Controller
 		$columns['graphs'] = Yii::app()->db->schema->getTable("graphs")->getColumnNames();
 		$columns['notes'] = Yii::app()->db->schema->getTable("notes")->getColumnNames();
 
+        foreach($columns as &$column){
+            foreach($column as &$label){
+                $label = strtoupper($label);
+            }
+        }
 		if(file_exists(Yii::app()->basePath."/../audio/".$id . "/STUDY/ALTERPROMPT.mp3")){
 			$audioFiles[] = array(
 				"url"=>Yii::app()->getBaseUrl(true)."/audio/". $id . "/STUDY/ALTERPROMPT.mp3",
@@ -278,7 +283,7 @@ class MobileController extends Controller
 				header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
 				die();
 			}
-            $oldStudy == Study::model()->findByPK($data['study']['ID']);
+            $oldStudy = Study::model()->findByAttributes(array("name"=>$data['study']['NAME']));
 			if($oldStudy->modified == $data['study']['MODIFIED']){
 				$this->saveAnswers($data);
 			}else{
@@ -314,7 +319,7 @@ class MobileController extends Controller
 				$newData = Study::replicate($study, $questions, $options, $expressions, array());
 				if($newData){
 					$this->saveAnswers($data, $newData);
-					echo "Study was modified.  Generated new study: " . $study->name . ". ";
+					echo "Study " . $oldStudy->name . " was modified. (" . $oldStudy->modified .  ":" . $data['study']['MODIFIED'] . ")  Generated new study: " . $study->name . ". ";
 				}else{
 					echo "Error while attempting to create a new study.";
 				}
@@ -329,16 +334,21 @@ class MobileController extends Controller
 	private function saveAnswers($data, $newData = null)
 	{
 		foreach($data['interviews'] as $interview){
-		$newInterview = new Interview;
-		if($newData)
-			$newInterview->studyId = $newData['studyId'];
-		else
-			$newInterview->studyId = $interview['STUDYID'];
-		$newInterview->completed = $interview['COMPLETED'];
-		$newInterview->start_date = $interview['START_DATE'];
-		$newInterview->complete_date = $interview['COMPLETE_DATE'];
-		$newInterview->save();
-		$newInterviewIds[$interview['ID']] = $newInterview->id;
+    		$newInterview = new Interview;
+    		if($newData)
+    			$newInterview->studyId = $newData['studyId'];
+    		else
+    			$newInterview->studyId = $interview['STUDYID'];
+    		$newInterview->completed = $interview['COMPLETED'];
+    		$newInterview->start_date = $interview['START_DATE'];
+    		$newInterview->complete_date = $interview['COMPLETE_DATE'];
+    		if($newInterview->save()){
+                $newInterviewIds[$interview['ID']] = $newInterview->id;
+            }else{
+                $errors++;
+                print_r($newInterview->getErrors());
+				die();
+            }
 		}
 		if(isset($data['alters'])){
 		foreach($data['alters'] as $alter){
@@ -347,10 +357,12 @@ class MobileController extends Controller
 			$newAlter = new Alters;
 			$newAlter->name = $alter['NAME'];
 			$newAlter->interviewId = $newInterviewIds[$alter['INTERVIEWID']];
-			$newAlter->ordering=1;
+            $newAlter->nameGenQIds = $alter['NAMEGENQIDS'];
+			$newAlter->ordering = 1;
 
 			if(!$newAlter->save()){
 				$errors++;
+                echo $alter['NAMEGENQIDS'];
 				print_r($newAlter->getErrors());
 				die();
 			}else{

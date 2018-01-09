@@ -44,6 +44,7 @@
 </div>
 
 <div id="alterListBox" class="col-xs-12 col-sm-3" ng-if="questions[0].ANSWERTYPE == 'NAME_GENERATOR'">
+    <span class="name-title">Names</span>
     <table class="items">
     <tbody>
     <tr class="multi" ng-repeat="alter in alters track by $index">
@@ -53,19 +54,20 @@
     </tr>
     </tbody>
     </table>
-</div>
-<div ng-if='keys(prevAlters).length > 0' class="col-sm-3 prev-alters pull-right">
-    <b>Previous Names</b><br>
-    <div ng-repeat="pAlter in prevAlters">
-        <label>{{ pAlter.NAME }}</label><br>
+    <div ng-if='keys(prevAlters).length > 0' class="prev-alters">
+        <span class="name-title">Previous Names</span>
+        <div ng-repeat="pAlter in prevAlters">
+            <label>{{ pAlter.NAME }}</label><br>
+        </div>
     </div>
 </div>
+
 <div id="alterFormBox" ng-if="questions[0].ANSWERTYPE == 'NAME_GENERATOR'">
     <div ng-if='alterPrompt != ""'>{{ alterPrompt }}</div>
     <a ng-if='audio["ALTERPROMPT"]' class="play-sound" ng-click='playSound("ALTERPROMPT")' href="javascript:void(0)"><span class="fui-volume"></span></a>
 
     <div class="col-sm-6">
-    <form ng-if="keys(alters).length < questions[0].MAXLITERAL" id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
+    <form ng-if="!questions[0].MAXLITERAL || keys(alters).length < questions[0].MAXLITERAL" id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
         <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
         <div class="form-group">
             <input name="Alters[name]" id="Alters_name" type="hidden" value="{{ alterName }}">

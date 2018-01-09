@@ -290,6 +290,8 @@ class InterviewController extends Controller
         }
         if(count($prevAlters) == 0)
             $prevAlters = new stdClass();
+        if(count($alters) == 0)
+            $alters = new stdClass();
         $this->render('view', array(
                 "study"=>json_encode(mToA($study)),
                 "questions"=>json_encode($questions),

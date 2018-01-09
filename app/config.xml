@@ -27,5 +27,5 @@
             </array>
         </config-file>
     </platform>
-    <plugin name="cordova-sqlite-storage" spec="~2.0.4" />
+    <engine name="ios" spec="~4.5.4" />
 </widget>

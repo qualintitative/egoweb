@@ -1,33 +1,34 @@
-<div id="status"></div>
-
+<div id="status" class="alert" style="display:none"></div>
 <div class="panel panel-default" id="addServer">
     <div class="panel-body">
-        <label class="col-xs-3">Add Server</label><input type="text" name="server" ng-model="address" placeholder="URL or IP address">
+        <label class="col-xs-3">Add Server</label><input type="text" name="server" ng-model="address" placeholder="URL or IP address" autocorrect="off" autocapitalize="none">
         <button class="btn btn-xs btn-primary" ng-click='addServer()'>Add</button>
     </div>
 </div>
-
 <div class="panel panel-default" ng-repeat="server in servers">
     <div class="panel-heading">
-        <b>{{ server.ADDRESS }}</b>
+        <b>{{ server.address }}</b> <a id="editButton_{{server.id}}" class="pull-right" href="javascript:void(0)" ng-click='showForm(server.id)'>Edit</a>
+        <div id="editServerForm_{{server.id}}" style="display:none;" class="pull-right">
+            <input id="Server_{{ server.id }}" type="text" name="server" placeholder="URL or IP address" autocorrect="off" autocapitalize="none">
+            <button class="btn btn-xs btn-success pull-right margin-top-8" ng-click="editServer(server.id)">Edit</button>
+        </div>
     </div>
-
     <div  class="panel-body">
-        <div ng-if="!studyList[server.ADDRESS]">
-            <form id="serverForm_{{ server.ID }}">
+        <div ng-if="!studyList[server.address]">
+            <form id="serverForm_{{ server.id }}">
                 <div style="float:left; width:100px;text-align:left">
                     Username
-                </div><input type="email" name="LoginForm[username]"><br style='clear:both'>
-    
+                </div><input type="email" name="LoginForm[username]" autocorrect="off" autocapitalize="none"><br style='clear:both'>
+
                 <div style="float:left; width:100px;text-align:left">
                     Password
                 </div><input type="password" autocapitalize="none" name="LoginForm[password]"><br style='clear:both'>
-                <button class="btn btn-xs btn-primary" ng-click='connect(server.ID)'>Connect</button>
+                <button class="btn btn-xs btn-primary" ng-click='connect(server.id)'>Connect</button>
             </form>
         </div>
-        <div class="multi col-sm-12" ng-if="studyList[server.ADDRESS]" ng-repeat="study in studyList[server.ADDRESS]">
+        <div class="multi col-sm-12" ng-if="studyList[server.address]" ng-repeat="study in studyList[server.address]">
             <label class="col-xs-9">{{study.name}}</label>
-            <button ng-if="!study.localStudyId" class="btn btn-xs btn-default pull-right margin-top-8" ng-click="importStudy(server.ADDRESS, study.id)">Import</button>
+            <button ng-if="!study.localStudyId" class="btn btn-xs btn-default pull-right margin-top-8" ng-click="importStudy(server.id, study.id)">Import</button>
             <button ng-if="study.localStudyId" class="btn btn-xs btn-danger pull-right margin-top-8" ng-click="deleteStudy(study.localStudyId)">Delete</button>
         </div>
     </div>

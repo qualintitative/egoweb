@@ -10,7 +10,7 @@
         "cordova-plugin-statusbar": {
             "PACKAGE_NAME": "com.rand.egowebmoble"
         },
-        "cordova-sqlite-storage": {
+        "cordova-plugin-sqlite-2": {
             "PACKAGE_NAME": "com.rand.egowebmoble"
         }
     },

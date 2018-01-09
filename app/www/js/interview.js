@@ -70,9 +70,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     }
     for(k in $scope.alters){
         if($scope.alters[k].NAMEGENQIDS != null && !Array.isArray($scope.alters[k].NAMEGENQIDS)){
-            console.log($scope.alters[k].NAMEGENQIDS)
             $scope.alters[k].NAMEGENQIDS = $scope.alters[k].NAMEGENQIDS.split(",");
-            if(typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR" &&  $scope.alters[k].NAMEGENQIDS.indexOf($scope.questions[0].ID) == -1){
+            if(typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR" &&  $scope.alters[k].NAMEGENQIDS.indexOf($scope.questions[0].ID.toString()) == -1){
                 if(typeof prevAlters[k] == "undefined")
                     prevAlters[k] = alters[k];
                 delete $scope.alters[k];
@@ -80,9 +79,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         }
     }
     $scope.prevAlters = prevAlters;
-    console.log($scope.prevAlters);
-    console.log($scope.alters);
-
     if(typeof hashKey != "undefined"){
         $scope.hashKey = hashKey;
     }else{
@@ -1078,7 +1074,7 @@ function buildList() {
         masterList[i] = new Object;
     }
 
-	if(interviewId != null){
+	//if(interviewId != null){
 		ego_question_list = new Object;
 		prompt = "";
 		for(j in questionList){
@@ -1302,7 +1298,7 @@ function buildList() {
 		conclusion.PROMPT = study.CONCLUSION;
         conclusion.array_id = 0;
 		masterList[i][0] = conclusion;
-	}
+	//}
 }
 
 function evalQuestions(){
