@@ -54,6 +54,12 @@
     </tr>
     </tbody>
     </table>
+    <div ng-if='keys(listedAlters).length > 0' class="prev-alters">
+        <span class="name-title">Already Listed</span>
+        <div ng-repeat="pAlter in listedAlters">
+            <label>{{ pAlter.NAME }}</label><br>
+        </div>
+    </div>
     <div ng-if='keys(prevAlters).length > 0' class="prev-alters">
         <span class="name-title">Previous Names</span>
         <div ng-repeat="pAlter in prevAlters">

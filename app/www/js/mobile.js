@@ -1,7 +1,6 @@
 db = false;
 baseUrl = "";
 isGuest = 0;
-serverMaxId = 0;
 studyMaxId = 0;
 loadedAudioFiles = 0;
 totalAudioFiles = 0;
@@ -12,9 +11,11 @@ questions = {};
 ego_id_questions = {};
 questionTitles = {};
 egoIdQs = [];
+multiIdQs = [];
 egoAnswers = [];
 egoOptions = [];
 interviews = [];
+multiIds = {};
 
 var checkPlugin = setInterval(function(){ loadPlugin() }, 100);
 
@@ -39,11 +40,7 @@ function loadDb() {
         txn.executeSql('CREATE TABLE IF NOT EXISTS server (ID INTEGER PRIMARY KEY, ADDRESS);', [], function(tx, res) {
             console.log("server database created");
             txn.executeSql('SELECT * FROM server', [], function(tx, res) {
-                if(res.rows.length == 0 )
-                   serverMaxId = 0;
                 for(i = 0; i < res.rows.length; i++){
-                    if(res.rows.item(i).ID > serverMaxId)
-                        serverMaxId = res.rows.item(i).ID;
                     servers[res.rows.item(i).ID] = res.rows.item(i).ADDRESS;
                 }
                 console.log("server list loaded:");
@@ -62,8 +59,15 @@ function loadDb() {
             txn.executeSql("SELECT * FROM question WHERE subjectType = 'EGO_ID' ORDER BY ORDERING",  [], function(tx,res){
                 for(i = 0; i < res.rows.length; i++){
                     if(typeof egoIdQs[res.rows.item(i).STUDYID] == "undefined")
-                        egoIdQs[res.rows.item(i).STUDYID] = []
+                        egoIdQs[res.rows.item(i).STUDYID] = [];
+                    if(res.rows.item(i).MULTISESSIONEGOID > 0)
+                        multiIdQs[res.rows.item(i).STUDYID] = res.rows.item(i);
                     egoIdQs[res.rows.item(i).STUDYID].push(res.rows.item(i));
+                }
+                for(k in multiIdQs){
+                    if(typeof multiIds[multiIdQs[k].TITLE] == "undefined")
+                        multiIds[multiIdQs[k].TITLE] = [];
+                    multiIds[multiIdQs[k].TITLE].push(multiIdQs[k].STUDYID);
                 }
             });
             txn.executeSql("SELECT QUESTIONID, INTERVIEWID, VALUE FROM answer WHERE questionType = 'EGO_ID'",  [], function(tx,res){
@@ -205,9 +209,13 @@ app.factory("saveAlter", function($http, $q) {
     var getAlters = function(){
     var defer = $.Deferred();
     var name = $("#Alters_name").val();
-
+    for(k in alters){
+        if(alters[k].NAME == name){
+            var oldAlter = alters[k];
+            alters[k].NAMEGENQIDS = alters[k].NAMEGENQIDS + "," + $("#Alters_nameGenQIds").val();
+        }
+    }
     if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
-        var interviewIds = getInterviewIds(interviewId);
         for(k in alters){
             if(alters[k].NAME == name){
                 var oldAlter = alters[k];
@@ -216,8 +224,8 @@ app.factory("saveAlter", function($http, $q) {
         }
     }
     if(typeof oldAlter != "undefined" && oldAlter){
-        newAlter = {INTERVIEWID: interviewId, ID: oldAlter.ID};
-        var alterSQL = "UPDATE alters SET INTERVIEWID = ? WHERE id = ?";
+        newAlter = {INTERVIEWID: alters[k].INTERVIEWID, NAMEGENQIDS: alters[k].NAMEGENQIDS, ID: oldAlter.ID};
+        var alterSQL = "UPDATE alters SET INTERVIEWID = ?, NAMEGENQIDS = ? WHERE id = ?";
     }else{
         newAlter = {
             ID: null,
@@ -325,15 +333,19 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
     justUploaded = [];
     $scope.startSurvey = function(studyId, intId) {
 	    study = studies[studyId];
-        multiIds = [studyId];
         studyNames = [];
         questionList = [];
+        if(typeof multiIdQs[studyId] != "undefined"){
+            multiStudyIds = multiIds[multiIdQs[studyId].TITLE];
+        }else{
+            multiStudyIds = [studyId];
+        }
         for(k in studies){
-            if($.inArray(studies[k].ID, multiIds) != -1)
+            if($.inArray(studies[k].ID, multiStudyIds) != -1)
                 studyNames[studies[k].ID] = studies[k].NAME;
         }
         db.readTransaction(function (txn) {
-            txn.executeSql('SELECT * FROM question WHERE studyId = ' + studyId + " ORDER BY ORDERING",  [], function(tx,res){
+            txn.executeSql('SELECT * FROM question WHERE studyId IN (' + multiStudyIds.join(",") + ") ORDER BY ORDERING",  [], function(tx,res){
                 console.log(res.rows);
                 for(i = 0; i < res.rows.length; i++){
                     if(res.rows.item(i).SUBJECTTYPE == "EGO_ID")
@@ -349,7 +361,7 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
                 console.log(tx);
                 console.log(error);
             });
-            txn.executeSql('SELECT * FROM questionOption WHERE studyId = ' + studyId + " ORDER BY ORDERING", [], function(tx,res){
+            txn.executeSql('SELECT * FROM questionOption WHERE studyId  IN (' + multiStudyIds.join(",") + ") ORDER BY ORDERING", [], function(tx,res){
                 options = [];
                 for(i = 0; i < res.rows.length; i++){
                 	if(typeof options[res.rows.item(i).QUESTIONID] == "undefined")
@@ -361,7 +373,7 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
                 console.log(tx);
                 console.log(error);
             });
-            txn.executeSql('SELECT * FROM expression WHERE studyId = ' + studyId, [], function(tx,res){
+            txn.executeSql('SELECT * FROM expression WHERE studyId IN (' + multiStudyIds.join(",") + ")", [], function(tx,res){
                 expressions = [];
                 for(i = 0; i < res.rows.length; i++){
                     expressions[res.rows.item(i).ID] = res.rows.item(i);
@@ -382,11 +394,12 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
             audio = [];
     		alters = {};
             prevAlters = {};
+            listedAlters = {};
             graphs = {};
             allNotes = {};
             otherGraphs = {};
             alterPrompts = [];
-            participantList = [];
+            participantList = {};
         	participantList['email'] = [];
         	participantList['name'] = [];
         	if(typeof intId == "undefined"){
@@ -417,35 +430,36 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
                             allNotes[res.rows.item(i).EXPRESSIONID][res.rows.item(i).ALTERID] = res.rows.item(i);
                         }
                     });
-                	if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
-                		var interviewIds = getInterviewIds(interviewId);
-                		interviewIds.splice(interviewIds.indexOf(interviewId),1);
-                		for(var k in interviewIds){
-                			prevAlters = db.queryObjects("SELECT * FROM alters WHERE CONCAT(',', interviewId, ',') LIKE '%," + interviewIds[k] + ",%' AND CONCAT(',', interviewId, ',') NOT LIKE '%," + interviewId + ",%'").data;
-                		}
-                	}
-                    txn.executeSql("SELECT * FROM alters WHERE interviewId = ? OR interviewId LIKE ? OR interviewId LIKE ? OR interviewId LIKE ?",  [interviewId, "%," + interviewId, interviewId + ",%", ",%" + interviewId + ",%"], function(tx,res){
-                        for(i = 0; i < res.rows.length; i++){
-                            alters[res.rows.item(i).ID] = res.rows.item(i);
-                        }
-                    });
-            		if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
-            			var interviewIds = getInterviewIds(interviewId);
-            			var aSQL = "SELECT * FROM answer WHERE interviewId in (" + interviewIds.join(",") + ")";
-            		}else{
-            			var aSQL = "SELECT * FROM answer WHERE interviewId = " + interviewId;
-            		}
+                    if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
+                        var interviewIds = getInterviewIds(interviewId);
+                        var aSQL = "SELECT * FROM answer WHERE interviewId in (" + interviewIds.join(",") + ")";
+                    }else{
+                        var aSQL = "SELECT * FROM answer WHERE interviewId = " + interviewId;
+                    }
                     txn.executeSql(aSQL,  [], function(tx,res){
                         for(i = 0; i < res.rows.length; i++){
                             if(res.rows.item(i).QUESTIONTYPE == "ALTER")
-                				array_id = res.rows.item(i).QUESTIONID + "-" + res.rows.item(i).ALTERID1;
-                			else if(res.rows.item(i).QUESTIONTYPE == "ALTER_PAIR")
-                				array_id = res.rows.item(i).QUESTIONID + "-" + res.rows.item(i).ALTERID1 + "and" + res.rows.item(i).ALTERID2;
-                			else
-                				array_id = res.rows.item(i).QUESTIONID;
-                			answers[array_id] = res.rows.item(i);
+                                array_id = res.rows.item(i).QUESTIONID + "-" + res.rows.item(i).ALTERID1;
+                            else if(res.rows.item(i).QUESTIONTYPE == "ALTER_PAIR")
+                                array_id = res.rows.item(i).QUESTIONID + "-" + res.rows.item(i).ALTERID1 + "and" + res.rows.item(i).ALTERID2;
+                            else
+                                array_id = res.rows.item(i).QUESTIONID;
+                            answers[array_id] = res.rows.item(i);
                         }
                     });
+                    if(typeof interviewIds == "undefined")
+                        interviewIds = [interviewId];
+                    for(k in interviewIds){
+                        txn.executeSql("SELECT * FROM alters WHERE interviewId = ? OR interviewId LIKE ? OR interviewId LIKE ? OR interviewId LIKE ?",  [interviewIds[k], "%," + interviewIds[k], interviewIds[k] + ",%", ",%" + interviewIds[k] + ",%"], function(tx,res){
+                            for(i = 0; i < res.rows.length; i++){
+                                alters[res.rows.item(i).ID] = res.rows.item(i);
+                                var alter = $.extend(true,{}, alters[res.rows.item(i).ID]);
+                                alterIntIds = alter.INTERVIEWID.toString().split(",");
+                                if($.inArray(interviewId.toString(), alterIntIds) == -1)
+                                    prevAlters[res.rows.item(i).ID] = res.rows.item(i);
+                            }
+                        });
+                    }
                     txn.executeSql("SELECT * FROM alterList WHERE studyId = " + study.ID,  [], function(tx,res){
                         for(i = 0; i < res.rows.length; i++){
                             if(res.rows.item(i).EMAIL)
@@ -467,23 +481,6 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
                 });
         	}
         });
-        //db.queryRowObject("SELECT * FROM study WHERE id = " + studyId);
-        //if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
-        //    var qTitle = db.queryValue("SELECT title FROM question WHERE ID = " + study.MULTISESSIONEGOID);
-        //	var column = db.queryObjects("SELECT STUDYID FROM question WHERE title = '" + qTitle + "'").data;
-        //	var multiIds = [];
-        //	for (var k in column){
-        //		multiIds.push(column[k].STUDYID)
-        //	}
-    	//}else{
-    	//}
-        /*
-    	ego_id_questions = db.queryObjects("SELECT * FROM question WHERE subjectType = 'EGO_ID' AND studyId = " + studyId + " ORDER BY ORDERING").data;
-    	ego_questions = db.queryObjects("SELECT * FROM question WHERE subjectType = 'EGO' AND studyId = " + studyId + " ORDER BY ORDERING").data;
-    	alter_questions = db.queryObjects("SELECT * FROM question WHERE subjectType = 'ALTER' AND studyId = " + studyId + " ORDER BY ORDERING").data;
-    	alter_pair_questions = db.queryObjects("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = " + studyId + " ORDER BY ORDERING").data;
-    	network_questions = db.queryObjects("SELECT * FROM question WHERE subjectType = 'NETWORK' AND studyId = " + studyId + " ORDER BY ORDERING").data;
-        */
     }
     $scope.deleteInterview = function(intId) {
         console.log("Deleting interview: " + intId);
@@ -770,10 +767,8 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
                         if(data == "success"){
                             console.log("connected to server");
                             db.transaction(function (txn) {
-                                newId = serverMaxId + 1;
-                                console.log("new server id: " + newId);
                                 txn.executeSql('INSERT INTO server VALUES (?,?)', [null, $scope.address], function(tx, res){
-                                    serverMaxId++;
+                                    newId = res.insertId;
                                     servers[newId] = $scope.address;
                                     console.log(tx);
                                     console.log(res.insertId);
@@ -815,7 +810,7 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
         $("#editButton_" + serverId).hide();
     }
     $scope.deleteStudy = function(id){
-    	if(interviews[id].length == 0){
+    	if(typeof interviews[id] == "undefined" || interviews[id].length == 0){
         	if(confirm("Are you sure?  This will remove all interviews as well")){
         		console.log("Deleting study " + id);
                 var serverStudy = studies[id];
@@ -827,41 +822,13 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
                     txn.executeSql('DELETE FROM expression WHERE STUDYID = ' + id, [], function(tx, res) {});
                     txn.executeSql('DELETE FROM alterList WHERE STUDYID = ' + id, [], function(tx, res) {});
                     txn.executeSql('DELETE FROM alterPrompt WHERE STUDYID = ' + id, [], function(tx, res) {});
+                }, function(txn){}, function(txn){
+                    for(k in studyList[serverStudy.SERVER]){
+                        if(studyList[serverStudy.SERVER][k].id == serverStudy.ID)
+                            studyList[serverStudy[1]][k].localStudyId = null;
+                    }
+                    $route.reload();
                 });
-
-        		var server = db.queryRowObject("SELECT * FROM server WHERE address = '" + serverStudy[1] + "'");
-        		var rowdel = db.queryRow("SELECT * FROM study WHERE id = " + id);
-        		db.catalog.getTable("serverstudy").deleteRow(serverStudy);
-        		db.catalog.getTable("study").deleteRow(rowdel);
-                for(k in studyList[serverStudy[1]]){
-                    console.log(studyList[serverStudy[1]][k].id +":"+ serverStudy[2]);
-                    if(studyList[serverStudy[1]][k].id == serverStudy[2])
-                        studyList[serverStudy[1]][k].localStudyId = null;
-                }
-                console.log(studyList);
-        		var questions = db.query("SELECT * FROM question WHERE studyId = " + id).data;
-        		for(q in questions){
-        			db.catalog.getTable("question").deleteRow(questions[q]);
-        		}
-        		var options = db.query("SELECT * FROM questionOption WHERE studyId = " + id).data;
-        		for(r in options){
-        			db.catalog.getTable("questionOption").deleteRow(options[r]);
-        		}
-        		var expressions = db.query("SELECT * FROM expression WHERE studyId = " + id).data;
-        		for(t in expressions){
-        			db.catalog.getTable("expression").deleteRow(expressions[t]);
-        		}
-        		var alterList = db.query("SELECT * FROM alterList WHERE studyId = " + id).data;
-        		for(t in alterList){
-        			db.catalog.getTable("alterList").deleteRow(alterList[t]);
-        		}
-        		var alterPrompt = db.query("SELECT * FROM alterPrompt WHERE studyId = " + id).data;
-        		for(t in alterPrompt){
-        			db.catalog.getTable("alterPrompt").deleteRow(alterPrompt[t]);
-        		}
-        		db.commit();
-        		deleteInterviews(id, true);
-                $route.reload();
     		}
     	}else{
     		alert("you must upload completed survey data before you can delete");
@@ -901,26 +868,31 @@ function save(questions, page, url, scope){
                     START_DATE:Math.round(Date.now()/1000),
                     COMPLETED_DATE:''
                 });
-                /*
-                        if(study.FILLALTERLIST == true){
-                            var names = db.queryObjects("SELECT * FROM alterList WHERE studyId = " + study.ID).data;
-                            for(k in names){
-                                var newId = db.queryValue("SELECT id FROM alters ORDER BY id DESC");
-                                if(!newId)
-                                    newId = 0;
-                                newId = parseInt(newId) + 1;
-                                alters[newId] = {
-                                    ID: newId,
+                if(study.FILLALTERLIST == true){
+                    db.transaction(function (txn){
+                        for(k in participantList['name']){
+                            var newAlter = {
+                                ID: null,
+                                ACTIVE:1,
+                                ORDERING: k,
+                                NAME: participantList['name'],
+                                INTERVIEWID: interviewId,
+                                ALTERLISTID: ''
+                            };
+                            var insert = objToArray(newAlter);
+                            txn.executeSql('INSERT INTO interview VALUES (' + Array(insert).fill("?").join(",") + ')', [], function(tx, res){
+                                alters[res.insertId] = {
+                                    ID: res.insertId,
                                     ACTIVE:1,
-                                    ORDERING: parseInt(db.queryValue("SELECT ordering FROM alters WHERE CONCAT(',', interviewId, ',') LIKE '%," + interviewId + ",%' ORDER BY ordering DESC")) + 1,
-                                    NAME: names[k].NAME,
+                                    ORDERING: k,
+                                    NAME: participantList['name'],
                                     INTERVIEWID: interviewId,
                                     ALTERLISTID: ''
                                 };
-                                db.catalog.getTable('alters').insertRow(objToArray(alters[newId]));
-                            }
+                            });
                         }
-                */
+                    });
+                }
                 console.log("created new interview: " + interviewId);
             }else{
                 console.log("continue interview: " + interviewId);
@@ -1028,8 +1000,7 @@ function saveSkip(interviewId, questionId, alterId1, alterId2, arrayId)
     });
 }
 
-function saveNodes()
-{
+function saveNodes() {
 	var nodes = {};
 	for(var k in s.graph.nodes()){
 		nodes[s.graph.nodes()[k].id] = s.graph.nodes()[k];
@@ -1037,33 +1008,32 @@ function saveNodes()
 	$("#Graph_nodes").val(JSON.stringify(nodes));
     var post = node.objectify($('#graph-form'));
     if(typeof graphs[expressionId] == "undefined"){
-        graphs[expressionId] = post.GRAPH;
-    	var newId = parseInt(db.queryValue("SELECT id FROM graphs ORDER BY id DESC"));
-    	if(!newId)
-    	    newId = 0;
-    	graphs[expressionId].ID = newId + 1;
-        console.log(graphs);
-
-        db.catalog.getTable('graphs').insertRow(objToArray(graphs[expressionId]));
+        var graphSQL = 'INSERT INTO graphs VALUES (' + Array(insert.length).fill("?").join(",") + ')';
+        var insert = graphs[expressionId];
+        insert.ID = null;
     }else{
-        graphs[expressionId] = post.GRAPH;
-        db.catalog.getTable('graphs').updateRow(objToArray(graphs[expressionId]));
+        var graphSQL = "UPDATE graphs SET NODES = ?, PARAMS = ? WHERE ID = ?";
+        var insert = [ post.GRAPH.NODES,  post.GRAPH.PARAMS,  post.GRAPH.ID];
     }
-    db.commit();
+    db.transaction(function (txn) {
+        txn.executeSql(graphSQL, insert, function(tx, res){
+            if(res.insertId)
+                graphs[expressionId].ID = res.insertId;
+            graphs[expressionId] = post.GRAPH;
+        })
+    });
 }
 
-function getInterviewIds(intId){
-	var egoValue = db.queryValue("SELECT VALUE FROM answer WHERE CONCAT(',', interviewId, ',') LIKE '%," + intId + ",%' AND questionID = " + study.MULTISESSIONEGOID);
-	var column = db.queryObjects("SELECT ID FROM question WHERE title = (SELECT q.title FROM question q WHERE q.ID = " + study.MULTISESSIONEGOID + ")").data;
-	var multiIds = [];
-	for (var k in column){
-		multiIds.push(column[k].ID)
-	}
-	var column = db.queryObjects("SELECT INTERVIEWID FROM answer WHERE questionId in (" + multiIds.join(",") + ") AND value = '"  + egoValue + "'" ).data;
-	var interviewIds = [];
-	for (var k in column){
-		interviewIds.push(column[k].INTERVIEWID)
-	}
+function getInterviewIds(intId, studyId){
+    var multiStudyIds = multiIds[multiQIds[studyId].TITLE];
+    var multiKey = egoAnswers[intId][multiQIds[studyId].ID];
+    var interviewIds = [];
+    for(i = 0; i < multiStudyIds.length; i++){
+        for(k in interviews[multiStudyIds[i]]){
+            if(multiKey == egoAnswers[interviews[multiStudyIds[i]][k].ID][multiQIds[multiStudyIds[i]].ID])
+                interviewIds.push(interviews[multiStudyIds[i]][k].ID);
+        }
+    }
 	return interviewIds;
 }
 

@@ -63,7 +63,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.redirect = false;
     $scope.participants = [];
     if(typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR"){
-        prevAlters = {};
+        listedAlters = {};
         alterPromptPage = true;
     }else{
         alterPromptPage = false;
@@ -72,12 +72,13 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         if($scope.alters[k].NAMEGENQIDS != null && !Array.isArray($scope.alters[k].NAMEGENQIDS)){
             $scope.alters[k].NAMEGENQIDS = $scope.alters[k].NAMEGENQIDS.split(",");
             if(typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR" &&  $scope.alters[k].NAMEGENQIDS.indexOf($scope.questions[0].ID.toString()) == -1){
-                if(typeof prevAlters[k] == "undefined")
-                    prevAlters[k] = alters[k];
+                if(typeof listedAlters[k] == "undefined")
+                    listedAlters[k] = alters[k];
                 delete $scope.alters[k];
             }
         }
     }
+    $scope.listedAlters = listedAlters;
     $scope.prevAlters = prevAlters;
     if(typeof hashKey != "undefined"){
         $scope.hashKey = hashKey;
@@ -122,6 +123,11 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         if(Object.keys($scope.prevAlters).length > 0){
             for(n in $scope.prevAlters){
                 $scope.participants.push($scope.prevAlters[n].NAME);
+            }
+        }
+        if(Object.keys($scope.listedAlters).length > 0){
+            for(n in $scope.listedAlters){
+                $scope.participants.push($scope.listedAlters[n].NAME);
             }
         }
         if(typeof $scope.questions[k].CITATION == "string")
@@ -431,6 +437,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 for(k in alters){
                     if(typeof prevAlters[k] != "undefined")
                         delete prevAlters[k];
+                }
+                for(k in alters){
+                    if(typeof listedAlters[k] != "undefined")
+                        delete listedAlters[k];
                 }
                 masterList = [];
                 $route.reload();

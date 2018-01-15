@@ -122,6 +122,7 @@ class MobileController extends Controller
                 $label = strtoupper($label);
             }
         }
+        /*
 		if(file_exists(Yii::app()->basePath."/../audio/".$id . "/STUDY/ALTERPROMPT.mp3")){
 			$audioFiles[] = array(
 				"url"=>Yii::app()->getBaseUrl(true)."/audio/". $id . "/STUDY/ALTERPROMPT.mp3",
@@ -156,7 +157,7 @@ class MobileController extends Controller
 				);
 			}
 		}
-
+*/
 		/*
 		foreach($interviews as $interview){
 			array_push($interviewIds, $interview[0]);
