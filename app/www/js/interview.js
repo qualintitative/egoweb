@@ -62,8 +62,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.conclusion = false;
     $scope.redirect = false;
     $scope.participants = [];
+    $scope.listedAlters = {};
+
     if(typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR"){
-        listedAlters = {};
         alterPromptPage = true;
     }else{
         alterPromptPage = false;
@@ -72,13 +73,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         if($scope.alters[k].NAMEGENQIDS != null && !Array.isArray($scope.alters[k].NAMEGENQIDS)){
             $scope.alters[k].NAMEGENQIDS = $scope.alters[k].NAMEGENQIDS.split(",");
             if(typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR" &&  $scope.alters[k].NAMEGENQIDS.indexOf($scope.questions[0].ID.toString()) == -1){
-                if(typeof listedAlters[k] == "undefined")
-                    listedAlters[k] = alters[k];
+                if(typeof $scope.listedAlters[k] == "undefined")
+                    $scope.listedAlters[k] = alters[k];
                 delete $scope.alters[k];
             }
         }
     }
-    $scope.listedAlters = listedAlters;
     $scope.prevAlters = prevAlters;
     if(typeof hashKey != "undefined"){
         $scope.hashKey = hashKey;
@@ -412,7 +412,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                 if(alters[k].NAMEGENQIDS != null)
                     var nameGenQIds = alters[k].NAMEGENQIDS.split(",");
                 if(nameGenQIds.indexOf($("#Alters_nameGenQIds").val()) > -1)
-                    $scope.errors[0] = 'That name is already listed';
+                    $scope.errors[0] = 'That name is already on this list';
             }
         }
 
@@ -439,8 +439,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
                         delete prevAlters[k];
                 }
                 for(k in alters){
-                    if(typeof listedAlters[k] != "undefined")
-                        delete listedAlters[k];
+                    if(typeof $scope.listedAlters[k] != "undefined")
+                        delete $scope.listedAlters[k];
                 }
                 masterList = [];
                 $route.reload();
@@ -1334,6 +1334,7 @@ function qFromList(pageNumber){
         var proceed = false;
         if(!!~jQuery.inArray(parseInt(k), evalQIndex)){
             for(j in masterList[k]){
+                console.log(k + ":" + j);
                 if(evalQList[masterList[k][j].array_id] == true){
                     proceed = true;
                     questions[j] = masterList[k][j];

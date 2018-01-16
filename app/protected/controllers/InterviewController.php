@@ -163,6 +163,11 @@ class InterviewController extends Controller
         $interview = false;
         $participantList = array();
         $otherGraphs = array();
+        $alters = array();
+        $prevAlters = array();
+        $alterPrompts = array();
+        $graphs = array();
+        $notes = array();
         $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
         foreach($results as $result){
             if($result->name)
@@ -211,7 +216,6 @@ class InterviewController extends Controller
     		}else{
     		    $answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$_GET['interviewId']));
             }
-            $alterPrompts = array();
             $results = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$id));
             foreach($results as $result){
                 if(!$result->questionId)
@@ -227,7 +231,6 @@ class InterviewController extends Controller
     				$array_id = $answer->questionId;
                 $answers[$array_id] = mToA($answer);
     		}
-    		$prevAlters = array();
     		foreach($prevIds as $i_id){
     			$criteria = array(
     				'condition'=>"FIND_IN_SET(" . $i_id .", interviewId)",
@@ -277,12 +280,10 @@ class InterviewController extends Controller
     			    unset($prevAlters[$result->id]);
     			$alters[$result->id] = mToA($result);
 			}
-			$graphs = array();
 			$results = Graph::model()->findAllByAttributes(array('interviewId'=>$interviewId));
 			foreach($results as $result){
     			$graphs[$result->expressionId] = mToA($result);
 			}
-    		$notes = array();
     		$results = Note::model()->findAllByAttributes(array("interviewId"=>$interviewId));
     		foreach($results as $result){
     			$notes[$result->expressionId][$result->alterId] = $result->notes;
@@ -300,7 +301,7 @@ class InterviewController extends Controller
                 "alter_questions"=>json_encode($alter_questions),
                 "alter_pair_questions"=>json_encode($alter_pair_questions),
                 "network_questions"=>json_encode($network_questions),
-                "no_response_questions"=>json_encode($no_response_questions),
+                //"no_response_questions"=>json_encode($no_response_questions),
                 "expressions"=>json_encode($expressions),
                 "options"=>json_encode($options),
                 "interviewId" => $interviewId,
@@ -326,7 +327,8 @@ class InterviewController extends Controller
         $key = "";
         if(isset($_POST["hashKey"]))
             $key = $_POST["hashKey"];
-
+        if(isset($_POST["studyId"]))
+            $study = Study::model()->findByPK($_POST["studyId"]);
         $interviewId = null;
 		foreach($_POST['Answer'] as $Answer){
 

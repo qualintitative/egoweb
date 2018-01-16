@@ -394,7 +394,6 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
             audio = [];
     		alters = {};
             prevAlters = {};
-            listedAlters = {};
             graphs = {};
             allNotes = {};
             otherGraphs = {};

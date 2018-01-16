@@ -138,7 +138,8 @@ function saveSkip(interviewId, questionId, alterId1, alterId2, arrayId)
                 "id":(typeof answers[arrayId] != "undefined" ? answers[arrayId].ID : "")
             }
         },
-        "YII_CSRF_TOKEN":csrf
+        "YII_CSRF_TOKEN":csrf,
+        "studyId":study.ID
     }
 
     var saveUrl = document.location.protocol + "//" + document.location.host + "/interview/save";
