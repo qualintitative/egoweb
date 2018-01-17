@@ -110,7 +110,9 @@ class InterviewController extends Controller
             $questions = Question::model()->findAll($criteria);
             $multiIds = array();
             foreach($questions as $question){
-                $multiIds[] = $question->studyId;
+                $check = Study::model()->findByPk($question->studyId);
+                if($check->multiSessionEgoId != 0)
+                    $multiIds[] = $question->studyId;
             }
         }else{
             $multiIds = $study->id;
@@ -132,7 +134,8 @@ class InterviewController extends Controller
         $questionList = array();
         foreach($results as $result){
             $questions[$result->id] = mToA($result);
-            $questionList[] = mToA($result);
+            if($result->studyId == $study->id)
+                $questionList[] = mToA($result);
             if(file_exists(Yii::app()->basePath."/../audio/".$study->id . "/PREFACE/" . $result->id . ".mp3"))
                 $audio['PREFACE_' . $result->id] = "/audio/".$study->id . "/PREFACE/" . $result->id . ".mp3";
             if(file_exists(Yii::app()->basePath."/../audio/".$study->id . "/" . $result->subjectType . "/" . $result->id . ".mp3"))
@@ -503,29 +506,8 @@ class InterviewController extends Controller
 
             $foundAlter = false;
 			if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
-                $criteria = array(
-                    "condition"=>"title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")",
-                );
-                $questions = Question::model()->findAll($criteria);
-                $multiQIds = array();
-                foreach($questions as $question){
-                    $multiQIds[] = $question->id;
-                }
-
-    			$criteria=array(
-    				'condition'=>"interviewId = ". $_POST['Alters']['interviewId']." AND questionId IN (" . implode(",", $multiQIds) . ")",
-    			);
-                $egoValue = Answer::model()->find($criteria);
-    			$criteria=array(
-    				'condition'=>"questionId IN (" . implode(",", $multiIds) . ")",
-    			);
-
-                $otherEgoValues = Answer::model()->findAll($criteria);
-                foreach($otherEgoValues as $other){
-                    if($other->value == $egoValue->value)
-                        $interviewIds[] = $other->interviewId;
-                }
-				$interviewIds = array_diff(array_unique($interviewIds), array($_POST['Alters']['interviewId']));
+                $interviewIds = Interview::multiInterviewIds($_POST['Alters']['interviewId'], $study);
+				//$interviewIds = array_diff(array_unique($interviewIds), array($_POST['Alters']['interviewId']));
 
                 foreach($interviewIds as $iId){
                     $criteria=array(
@@ -534,7 +516,12 @@ class InterviewController extends Controller
                     $alters = Alters::model()->findAll($criteria);
                     foreach($alters as $alter){
                         if($alter->name == $_POST['Alters']['name']){
-                            $alter->interviewId = $alter->interviewId . ",". $_POST['Alters']['interviewId'];
+                            $intIds = explode(",", $alter->interviewId);
+                            $nameQIds = explode(",", $alter->nameGenQIds);
+                            if(!in_array($_POST['Alters']['interviewId'], $intIds))
+                                $alter->interviewId = $alter->interviewId . ",". $_POST['Alters']['interviewId'];
+                            if(!in_array($_POST['Alters']['nameGenQIds'], $nameQIds))
+                                $alter->nameGenQIds = $alter->nameGenQIds . ",". $_POST['Alters']['nameGenQIds'];
                             $alter->save();
                             $foundAlter = true;
                         }
@@ -578,22 +565,41 @@ class InterviewController extends Controller
 		if(isset($_POST['Alters'])){
 			$model = Alters::model()->findByPk((int)$_POST['Alters']['id']);
 			$interviewId = $_POST['Alters']['interviewId'];
-            $nameGenQId = $_POST['Alters']['nameGenQId'];
+            $nameQId = $_POST['Alters']['nameGenQId'];
+            $interview = Interview::model()->findByPk($interviewId);
+            $name_gen_questions = Question::model()->findAllByAttributes(array("studyId"=>$interview->studyId,"subjectType"=>"NAME_GENERATOR"));
+            $nameQIds = array();
+            foreach($name_gen_questions as $question){
+                $nameQIds[] = $question->id;
+            }
 			if($model){
 				$ordering = $model->ordering;
 				if(strstr($model->interviewId, ",")){
-					$interviewIds = explode(",", $model->interviewId);
-					$interviewIds = array_diff($interviewIds,array($interviewId));
-					$model->interviewId = implode(",", $interviewIds);
-					$model->save();
-				}else if(strstr($model->nameGenQIds, ",")){
                     $nameGenQIds = explode(",", $model->nameGenQIds);
-					$nameGenQIds = array_diff($nameGenQIds,array($nameGenQId));
-					$model->nameGenQIds = implode(",", $nameGenQIds);
-					$model->save();
-                }else{
-					$model->delete();
-				}
+                    $checkRemain = false;
+                    foreach($nameGenQIds as $nameGenQId){
+                        if($nameQId != $nameGenQId && in_array($nameGenQId, $nameQIds))
+                            $checkRemain = true;
+                    }
+                    $nameGenQIds = array_diff($nameGenQIds,array($nameQId));
+                    $model->nameGenQIds = implode(",", $nameGenQIds);
+                    if($checkRemain == false){
+                        $interviewIds = explode(",", $model->interviewId);
+    					$interviewIds = array_diff($interviewIds,array($interviewId));
+    					$model->interviewId = implode(",", $interviewIds);
+                    }
+                    $model->save();
+				}else{
+                    if(strstr($model->nameGenQIds, ",")){
+                        $nameGenQIds = explode(",", $model->nameGenQIds);
+    					$nameGenQIds = array_diff($nameGenQIds,array($nameQId));
+    					$model->nameGenQIds = implode(",", $nameGenQIds);
+    					$model->save();
+                    }else{
+    					$model->delete();
+    				}
+                }
+
 				Alters::sortOrder($ordering, $interviewId);
 			}
 

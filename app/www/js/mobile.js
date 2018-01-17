@@ -9,6 +9,7 @@ studies = {};
 tables = ["study", "question", "questionOption", "expression", "answer", "alters", "interview", "alterList", "alterPrompt", "notes", "graphs"];
 questions = {};
 ego_id_questions = {};
+name_gen_questions = {};
 questionTitles = {};
 egoIdQs = [];
 multiIdQs = [];
@@ -60,7 +61,7 @@ function loadDb() {
                 for(i = 0; i < res.rows.length; i++){
                     if(typeof egoIdQs[res.rows.item(i).STUDYID] == "undefined")
                         egoIdQs[res.rows.item(i).STUDYID] = [];
-                    if(res.rows.item(i).MULTISESSIONEGOID > 0)
+                    if(studies[res.rows.item(i).STUDYID].MULTISESSIONEGOID > 0)
                         multiIdQs[res.rows.item(i).STUDYID] = res.rows.item(i);
                     egoIdQs[res.rows.item(i).STUDYID].push(res.rows.item(i));
                 }
@@ -216,15 +217,17 @@ app.factory("saveAlter", function($http, $q) {
         }
     }
     if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
-        for(k in alters){
-            if(alters[k].NAME == name){
+        for(k in prevAlters){
+            if(prevAlters[k].NAME == name){
+                alters[k] = $.extend(true,{}, prevAlters[k]);
                 var oldAlter = alters[k];
-                alters[k].INTERVIEWID = alters[k].INTERVIEWID + "," + interviewId
+                alters[k].INTERVIEWID = alters[k].INTERVIEWID + "," + interviewId;
+                alters[k].NAMEGENQIDS = alters[k].NAMEGENQIDS + "," + $("#Alters_nameGenQIds").val();
             }
         }
     }
     if(typeof oldAlter != "undefined" && oldAlter){
-        newAlter = {INTERVIEWID: alters[k].INTERVIEWID, NAMEGENQIDS: alters[k].NAMEGENQIDS, ID: oldAlter.ID};
+        newAlter = {INTERVIEWID: oldAlter.INTERVIEWID, NAMEGENQIDS: oldAlter.NAMEGENQIDS, ID: oldAlter.ID};
         var alterSQL = "UPDATE alters SET INTERVIEWID = ?, NAMEGENQIDS = ? WHERE id = ?";
     }else{
         newAlter = {
@@ -267,19 +270,50 @@ app.factory("deleteAlter", function($http, $q) {
     var getAlters = function() {
         var defer = $.Deferred();
         var id = $("#deleteAlterId").val();
+        var nameQId = $("#deleteNameGenQId").val();
+        var nameQIds = Object.keys(name_gen_questions);
     	if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
     		var interviewIds = alters[id].INTERVIEWID.toString().split(",");
-    		$(interviewIds).each(function(index){
-    			if(interviewIds[index] == interviewId)
-    				interviewIds.splice(index,1);
+            if(alters[id].NAMEGENQIDS.toString().match(","))
+                var nameGenQIds = alters[id].NAMEGENQIDS.toString().split(",");
+            else
+                var nameGenQIds = [alters[id].NAMEGENQIDS.toString()];
+            var checkRemain = false;
+            for(i = 0; i < nameGenQIds.length; i++){
+                if(nameGenQIds[i] != nameQId && $.inArray(parseInt(nameGenQIds[i]), nameQIds) != -1)
+                    checkRemain = true;
+            }
+            $(nameGenQIds).each(function(index){
+    			if(nameGenQIds[index] == nameQId)
+    				nameGenQIds.splice(index,1);
     		});
-    		alters[id].INTERVIEWID = interviewIds.join(",");
-    		alterSQL = "UPDATE alters SET INTERVIEWID = ? WHERE ID = ?";
-            deleteAlter = [interviewId, id];
+    		alters[id].NAMEGENQIDS = nameGenQIds.join(",");
+            if(checkRemain == false){
+                $(interviewIds).each(function(index){
+        			if(interviewIds[index] == interviewId)
+        				interviewIds.splice(index,1);
+        		});
+        		alters[id].INTERVIEWID = interviewIds.join(",");
+            }
+    		alterSQL = "UPDATE alters SET INTERVIEWID = ?, NAMEGENQIDS = ? WHERE ID = ?";
+            insert =  $.extend(true,{},  alters[id]);
+            delete alters[id];
+            deleteAlter = [insert.INTERVIEWID, insert.NAMEGENQIDS, id];
     	}else{
-        	delete alters[id];
-            alterSQL = "DELETE FROM alters WHERE ID = ?";
-            deleteAlter = [id];
+            if(alters[id].NAMEGENQIDS.toString().match(",")){
+                var nameGenQIds = alters[id].NAMEGENQIDS.toString().split(",");
+                $(nameGenQIds).each(function(index){
+                    if(nameGenQIds[index] == nameQId)
+                        nameGenQIds.splice(index,1);
+                });
+                alters[id].NAMEGENQIDS = nameGenQIds.join(",");
+                alterSQL = "UPDATE alters SET NAMEGENQIDS = ? WHERE ID = ?";
+                deleteAlter = [alters[id].NAMEGENQIDS, id];
+            }else{
+                delete alters[id];
+                alterSQL = "DELETE FROM alters WHERE ID = ?";
+                deleteAlter = [id];
+            }
     	}
         db.transaction(function (txn) {
             txn.executeSql(alterSQL, deleteAlter, function(tx, res){
@@ -348,10 +382,14 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
             txn.executeSql('SELECT * FROM question WHERE studyId IN (' + multiStudyIds.join(",") + ") ORDER BY ORDERING",  [], function(tx,res){
                 console.log(res.rows);
                 for(i = 0; i < res.rows.length; i++){
-                    if(res.rows.item(i).SUBJECTTYPE == "EGO_ID")
-                        ego_id_questions[parseInt(res.rows.item(i).ID)] = res.rows.item(i);
                     questions[parseInt(res.rows.item(i).ID)] = res.rows.item(i);
-                    questionList.push(res.rows.item(i));
+                    if(res.rows.item(i).STUDYID == study.ID){
+                        if(res.rows.item(i).SUBJECTTYPE == "EGO_ID")
+                            ego_id_questions[parseInt(res.rows.item(i).ID)] = res.rows.item(i);
+                        if(res.rows.item(i).SUBJECTTYPE == "NAME_GENERATOR")
+                            name_gen_questions[parseInt(res.rows.item(i).ID)] = res.rows.item(i);
+                        questionList.push(res.rows.item(i));
+                    }
                     if(typeof questionTitles[studyNames[res.rows.item(i).STUDYID]] == "undefined")
                         questionTitles[studyNames[res.rows.item(i).STUDYID]] = {};
                     questionTitles[studyNames[res.rows.item(i).STUDYID]][res.rows.item(i).TITLE] = res.rows.item(i).ID;
@@ -430,7 +468,7 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
                         }
                     });
                     if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
-                        var interviewIds = getInterviewIds(interviewId);
+                        var interviewIds = getInterviewIds(interviewId, study.ID);
                         var aSQL = "SELECT * FROM answer WHERE interviewId in (" + interviewIds.join(",") + ")";
                     }else{
                         var aSQL = "SELECT * FROM answer WHERE interviewId = " + interviewId;
@@ -448,14 +486,20 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
                     });
                     if(typeof interviewIds == "undefined")
                         interviewIds = [interviewId];
-                    for(k in interviewIds){
+                    console.log("interviews::");
+                    console.log(interviewIds);
+                    for(k = 0; k < interviewIds.length; k++){
+                        console.log("k"+k);
+
                         txn.executeSql("SELECT * FROM alters WHERE interviewId = ? OR interviewId LIKE ? OR interviewId LIKE ? OR interviewId LIKE ?",  [interviewIds[k], "%," + interviewIds[k], interviewIds[k] + ",%", ",%" + interviewIds[k] + ",%"], function(tx,res){
                             for(i = 0; i < res.rows.length; i++){
-                                alters[res.rows.item(i).ID] = res.rows.item(i);
-                                var alter = $.extend(true,{}, alters[res.rows.item(i).ID]);
+                                var alter = $.extend(true,{}, res.rows.item(i));
                                 alterIntIds = alter.INTERVIEWID.toString().split(",");
+                                console.log(alterIntIds);
                                 if($.inArray(interviewId.toString(), alterIntIds) == -1)
                                     prevAlters[res.rows.item(i).ID] = res.rows.item(i);
+                                else
+                                    alters[res.rows.item(i).ID] = res.rows.item(i);
                             }
                         });
                     }
@@ -1024,12 +1068,15 @@ function saveNodes() {
 }
 
 function getInterviewIds(intId, studyId){
-    var multiStudyIds = multiIds[multiQIds[studyId].TITLE];
-    var multiKey = egoAnswers[intId][multiQIds[studyId].ID];
+    var multiStudyIds = multiIds[multiIdQs[studyId].TITLE];
+    var multiKey = egoAnswers[intId][multiIdQs[studyId].ID];
     var interviewIds = [];
+    console.log("getting interview IDs...");
+    console.log(multiStudyIds);
+    console.log(multiKey);
     for(i = 0; i < multiStudyIds.length; i++){
         for(k in interviews[multiStudyIds[i]]){
-            if(multiKey == egoAnswers[interviews[multiStudyIds[i]][k].ID][multiQIds[multiStudyIds[i]].ID])
+            if(multiKey == egoAnswers[interviews[multiStudyIds[i]][k].ID][multiIdQs[multiStudyIds[i]].ID])
                 interviewIds.push(interviews[multiStudyIds[i]][k].ID);
         }
     }

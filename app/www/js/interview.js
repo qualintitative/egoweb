@@ -4,6 +4,7 @@ var evalQList = {};
 var evalQIndex = [];
 var currentPage = 0;
 var alterPromptPage = false;
+deletedPrevAlters = {};
 
 app.config(function ($routeProvider) {
 
@@ -435,8 +436,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
             saveAlter.getAlters().then(function(data){
                 alters = JSON.parse(data);
                 for(k in alters){
-                    if(typeof prevAlters[k] != "undefined")
+                    if(typeof prevAlters[k] != "undefined"){
+                        deletedPrevAlters[k] =$.extend(true,{}, prevAlters[k]);
                         delete prevAlters[k];
+                    }
                 }
                 for(k in alters){
                     if(typeof $scope.listedAlters[k] != "undefined")
@@ -452,9 +455,15 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         $("#deleteAlterId").val(alterId);
         $("#deleteNameGenQId").val(nameGenQId);
         console.log(alterId);
+        alert(nameGenQId);
         // check to make sure the form is completely valid
         deleteAlter.getAlters().then(function(data){
             alters = JSON.parse(data);
+            if(typeof deletedPrevAlters[alterId] != "undefined" && typeof prevAlters[alterId] == "undefined"){
+                prevAlters[alterId] =  $.extend(true,{}, deletedPrevAlters[alterId]);
+                $scope.prevAlters = prevAlters;
+                delete  deletedPrevAlters[alterId];
+             }
             masterList = [];
             $route.reload();
         });

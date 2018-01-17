@@ -273,39 +273,23 @@ class Interview extends CActiveRecord
 
     public static function multiInterviewIds($interviewId = null, $study = null)
     {
-        #OK FOR SQL INJECTION
         $interview = Interview::model()->findByPk((int)$interviewId);
+        $egoAnswer = Answer::model()->findByAttributes(array("interviewId"=>$interview->id, "questionId"=>$study->multiSessionEgoId));
+        $interviewIds = array();
         if ($interview && $study && $study->multiSessionEgoId)
         {
-            $criteria = array(
-                "condition"=>"interviewId = " . $interview->id . " AND questionId = " . $study->multiSessionEgoId,
-            );
-            $egoAnsewr = Answer::model()->find($criteria);
-            $egoValue = $egoAnsewr->value;
-            $criteria = array(
-                "condition"=>"title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")",
-            );
-            $questions = Question::model()->findAll($criteria);
-            $multiQIds = array();
-            foreach($questions as $question){
-                $multiQIds[] = $question->id;
-            }
-            if ($multiIds)
-            {
-                $answers = Answer::model()->findAllByAttributes(array('questionId'=>$multiIds));
-                $interviewIds = array();
-                foreach ($answers as $answer)
-                {
-                    if ($answer->value == $egoValue)
-                    {
-                        $interviewIds[] = $answer->interviewId;
-                    }
+            foreach($study->multiIdQs() as $q){
+                $newAnswers = Answer::model()->findAllByAttributes(array("studyId"=>$q->studyId, "questionId"=>$q->id));
+                foreach($newAnswers as $a){
+                    if($a->value == $egoAnswer->value)
+                        $interviewIds[] = $a->interviewId;
+
                 }
-                $interviewIds = array_unique($interviewIds);
-                return $interviewIds;
             }
+        }else{
+            $interviewIds = $interview->id;
         }
-        return $interviewId;
+        return $interviewIds;
     }
 
     // CORE FUNCTION

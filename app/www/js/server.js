@@ -71,15 +71,10 @@ function save(questions, page, url, scope){
                     console.log(answers);
                     console.log(interview);
                     evalQuestions();
-                    for(k in answers){
-                        interviewId = answers[k].INTERVIEWID;
-                        studyId = answers[k].STUDYID;
-                        break;
-                    }
                     if(typeof hashKey != "undefined"){
                         page = parseInt(interview.COMPLETED);
                     }
-                    var nextUrl = document.location.protocol + "//" + document.location.host + "/interview/" + studyId + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
+                    var nextUrl = document.location.protocol + "//" + document.location.host + "/interview/" + study.ID + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
                     if(typeof hashKey != "undefined")
                         nextUrl = nextUrl + "/" + hashKey;
                     document.location = nextUrl;
@@ -89,12 +84,7 @@ function save(questions, page, url, scope){
                 }
             });
         }else{
-            for(k in answers){
-                interviewId = answers[k].INTERVIEWID;
-                studyId = answers[k].STUDYID;
-                break;
-            }
-            var nextUrl = document.location.protocol + "//" + document.location.host + "/interview/" + studyId + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
+            var nextUrl = document.location.protocol + "//" + document.location.host + "/interview/" + study.ID + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
             if(typeof hashKey != "undefined")
                 nextUrl = nextUrl + "/" + hashKey;
             document.location = nextUrl;
