@@ -7,6 +7,7 @@ ego_questions = <?php echo $ego_questions ?>;
 alter_questions = <?php echo $alter_questions ?>;
 alter_pair_questions = <?php echo $alter_pair_questions ?>;
 network_questions = <?php echo $network_questions ?>;
+name_gen_questions = <?php echo $name_gen_questions; ?>;
 expressions = <?php echo $expressions ?>;
 options = <?php echo $options ?>;
 interviewId = <?php echo $interviewId ? $interviewId : "undefined" ?>;

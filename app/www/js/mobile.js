@@ -235,7 +235,7 @@ app.factory("saveAlter", function($http, $q) {
             ACTIVE:1,
             ORDERING: Object.keys(alters).length,
             NAME: name,
-            INTERVIEWID: interviewId,
+            INTERVIEWID: interviewId.toString(),
             ALTERLISTID: '',
             NAMEGENQIDS: $("#Alters_nameGenQIds").val()
         };
@@ -280,8 +280,9 @@ app.factory("deleteAlter", function($http, $q) {
                 var nameGenQIds = [alters[id].NAMEGENQIDS.toString()];
             var checkRemain = false;
             for(i = 0; i < nameGenQIds.length; i++){
-                if(nameGenQIds[i] != nameQId && $.inArray(parseInt(nameGenQIds[i]), nameQIds) != -1)
+                if(nameGenQIds[i] != nameQId && $.inArray(nameGenQIds[i], nameQIds) != -1){
                     checkRemain = true;
+                }
             }
             $(nameGenQIds).each(function(index){
     			if(nameGenQIds[index] == nameQId)
@@ -297,8 +298,10 @@ app.factory("deleteAlter", function($http, $q) {
             }
     		alterSQL = "UPDATE alters SET INTERVIEWID = ?, NAMEGENQIDS = ? WHERE ID = ?";
             insert =  $.extend(true,{},  alters[id]);
-            delete alters[id];
             deleteAlter = [insert.INTERVIEWID, insert.NAMEGENQIDS, id];
+            if(checkRemain == false){
+                delete alters[id];
+            }
     	}else{
             if(alters[id].NAMEGENQIDS.toString().match(",")){
                 var nameGenQIds = alters[id].NAMEGENQIDS.toString().split(",");
@@ -317,7 +320,7 @@ app.factory("deleteAlter", function($http, $q) {
     	}
         db.transaction(function (txn) {
             txn.executeSql(alterSQL, deleteAlter, function(tx, res){
-                console.log("deleted alter");
+                console.log(tx);
             });
         },
         function(txn){
@@ -369,6 +372,10 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
 	    study = studies[studyId];
         studyNames = [];
         questionList = [];
+        masterList = [];
+        name_gen_questions = [];
+        ego_id_questions = [];
+        questions = {};
         if(typeof multiIdQs[studyId] != "undefined"){
             multiStudyIds = multiIds[multiIdQs[studyId].TITLE];
         }else{
@@ -386,7 +393,7 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
                     if(res.rows.item(i).STUDYID == study.ID){
                         if(res.rows.item(i).SUBJECTTYPE == "EGO_ID")
                             ego_id_questions[parseInt(res.rows.item(i).ID)] = res.rows.item(i);
-                        if(res.rows.item(i).SUBJECTTYPE == "NAME_GENERATOR")
+                        if(res.rows.item(i).STUDYID == study.ID && res.rows.item(i).SUBJECTTYPE == "NAME_GENERATOR")
                             name_gen_questions[parseInt(res.rows.item(i).ID)] = res.rows.item(i);
                         questionList.push(res.rows.item(i));
                     }
@@ -468,7 +475,7 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
                         }
                     });
                     if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
-                        var interviewIds = getInterviewIds(interviewId, study.ID);
+                        interviewIds = getInterviewIds(interviewId, study.ID);
                         var aSQL = "SELECT * FROM answer WHERE interviewId in (" + interviewIds.join(",") + ")";
                     }else{
                         var aSQL = "SELECT * FROM answer WHERE interviewId = " + interviewId;
@@ -486,12 +493,9 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
                     });
                     if(typeof interviewIds == "undefined")
                         interviewIds = [interviewId];
-                    console.log("interviews::");
-                    console.log(interviewIds);
                     for(k = 0; k < interviewIds.length; k++){
-                        console.log("k"+k);
-
-                        txn.executeSql("SELECT * FROM alters WHERE interviewId = ? OR interviewId LIKE ? OR interviewId LIKE ? OR interviewId LIKE ?",  [interviewIds[k], "%," + interviewIds[k], interviewIds[k] + ",%", ",%" + interviewIds[k] + ",%"], function(tx,res){
+                        interviewIds[k] = interviewIds[k].toString();
+                        txn.executeSql("SELECT * FROM alters WHERE interviewId = ? OR interviewId LIKE ? OR interviewId LIKE ? OR interviewId LIKE ?",  [interviewIds[k], "%," + interviewIds[k], interviewIds[k] + ",%", "%," + interviewIds[k] + ",%"], function(tx,res){
                             for(i = 0; i < res.rows.length; i++){
                                 var alter = $.extend(true,{}, res.rows.item(i));
                                 alterIntIds = alter.INTERVIEWID.toString().split(",");
@@ -769,6 +773,7 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
                         if(studies[newId].NAME == studyList[address][k])
                             tudyList[address][k].localStudyId = newId;
                     }
+                    loadDb();
                     $route.reload();
                 });
                 });

@@ -130,6 +130,7 @@ class InterviewController extends Controller
         $ego_questions = array();
         $alter_questions = array();
         $alter_pair_questions = array();
+        $name_gen_questions = array();
         $network_questions = array();
         $questionList = array();
         foreach($results as $result){
@@ -140,12 +141,13 @@ class InterviewController extends Controller
                 $audio['PREFACE_' . $result->id] = "/audio/".$study->id . "/PREFACE/" . $result->id . ".mp3";
             if(file_exists(Yii::app()->basePath."/../audio/".$study->id . "/" . $result->subjectType . "/" . $result->id . ".mp3"))
                 $audio[$result->subjectType . $result->id] = "/audio/".$study->id . "/" . $result->subjectType . "/" . $result->id . ".mp3";
-
             if($id == $result->studyId){
                 if($result->subjectType == "EGO_ID")
                     $ego_id_questions[] = mToA($result);
                 if($result->subjectType == "EGO")
                     $ego_questions[] = mToA($result);
+                if($result->subjectType == "NAME_GENERATOR")
+                    $name_gen_questions[] = mToA($result);
                 if($result->subjectType == "ALTER")
                     $alter_questions[] = mToA($result);
                 if($result->subjectType == "ALTER_PAIR")
@@ -301,6 +303,7 @@ class InterviewController extends Controller
                 "questions"=>json_encode($questions),
                 "ego_id_questions"=>json_encode($ego_id_questions),
                 "ego_questions"=>json_encode($ego_questions),
+                "name_gen_questions"=>json_encode($name_gen_questions),
                 "alter_questions"=>json_encode($alter_questions),
                 "alter_pair_questions"=>json_encode($alter_pair_questions),
                 "network_questions"=>json_encode($network_questions),

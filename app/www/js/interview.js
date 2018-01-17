@@ -71,6 +71,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         alterPromptPage = false;
     }
     for(k in $scope.alters){
+        if($scope.alters[k].INTERVIEWID.match(",")){
+            deletedPrevAlters[k] = $scope.alters[k];
+        }
         if($scope.alters[k].NAMEGENQIDS != null && !Array.isArray($scope.alters[k].NAMEGENQIDS)){
             $scope.alters[k].NAMEGENQIDS = $scope.alters[k].NAMEGENQIDS.split(",");
             if(typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR" &&  $scope.alters[k].NAMEGENQIDS.indexOf($scope.questions[0].ID.toString()) == -1){
@@ -455,14 +458,13 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
         $("#deleteAlterId").val(alterId);
         $("#deleteNameGenQId").val(nameGenQId);
         console.log(alterId);
-        alert(nameGenQId);
         // check to make sure the form is completely valid
         deleteAlter.getAlters().then(function(data){
             alters = JSON.parse(data);
-            if(typeof deletedPrevAlters[alterId] != "undefined" && typeof prevAlters[alterId] == "undefined"){
+            if(typeof deletedPrevAlters[alterId] != "undefined" && typeof prevAlters[alterId] == "undefined" && typeof alters[alterId] == "undefined"){
                 prevAlters[alterId] =  $.extend(true,{}, deletedPrevAlters[alterId]);
                 $scope.prevAlters = prevAlters;
-                delete  deletedPrevAlters[alterId];
+                delete deletedPrevAlters[alterId];
              }
             masterList = [];
             $route.reload();
@@ -1325,7 +1327,6 @@ function evalQuestions(){
         if(evalQIndex[i] < currentPage)
             continue;
         for(j in masterList[evalQIndex[i]]){
-            console.log(masterList[evalQIndex[i]][j]);
             evalQList[masterList[evalQIndex[i]][j].array_id] = evalExpression(masterList[evalQIndex[i]][j].ANSWERREASONEXPRESSIONID, masterList[evalQIndex[i]][j].ALTERID1, masterList[evalQIndex[i]][j].ALTERID2);
         }
     }
