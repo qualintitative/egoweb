@@ -68,6 +68,7 @@ function save(questions, page, url, scope){
                     data = JSON.parse(data);
                     answers = data.answers;
                     interview = data.interview;
+                    interviewId = interview.ID;
                     console.log(answers);
                     console.log(interview);
                     evalQuestions();

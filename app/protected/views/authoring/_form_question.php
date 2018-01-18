@@ -320,7 +320,7 @@ jQuery('input.time-".$model->id."').change(function() {
 
         <div class="panel-<?php echo $model->id; ?>" id="NAME_GENERATOR" style="<?php if(!strstr($model->subjectType, "ALTER_PAIR")){ ?>display:none<?php } ?>">
             Minimum Alters: <?php echo $form->textField($model,'minLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-minLiteral')); ?>
-            Minimum Alters: <?php echo $form->textField($model,'maxLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-maxLiteral')); ?>
+            Maximum Alters: <?php echo $form->textField($model,'maxLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-maxLiteral')); ?>
         </div>
 
 	<div id="ALTER" style="<?php if(!strstr($model->subjectType, "ALTER")){ ?>display:none<?php } ?>">
