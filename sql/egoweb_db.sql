@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS `alterPrompt` (
   `id` int(11) NOT NULL,
   `studyId` int(11) NOT NULL,
   `afterAltersEntered` int(11) NOT NULL,
-  `display` text NOT NULL
+  `display` text NOT NULL,
+  `questionId` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS `alters` (
@@ -29,7 +30,8 @@ CREATE TABLE IF NOT EXISTS `alters` (
   `ordering` int(11) NOT NULL,
   `name` text NOT NULL,
   `interviewId` text NOT NULL,
-  `alterListId` int(11) DEFAULT NULL
+  `alterListId` int(11) DEFAULT NULL,
+  `nameGenQIds` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `answer` (
@@ -356,4 +358,6 @@ INSERT INTO `tbl_migration` (`version`, `apply_time`) VALUES
 ('m160407_002139_js_question', 1459988879),
 ('m160919_094624_header', 1474279347),
 ('m170127_113542_add_matched_interviews', 1485613302),
-('m170317_083540_add_alter_matcher', 1489740523);
+('m170317_083540_add_alter_matcher', 1489740523),
+('m170912_064545_name_generators', 1505200157),
+('m171010_091427_add_var_prompt_q_id', 1507650908);
