@@ -1150,7 +1150,9 @@ function buildList() {
                 i++;
                 masterList[i] = new Object;
             }*/
-            if(alter_non_list_qs.length > 0 && (questionList[j].SUBJECTTYPE != "ALTER"  ||  parseInt(questionList[j].ASKINGSTYLELIST) == 1 )) {
+            if((alter_non_list_qs.length > 0 && (questionList[j].SUBJECTTYPE != "ALTER"  ||  parseInt(questionList[j].ASKINGSTYLELIST) == 1 ))  || (j == questionList.length - 1 && questionList[j].SUBJECTTYPE == "ALTER"  &&  parseInt(questionList[j].ASKINGSTYLELIST) != 1)) {
+                if(j == questionList.length - 1 && questionList[j].SUBJECTTYPE == "ALTER"  &&  parseInt(questionList[j].ASKINGSTYLELIST) != 1)
+                    alter_non_list_qs.push(questionList[j]);
                     var preface = new Object;
                     preface.ID = alter_non_list_qs[0].ID;
                     preface.ANSWERTYPE = "PREFACE";
@@ -1238,6 +1240,7 @@ function buildList() {
                 preface.TITLE = questionList[j].TITLE + " - PREFACE";
 				preface.PROMPT = questionList[j].PREFACE;
 				for(k in alters){
+                    console.log("alter piar q...");
 					if(questionList[j].SYMMETRIC){
     					var keys = Object.keys(alters2);
     					delete alters2[keys[0]];

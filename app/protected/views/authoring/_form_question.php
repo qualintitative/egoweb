@@ -721,5 +721,6 @@ $(function(){
 		}
 	});
     $("#s-<?php echo $model->id;?>").change();
+    $('#a-<?php echo $model->id;?>').change();
 });
 </script>
