@@ -91,7 +91,10 @@ function loadDb() {
                 }
             });
         }, null, function(txn){
+            /*
             for(k in studies){
+                if(typeof interviews[studies[k].ID] == "undefined")
+                    continue;
                 for(i = 0; i < interviews[studies[k].ID].length; i++){
                     interviews[studies[k].ID][i].egoValue = "";
                     for(j in egoIdQs[interviews[studies[k].ID][i].STUDYID]){
@@ -104,6 +107,7 @@ function loadDb() {
                     }
                 }
             }
+            */
         });
 }
 
@@ -356,6 +360,8 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
         for(j in interviews[studies[k].ID]){
             interviews[studies[k].ID][j].egoValue = "";
             for(l in egoIdQs[interviews[studies[k].ID][j].STUDYID]){
+                if(typeof egoAnswers[interviews[studies[k].ID][j].ID] == "undefined")
+                    continue;
                 if(interviews[studies[k].ID][j].egoValue)
                     interviews[studies[k].ID][j].egoValue = interviews[studies[k].ID][j].egoValue + "_";
                 if(egoIdQs[interviews[studies[k].ID][j].STUDYID][l].ANSWERTYPE == "MULTIPLE_SELECTION")
@@ -760,7 +766,8 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
                     for (k in data.alterPrompts) {
                         data.alterPrompts[k][0] = parseInt(data.alterPrompts[k][0]);
                         data.alterPrompts[k][1] = newId;
-                        txn.executeSql('INSERT INTO alterPrompt VALUES ("' + Array(data.alterPrompts[k].length).fill("?").join(",") + '")', data.alterPrompts[k]);
+                        console.log(data.alterPrompts[k]);
+                        txn.executeSql('INSERT INTO alterPrompt VALUES (' + Array(data.alterPrompts[k].length).fill("?").join(",") + ')', data.alterPrompts[k]);
                     }
                     console.log("alter prompts imported...");
                 },
@@ -770,8 +777,10 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
                 function(txn){
                     console.log("done importing...");
                     for(k in studyList[address]){
-                        if(studies[newId].NAME == studyList[address][k])
-                            tudyList[address][k].localStudyId = newId;
+                        if(studies[newId].NAME == studyList[address][k].name){
+                            studyList[address][k].localStudyId = newId;
+                            console.log("server id match:" + newId)
+                        }
                     }
                     loadDb();
                     $route.reload();
@@ -861,7 +870,7 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
     	if(typeof interviews[id] == "undefined" || interviews[id].length == 0){
         	if(confirm("Are you sure?  This will remove all interviews as well")){
         		console.log("Deleting study " + id);
-                var serverStudy = studies[id];
+                serverStudy = studies[id];
         		console.log(serverStudy);
                 db.transaction(function (txn) {
                     txn.executeSql('DELETE FROM study WHERE ID = ' + id, [], function(tx, res) {});
@@ -871,9 +880,13 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
                     txn.executeSql('DELETE FROM alterList WHERE STUDYID = ' + id, [], function(tx, res) {});
                     txn.executeSql('DELETE FROM alterPrompt WHERE STUDYID = ' + id, [], function(tx, res) {});
                 }, function(txn){}, function(txn){
-                    for(k in studyList[serverStudy.SERVER]){
-                        if(studyList[serverStudy.SERVER][k].id == serverStudy.ID)
-                            studyList[serverStudy[1]][k].localStudyId = null;
+                    for(k in studyList[servers[serverStudy.SERVER]]){
+                        console.log(serverStudy.SERVERSTUDYID);
+                        console.log(studyList[servers[serverStudy.SERVER]][k]);
+                        if(studyList[servers[serverStudy.SERVER]][k].id == serverStudy.SERVERSTUDYID){
+                            delete studyList[servers[serverStudy.SERVER]][k].localStudyId;
+                            delete studies[serverStudy.ID];
+                        }
                     }
                     $route.reload();
                 });
@@ -959,6 +972,13 @@ function save(questions, page, url, scope){
                         var array_id = answer.QUESTIONID;
                     answer.VALUE = $("#Answer_" + array_id + "_VALUE").val();
                     console.log("answer value:" + answer.VALUE);
+                    if(answer.QUESTIONTYPE == "EGO_ID"){
+                        console.log("inserting ego answers");
+                        if(typeof egoAnswers[interviewId] == "undefined")
+                            egoAnswers[interviewId] = [];
+                        egoAnswers[interviewId][answer.QUESTIONID] = answer.VALUE;
+                        console.log(egoAnswers);
+                    }
                     answer.INTERVIEWID = interviewId;
                     if(!answer.ID){
                         answers[array_id] = {
@@ -978,12 +998,6 @@ function save(questions, page, url, scope){
                         var insert = objToArray(answers[array_id]);
                         txn.executeSql('INSERT INTO answer VALUES (' + Array(insert.length).fill("?").join(",") + ')', insert, function(tx, res){
                             answers[array_id].ID = res.insertId;
-                            if(answers[array_id].QUESTIONTYPE == "EGO_ID"){
-                                if(typeof egoAnswers[interviewId] == "undefined")
-                                    egoAnswers[interviewId] = [];
-                                egoAnswers[interviewId][answers[array_id].QUESTIONID] = answers[array_id].VALUE;
-                            }
-                            console.log(answers[array_id]);
                         }, function(tx, error){
                             console.log(tx);
                             console.log(error);
@@ -1089,6 +1103,7 @@ function getInterviewIds(intId, studyId){
 }
 
 function displayAudioLoad() {
+    window.scrollTo(0, 0);
     $('#status').html("Importing audio files: " + loadedAudioFiles + " / " +totalAudioFiles);
     if (loadedAudioFiles ==totalAudioFiles) {
         $('#status').html("Done!");
