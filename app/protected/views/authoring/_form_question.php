@@ -720,7 +720,7 @@ $(function(){
 			}, 10);
 		}
 	});
-    $("#s-<?php echo $model->id;?>").change();
     $('#a-<?php echo $model->id;?>').change();
+    $("#s-<?php echo $model->id;?>").change();
 });
 </script>
