@@ -432,12 +432,29 @@ jQuery('input.time-".$model->id."').change(function() {
 			array('empty' => 'Choose One', "class"=>"form-control")
 		); ?>
 		<?php echo $form->error($model,'networkRelationshipExprId'); ?>
+    <?php $criteria=new CDbCriteria;
+    $criteria=array(
+      'condition'=>"studyId = " . $model->studyId,
+    );
+    ?>
+    Create star network with expression:
+    <?php echo $form->dropdownlist(
+      $model,
+      'uselfExpression',
+      CHtml::listData(
+        Expression::model()->findAll($criteria),
+        'id',
+        function($post) {return CHtml::encode(substr($post->name,0,40));}
+      ),
+      array('empty' => 'Choose One', "class"=>"form-control")
+    ); ?>
 		</div>
 
 	<div id="visualize-bar" class="pull-left">
 
 	<?php
-	    $this->widget('plugins.visualize', array('method'=>'nodecolor', 'id'=>$model->studyId, 'params'=>$model->networkParams));
+    $this->widget('plugins.visualize', array('method'=>'staroptions', 'id'=>$model->studyId, 'params'=>$model->networkParams));
+	  $this->widget('plugins.visualize', array('method'=>'nodecolor', 'id'=>$model->studyId, 'params'=>$model->networkParams));
 		$this->widget('plugins.visualize', array('method'=>'nodeshape', 'id'=>$model->studyId, 'params'=>$model->networkParams));
 		$this->widget('plugins.visualize', array('method'=>'nodesize', 'id'=>$model->studyId, 'params'=>$model->networkParams));
 		$this->widget('plugins.visualize', array('method'=>'edgecolor', 'id'=>$model->studyId, 'params'=>$model->networkParams));
@@ -469,6 +486,15 @@ function refresh(container){
         nodeColor["options"].push({"id":0, "color" :$("#defaultNodeColor option:selected", container).val()});
         params['nodeColor'] = nodeColor;
     }
+    if($('#starNodeColor option:selected', container).val()){
+      var nodeColor = new Object;
+      if(typeof params['nodeColor'] != "undefined")
+          nodeColor = params['nodeColor'];
+      else
+          nodeColor['options'] = [];
+      nodeColor['options'].push({"id":-1,"color":$("#starNodeColor option:selected", container).val()});
+      params['nodeColor'] = nodeColor;
+    }
 	if($('#nodeShapeSelect option:selected', container).val()){
 		var nodeShape = new Object;
 		var question = $('#nodeShapeSelect option:selected', container).val();
@@ -486,6 +512,15 @@ function refresh(container){
         else
             nodeShape['options'] = [];
         nodeShape["options"].push({"id":0, "shape" :$("#defaultNodeShape option:selected", container).val()});
+        params['nodeShape'] = nodeShape;
+    }
+    if($("#starNodeShape option:selected", container).val()){
+        var nodeShape = new Object;
+        if(typeof params['nodeShape'] != "undefined")
+            nodeShape = params['nodeShape'];
+        else
+            nodeShape['options'] = [];
+        nodeShape["options"].push({"id":-1, "shape" :$("#starNodeShape option:selected", container).val()});
         params['nodeShape'] = nodeShape;
     }
 	if($('#nodeSizeSelect option:selected', container).val()){
@@ -506,6 +541,15 @@ function refresh(container){
             nodeSize['options'] = [];
         nodeSize["options"].push({"id":0, "size" :$("#defaultNodeSize option:selected", container).val()});
         params['nodeSize'] = nodeSize;
+    }
+    if($('#starNodeSize option:selected', container).val()){
+      var nodeSize = new Object;
+      if(typeof params['nodeSize'] != "undefined")
+          nodeSize = params['nodeSize'];
+      else
+          nodeSize['options'] = [];
+      nodeSize['options'].push({"id":-1,"size":$("#starNodeSize option:selected", container).val()});
+      params['nodeSize'] = nodeSize;
     }
 	if($('#edgeColorSelect option:selected', container).val()){
 		var edgeColor = new Object;

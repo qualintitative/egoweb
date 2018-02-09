@@ -1783,6 +1783,8 @@ function initStats(question){
     edges = [];
     var n = [];
     var expressionId = question.NETWORKRELATIONSHIPEXPRID;
+    var starExpressionId = question.USELFEXPRESSION;
+
     if(!question.NETWORKPARAMS)
         question.NETWORKPARAMS = "[]";
     this.params = JSON.parse(question.NETWORKPARAMS);
@@ -1799,6 +1801,8 @@ function initStats(question){
     	var expression = expressions[expressionId];
 	else
 	    return;
+  if(typeof expressions[starExpressionId] != "undefined")
+  	var starExpression = expressions[expressionId];
 
 	if(expression.QUESTIONID)
 		var question = questions[expression.QUESTIONID];
@@ -2078,6 +2082,7 @@ function initStats(question){
 
 	this.getNodeColor = function(nodeId){
         var defaultNodeColor = "#07f";
+    console.log(this.params['nodeColor'])
 		if(typeof this.params['nodeColor'] != "undefined"){
 			if(typeof this.params['nodeColor']['questionId'] != "undefined" && $.inArray(this.params['nodeColor']['questionId'], ["degree", "betweenness", "eigenvector"]) != -1){
 				if(this.params['nodeColor']['questionId'] == "degree"){
@@ -2119,10 +2124,12 @@ function initStats(question){
                 else
                     var answer = "";
 				for(p in this.params['nodeColor']['options']){
-                    if(this.params['nodeColor']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
-                        defaultNodeColor = this.params['nodeColor']['options'][p]['color'];
-					if(this.params['nodeColor']['options'][p]['id'] == answer || $.inArray(this.params['nodeColor']['options'][p]['id'], answer) != -1)
-                        return this.params['nodeColor']['options'][p]['color'];
+          if(this.params['nodeColor']['options'][p]['id'] == -1 && nodeId == -1)
+              return this.params['nodeColor']['options'][p]['color'];
+          if(this.params['nodeColor']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+              defaultNodeColor = this.params['nodeColor']['options'][p]['color'];
+					if(nodeId != -1 && (this.params['nodeColor']['options'][p]['id'] == answer || $.inArray(this.params['nodeColor']['options'][p]['id'], answer) != -1))
+              return this.params['nodeColor']['options'][p]['color'];
 				}
 			}
 		}
@@ -2131,6 +2138,7 @@ function initStats(question){
 
 	this,getNodeSize = function(nodeId){
         var defaultNodeSize = 4;
+    console.log(this.params)
 		if(typeof this.params['nodeSize'] != "undefined"){
 			if(typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "degree"){
 				max = maxDegree;
@@ -2167,10 +2175,12 @@ function initStats(question){
 			else
 			    var answer = "";
 			for(p in this.params['nodeSize']['options']){
-                if(this.params['nodeSize']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
-                    defaultNodeSize = this.params['nodeSize']['options'][p]['size'];
-				if(this.params['nodeSize']['options'][p]['id'] == answer || $.inArray(this.params['nodeSize']['options'][p]['id'], answer) != -1)
-				    return this.params['nodeSize']['options'][p]['size'];
+        if(this.params['nodeSize']['options'][p]['id'] == -1 && nodeId == -1)
+            defaultNodeSize = this.params['nodeSize']['options'][p]['size'];
+        if(this.params['nodeSize']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+            defaultNodeSize = this.params['nodeSize']['options'][p]['size'];
+				if(nodeId != -1 && (this.params['nodeSize']['options'][p]['id'] == answer || $.inArray(this.params['nodeSize']['options'][p]['id'], answer) != -1))
+				    defaultNodeSize = this.params['nodeSize']['options'][p]['size'];
 			}
 		}
 		return defaultNodeSize;
@@ -2184,9 +2194,11 @@ function initStats(question){
             else
                 var answer = "";
 			for(p in this.params['nodeShape']['options']){
-                if(this.params['nodeShape']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
-                    defaultNodeShape = this.params['nodeShape']['options'][p]['shape'];
-				if(this.params['nodeShape']['options'][p]['id'] == answer || $.inArray(this.params['nodeShape']['options'][p]['id'], answer) != -1)
+        if(this.params['nodeShape']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+            defaultNodeShape = this.params['nodeShape']['options'][p]['shape'];
+        if(this.params['nodeShape']['options'][p]['id'] == -1 && nodeId == -1)
+            defaultNodeShape = this.params['nodeShape']['options'][p]['shape'];
+				if(nodeId != -1 && (this.params['nodeShape']['options'][p]['id'] == answer || $.inArray(this.params['nodeShape']['options'][p]['id'], answer) != -1))
 				    return this.params['nodeShape']['options'][p]['shape'];
 			}
 		}
@@ -2228,6 +2240,18 @@ function initStats(question){
 	}
 
     var alters2 = $.extend(true,{}, alters);
+  if(starExpression != undefined){
+    nodes.push(
+      {
+        'id'   : '-1',
+        'label': "You",
+        'x'    : Math.random(),
+        'y'    : Math.random(),
+        "type" : this.getNodeShape(-1),
+        "color": this.getNodeColor(-1),
+        "size" : this.getNodeSize(-1),
+      })
+  }
 	for(a in alters){
 		nodes.push(
 			{
@@ -2240,6 +2264,17 @@ function initStats(question){
 				"size" : this.getNodeSize(alters[a].ID),
 			}
 		);
+    if(starExpression != undefined){
+      if(evalExpression(starExpressionId, alters[a].ID, alters2[b].ID) == true){
+        edges.push({
+          "id"    : "-1_" + alters[a].ID,
+          "source": alters[a].ID.toString(),
+          "target": '-1',
+          "color" : this.getEdgeColor(-1, alters[a].ID),
+          "size"  : this.getEdgeSize(-1, alters[a].ID),
+        });
+      }
+    }
 		var keys = Object.keys(alters2);
 		delete alters2[keys[0]];
 		for(b in alters2){

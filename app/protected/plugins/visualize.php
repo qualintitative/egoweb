@@ -257,6 +257,46 @@ class visualize extends Plugin
 		}
 	}
 
+  public function actionStarOptions(){
+    $params = json_decode($this->params, true);
+    if(isset($params['nodeColor'])){
+      foreach($params['nodeColor']['options'] as $option){
+        $nodeColors[$option['id']] = $option['color'];
+      }
+    }
+    if(isset($params['nodeSize'])){
+      foreach($params['nodeSize']['options'] as $option){
+        $nodeSizes[$option['id']] = $option['size'];
+      }
+    }
+    if(isset($params['nodeShape'])){
+      foreach($params['nodeShape']['options'] as $option){
+        $nodeShapes[$option['id']] = $option['shape'];
+      }
+    }
+    echo "<div><label style='width:200px;float:left;font-size: .7em;'>Star Node Color</label>";
+    echo CHtml::dropDownList(
+        -1,
+        (isset($nodeColors['-1']) ? $nodeColors['-1'] : ''),
+        $this->nodeColors,
+        array("class"=>"form-control", "id"=>"starNodeColor")
+      ). "</div>";
+      echo "<div><label style='width:200px;float:left;font-size: .7em;'>Star Node Shape</label>";
+      echo CHtml::dropDownList(
+          -1,
+          (isset($nodeShapes[-1]) ? $nodeShapes[-1] : ''),
+          $this->nodeShapes,
+          array("class"=>"form-control", "id"=>"starNodeShape")
+        ). "</div>";
+      echo "<div><label style='width:200px;float:left;font-size: .7em;'>Star Node Size</label>";
+      echo CHtml::dropDownList(
+          -1,
+          (isset($nodeSizes[-1]) ? $nodeSizes[-1] : ''),
+          $this->nodeSizes,
+          array("class"=>"form-control", "id"=>"starNodeSize")
+        ). "</div>";
+  }
+
 	public function actionNodecolor(){
 		$params = json_decode($this->params, true);
 		$nodeColorId = ''; $nodeColors = array();
@@ -604,9 +644,13 @@ class visualize extends Plugin
 			$alterNames[$alter->id] = $alter->name;
 		}
 
-        $expression = Expression::model()->findByPk($this->id);
-        if(!$expression)
-            return;
+    $expression = Expression::model()->findByPk($this->id);
+    if(!$expression)
+        return;
+
+    $starExpression = false;
+    if(is_numeric($this->event))
+      $starExpression = Expression::model()->findByPk($this->event);
 
 		$this->stats = new Statistics;
 		$this->stats->initComponents($this->method, $this->id);
@@ -702,6 +746,29 @@ class visualize extends Plugin
 					"size"=>$this->getNodeSize($alter->id),
 				)
 			);
+      if($starExpression){
+        array_push(
+          $nodes,
+          array(
+            'id'=> '0',
+            'label'=> "You",
+            'x'=> rand(0, 10) / 10,
+            'y'=> rand(0, 10) / 10,
+            "type"=>$this->getNodeShape($alter->id),
+            "color"=>$this->getNodeColor($alter->id),
+            "size"=>$this->getNodeSize($alter->id),
+          )
+        );
+      }
+      if($starExpression && $starExpression->evalExpression($this->method, $alter2->id, null, $this->answers)){
+        $edges[] = array(
+          "id" =>  "0_" . $alter->id,
+          "source" => $alter->id,
+          "target" => '0',
+          "color"=>$this->getEdgeColor($alter->id, $alter2->id),
+          "size"=>$this->getEdgeSize($alter->id, $alter2->id),
+        );
+      }
 			foreach($alters2 as $alter2){
 				if($alter2->id == $alter->id)
 					continue;
