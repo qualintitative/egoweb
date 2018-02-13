@@ -570,6 +570,27 @@ function refresh(container){
         edgeColor["options"].push({"id":0, "color" :$("#defaultEdgeColor option:selected", container).val()});
         params['edgeColor'] = edgeColor;
     }
+    if($("#egoEdgeColorSelect option:selected", container).val()){
+        var egoEdgeColor = new Object;
+        egoEdgeColor['options'] = [];
+        var question = $('#egoEdgeColorSelect option:selected', container).val();
+    		egoEdgeColor['questionId'] = question.replace('_egoEdgeColor','');
+    		$("#" + question + " select", container).each(function(index){
+    			egoEdgeColor['options'].push({"id":$(this).attr('id'),"color":$("option:selected", this).val()});
+    		});
+    		params['egoEdgeColor'] = egoEdgeColor;
+    }
+    if($("#egoEdgeSizeSelect option:selected", container).val()){
+        var egoEdgeSize = new Object;
+        egoEdgeSize['options'] = [];
+        var question = $('#egoEdgeSizeSelect option:selected', container).val();
+        egoEdgeSize['questionId'] = question.replace('_egoEdgeSize','');
+        $("#" + question + " select", container).each(function(index){
+          egoEdgeSize['options'].push({"id":$(this).attr('id'),"size":$("option:selected", this).val()});
+        });
+        params['egoEdgeSize'] = egoEdgeSize;
+        console.log(egoEdgeSize)
+    }
 	if($('#edgeSizeSelect option:selected', container).val()){
 		var edgeSize = new Object;
 		var question = $('#edgeSizeSelect option:selected', container).val();

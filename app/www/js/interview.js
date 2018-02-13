@@ -2212,15 +2212,32 @@ function initStats(question){
                 var answer = answers[this.params['edgeColor']['questionId'] + "-" + nodeId1 + "and" + nodeId2].VALUE.split(",");
             else
                 var answer = "";
-    		for(p in this.params['edgeColor']['options']){
-                if(this.params['edgeColor']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
-                    defaultEdgeColor = this.params['edgeColor']['options'][p]['color'];
-    			if(this.params['edgeColor']['options'][p]['id'] == answer || $.inArray(this.params['edgeColor']['options'][p]['id'], answer) != -1)
-    			    return this.params['edgeColor']['options'][p]['color'];
-    		}
+      		for(p in this.params['edgeColor']['options']){
+                  if(this.params['edgeColor']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+                      defaultEdgeColor = this.params['edgeColor']['options'][p]['color'];
+      			if(this.params['edgeColor']['options'][p]['id'] == answer || $.inArray(this.params['edgeColor']['options'][p]['id'], answer) != -1)
+      			    return this.params['edgeColor']['options'][p]['color'];
+      		}
         }
 		return defaultEdgeColor;
 	}
+
+  this.getEgoEdgeColor = function(nodeId1){
+        var defaultEdgeColor = "#ccc";
+        if(typeof this.params['egoEdgeColor'] != "undefined"){
+            if(typeof this.params['egoEdgeColor']['questionId'] != "undefined" && typeof answers[this.params['egoEdgeColor']['questionId'] + "-" + nodeId1] != "undefined")
+                var answer = answers[this.params['egoEdgeColor']['questionId'] + "-" + nodeId1].VALUE.split(",");
+            else
+                var answer = "";
+          for(p in this.params['egoEdgeColor']['options']){
+                  if(this.params['egoEdgeColor']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+                      defaultEdgeColor = this.params['egoEdgeColor']['options'][p]['color'];
+            if(this.params['egoEdgeColor']['options'][p]['id'] == answer || $.inArray(this.params['egoEdgeColor']['options'][p]['id'], answer) != -1)
+                return this.params['egoEdgeColor']['options'][p]['color'];
+          }
+        }
+    return defaultEdgeColor;
+  }
 
 	this.getEdgeSize = function(nodeId1, nodeId2){
         var defaultEdgeSize  = 1;
@@ -2234,6 +2251,23 @@ function initStats(question){
                     defaultEdgeSize = this.params['edgeSize']['options'][p]['size'];
     			if(this.params['edgeSize']['options'][p]['id'] == answer || $.inArray(this.params['edgeSize']['options'][p]['id'], answer) != -1)
     			    return this.params['edgeSize']['options'][p]['size'];
+    		}
+        }
+		return defaultEdgeSize;
+	}
+
+  this.getEgoEdgeSize = function(nodeId1, nodeId2){
+        var defaultEdgeSize  = 1;
+        if(typeof this.params['egoEdgeSize'] != "undefined"){
+            if(typeof this.params['egoEdgeSize']['questionId'] != "undefined" && typeof answers[this.params['egoEdgeSize']['questionId'] + "-" + nodeId1] != "undefined")
+                var answer = answers[this.params['egoEdgeSize']['questionId'] + "-" + nodeId1].VALUE.split(",");
+            else
+                var answer = "";
+    		for(p in this.params['egoEdgeSize']['options']){
+                if(this.params['egoEdgeSize']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+                    defaultEdgeSize = this.params['egoEdgeSize']['options'][p]['size'];
+    			if(this.params['egoEdgeSize']['options'][p]['id'] == answer || $.inArray(this.params['egoEdgeSize']['options'][p]['id'], answer) != -1)
+    			    return this.params['egoEdgeSize']['options'][p]['size'];
     		}
         }
 		return defaultEdgeSize;
@@ -2270,8 +2304,8 @@ function initStats(question){
           "id"    : "-1_" + alters[a].ID,
           "source": alters[a].ID.toString(),
           "target": '-1',
-          "color" : this.getEdgeColor(-1, alters[a].ID),
-          "size"  : this.getEdgeSize(-1, alters[a].ID),
+          "color" : this.getEgoEdgeColor(alters[a].ID),
+          "size"  : this.getEgoEdgeSize(alters[a].ID),
         });
       }
     }
