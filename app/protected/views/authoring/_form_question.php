@@ -467,6 +467,9 @@ function refresh(container){
 	var params = new Object;
 	if(typeof container == "undefined")
 		container = $('body');
+  if($('#egoLabel', container).val()){
+    params['egoLabel'] = $('#egoLabel', container).val();
+  }
 	if($('#nodeColorSelect option:selected', container).val()){
 		var nodeColor = new Object;
 		var question = $('#nodeColorSelect option:selected', container).val();
@@ -618,6 +621,9 @@ function refresh(container){
 	$('#<?= $model->id; ?> #visualize-bar select').change(function(){
 		$('#<?= $model->id; ?> #Question_networkParams').val(refresh($('#<?= $model->id; ?> #visualize-bar')));
 	});
+  $('#<?= $model->id; ?> #visualize-bar input').change(function(){
+    $('#<?= $model->id; ?> #Question_networkParams').val(refresh($('#<?= $model->id; ?> #visualize-bar')));
+  });
 	</script>
 	<?php endif;?>
 
@@ -659,12 +665,6 @@ function refresh(container){
 		<?php echo $form->labelEx($model,'allOptionString'); ?>
 		<?php echo $form->textField($model,'allOptionString'); ?>
 		<?php echo $form->error($model,'allOptionString'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'uselfExpression'); ?>
-		<?php echo $form->textField($model,'uselfExpression'); ?>
-		<?php echo $form->error($model,'uselfExpression'); ?>
 	</div>
 
 	<div class="row">

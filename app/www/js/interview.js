@@ -2278,7 +2278,7 @@ function initStats(question){
     nodes.push(
       {
         'id'   : '-1',
-        'label': "You",
+        'label': this.params['egoLabel'],
         'x'    : Math.random(),
         'y'    : Math.random(),
         "type" : this.getNodeShape(-1),

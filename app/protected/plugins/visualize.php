@@ -259,6 +259,10 @@ class visualize extends Plugin
 
   public function actionStarOptions(){
     $params = json_decode($this->params, true);
+    $egoLabel = "You";
+    if(isset($params['egoLabel'])){
+      $egoLabel = $params['egoLabel'];
+    }
     if(isset($params['nodeColor'])){
       foreach($params['nodeColor']['options'] as $option){
         $nodeColors[$option['id']] = $option['color'];
@@ -288,13 +292,15 @@ class visualize extends Plugin
 				$edgeSizes[$option['id']] = $option['size'];
 			}
 		}
-    echo "<div><label style='width:200px;float:left;font-size: .7em;'>Ego-Alter Node Color</label>";
+    echo "<div class='form-horizontal'><label style='width:200px;float:left;font-size: .7em;'>Ego-Alter Label</label>";
+    echo "<input id='egoLabel' class='form-control' value='$egoLabel'>";
+    echo "<label style='width:200px;float:left;font-size: .7em;'>Ego-Alter Node Color</label>";
     echo CHtml::dropDownList(
         -1,
         (isset($nodeColors['-1']) ? $nodeColors['-1'] : ''),
         $this->nodeColors,
         array("class"=>"form-control", "id"=>"starNodeColor")
-      ). "</div>";
+      );
       echo "<div><label style='width:200px;float:left;font-size: .7em;'>Star Node Shape</label>";
       echo CHtml::dropDownList(
           -1,
@@ -348,7 +354,7 @@ class visualize extends Plugin
         			$alter_expressions = array();
         		}
 
-            echo "<div><label style='width:200px;float:left;font-size: .7em;'>Ego-Alter Edge Color</label>";
+            echo "<label style='width:200px;float:left;font-size: .7em;'>Ego-Alter Edge Color</label>";
             echo "<select id='egoEdgeColorSelect' class='form-control' onchange='$(\".egoEdgeColorOptions\").hide();console.log($(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")));$(\"#\" + $(\"option:selected\", this).val()).toggle();'>";
         		echo "<option value=''> Select </option>";
         		foreach($alter_expressions as $expression){
@@ -391,8 +397,7 @@ class visualize extends Plugin
         			}
         			echo "</div>";
         		}
-            echo "</div>";
-            echo "<div><label style='width:200px;float:left;font-size: .7em;'>Ego-Alter Edge Size</label>";
+            echo "<label style='width:200px;float:left;font-size: .7em;'>Ego-Alter Edge Size</label>";
             echo "<select id='egoEdgeSizeSelect' class='form-control' onchange='$(\".egoEdgeSizeOptions\").hide();console.log($(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")));$(\"#\" + $(\"option:selected\", this).val()).toggle();'>";
             echo "<option value=''> Select </option>";
             foreach($alter_expressions as $expression){
