@@ -339,6 +339,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
 
         if($scope.questions[k].SUBJECTTYPE == "NETWORK"){
             expressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
+            console.log("expr:"+expressionId + $scope.questions[k].USELFEXPRESSION)
+            if(!expressionId)
+              expressionId = $scope.questions[k].USELFEXPRESSION
             notes = [];
             if(typeof otherGraphs[$scope.questions[k].ID] != "undefined")
                 $scope.otherGraphs = otherGraphs[$scope.qId];
@@ -1783,7 +1786,7 @@ function initStats(question){
     edges = [];
     var n = [];
     var expressionId = question.NETWORKRELATIONSHIPEXPRID;
-    var starExpressionId = question.USELFEXPRESSION;
+    var starExpressionId = parseInt(question.USELFEXPRESSION);
 
     if(!question.NETWORKPARAMS)
         question.NETWORKPARAMS = "[]";
@@ -1797,15 +1800,16 @@ function initStats(question){
 
     var alters2 = $.extend(true,{}, alters);
 
-    if(typeof expressions[expressionId] != "undefined")
+  if(typeof expressions[expressionId] != "undefined")
     	var expression = expressions[expressionId];
-	else
-	    return;
   if(typeof expressions[starExpressionId] != "undefined")
-  	var starExpression = expressions[expressionId];
+  	var starExpression = expressions[starExpressionId];
+  console.log(expressions, starExpression)
+  if(expression == undefined && starExpression == undefined)
+    return
 
-	if(expression.QUESTIONID)
-		var question = questions[expression.QUESTIONID];
+	//if(expression == undefined && expression.QUESTIONID)
+		//var question = questions[expression.QUESTIONID];
 
 	for(a in alters){
 		betweennesses[alters[a].ID] = 0;
@@ -2311,17 +2315,19 @@ function initStats(question){
     }
 		var keys = Object.keys(alters2);
 		delete alters2[keys[0]];
-		for(b in alters2){
-			if(evalExpression(expressionId, alters[a].ID, alters2[b].ID) == true){
-				edges.push({
-					"id"    : alters[a].ID + "_" + alters2[b].ID,
-					"source": alters2[b].ID.toString(),
-					"target": alters[a].ID.toString(),
-					"color" : this.getEdgeColor(alters[a].ID, alters2[b].ID),
-					"size"  : this.getEdgeSize(alters[a].ID, alters2[b].ID),
-				});
-			}
-		}
+    if(expression != undefined){
+  		for(b in alters2){
+  			if(evalExpression(expressionId, alters[a].ID, alters2[b].ID) == true){
+  				edges.push({
+  					"id"    : alters[a].ID + "_" + alters2[b].ID,
+  					"source": alters2[b].ID.toString(),
+  					"target": alters[a].ID.toString(),
+  					"color" : this.getEdgeColor(alters[a].ID, alters2[b].ID),
+  					"size"  : this.getEdgeSize(alters[a].ID, alters2[b].ID),
+  				});
+  			}
+  		}
+    }
 	}
 
 
