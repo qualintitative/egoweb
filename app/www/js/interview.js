@@ -1516,11 +1516,14 @@ function evalExpression(id, alterId1, alterId2)
         else
             var genList = [expressions[id].VALUE];
         console.log(genList);
-        if(alters[alterId1].NAMEGENQIDS.match(","))
-            var aList = alters[alterId1].NAMEGENQIDS.split(",");
-        else
-            var aList = [alters[alterId1].NAMEGENQIDS];
-        console.log(aList);
+        aList = []
+        if(alters[alterId1] != undefined){
+          if(alters[alterId1].NAMEGENQIDS.match(","))
+              var aList = alters[alterId1].NAMEGENQIDS.split(",");
+          else
+              var aList = [alters[alterId1].NAMEGENQIDS];
+          console.log(aList);
+        }
         for(n in aList){
             if(genList.indexOf(aList[n]) > -1)
                 return true;
