@@ -42,9 +42,15 @@ class ImportExportController extends Controller
 
     		foreach($study->attributes() as $key=>$value){
     			if($key != "id" && $newStudy->hasAttribute($key))
+            if($key == "active")
+              $value = intval($value);
+            if($key == "id")
+              $value = null;
     				$newStudy->$key = $value;
                 if($_POST['newName'])
                     $newStudy->name = $_POST['newName'];
+
+
     			if($key == "name"){
     				$oldStudy = Study::model()->findByAttributes(array("name"=>$value));
     				if($oldStudy && !$_POST['newName']){
@@ -138,7 +144,6 @@ class ImportExportController extends Controller
     					foreach($question->option as $option){
     						$newOption = new QuestionOption;
     						$newOption->studyId = $newStudy->id;
-    						$newOption->questionId = $newQuestion->id;
     						foreach($option->attributes() as $optionkey=>$val){
     							if($optionkey == "id")
     								$oldOptionId = intval($val);
@@ -147,6 +152,7 @@ class ImportExportController extends Controller
     							if($optionkey!="key" && $optionkey != "id")
     								$newOption->$optionkey = $val;
     						}
+                $newOption->questionId = $newQuestion->id;
     						if(!$newOption->save())
     							echo "Option: " . print_r($newOption->getErrors());
     						else
@@ -277,15 +283,20 @@ class ImportExportController extends Controller
             				$question->networkParams = json_encode($params);
         				}
 
-                        if(isset($newExpressionIds[$question->answerReasonExpressionId]))
-        				    $question->answerReasonExpressionId = $newExpressionIds[$question->answerReasonExpressionId];
-                        else
-                            $question->answerReasonExpressionId = "";
+                if(isset($newExpressionIds[$question->answerReasonExpressionId]))
+      				    $question->answerReasonExpressionId = $newExpressionIds[$question->answerReasonExpressionId];
+                else
+                  $question->answerReasonExpressionId = "";
 
         				if(isset($newExpressionIds[$question->networkRelationshipExprId]))
         					$question->networkRelationshipExprId = $newExpressionIds[$question->networkRelationshipExprId];
-                        else
-                            $question->networkRelationshipExprId = "";
+                else
+                  $question->networkRelationshipExprId = "";
+
+                if(isset($newExpressionIds[$question->uselfExpression]))
+      				    $question->uselfExpression = $newExpressionIds[$question->uselfExpression];
+                else
+                  $question->uselfExpression = "";
 
         				$question->save();
         			}
