@@ -1151,9 +1151,9 @@ function buildList() {
       i++;
       masterList[i] = new Object;
     }
-    if (Object.keys(alters).length == 0)
-      continue;
     if (questionList[j].SUBJECTTYPE == "ALTER") {
+      if (Object.keys(alters).length == 0)
+        continue;
       alter_question_list = new Object;
       if (parseInt(questionList[j].ASKINGSTYLELIST) != 1) {
         console.log("non list alter qs")
@@ -1193,6 +1193,8 @@ function buildList() {
     }
 
     if (questionList[j].SUBJECTTYPE == "ALTER_PAIR") {
+      if (Object.keys(alters).length == 0)
+        continue;
       var alters2 = $.extend(true, {}, alters);
       var preface = new Object;
       preface.ID = questionList[j].ID;
@@ -1277,6 +1279,8 @@ function buildList() {
       masterList[i] = new Object;
     }
     if (questionList[j].SUBJECTTYPE == "EGO") {
+      console.log(questionList[j].TITLE)
+
       console.log(Object.keys(ego_question_list).length > 0 && (parseInt(questionList[j].ASKINGSTYLELIST) != 1 || prompt != questionList[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm, "")));
       questionList[j].array_id = questionList[j].ID;
       if (Object.keys(ego_question_list).length > 0 && (parseInt(questionList[j].ASKINGSTYLELIST) != 1 || prompt != questionList[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm, ""))) {
