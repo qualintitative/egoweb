@@ -785,7 +785,7 @@ $(function(){
 			}, 10);
 		}
 	});
-    $('#a-<?php echo $model->id;?>').change();
+    $("#a-<?php echo $model->id;?>").change();
     $("#s-<?php echo $model->id;?>").change();
     changeStyle($("#<?php echo $model->id;?>_askingStyleList"), <?php echo $model->id;?>, "<?php echo $model->subjectType;?>")
 });

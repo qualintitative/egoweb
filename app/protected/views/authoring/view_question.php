@@ -43,7 +43,8 @@ function changeAType(answerSelect) {
         $(".askingStyle").show();
         $('#a-' + model_id).prop('disabled', false);
     }
-	$('.panel-' + model_id).hide();
+    if( $(answerSelect).attr('id').match("a"))
+	   $('.panel-' + model_id).hide();
 	$('.panel-' + model_id + "#" +value).show();
 }
 
