@@ -179,6 +179,10 @@ class AuthoringController extends Controller
 		if(isset($_POST['Study']))
 		{
 			$model->attributes=$_POST['Study'];
+      $model->valueDontKnow = $_POST['Study']['valueDontKnow'];
+      $model->valueRefusal = $_POST['Study']['valueRefusal'];
+      $model->valueLogicalSkip = $_POST['Study']['valueLogicalSkip'];
+      $model->valueNotYetAnswered = $_POST['Study']['valueNotYetAnswered'];
 			if($model->save()){
 				Study::updated($this->studyId);
 				$this->redirect(array('edit','id'=>$model->id));
