@@ -249,7 +249,18 @@ class ImportExportController extends Controller
     								$expressionId = $newExpressionIds[$expressionId];
     						}
     						$newExpression->value = implode(',',$expressionIds);
-    					}
+              } else if($newExpression->type == "Name Generator"){
+                if($newExpression->value != ""){
+    							$questionIds = explode(',', $newExpression->value);
+    							foreach($questionIds as &$questionId){
+    								if(isset($newQuestionIds[$questionId]))
+    									$questionId = $newQuestionIds[$questionId];
+    								else
+    									$questionId = '';
+    							}
+    							$newExpression->value = implode(',', $questionIds);
+    						}
+              }
     					$newExpression->save();
     				}
 
