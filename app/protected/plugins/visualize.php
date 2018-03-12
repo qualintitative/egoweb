@@ -292,23 +292,23 @@ class visualize extends Plugin
 				$edgeSizes[$option['id']] = $option['size'];
 			}
 		}
-    echo "<div class='form-horizontal'><label style='width:200px;float:left;font-size: .7em;'>Ego-Alter Label</label>";
+    echo "<div class='form-horizontal'><label style='width:200px;float:left;font-size: .7em;'>Ego Node Label</label>";
     echo "<input id='egoLabel' class='form-control' value='$egoLabel'>";
-    echo "<label style='width:200px;float:left;font-size: .7em;'>Ego-Alter Node Color</label>";
+    echo "<label style='width:200px;float:left;font-size: .7em;'>Ego Node Color</label>";
     echo CHtml::dropDownList(
         -1,
         (isset($nodeColors['-1']) ? $nodeColors['-1'] : ''),
         $this->nodeColors,
         array("class"=>"form-control", "id"=>"starNodeColor")
       );
-      echo "<div><label style='width:200px;float:left;font-size: .7em;'>Star Node Shape</label>";
+      echo "<div><label style='width:200px;float:left;font-size: .7em;'>Ego Node Shape</label>";
       echo CHtml::dropDownList(
           -1,
           (isset($nodeShapes[-1]) ? $nodeShapes[-1] : ''),
           $this->nodeShapes,
           array("class"=>"form-control", "id"=>"starNodeShape")
         ). "</div>";
-      echo "<div><label style='width:200px;float:left;font-size: .7em;'>Ego-Alter Node Size</label>";
+      echo "<div><label style='width:200px;float:left;font-size: .7em;'>Ego Node Size</label>";
       echo CHtml::dropDownList(
           -1,
           (isset($nodeSizes[-1]) ? $nodeSizes[-1] : ''),
