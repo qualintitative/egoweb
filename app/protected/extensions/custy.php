@@ -118,6 +118,9 @@ function mToA($models) {
 
     $result = array();
     foreach ($models as $model) {
+        if (!is_object($model)) {
+            return false;
+        }
         $attributes = $model->getAttributes();
         $relations = array();
         foreach($attributes as $key=>$value){

@@ -216,6 +216,12 @@ class Question extends CActiveRecord
 			$this->preface = "";
 		if(trim($this->citation) == "<br>" ||  $this->citation == " ")
 			$this->citation = "";
+    if($this->answerType != "MULTIPLE_SELECTION"){
+      $options = QuestionOption::model()->findAllByAttributes(array("questionId"=>$this->id));
+      foreach($options as $option){
+        $option->delete();
+      }
+    }
 		return true;
 	}
 
