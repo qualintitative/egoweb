@@ -284,15 +284,16 @@ class MobileController extends Controller
 				header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
 				die();
 			}
-            $oldStudy = Study::model()->findByAttributes(array("name"=>$data['study']['NAME']));
-			if($oldStudy->modified == $data['study']['MODIFIED']){
+      $oldStudy = Study::model()->findByAttributes(array("name"=>$data['study']['NAME']));
+			if($oldStudy && $oldStudy->modified == $data['study']['MODIFIED']){
 				$this->saveAnswers($data);
-			}else{
+		  }else{
 				$study = new Study;
 				foreach($study->attributes as $key=>$value){
 					$study->$key = $data['study'][strtoupper($key)];
 				}
-				$study->name = $data['study']['NAME'] . " 2";
+        if($oldStudy)
+				   $study->name = $data['study']['NAME'] . " 2";
 				$questions = array();
 				foreach($data['questions'] as $q){
 					$question = new Question;
@@ -317,6 +318,7 @@ class MobileController extends Controller
 					}
 					array_push($expressions, $expression);
 				}
+        echo "questions ". count($questions);
 				$newData = Study::replicate($study, $questions, $options, $expressions, array());
 				if($newData){
 					$this->saveAnswers($data, $newData);
@@ -334,6 +336,8 @@ class MobileController extends Controller
 
 	private function saveAnswers($data, $newData = null)
 	{
+    if(count($data['interviews']) == 0)
+      return false;
 		foreach($data['interviews'] as $interview){
     		$newInterview = new Interview;
     		if($newData)

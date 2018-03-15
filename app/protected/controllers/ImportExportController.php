@@ -640,4 +640,89 @@ class ImportExportController extends Controller
 
 		echo $study->export($_POST['export']);
 	}
+
+  public function actionSend($id)
+	{
+        $study = Study::model()->findByPk($id);
+        $expressions = array();
+        $results = Expression::model()->findAllByAttributes(array("studyId"=>$id));
+        foreach($results as $result)
+            $expressions[] = mToA($result);
+        $questions = array();
+        $results = Question::model()->findAllByAttributes(array("studyId"=>$id), array('order'=>'ordering'));
+        foreach($results as $result){
+            $questions[] = mToA($result);
+        }
+        $results = QuestionOption::model()->findAllByAttributes(array("studyId"=>$id));
+        foreach($results as $result){
+          $options[] = mToA($result);
+        }
+        $answers = array();
+        $participantList = array();
+        $alters = array();
+        $prevAlters = array();
+        $alterPrompts = array();
+        $graphs = array();
+        $notes = array();
+        $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
+        foreach($results as $result){
+            if($result->name)
+                $participantList['name'][] = $result->name;
+            if($result->email)
+                $participantList['email'][] = $result->email;
+        }
+        $results = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$id));
+        foreach($results as $result){
+            if(!$result->questionId)
+                $result->questionId = 0;
+            $alterPrompts[] = $result->display;
+        }
+
+        if(is_array($_POST['export']))
+          $interviewIds = $_POST['export'];
+        else
+          $interviewIds = array();
+        foreach($interviewIds as $interviewId){
+          $interviews[] = mToA(Interview::model()->findByPK($interviewId));
+	        $results = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+          foreach($results as $result){
+            $answers[] = mToA($result);
+          }
+    			$criteria = array(
+    				'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId)",
+    				'order'=>'ordering',
+    			);
+			    $results = Alters::model()->findAll($criteria);
+          foreach($results as $result){
+            $alters[] = mToA($result);
+          }
+    			$results = Graph::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+    			foreach($results as $result){
+        			$graphs[] = mToA($result);
+    			}
+      		$results = Note::model()->findAllByAttributes(array("interviewId"=>$interviewId));
+      		foreach($results as $result){
+      			$notes[] = $result->notes;
+      		}
+      }
+
+      if(count($alters) == 0)
+        $alters = new stdClass();
+      if(count($options) == 0)
+        $options = new stdClass();
+       $data = array(
+          "study"=>mToA($study),
+          "questions"=>$questions,
+          "expressions"=>$expressions,
+          "questionOptions"=>$options,
+          "interviews" => $interviews,
+          "answers"=>$answers,
+          "alterPrompts"=>$alterPrompts,
+          "alters"=>$alters,
+          "graphs"=>$graphs,
+          "notes"=>$notes,
+          "participantList"=>$participantList,
+      );
+      echo json_encode($data);
+	}
 }

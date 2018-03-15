@@ -606,7 +606,7 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
             console.log(txn);
         },
         function(txn){
-            $('#data').val(JSON.stringify(data));
+          $('#data').val(JSON.stringify(data));
         	console.log($('#data').val());
         	$.ajax({
         		type:'POST',

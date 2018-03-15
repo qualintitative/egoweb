@@ -76,20 +76,11 @@ echo CHtml::dropdownlist(
 <br clear=all>
 <br clear=all>
 
-
 <div class="panel panel-info">
-    <div class="panel-heading">
-        Export Study
-    </div>
-
-    <div class="panel-body">
-        
-<script>
-function getInterviews(dropdown){
-	$.get('/importExport/ajaxinterviews/' + dropdown.val(), function(data){$('#interviews').html(data);});
-}
-
-</script>
+  <div class="panel-heading">
+    Export Study
+  </div>
+  <div class="panel-body">
 <?php
 // export study
 $form=$this->beginWidget('CActiveForm', array(
@@ -99,32 +90,87 @@ $form=$this->beginWidget('CActiveForm', array(
 ));
 $criteria=new CDbCriteria;
 $criteria->order = 'name';
-
 echo CHtml::dropdownlist(
 	'studyId',
 	'',
 	CHtml::listData(Study::model()->findAll($criteria),'id', 'name'),
 	                array(
                         'empty' => 'Select',
-                        'onchange'=>"js:getInterviews(\$(this))",
+                        'onchange'=>"js:getInterviews(\$(this), '#export-interviews')",
                         'class'=>'form-control'
                     )
 
 );
-echo "<br><br>";
-echo " Include Responses<br><br>";
 ?>
-    <div id="interviews"></div>
-        <div class="form-group">
-            <div class="col-lg-4 ">
-                <button class="btn btn-info">Export</button>
-            </div>
-        </div>
-    <?php $this->endWidget(); ?>
+    <br>Include Response Data<br>
+    <div id="export-interviews"></div>
+    <div class="form-group">
+      <div class="col-lg-4 ">
+        <button class="btn btn-info">Export</button>
+      </div>
     </div>
+    <?php $this->endWidget(); ?>
+  </div>
 </div>
 
-<script type="text/javascript">
+<div class="panel panel-info">
+  <div class="panel-heading">
+    Send Study to Server
+  </div>
+  <div class="panel-body">
+<?php
+// export study
+$form=$this->beginWidget('CActiveForm', array(
+    'id'=>'sendForm',
+    'enableAjaxValidation'=>false,
+));
+$criteria=new CDbCriteria;
+$criteria->order = 'name';
+echo CHtml::dropdownlist(
+	'studyId',
+	'',
+	CHtml::listData(Study::model()->findAll($criteria),'id', 'name'),
+    array(
+          'id'=>'sendStudy',
+          'empty' => 'Select',
+          'onchange'=>"js:getInterviews(\$(this),'#send-interviews')",
+          'class'=>'form-control'
+    )
+);
+?>
+    <br>Include Response Data<br>
+    <div id="send-interviews"></div>
+
+    <div id="sendNotice" class="col-sm-12 alert alert-info"></div>
+    <div class="form-group">
+      <label class="col-sm-4">Server Address</label>
+      <div class='col-sm-8'>
+        <input class="form-control" id="serverAddress">
+      </div>
+      <div class="col-sm-4 ">
+        <button class="btn btn-info" onclick="getData();return false;">Send</button>
+      </div>
+    </div>
+    <?php $this->endWidget(); ?>
+    <textarea id="sendJson" class="hidden"></textarea>
+  </div>
+</div>
+
+<script>
+function getInterviews(dropdown, container){
+	$.get('/importExport/ajaxinterviews/' + dropdown.val(), function(data){$(container).html(data);});
+}
+function getData(){
+  $.post('/importExport/send/' + $("#sendStudy option:selected").val(), $("#sendForm").serialize(), function(data){
+    $("#sendJson").val(data);
+    if(!$("#serverAddress").val().match("http"))
+      $("#serverAddress").val('http://'+$("#serverAddress").val())
+    $.post($("#serverAddress").val()+ '/mobile/uploadData/', {"data":$("#sendJson").val()}, function(data){
+      $("#sendNotice").html(data);
+    });
+  });
+}
+
 //On import study form submit
 /*
 $( "#importForm" ).submit(function( event) {
@@ -156,4 +202,6 @@ $( "#importForm" ).submit(function( event) {
         return false;
     }
 });*/
+
+
 </script>
