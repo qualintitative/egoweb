@@ -135,7 +135,7 @@ class InterviewController extends Controller
         $questionList = array();
         foreach($results as $result){
             $questions[$result->id] = mToA($result);
-            if($result->studyId == $study->id)
+            if($result->studyId == $study->id && $result->subjectType != "EGO_ID")
                 $questionList[] = mToA($result);
             if(file_exists(Yii::app()->basePath."/../audio/".$study->id . "/PREFACE/" . $result->id . ".mp3"))
                 $audio['PREFACE_' . $result->id] = "/audio/".$study->id . "/PREFACE/" . $result->id . ".mp3";
