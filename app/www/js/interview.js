@@ -1157,6 +1157,8 @@ function buildList() {
       masterList[i] = new Object;
     }
     if (questionList[j].SUBJECTTYPE == "NAME_GENERATOR") {
+      if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
+        evalQIndex.push(i);
       questionList[j].ANSWERTYPE = "NAME_GENERATOR";
       questionList[j].array_id = questionList[j].ID;
       masterList[i][0] = questionList[j];
