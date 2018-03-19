@@ -100,6 +100,7 @@ class AlterList extends CActiveRecord
 			'email' => 'Email',
 			'ordering' => 'Ordering',
 			'interviewId' => 'interview Id',
+      'nameGenQId' => 'Name Generator Question Id',
 		);
 	}
 

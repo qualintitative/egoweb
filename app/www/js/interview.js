@@ -1029,48 +1029,49 @@ app.directive('checkAnswer', [function() {
               delete scope.errors[array_id];
             valid = true;
           }
-        }
-
-        // check for list range limitations
-        var checks = 0;
-        if (typeof question != "undefined" && parseInt(question.WITHLISTRANGE) != 0) {
-          for (i in scope.answers) {
-            console.log(scope.answers[i].VALUE + ":" + question.LISTRANGESTRING);
-            if (scope.answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1) {
-              checks++;
+          // check for list range limitations
+          var checks = 0;
+          if (typeof question != "undefined" && parseInt(question.WITHLISTRANGE) != 0) {
+            for (i in scope.answers) {
+              console.log(scope.answers[i].VALUE + ":" + question.LISTRANGESTRING);
+              if (scope.answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1) {
+                checks++;
+              }
             }
-          }
 
-          //console.log("check list range: " + checks);
+            //console.log("check list range: " + checks);
 
-          if (checks < question.MINLISTRANGE || checks > question.MAXLISTRANGE) {
-            errorMsg = "";
-            if (question.MINLISTRANGE && question.MAXLISTRANGE) {
-              if (question.MINLISTRANGE != question.MAXLISTRANGE)
-                errorMsg = question.MINLISTRANGE + " - " + question.MAXLISTRANGE;
-              else
-                errorMsg = "just " + question.MINLISTRANGE;
-            } else if (!question.MINLISTRANGE && !question.MAXLISTRANGE) {
-              errorMsg = "up to " + question.MAXLISTRANGE;
+            if (checks < question.MINLISTRANGE || checks > question.MAXLISTRANGE) {
+              errorMsg = "";
+              if (question.MINLISTRANGE && question.MAXLISTRANGE) {
+                if (question.MINLISTRANGE != question.MAXLISTRANGE)
+                  errorMsg = question.MINLISTRANGE + " - " + question.MAXLISTRANGE;
+                else
+                  errorMsg = "just " + question.MINLISTRANGE;
+              } else if (!question.MINLISTRANGE && !question.MAXLISTRANGE) {
+                errorMsg = "up to " + question.MAXLISTRANGE;
+              } else {
+                errorMsg = "at least " + question.MINLISTRANGE;
+              }
+
+              valid = false;
+              scope.errors[array_id] = "Please select " + errorMsg + " response(s).  You selected " + checks;
+
             } else {
-              errorMsg = "at least " + question.MINLISTRANGE;
-            }
-
-            valid = false;
-            scope.errors[array_id] = "Please select " + errorMsg + " response(s).  You selected " + checks;
-
-          } else {
-            for (k in scope.errors) {
-              if (scope.errors[k].match("Please select "))
-                delete scope.errors[k];
-            }
-            for (k in scope.answerForm) {
-              if (k.match("Answer")) {
-                scope.answerForm[k].$setValidity("checkAnswer", true);
+              for (k in scope.errors) {
+                if (scope.errors[k].match("Please select "))
+                  delete scope.errors[k];
+              }
+              for (k in scope.answerForm) {
+                if (k.match("Answer")) {
+                  scope.answerForm[k].$setValidity("checkAnswer", true);
+                }
               }
             }
           }
         }
+
+
 
         ngModel.$setValidity('checkAnswer', valid);
         return value;
