@@ -40,9 +40,12 @@ class AuthoringController extends Controller
 	{
 		if(!is_uploaded_file($_FILES['userfile']['tmp_name'])) //checks that file is uploaded
 			die("Error importing Participant list");
-
+    $nameGenQs = Question::model()->findAllByAttributes(array("studyId"=>$_POST['studyId'], "subjectType"=>"NAME_GENERATOR"));
+    $nameGenQIds = array();
+    foreach($nameGenQs as $nameGenQ){
+      $nameGenQIds[$nameGenQ->title] = $nameGenQ->id;
+    }
 		$file = fopen($_FILES['userfile']['tmp_name'],"r");
-
 		while(! feof($file)){
 			$data = fgetcsv($file);
 			if(isset($data[0]) && $data[0]){
@@ -54,8 +57,19 @@ class AuthoringController extends Controller
 				$model->ordering = $row['ordering'];
 				$model->name = trim($data[0]);
 				$model->email = isset($data[1]) ? $data[1] : "";
+        if(stristr($data[2], ";")){
+          $Qs = explode(";", $data[2]);
+          $qIds = array();
+          foreach($Qs as $title){
+            if(isset($nameGenQIds[$title]))
+              $qIds[] = $nameGenQIds[$title];
+          }
+          $model->nameGenQIds = implode(",", $qIds);
+        }elseif(isset($nameGenQIds[$data[2]])){
+          $model->nameGenQIds = $nameGenQIds[$data[2]];
+        }
 				$model->studyId = $_POST['studyId'];
-				$model->save();
+			  $model->save();
 			}
 
 		}

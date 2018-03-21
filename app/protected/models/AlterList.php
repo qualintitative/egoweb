@@ -46,7 +46,7 @@ class AlterList extends CActiveRecord
 			array('interviewerId','default',
 				'value'=>0,
 			'setOnEmpty'=>true),
-			array('id, studyId, name, email, ordering', 'safe', 'on'=>'search'),
+			array('id, studyId, name, email, nameGenQIds, ordering', 'safe', 'on'=>'search'),
 		);
 	}
 

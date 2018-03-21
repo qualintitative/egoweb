@@ -162,7 +162,7 @@ jQuery('input.time-".$model->id."').change(function() {
 			<?php endif;?>
 		<?php else: ?>
 		<div class="panel-<?php echo $model->id; ?>" id="TEXTUAL" style="display:none">
-            <?php echo $form->labelEx($model,'useAlterListField', array("class"=>"control-label col-sm-8")); ?>
+        <?php echo $form->labelEx($model,'useAlterListField', array("class"=>"control-label col-sm-8")); ?>
     		<div class="col-sm-4">
         		<?php echo $form->dropDownList(
         			$model,
@@ -321,6 +321,21 @@ jQuery('input.time-".$model->id."').change(function() {
         <div class="panel-<?php echo $model->id; ?>" id="NAME_GENERATOR" style="<?php if(!strstr($model->subjectType, "ALTER_PAIR")){ ?>display:none<?php } ?>">
             Minimum Alters: <?php echo $form->textField($model,'minLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-minLiteral')); ?>
             Maximum Alters: <?php echo $form->textField($model,'maxLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-maxLiteral')); ?>
+            <?php echo $form->labelEx($model,'useAlterListField', array("class"=>"control-label col-sm-8")); ?>
+            <div class="col-sm-4">
+                <?php echo $form->dropDownList(
+                  $model,
+                  'useAlterListField',
+                  array(
+                    ''=>'None',
+                    'id'=>'ID',
+                    'email'=>'Email',
+                    'name'=>'Name',
+                  ),
+                  array("class"=>"form-control")
+                ); ?>
+                <?php echo $form->error($model,'useAlterListField'); ?>
+            </div>
         </div>
 
 	<div id="ALTER" style="<?php if(!strstr($model->subjectType, "ALTER")){ ?>display:none<?php } ?>">
