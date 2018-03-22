@@ -124,7 +124,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     if ($scope.questions[k].USEALTERLISTFIELD == "name" || $scope.questions[k].USEALTERLISTFIELD == "email") {
       for(p in participantList){
         var qIds = [];
-        if(participantList[p].NAMEGENQIDS.match(","))
+        if(participantList[p].NAMEGENQIDS && participantList[p].NAMEGENQIDS.match(","))
           qIds = participantList[p].NAMEGENQIDS.split(",");
         else if(participantList[p].NAMEGENQIDS)
           qIds.push(participantList[p].NAMEGENQIDS);
