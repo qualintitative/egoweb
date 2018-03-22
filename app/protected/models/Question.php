@@ -225,6 +225,21 @@ class Question extends CActiveRecord
 		return true;
 	}
 
+  public static function getTitles($ids){
+    if(stristr($ids, ",")){
+      $qIds = explode(",", $ids);
+    }else{
+      $qIds = array($ids);
+    }
+    $qTitles = array();
+    foreach($qIds as $qId){
+      $question = Question::model()->findByPk($qId);
+      $qTitles[] = $question->title;
+    }
+    return implode(", ", $qTitles);
+  }
+
+
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.

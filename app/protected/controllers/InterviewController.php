@@ -175,10 +175,7 @@ class InterviewController extends Controller
         $notes = array();
         $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
         foreach($results as $result){
-            if($result->name)
-                $participantList['name'][] = $result->name;
-            if($result->email)
-                $participantList['email'][] = $result->email;
+            $participantList[] = mToA($result);
         }
         if(isset($_GET['interviewId'])){
             $interviewId = $_GET['interviewId'];

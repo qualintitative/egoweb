@@ -122,7 +122,20 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   for (var k in $scope.questions) {
     var array_id = $scope.questions[k].array_id;
     if ($scope.questions[k].USEALTERLISTFIELD == "name" || $scope.questions[k].USEALTERLISTFIELD == "email") {
-      $scope.participants = participantList[$scope.questions[k].USEALTERLISTFIELD];
+      for(p in participantList){
+        var qIds = [];
+        if(participantList[p].NAMEGENQIDS.match(","))
+          qIds = participantList[p].NAMEGENQIDS.split(",");
+        else if(participantList[p].NAMEGENQIDS)
+          qIds.push(participantList[p].NAMEGENQIDS);
+        if(qIds.length != 0){
+          if($.inArray($scope.questions[k].ID.toString(), qIds) != -1){
+            $scope.participants.push(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()]);
+          }
+        }else{
+          $scope.participants.push(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()]);
+        }
+      }
     }
     if (Object.keys($scope.prevAlters).length > 0) {
       for (n in $scope.prevAlters) {

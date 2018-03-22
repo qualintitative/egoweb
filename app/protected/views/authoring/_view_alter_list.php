@@ -73,6 +73,12 @@ $this->widget('zii.widgets.grid.CGridView', array(
 			'type'=>'raw',
 			'value'=>'User::getName($data->interviewerId)',
 		),
+    array(
+      'name'=>'nameGenQIds',
+      'header'=>'Name Generators',
+      'type'=>'raw',
+      'value'=>'Question::getTitles($data->nameGenQIds)',
+    ),
 		array
 		(
     		'class'=>'CButtonColumn',
@@ -104,4 +110,3 @@ $this->widget('zii.widgets.grid.CGridView', array(
 ));
 ?>
 </div>
-
