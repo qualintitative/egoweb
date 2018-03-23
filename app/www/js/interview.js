@@ -128,8 +128,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
           qIds = participantList[p].NAMEGENQIDS.split(",");
         else if(participantList[p].NAMEGENQIDS)
           qIds.push(participantList[p].NAMEGENQIDS);
-        if(qIds.length != 0){
+        if(qIds.length != 0 || $scope.questions[k].SUBJECTTYPE == "EGO_ID"){
           if($.inArray($scope.questions[k].ID.toString(), qIds) != -1){
+            $scope.participants.push(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()]);
+          }else if($scope.questions[k].SUBJECTTYPE == "EGO_ID"){
             $scope.participants.push(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()]);
           }
         }else{
