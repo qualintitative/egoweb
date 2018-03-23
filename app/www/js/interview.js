@@ -1160,7 +1160,7 @@ function buildList() {
       }
       alter_non_list_qs = [];
     }
-    if (questionList[j].SUBJECTTYPE != "EGO" &&  questionList[j-1] != undefined && questionList[j-1].SUBJECTTYPE == "EGO" && Object.keys(ego_question_list).length > 0) {
+    if ((questionList[j].SUBJECTTYPE != "EGO" || questionList[j].ASKINGSTYLELIST != 1) &&  questionList[j-1] != undefined && questionList[j-1].SUBJECTTYPE == "EGO" && Object.keys(ego_question_list).length > 0) {
       console.log(questionList[j])
       console.log("wait over " + Object.keys(ego_question_list).length);
       if (ego_question_list[Object.keys(ego_question_list)[0]].ANSWERREASONEXPRESSIONID > 0)
@@ -1308,9 +1308,6 @@ function buildList() {
       masterList[i] = new Object;
     }
     if (questionList[j].SUBJECTTYPE == "EGO") {
-      console.log(questionList[j].TITLE)
-
-      console.log(Object.keys(ego_question_list).length > 0 && (parseInt(questionList[j].ASKINGSTYLELIST) != 1 || prompt != questionList[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm, "")));
       questionList[j].array_id = questionList[j].ID;
 /*
       if (Object.keys(ego_question_list).length > 0 && (parseInt(questionList[j].ASKINGSTYLELIST) != 1 || prompt != questionList[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm, ""))) {
