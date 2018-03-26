@@ -361,6 +361,7 @@ class InterviewController extends Controller
 			else
 				$array_id = $Answer['questionId'];
 
+        $loadGuest = false;
 			if($Answer['questionType'] == "EGO_ID" && $Answer['value'] != "" && !$interviewId){
 				if(Yii::app()->user->isGuest){
 					foreach($_POST['Answer'] as $ego_id){
@@ -373,24 +374,24 @@ class InterviewController extends Controller
 						}
 					}
 					if(!$key || ($key && User::hashPassword($keystr) != $key)){
-
 						$errors++;
 						break;
 					}
+          $loadGuest = true;
 				}
 
 				if($errors == 0){
-
 					if(Yii::app()->user->isGuest && isset($keystr)){
 						$interview = Interview::getInterviewFromEmail($Answer['studyId'], $keystr);
-                        if(!$interview){
-                            $interview = new Interview;
-                            $interview->studyId = $Answer['studyId'];
-                        }
+            if(!$interview){
+                $interview = new Interview;
+                $interview->studyId = $Answer['studyId'];
+                $loadGuest = false;
+            }
 					}else{
     					$interview = new Interview;
     					$interview->studyId = $Answer['studyId'];
-                    }
+          }
 					if($interview->save()){
     					$randoms = Question::model()->findAllByAttributes(array("answerType"=>"RANDOM_NUMBER", "studyId"=>$Answer['studyId']));
     					foreach($randoms as $q){
@@ -426,7 +427,7 @@ class InterviewController extends Controller
 			}
         }
 		$interview = Interview::model()->findByPk((int)$interviewId);
-		if($interview && $interview->completed != -1 && is_numeric($_POST['page'])){
+		if($loadGuest == false && $interview && $interview->completed != -1 && is_numeric($_POST['page'])){
 			$interview->completed = (int)$_POST['page'];
 			$interview->save();
 		}

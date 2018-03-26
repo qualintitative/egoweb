@@ -1246,13 +1246,15 @@ class AuthoringController extends Controller
             $ego_id = Question::model()->findByAttributes(array("studyId"=>$alter->studyId, "subjectType"=>"EGO_ID", "useAlterListField"=>array("name", "email", "id")));
         //    if($ego_id->useAlterListField == "name")
     		//	$key = User::hashPassword($alter->name);
-			//else if($ego_id->useAlterListField == "email")
+			//else if($ego_id->useAlterListField == "email"
     			$key = User::hashPassword($alter->email);
+          //$key = User::hashPassword("test_a@test.com");
+
 			//else if($ego_id->useAlterListField == "id")
     		//	$key = User::hashPassword($alter->id);
             //else
             //    $key = "";
-			echo "<div style='clear:both'><label>Authorized Link</label><br>" . Yii::app()->getBaseUrl(true) . "/interview/".$alter->studyId."#/page/0/".$key."</div>";
+			echo "<div style='clear:both'><label>Authorized Link for $alter->email</label><br>" . Yii::app()->getBaseUrl(true) . "/interview/".$alter->studyId."#/page/0/".$key."</div>";
 		}
 	}
 	public function actionAjaxmoveup()
