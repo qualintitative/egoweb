@@ -1244,9 +1244,9 @@ class AuthoringController extends Controller
 
 			$alter = AlterList::model()->findByPk((int)$_GET['alterListId']);
             $ego_id = Question::model()->findByAttributes(array("studyId"=>$alter->studyId, "subjectType"=>"EGO_ID", "useAlterListField"=>array("name", "email", "id")));
-        //    if($ego_id->useAlterListField == "name")
-    		//	$key = User::hashPassword($alter->name);
-			//else if($ego_id->useAlterListField == "email"
+        if($ego_id->useAlterListField == "name")
+    		  $key = User::hashPassword($alter->name);
+			  else if($ego_id->useAlterListField == "email")
     			$key = User::hashPassword($alter->email);
           //$key = User::hashPassword("test_a@test.com");
 
