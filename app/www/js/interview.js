@@ -1172,6 +1172,19 @@ function buildList() {
       masterList[i] = new Object;
     }
     if (questionList[j].SUBJECTTYPE == "NAME_GENERATOR") {
+      if (questionList[j].PREFACE != "") {
+        var preface = new Object;
+        preface.ID = questionList[j].ID;
+        preface.ANSWERTYPE = "PREFACE";
+        preface.SUBJECTTYPE = "PREFACE";
+        preface.TITLE = questionList[j].TITLE + " - PREFACE";
+        preface.PROMPT = questionList[j].PREFACE;
+        if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
+          evalQIndex.push(i);
+        masterList[i][0] = $.extend(true, {}, preface);
+        i++;
+        masterList[i] = new Object;
+      }
       if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
         evalQIndex.push(i);
       questionList[j].ANSWERTYPE = "NAME_GENERATOR";
