@@ -372,6 +372,7 @@ class ImportExportController extends Controller
     							if($key!="key" && $key != "id")
     								$newAlter->$key = $value;
                                 if($key == "nameGenQIds"){
+                                  $value = intval($value);
                                     if(isset($newQuestionIds[$value]))
                                         $newAlter->$key = $newQuestionIds[$value];
                                 }
