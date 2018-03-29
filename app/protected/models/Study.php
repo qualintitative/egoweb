@@ -1044,7 +1044,7 @@ class Study extends CActiveRecord
           $x->startElement('alters');
 					foreach($alters[$interview->id] as $alter){
             $x->startElement('alter');
-            foreach($columns['alter'] as $attr){
+            foreach($columns['alters'] as $attr){
               if(!in_array($attr, $exclude))
                 $x->writeAttribute($attr, $alter->$attr);
             }
