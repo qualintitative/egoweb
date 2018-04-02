@@ -208,19 +208,30 @@ class visualize extends Plugin
 	private function getEdgeColor($nodeId1, $nodeId2){
 		$default = "#ccc";
 		if(isset($this->params['edgeColor'])){
+        if($nodeId1 != -1){
             $criteria = array(
                 "condition"=>"questionId = '".$this->params['edgeColor']['questionId']. "' AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2,
             );
+        }else{
+          $criteria = array(
+              "condition"=>"questionId = '".$this->params['egoEdgeColor']['questionId']. "' AND alterId1 = " .$nodeId2,
+          );
+        }
             $answerV = "";
             $answer = Answer::model()->find($criteria);
             if($answer)
                 $answerV = explode(',', $answer->value);
+            echo $answerV.":".$nodeId1."<br>";
 			foreach($this->params['edgeColor']['options'] as $option){
                 if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
                     return $option['color'];
 				if($option['id']== $answerV || in_array($option['id'], $answerV))
 					return $option['color'];
 			}
+      foreach($this->params['egoEdgeColor']['options'] as $option){
+        if($option['id']== $answerV || in_array($option['id'], $answerV))
+          return $option['color'];
+      }
 		}
 		return $default;
 	}
@@ -228,9 +239,16 @@ class visualize extends Plugin
 	private function getEdgeSize($nodeId1, $nodeId2){
 		$default = 1;
 		if(isset($this->params['edgeSize'])){
-            $criteria = array(
-                "condition"=>"questionId = '".$this->params['edgeSize']['questionId']. "' AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2,
-            );
+      if($nodeId1 != -1){
+        $criteria = array(
+            "condition"=>"questionId = '".$this->params['edgeSize']['questionId']. "' AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2,
+        );
+      }else{
+        $criteria = array(
+            "condition"=>"questionId = '".$this->params['egoEdgeSize']['questionId']. "' AND alterId1 = " .$nodeId2,
+        );
+      }
+
             $answerV = "";
             $answer = Answer::model()->find($criteria);
             if($answer)
@@ -241,6 +259,10 @@ class visualize extends Plugin
 				if($option['id'] == $answerV || in_array($option['id'], $answerV))
 					$default = floatval($option['size']);
 			}
+      foreach($this->params['egoEdgeSize']['options'] as $option){
+        if($option['id']== $answerV || in_array($option['id'], $answerV))
+          return $option['size'];
+      }
 		}
 		return $default;
 	}
@@ -771,7 +793,7 @@ class visualize extends Plugin
 	}
 
 	public function actionIndex(){
-		if(!$this->method || !$this->id)
+		if(!$this->method)
 			return;
 		$this->params = json_decode($this->params, true);
 		$graph = Graph::model()->findByAttributes(array("interviewId"=>$this->method,"expressionId"=>$this->id));
@@ -791,16 +813,16 @@ class visualize extends Plugin
 		}
 
     $expression = Expression::model()->findByPk($this->id);
-    if(!$expression)
-        return;
+
 
     $starExpression = false;
     if(is_numeric($this->event))
       $starExpression = Expression::model()->findByPk($this->event);
 
 		$this->stats = new Statistics;
-		$this->stats->initComponents($this->method, $this->id);
-
+    if($expression){
+		    $this->stats->initComponents($this->method, $this->id);
+    }
 		$notes = Note::model()->findAllByAttributes(array("interviewId"=>$this->method, "expressionId"=>$this->id));
 		$alterNotes = array();
 		foreach($notes as $note){
@@ -841,8 +863,8 @@ class visualize extends Plugin
         );
         $alter_pair_expression = Expression::model()->findAll($criteria);
         $alter_pair_expression_ids = array();
-        foreach($alter_pair_expression as $expression){
-            $alter_pair_expression_ids[] = $expression->id;
+        foreach($alter_pair_expression as $e){
+            $alter_pair_expression_ids[] = $e->id;
         }
 		$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interview->id));
 		foreach($answerList as $answer){
@@ -876,20 +898,20 @@ class visualize extends Plugin
 				}
 			}
 		}
-
+print_r($expression);
 		$alters2 = $alters;
 		$nodes = array();
     if($starExpression){
       array_push(
         $nodes,
         array(
-          'id'=> '0',
+          'id'=> '-1',
           'label'=> "You",
           'x'=> rand(0, 10) / 10,
           'y'=> rand(0, 10) / 10,
-          "type"=>$this->getNodeShape(0),
-          "color"=>$this->getNodeColor(0),
-          "size"=>$this->getNodeSize(0),
+          "type"=>$this->getNodeShape(-1),
+          "color"=>$this->getNodeColor(-1),
+          "size"=>$this->getNodeSize(-1),
         )
       );
     }
@@ -909,11 +931,11 @@ class visualize extends Plugin
 
       if($starExpression && $starExpression->evalExpression($this->method, $alter->id, null, $this->answers)){
         $edges[] = array(
-          "id" =>  "0_" . $alter->id,
+          "id" =>  "-_" . $alter->id,
           "source" => $alter->id,
-          "target" => '0',
-          "color"=>$this->getEdgeColor(0, $alter->id),
-          "size"=>$this->getEdgeSize(0, $alter->id),
+          "target" => '-1',
+          "color"=>$this->getEdgeColor(-1, $alter->id),
+          "size"=>$this->getEdgeSize(-1, $alter->id),
         );
       }
 			foreach($alters2 as $alter2){

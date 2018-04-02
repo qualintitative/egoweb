@@ -44,7 +44,7 @@ function getAdjacencies(newExpressionId){
 printView = true;
 </script>
 <div id="print-view" style="width:960px">
-<?php if($expressionId): ?>
+<?php if($interviewId): ?>
 <div class="col-sm-12 pull-left">
 	<?php echo "<h2 class='margin-top-10'>" .Study::getName($studyId) . " &nbsp| &nbsp" . Interview::getEgoId($interviewId)."</h2>"; ?>
 </div>

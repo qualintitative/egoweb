@@ -59,7 +59,7 @@ echo "<h3 class='margin-top-10'>".CHtml::link("Analysis &nbsp| &nbsp", $this->cr
     </div>
 
 
-<?php if($expressionId): ?>
+<?php if($interviewId): ?>
     <div id="visualizePlugin" class="col-sm-8 pull-right">
         <?php $this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$expressionId, 'event'=>$starExpressionId, 'params'=>$params)); ?>
     </div>
