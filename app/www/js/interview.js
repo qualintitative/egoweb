@@ -64,6 +64,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   $scope.redirect = false;
   $scope.participants = [];
   $scope.listedAlters = {};
+  $scope.starExpressionId = false;
 
   if (typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR") {
     alterPromptPage = true;
@@ -374,6 +375,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         $scope.graphInterviewId = interviewId;
 
       }
+      if($scope.questions[k].USELFEXPRESSION && parseInt($scope.questions[k].USELFEXPRESSION) != 0)
+        $scope.starExpressionId =  parseInt($scope.questions[k].USELFEXPRESSION);
       initStats($scope.questions[k]);
     }
     setTimeout(
@@ -404,7 +407,11 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       e_Id = expressionId;
     if (typeof i_Id == "undefined")
       i_Id = interviewId;
-    url = "/data/visualize?print&expressionId=" + e_Id + "&interviewId=" + i_Id + "&params=" + encodeURIComponent($("#Graph_params").val()) + "&labelThreshold=" + s.renderers[0].settings("labelThreshold");
+    if ($scope.starExpressionId == false)
+      s_Id = "";
+    else
+      s_Id = "&starExpressionId=" + $scope.starExpressionId;
+    url = "/data/visualize?print&expressionId=" + e_Id + "&interviewId=" + i_Id + s_Id + "&params=" + encodeURIComponent($("#Graph_params").val()) + "&labelThreshold=" + s.renderers[0].settings("labelThreshold");
     window.open(url);
   }
 

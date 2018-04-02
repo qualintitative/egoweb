@@ -879,6 +879,20 @@ class visualize extends Plugin
 
 		$alters2 = $alters;
 		$nodes = array();
+    if($starExpression){
+      array_push(
+        $nodes,
+        array(
+          'id'=> '0',
+          'label'=> "You",
+          'x'=> rand(0, 10) / 10,
+          'y'=> rand(0, 10) / 10,
+          "type"=>$this->getNodeShape(0),
+          "color"=>$this->getNodeColor(0),
+          "size"=>$this->getNodeSize(0),
+        )
+      );
+    }
 		foreach($alters as $alter){
 			array_push(
 				$nodes,
@@ -892,27 +906,14 @@ class visualize extends Plugin
 					"size"=>$this->getNodeSize($alter->id),
 				)
 			);
-      if($starExpression){
-        array_push(
-          $nodes,
-          array(
-            'id'=> '0',
-            'label'=> "You",
-            'x'=> rand(0, 10) / 10,
-            'y'=> rand(0, 10) / 10,
-            "type"=>$this->getNodeShape($alter->id),
-            "color"=>$this->getNodeColor($alter->id),
-            "size"=>$this->getNodeSize($alter->id),
-          )
-        );
-      }
-      if($starExpression && $starExpression->evalExpression($this->method, $alter2->id, null, $this->answers)){
+
+      if($starExpression && $starExpression->evalExpression($this->method, $alter->id, null, $this->answers)){
         $edges[] = array(
           "id" =>  "0_" . $alter->id,
           "source" => $alter->id,
           "target" => '0',
-          "color"=>$this->getEdgeColor($alter->id, $alter2->id),
-          "size"=>$this->getEdgeSize($alter->id, $alter2->id),
+          "color"=>$this->getEdgeColor(0, $alter->id),
+          "size"=>$this->getEdgeSize(0, $alter->id),
         );
       }
 			foreach($alters2 as $alter2){

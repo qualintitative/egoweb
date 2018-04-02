@@ -18,7 +18,7 @@
 }
 </style>
 <?php
-$interviewId = ''; $expressionId = 0; $params = "";
+$interviewId = ''; $expressionId = 0; $params = ""; $starExpressionId = 0;
 if(isset($_GET['interviewId']) && $_GET['interviewId'])
 	$interviewId = $_GET['interviewId'];
 
@@ -27,6 +27,10 @@ if(isset($_GET['expressionId']) && $_GET['expressionId'])
 
 if(isset($_GET['params']) && $_GET['params'])
 	$params = $_GET['params'];
+
+  if(isset($_GET['starExpressionId']) && $_GET['starExpressionId'])
+      $starExpressionId = $_GET['starExpressionId'];
+
 ?>
 <script>
 expressionId = <?= $expressionId ?>;
@@ -46,7 +50,7 @@ printView = true;
 </div>
 
 <div class="col-sm-12 pull-left">
-<?php $this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$expressionId, 'params'=>$params)); ?>
+  <?php $this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$expressionId, 'event'=>$starExpressionId, 'params'=>$params)); ?>
 </div>
 <div class="col-sm-12 pull-left">
 <h2 class='margin-top-10'>Notes</h2>

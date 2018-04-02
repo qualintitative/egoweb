@@ -29,14 +29,17 @@ class Plugin extends CWidget{
 				$this->actionIndex();
 			}
 		}else if ($this->event) {
+      echo $this->event;
+      die();
 			$event = 'on' . ucfirst($this->event);
 			if(method_exists($this,$event))
 				$this->$event();
-				
+      else
+  			$this->actionIndex();
 		}else{
 			$this->actionIndex();
 		}
-		
+
 	}
 
 	public function runWithParams(){
