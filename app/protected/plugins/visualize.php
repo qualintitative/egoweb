@@ -132,6 +132,8 @@ class visualize extends Plugin
 				foreach($this->params['nodeColor']['options'] as $option){
                     if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE" || $answer->value < 0))
                         return $option['color'];
+                    if($option['id'] == -1 && $nodeId == '-1')
+                        return $option['color'];
 					if($option['id'] == $answerV || (is_array($answerV) && in_array($option['id'], $answerV)))
 						return $option['color'];
 				}

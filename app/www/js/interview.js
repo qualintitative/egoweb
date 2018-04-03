@@ -276,7 +276,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         min = $scope.questions[k].MINLITERAL;
       } else if ($scope.questions[k].MINLIMITTYPE == "NLT_PREVQUES") {
         if (typeof answers[$scope.questions[k].MINPREVQUES] != "undefined")
-          min = answers[$scope.questions[k].MINPREVQUES];
+          min = answers[$scope.questions[k].MINPREVQUES].VALUE;
         else
           min = "";
       }
@@ -284,7 +284,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         max = $scope.questions[k].MAXLITERAL;
       } else if ($scope.questions[k].MAXLIMITTYPE == "NLT_PREVQUES") {
         if (typeof answers[$scope.questions[k].MAXPREVQUES] != "undefined")
-          max = answers[$scope.questions[k].MAXPREVQUES];
+          max = answers[$scope.questions[k].MAXPREVQUES].VALUE;
         else
           max = "";
       }
