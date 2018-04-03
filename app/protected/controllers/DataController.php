@@ -139,7 +139,7 @@ class DataController extends Controller
                 $alter_pair_expression_ids[] = $expression->id;
             }
             if (count($alter_pair_expression_ids) < 1 ) {
-                echo "NO ALTER PAIR EXPRESSION IDS FOUND FOR QUESTION IDS ".(string)$questionIds;
+                //echo "NO ALTER PAIR EXPRESSION IDS FOUND FOR QUESTION IDS ".(string)$questionIds;
                 $alter_pair_expressions = array();
             }
             else{
