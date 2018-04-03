@@ -355,10 +355,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     }
 
     if ($scope.questions[k].SUBJECTTYPE == "NETWORK") {
-      expressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
+      var expressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
       console.log("expr:" + expressionId + $scope.questions[k].USELFEXPRESSION)
-      if (!expressionId)
-        expressionId = $scope.questions[k].USELFEXPRESSION
       notes = [];
       if (typeof otherGraphs[$scope.questions[k].ID] != "undefined")
         $scope.otherGraphs = otherGraphs[$scope.qId];
@@ -371,8 +369,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         if (typeof allNotes[expressionId] != "undefined")
           notes = allNotes[expressionId];
       } else {
-        $scope.graphExpressionId = expressionId;
+        $scope.graphExpressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
         $scope.graphInterviewId = interviewId;
+        $scope.graphParams = $scope.questions[k].NETWORKPARAMS;
 
       }
       if($scope.questions[k].USELFEXPRESSION && parseInt($scope.questions[k].USELFEXPRESSION) != 0)
@@ -404,7 +403,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
   $scope.print = function(e_Id, i_Id) {
     if (typeof e_Id == "undefined")
-      e_Id = expressionId;
+      e_Id = $scope.graphExpressionId;
     if (typeof i_Id == "undefined")
       i_Id = interviewId;
     if ($scope.starExpressionId == false)
@@ -1528,7 +1527,7 @@ function evalExpression(id, alterId1, alterId2) {
   if (expressions[id].TYPE == "Comparison") {
     compSplit = expressions[id].VALUE.split(':');
     value = parseInt(compSplit[0]);
-    expressionId = parseInt(compSplit[1]);
+    var expressionId = parseInt(compSplit[1]);
     result = evalExpression(expressionId, alterId1, alterId2);
     logic = result + " " + comparers[expressions[id].OPERATOR] + " " + value;
     result = eval(logic);

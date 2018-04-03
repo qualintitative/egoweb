@@ -130,12 +130,12 @@ class visualize extends Plugin
                         $answerV = "";
                 }
 				foreach($this->params['nodeColor']['options'] as $option){
-                    if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE" || $answer->value < 0))
-                        return $option['color'];
-                    if($option['id'] == -1 && $nodeId == '-1')
-                        return $option['color'];
-					if($option['id'] == $answerV || (is_array($answerV) && in_array($option['id'], $answerV)))
-						return $option['color'];
+          if($option['id'] == -1 && $nodeId == -1)
+            $default = $option['color'];
+          else if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE" || $answer->value < 0))
+            $default = $option['color'];
+					else if(($option['id'] == $answerV) || (is_array($answerV) && in_array($option['id'], $answerV)))
+						$default = $option['color'];
 				}
 			}
 		}
@@ -153,10 +153,12 @@ class visualize extends Plugin
             if($answer)
                 $answerV = explode(',', $answer->value);
 			foreach($this->params['nodeShape']['options'] as $option){
-                if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
-                    return $option['shape'];
-				if($option['id'] == $answerV || in_array($option['id'], $answerV))
-					return $option['shape'];
+        if($option['id'] == -1 && $nodeId == -1)
+          $default = $option['shape'];
+        else if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
+          $default = $option['shape'];
+				else if($option['id'] == $answerV || (is_array($answerV) && in_array($option['id'], $answerV)))
+					$default = $option['shape'];
 			}
 		}
 		return $default;
@@ -196,9 +198,11 @@ class visualize extends Plugin
                 if($answer)
                     $answerV = explode(',', $answer->value);
 				foreach($this->params['nodeSize']['options'] as $option){
-                    if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
-                        return intval($option['size']);
-					if($option['id']== $answerV || in_array($option['id'], $answerV))
+          if($option['id'] == -1 && $nodeId == -1)
+            $default = intval($option['size']);
+          else if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
+            $default =  intval($option['size']);
+					else if($option['id']== $answerV || (is_array($answerV) && in_array($option['id'], $answerV)))
 						$default = intval($option['size']);
 				}
 			}
@@ -223,7 +227,6 @@ class visualize extends Plugin
             $answer = Answer::model()->find($criteria);
             if($answer)
                 $answerV = explode(',', $answer->value);
-            echo $answerV.":".$nodeId1."<br>";
 			foreach($this->params['edgeColor']['options'] as $option){
                 if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
                     return $option['color'];
@@ -900,15 +903,18 @@ class visualize extends Plugin
 				}
 			}
 		}
-print_r($expression);
 		$alters2 = $alters;
 		$nodes = array();
+    $egoLabel = "You";
+    if(isset($this->params['egoLabel'])){
+      $egoLabel = $this->params['egoLabel'];
+    }
     if($starExpression){
       array_push(
         $nodes,
         array(
           'id'=> '-1',
-          'label'=> "You",
+          'label'=> $egoLabel,
           'x'=> rand(0, 10) / 10,
           'y'=> rand(0, 10) / 10,
           "type"=>$this->getNodeShape(-1),

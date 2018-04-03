@@ -1,6 +1,6 @@
 <div class="col-sm-12 no-padding" ng-if="header != '' && subjectType == 'NETWORK'" ng-bind-html="header">{{ header }}</div>
 
-<div id="visualizePlugin" ng-if="subjectType == 'NETWORK' && graphExpressionId > 0" class="col-sm-6 pull-right">
+<div id="visualizePlugin" ng-if="subjectType == 'NETWORK' && (graphExpressionId > 0 || starExpressionId > 0 )" class="col-sm-6 pull-right">
     <div id="infovis"></div>
 	<div class="col-sm-4 pull-left" id="legend">
 		<canvas id="legend"></canvas>
