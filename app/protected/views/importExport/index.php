@@ -102,7 +102,6 @@ echo CHtml::dropdownlist(
 
 );
 ?>
-    <br>Include Response Data<br>
     <div id="export-interviews"></div>
     <div class="form-group">
       <div class="col-lg-4 ">
@@ -138,19 +137,33 @@ echo CHtml::dropdownlist(
     )
 );
 ?>
-    <br>Include Response Data<br>
+<br>
     <div id="send-interviews"></div>
 
-    <div id="sendNotice" class="col-sm-12 alert alert-info"></div>
+    <div id="sendNotice" class="col-sm-12 alert alert-success" style="display:none"></div>
+    <div id="sendError" class="col-sm-12 alert alert-danger" style="display:none"></div>
+
     <div class="form-group">
-      <label class="col-sm-4">Server Address</label>
-      <div class='col-sm-8'>
-        <input class="form-control" id="serverAddress">
+      <label class="col-sm-2">User Name</label>
+        <div class='col-sm-4'>
+          <input class="form-control" id="userName">
+        </div>
+        <label class="col-sm-2">Password</label>
+        <div class='col-sm-4'>
+          <input type="password" class="form-control" id="userPass">
+        </div>
       </div>
-      <div class="col-sm-4 ">
-        <button class="btn btn-info" onclick="getData();return false;">Send</button>
+      <br>
+      <div class="form-group">
+        <label class="col-sm-2">Server Address</label>
+        <div class='col-sm-8'>
+          <input class="form-control" id="serverAddress">
+        </div>
+        <div class="col-sm-2">
+          <button class="btn btn-info" onclick="getData();return false;">Send</button>
+        </div>
       </div>
-    </div>
+
     <?php $this->endWidget(); ?>
     <textarea id="sendJson" class="hidden"></textarea>
   </div>
@@ -158,16 +171,32 @@ echo CHtml::dropdownlist(
 
 <script>
 function getInterviews(dropdown, container){
-	$.get('/importExport/ajaxinterviews/' + dropdown.val(), function(data){$(container).html(data);});
+	$.get('/importExport/ajaxinterviews/' + dropdown.val(), function(data){
+    $("#sendError").hide();
+    $("#sendNotice").hide();
+    $(container).html(data);
+  });
 }
 function getData(){
   $.post('/importExport/send/' + $("#sendStudy option:selected").val(), $("#sendForm").serialize(), function(data){
     $("#sendJson").val(data);
     if(!$("#serverAddress").val().match("http"))
       $("#serverAddress").val('http://'+$("#serverAddress").val())
-    $.post($("#serverAddress").val()+ '/mobile/uploadData/', {"data":$("#sendJson").val()}, function(data){
-      $("#sendNotice").html(data);
-    });
+      $.ajax({
+        type: "POST",
+        url: $("#serverAddress").val()+ '/mobile/uploadData/',
+        data: {"LoginForm[username]":$("#userName").val(),"LoginForm[password]":$("#userPass").val(),"data":$("#sendJson").val()},
+        success: function(msg){
+          $("#sendError").hide();
+          $("#sendNotice").show();
+          $("#sendNotice").html(msg);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          $("#sendNotice").hide();
+          $("#sendError").show();
+          $("#sendError").html("Authentication failed");
+        }
+      });
   });
 }
 

@@ -271,6 +271,18 @@ class MobileController extends Controller
 			header("Access-Control-Allow-Origin: *");
 		$errorMsg = "";
 		if(count($_POST)){
+      if(isset($_POST['LoginForm']))
+  		{
+  			$model = new LoginForm;
+  			$model->attributes=$_POST['LoginForm'];
+  			// validate user input and redirect to the previous page if valid
+  			if($model->validate() && $model->login()){
+
+        }else{
+      			header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+            die();
+      	}
+  		}
 			header("Access-Control-Allow-Origin: *");
 			header('Access-Control-Allow-Credentials: true');
 			header('Access-Control-Max-Age: 86400');

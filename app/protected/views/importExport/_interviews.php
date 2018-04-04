@@ -1,6 +1,6 @@
 <a href="javascript:void(0)" onclick="$('input[type=checkbox]').prop('checked', true)">Select All</a> ::
 <a href="javascript:void(0)" onclick="$('input[type=checkbox]').prop('checked', false)">De-select All</a>
-<br clear="all">
+Include Response Data<br>
 <?php
 
     foreach($interviews as $interview){
