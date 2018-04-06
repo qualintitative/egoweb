@@ -129,25 +129,40 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
           qIds = participantList[p].NAMEGENQIDS.split(",");
         else if(participantList[p].NAMEGENQIDS)
           qIds.push(participantList[p].NAMEGENQIDS);
-        if(qIds.length != 0 || $scope.questions[k].SUBJECTTYPE == "EGO_ID"){
-          if($.inArray($scope.questions[k].ID.toString(), qIds) != -1){
+        if(qIds.length != 0){
+          if($.inArray($scope.questions[k].ID.toString(), qIds) != -1 && $.inArray( participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()], $scope.participants) == -1){
             $scope.participants.push(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()]);
           }else if($scope.questions[k].SUBJECTTYPE == "EGO_ID"){
             $scope.participants.push(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()]);
           }
         }else{
-          $scope.participants.push(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()]);
+          console.log(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()]);
+          if($.inArray(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()], $scope.participants) == -1)
+            $scope.participants.push(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()]);
         }
       }
     }
     if (Object.keys($scope.prevAlters).length > 0) {
       for (n in $scope.prevAlters) {
-        $scope.participants.push($scope.prevAlters[n].NAME);
+        if(study.RESTRICTALTERS){
+          if ($scope.participants.indexOf($scope.prevAlters[n].NAME) == -1)
+            $scope.participants.push($scope.prevAlters[n].NAME);
+        }else{
+          $scope.participants.push($scope.prevAlters[n].NAME);
+        }
       }
     }
     if (Object.keys($scope.listedAlters).length > 0) {
       for (n in $scope.listedAlters) {
-        $scope.participants.push($scope.listedAlters[n].NAME);
+        if(study.RESTRICTALTERS){
+          console.log($scope.listedAlters[n].NAME.toString() == "test_d@test.com")
+          console.log($scope.participants);
+          console.log(($.inArray($scope.listedAlters[n].NAME, $scope.participants)))
+          if ($.inArray($scope.listedAlters[n].NAME, $scope.participants) == -1)
+            $scope.participants.push($scope.listedAlters[n].NAME);
+        }else{
+          $scope.participants.push($scope.listedAlters[n].NAME);
+        }
       }
     }
     if (typeof $scope.questions[k].CITATION == "string")
@@ -448,6 +463,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     // check pre-defined participant list
     if ($scope.participants.length > 0 && study.RESTRICTALTERS == true) {
       if ($scope.participants.indexOf($("#Alters_name").val().trim()) == -1) {
+        console.log($scope.participants);
+        console.log($("#Alters_name").val().trim());
         console.log($scope.participants.indexOf($("#Alters_name").val().trim()));
         $scope.errors[0] = 'Name not found in list';
       }
