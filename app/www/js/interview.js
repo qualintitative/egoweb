@@ -130,13 +130,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         else if(participantList[p].NAMEGENQIDS)
           qIds.push(participantList[p].NAMEGENQIDS);
         if(qIds.length != 0){
-          if($.inArray($scope.questions[k].ID.toString(), qIds) != -1 && $.inArray( participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()], $scope.participants) == -1){
+          if($.inArray($scope.questions[k].ID.toString(), qIds) != -1 && $.inArray(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()], $scope.participants) == -1){
             $scope.participants.push(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()]);
           }else if($scope.questions[k].SUBJECTTYPE == "EGO_ID"){
             $scope.participants.push(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()]);
           }
         }else{
-          console.log(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()]);
           if($.inArray(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()], $scope.participants) == -1)
             $scope.participants.push(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()]);
         }

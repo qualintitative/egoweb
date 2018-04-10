@@ -184,7 +184,7 @@ function getData(){
       $("#serverAddress").val('http://'+$("#serverAddress").val())
       $.ajax({
         type: "POST",
-        url: $("#serverAddress").val()+ '/mobile/uploadData/',
+        url: $("#serverAddress").val()+ '/mobile/syncData/',
         data: {"LoginForm[username]":$("#userName").val(),"LoginForm[password]":$("#userPass").val(),"data":$("#sendJson").val()},
         success: function(msg){
           $("#sendError").hide();
@@ -194,7 +194,7 @@ function getData(){
         error: function(XMLHttpRequest, textStatus, errorThrown) {
           $("#sendNotice").hide();
           $("#sendError").show();
-          $("#sendError").html("Authentication failed");
+          $("#sendError").html("Failed");
         }
       });
   });

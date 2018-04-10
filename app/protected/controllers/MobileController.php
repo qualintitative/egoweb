@@ -267,22 +267,91 @@ class MobileController extends Controller
 		}
 	}
 
-	public function actionUploadData(){
+  public function actionUploadData(){
+  			header("Access-Control-Allow-Origin: *");
+  		$errorMsg = "";
+  		if(count($_POST)){
+  			header("Access-Control-Allow-Origin: *");
+  			header('Access-Control-Allow-Credentials: true');
+  			header('Access-Control-Max-Age: 86400');
+  			$errors = 0;
+  			$errorMsgs = array();
+  			Yii::log($_POST['data']);
+  			$data = json_decode($_POST['data'],true);
+  			if(!$data['study']['ID']){
+  				echo "Study object broken:";
+  				print_r($data['study']);
+  				header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+  				die();
+  			}
+        $oldStudy = Study::model()->findByAttributes(array("name"=>$data['study']['NAME']));
+  			if($oldStudy && $oldStudy->modified == $data['study']['MODIFIED']){
+  				$this->saveAnswers($data);
+  		  }else{
+  				$study = new Study;
+  				foreach($study->attributes as $key=>$value){
+  					$study->$key = $data['study'][strtoupper($key)];
+  				}
+          if($oldStudy)
+  				   $study->name = $data['study']['NAME'] . " 2";
+  				$questions = array();
+  				foreach($data['questions'] as $q){
+  					$question = new Question;
+  					foreach($question->attributes as $key=>$value){
+  						$question->$key = $q[strtoupper($key)];
+  					}
+  					array_push($questions, $question);
+  				}
+  				$options = array();
+  				foreach($data['questionOptions'] as $o){
+  					$option = new QuestionOption;
+  					foreach($option->attributes as $key=>$value){
+  						$option->$key = $o[strtoupper($key)];
+  					}
+  					array_push($options, $option);
+  				}
+  				$expressions = array();
+  				foreach($data['expressions'] as $e){
+  					$expression = new Expression;
+  					foreach($expression->attributes as $key=>$value){
+  						$expression->$key = $e[strtoupper($key)];
+  					}
+  					array_push($expressions, $expression);
+  				}
+          echo "questions ". count($questions);
+  				$newData = Study::replicate($study, $questions, $options, $expressions, array());
+  				if($newData){
+  					$this->saveAnswers($data, $newData);
+  					echo "Study " . $oldStudy->name . " was modified. (" . $oldStudy->modified .  ":" . $data['study']['MODIFIED'] . ")  Generated new study: " . $study->name . ". ";
+  				}else{
+  					echo "Error while attempting to create a new study.";
+  				}
+  			}
+  			if($errors == 0)
+  				echo "Upload completed.  No Errors Found";
+  			else
+  				echo "Errors encountered!";
+  		}
+  	}
+
+	public function actionSyncData(){
 			header("Access-Control-Allow-Origin: *");
 		$errorMsg = "";
 		if(count($_POST)){
-      if(isset($_POST['LoginForm']))
+      if(!isset($_POST['LoginForm']))
   		{
-  			$model = new LoginForm;
-  			$model->attributes=$_POST['LoginForm'];
-  			// validate user input and redirect to the previous page if valid
-  			if($model->validate() && $model->login()){
+        header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+        die();
+      }
+			$model = new LoginForm;
+			$model->attributes=$_POST['LoginForm'];
+			// validate user input and redirect to the previous page if valid
+			if($model->validate() && $model->login()){
 
-        }else{
-      			header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
-            die();
-      	}
-  		}
+      }else{
+    			header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+          die();
+    	}
 			header("Access-Control-Allow-Origin: *");
 			header('Access-Control-Allow-Credentials: true');
 			header('Access-Control-Max-Age: 86400');
@@ -297,7 +366,7 @@ class MobileController extends Controller
 				die();
 			}
       $oldStudy = Study::model()->findByAttributes(array("name"=>$data['study']['NAME']));
-			if($oldStudy && $oldStudy->modified == $data['study']['MODIFIED']){
+			if($oldStudy){
 				$this->saveAnswers($data);
 		  }else{
 				$study = new Study;
