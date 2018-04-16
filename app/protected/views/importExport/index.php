@@ -114,6 +114,34 @@ echo CHtml::dropdownlist(
 
 <div class="panel panel-info">
   <div class="panel-heading">
+    Save External Server Credentials
+  </div>
+  <div class="panel-body">
+    <div class="form-group">
+      <label class="col-sm-2">User Name</label>
+      <div class='col-sm-4'>
+        <input class="form-control" id="userName">
+      </div>
+      <label class="col-sm-2">Password</label>
+      <div class='col-sm-4'>
+        <input type="password" class="form-control" id="userPass">
+      </div>
+    </div>
+      <br>
+      <div class="form-group">
+        <label class="col-sm-2">Server Address</label>
+        <div class='col-sm-8'>
+          <input class="form-control" id="serverAddress">
+        </div>
+        <div class="col-sm-2">
+          <button class="btn btn-success" onclick="saveServer();return false;">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="panel panel-info">
+  <div class="panel-heading">
     Send Study to Server
   </div>
   <div class="panel-body">
@@ -125,7 +153,28 @@ $form=$this->beginWidget('CActiveForm', array(
 ));
 $criteria=new CDbCriteria;
 $criteria->order = 'name';
-echo CHtml::dropdownlist(
+?>
+<div class="form-group">
+  <label class="col-sm-2">Server Address</label>
+  <div class='col-sm-10'>
+    <?php echo CHtml::dropdownlist(
+    	'serverId',
+    	'',
+    	CHtml::listData(Server::model()->findAll(),'id', 'address'),
+        array(
+              'id'=>'serverAddress',
+              'empty' => 'Select',
+              'class'=>'form-control'
+        )
+    );
+    ?>
+  </div>
+</div>
+<br>
+<div class="form-group">
+  <label class="col-sm-2">Study</label>
+  <div class='col-sm-10'>
+<?php echo CHtml::dropdownlist(
 	'studyId',
 	'',
 	CHtml::listData(Study::model()->findAll($criteria),'id', 'name'),
@@ -137,33 +186,19 @@ echo CHtml::dropdownlist(
     )
 );
 ?>
+</div>
 <br>
+
+
+
     <div id="send-interviews"></div>
 
     <div id="sendNotice" class="col-sm-12 alert alert-success" style="display:none"></div>
     <div id="sendError" class="col-sm-12 alert alert-danger" style="display:none"></div>
 
-    <div class="form-group">
-      <label class="col-sm-2">User Name</label>
-        <div class='col-sm-4'>
-          <input class="form-control" id="userName">
-        </div>
-        <label class="col-sm-2">Password</label>
-        <div class='col-sm-4'>
-          <input type="password" class="form-control" id="userPass">
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label class="col-sm-2">Server Address</label>
-        <div class='col-sm-8'>
-          <input class="form-control" id="serverAddress">
-        </div>
-        <div class="col-sm-2">
-          <button class="btn btn-info" onclick="getData();return false;">Send</button>
-        </div>
-      </div>
-
+    <div class="col-sm-2">
+      <button class="btn btn-info" onclick="getData();return false;">Send</button>
+    </div>
     <?php $this->endWidget(); ?>
     <textarea id="sendJson" class="hidden"></textarea>
   </div>
