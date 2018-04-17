@@ -91,6 +91,25 @@ class Server extends CActiveRecord
 		));
 	}
 
+  /**
+   * Decrypts "name" attribute after it's found.
+   */
+  protected function afterFind() {
+      $this->username = decrypt( $this->username );
+      $this->password = decrypt( $this->password );
+      return parent::afterFind();
+  }
+
+  /**
+   * Encrypts "name" attribute before it's saved.
+   * @return bool|void
+   */
+  protected function beforeSave() {
+      $this->username = encrypt( $this->username );
+      $this->password = encrypt( $this->password );
+      return parent::beforeSave();
+  }
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!

@@ -614,7 +614,21 @@ class ImportExportController extends Controller
 
 	public function actionIndex()
 	{
-		$this->render('index');
+    if(isset($_POST['Server'])){
+      $server = new Server;
+      $server->attributes = $_POST['Server'];
+      $server->userId = Yii::app()->user->id;
+      $server->save();
+      Yii::app()->request->redirect("/importExport");
+    }
+    $result = Server::model()->findAllByAttributes(array("userId"=>Yii::app()->user->id));
+    $servers = array();
+    foreach($result as $server){
+      $servers[$server->id] = mToA($server);
+    }
+		$this->render('index', array(
+      "servers"=>$servers,
+    ));
 	}
 
 	public function actionAjaxInterviews($id)

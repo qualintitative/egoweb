@@ -117,26 +117,34 @@ echo CHtml::dropdownlist(
     Save External Server Credentials
   </div>
   <div class="panel-body">
+    <?php
+    // export study
+    $form=$this->beginWidget('CActiveForm', array(
+        'id'=>'sendForm',
+        'enableAjaxValidation'=>false,
+    ));
+    ?>
     <div class="form-group">
       <label class="col-sm-2">User Name</label>
       <div class='col-sm-4'>
-        <input class="form-control" id="userName">
+        <input class="form-control" id="userName" name="Server[username]">
       </div>
       <label class="col-sm-2">Password</label>
       <div class='col-sm-4'>
-        <input type="password" class="form-control" id="userPass">
+        <input type="password" class="form-control" id="userPass"  name="Server[password]">
       </div>
     </div>
       <br>
       <div class="form-group">
         <label class="col-sm-2">Server Address</label>
         <div class='col-sm-8'>
-          <input class="form-control" id="serverAddress">
+          <input class="form-control" name="Server[address]" id="sAddress">
         </div>
         <div class="col-sm-2">
-          <button class="btn btn-success" onclick="saveServer();return false;">Save</button>
+          <button  class="btn btn-success" onclick="authenticate(); return false;">Save</button>
         </div>
       </div>
+      <?php $this->endWidget(); ?>
     </div>
   </div>
 
@@ -205,6 +213,7 @@ $criteria->order = 'name';
 </div>
 
 <script>
+servers = <?php echo json_encode($servers); ?>;
 function getInterviews(dropdown, container){
 	$.get('/importExport/ajaxinterviews/' + dropdown.val(), function(data){
     $("#sendError").hide();
@@ -212,26 +221,46 @@ function getInterviews(dropdown, container){
     $(container).html(data);
   });
 }
+function authenticate(){
+  url = $("#sAddress").val();
+  if(!url.match("http"))
+    url = "http://" + url;
+  $.ajax({
+    type: "POST",
+    url:  url  +  '/mobile/authenticate/',
+    data: {"LoginForm[username]":$("#userName").val(),"LoginForm[password]":$("#userPass").val()},
+    success: function(msg){
+      if(msg != "failed"){
+        $("#sendForm").submit();
+      }else{
+        alert("Authentication failed");
+      }
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) {
+      alert("Can't connect to server");
+    }
+  });
+}
 function getData(){
   $.post('/importExport/send/' + $("#sendStudy option:selected").val(), $("#sendForm").serialize(), function(data){
     $("#sendJson").val(data);
-    if(!$("#serverAddress").val().match("http"))
-      $("#serverAddress").val('http://'+$("#serverAddress").val())
-      $.ajax({
-        type: "POST",
-        url: $("#serverAddress").val()+ '/mobile/syncData/',
-        data: {"LoginForm[username]":$("#userName").val(),"LoginForm[password]":$("#userPass").val(),"data":$("#sendJson").val()},
-        success: function(msg){
-          $("#sendError").hide();
-          $("#sendNotice").show();
-          $("#sendNotice").html(msg);
-        },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-          $("#sendNotice").hide();
-          $("#sendError").show();
-          $("#sendError").html("Failed");
-        }
-      });
+    if(!servers[$("#serverAddress option:selected").val()].ADDRESS.match("http"))
+      servers[$("#serverAddress option:selected").val()].ADDRESS = 'http://'+ servers[$("#serverAddress option:selected").val()].ADDRESS;
+    $.ajax({
+      type: "POST",
+      url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
+      data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
+      success: function(msg){
+        $("#sendError").hide();
+        $("#sendNotice").show();
+        $("#sendNotice").html(msg);
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) {
+        $("#sendNotice").hide();
+        $("#sendError").show();
+        $("#sendError").html("Failed");
+      }
+    });
   });
 }
 
