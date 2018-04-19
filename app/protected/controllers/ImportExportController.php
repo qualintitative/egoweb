@@ -672,13 +672,7 @@ class ImportExportController extends Controller
         foreach($results as $result){
           $options[] = mToA($result);
         }
-        $answers = array();
         $participantList = array();
-        $alters = array();
-        $prevAlters = array();
-        $alterPrompts = array();
-        $graphs = array();
-        $notes = array();
         $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
         foreach($results as $result){
             if($result->name)
@@ -686,58 +680,66 @@ class ImportExportController extends Controller
             if($result->email)
                 $participantList['email'][] = $result->email;
         }
+        $alterPrompts = array();
         $results = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$id));
         foreach($results as $result){
             if(!$result->questionId)
                 $result->questionId = 0;
             $alterPrompts[] = $result->display;
         }
-
         if(is_array($_POST['export']))
           $interviewIds = $_POST['export'];
         else
-          $interviewIds = array();
+          $interviewIds = array(0);
+        if(count($options) == 0)
+          $options = new stdClass();
+        $studies = array();
         foreach($interviewIds as $interviewId){
-          $interviews[] = mToA(Interview::model()->findByPK($interviewId));
-	        $results = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewId));
-          foreach($results as $result){
-            $answers[] = mToA($result);
+          $interviews = array();
+          $answers = array();
+          $alters = array();
+          $graphs = array();
+          $notes = array();
+          if($interviewId != 0){
+            $interviews[] = mToA(Interview::model()->findByPK($interviewId));
+  	        $results = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+            foreach($results as $result){
+              $answers[] = mToA($result);
+            }
+      			$criteria = array(
+      				'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId)",
+      				'order'=>'ordering',
+      			);
+  			    $results = Alters::model()->findAll($criteria);
+            foreach($results as $result){
+              $alters[] = mToA($result);
+            }
+      			$results = Graph::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+      			foreach($results as $result){
+          			$graphs[] = mToA($result);
+      			}
+        		$results = Note::model()->findAllByAttributes(array("interviewId"=>$interviewId));
+        		foreach($results as $result){
+        			$notes[] = $result->notes;
+        		}
           }
-    			$criteria = array(
-    				'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId)",
-    				'order'=>'ordering',
-    			);
-			    $results = Alters::model()->findAll($criteria);
-          foreach($results as $result){
-            $alters[] = mToA($result);
-          }
-    			$results = Graph::model()->findAllByAttributes(array('interviewId'=>$interviewId));
-    			foreach($results as $result){
-        			$graphs[] = mToA($result);
-    			}
-      		$results = Note::model()->findAllByAttributes(array("interviewId"=>$interviewId));
-      		foreach($results as $result){
-      			$notes[] = $result->notes;
-      		}
-      }
-
+          $studies[] = array(
+             "study"=>mToA($study),
+             "questions"=>$questions,
+             "expressions"=>$expressions,
+             "questionOptions"=>$options,
+             "alterPrompts"=>$alterPrompts,
+             "participantList"=>$participantList,
+             "interviews" => $interviews,
+             "answers"=>$answers,
+             "alters"=>$alters,
+             "graphs"=>$graphs,
+             "notes"=>$notes,
+         );
+        }
       if(count($alters) == 0)
         $alters = new stdClass();
-      if(count($options) == 0)
-        $options = new stdClass();
-       $data = array(
-          "study"=>mToA($study),
-          "questions"=>$questions,
-          "expressions"=>$expressions,
-          "questionOptions"=>$options,
-          "interviews" => $interviews,
-          "answers"=>$answers,
-          "alterPrompts"=>$alterPrompts,
-          "alters"=>$alters,
-          "graphs"=>$graphs,
-          "notes"=>$notes,
-          "participantList"=>$participantList,
-      );
+      $data = $studies;
       echo json_encode($data);
 	}
 }

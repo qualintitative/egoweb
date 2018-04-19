@@ -156,7 +156,7 @@ echo CHtml::dropdownlist(
 <?php
 // export study
 $form=$this->beginWidget('CActiveForm', array(
-    'id'=>'sendForm',
+    'id'=>'syncForm',
     'enableAjaxValidation'=>false,
 ));
 $criteria=new CDbCriteria;
@@ -203,8 +203,12 @@ $criteria->order = 'name';
 
     <div id="sendNotice" class="col-sm-12 alert alert-success" style="display:none"></div>
     <div id="sendError" class="col-sm-12 alert alert-danger" style="display:none"></div>
-
-    <div class="col-sm-2">
+    <div class="progress" style="clear:both">
+      <div class="progress-bar progress-bar-striped active" role="progressbar"
+      aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
+      </div>
+    </div>
+    <div class="col-sm-2"  style="clear:both">
       <button class="btn btn-info" onclick="getData();return false;">Send</button>
     </div>
     <?php $this->endWidget(); ?>
@@ -242,24 +246,35 @@ function authenticate(){
   });
 }
 function getData(){
-  $.post('/importExport/send/' + $("#sendStudy option:selected").val(), $("#sendForm").serialize(), function(data){
-    $("#sendJson").val(data);
+  var finished = 0;
+  $(".progress-bar").width(0);
+  $.post('/importExport/send/' + $("#sendStudy option:selected").val(), $("#syncForm").serialize(), function(res){
     if(!servers[$("#serverAddress option:selected").val()].ADDRESS.match("http"))
       servers[$("#serverAddress option:selected").val()].ADDRESS = 'http://'+ servers[$("#serverAddress option:selected").val()].ADDRESS;
-    $.ajax({
-      type: "POST",
-      url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
-      data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
-      success: function(msg){
-        $("#sendError").hide();
-        $("#sendNotice").show();
-        $("#sendNotice").html(msg);
-      },
-      error: function(XMLHttpRequest, textStatus, errorThrown) {
-        $("#sendNotice").hide();
-        $("#sendError").show();
-        $("#sendError").html("Failed");
-      }
+    studies = JSON.parse(res);
+    console.log(studies.length);
+    var total = studies.length;
+    studies.forEach(function(data) {
+      $("#sendJson").val(JSON.stringify(data));
+      $.ajax({
+        type: "POST",
+        url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
+        data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
+        success: function(msg){
+          finished++;
+          if(total != finished)
+            msg = "Processed " + finished + " / " + total + " interviews";
+          $(".progress-bar").width((finished / total * 100) + "%");
+          $("#sendError").hide();
+          $("#sendNotice").show();
+          $("#sendNotice").html(msg);
+        },
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          $("#sendNotice").hide();
+          $("#sendError").show();
+          $("#sendError").html("Failed");
+        }
+      });
     });
   });
 }
