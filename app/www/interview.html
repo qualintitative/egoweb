@@ -32,7 +32,7 @@
             {{ error }}
         </div>
     </span>
-    <div ng-if="prompt != ''" ng-bind-html="prompt" ng-class="{'col-xs-12 col-sm-9 no-padding': questions[0].ANSWERTYPE == 'NAME_GENERATOR'}">{{ prompt }}</div>
+    <div ng-if="prompt != ''" ng-bind-html="prompt" ng-class="{'col-xs-12 col-sm-9': questions[0].ANSWERTYPE == 'NAME_GENERATOR'}">{{ prompt }}</div>
     <a ng-if='audio[subjectType + qId]' class="play-sound" ng-click='playSound(subjectType + qId)' href="javascript:void(0)"><span class="fui-volume"></span></a>
     <a ng-if='audio["PREFACE" + qId]' class="play-sound" ng-click='playSound("PREFACE" + qId)' href="javascript:void(0)"><span class="fui-volume"></span></a>
     <div ng-if="phrase != ''" class="orangeText col-xs-12 no-padding">{{ phrase }}</div>
@@ -42,7 +42,31 @@
         <div ng-repeat="option in options[askingStyleList]" style="width:120px">{{ option.NAME }}</div>
     </div>
 </div>
+<div id="alterFormBox" ng-if="questions[0].ANSWERTYPE == 'NAME_GENERATOR'">
+    <div ng-if='alterPrompt != ""'>{{ alterPrompt }}</div>
+    <a ng-if='audio["ALTERPROMPT"]' class="play-sound" ng-click='playSound("ALTERPROMPT")' href="javascript:void(0)"><span class="fui-volume"></span></a>
 
+    <div class="col-sm-6">
+    <form ng-if="!questions[0].MAXLITERAL || keys(alters).length < questions[0].MAXLITERAL" id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
+        <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
+        <div class="form-group">
+            <input name="Alters[name]" id="Alters_name" type="hidden" value="{{ alterName }}">
+            <autocomplete attr-input-class="answerInput" ng-disabled="interview.COMPLETED == -1" style="float:left" ng-model="alterName" data="participants"></autocomplete>
+            <input value="{{ interviewId }}" name="Alters[interviewId]" id="Alters_interviewId" type="hidden">
+            <input value="{{ questions[0].ID }}" name="Alters[nameGenQIds]" id="Alters_nameGenQIds" type="hidden">
+            <input class="btn orangebutton alterSubmit" type="submit" name="yt0" value="+ Add">
+        </div>
+        <br><br class="clearfix">
+    </form>
+    </div>
+
+    <form id="deleteAlterForm" name="deleteAlterForm">
+        <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
+        <input id="deleteAlterId" name="Alters[id]" type="hidden">
+        <input id="deleteNameGenQId" name="Alters[nameGenQId]" type="hidden">
+        <input value="{{ interviewId }}" name="Alters[interviewId]" type="hidden">
+    </form>
+</div>
 <div id="alterListBox" class="col-xs-12 col-sm-3" ng-if="questions[0].ANSWERTYPE == 'NAME_GENERATOR'">
     <span class="name-title">Names</span>
     <table class="items">
@@ -71,31 +95,7 @@
     </div>
 </div>
 
-<div id="alterFormBox" ng-if="questions[0].ANSWERTYPE == 'NAME_GENERATOR'">
-    <div ng-if='alterPrompt != ""'>{{ alterPrompt }}</div>
-    <a ng-if='audio["ALTERPROMPT"]' class="play-sound" ng-click='playSound("ALTERPROMPT")' href="javascript:void(0)"><span class="fui-volume"></span></a>
 
-    <div class="col-sm-6">
-    <form ng-if="!questions[0].MAXLITERAL || keys(alters).length < questions[0].MAXLITERAL" id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
-        <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
-        <div class="form-group">
-            <input name="Alters[name]" id="Alters_name" type="hidden" value="{{ alterName }}">
-            <autocomplete attr-input-class="answerInput" ng-disabled="interview.COMPLETED == -1" style="float:left" ng-model="alterName" data="participants"></autocomplete>
-            <input value="{{ interviewId }}" name="Alters[interviewId]" id="Alters_interviewId" type="hidden">
-            <input value="{{ questions[0].ID }}" name="Alters[nameGenQIds]" id="Alters_nameGenQIds" type="hidden">
-            <input class="btn orangebutton alterSubmit" type="submit" name="yt0" value="+ Add">
-        </div>
-        <br><br class="clearfix">
-    </form>
-    </div>
-
-    <form id="deleteAlterForm" name="deleteAlterForm">
-        <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
-        <input id="deleteAlterId" name="Alters[id]" type="hidden">
-        <input id="deleteNameGenQId" name="Alters[nameGenQId]" type="hidden">
-        <input value="{{ interviewId }}" name="Alters[interviewId]" type="hidden">
-    </form>
-</div>
 
 <form id="answerForm" name="answerForm" ng-submit="submitForm(answerForm.$valid)" novalidate>
 

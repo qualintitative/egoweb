@@ -415,10 +415,9 @@ textarea {
 .orangebutton{
 	background-color:#db7522;
 	float:left;
-	margin:0 10px 10px 0;
-    width:120px;
-    margin-left:15px;
-    color:#eee;
+	margin:0 0 10px 15px;
+  width:120px;
+  color:#eee;
 }
 
 hr{
@@ -473,6 +472,18 @@ td{
 @media (max-width: 768px) {
   .nav {
     margin-left:0;
+  }
+  #alterListBox{
+    padding-left: 0!important;
+    height:auto!important;
+    margin-right:0!important;
+    overflow-y: auto;
+  }
+  .orangebutton{
+  	margin-left:10px!important;
+  }
+  .prev-alters {
+    min-height: 100px!important;
   }
 }
 
