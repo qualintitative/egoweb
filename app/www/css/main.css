@@ -9,9 +9,19 @@ body
 	overflow-y: scroll;
 }
 */
-
+.name-title {
+    background-color: #000;
+    color: #fff;
+    padding-left: 5px;
+    display: block;
+}
 .panel {
     background-color: inherit;
+}
+
+.prev-alters {
+    padding-left: 0!important;
+    min-height: 200px!important;
 }
 
 .multi-header {
@@ -405,10 +415,9 @@ textarea {
 .orangebutton{
 	background-color:#db7522;
 	float:left;
-	margin:0 10px 10px 0;
-    width:120px;
-    margin-left:15px;
-    color:#eee;
+	margin:0 0 10px 15px;
+  width:120px;
+  color:#eee;
 }
 
 hr{
@@ -463,6 +472,18 @@ td{
 @media (max-width: 768px) {
   .nav {
     margin-left:0;
+  }
+  #alterListBox{
+    padding-left: 0!important;
+    height:auto!important;
+    margin-right:0!important;
+    overflow-y: auto;
+  }
+  .orangebutton{
+  	margin-left:10px!important;
+  }
+  .prev-alters {
+    min-height: 100px!important;
   }
 }
 
@@ -722,6 +743,11 @@ a.btn {
 #visualize-bar label, #expression-bar label, #load-bar label,#inner-details label {
 	margin-bottom: 0;
 	padding-top:0;
+    text-align: left;
+}
+
+#visualize-bar .form-horizontal {
+    padding:15px 10px;
 }
 
 .nodeColorOptions, .nodeShapeOptions, .edgeColorOptions, .nodeSizeOptions, .edgeSizeOptions {

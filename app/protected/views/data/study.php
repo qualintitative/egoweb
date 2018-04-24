@@ -134,9 +134,10 @@ Network Statistics
                         <th class="hidden-xs">Started</th>
                         <th class="hidden-xs">Completed</th>
                         <th class="hidden-xs">Dyad Match ID</th>
+                        <th class="hidden-xs">Match User</th>
                         <th><em class="fa fa-cog"></em></th>
 
-                    </tr> 
+                    </tr>
                   </thead>
                   <tbody>
 
@@ -148,28 +149,31 @@ Network Statistics
         else
             $completed = "";
         $mark = "";
+        $matchId = "";
+        $matchUser = "";
         if($interview->hasMatches){
             $mark = "class='success'";
     		$criteria = array(
     			'condition'=>"interviewId1 = $interview->id OR interviewId2 = $interview->id",
     		);
-    		$matchId = "";
     		$match = MatchedAlters::model()->find($criteria);
             if($interview->id == $match->interviewId1)
                 $matchInt = Interview::model()->findByPk($match->interviewId2);
             else
                 $matchInt = Interview::model()->findByPk($match->interviewId1);
-            $matchId = Interview::getEgoId($matchInt->id);
+            $matchId = $match->getMatchId();
+            $matchUser = User::getName($match->userId);
         }
         echo "<tr $mark>";
         echo "<td>".CHtml::checkbox('export[' .$interview['id'].']'). "</td><td>" . Interview::getEgoId($interview->id)."</td>";
         echo "<td class='hidden-xs'>".date("Y-m-d h:i:s", $interview->start_date)."</td>";
         echo "<td class='hidden-xs'>".$completed."</td>";
         echo "<td class='hidden-xs'>".$matchId."</td>";
+        echo "<td class='hidden-xs'>".$matchUser."</td>";
         echo "<td>";
         if($interview->completed == -1)
             echo CHtml::button('Edit',array('submit'=>$this->createUrl('/data/edit/' . $interview->id)));
-            
+
         echo CHtml::button('Review',array('submit'=>$this->createUrl('/interview/'.$study->id.'/'.$interview->id.'/#/page/0')));
         echo CHtml::button('Visualize',array('submit'=>$this->createUrl('/data/visualize?expressionId=&interviewId='.$interview->id)))."</td>";
         echo "</tr>";

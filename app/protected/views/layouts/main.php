@@ -33,8 +33,14 @@
 				<?php
 				$condition = "id != 0";
 				if(!Yii::app()->user->isSuperAdmin){
-                    #OK FOR SQL INJECTION
-					$studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
+                    $criteria = array(
+            			'condition'=>"interviewerId = " . Yii::app()->user->id,
+                    );
+                    $interviewers = Interviewer::model()->findAll($criteria);
+                    $studies = array();
+                    foreach($interviewers as $i){
+                        $studies[] = $i->studyId;
+                    }
 					if($studies)
 						$condition = "id IN (" . implode(",", $studies) . ")";
 					else
@@ -101,7 +107,7 @@
 					</li>
 				</ul>
 				<?php endif; ?>
-				<a class="titlelink" href="/admin">EgoWeb 2.0</a><span class="title"><?php echo CHtml::encode($this->pageTitle); ?></span><?php if(!Yii::app()->user->isGuest): ?><span class="title" id="questionTitle"></span><?php endif; ?>
+				<a class="titlelink" href="/admin">EgoWeb 2.0</a><span class="title hidden-xs"><?php echo CHtml::encode($this->pageTitle); ?></span><?php if(!Yii::app()->user->isGuest): ?><span class="title" id="questionTitle"></span><?php endif; ?>
 
 				<ul id="navbox" class="nav navbar-nav navbar-right">
 					<li id="questionMenu" class="dropdown hidden">
@@ -140,10 +146,13 @@
             			$this->menu=array(
             				array('label'=>'Study Settings', 'url'=>array('edit','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'edit'),
             				array('label'=>'Ego ID Questions', 'url'=>array('ego_id','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'ego_id'),
-            				array('label'=>'Ego Questions', 'url'=>array('ego','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'ego'),
+                            array('label'=>'Questions', 'url'=>array('questions','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'questions'),
+/*
+                        	array('label'=>'Ego Questions', 'url'=>array('ego','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'ego'),
             				array('label'=>'Alter Questions', 'url'=>array('alter','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'alter'),
             				array('label'=>'Alter Pair Questions', 'url'=>array('alterpair','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'alterpair'),
             				array('label'=>'Network Questions', 'url'=>array('network','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'network'),
+*/
             				array('label'=>'Expressions', 'url'=>array('expression','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'expression'),
             				array('label'=>'Option Lists', 'url'=>array('optionlist','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'optionlist'),
             			);

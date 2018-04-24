@@ -8,8 +8,8 @@ function ajaxCheck(optionId, checked){
 }
 </script>
 <?php
-#OK FOR SQL INJECTION
-$studyId = q("SELECT studyId FROM question WHERE id = " . $questionId)->queryScalar();
+$question = Question::model()->findByPK($questionId);
+$studyId = $question->studyId;
 Yii::app()->clientScript->registerScript('delete', "
 jQuery('a.delete').click(function() {
 

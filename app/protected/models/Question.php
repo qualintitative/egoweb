@@ -216,8 +216,29 @@ class Question extends CActiveRecord
 			$this->preface = "";
 		if(trim($this->citation) == "<br>" ||  $this->citation == " ")
 			$this->citation = "";
+    if($this->answerType != "MULTIPLE_SELECTION"){
+      $options = QuestionOption::model()->findAllByAttributes(array("questionId"=>$this->id));
+      foreach($options as $option){
+        $option->delete();
+      }
+    }
 		return true;
 	}
+
+  public static function getTitles($ids){
+    if(stristr($ids, ",")){
+      $qIds = explode(",", $ids);
+    }else{
+      $qIds = array($ids);
+    }
+    $qTitles = array();
+    foreach($qIds as $qId){
+      $question = Question::model()->findByPk($qId);
+      $qTitles[] = $question->title;
+    }
+    return implode(", ", $qTitles);
+  }
+
 
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.

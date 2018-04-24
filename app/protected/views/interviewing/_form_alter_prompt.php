@@ -65,9 +65,9 @@ echo $form->hiddenField($model, 'interviewId',array('value'=>$interviewId));
 				'condition'=>"interviewId = $interviewId AND questionId = $study->multiSessionEgoId",
 			);
         $egoValue = Answer::model()->find($criteria)->value;
-        $multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-        #OK FOR SQL INJECTION
 
+        #OK FOR SQL INJECTION
+        $multiIds = array();
         $oldAnswers = Answer::model()->findAllByAttributes(array("questionId"=>$multiIds));
         foreach($oldAnswers as $oldA){
             if($oldA->value == $egoValue)

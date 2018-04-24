@@ -10,6 +10,7 @@
  * @property integer $ordering
  * @property integer $name
  * @property integer $interviewId
+ * @property text $nameGenQIds
  */
 class Alters extends CActiveRecord
 {
@@ -39,11 +40,11 @@ class Alters extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('ordering, name, interviewId', 'required'),
+			array('ordering, name, interviewId, nameGenQIds', 'required'),
 			array('ordering', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, active, ordering, name, interviewId', 'length', 'max'=>1024),
+			array('id, active, ordering, name, interviewId, nameGenQIds', 'length', 'max'=>1024),
 			array('id, active, ordering, name, interviewId', 'safe', 'on'=>'search'),
 		);
 	}
@@ -97,6 +98,7 @@ class Alters extends CActiveRecord
 			'ordering' => 'Ordering',
 			'name' => 'Name',
 			'interviewId' => 'Interview',
+            'nameGenQIds' => 'nameGenQIds',
 		);
 	}
 

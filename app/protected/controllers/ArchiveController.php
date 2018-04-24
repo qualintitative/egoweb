@@ -33,10 +33,15 @@ class ArchiveController extends Controller
 	{
 
 		$condition = "id != 0";
-		if(!Yii::app()->user->isSuperAdmin){
-            #OK FOR SQL INJECTION
-			$studies = q("SELECT studyId FROM interviewers WHERE active = 1 AND interviewerId = " . Yii::app()->user->id)->queryColumn();
-			if($studies)
+		if(!Yii::app()->user->isSuperAdmin){            
+            $studies = array();
+            $criteria = new CDbCriteria;
+            $criteria->condition = "active = 1 AND interviewerId = " . Yii::app()->user->id;
+            $interviewers = Interviewer::model()->findAll($criteria);
+            foreach($interviewers as $interviewer){
+                $studies[] = $interviewer->studyId;
+            }
+            if($studies)
 				$condition = "id IN (" . implode(",", $studies) . ") AND active = 0";
 			else
 				$condition = "id = -1 AND active = 0";

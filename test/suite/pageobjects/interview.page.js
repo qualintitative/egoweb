@@ -78,8 +78,8 @@ var IwPage = Object.create(Page, {
         enumerable: false,
         writable: true,
         configurable: false
-    },    
-    
+    },
+
     /**
      * define or overwrite page methods
      */
@@ -351,6 +351,7 @@ var IwPage = Object.create(Page, {
     updateNavLinks: {
         value: function() {
             // set up nav links to be referenced by question title
+            browser.element("#second li a").waitForExist(browser.options.egoweb.waitTime);
             let links = browser.getAttribute("#second li a","href");
             let titles = browser.getHTML("#second li a", false);
             for(i = 0; i < links.length; i++){
@@ -377,13 +378,12 @@ var IwPage = Object.create(Page, {
                     max = val;
                 }
             });
-    
+
             if(browser.options.egoweb.reuseInterview == true && max != 0){
-                
+
                 // opens most recent interview
                 this.ewid = max;
                 browser.element('='+this.ewid).click();
-
                 this.updateNavLinks();
 
                 if(startPage != null)
@@ -395,7 +395,7 @@ var IwPage = Object.create(Page, {
                 this.startInterviewLink.click();
 
                 this.goForwardToQuestion("EGO ID");
-        
+
                 // enter ego id
                 let id = this.inputField();
                 id.waitForExist(browser.options.egoweb.waitTime);

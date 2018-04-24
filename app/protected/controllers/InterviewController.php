@@ -10,11 +10,17 @@ class InterviewController extends Controller
 	{
 		$condition = "id != 0";
 		if(!Yii::app()->user->isSuperAdmin){
-            #OK FOR SQL INJECTION
-            if(Yii::app()->user->id)
-			    $studies = q("SELECT studyId FROM interviewers WHERE interviewerId = " . Yii::app()->user->id)->queryColumn();
-            else
+            if(Yii::app()->user->id){
+                $studies = array();
+                $criteria = new CDbCriteria;
+                $criteria->condition = "interviewerId = " . Yii::app()->user->id;
+                $interviewers = Interviewer::model()->findAll($criteria);
+                foreach($interviewers as $interviewer){
+                    $studies[] = $interviewer->studyId;
+                }
+            }else{
                 $studies = false;
+            }
 			if($studies)
 				$condition = "id IN (" . implode(",", $studies) . ")";
 			else
@@ -43,29 +49,39 @@ class InterviewController extends Controller
 
 	public function actionStudy($id)
 	{
-		$egoIdQ = q("SELECT * from question where studyId = $id and useAlterListField in ('name','email','id')")->queryRow();
-		$restrictions = "";
-		if($egoIdQ){
-			$participants = q("SELECT " . $egoIdQ['useAlterListField'] . " FROM alterList where interviewerId = " . Yii::app()->user->id)->queryColumn();
-			foreach($participants as &$p){
-    			if(strlen($p) >= 8)
-    			    $p = decrypt($p);
-			}
-			if($participants){
-        		$criteria = array(
-        			'condition'=>"questionId = " .$egoIdQ['id'],
-        		);
+        $criteria = array(
+            'condition'=>"studyId = $id and useAlterListField in ('name','email','id')",
+        );
+        $egoIdQ = Question::model()->find($criteria);
+        $restrictions = "";
+        if($egoIdQ){
+            $criteria = new CDbCriteria;
+            $criteria = array(
+                'condition'=>"interviewerId = " . Yii::app()->user->id,
+            );
+            $participantList =  AlterList::model()->findAll($criteria);
+            $participants = array();
+            foreach($participantList as $p){
+                if($egoIdQ->useAlterListField == "email")
+                    $participants[] = $p->email;
+                elseif($egoIdQ->useAlterListField == "name")
+                    $participants[] = $p->name;
+            }
+            if($participants){
+                $criteria = array(
+                    'condition'=>"questionId = " .$egoIdQ->id,
+                );
                 $answers = Answer::model()->findAll($criteria);
                 foreach($answers as $answer){
                     if(in_array($answer->value, $participants))
                         $interviewIds[] = $answer->interviewId;
                 }
-				if($interviewIds)
-					$restrictions = ' and id in (' . implode(",", $interviewIds) . ')';
-				else
-					$restrictions = ' and id = -1';
-			}
-		}
+                if($interviewIds)
+                    $restrictions = ' and id in (' . implode(",", $interviewIds) . ')';
+                else
+                    $restrictions = ' and id = -1';
+            }
+        }
         if(Yii::app()->user->isSuperAdmin)
             $restrictions = "";
 		$criteria=array(
@@ -87,10 +103,20 @@ class InterviewController extends Controller
 	public function actionView($id)
 	{
         $study = Study::model()->findByPk($id);
-        if ($study->multiSessionEgoId)
-            $multiIds = q("SELECT studyId FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-        else
+        if ($study->multiSessionEgoId){
+            $criteria = array(
+                "condition"=>"title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")",
+            );
+            $questions = Question::model()->findAll($criteria);
+            $multiIds = array();
+            foreach($questions as $question){
+                $check = Study::model()->findByPk($question->studyId);
+                if($check->multiSessionEgoId != 0)
+                    $multiIds[] = $question->studyId;
+            }
+        }else{
             $multiIds = $study->id;
+        }
         $this->pageTitle = $study->name;
         $expressions = array();
         $results = Expression::model()->findAllByAttributes(array("studyId"=>$multiIds));
@@ -104,19 +130,24 @@ class InterviewController extends Controller
         $ego_questions = array();
         $alter_questions = array();
         $alter_pair_questions = array();
+        $name_gen_questions = array();
         $network_questions = array();
+        $questionList = array();
         foreach($results as $result){
             $questions[$result->id] = mToA($result);
+            if($result->studyId == $study->id && $result->subjectType != "EGO_ID")
+                $questionList[] = mToA($result);
             if(file_exists(Yii::app()->basePath."/../audio/".$study->id . "/PREFACE/" . $result->id . ".mp3"))
                 $audio['PREFACE_' . $result->id] = "/audio/".$study->id . "/PREFACE/" . $result->id . ".mp3";
             if(file_exists(Yii::app()->basePath."/../audio/".$study->id . "/" . $result->subjectType . "/" . $result->id . ".mp3"))
                 $audio[$result->subjectType . $result->id] = "/audio/".$study->id . "/" . $result->subjectType . "/" . $result->id . ".mp3";
-
             if($id == $result->studyId){
                 if($result->subjectType == "EGO_ID")
                     $ego_id_questions[] = mToA($result);
                 if($result->subjectType == "EGO")
                     $ego_questions[] = mToA($result);
+                if($result->subjectType == "NAME_GENERATOR")
+                    $name_gen_questions[] = mToA($result);
                 if($result->subjectType == "ALTER")
                     $alter_questions[] = mToA($result);
                 if($result->subjectType == "ALTER_PAIR")
@@ -137,12 +168,14 @@ class InterviewController extends Controller
         $interview = false;
         $participantList = array();
         $otherGraphs = array();
+        $alters = array();
+        $prevAlters = array();
+        $alterPrompts = array();
+        $graphs = array();
+        $notes = array();
         $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
         foreach($results as $result){
-            if($result->name)
-                $participantList['name'][] = $result->name;
-            if($result->email)
-                $participantList['email'][] = $result->email;
+            $participantList[] = mToA($result);
         }
         if(isset($_GET['interviewId'])){
             $interviewId = $_GET['interviewId'];
@@ -160,12 +193,18 @@ class InterviewController extends Controller
                         if($i_id == $interviewId)
                             continue;
                         $graphId = "";
-                        $s = Study::model()->findByPk((int)q("SELECT studyId from interview WHERE id = " . $i_id)->queryScalar());
-                        #OK FOR SQL INJECTION
-                        $networkExprId = q("SELECT networkRelationshipExprId FROM question WHERE title = '" . $nq['TITLE'] . "' AND studyId = " . $s->id)->queryScalar();
-                        #OK FOR SQL INJECTION
-                        if($networkExprId)
-                            $graphId = q("SELECT id FROM graphs WHERE expressionId = " . $networkExprId  . " AND interviewId = " . $i_id)->queryScalar();
+                        $s = Study::model()->findByPk($interview->studyId);
+                        $criteria = array(
+                            "condition"=>"title = '" . $nq['TITLE'] . "' AND studyId = " . $s->id,
+                        );
+                        $question = Question::model()->find($criteria);
+                        $networkExprId = $question->networkRelationshipExprId;
+                        if($networkExprId){
+                            $criteria = array(
+                                "condition"=>"expressionId = " . $networkExprId  . " AND interviewId = " . $i_id,
+                            );
+                            $graphId = Graph::model()->find($criteria);
+                        }
                         if($graphId){
                             $otherGraphs[$nq['ID']][] = array(
                                 "interviewId" => $i_id,
@@ -179,10 +218,11 @@ class InterviewController extends Controller
     		}else{
     		    $answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$_GET['interviewId']));
             }
-            $alterPrompts = array();
             $results = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$id));
             foreach($results as $result){
-                $alterPrompts[$result->afterAltersEntered] = $result->display;
+                if(!$result->questionId)
+                    $result->questionId = 0;
+                $alterPrompts[$result->questionId][$result->afterAltersEntered] = $result->display;
             }
     		foreach($answerList as $answer){
     			if($answer->alterId1 && $answer->alterId2)
@@ -193,7 +233,6 @@ class InterviewController extends Controller
     				$array_id = $answer->questionId;
                 $answers[$array_id] = mToA($answer);
     		}
-    		$prevAlters = array();
     		foreach($prevIds as $i_id){
     			$criteria = array(
     				'condition'=>"FIND_IN_SET(" . $i_id .", interviewId)",
@@ -205,11 +244,19 @@ class InterviewController extends Controller
     			}
             }
     		if(isset($_GET['interviewId']) && $study->fillAlterList){
-                #OK FOR SQL INJECTION
-                $check = q("SELECT count(id) FROM alters WHERE interviewId = " . $interviewId)->queryScalar();
-    			if(!$check){
-                    #OK FOR SQL INJECTION
-    				$names = q("SELECT name FROM alterList where studyId = " . $study->id)->queryColumn();
+                $criteria = array(
+                    "condition"=>"interviewId = " . $interviewId,
+                );
+                $check = Alters::model()->findAll($criteria);
+    			if(count($check) > 0){
+                    $criteria = array(
+                        "condition"=>"studyId = " . $study->id,
+                    );
+                    $alterList = AlterList::model()->findAll($criteria);
+                    $names = array();
+                    foreach($alterList as $a){
+                        $names[] = $a->name;
+                    }
     				$count = 0;
     				foreach($names as $name){
     					$alter = new Alters;
@@ -235,26 +282,29 @@ class InterviewController extends Controller
     			    unset($prevAlters[$result->id]);
     			$alters[$result->id] = mToA($result);
 			}
-			$graphs = array();
 			$results = Graph::model()->findAllByAttributes(array('interviewId'=>$interviewId));
 			foreach($results as $result){
     			$graphs[$result->expressionId] = mToA($result);
 			}
-    		$notes = array();
     		$results = Note::model()->findAllByAttributes(array("interviewId"=>$interviewId));
     		foreach($results as $result){
     			$notes[$result->expressionId][$result->alterId] = $result->notes;
     		}
         }
+        if(count($prevAlters) == 0)
+            $prevAlters = new stdClass();
+        if(count($alters) == 0)
+            $alters = new stdClass();
         $this->render('view', array(
                 "study"=>json_encode(mToA($study)),
                 "questions"=>json_encode($questions),
                 "ego_id_questions"=>json_encode($ego_id_questions),
                 "ego_questions"=>json_encode($ego_questions),
+                "name_gen_questions"=>json_encode($name_gen_questions),
                 "alter_questions"=>json_encode($alter_questions),
                 "alter_pair_questions"=>json_encode($alter_pair_questions),
                 "network_questions"=>json_encode($network_questions),
-                "no_response_questions"=>json_encode($no_response_questions),
+                //"no_response_questions"=>json_encode($no_response_questions),
                 "expressions"=>json_encode($expressions),
                 "options"=>json_encode($options),
                 "interviewId" => $interviewId,
@@ -266,7 +316,8 @@ class InterviewController extends Controller
                 "graphs"=>json_encode($graphs),
                 "allNotes"=>json_encode($notes),
                 "participantList"=>json_encode($participantList),
-                "questionList"=>json_encode($study->questionList()),
+                "questionList"=>json_encode($questionList),
+                "questionTitles"=>json_encode($study->questionTitles()),
                 "audio"=>json_encode($audio),
                 "otherGraphs"=>json_encode($otherGraphs),
             )
@@ -279,7 +330,8 @@ class InterviewController extends Controller
         $key = "";
         if(isset($_POST["hashKey"]))
             $key = $_POST["hashKey"];
-
+        if(isset($_POST["studyId"]))
+            $study = Study::model()->findByPK($_POST["studyId"]);
         $interviewId = null;
 		foreach($_POST['Answer'] as $Answer){
 
@@ -309,6 +361,7 @@ class InterviewController extends Controller
 			else
 				$array_id = $Answer['questionId'];
 
+        $loadGuest = false;
 			if($Answer['questionType'] == "EGO_ID" && $Answer['value'] != "" && !$interviewId){
 				if(Yii::app()->user->isGuest){
 					foreach($_POST['Answer'] as $ego_id){
@@ -316,30 +369,29 @@ class InterviewController extends Controller
 						$answers[$array_id] = new Answer;
 						$answers[$array_id]->attributes = $ego_id;
 						$ego_id_q = Question::model()->findByPk($ego_id['questionId']);
-						if(in_array($ego_id_q->useAlterListField, array("name", "email", "id"))){
+						if(in_array($ego_id_q->useAlterListField, array("name", "email"))){
 							$keystr = $ego_id['value'];
-							//$email_id = $array_id;
 						}
 					}
 					if(!$key || ($key && User::hashPassword($keystr) != $key)){
-						//$model[$email_id]->addError('value', 'You do not have the correct email for this survey.');
 						$errors++;
 						break;
 					}
+          $loadGuest = true;
 				}
+
 				if($errors == 0){
-					if(Yii::app()->user->isGuest && isset($email)){
-						$interview = Interview::getInterviewFromEmail($Answer['studyId'], $email);
-						if($interview){
-							$this->redirect(Yii::app()->createUrl(
-								'interview/'.$study->id.'/'.
-								$interview->id.'#/'.
-								'page/'.$interview->completed
-							));
-						}
-					}
-					$interview = new Interview;
-					$interview->studyId = $Answer['studyId'];
+					if(Yii::app()->user->isGuest && isset($keystr)){
+						$interview = Interview::getInterviewFromEmail($Answer['studyId'], $keystr);
+            if(!$interview){
+                $interview = new Interview;
+                $interview->studyId = $Answer['studyId'];
+                $loadGuest = false;
+            }
+					}else{
+    					$interview = new Interview;
+    					$interview->studyId = $Answer['studyId'];
+          }
 					if($interview->save()){
     					$randoms = Question::model()->findAllByAttributes(array("answerType"=>"RANDOM_NUMBER", "studyId"=>$Answer['studyId']));
     					foreach($randoms as $q){
@@ -375,12 +427,14 @@ class InterviewController extends Controller
 			}
         }
 		$interview = Interview::model()->findByPk((int)$interviewId);
-		if($interview &&$interview->completed != -1 && is_numeric($_POST['page'])){
-			$interview->completed = (int)$_POST['page'] + 1;
+		if($loadGuest == false && $interview && $interview->completed != -1 && is_numeric($_POST['page'])){
+			$interview->completed = (int)$_POST['page'];
 			$interview->save();
 		}
+        if($interview)
+            $json["interview"] = mToA($interview);
 		foreach($answers as $index => $answer){
-    		$json[$index] = mToA($answer);
+    		$json["answers"][$index] = mToA($answer);
 		}
 
 		if(isset($_POST['conclusion'])){
@@ -401,28 +455,31 @@ class InterviewController extends Controller
 
 	public function actionAlter(){
 		if(isset($_POST['Alters'])){
-            #OK FOR SQL INJECTION
-            $params = new stdClass();
-            $params->name = ':interviewId';
-            $params->value = $_POST['Alters']['interviewId'];
-            $params->dataType = PDO::PARAM_INT;
-
-			$studyId = q("SELECT studyId FROM interview WHERE id = :interviewId", array($params))->queryScalar();
+            $interview = Interview::model()->findByPk($_POST['Alters']['interviewId']);
+			$studyId = $interview->studyId;
 			$criteria=array(
 				'condition'=>"FIND_IN_SET(" . $_POST['Alters']['interviewId'] .", interviewId)",
 				'order'=>'ordering',
 			);
 			$alters = Alters::model()->findAll($criteria);
 			$alterNames = array();
+            $alterGroups = array();
 			foreach($alters as $alter){
-				$alterNames[] = $alter->name;
+				$alterNames[$alter->id] = $alter->name;
+                $alterGroups[$alter->name] = explode(",", $alter->nameGenQIds);
 			}
 			$model = new Alters;
 			$model->attributes = $_POST['Alters'];
 			if(in_array($_POST['Alters']['name'], $alterNames)){
-				$model->addError('name', $_POST['Alters']['name']. ' has already been added!');
-			}
-			
+                if(!in_array($_POST['Alters']['nameGenQIds'], $alterGroups[$_POST['Alters']['name']])){
+                    $model = Alters::model()->findByPk(array_search($_POST['Alters']['name'], $alterNames));
+                    $alterGroups[$_POST['Alters']['name']][] = $_POST['Alters']['nameGenQIds'];
+                    $model->nameGenQIds = implode(",", $alterGroups[$_POST['Alters']['name']]);
+                }else{
+                    $model->addError('name', $_POST['Alters']['name']. ' has already been added!');
+                }
+            }
+
             $pre_names = array();
             $preset_alters = AlterList::model()->findAllByAttributes(array("studyId"=>$studyId));
             foreach($preset_alters as $alter){
@@ -434,45 +491,24 @@ class InterviewController extends Controller
 			// check to see if pre-defined alters exist.  If they do exist, check name against list
 			if($study->useAsAlters){
                 #OK FOR SQL INJECTION
-				//$alterCount = q("SELECT count(id) FROM alterList WHERE studyId = ".$studyId)->queryScalar();
 				if(count($pre_names) > 0){
                     #OK FOR SQL INJECTION
                     $params = new stdClass();
                     $params->name = ':name';
                     $params->value = encrypt($_POST['Alters']['name']);
                     //echo encrypt($_POST['Alters']['name']);
-                
+
                     $params->dataType = PDO::PARAM_STR;
-        			if(!in_array($_POST['Alters']['name'], $pre_names)){
+        			if(!in_array($_POST['Alters']['name'], $pre_names) && $study->restrictAlters){
 						$model->addError('name', $_POST['Alters']['name']. ' is not in our list of participants');
                     }
-					//$nameInList = q('SELECT name FROM alterList WHERE name = :name AND studyId = '. $studyId, array($params))->queryScalar();
-					//if(!$nameInList && $study->restrictAlters){
-					//}
 				}
 			}
 
             $foundAlter = false;
 			if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
-                #OK FOR SQL INJECTION
-                #OK FOR SQL INJECTION
-                $multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-                #OK FOR SQL INJECTION
-
-    			$criteria=array(
-    				'condition'=>"interviewId = ". $_POST['Alters']['interviewId']." AND questionId IN (" . implode(",", $multiIds) . ")",
-    			);
-                $egoValue = Answer::model()->find($criteria);
-    			$criteria=array(
-    				'condition'=>"questionId IN (" . implode(",", $multiIds) . ")",
-    			);
-
-                $otherEgoValues = Answer::model()->findAll($criteria);
-                foreach($otherEgoValues as $other){
-                    if($other->value == $egoValue->value)
-                        $interviewIds[] = $other->interviewId;
-                }
-				$interviewIds = array_diff(array_unique($interviewIds), array($_POST['Alters']['interviewId']));
+                $interviewIds = Interview::multiInterviewIds($_POST['Alters']['interviewId'], $study);
+				//$interviewIds = array_diff(array_unique($interviewIds), array($_POST['Alters']['interviewId']));
 
                 foreach($interviewIds as $iId){
                     $criteria=array(
@@ -481,7 +517,12 @@ class InterviewController extends Controller
                     $alters = Alters::model()->findAll($criteria);
                     foreach($alters as $alter){
                         if($alter->name == $_POST['Alters']['name']){
-                            $alter->interviewId = $alter->interviewId . ",". $_POST['Alters']['interviewId'];
+                            $intIds = explode(",", $alter->interviewId);
+                            $nameQIds = explode(",", $alter->nameGenQIds);
+                            if(!in_array($_POST['Alters']['interviewId'], $intIds))
+                                $alter->interviewId = $alter->interviewId . ",". $_POST['Alters']['interviewId'];
+                            if(!in_array($_POST['Alters']['nameGenQIds'], $nameQIds))
+                                $alter->nameGenQIds = $alter->nameGenQIds . ",". $_POST['Alters']['nameGenQIds'];
                             $alter->save();
                             $foundAlter = true;
                         }
@@ -525,16 +566,41 @@ class InterviewController extends Controller
 		if(isset($_POST['Alters'])){
 			$model = Alters::model()->findByPk((int)$_POST['Alters']['id']);
 			$interviewId = $_POST['Alters']['interviewId'];
+            $nameQId = $_POST['Alters']['nameGenQId'];
+            $interview = Interview::model()->findByPk($interviewId);
+            $name_gen_questions = Question::model()->findAllByAttributes(array("studyId"=>$interview->studyId,"subjectType"=>"NAME_GENERATOR"));
+            $nameQIds = array();
+            foreach($name_gen_questions as $question){
+                $nameQIds[] = $question->id;
+            }
 			if($model){
 				$ordering = $model->ordering;
 				if(strstr($model->interviewId, ",")){
-					$interviewIds = explode(",", $model->interviewId);
-					$interviewIds = array_diff($interviewIds,array($interviewId));
-					$model->interviewId = implode(",", $interviewIds);
-					$model->save();
+                    $nameGenQIds = explode(",", $model->nameGenQIds);
+                    $checkRemain = false;
+                    foreach($nameGenQIds as $nameGenQId){
+                        if($nameQId != $nameGenQId && in_array($nameGenQId, $nameQIds))
+                            $checkRemain = true;
+                    }
+                    $nameGenQIds = array_diff($nameGenQIds,array($nameQId));
+                    $model->nameGenQIds = implode(",", $nameGenQIds);
+                    if($checkRemain == false){
+                        $interviewIds = explode(",", $model->interviewId);
+    					$interviewIds = array_diff($interviewIds,array($interviewId));
+    					$model->interviewId = implode(",", $interviewIds);
+                    }
+                    $model->save();
 				}else{
-					$model->delete();
-				}
+                    if(strstr($model->nameGenQIds, ",")){
+                        $nameGenQIds = explode(",", $model->nameGenQIds);
+    					$nameGenQIds = array_diff($nameGenQIds,array($nameQId));
+    					$model->nameGenQIds = implode(",", $nameGenQIds);
+    					$model->save();
+                    }else{
+    					$model->delete();
+    				}
+                }
+
 				Alters::sortOrder($ordering, $interviewId);
 			}
 

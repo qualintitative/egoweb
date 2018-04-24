@@ -73,24 +73,50 @@ class Study extends CActiveRecord
 			);
 	}
 
-    public function questionList()
+    public function multiIdQs()
+    {
+        if($this->multiSessionEgoId == 0)
+            return false;
+        $egoIdQ = Question::model()->findByPK($this->multiSessionEgoId);
+        $multiIdQs = array();
+        $criteria = array(
+            "condition"=>"multiSessionEgoId != 0",
+        );
+        $studies = Study::findAll($criteria);
+        foreach($studies as $study){
+            $newEgoIdQ = Question::model()->findByPK($study->multiSessionEgoId);
+            if($newEgoIdQ->title == $egoIdQ->title)
+                $multiIdQs[] = $newEgoIdQ;
+        }
+        return $multiIdQs;
+    }
+
+    public function questionTitles()
     {
 
-        if ($this->multiSessionEgoId)
-            $multiIds = q("SELECT studyId FROM question WHERE title = (SELECT title FROM question WHERE id = " . $this->multiSessionEgoId . ")")->queryColumn();
-        else
+        if ($this->multiSessionEgoId){
+            $criteria = array(
+                "condition"=>"title = (SELECT title FROM question WHERE id = " . $this->multiSessionEgoId . ")",
+            );
+            $questions = Question::model()->findAll($criteria);
+            $multiIds = array();
+            foreach($questions as $question){
+                $multiIds[] = $question->studyId;
+            }
+        }else{
             $multiIds = $this->id;
+        }
         $studies = Study::model()->findAllByAttributes(array('id'=>$multiIds));
         foreach($studies as $study){
             $studyNames[$study->id] = $study->name;
         }
         $questions = Question::model()->findAllByAttributes(array('studyId'=>$multiIds));
-        $questionList = array();
+        $questionTitles = array();
         foreach ($questions as $question)
         {
-            $questionList[$studyNames[$question->studyId]][$question->title] = $question->id;
+            $questionTitles[$studyNames[$question->studyId]][$question->title] = $question->id;
         }
-        return $questionList;
+        return $questionTitles;
     }
 
 	/**
@@ -134,7 +160,7 @@ class Study extends CActiveRecord
 	public static function nav($study, $pageNumber, $interviewId = null, $answers = null){
 
 		$expressionList = Expression::model()->findAllByAttributes(array('studyId'=>$study->id));
-		$questionList = Question::model()->findAllByAttributes(array('studyId'=>$study->id),array('order'=>'ordering'));
+		$questions = Question::model()->findAllByAttributes(array('studyId'=>$study->id),array('order'=>'ordering'));
 		$egoQuestions = array();
 		$alterQuestions = array();
 		$alterPairQuestions = array();
@@ -143,7 +169,7 @@ class Study extends CActiveRecord
 		$page = array();
 		$i = 0;
 
-		foreach($questionList as $question){
+		foreach($questions as $question){
 			$questions[$question->id] = $question;
 			if($question->subjectType == "EGO_ID")
 				$ego_id_questions[$question->id] = $question;
@@ -212,7 +238,7 @@ class Study extends CActiveRecord
 			$i++;
 		}
 		if(trim(preg_replace('/<\/*[^>]*>/', '', $study->alterPrompt)) != ""){
-			$page[$i] = Study::checkPage($i, $pageNumber, "ALTER_PROMPT");
+			$page[$i] = Study::checkPage($i, $pageNumber, "NAME_GENERATOR");
 			$i++;
 		}
 		$criteria = array(
@@ -366,7 +392,7 @@ class Study extends CActiveRecord
 	public static function buildQuestions($study, $pageNumber = null, $interviewId = null, $answers = null){
 
 		$expressionList = Expression::model()->findAllByAttributes(array('studyId'=>$study->id));
-		$questionList = Question::model()->findAllByAttributes(array('studyId'=>$study->id),array('order'=>'ordering'));
+		$questions = Question::model()->findAllByAttributes(array('studyId'=>$study->id),array('order'=>'ordering'));
 		$egoQuestions = array();
 		$alterQuestions = array();
 		$alterPairQuestions = array();
@@ -374,7 +400,7 @@ class Study extends CActiveRecord
 		$page = array();
 		$i = 0;
 
-		foreach($questionList as $question){
+		foreach($questions as $question){
 			$questions[$question->id] = $question;
 			if($question->subjectType == "EGO_ID")
 				$ego_id_questions[$question->id] = $question;
@@ -468,7 +494,7 @@ class Study extends CActiveRecord
 
 			if($pageNumber == $i && trim(preg_replace('/<\/*[^>]*>/', '', $study->alterPrompt)) != ""){
 				$alter_prompt = new Question;
-				$alter_prompt->answerType = "ALTER_PROMPT";
+				$alter_prompt->answerType = "NAME_GENERATOR";
 				$alter_prompt->prompt = $study->alterPrompt;
 				$alter_prompt->studyId = $study->id;
 				$alter_prompt->id = 0;
@@ -902,10 +928,162 @@ class Study extends CActiveRecord
 				$graphs[$result->id] = $graph;
 				$note = Note::model()->findAllByAttributes(array("interviewId"=>$result->id));
 				$notes[$result->id] = $note;
-				$other = OtherSpecify::model()->findAllByAttributes(array("interviewId"=>$result->id));
+				$other = array();
+				//$other = OtherSpecify::model()->findAllByAttributes(array("interviewId"=>$result->id));
 				$others[$result->id] = $other;
 			}
 		}
+    $columns = array();
+		$columns['study'] = Yii::app()->db->schema->getTable("study")->getColumnNames();
+		$columns['question'] = Yii::app()->db->schema->getTable("question")->getColumnNames();
+		$columns['questionOption'] = Yii::app()->db->schema->getTable("questionOption")->getColumnNames();
+		$columns['expression'] = Yii::app()->db->schema->getTable("expression")->getColumnNames();
+		$columns['answer'] = Yii::app()->db->schema->getTable("answer")->getColumnNames();
+		$columns['alters'] = Yii::app()->db->schema->getTable("alters")->getColumnNames();
+		$columns['interview'] = Yii::app()->db->schema->getTable("interview")->getColumnNames();
+		$columns['alterList'] = Yii::app()->db->schema->getTable("alterList")->getColumnNames();
+		$columns['alterPrompt'] = Yii::app()->db->schema->getTable("alterPrompt")->getColumnNames();
+		$columns['alterList'] = Yii::app()->db->schema->getTable("alterList")->getColumnNames();
+		$columns['graphs'] = Yii::app()->db->schema->getTable("graphs")->getColumnNames();
+		$columns['notes'] = Yii::app()->db->schema->getTable("notes")->getColumnNames();
+    $exclude = array("studyId", "active");
+    $x=new XMLWriter();
+    $x->openMemory();
+    $x->setIndent(true);
+    $x->startDocument('1.0','UTF-8');
+    $x->startElement('study');
+    foreach($columns['study'] as $attr){
+      $x->writeAttribute($attr, $this->$attr);
+    }
+    $x->writeElement('introduction', $this->introduction);
+    $x->writeElement('egoIdPrompt', $this->egoIdPrompt);
+    $x->writeElement('introduction', $this->alterPrompt);
+    $x->writeElement('conclusion', $this->conclusion);
+		if(count($alterLists) > 0){
+      $x->startElement('alterLists');
+      foreach($alterLists as $alterList){
+        $x->startElement('alterList');
+        foreach($columns['alterList'] as $attr){
+          if(!in_array($attr, $exclude))
+            $x->writeAttribute($attr, $alterList->$attr);
+        }
+        $x->endElement();
+      }
+      $x->endElement();
+    }
+    if(count($alterPrompts) > 0){
+      $x->startElement('alterPrompts');
+      foreach($alterPrompts as $alterPrompt){
+        $x->startElement('alterPrompt');
+        foreach($columns['alterPrompt'] as $attr){
+          if(!in_array($attr, $exclude))
+            $x->writeAttribute($attr, $alterPrompt->$attr);
+        }
+        $x->endElement();
+      }
+      $x->endElement();
+    }
+    if(count($questions) > 0){
+      $x->startElement('questions');
+      foreach($questions as $question){
+        $x->startElement('question');
+        foreach($columns['question'] as $attr){
+          if(!in_array($attr, $exclude))
+            $x->writeAttribute($attr, $question->$attr);
+        }
+        if($question->answerType == "SELECTION" || $question->answerType == "MULTIPLE_SELECTION"){
+          $options = QuestionOption::model()->findAllByAttributes(
+            array("studyId"=>$_POST['studyId'], "questionId"=>$question->id)
+          );
+          foreach($options as $option){
+            $x->startElement('option');
+            foreach($columns['questionOption'] as $attr){
+              if(!in_array($attr, $exclude))
+                $x->writeAttribute($attr, $option->$attr);
+            }
+            $x->endElement();
+          }
+        }
+        $x->endElement();
+      }
+      $x->endElement();
+    }
+    if(count($expressions) > 0){
+      $x->startElement('expressions');
+      foreach($expressions as $expression){
+        $x->startElement('expression');
+        foreach($columns['expression'] as $attr){
+          if(!in_array($attr, $exclude))
+            $x->writeAttribute($attr, $expression->$attr);
+        }
+        $x->endElement();
+      }
+      $x->endElement();
+    }
+    if(count($interviewIds) > 0){
+      $x->startElement('interviews');
+			foreach($interviews as $interview){
+        $x->startElement('interview');
+        foreach($columns['interview'] as $attr){
+          if(!in_array($attr, $exclude))
+            $x->writeAttribute($attr, $interview->$attr);
+        }
+        if(isset($answers[$interview->id])){
+          $x->startElement('answers');
+          foreach($answers[$interview->id] as $answer){
+            $x->startElement('answer');
+            foreach($columns['answer'] as $attr){
+              if(!in_array($attr, $exclude))
+              $x->writeAttribute($attr, $answer->$attr);
+            }
+            $x->endElement();
+          }
+          $x->endElement();
+        }
+				if(isset($alters[$interview->id])){
+          $x->startElement('alters');
+					foreach($alters[$interview->id] as $alter){
+            $x->startElement('alter');
+            foreach($columns['alters'] as $attr){
+              if(!in_array($attr, $exclude))
+                $x->writeAttribute($attr, $alter->$attr);
+            }
+            $x->endElement();
+					}
+          $x->endElement();
+				}
+				if(isset($graphs[$interview->id])){
+          $x->startElement('graphs');
+          foreach($graphs[$interview->id] as $graph){
+            $x->startElement('graph');
+            foreach($columns['graph'] as $attr){
+              if(!in_array($attr, $exclude))
+                $x->writeAttribute($attr, $graph->$attr);
+            }
+            $x->endElement();
+          }
+          $x->endElement();
+				}
+				if(isset($notes[$interview->id])){
+          $x->startElement('notes');
+          foreach($notes[$interview->id] as $note){
+            $x->startElement('note');
+            foreach($columns['note'] as $attr){
+              if(!in_array($attr, $exclude))
+                $x->writeAttribute($attr, $note->$attr);
+            }
+            $x->endElement();
+          }
+          $x->endElement();
+				}
+        $x->endElement();
+      }
+      $x->endElement();
+    }
+    $x->endElement();
+    $x->endDocument();
+    $text = $x->outputMemory();
+/*
 		$text = <<<EOT
 <?xml version="1.0" encoding="UTF-8"?>
 <study id="{$this->id}" name="{$this->name}" minAlters="{$this->minAlters}" maxAlters="{$this->maxAlters}" valueDontKnow="{$this->valueDontKnow}" valueLogicalSkip="{$this->valueLogicalSkip}" valueNotYetAnswered="{$this->valueNotYetAnswered}" valueRefusal="{$this->valueRefusal}" modified="{$this->modified}" multiSessionEgoId="{$this->multiSessionEgoId}" useAsAlters="{$this->useAsAlters}" restrictAlters="{$this->restrictAlters}" fillAlterList="{$this->fillAlterList}" hideEgoIdPage="{$this->hideEgoIdPage}">
@@ -1075,7 +1253,7 @@ EOT;
 		}
 		$text .= "
 </study>";
-
+*/
 		return $text;
 	}
 

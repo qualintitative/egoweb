@@ -5,7 +5,7 @@ $expressionTypes = array(
     "_form_expression_compound" => "Compound",
     "_form_expression_counting" => "Counting",
     "_form_expression_comparison" => "Comparison",
-
+    "_form_expression_name_gen" => "Name Generator",
 );
 ?>
 
@@ -16,7 +16,7 @@ $expressionTypes = array(
         'id'=>'new-expression',
         'enableAjaxValidation'=>false,
         'method'=>'GET',
-    
+
     ));
 
     echo CHtml::hiddenField("studyId", $studyId);
@@ -27,7 +27,7 @@ $expressionTypes = array(
         $expressionTypes,
         array('empty' => 'Choose One')
     );
-    
+
     echo CHtml::ajaxButton ("New Expression",
     	CController::createUrl('ajaxload'),
     	array( 'update' => '#Expression', 'data'=>'js:$("#new-expression").serialize()', 'method'=>'get'),

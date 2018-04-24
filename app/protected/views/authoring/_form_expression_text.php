@@ -8,33 +8,37 @@ function changeEQ(questionId){
     )
 }
 </script>
-<h4>Simple Expression 
+<h4>Simple Expression
 <span>about <?php
 				if(isset($_GET['questionId']) && is_numeric($_GET['questionId']) && $_GET['questionId'] != 0)
 					$question = Question::model()->findByPk((int)$_GET['questionId']);
 				else
 					$question = new Question;
-$criteria=new CDbCriteria;
-$multi = q("SELECT multiSessionEgoId FROM study WHERE id = " . $studyId)->queryScalar();
-if($multi){
-    #OK FOR SQL INJECTION
-	$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " .$multi . ")")->queryColumn();
-    #OK FOR SQL INJECTION
-    $studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
+$study = Study::model()->findByPk($studyId);
+if($study->multiSessionEgoId){
+    $criteria = array(
+        "condition"=>"title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")",
+    );
+    $questions = Question::model()->findAll($criteria);
+    $multiIds = array();
+    foreach($questions as $question){
+        $multiIds[] = $question->studyId;
+    }
 	$criteria=array(
-		'condition'=>"studyId in (" . implode(",", $studyIds) . ")",
+		'condition'=>"studyId in (" . implode(",", $multiIds) . ")",
+        'order'=>'ordering',
 	);
 } else {
 	$criteria=array(
 		'condition'=>"studyId = " . $studyId,
-		'order'=>'FIELD(subjectType, "EGO_ID", "EGO","ALTER", "ALTER_PAIR", "NETWORK"), ordering',
+		'order'=>'ordering',
 	);
 }
 $questions = Question::model()->findAll($criteria);
 $qList = array();
 foreach($questions as $q){
-	$studyName = q("SELECT name FROM study WHERE id = " . $q->studyId)->queryScalar();
-	$qList[$q->id] = $studyName . ":" . $q->title;
+    $m_study = Study::model()->findByPK($q->studyId);
+	$qList[$q->id] = $m_study->name . ":" . $q->title;
 }
 echo CHtml::dropdownlist(
 	'questionId',

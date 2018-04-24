@@ -107,23 +107,35 @@ class visualize extends Plugin
 				$expression = Expression::model()->findByPk($expressionId);
 				if($expression->evalExpression($this->method, $nodeId, null, $this->answers)){
 					foreach($this->params['nodeColor']['options'] as $option){
-						if($option['id'] == 1)
+						if($option->id == 1)
 							return $option['color'];
 					}
 				}else{
 					foreach($this->params['nodeColor']['options'] as $option){
-						if($option['id'] == 0)
+						if($option->id == 0)
 							return $option['color'];
 					}
 				}
 
-			}else if($this->params['nodeColor']['questionId']){
-				#OK FOR SQL INJECTION
-				$answer = decrypt(q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeColor']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar());
-				$answer = explode(',', $answer);
+			}else{
+                $answerV = "";
+                if($this->params['nodeColor']['questionId']){
+                    $criteria = array(
+                        "condition"=>"questionId = '".$this->params['nodeColor']['questionId']. "' AND alterId1 = " .$nodeId,
+                    );
+    				$answer = Answer::model()->find($criteria);
+                    if($answer)
+                    	$answerV = explode(',', $answer->value);
+                    if($answerV == array())
+                        $answerV = "";
+                }
 				foreach($this->params['nodeColor']['options'] as $option){
-					if($option['id'] == $answer || in_array($option['id'], $answer))
-						return $option['color'];
+          if($option['id'] == -1 && $nodeId == -1)
+            $default = $option['color'];
+          else if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE" || $answer->value < 0))
+            $default = $option['color'];
+					else if(($option['id'] == $answerV) || (is_array($answerV) && in_array($option['id'], $answerV)))
+						$default = $option['color'];
 				}
 			}
 		}
@@ -133,12 +145,20 @@ class visualize extends Plugin
 	private function getNodeShape($nodeId){
 		$default = "circle";
 		if(isset($this->params['nodeShape'])){
-			#OK FOR SQL INJECTION
-			$answer = decrypt(q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeShape']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar());
-			$answer = explode(',', $answer);
+            $criteria = array(
+                "condition"=>"questionId = '".$this->params['nodeShape']['questionId']. "' AND alterId1 = " .$nodeId,
+            );
+            $answerV = "";
+            $answer = Answer::model()->find($criteria);
+            if($answer)
+                $answerV = explode(',', $answer->value);
 			foreach($this->params['nodeShape']['options'] as $option){
-				if($option['id'] == $answer || in_array($option['id'], $answer))
-					return $option['shape'];
+        if($option['id'] == -1 && $nodeId == -1)
+          $default = $option['shape'];
+        else if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
+          $default = $option['shape'];
+				else if($option['id'] == $answerV || (is_array($answerV) && in_array($option['id'], $answerV)))
+					$default = $option['shape'];
 			}
 		}
 		return $default;
@@ -170,11 +190,19 @@ class visualize extends Plugin
 				$value = round((($value-$min) / ($range)) * 9) + 1;
 				$default = current(array_keys($this->nodeSizes, $value));
 			}else{
-				#OK FOR SQL INJECTION
-				$answer = decrypt(q("SELECT value FROM answer WHERE questionID = ".$this->params['nodeSize']['questionId']. " AND alterId1 = " .$nodeId)->queryScalar());
-				$answer = explode(',', $answer);
+                $criteria = array(
+                    "condition"=>"questionId = '".$this->params['nodeSize']['questionId']. "' AND alterId1 = " .$nodeId,
+                );
+                $answerV = "";
+                $answer = Answer::model()->find($criteria);
+                if($answer)
+                    $answerV = explode(',', $answer->value);
 				foreach($this->params['nodeSize']['options'] as $option){
-					if($option['id'] == $answer || in_array($option['id'], $answer))
+          if($option['id'] == -1 && $nodeId == -1)
+            $default = intval($option['size']);
+          else if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
+            $default =  intval($option['size']);
+					else if($option['id']== $answerV || (is_array($answerV) && in_array($option['id'], $answerV)))
 						$default = intval($option['size']);
 				}
 			}
@@ -186,13 +214,29 @@ class visualize extends Plugin
 	private function getEdgeColor($nodeId1, $nodeId2){
 		$default = "#ccc";
 		if(isset($this->params['edgeColor'])){
-			#OK FOR SQL INJECTION
-			$answer = decrypt(q("SELECT value FROM answer WHERE questionID = ".$this->params['edgeColor']['questionId']. " AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2)->queryScalar());
-			$answer = explode(',', $answer);
+        if($nodeId1 != -1){
+            $criteria = array(
+                "condition"=>"questionId = '".$this->params['edgeColor']['questionId']. "' AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2,
+            );
+        }else{
+          $criteria = array(
+              "condition"=>"questionId = '".$this->params['egoEdgeColor']['questionId']. "' AND alterId1 = " .$nodeId2,
+          );
+        }
+            $answerV = "";
+            $answer = Answer::model()->find($criteria);
+            if($answer)
+                $answerV = explode(',', $answer->value);
 			foreach($this->params['edgeColor']['options'] as $option){
-				if($option['id'] == $answer || in_array($option['id'], $answer))
+                if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
+                    return $option['color'];
+				if($option['id']== $answerV || in_array($option['id'], $answerV))
 					return $option['color'];
 			}
+      foreach($this->params['egoEdgeColor']['options'] as $option){
+        if($option['id']== $answerV || in_array($option['id'], $answerV))
+          return $option['color'];
+      }
 		}
 		return $default;
 	}
@@ -200,13 +244,30 @@ class visualize extends Plugin
 	private function getEdgeSize($nodeId1, $nodeId2){
 		$default = 1;
 		if(isset($this->params['edgeSize'])){
-			#OK FOR SQL INJECTION
-			$answer = decrypt(q("SELECT value FROM answer WHERE questionID = ".$this->params['edgeSize']['questionId']. " AND alterId1 = " .$nodeId1. " AND alterId2 = " . $nodeId2)->queryScalar());
-			$answer = explode(',', $answer);
+      if($nodeId1 != -1){
+        $criteria = array(
+            "condition"=>"questionId = '".$this->params['edgeSize']['questionId']. "' AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2,
+        );
+      }else{
+        $criteria = array(
+            "condition"=>"questionId = '".$this->params['egoEdgeSize']['questionId']. "' AND alterId1 = " .$nodeId2,
+        );
+      }
+
+            $answerV = "";
+            $answer = Answer::model()->find($criteria);
+            if($answer)
+                $answerV = explode(',', $answer->value);
 			foreach($this->params['edgeSize']['options'] as $option){
-				if($option['id'] == $answer || in_array($option['id'], $answer))
+                if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
+                    return floatval($option['size']);
+				if($option['id'] == $answerV || in_array($option['id'], $answerV))
 					$default = floatval($option['size']);
 			}
+      foreach($this->params['egoEdgeSize']['options'] as $option){
+        if($option['id']== $answerV || in_array($option['id'], $answerV))
+          return $option['size'];
+      }
 		}
 		return $default;
 	}
@@ -223,6 +284,192 @@ class visualize extends Plugin
 		}
 	}
 
+  public function actionStarOptions(){
+    $params = json_decode($this->params, true);
+    $egoLabel = "You";
+    if(isset($params['egoLabel'])){
+      $egoLabel = $params['egoLabel'];
+    }
+    if(isset($params['nodeColor'])){
+      foreach($params['nodeColor']['options'] as $option){
+        $nodeColors[$option['id']] = $option['color'];
+      }
+    }
+    if(isset($params['nodeSize'])){
+      foreach($params['nodeSize']['options'] as $option){
+        $nodeSizes[$option['id']] = $option['size'];
+      }
+    }
+    if(isset($params['nodeShape'])){
+      foreach($params['nodeShape']['options'] as $option){
+        $nodeShapes[$option['id']] = $option['shape'];
+      }
+    }
+    $edgeColorId = ''; $edgeColors = array();
+		if(isset($params['egoEdgeColor'])){
+			$edgeColorId = $params['egoEdgeColor']['questionId'];
+			foreach($params['egoEdgeColor']['options'] as $option){
+				$edgeColors[$option['id']] = $option['color'];
+			}
+		}
+    $edgeSizeId = ''; $edgeSizes = array();
+		if(isset($params['egoEdgeSize'])){
+			$edgeSizeId = $params['egoEdgeSize']['questionId'];
+			foreach($params['egoEdgeSize']['options'] as $option){
+				$edgeSizes[$option['id']] = $option['size'];
+			}
+		}
+    echo "<div class='form-horizontal'><label style='width:200px;float:left;font-size: .7em;'>Ego Node Label</label>";
+    echo "<input id='egoLabel' class='form-control' value='$egoLabel'>";
+    echo "<label style='width:200px;float:left;font-size: .7em;'>Ego Node Color</label>";
+    echo CHtml::dropDownList(
+        -1,
+        (isset($nodeColors['-1']) ? $nodeColors['-1'] : ''),
+        $this->nodeColors,
+        array("class"=>"form-control", "id"=>"starNodeColor")
+      );
+      echo "<div><label style='width:200px;float:left;font-size: .7em;'>Ego Node Shape</label>";
+      echo CHtml::dropDownList(
+          -1,
+          (isset($nodeShapes[-1]) ? $nodeShapes[-1] : ''),
+          $this->nodeShapes,
+          array("class"=>"form-control", "id"=>"starNodeShape")
+        ). "</div>";
+      echo "<div><label style='width:200px;float:left;font-size: .7em;'>Ego Node Size</label>";
+      echo CHtml::dropDownList(
+          -1,
+          (isset($nodeSizes[-1]) ? $nodeSizes[-1] : ''),
+          $this->nodeSizes,
+          array("class"=>"form-control", "id"=>"starNodeSize")
+        ). "</div>";
+
+        		$questionIds = array();
+            $criteria = array(
+                "condition"=>"subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id,
+            );
+            $alter_qs = Question::model()->findAll($criteria);
+
+        		foreach($alter_qs as $alter_q){
+        			$questionIds[] = $alter_q->id;
+        		}
+        		$questionIds = implode(",", $questionIds);
+        		if(!$questionIds)
+        			$questionIds = 0;
+            $criteria = array(
+                "condition"=>"studyId = " . $this->id . " AND questionId in (" . $questionIds . ")",
+            );
+            $alter_expressions = Expression::model()->findAll($criteria);
+            $all_expression_ids = array();
+        		foreach($alter_expressions as $exp){
+        			$all_expression_ids[] = $exp->id;
+              $criteria = array(
+                  "condition"=>"FIND_IN_SET($exp->id, value)",
+              );
+              $sub_exps = Expression::model()->findAll($criteria);
+              if($sub_exps){
+                  foreach($sub_exps as $s_exp){
+                      $all_expression_ids[] = $s_exp->id;
+                  }
+              }
+        		}
+        		if(count($all_expression_ids) > 0){
+              $criteria = array(
+                  "condition"=>"id in (" . implode(",",$all_expression_ids) . ")",
+              );
+              $alter_expressions = Expression::model()->findAll($criteria);
+        		}else{
+        			$alter_expressions = array();
+        		}
+
+            echo "<label style='width:200px;float:left;font-size: .7em;'>Ego-Alter Edge Color</label>";
+            echo "<select id='egoEdgeColorSelect' class='form-control' onchange='$(\".egoEdgeColorOptions\").hide();console.log($(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")));$(\"#\" + $(\"option:selected\", this).val()).toggle();'>";
+        		echo "<option value=''> Select </option>";
+        		foreach($alter_expressions as $expression){
+        			$selected = '';
+        			if($nodeColorId == "expression_" . $expression->id)
+        				$selected = "selected";
+        			echo "<option value='expression_"  . $expression->id . "_egoEdgeColor' $selected>" .$expression['name'].  "</option>";
+        		}
+        		foreach($alter_qs as $question){
+        			$selected = '';
+        			if($edgeColorId == $question->id)
+        				$selected = "selected";
+        			echo "<option value='"  . $question->id. "_egoEdgeColor' $selected>" .$question->title.  "</option>";
+        		}
+        		echo "</select>";
+        		foreach($alter_qs as $question){
+        			echo "<div class='egoEdgeColorOptions' id='" .$question->id ."_egoEdgeColor' style='" . ( $question->id != $edgeColorId ? "display:none" : "") . "'>";
+                    $options = QuestionOption::model()->findAllByAttributes(array("questionId"=>$question->id));
+        			foreach($options as $option){
+        				echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option->name . "</label>";
+        				echo CHtml::dropDownList(
+        						$option->id,
+        						(isset($edgeColors[$option->id]) ? $edgeColors[$option->id] : ''),
+        						$this->edgeColors
+        					). "</div>";
+        			}
+                    echo "</div>";
+        		}
+
+        		foreach($alter_expressions as $expression){
+        			echo "<div class='egoEdgeColorOptions' id='expression_" .$expression->id ."_egoEdgeColor' style='" . ( "expression_" . $expression->id != $nodeColorId ? "display:none" : "") . "'>";
+        			$options = array("false", "true");
+        			foreach($options as $index=>$option){
+        				echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option. "</label>";
+        				echo CHtml::dropDownList(
+        						$index,
+        						(isset($edgeColors[$index]) ? $edgeColors[$index] : ''),
+        						$this->edgeColors
+        					). "</div>";
+        			}
+        			echo "</div>";
+        		}
+            echo "<label style='width:200px;float:left;font-size: .7em;'>Ego-Alter Edge Size</label>";
+            echo "<select id='egoEdgeSizeSelect' class='form-control' onchange='$(\".egoEdgeSizeOptions\").hide();console.log($(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")));$(\"#\" + $(\"option:selected\", this).val()).toggle();'>";
+            echo "<option value=''> Select </option>";
+            foreach($alter_expressions as $expression){
+              $selected = '';
+              if($edgeSizeId == "expression_" . $expression->id)
+                $selected = "selected";
+              echo "<option value='expression_"  . $expression->id . "_egoEdgeSize' $selected>" .$expression['name'].  "</option>";
+            }
+            foreach($alter_qs as $question){
+              $selected = '';
+              if($edgeSizeId == $question->id)
+                $selected = "selected";
+              echo "<option value='"  . $question->id. "_egoEdgeSize' $selected>" .$question->title.  "</option>";
+            }
+            echo "</select>";
+            foreach($alter_qs as $question){
+              echo "<div class='egoEdgeSizeOptions' id='" .$question->id ."_egoEdgeSize' style='" . ( $question->id != $edgeSizeId ? "display:none" : "") . "'>";
+                    $options = QuestionOption::model()->findAllByAttributes(array("questionId"=>$question->id));
+              foreach($options as $option){
+                echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option->name . "</label>";
+                echo CHtml::dropDownList(
+                    $option->id,
+                    (isset($edgeSizes[$option->id]) ? $edgeSizes[$option->id] : ''),
+                    $this->edgeSizes
+                  ). "</div>";
+              }
+                    echo "</div>";
+            }
+
+            foreach($alter_expressions as $expression){
+              echo "<div class='egoEdgeSizeOptions' id='expression_" .$expression->id ."_egoEdgeSize' style='" . ( "expression_" . $expression->id != $edgeSizeId ? "display:none" : "") . "'>";
+              $options = array("false", "true");
+              foreach($options as $index=>$option){
+                echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option. "</label>";
+                echo CHtml::dropDownList(
+                    $index,
+                    (isset($edgeSizes[$index]) ? $edgeSizes[$index] : ''),
+                    $this->edgeSizes
+                  ). "</div>";
+              }
+              echo "</div>";
+            }
+            echo "</div>";
+  }
+
 	public function actionNodecolor(){
 		$params = json_decode($this->params, true);
 		$nodeColorId = ''; $nodeColors = array();
@@ -234,10 +481,16 @@ class visualize extends Plugin
 				$nodeColors[$option['id']] = $option['color'];
 			}
 		}
-		#OK FOR SQL INJECTION
-		$alter_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
-		echo "<div class='form-group'>";
-		echo "<label class='control-label'>Node Color</label>";
+		echo "<div class='form-horizontal'>";
+		echo "<label class='control-label col-sm-6'>Node Color</label>";
+        echo "<div class='col-sm-6'>";
+        echo CHtml::dropDownList(
+                "0",
+                (isset($nodeColors[0]) ? $nodeColors[0] : ''),
+                $this->nodeColors,
+                array("class"=>"form-control", "id"=>"defaultNodeColor")
+            );
+        echo "</div>";
 		echo "<select id='nodeColorSelect' class='form-control' onchange='$(\".nodeColorOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle();'>";
 		echo "<option value=''> Select </option>";
 
@@ -249,57 +502,73 @@ class visualize extends Plugin
 		}
 
 		$questionIds = array();
+    $criteria = array(
+        "condition"=>"subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id,
+    );
+    $alter_qs = Question::model()->findAll($criteria);
+
 		foreach($alter_qs as $alter_q){
-			$questionIds[] = $alter_q['id'];
+			$questionIds[] = $alter_q->id;
 		}
 		$questionIds = implode(",", $questionIds);
 		if(!$questionIds)
 			$questionIds = 0;
-		#OK FOR SQL INJECTION
-		$alter_expression_ids = q("SELECT id FROM expression WHERE studyId = " . $this->id . " AND questionId in (" . $questionIds . ")")->queryColumn();
-		$all_expression_ids = $alter_expression_ids;
-		foreach($alter_expression_ids as $id){
-			#OK FOR SQL INJECTION
-			$all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
+    $criteria = array(
+        "condition"=>"studyId = " . $this->id . " AND questionId in (" . $questionIds . ")",
+    );
+    $alter_expressions = Expression::model()->findAll($criteria);
+    $all_expression_ids = array();
+		foreach($alter_expressions as $exp){
+			$all_expression_ids[] = $exp->id;
+            $criteria = array(
+                "condition"=>"FIND_IN_SET($exp->id, value)",
+            );
+            $sub_exps = Expression::model()->findAll($criteria);
+            if($sub_exps){
+                foreach($sub_exps as $s_exp){
+                    $all_expression_ids[] = $s_exp->id;
+                }
+            }
 		}
-		if($all_expression_ids){
-			#OK FOR SQL INJECTION
-			$alter_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
+		if(count($all_expression_ids) > 0){
+            $criteria = array(
+                "condition"=>"id in (" . implode(",",$all_expression_ids) . ")",
+            );
+            $alter_expressions = Expression::model()->findAll($criteria);
 		}else{
 			$alter_expressions = array();
 		}
 
 		foreach($alter_expressions as $expression){
 			$selected = '';
-			if($nodeColorId == "expression_" . $expression['id'])
+			if($nodeColorId == "expression_" . $expression->id)
 				$selected = "selected";
-			echo "<option value='expression_"  . $expression['id']. "_nodeColor' $selected>" .$expression['name'].  "</option>";
+			echo "<option value='expression_"  . $expression->id . "_nodeColor' $selected>" .$expression['name'].  "</option>";
 
 		}
 		foreach($alter_qs as $question){
 			$selected = '';
-			if($nodeColorId == $question['id'])
+			if($nodeColorId == $question->id)
 				$selected = "selected";
-			echo "<option value='"  . $question['id']. "_nodeColor' $selected>" .$question['title'].  "</option>";
+			echo "<option value='"  . $question->id. "_nodeColor' $selected>" .$question->title.  "</option>";
 		}
 		echo "</select></div>";
 		foreach($alter_qs as $question){
-			echo "<div class='nodeColorOptions' id='" .$question['id'] ."_nodeColor' style='" . ( $question['id'] != $nodeColorId ? "display:none" : "") . "'>";
-			#OK FOR SQL INJECTION
-			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
+			echo "<div class='nodeColorOptions' id='" .$question->id ."_nodeColor' style='" . ( $question->id != $nodeColorId ? "display:none" : "") . "'>";
+            $options = QuestionOption::model()->findAllByAttributes(array("questionId"=>$question->id));
 			foreach($options as $option){
-				echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option['name'] . "</label>";
+				echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option->name . "</label>";
 				echo CHtml::dropDownList(
-						$option['id'],
-						(isset($nodeColors[$option['id']]) ? $nodeColors[$option['id']] : ''),
+						$option->id,
+						(isset($nodeColors[$option->id]) ? $nodeColors[$option->id] : ''),
 						$this->nodeColors
 					). "</div>";
 			}
-			echo "</div>";
+            echo "</div>";
 		}
 
 		foreach($alter_expressions as $expression){
-			echo "<div class='nodeColorOptions' id='expression_" .$expression['id'] ."_nodeColor' style='" . ( "expression_" . $expression['id'] != $nodeColorId ? "display:none" : "") . "'>";
+			echo "<div class='nodeColorOptions' id='expression_" .$expression->id ."_nodeColor' style='" . ( "expression_" . $expression->id != $nodeColorId ? "display:none" : "") . "'>";
 			$options = array("false", "true");
 			foreach($options as $index=>$option){
 				echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option. "</label>";
@@ -310,7 +579,6 @@ class visualize extends Plugin
 					). "</div>";
 			}
 			echo "</div>";
-
 		}
 
 		foreach($centralities as $centrality){
@@ -331,31 +599,38 @@ class visualize extends Plugin
 				$nodeShapes[$option['id']] = $option['shape'];
 			}
 		}
-		#OK FOR SQL INJECTION
-		$alter_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
-		echo "<div class='form-group'>";
-		echo "<label class='control-label'>Node Shape</label>";
-		echo "<select id='nodeShapeSelect' class='form-control' onchange='$(\".nodeShapeOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
+        $criteria = array(
+            "condition"=>"subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id,
+        );
+        $alter_qs = Question::model()->findAll($criteria);
+        echo "<div class='form-horizontal'>";
+		echo "<label class='control-label col-sm-6'>Node Shape</label>";
+        echo "<div class='col-sm-6'>";
+        echo CHtml::dropDownList(
+                0,
+                (isset($nodeShapes[0]) ? $nodeShapes[0] : ''),
+                $this->nodeShapes,
+                array("class"=>"form-control", "id"=>"defaultNodeShape")
+            ). "</div>";
+
+        echo "<select id='nodeShapeSelect' class='form-control' onchange='$(\".nodeShapeOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
 		echo "<option value=''> Select </option>";
 
 		foreach($alter_qs as $question){
 			$selected = '';
-			if($nodeShapeId == $question['id'])
+			if($nodeShapeId == $question->id)
 				$selected = "selected";
-			echo "<option value='"  . $question['id']. "_nodeShape' $selected>" .$question['title'].  "</option>";
+			echo "<option value='"  . $question->id. "_nodeShape' $selected>" .$question->title.  "</option>";
 		}
 		echo "</select></div>";
 		foreach($alter_qs as $question){
-
-			echo "<div class='nodeShapeOptions' id='" .$question['id'] ."_nodeShape' style='" . ( $question['id'] != $nodeShapeId ? "display:none" : "") . "'>";
-
-			#OK FOR SQL INJECTION
-			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
+			echo "<div class='nodeShapeOptions' id='" .$question->id ."_nodeShape' style='" . ( $question->id != $nodeShapeId ? "display:none" : "") . "'>";
+			$options = QuestionOption::model()->findAllByAttributes(array("questionId"=>$question->id));
 			foreach($options as $option){
-				echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option['name'] . "</label>";
+				echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option->name . "</label>";
 				echo CHtml::dropDownList(
-						$option['id'],
-						(isset($nodeShapes[$option['id']]) ? $nodeShapes[$option['id']] : ''),
+						$option->id,
+						(isset($nodeShapes[$option->id]) ? $nodeShapes[$option->id] : ''),
 						$this->nodeShapes
 					). "</div>";
 			}
@@ -374,10 +649,20 @@ class visualize extends Plugin
 				$nodeSizes[$option['id']] = $option['size'];
 			}
 		}
-		#OK FOR SQL INJECTION
-		$alter_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
-		echo "<div class='form-group'>";
-		echo "<label class='control-label'>Node Size</label>";
+        $criteria = array(
+            "condition"=>"subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id,
+        );
+        $alter_qs = Question::model()->findAll($criteria);
+	    echo "<div class='form-horizontal'>";
+		echo "<label class='control-label col-sm-6'>Node Size</label>";
+        echo "<div class='col-sm-6'>";
+        echo CHtml::dropDownList(
+                0,
+                (isset($nodeSizes[0]) ? $nodeSizes[0] : ''),
+                $this->nodeSizes,
+                array("class"=>"form-control", "id"=>"defaultNodeSize")
+            ). "</div>";
+
 		echo "<select id='nodeSizeSelect' class='form-control' onchange='$(\".nodeSizeOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
 		echo "<option value=''> Select </option>";
 
@@ -390,22 +675,19 @@ class visualize extends Plugin
 
 		foreach($alter_qs as $question){
 			$selected = '';
-			if($nodeSizeId == $question['id'])
+			if($nodeSizeId == $question->id)
 				$selected = "selected";
-			echo "<option value='"  . $question['id']. "_nodeSize' $selected>" .$question['title'].  "</option>";
+			echo "<option value='"  . $question->id. "_nodeSize' $selected>" .$question->title.  "</option>";
 		}
 		echo "</select></div>";
 		foreach($alter_qs as $question){
-
-			echo "<div class='nodeSizeOptions' id='" .$question['id'] ."_nodeSize' style='" . ( $question['id'] != $nodeSizeId ? "display:none" : "") . "'>";
-
-			#OK FOR SQL INJECTION
-			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
+			echo "<div class='nodeSizeOptions' id='" .$question->id ."_nodeSize' style='" . ( $question->id != $nodeSizeId ? "display:none" : "") . "'>";
+            $options = QuestionOption::model()->findAllByAttributes(array("questionId"=>$question->id));
 			foreach($options as $option){
-				echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option['name'] . "</label>";
+				echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option->name . "</label>";
 				echo CHtml::dropDownList(
-						$option['id'],
-						(isset($nodeSizes[$option['id']]) ? $nodeSizes[$option['id']] : ''),
+						$option->id,
+						(isset($nodeSizes[$option->id]) ? $nodeSizes[$option->id] : ''),
 						$this->nodeSizes
 					). "</div>";
 			}
@@ -427,32 +709,38 @@ class visualize extends Plugin
 				$edgeColors[$option['id']] = $option['color'];
 			}
 		}
-		#OK FOR SQL INJECTION
-		$alter_pair_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
-		echo "<div class='form-group'>";
-		echo "<label class='control-label'>Edge Color</label>";
-		echo "<select id='edgeColorSelect' class='form-control' onchange='$(\".edgeColorOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
+        $criteria = array(
+            "condition"=>"subjectType = 'ALTER_PAIR' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id,
+        );
+        $alter_pair_qs = Question::model()->findAll($criteria);
+		echo "<div class='form-horizontal'>";
+		echo "<label class='control-label col-sm-6'>Edge Color</label>";
+        echo "<div class='col-sm-6'>";
+        echo CHtml::dropDownList(
+                0,
+                (isset($edgeColors[0]) ? $edgeColors[0] : ''),
+                $this->edgeColors,
+                array("class"=>"form-control", "id"=>"defaultEdgeColor")
+            ). "</div>";
 
+		echo "<select id='edgeColorSelect' class='form-control' onchange='$(\".edgeColorOptions\").hide();$(\"#\" + $(\"option:selected\", this).val()).toggle()'>";
 		echo "<option value=''> Select </option>";
 
 		foreach($alter_pair_qs as $question){
 			$selected = '';
-			if($edgeColorId == $question['id'])
+			if($edgeColorId == $question->id)
 				$selected = "selected";
-			echo "<option value='"  . $question['id']. "_edgeColor' $selected>" .$question['title'].  "</option>";
+			echo "<option value='"  . $question->id. "_edgeColor' $selected>" .$question->title.  "</option>";
 		}
 		echo "</select></div>";
 		foreach($alter_pair_qs as $question){
-
-			echo "<div class='edgeColorOptions' id='" .$question['id'] ."_edgeColor' style='" . ( $question['id'] != $edgeColorId ? "display:none" : "") . "'>";
-
-			#OK FOR SQL INJECTION
-			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
+			echo "<div class='edgeColorOptions' id='" .$question->id ."_edgeColor' style='" . ( $question->id != $edgeColorId ? "display:none" : "") . "'>";
+            $options = QuestionOption::model()->findAllByAttributes(array("questionId"=>$question->id));
 			foreach($options as $option){
-				echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option['name'] . "</label>";
+				echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option->name . "</label>";
 				echo CHtml::dropDownList(
-						$option['id'],
-						(isset($edgeColors[$option['id']]) ? $edgeColors[$option['id']] : ''),
+						$option->id,
+						(isset($edgeColors[$option->id]) ? $edgeColors[$option->id] : ''),
 						$this->edgeColors
 					). "</div>";
 			}
@@ -469,32 +757,39 @@ class visualize extends Plugin
 				$edgeSizes[$option['id']] = $option['size'];
 			}
 		}
-		#OK FOR SQL INJECTION
-		$alter_pair_qs = q("SELECT * FROM question WHERE subjectType = 'ALTER_PAIR' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id)->queryAll();
-		echo "<div class='form-group'>";
-		echo "<label class='control-label'>Edge Size</label>";
-
+        $criteria = array(
+            "condition"=>"subjectType = 'ALTER_PAIR' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id,
+        );
+        $alter_pair_qs = Question::model()->findAll($criteria);
+        echo "<div class='form-horizontal'>";
+		echo "<label class='control-label col-sm-6'>Edge Size</label>";
+        echo "<div class='col-sm-6'>";
+        echo CHtml::dropDownList(
+                0,
+                (isset($edgeSizes[0]) ? $edgeSizes[0] : ''),
+                $this->edgeSizes,
+                array("class"=>"form-control", "id"=>"defaultEdgeSize")
+            ). "</div>";
 		echo "<select id='edgeSizeSelect' class='form-control' onchange='$(\".edgeSizeOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
 		echo "<option value=''> Select </option>";
 
 		foreach($alter_pair_qs as $question){
 			$selected = '';
-			if($edgeSizeId == $question['id'])
+			if($edgeSizeId == $question->id)
 				$selected = "selected";
-			echo "<option value='"  . $question['id']. "_edgeSize' $selected>" .$question['title'].  "</option>";
+			echo "<option value='"  . $question->id. "_edgeSize' $selected>" .$question->title.  "</option>";
 		}
 		echo "</select></div>";
 		foreach($alter_pair_qs as $question){
 
-			echo "<div class='edgeSizeOptions' id='" .$question['id'] ."_edgeSize' style='" . ( $question['id'] != $edgeSizeId ? "display:none" : "") . "'>";
+			echo "<div class='edgeSizeOptions' id='" .$question->id ."_edgeSize' style='" . ( $question->id != $edgeSizeId ? "display:none" : "") . "'>";
 
-			#OK FOR SQL INJECTION
-			$options = q("SELECT * FROM questionOption WHERE questionId = ".$question['id'])->queryAll();
+            $options = QuestionOption::model()->findAllByAttributes(array("questionId"=>$question->id));
 			foreach($options as $option){
-				echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option['name'] . "</label>";
+				echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option->name . "</label>";
 				echo CHtml::dropDownList(
-						$option['id'],
-						(isset($edgeSizes[$option['id']]) ? $edgeSizes[$option['id']] : ''),
+						$option->id,
+						(isset($edgeSizes[$option->id]) ? $edgeSizes[$option->id] : ''),
 						$this->edgeSizes
 					). "</div>";
 			}
@@ -503,30 +798,36 @@ class visualize extends Plugin
 	}
 
 	public function actionIndex(){
-		if(!$this->method || !$this->id)
+		if(!$this->method)
 			return;
 		$this->params = json_decode($this->params, true);
 		$graph = Graph::model()->findByAttributes(array("interviewId"=>$this->method,"expressionId"=>$this->id));
 		if(!$graph)
 			$graph = new Graph;
 		$adjacencies = array();
-		#OK FOR SQL INJECTION
-		$alters = q("SELECT * FROM alters WHERE FIND_IN_SET(".$this->method .", interviewId)")->queryAll();
+		$criteria = array(
+            "condition"=>"FIND_IN_SET(".$this->method .", interviewId)",
+        );
+        $alters = Alters::model()->findAll($criteria);
 		$alterNames = array();
 		$alterIds = array();
 		$filterIds = array();
 		foreach($alters as $alter){
-			$alterIds[] = $alter['id'];
-			$alterNames[$alter['id']] = decrypt($alter['name']);
+			$alterIds[] = $alter->id;
+			$alterNames[$alter->id] = $alter->name;
 		}
 
-        $expression = Expression::model()->findByPk($this->id);
-        if(!$expression)
-            return;
+    $expression = Expression::model()->findByPk($this->id);
+
+
+    $starExpression = false;
+    if(is_numeric($this->event))
+      $starExpression = Expression::model()->findByPk($this->event);
 
 		$this->stats = new Statistics;
-		$this->stats->initComponents($this->method, $this->id);
-
+    if($expression){
+		    $this->stats->initComponents($this->method, $this->id);
+    }
 		$notes = Note::model()->findAllByAttributes(array("interviewId"=>$this->method, "expressionId"=>$this->id));
 		$alterNotes = array();
 		foreach($notes as $note){
@@ -536,32 +837,49 @@ class visualize extends Plugin
 		$interview = Interview::model()->findByPK($this->method);
 		$study = Study::model()->findByPk($interview->studyId);
 
-		#OK FOR SQL INJECTION
-		$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$interview->studyId)->queryColumn();
-		$questionIds = implode(",", $questionIds);
+        $questionIds = array();
+        $criteria = array(
+            "condition"=>"subjectType = 'ALTER_PAIR' AND studyId = ". $interview->studyId,
+        );
+        $alter_qs = Question::model()->findAll($criteria);
+		foreach($alter_qs as $alter_q){
+			$questionIds[] = $alter_q->id;
+		};
+        $questionIds = implode(",", $questionIds);
 		if(!$questionIds)
 			$questionIds = 0;
 
 		if($study->multiSessionEgoId){
-			$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")")->queryColumn();
-			$studyId = implode(",", q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn());
+            $criteria = array(
+                "condition"=>"title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")",
+            );
+            $questions = Question::model()->findAll($criteria);
+            $multiIds = array();
+            foreach($questions as $question){
+                $multiIds[] = $question->studyId;
+            }
+			$studyId = implode(",",  $multiIds);
 		}else{
 			$studyId = $interview->studyId;
 		}
 
-		#OK FOR SQL INJECTION
-		$alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId in (" . $studyId . ") AND questionId in (" . $questionIds . ")")->queryColumn();
-
-			$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interview->id));
-
-			foreach($answerList as $answer){
-				if($answer->alterId1 && $answer->alterId2)
-					$this->answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
-				else if ($answer->alterId1 && !$answer->alterId2)
-					$this->answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
-				else
-					$this->answers[$answer->questionId] = $answer;
-			}
+        $criteria = array(
+            'condition'=>"studyId in (" . $studyId . ") AND questionId in (" . $questionIds . ")",
+        );
+        $alter_pair_expression = Expression::model()->findAll($criteria);
+        $alter_pair_expression_ids = array();
+        foreach($alter_pair_expression as $e){
+            $alter_pair_expression_ids[] = $e->id;
+        }
+		$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interview->id));
+		foreach($answerList as $answer){
+			if($answer->alterId1 && $answer->alterId2)
+				$this->answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
+			else if ($answer->alterId1 && !$answer->alterId2)
+				$this->answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
+			else
+				$this->answers[$answer->questionId] = $answer;
+		}
 
 
 		if($expression->questionId)
@@ -578,39 +896,66 @@ class visualize extends Plugin
 			foreach($filterIds as $filterId){
 				$filter = Expression::model()->findByPK($filterId);
 				foreach($alters as $index=>$alter){
-					if(!$filter->evalExpression($this->method, $alter['id'])){
+					if(!$filter->evalExpression($this->method, $alter->id)){
 						array_splice($alters, $index, 1);
 						array_splice($alterIds, $index, 1);
 					}
 				}
 			}
 		}
-
 		$alters2 = $alters;
 		$nodes = array();
+    $egoLabel = "You";
+    if(isset($this->params['egoLabel'])){
+      $egoLabel = $this->params['egoLabel'];
+    }
+    if($starExpression){
+      array_push(
+        $nodes,
+        array(
+          'id'=> '-1',
+          'label'=> $egoLabel,
+          'x'=> rand(0, 10) / 10,
+          'y'=> rand(0, 10) / 10,
+          "type"=>$this->getNodeShape(-1),
+          "color"=>$this->getNodeColor(-1),
+          "size"=>$this->getNodeSize(-1),
+        )
+      );
+    }
 		foreach($alters as $alter){
 			array_push(
 				$nodes,
 				array(
-					'id'=>$alter['id'],
-					'label'=>decrypt($alter['name']) . (isset($alterNotes[$alter['id']]) ? " �" : ""),
+					'id'=>$alter->id,
+					'label'=>$alter->name . (isset($alterNotes[$alter->id]) ? " �" : ""),
 					'x'=> rand(0, 10) / 10,
 					'y'=> rand(0, 10) / 10,
-					"type"=>$this->getNodeShape($alter['id']),
-					"color"=>$this->getNodeColor($alter['id']),
-					"size"=>$this->getNodeSize($alter['id']),
+					"type"=>$this->getNodeShape($alter->id),
+					"color"=>$this->getNodeColor($alter->id),
+					"size"=>$this->getNodeSize($alter->id),
 				)
 			);
+
+      if($starExpression && $starExpression->evalExpression($this->method, $alter->id, null, $this->answers)){
+        $edges[] = array(
+          "id" =>  "-_" . $alter->id,
+          "source" => $alter->id,
+          "target" => '-1',
+          "color"=>$this->getEdgeColor(-1, $alter->id),
+          "size"=>$this->getEdgeSize(-1, $alter->id),
+        );
+      }
 			foreach($alters2 as $alter2){
-				if($alter2['id'] == $alter['id'])
+				if($alter2->id == $alter->id)
 					continue;
-				if($expression && $expression->evalExpression($this->method, $alter['id'], $alter2['id'], $this->answers)){
+				if($expression && $expression->evalExpression($this->method, $alter->id, $alter2->id, $this->answers)){
 					$edges[] = array(
-						"id" => $alter['id'] . "_" . $alter2['id'],
-						"source" => $alter2['id'],
-						"target" => $alter['id'],
-						"color"=>$this->getEdgeColor($alter['id'], $alter2['id']),
-						"size"=>$this->getEdgeSize($alter['id'], $alter2['id']),
+						"id" => $alter->id . "_" . $alter2->id,
+						"source" => $alter2->id,
+						"target" => $alter->id,
+						"color"=>$this->getEdgeColor($alter->id, $alter2->id),
+						"size"=>$this->getEdgeSize($alter->id, $alter2->id),
 					);
 				}
 			}
@@ -618,8 +963,8 @@ class visualize extends Plugin
 
 		$legends = array();
 		if($this->networkTitle){
-			$questionId = q("SELECT id FROM question WHERE studyId = " . $interview->studyId . " AND title = '" . $this->networkTitle . "'")->queryScalar();
-			$result = Legend::model()->findAllByAttributes(array("questionId"=>$questionId));
+            $question = Question::model()->findByAttributes(array("studyId"=>$interview->studyId, "title"=>$this->networkTitle));
+			$result = Legend::model()->findAllByAttributes(array("questionId"=>$question->id));
 			if($result){
 				foreach($result as $legend){
 					$legends[] = array(
@@ -656,13 +1001,15 @@ class visualize extends Plugin
 						echo "<br>Load other graphs:";
 						foreach($interviewIds as $interviewId){
 							$graphId = "";
-							#OK FOR SQL INJECTION
-							$study = Study::model()->findByPk((int)q("SELECT studyId from interview WHERE id = " . $interviewId)->queryScalar());
-							#OK FOR SQL INJECTION
-							$networkExprId = q("SELECT networkRelationshipExprId FROM question WHERE title = '" . $this->networkTitle . "' AND studyId = " . $study->id)->queryScalar();
-							#OK FOR SQL INJECTION
-							if($networkExprId)
-								$graphId = q("SELECT id FROM graphs WHERE expressionId = " . $networkExprId  . " AND interviewId = " . $interviewId)->queryScalar();
+                            $g_interview = Interview::model()->findByPk($interviewId);
+                            $g_study =  Study::model()->findByPk($g_interview->studyId);
+                            $n_question = Question::model()->findByAttributes(array("title"=>$this->networkTitle, "studyId"=>$g_study->id));
+							$networkExprId = $n_question->networkRelationshipExprId;
+							if($networkExprId){
+                                $graph = Graph::model()->findByAttributes(array("expressionId"=>$networkExprId, "interviewId"=>$interviewId));
+                                if($graph)
+                                    $graphId = $graph->id;
+                            }
 							if($graphId)
 								echo '<br><a href="#" onclick="print(' . $networkExprId . ','. $interviewId . ')">' . $study->name . '</a>';
 						}
@@ -711,6 +1058,111 @@ class visualize extends Plugin
 				});
 			}
 
+            function resetParams(container){
+            	var params = new Object;
+            	if(typeof container == "undefined")
+            		container = $('body');
+            	if($('#nodeColorSelect option:selected', container).val()){
+            		var nodeColor = new Object;
+            		var question = $('#nodeColorSelect option:selected', container).val();
+            		nodeColor['questionId'] = question.replace('_nodeColor','');
+            		nodeColor['options'] = [];
+            		$("#" + question + " select", container).each(function(index){
+            			nodeColor['options'].push({"id":$(this).attr('id'),"color":$("option:selected", this).val()});
+            		});
+            		params['nodeColor'] = nodeColor;
+            	}
+                if($("#defaultNodeColor option:selected", container).val()){
+                    var nodeColor = new Object;
+                    if(typeof params['nodeColor'] != "undefined")
+                        nodeColor = params['nodeColor'];
+                    else
+                        nodeColor['options'] = [];
+                    nodeColor["options"].push({"id":0, "color" :$("#defaultNodeColor option:selected", container).val()});
+                    params['nodeColor'] = nodeColor;
+                }
+            	if($('#nodeShapeSelect option:selected', container).val()){
+            		var nodeShape = new Object;
+            		var question = $('#nodeShapeSelect option:selected', container).val();
+            		nodeShape['questionId'] = question.replace('_nodeShape','');
+            		nodeShape['options'] = [];
+            		$("#" + question + " select", container).each(function(index){
+            			nodeShape['options'].push({"id":$(this).attr('id'),"shape":$("option:selected", this).val()});
+            		});
+            		params['nodeShape'] = nodeShape;
+            	}
+                if($("#defaultNodeShape option:selected", container).val()){
+                    var nodeShape = new Object;
+                    if(typeof params['nodeShape'] != "undefined")
+                        nodeShape = params['nodeShape'];
+                    else
+                        nodeShape['options'] = [];
+                    nodeShape["options"].push({"id":0, "shape" :$("#defaultNodeShape option:selected", container).val()});
+                    params['nodeShape'] = nodeShape;
+                }
+            	if($('#nodeSizeSelect option:selected', container).val()){
+            		var nodeSize = new Object;
+            		var question = $('#nodeSizeSelect option:selected', container).val();
+            		nodeSize['questionId'] = question.replace('_nodeSize','');
+            		nodeSize['options'] = [];
+            		$( "#" + question + " select", container).each(function(index){
+            			nodeSize['options'].push({"id":$(this).attr('id'),"size":$("option:selected", this).val()});
+            		});
+            		params['nodeSize'] = nodeSize;
+            	}
+                if($("#defaultNodeSize option:selected", container).val()){
+                    var nodeSize = new Object;
+                    if(typeof params['nodeSize'] != "undefined")
+                        nodeSize = params['nodeSize'];
+                    else
+                        nodeSize['options'] = [];
+                    nodeSize["options"].push({"id":0, "size" :$("#defaultNodeSize option:selected", container).val()});
+                    params['nodeSize'] = nodeSize;
+                }
+            	if($('#edgeColorSelect option:selected', container).val()){
+            		var edgeColor = new Object;
+            		var question = $('#edgeColorSelect option:selected', container).val();
+            		edgeColor['questionId'] = question.replace('_edgeColor','');
+            		edgeColor['options'] = [];
+            		$("#" + question + " select", container).each(function(index){
+            			edgeColor['options'].push({"id":$(this).attr('id'),"color":$("option:selected", this).val()});
+            		});
+            		params['edgeColor'] = edgeColor;
+            	}
+                if($("#defaultEdgeColor option:selected", container).val()){
+                    var edgeColor = new Object;
+                    if(typeof params['edgeColor'] != "undefined")
+                        edgeColor = params['edgeColor'];
+                    else
+                        edgeColor['options'] = [];
+                    edgeColor["options"].push({"id":0, "color" :$("#defaultEdgeColor option:selected", container).val()});
+                    params['edgeColor'] = edgeColor;
+                }
+            	if($('#edgeSizeSelect option:selected', container).val()){
+            		var edgeSize = new Object;
+            		var question = $('#edgeSizeSelect option:selected', container).val();
+            		edgeSize['questionId'] = question.replace('_edgeSize','');
+            		edgeSize['options'] = [];
+            		$("#" + question + " select", container).each(function(index){
+            			edgeSize['options'].push({"id":$(this).attr('id'),"size":$("option:selected", this).val()});
+            		});
+            		params['edgeSize'] = edgeSize;
+            	}
+                if($("#defaultEdgeSize option:selected", container).val()){
+                    var edgeSize = new Object;
+                    if(typeof params['edgeSize'] != "undefined")
+                        edgeSize = params['edgeSize'];
+                    else
+                        edgeSize['options'] = [];
+                    edgeSize["options"].push({"id":0, "size" :$("#defaultEdgeSize option:selected", container).val()});
+                    params['edgeSize'] = edgeSize;
+                }
+            	console.log(JSON.stringify(params));
+
+            	$("#Graph_params").val(JSON.stringify(params));
+            	return params;
+            }
+            /*
 			function resetParams(container){
 				var params = new Object;
 				if(typeof container == "undefined")
@@ -770,7 +1222,7 @@ class visualize extends Plugin
 				$("#Graph_params").val(JSON.stringify(params));
 				return params;
 			}
-
+*/
 			function refresh(params){
 				url = "/data/visualize?expressionId=" + expressionId + "&interviewId=" + interviewId + "&params=" + encodeURIComponent(JSON.stringify(params));
 				document.location = url;

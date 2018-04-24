@@ -31,6 +31,13 @@ function updatePrompt(url) {
     return false;
 }
 
+function deletePrompt(url) {
+    $.get(url,function(data){
+         $('#edit-alterPrompt').html(data);
+     });
+    return false;
+}
+
 function createUUID() {
     var s = [];
     var hexDigits = "0123456789abcdef";

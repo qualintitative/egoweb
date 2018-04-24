@@ -42,11 +42,11 @@ class AlterList extends CActiveRecord
 			array('studyId, ordering', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, studyId, name, email, ordering, interviewerId', 'length', 'max'=>1024),
+			array('id, studyId, name, email, ordering, interviewerId, nameGenQIds', 'length', 'max'=>1024),
 			array('interviewerId','default',
 				'value'=>0,
 			'setOnEmpty'=>true),
-			array('id, studyId, name, email, ordering', 'safe', 'on'=>'search'),
+			array('id, studyId, name, email, nameGenQIds, ordering', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -100,6 +100,7 @@ class AlterList extends CActiveRecord
 			'email' => 'Email',
 			'ordering' => 'Ordering',
 			'interviewId' => 'interview Id',
+      'nameGenQIds' => 'Name Generator Question IDs',
 		);
 	}
 

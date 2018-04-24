@@ -97,8 +97,7 @@ class ApiController extends Controller
 			$this->sendResponse( 404, $msg );
 		}
 
-		$questions = q("SELECT * FROM question WHERE studyId = ".$_GET['survey_id'])->queryAll(false);
-
+        $questions = QUestion::model()->findByAttributes(array("studyId"=>$study->id)));
 
 		$started = count(Interview::model()->findByAttributes(array("studyId"=>$study->id)));
 		$completed = count(Interview::model()->findByAttributes(array("studyId"=>$study->id,"completed"=>-1)));
@@ -172,7 +171,14 @@ class ApiController extends Controller
 			return $this->sendResponse( 419, $msg );
 		}
 
-		$questionIds = q( "SELECT id FROM question where lower(title) = 'mmic_prime_key'" )->queryColumn();
+		$questionIds = array();
+        $criteria = new CDbCriteria;
+        $criteria->condition = ('lower(title) = "mmic_prime_key"');
+        $questions = Question::model()->findAll($criteria);
+        foreach($questions as $question){
+            $questionIds[] = $question->id;
+        }
+
 		$interviews = Answer::model()->findAllByAttributes( array( 'questionId'=>$questionIds ) );
 
 		$surveys_completed = array();
@@ -232,7 +238,12 @@ class ApiController extends Controller
 			return $this->sendResponse( 419, $msg );
 		}
 
-		$questionId = q( "SELECT id FROM question where studyId = {$_GET['survey_id']} AND lower(title) = 'mmic_prime_key'")->queryScalar();
+        $criteria = new CDbCriteria;
+        $criteria->condition = ('lower(title) = "mmic_prime_key" and studyId = ' $_GET['survey_id']);
+        $question = Question::model()->find($criteria);
+        $questionId = false;
+        if($question)
+            $questionId = $question->id;
 
 		if(!$questionId){
 			$msg = "Study not found";
@@ -310,8 +321,14 @@ class ApiController extends Controller
 
 	private function getSurveys()
 	{
-		$studyIds = q( "SELECT studyId FROM question where lower(title) = 'mmic_prime_key'")->queryColumn();
-
+		$studyIds = array();
+        $criteria = new CDbCriteria;
+        $criteria->condition = ('lower(title) = "mmic_prime_key"');
+        $questions = Study::model()->findAll($criteria);
+        foreach($questions as $question){
+            $studyIds[] = $question->studyId;
+        }
+    
 		if(count($studyIds) == 0){
 			$msg = "No MMIC surveys found";
 			return $this->sendResponse( 419, $msg );

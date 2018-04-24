@@ -35,30 +35,33 @@ class MobileController extends Controller
 	}
 	public function actionAjaxstudies(){
 		if(isset($_POST['userId'])){
-			#OK FOR SQL INJECTION
-			$params = new stdClass();
-			$params->name = ':userId';
-			$params->value = $_POST['userId'];
-			$params->dataType = PDO::PARAM_INT;
-
-			$permission = q("SELECT permissions FROM user WHERE id = :userId",array($params))->queryScalar();
-			if($permission != 11)
-				#OK FOR SQL INJECTION
-				$studyIds = q("SELECT studyId FROM interviewers WHERE interviewerId = :userId",array($params))->queryColumn();
-			else
+            $user = User::model()->findByPK($_POST['userId']);
+			$permission = $user->permissions;
+			if($permission != 11){
+                $studyIds = array();
+                $criteria = new CDbCriteria;
+                $criteria->condition = "interviewerId = " . $user->id;
+                $interviewers = Interviewer::model()->findAll($criteria);
+                foreach($interviewers as $interviewer){
+                    $studyIds[] = $interviewer->studyId;
+                }
+			}else{
 				$studyIds = "";
+            }
 		}else{
 			$studyIds = "";
 		}
-		if($studyIds)
-			#OK FOR SQL INJECTION
-			$studies = q("SELECT id,name FROM study WHERE id IN (" . implode(",", $studyIds) . ")")->queryAll();
-		else
-			#OK FOR SQL INJECTION
-			$studies = q("SELECT id,name FROM study")->queryAll();
+		if($studyIds){
+            $criteria = array(
+                "condition"=>"id IN (" . implode(",", $studyIds) . ")",
+            );
+            $studies = Study::model()->findAll($criteria);
+		}else{
+			$studies =  Study::model()->findAll();
+        }
 
 		foreach($studies as $study){
-			$json[$study['id']] = $study['name'];
+			$json[$study->id] = $study->name;
 		}
 		header("Access-Control-Allow-Origin: *");
 		header('Access-Control-Allow-Credentials: true');
@@ -69,36 +72,35 @@ class MobileController extends Controller
 
 	public function actionAjaxdata($id){
         Yii::log("begin import");
-		#OK FOR SQL INJECTION
-		$study = q("SELECT * FROM study WHERE id = " . $id)->queryRow(false);
-		#OK FOR SQL INJECTION
-		$questions = q("SELECT * FROM question WHERE studyId = ".$id)->queryAll(false);
-		#OK FOR SQL INJECTION
-		$options = q("SELECT * FROM questionOption WHERE studyId = " . $id)->queryAll(false);
-		#OK FOR SQL INJECTION
-		$expressions = q("SELECT * FROM expression WHERE studyId = " . $id)->queryAll(false);
-		#OK FOR SQL INJECTION
-		$alterList = q("SELECT * FROM alterList WHERE studyId = " . $id)->queryAll(false);
-		foreach($alterList as &$alter){
-			if(strlen($alter[2]) >= 8)
-				$alter[2] = decrypt($alter[2]);
-			if(strlen($alter[3]) >= 8)
-				$alter[3] = decrypt($alter[3]);
-		}
-
-		#OK FOR SQL INJECTION
-		$alterPrompts = q("SELECT * FROM alterPrompt WHERE studyId = " . $id)->queryAll(false);
-
-		//$answers = q("SELECT * FROM answer WHERE studyId = " . $id)->queryAll(false);
-
-		//foreach($answers as &$answer){
-		//	if(strlen($answer[6]) >= 8)
-		//		$answer[6] = decrypt($answer[6]);
-		//}
+		$study = mToA(Study::model()->findByPK($id));
+		$results = Question::model()->findAllByAttributes(array("studyId"=>$id));
+        $questions = array();
+        foreach($results as $result){
+            $questions[] = mToA($result);
+        }
+        $results = QuestionOption::model()->findAllByAttributes(array("studyId"=>$id));
+        $options = array();
+        foreach($results as $result){
+            $options[] = mToA($result);
+        }
+        $results = Expression::model()->findAllByAttributes(array("studyId"=>$id));
+        $expressions = array();
+        foreach($results as $result){
+            $expressions[] = mToA($result);
+        }
+        $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
+        $alterList = array();
+        foreach($results as $result){
+            $alterList[] = mToA($result);
+        }
+        $results = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$id));
+        $alterPrompts = array();
+        foreach($results as $result){
+            $alterPrompts[] = mToA($result);
+        }
 
 		$interviewIds = array();
 		#OK FOR SQL INJECTION
-		$interviews = q("SELECT * FROM interview WHERE studyId = " . $id)->queryAll(false);
 		$audioFiles = array();
 
 		$columns = array();
@@ -115,6 +117,12 @@ class MobileController extends Controller
 		$columns['graphs'] = Yii::app()->db->schema->getTable("graphs")->getColumnNames();
 		$columns['notes'] = Yii::app()->db->schema->getTable("notes")->getColumnNames();
 
+        foreach($columns as &$column){
+            foreach($column as &$label){
+                $label = strtoupper($label);
+            }
+        }
+        /*
 		if(file_exists(Yii::app()->basePath."/../audio/".$id . "/STUDY/ALTERPROMPT.mp3")){
 			$audioFiles[] = array(
 				"url"=>Yii::app()->getBaseUrl(true)."/audio/". $id . "/STUDY/ALTERPROMPT.mp3",
@@ -149,7 +157,7 @@ class MobileController extends Controller
 				);
 			}
 		}
-
+*/
 		/*
 		foreach($interviews as $interview){
 			array_push($interviewIds, $interview[0]);
@@ -158,7 +166,6 @@ class MobileController extends Controller
 		if($interviewIds){
 			$interviewIds = implode(',', $interviewIds);
 			#OK FOR SQL INJECTION
-			$alters = q("SELECT * FROM alters WHERE interviewId  in (" . $interviewIds . ")")->queryAll(false);
 			foreach($alters as &$alter){
 				if(strlen($alter[3]) >= 8)
 					$alter[3] = decrypt($alter[3]);
@@ -223,30 +230,32 @@ class MobileController extends Controller
 			// validate user input and redirect to the previous page if valid
 			if($model->validate() && $model->login()){
         		if(Yii::app()->user->id){
-        			#OK FOR SQL INJECTION
-        			$params = new stdClass();
-        			$params->name = ':userId';
-        			$params->value = Yii::app()->user->id;
-        			$params->dataType = PDO::PARAM_INT;
-        
-        			$permission = q("SELECT permissions FROM user WHERE id = :userId",array($params))->queryScalar();
-        			if($permission != 11)
-        				#OK FOR SQL INJECTION
-        				$studyIds = q("SELECT studyId FROM interviewers WHERE interviewerId = :userId",array($params))->queryColumn();
-        			else
+                    $user = User::model()->findByPK(Yii::app()->user->id);
+        			$permission = $user->permissions;
+        			if($permission != 11){
+                        $studyIds = array();
+                        $criteria = new CDbCriteria;
+                        $criteria->condition = "interviewerId = " . $user->id;
+                        $interviewers = Interviewer::model()->findAll($criteria);
+                        foreach($interviewers as $interviewer){
+                            $studyIds[] = $interviewer->studyId;
+                        };
+        			}else{
         				$studyIds = "";
+                    }
         		}else{
         			$studyIds = "";
         		}
-        		if($studyIds)
-        			#OK FOR SQL INJECTION
-        			$studies = q("SELECT id,name FROM study WHERE id IN (" . implode(",", $studyIds) . ")")->queryAll();
-        		else
-        			#OK FOR SQL INJECTION
-        			$studies = q("SELECT id,name FROM study")->queryAll();
-        
+                if($studyIds){
+                    $criteria = array(
+                        "condition"=>"id IN (" . implode(",", $studyIds) . ")",
+                    );
+                    $studies = Study::model()->findAll($criteria);
+        		}else{
+        			$studies =  Study::model()->findAll();
+                }
         		foreach($studies as $study){
-        			$json[] = array("id"=>$study['id'], "name"=>$study['name']);
+        			$json[] = array("id"=>$study->id, "name"=>$study->name);
         		}
         		echo json_encode($json);
 				Yii::app()->end();
@@ -258,10 +267,91 @@ class MobileController extends Controller
 		}
 	}
 
-	public function actionUploadData(){
+  public function actionUploadData(){
+  			header("Access-Control-Allow-Origin: *");
+  		$errorMsg = "";
+  		if(count($_POST)){
+  			header("Access-Control-Allow-Origin: *");
+  			header('Access-Control-Allow-Credentials: true');
+  			header('Access-Control-Max-Age: 86400');
+  			$errors = 0;
+  			$errorMsgs = array();
+  			Yii::log($_POST['data']);
+  			$data = json_decode($_POST['data'],true);
+  			if(!$data['study']['ID']){
+  				echo "Study object broken:";
+  				print_r($data['study']);
+  				header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+  				die();
+  			}
+        $oldStudy = Study::model()->findByAttributes(array("name"=>$data['study']['NAME']));
+  			if($oldStudy && $oldStudy->modified == $data['study']['MODIFIED']){
+  				$this->saveAnswers($data);
+  		  }else{
+  				$study = new Study;
+  				foreach($study->attributes as $key=>$value){
+  					$study->$key = $data['study'][strtoupper($key)];
+  				}
+          if($oldStudy)
+  				   $study->name = $data['study']['NAME'] . " 2";
+  				$questions = array();
+  				foreach($data['questions'] as $q){
+  					$question = new Question;
+  					foreach($question->attributes as $key=>$value){
+  						$question->$key = $q[strtoupper($key)];
+  					}
+  					array_push($questions, $question);
+  				}
+  				$options = array();
+  				foreach($data['questionOptions'] as $o){
+  					$option = new QuestionOption;
+  					foreach($option->attributes as $key=>$value){
+  						$option->$key = $o[strtoupper($key)];
+  					}
+  					array_push($options, $option);
+  				}
+  				$expressions = array();
+  				foreach($data['expressions'] as $e){
+  					$expression = new Expression;
+  					foreach($expression->attributes as $key=>$value){
+  						$expression->$key = $e[strtoupper($key)];
+  					}
+  					array_push($expressions, $expression);
+  				}
+          echo "questions ". count($questions);
+  				$newData = Study::replicate($study, $questions, $options, $expressions, array());
+  				if($newData){
+  					$this->saveAnswers($data, $newData);
+  					echo "Study " . $oldStudy->name . " was modified. (" . $oldStudy->modified .  ":" . $data['study']['MODIFIED'] . ")  Generated new study: " . $study->name . ". ";
+  				}else{
+  					echo "Error while attempting to create a new study.";
+  				}
+  			}
+  			if($errors == 0)
+  				echo "Upload completed.  No Errors Found";
+  			else
+  				echo "Errors encountered!";
+  		}
+  	}
+
+	public function actionSyncData(){
 			header("Access-Control-Allow-Origin: *");
 		$errorMsg = "";
 		if(count($_POST)){
+      if(!isset($_POST['LoginForm']))
+  		{
+        header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+        die();
+      }
+			$model = new LoginForm;
+			$model->attributes=$_POST['LoginForm'];
+			// validate user input and redirect to the previous page if valid
+			if($model->validate() && $model->login()){
+
+      }else{
+    			header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+          die();
+    	}
 			header("Access-Control-Allow-Origin: *");
 			header('Access-Control-Allow-Credentials: true');
 			header('Access-Control-Max-Age: 86400');
@@ -275,21 +365,16 @@ class MobileController extends Controller
 				header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
 				die();
 			}
-			#OK FOR SQL INJECTION
-			$params = new stdClass();
-			$params->name = ':studyId';
-			$params->value = $data['study']['ID'];
-			$params->dataType = PDO::PARAM_INT;
-
-			$oldStudy = q("SELECT * FROM study WHERE id = :studyId", array($params))->queryRow();
-			if($oldStudy['modified'] == $data['study']['MODIFIED']){
+      $oldStudy = Study::model()->findByAttributes(array("name"=>$data['study']['NAME']));
+			if($oldStudy){
 				$this->saveAnswers($data);
-			}else{
+		  }else{
 				$study = new Study;
 				foreach($study->attributes as $key=>$value){
 					$study->$key = $data['study'][strtoupper($key)];
 				}
-				$study->name = $data['study']['NAME'] . " 2";
+        if($oldStudy)
+				   $study->name = $data['study']['NAME'] . " 2";
 				$questions = array();
 				foreach($data['questions'] as $q){
 					$question = new Question;
@@ -314,10 +399,11 @@ class MobileController extends Controller
 					}
 					array_push($expressions, $expression);
 				}
+        echo "questions ". count($questions);
 				$newData = Study::replicate($study, $questions, $options, $expressions, array());
 				if($newData){
 					$this->saveAnswers($data, $newData);
-					echo "Study was modified.  Generated new study: " . $study->name . ". ";
+					echo "Study " . $oldStudy->name . " was modified. (" . $oldStudy->modified .  ":" . $data['study']['MODIFIED'] . ")  Generated new study: " . $study->name . ". ";
 				}else{
 					echo "Error while attempting to create a new study.";
 				}
@@ -329,49 +415,26 @@ class MobileController extends Controller
 		}
 	}
 
-	private function compare($data){
-		#OK FOR SQL INJECTION
-		$oldStudy = q("SELECT * FROM study WHERE id = " . $data['study']['ID'])->queryRow();
-
-		foreach($oldStudy as $key=>$value){
-		$oldStudy[strtoupper($key)] = $value;
-		unset($oldStudy[$key]);
-		}
-
-		if($data['study'] != $oldStudy)
-		return false;
-
-		#OK FOR SQL INJECTION
-		$oldQuestions = q("SELECT * FROM question WHERE studyId = " . $data['study']['ID'])->queryAll();
-		if(count($data['questions']) != count($oldQuestions))
-		return false;
-
-		#OK FOR SQL INJECTION
-		$oldQuestionOptions = q("SELECT * FROM questionOption WHERE studyId = " . $data['study']['ID'])->queryAll();
-		if(count($data['questionOptions']) != count($oldQuestionOptions))
-		return false;
-
-		#OK FOR SQL INJECTION
-		$oldExpressions = q("SELECT * FROM expression WHERE studyId = " . $data['study']['ID'])->queryAll();
-		if(count($data['expressions']) != count($oldExpressions))
-		return false;
-
-		return true;
-	}
-
 	private function saveAnswers($data, $newData = null)
 	{
+    if(count($data['interviews']) == 0)
+      return false;
 		foreach($data['interviews'] as $interview){
-		$newInterview = new Interview;
-		if($newData)
-			$newInterview->studyId = $newData['studyId'];
-		else
-			$newInterview->studyId = $interview['STUDYID'];
-		$newInterview->completed = $interview['COMPLETED'];
-		$newInterview->start_date = $interview['START_DATE'];
-		$newInterview->complete_date = $interview['COMPLETE_DATE'];
-		$newInterview->save();
-		$newInterviewIds[$interview['ID']] = $newInterview->id;
+    		$newInterview = new Interview;
+    		if($newData)
+    			$newInterview->studyId = $newData['studyId'];
+    		else
+    			$newInterview->studyId = $interview['STUDYID'];
+    		$newInterview->completed = $interview['COMPLETED'];
+    		$newInterview->start_date = $interview['START_DATE'];
+    		$newInterview->complete_date = $interview['COMPLETE_DATE'];
+    		if($newInterview->save()){
+                $newInterviewIds[$interview['ID']] = $newInterview->id;
+            }else{
+                $errors++;
+                print_r($newInterview->getErrors());
+				die();
+            }
 		}
 		if(isset($data['alters'])){
 		foreach($data['alters'] as $alter){
@@ -380,10 +443,12 @@ class MobileController extends Controller
 			$newAlter = new Alters;
 			$newAlter->name = $alter['NAME'];
 			$newAlter->interviewId = $newInterviewIds[$alter['INTERVIEWID']];
-			$newAlter->ordering=1;
+            $newAlter->nameGenQIds = $alter['NAMEGENQIDS'];
+			$newAlter->ordering = 1;
 
 			if(!$newAlter->save()){
 				$errors++;
+                echo $alter['NAMEGENQIDS'];
 				print_r($newAlter->getErrors());
 				die();
 			}else{
