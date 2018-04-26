@@ -335,11 +335,31 @@ class MobileController extends Controller
   	}
 
 	public function actionSyncData(){
-			header("Access-Control-Allow-Origin: *");
+		header("Access-Control-Allow-Origin: *");
+    header('Access-Control-Allow-Credentials: true');
+    header('Access-Control-Max-Age: 86400');
+    $data = json_decode($_POST['data'],true);
 		$errorMsg = "";
 		if(count($_POST)){
       if(!isset($_POST['LoginForm']))
   		{
+        header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+        die();
+      }
+      $egoIds = array();
+      if(isset($data['study']['NAME'])){
+        $oldStudy = Study::model()->findByAttributes(array("name"=>$data['study']['NAME']));
+        if($oldStudy){
+          $interviews = Interview::model()->findAllByAttributes(array("studyId"=>$oldStudy->id));
+          foreach($interviews as $interview){
+            $egoId = Interview::getEgoId($interview->id);
+            if($egoId == $data['interviews'][0]["EGOID"]){
+              echo $egoId . ": interview already exists";
+              die();
+            }
+          }
+        }
+      }else{
         header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
         die();
       }
@@ -352,20 +372,15 @@ class MobileController extends Controller
     			header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
           die();
     	}
-			header("Access-Control-Allow-Origin: *");
-			header('Access-Control-Allow-Credentials: true');
-			header('Access-Control-Max-Age: 86400');
 			$errors = 0;
 			$errorMsgs = array();
 			Yii::log($_POST['data']);
-			$data = json_decode($_POST['data'],true);
 			if(!$data['study']['ID']){
-				echo "Study object broken:";
-				print_r($data['study']);
+				//echo "Study object broken:";
+				//print_r($data['study']);
 				header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
 				die();
 			}
-      $oldStudy = Study::model()->findByAttributes(array("name"=>$data['study']['NAME']));
 			if($oldStudy){
 				$this->saveAnswers($data);
 		  }else{
@@ -403,7 +418,7 @@ class MobileController extends Controller
 				$newData = Study::replicate($study, $questions, $options, $expressions, array());
 				if($newData){
 					$this->saveAnswers($data, $newData);
-					echo "Study " . $oldStudy->name . " was modified. (" . $oldStudy->modified .  ":" . $data['study']['MODIFIED'] . ")  Generated new study: " . $study->name . ". ";
+					echo "Study " . $oldStudy->name . " was created because " . $data['study']['NAME'] . " was not found. (" . $oldStudy->modified .  ":" . $data['study']['MODIFIED'] . ")  Generated new study: " . $study->name . ". ";
 				}else{
 					echo "Error while attempting to create a new study.";
 				}

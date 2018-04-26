@@ -252,29 +252,47 @@ function getData(){
     if(!servers[$("#serverAddress option:selected").val()].ADDRESS.match("http"))
       servers[$("#serverAddress option:selected").val()].ADDRESS = 'http://'+ servers[$("#serverAddress option:selected").val()].ADDRESS;
     studies = JSON.parse(res);
-    console.log(studies.length);
-    var total = studies.length;
-    studies.forEach(function(data) {
-      $("#sendJson").val(JSON.stringify(data));
-      $.ajax({
-        type: "POST",
-        url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
-        data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
-        success: function(msg){
-          finished++;
-          if(total != finished)
-            msg = "Processed " + finished + " / " + total + " interviews";
-          $(".progress-bar").width((finished / total * 100) + "%");
-          $("#sendError").hide();
-          $("#sendNotice").show();
-          $("#sendNotice").html(msg);
-        },
-        error: function(XMLHttpRequest, textStatus, errorThrown) {
-          $("#sendNotice").hide();
-          $("#sendError").show();
-          $("#sendError").html("Failed");
-        }
-      });
+    firstStudy = studies.shift();
+    var total = studies.length + 1;
+    $("#sendJson").val(JSON.stringify(firstStudy));
+    $.ajax({
+      type: "POST",
+      url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
+      data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
+      success: function(msg){
+        finished++;
+        msg = "Processed " + finished + " / " + total + " interviews: " + msg;
+        $(".progress-bar").width((finished / total * 100) + "%");
+        $("#sendError").hide();
+        $("#sendNotice").show();
+        $("#sendNotice").html(msg);
+        studies.forEach(function(data) {
+          $("#sendJson").val(JSON.stringify(data));
+          $.ajax({
+            type: "POST",
+            url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
+            data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
+            success: function(msg){
+              finished++;
+              msg = "Processed " + finished + " / " + total + " interviews: " + msg;
+              $(".progress-bar").width((finished / total * 100) + "%");
+              $("#sendError").hide();
+              $("#sendNotice").show();
+              $("#sendNotice").html($("#sendNotice").html() + "<br>" + msg);
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+              $("#sendNotice").hide();
+              $("#sendError").show();
+              $("#sendError").html("Failed");
+            }
+          });
+        });
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) {
+        $("#sendNotice").hide();
+        $("#sendError").show();
+        $("#sendError").html("Failed");
+      }
     });
   });
 }

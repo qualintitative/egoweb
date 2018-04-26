@@ -701,7 +701,10 @@ class ImportExportController extends Controller
           $graphs = array();
           $notes = array();
           if($interviewId != 0){
-            $interviews[] = mToA(Interview::model()->findByPK($interviewId));
+            $interviewData = mToA(Interview::model()->findByPK($interviewId));
+            $interviewData['EGOID'] = Interview::getEgoId($interviewId);
+            $interviews[] = $interviewData;
+
   	        $results = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewId));
             foreach($results as $result){
               $answers[] = mToA($result);
