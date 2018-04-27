@@ -386,6 +386,8 @@ class MobileController extends Controller
         $newQuestionIds = array();
         $newQuestionTitles = array();
         foreach($questions as $question){
+          if($question->subjectType == "NAME_GENERATOR")
+            $nameGenQId = $question->id;
           $newQuestionIds[$question->title] = $question->id;
           $newQuestionTitles[$question->id] = $question->title;
         }
@@ -400,6 +402,7 @@ class MobileController extends Controller
           "studyId"=>$oldStudy->id,
           "newQuestionIds"=>$newQuestionIds,
           "newOptionIds"=>$newOptionIds,
+          "nameGenQId"=>$nameGenQId,
         );
 				$this->saveAnswersMerge($data, $newData);
 		  }else{
@@ -555,6 +558,10 @@ class MobileController extends Controller
 				die();
             }
 		}
+    $questionTitles = array();
+    foreach($data['questions'] as $q){
+      $questionTitles[$q['ID']] = $q['TITLE'];
+    }
 		if(isset($data['alters'])){
 		foreach($data['alters'] as $alter){
 			if(!isset($newInterviewIds[$alter['INTERVIEWID']]))
@@ -562,11 +569,31 @@ class MobileController extends Controller
 			$newAlter = new Alters;
 			$newAlter->name = $alter['NAME'];
 			$newAlter->interviewId = $newInterviewIds[$alter['INTERVIEWID']];
-            $newAlter->nameGenQIds = $alter['NAMEGENQIDS'];
-			$newAlter->ordering = 1;
-
+      if(!isset($alter['NAMEGENQIDS'])){
+        $newAlter->nameGenQIds = $newData["nameGenQId"];
+      }else{
+        if(stristr($alter['NAMEGENQIDS'], ",")){
+          $qIds = explode(",", $alter['NAMEGENQIDS']);
+          foreach($qIds as $qId){
+            $qTitle = $questionTitles[$qId];
+            if(!isset($newData['newQuestionIds'][$qTitle]))
+              $newAlter->nameGenQIds = $newData['newQuestionIds'][$qTitle];
+            else
+              $newAlter->nameGenQIds =  $newData["nameGenQId"];
+          }
+        }else{
+          $qTitle = $questionTitles[$alter['NAMEGENQIDS']];
+          if(!isset($newData['newQuestionIds'][$qTitle]))
+            $newAlter->nameGenQIds = $newData['newQuestionIds'][$qTitle];
+          else
+            $newAlter->nameGenQIds =  $newData["nameGenQId"];
+        }
+      }
+			$newAlter->ordering = $alter['ORDERING'];
 			if(!$newAlter->save()){
 				$errors++;
+        echo $questionTitles[$alter['NAMEGENQIDS']];
+        echo $newData["nameGenQId"];
         echo $alter['NAMEGENQIDS'];
 				print_r($newAlter->getErrors());
 				die();
@@ -575,10 +602,6 @@ class MobileController extends Controller
 			}
 		}
 		}
-    $questionTitles = array();
-    foreach($data['questions'] as $q){
-      $questionTitles[$q['ID']] = $q['TITLE'];
-    }
     $optionNames = array();
     foreach($data['questionOptions'] as $o){
       $optionNames[$o['ID']] = $o['NAME'];
