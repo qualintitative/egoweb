@@ -382,7 +382,26 @@ class MobileController extends Controller
 				die();
 			}
 			if($oldStudy){
-				$this->saveAnswers($data);
+        $questions = Question::model()->findAllByAttributes(array("studyId"=>$oldStudy->id));
+        $newQuestionIds = array();
+        $newQuestionTitles = array();
+        foreach($questions as $question){
+          $newQuestionIds[$question->title] = $question->id;
+          $newQuestionTitles[$question->id] = $question->title;
+        }
+        $options = QuestionOption::model()->findAllByAttributes(array("studyId"=>$oldStudy->id));
+        $newOptionIds = array();
+        foreach($options as $option){
+          $newOptionIds[$newQuestionTitles[$option->questionId]."_".$option->name] = $option->id;
+        }
+        echo "Marging with existing study $oldStudy->name. ";
+        $data['interviews'][0]['STUDYID'] = $oldStudy->id;
+        $newData = array(
+          "studyId"=>$oldStudy->id,
+          "newQuestionIds"=>$newQuestionIds,
+          "newOptionIds"=>$newOptionIds,
+        );
+				$this->saveAnswersMerge($data, $newData);
 		  }else{
 				$study = new Study;
 				foreach($study->attributes as $key=>$value){
@@ -414,7 +433,6 @@ class MobileController extends Controller
 					}
 					array_push($expressions, $expression);
 				}
-        echo "questions ". count($questions);
 				$newData = Study::replicate($study, $questions, $options, $expressions, array());
 				if($newData){
 					$this->saveAnswers($data, $newData);
@@ -463,7 +481,7 @@ class MobileController extends Controller
 
 			if(!$newAlter->save()){
 				$errors++;
-                echo $alter['NAMEGENQIDS'];
+        echo $alter['NAMEGENQIDS'];
 				print_r($newAlter->getErrors());
 				die();
 			}else{
@@ -500,8 +518,97 @@ class MobileController extends Controller
 			if(!isset($answer['QUESTIONID']))
 				continue;
 			$newAnswer->questionId = $answer['QUESTIONID'];
-			$newAnswer->studyId = $answer['STUDYID'];
+			$newAnswer->studyId = $newInterview->studyId;
 			$newAnswer->value = $answer['VALUE'];
+		}
+		$newAnswer->questionType = $answer['QUESTIONTYPE'];
+		$newAnswer->answerType = $answer['ANSWERTYPE'];
+		$newAnswer->otherSpecifyText = $answer['OTHERSPECIFYTEXT'];
+		$newAnswer->skipReason = $answer['SKIPREASON'];
+		$newAnswer->interviewId = $newInterviewIds[$answer['INTERVIEWID']];
+		if(is_numeric($answer['ALTERID1']) && isset($newAlterIds[$answer['ALTERID1']]))
+			$newAnswer->alterId1 = $newAlterIds[$answer['ALTERID1']];
+		if(is_numeric($answer['ALTERID2']) && isset($newAlterIds[$answer['ALTERID2']]))
+			$newAnswer->alterId2 = $newAlterIds[$answer['ALTERID2']];
+		if(!$newAnswer->save()){
+			print_r($newAnswer->getErrors());
+			die();
+		}
+		}
+	}
+
+  private function saveAnswersMerge($data, $newData)
+	{
+    if(count($data['interviews']) == 0)
+      return false;
+		foreach($data['interviews'] as $interview){
+    		$newInterview = new Interview;
+    		$newInterview->studyId = $newData['studyId'];
+    		$newInterview->completed = $interview['COMPLETED'];
+    		$newInterview->start_date = $interview['START_DATE'];
+    		$newInterview->complete_date = $interview['COMPLETE_DATE'];
+    		if($newInterview->save()){
+                $newInterviewIds[$interview['ID']] = $newInterview->id;
+            }else{
+                $errors++;
+                print_r($newInterview->getErrors());
+				die();
+            }
+		}
+		if(isset($data['alters'])){
+		foreach($data['alters'] as $alter){
+			if(!isset($newInterviewIds[$alter['INTERVIEWID']]))
+				continue;
+			$newAlter = new Alters;
+			$newAlter->name = $alter['NAME'];
+			$newAlter->interviewId = $newInterviewIds[$alter['INTERVIEWID']];
+            $newAlter->nameGenQIds = $alter['NAMEGENQIDS'];
+			$newAlter->ordering = 1;
+
+			if(!$newAlter->save()){
+				$errors++;
+        echo $alter['NAMEGENQIDS'];
+				print_r($newAlter->getErrors());
+				die();
+			}else{
+				$newAlterIds[$alter['ID']] = $newAlter->id;
+			}
+		}
+		}
+    $questionTitles = array();
+    foreach($data['questions'] as $q){
+      $questionTitles[$q['ID']] = $q['TITLE'];
+    }
+    $optionNames = array();
+    foreach($data['questionOptions'] as $o){
+      $optionNames[$o['ID']] = $o['NAME'];
+    }
+		foreach($data['answers'] as $answer){
+		$newAnswer = new Answer;
+		if($newData){
+      $qTitle = $questionTitles[$answer['QUESTIONID']];
+			if(!isset($newData['newQuestionIds'][$qTitle]))
+				continue;
+			$newAnswer->questionId = $newData['newQuestionIds'][$qTitle];
+			$newAnswer->studyId = $newData['studyId'];
+			if($answer['ANSWERTYPE'] == "MULTIPLE_SELECTION"){
+				$values = explode(',', $answer['VALUE']);
+				foreach($values as &$value){
+					if(isset($newData['newOptionIds'][$qTitle . "_" . $optionNames[$value]]))
+						$value = $newData['newOptionIds'][$qTitle . "_" . $optionNames[$value]];
+				}
+				$answer['VALUE'] = implode(',', $values);
+			}
+			$newAnswer->value = $answer['VALUE'];
+			if($answer['OTHERSPECIFYTEXT']){
+				foreach(preg_split('/;;/', $answer['OTHERSPECIFYTEXT']) as $other){
+				if($other && strstr($other, ':')){
+					list($key, $val) = preg_split('/:/', $other);
+					$responses[] = $newData['newOptionIds'][$optionNames[$key]] . ":" .$val;
+				}
+				}
+				$answer['OTHERSPECIFYTEXT'] = implode(";;", $responses);
+			}
 		}
 		$newAnswer->questionType = $answer['QUESTIONTYPE'];
 		$newAnswer->answerType = $answer['ANSWERTYPE'];
