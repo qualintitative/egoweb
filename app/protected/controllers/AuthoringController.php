@@ -393,7 +393,18 @@ class AuthoringController extends Controller
         );
         $model->save();
         $nameGenQId = $model->id;
-
+        $interviews = Interview::model()->findAllByAttributes(array("studyId"=>$study->id));
+        foreach($interviews as $interview){
+          $criteria=array(
+            'condition'=>"FIND_IN_SET(" . $interview->id .", interviewId)",
+            'order'=>'ordering',
+          );
+          $alters = Alters::model()->findAll($criteria);
+          foreach($alters as $alter){
+            $alter->nameGenQIds = $nameGenQId;
+            $alter->save();
+          }
+        }
         $i++;
         foreach($alter_questions as $question){
             $question->ordering = $i + $question->ordering;
