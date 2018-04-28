@@ -362,10 +362,10 @@ class AuthoringController extends Controller
 	{
         $study = Study::model()->findByPk($id);
         $criteria=new CDbCriteria;
-		$criteria=array(
-			'condition'=>"studyId = " . $id . ' AND subjectType != "EGO_ID"',
-			'order'=>'ordering',
-		);
+    		$criteria=array(
+    			'condition'=>"studyId = " . $id . ' AND subjectType != "EGO_ID"',
+    			'order'=>'ordering',
+    		);
         $ego_questions = array();
         $alter_questions = array();
         $alter_pair_questions = array();

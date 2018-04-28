@@ -209,7 +209,7 @@ $criteria->order = 'name';
       </div>
     </div>
     <div class="col-sm-2"  style="clear:both">
-      <button class="btn btn-info" onclick="getData();return false;">Send</button>
+      <button id="sendSync" class="btn btn-info" onclick="getData();return false;">Send</button>
     </div>
     <?php $this->endWidget(); ?>
     <textarea id="sendJson" class="hidden"></textarea>
@@ -248,6 +248,10 @@ function authenticate(){
 function getData(){
   var finished = 0;
   $(".progress-bar").width(0);
+  $("#sendError").hide();
+  $("#sendNotice").show();
+  $("#sendNotice").html("Preparing data to send..");
+  $("#sendSync").prop("disabled", true);
   $.post('/importExport/send/' + $("#sendStudy option:selected").val(), $("#syncForm").serialize(), function(res){
     if(!servers[$("#serverAddress option:selected").val()].ADDRESS.match("http"))
       servers[$("#serverAddress option:selected").val()].ADDRESS = 'http://'+ servers[$("#serverAddress option:selected").val()].ADDRESS;
@@ -265,7 +269,7 @@ function getData(){
         $(".progress-bar").width((finished / total * 100) + "%");
         $("#sendError").hide();
         $("#sendNotice").show();
-        $("#sendNotice").html(msg);
+        $("#sendNotice").html($("#sendNotice").html() + "<br>" + msg);
         studies.forEach(function(data) {
           $("#sendJson").val(JSON.stringify(data));
           $.ajax({
@@ -287,11 +291,14 @@ function getData(){
             }
           });
         });
+        $("#sendNotice").html($("#sendNotice").html() + "<br>" + "Done!");
+        $("#sendSync").prop("disabled", false);
       },
       error: function(XMLHttpRequest, textStatus, errorThrown) {
         $("#sendNotice").hide();
         $("#sendError").show();
         $("#sendError").html("Failed");
+        $("#sendSync").prop("disabled", false);
       }
     });
   });
