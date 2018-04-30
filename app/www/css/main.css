@@ -479,9 +479,6 @@ td{
     margin-right:0!important;
     overflow-y: auto;
   }
-  #alterFormBox{
-    margin: 0 15px;
-  }
   .orangebutton{
   	margin-left:10px!important;
   }
@@ -948,5 +945,5 @@ input[type=checkbox]{
 }
 
 #alterFormBox {
-  padding-left:30px;
+  margin-left:30px;
 }

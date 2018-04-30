@@ -685,7 +685,7 @@ class ImportExportController extends Controller
         foreach($results as $result){
             if(!$result->questionId)
                 $result->questionId = 0;
-            $alterPrompts[] = $result->display;
+            $alterPrompts[] = mToA($result);
         }
         if(is_array($_POST['export']))
           $interviewIds = $_POST['export'];
