@@ -877,6 +877,8 @@ class Study extends CActiveRecord
 			$newAlterPrompt->attributes = $alterPrompt->attributes;
 			$newAlterPrompt->id = null;
 			$newAlterPrompt->studyId = $newStudy->id;
+      if(isset($newQuestionIds[$newAlterPrompt->questionId]))
+        $newAlterPrompt->questionId = $newQuestionIds[$newAlterPrompt->questionId];
 			if(!$newAlterPrompt->save())
 				throw new CHttpException(500, "AlterPrompt: " . print_r($newAlterPrompt->errors));
 		}

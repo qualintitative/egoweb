@@ -436,7 +436,17 @@ class MobileController extends Controller
 					}
 					array_push($expressions, $expression);
 				}
-				$newData = Study::replicate($study, $questions, $options, $expressions, array());
+        $alterPrompts = array();
+        if(isset($data['alterPrompts'])){
+          foreach($data['alterPrompts'] as $a){
+            $alterPrompt = new Expression;
+            foreach($alterPrompt->attributes as $key=>$value){
+              $alterPrompt->$key = $a[strtoupper($key)];
+            }
+            array_push($alterPrompts, $alterPrompt);
+          }
+        }
+				$newData = Study::replicate($study, $questions, $options, $expressions, $alterPrompts);
 				if($newData){
 					$this->saveAnswers($data, $newData);
 					echo "Study " . $oldStudy->name . " was created because " . $data['study']['NAME'] . " was not found. (" . $oldStudy->modified .  ":" . $data['study']['MODIFIED'] . ")  Generated new study: " . $study->name . ". ";
