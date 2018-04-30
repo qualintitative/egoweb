@@ -42,11 +42,10 @@
         <div ng-repeat="option in options[askingStyleList]" style="width:120px">{{ option.NAME }}</div>
     </div>
 </div>
-<div id="alterFormBox" ng-if="questions[0].ANSWERTYPE == 'NAME_GENERATOR'">
+<div id="alterFormBox" class="col-sm-3" ng-if="questions[0].ANSWERTYPE == 'NAME_GENERATOR'">
     <div ng-if='alterPrompt != ""'>{{ alterPrompt }}</div>
     <a ng-if='audio["ALTERPROMPT"]' class="play-sound" ng-click='playSound("ALTERPROMPT")' href="javascript:void(0)"><span class="fui-volume"></span></a>
 
-    <div class="col-sm-6">
     <form ng-if="!questions[0].MAXLITERAL || keys(alters).length < questions[0].MAXLITERAL" id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
         <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
         <div class="form-group">
@@ -58,7 +57,6 @@
         </div>
         <br><br class="clearfix">
     </form>
-    </div>
 
     <form id="deleteAlterForm" name="deleteAlterForm">
         <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
