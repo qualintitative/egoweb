@@ -396,7 +396,7 @@ class MobileController extends Controller
         foreach($options as $option){
           $newOptionIds[$newQuestionTitles[$option->questionId]."_".$option->name] = $option->id;
         }
-        echo "Marging with existing study $oldStudy->name. ";
+        echo "Merging with existing study $oldStudy->name. ";
         $data['interviews'][0]['STUDYID'] = $oldStudy->id;
         $newData = array(
           "studyId"=>$oldStudy->id,
