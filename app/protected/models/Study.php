@@ -868,7 +868,14 @@ class Study extends CActiveRecord
 						$expressionId = $newExpressionIds[$expressionId];
 				}
 				$newExpression->value = implode(',',$expressionIds);
-			}
+			} else if ($newExpression->type == "Name Generator"){
+        $questionIds = explode(',', $newExpression->value);
+        foreach($questionIds as &$questionId){
+          if(isset($newQuestionIds[$questionId]))
+             $questionId = $newQuestionIds[$questionId];
+        }
+        $newExpression->value = implode(',', $questionIds);
+      }
 			$newExpression->save();
 		}
 
@@ -879,8 +886,12 @@ class Study extends CActiveRecord
 			$newAlterPrompt->studyId = $newStudy->id;
       if(isset($newQuestionIds[$newAlterPrompt->questionId]))
         $newAlterPrompt->questionId = $newQuestionIds[$newAlterPrompt->questionId];
-			if(!$newAlterPrompt->save())
-				throw new CHttpException(500, "AlterPrompt: " . print_r($newAlterPrompt->errors));
+			if(!$newAlterPrompt->save()){
+        ob_start();
+        var_dump($newAlterPrompt->errors);
+        $errorMsg = ob_get_clean();
+				throw new CHttpException(500, "AlterPrompt: " . $errorMsg);
+      }
 		}
 
 		foreach($alterLists as $alterList){

@@ -439,7 +439,7 @@ class MobileController extends Controller
         $alterPrompts = array();
         if(isset($data['alterPrompts'])){
           foreach($data['alterPrompts'] as $a){
-            $alterPrompt = new Expression;
+            $alterPrompt = new AlterPrompt;
             foreach($alterPrompt->attributes as $key=>$value){
               $alterPrompt->$key = $a[strtoupper($key)];
             }
