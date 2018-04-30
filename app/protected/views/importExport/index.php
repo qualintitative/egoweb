@@ -245,6 +245,7 @@ function authenticate(){
     }
   });
 }
+var studies = [];
 function getData(){
   var finished = 0;
   $(".progress-bar").width(0);
@@ -252,56 +253,124 @@ function getData(){
   $("#sendNotice").show();
   $("#sendNotice").html("Preparing data to send..");
   $("#sendSync").prop("disabled", true);
-  $.post('/importExport/send/' + $("#sendStudy option:selected").val(), $("#syncForm").serialize(), function(res){
-    if(!servers[$("#serverAddress option:selected").val()].ADDRESS.match("http"))
-      servers[$("#serverAddress option:selected").val()].ADDRESS = 'http://'+ servers[$("#serverAddress option:selected").val()].ADDRESS;
-    studies = JSON.parse(res);
-    firstStudy = studies.shift();
-    var total = studies.length + 1;
-    $("#sendJson").val(JSON.stringify(firstStudy));
-    $.ajax({
-      type: "POST",
-      url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
-      data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
-      success: function(msg){
-        finished++;
-        msg = "Processed " + finished + " / " + total + " interviews: " + msg;
-        $(".progress-bar").width((finished / total * 100) + "%");
-        $("#sendError").hide();
-        $("#sendNotice").show();
-        $("#sendNotice").html($("#sendNotice").html() + "<br>" + msg);
-        studies.forEach(function(data) {
-          $("#sendJson").val(JSON.stringify(data));
-          $.ajax({
-            type: "POST",
-            url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
-            data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
-            success: function(msg){
-              finished++;
-              msg = "Processed " + finished + " / " + total + " interviews: " + msg;
-              $(".progress-bar").width((finished / total * 100) + "%");
-              $("#sendError").hide();
-              $("#sendNotice").show();
-              $("#sendNotice").html($("#sendNotice").html() + "<br>" + msg);
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-              $("#sendNotice").hide();
-              $("#sendError").show();
-              $("#sendError").html("Failed");
-            }
-          });
+  var total = $("#send-interviews .export:checked").length;
+  var batchSize = 1;
+  var interviews = $("#send-interviews .export:checked");
+  var batchPromiseRecursive = function() {
+    // note splice is destructive, removing the first batch off
+    // the array
+    //var batch = studies.splice(0, batchSize);
+    if (interviews.length == 0) {
+      return $.Deferred().resolve().promise();
+    }
+    var thisInt = interviews.splice(0, batchSize);
+
+    console.log($(thisInt).val());
+
+
+    return $.post('/importExport/send/' + $("#sendStudy option:selected").val(), {"YII_CSRF_TOKEN":$("input[name='YII_CSRF_TOKEN']").val(), "serverId":$("#serverAddress option:selected").val(), "export[]":$(thisInt).val()})
+      .done(function(res) {
+        $("#sendNotice").html($("#sendNotice").html() + "<br>" + "Prepared interview... ");
+        if(!servers[$("#serverAddress option:selected").val()].ADDRESS.match("http"))
+          servers[$("#serverAddress option:selected").val()].ADDRESS = 'http://'+ servers[$("#serverAddress option:selected").val()].ADDRESS;
+        $("#sendJson").val(res);
+        $.ajax({
+          type: "POST",
+          url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
+          data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
+          success: function(msg){
+            finished++;
+            msg = "Processed " + finished + " / " + total + " interviews: " + msg;
+            $(".progress-bar").width((finished / total * 100) + "%");
+            $("#sendError").hide();
+            $("#sendNotice").show();
+            $("#sendNotice").html($("#sendNotice").html() + "<br>" + msg);
+          },
+          error: function(XMLHttpRequest, textStatus, errorThrown) {
+            $("#sendNotice").hide();
+            $("#sendError").show();
+            $("#sendError").html("Failed");
+          }
         });
-        $("#sendNotice").html($("#sendNotice").html() + "<br>" + "Done!");
-        $("#sendSync").prop("disabled", false);
-      },
-      error: function(XMLHttpRequest, textStatus, errorThrown) {
-        $("#sendNotice").hide();
-        $("#sendError").show();
-        $("#sendError").html("Failed");
-        $("#sendSync").prop("disabled", false);
-      }
+        // Do something after each batch finishes.
+        // Update a progress bar is probably a good idea.
+      })
+      .fail(function(e) {
+        // if a batch fails, say server returns 500,
+        // do something here.
+      })
+      .then(function() {
+        return batchPromiseRecursive();
+      });
+  }
+
+
+  batchPromiseRecursive().then(function() {
+    console.log(studies);
+    $("#sendSync").prop("disabled", false);
+
+    // something to do when it's all over.
+
+      //  var total = studies.length + 1;
+      /*
+        $("#sendJson").val(JSON.stringify(firstStudy));
+        $.ajax({
+          type: "POST",
+          url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
+          data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
+          success: function(msg){
+            finished++;
+            msg = "Processed " + finished + " / " + total + " interviews: " + msg;
+            $(".progress-bar").width((finished / total * 100) + "%");
+            $("#sendError").hide();
+            $("#sendNotice").show();
+            $("#sendNotice").html($("#sendNotice").html() + "<br>" + msg);
+            studies.forEach(function(data) {
+              $("#sendJson").val(JSON.stringify(data));
+              $.ajax({
+                type: "POST",
+                url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
+                data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
+                success: function(msg){
+                  finished++;
+                  msg = "Processed " + finished + " / " + total + " interviews: " + msg;
+                  $(".progress-bar").width((finished / total * 100) + "%");
+                  $("#sendError").hide();
+                  $("#sendNotice").show();
+                  $("#sendNotice").html($("#sendNotice").html() + "<br>" + msg);
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                  $("#sendNotice").hide();
+                  $("#sendError").show();
+                  $("#sendError").html("Failed");
+                }
+              });
+            });
+            $("#sendNotice").html($("#sendNotice").html() + "<br>" + "Done!");
+            $("#sendSync").prop("disabled", false);
+          },
+          error: function(XMLHttpRequest, textStatus, errorThrown) {
+            $("#sendNotice").hide();
+            $("#sendError").show();
+            $("#sendError").html("Failed");
+            $("#sendSync").prop("disabled", false);
+          }
+        });
+        */
+  });
+
+
+  /*
+  $("#send-interviews .export:checked").each(function(){
+    var intId = $(this).val();
+    $.post('/importExport/send/' + $("#sendStudy option:selected").val(), {"YII_CSRF_TOKEN":$("input[name='YII_CSRF_TOKEN']").val(), "serverId":$("#serverAddress option:selected").val(), "export[]":intId}, function(res){
+      $("#sendNotice").html($("#sendNotice").html() + "<br>" + "Prepared interview #" + intId);
+      if(!servers[$("#serverAddress option:selected").val()].ADDRESS.match("http"))
+        servers[$("#serverAddress option:selected").val()].ADDRESS = 'http://'+ servers[$("#serverAddress option:selected").val()].ADDRESS;
+      studies.push(JSON.parse(res).shift());
     });
   });
+*/
 }
 
 //On import study form submit

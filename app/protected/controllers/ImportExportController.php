@@ -742,7 +742,10 @@ class ImportExportController extends Controller
         }
       if(count($alters) == 0)
         $alters = new stdClass();
-      $data = $studies;
+      if(count($studies) > 1)
+        $data = $studies;
+      else
+        $data = $studies[0];
       echo json_encode($data);
 	}
 }
