@@ -46,9 +46,10 @@ class ImportExportController extends Controller
               $value = intval($value);
             if($key == "id")
               $value = null;
-    				$newStudy->$key = $value;
-                if($_POST['newName'])
-                    $newStudy->name = $_POST['newName'];
+            if(isset($newStudy->$key))
+    				    $newStudy->$key = $value;
+            if($_POST['newName'])
+                $newStudy->name = $_POST['newName'];
 
 
     			if($key == "name"){
