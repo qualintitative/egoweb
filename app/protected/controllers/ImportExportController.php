@@ -41,16 +41,13 @@ class ImportExportController extends Controller
     		$merge = false;
 
     		foreach($study->attributes() as $key=>$value){
-    			if($key != "id" && $newStudy->hasAttribute($key))
+    	//		if($newStudy->hasAttribute($key)){
             if($key == "active")
               $value = intval($value);
             if($key == "id")
               $value = null;
-            if(isset($newStudy->$key))
-    				    $newStudy->$key = $value;
-            if($_POST['newName'])
-                $newStudy->name = $_POST['newName'];
-
+            if(in_array($key, array_keys($newStudy->attributes)))
+    				    $newStudy->$key = html_entity_decode($value);
 
     			if($key == "name"){
     				$oldStudy = Study::model()->findByAttributes(array("name"=>$value));
@@ -59,21 +56,24 @@ class ImportExportController extends Controller
     					$newStudy = $oldStudy;
     				}
     			}
+      //  }
     		}
-
     		if(!$merge){
 
     			foreach($study as $key=>$value){
     				if(count($value) == 0 && $key != "answerLists" && $key != "expressions")
     					$newStudy->$key = html_entity_decode ($value);
     			}
-    			if(isset($_POST['newName']) && $_POST['newName'])
-    				$newStudy->name = $_POST['newName'];
+   			if(isset($_POST['newName']) && $_POST['newName'])
+  				$newStudy->name = $_POST['newName'];
 
                 $newStudy->userId = Yii::app()->user->id;
 
-    			if(!$newStudy->save()){
-    				echo "study: " . print_r($newStudy->getErrors());
+    			if($newStudy->save()){
+            $newStudyId = Yii::app()->db->getLastInsertID();
+            $newStudy->id = $newStudyId;
+          }else{
+    				echo "study: " . print_r($newStudy->attributes);
     				die();
     			}
 
@@ -174,9 +174,11 @@ class ImportExportController extends Controller
             				$newAlterPrompt->questionId = $newQuestionIds[intval($value)];
                 }
               }
-              $newAlterPrompt->studyId = $newStudy->id;
-              if(!$newAlterPrompt->save())
-                echo "Alter prompt: $newAlterPrompt->afterAltersEntered :" . print_r($newAlterPrompt->errors);
+              $newAlterPrompt->studyId = $newStudyId;
+              if(!$newAlterPrompt->save()){
+                print_r($newStudy->attributes);
+                echo "Alter prompt: $newStudy->id : $newAlterPrompt->afterAltersEntered :" . print_r($newAlterPrompt->errors);
+              }
             }
           }
 
@@ -363,11 +365,13 @@ class ImportExportController extends Controller
     					if($key!="key" && $key != "id")
     						$newInterview->$key = $value;
     				}
-    				$newInterview->studyId = $newStudy->id;
-    				if(!$newInterview->save())
+    				$newInterview->studyId = $newStudyId;
+    				if(!$newInterview->save()){
     					echo "New interview: " .  print_r($newInterview->errors);
-    				else
-    					$newInterviewIds[intval($oldInterviewId)] = $newInterview->id;
+    				}else{
+              $newInterviewId = Yii::app()->db->getLastInsertID();
+    					$newInterviewIds[intval($oldInterviewId)] =  $newInterviewId;
+            }
 
     				if(count($interview->alters->alter) != 0){
     					foreach($interview->alters->alter as $alter){
@@ -386,12 +390,12 @@ class ImportExportController extends Controller
                             if(!$newAlter->nameGenQIds)
                                 $newAlter->nameGenQIds = 0;
     						if(!preg_match("/,/", $newAlter->interviewId)){
-    							$newAlter->interviewId = $newInterview->id;
+    							$newAlter->interviewId = $newInterviewId;
                             }else{
                                 $interviewIds = explode(",", $newAlter->interviewId);
                                 foreach($interviewIds as &$interviewId){
                                     if($interviewId == $oldInterviewId)
-                                        $interviewId = $newInterview->id;
+                                        $interviewId = $newInterviewId;
                                 }
                                 $newAlter->interviewId = implode(",", $interviewIds);
                             }
@@ -400,7 +404,7 @@ class ImportExportController extends Controller
 
     						if(!$newAlter->save()){
     							echo "Alter: ";
-                                print_r($newAlter->getErrors());
+                  print_r($newAlter->getErrors());
     							die();
     						}else{
     							$newAlterIds[intval($thisAlterId)] = $newAlter->id;
@@ -416,7 +420,7 @@ class ImportExportController extends Controller
     								$newNote->$key = $value;
     						}
     						if(!preg_match("/,/", $newNote->interviewId))
-    							$newNote->interviewId = $newInterview->id;
+    							$newNote->interviewId = $newInterviewId;
 
                             if(!isset($newExpressionIds[intval($newNote->expressionId)]) || !isset($newAlterIds[intval($newNote->alterId)]))
                                 continue;
@@ -492,7 +496,7 @@ class ImportExportController extends Controller
     							}
     						}
     						if(!preg_match("/,/", $newGraph->interviewId))
-    							$newGraph->interviewId = $newInterview->id;
+    							$newGraph->interviewId = $newInterviewId;
 
                             if(isset($newExpressionIds[intval($newGraph->expressionId)]))
         						$newGraph->expressionId = $newExpressionIds[intval($newGraph->expressionId)];
@@ -526,6 +530,7 @@ class ImportExportController extends Controller
 
     									if($key == "answerType")
     										$answerType = $value;
+
     						}
 
 
@@ -553,8 +558,8 @@ class ImportExportController extends Controller
         						}
     						}
 
-    						$newAnswer->studyId = $newStudy->id;
-    						$newAnswer->interviewId = $newInterview->id;
+    						$newAnswer->studyId = $newStudyId;
+                $newAnswer->interviewId = $newInterviewId;
 
     						if(!isset($newQuestionIds[$oldQId]) || !$newQuestionIds[$oldQId])
     							continue;
@@ -598,7 +603,7 @@ class ImportExportController extends Controller
     			}
     		}
         }
-		$this->redirect(array('/authoring/edit','id'=>$newStudy->id));
+		$this->redirect(array('/authoring/edit','id'=>$newStudyId));
 
 	}
 
