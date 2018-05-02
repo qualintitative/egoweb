@@ -1069,7 +1069,7 @@ class Study extends CActiveRecord
           $x->startElement('graphs');
           foreach($graphs[$interview->id] as $graph){
             $x->startElement('graph');
-            foreach($columns['graph'] as $attr){
+            foreach($columns['graphs'] as $attr){
               if(!in_array($attr, $exclude))
                 $x->writeAttribute($attr, $graph->$attr);
             }
@@ -1081,7 +1081,7 @@ class Study extends CActiveRecord
           $x->startElement('notes');
           foreach($notes[$interview->id] as $note){
             $x->startElement('note');
-            foreach($columns['note'] as $attr){
+            foreach($columns['notes'] as $attr){
               if(!in_array($attr, $exclude))
                 $x->writeAttribute($attr, $note->$attr);
             }
