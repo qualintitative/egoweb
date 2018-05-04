@@ -2562,7 +2562,7 @@ function columnWidths() {
 function fixHeader() {
   columnWidths();
   // Set this variable with the height of your sidebar + header
-  var offsetLeft = parseInt($("#content").css("margin-left")) + parseInt($("#content").css("padding-left"))
+  var offsetLeft = $("#realHeader").offset().left
   var offsetPixels = $(".navbar").height();
   $("#content").css({
     "background-attachment": "fixed"
@@ -2593,6 +2593,16 @@ function fixHeader() {
     });
   }
   $(window).resize(function() {
+    var offsetLeft = $("#realHeader").offset().left
+    console.log("resizing:" + offsetLeft + ":" + $(window).scrollLeft() + "px");
+    $("#content").css({
+      "background-attachment": "fixed"
+    });
+        $("#floatHeader").css({
+          "position": "fixed",
+          "left": offsetLeft - $(window).scrollLeft() + "px",
+        });
+
     columnWidths();
   });
 }
