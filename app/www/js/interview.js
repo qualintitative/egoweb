@@ -2592,19 +2592,39 @@ function fixHeader() {
       });
     });
   }
-  $(window).resize(function() {
+  var resizeTimer;
+
+$(window).on('resize', function(e) {
+
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(function() {
+
+    $(window).unbind('scroll');
     var offsetLeft = $("#realHeader").offset().left
-    console.log("resizing:" + offsetLeft + ":" + $(window).scrollLeft() + "px");
     $("#content").css({
       "background-attachment": "fixed"
     });
-        $("#floatHeader").css({
-          "position": "fixed",
-          "left": offsetLeft - $(window).scrollLeft() + "px",
-        });
+    $("#floatHeader").css({
+      "position": "fixed",
+      "left": offsetLeft - $(window).scrollLeft() + "px",
+    });
+    fixHeader();
+  }, 250);
 
-    columnWidths();
-  });
+});
+/*
+  $(window).resize(function() {
+    $(window).unbind('scroll');
+    var offsetLeft = $("#realHeader").offset().left
+    $("#content").css({
+      "background-attachment": "fixed"
+    });
+    $("#floatHeader").css({
+      "position": "fixed",
+      "left": offsetLeft - $(window).scrollLeft() + "px",
+    });
+    fixHeader();
+  });*/
 }
 
 function unfixHeader() {
