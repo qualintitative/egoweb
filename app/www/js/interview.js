@@ -1649,9 +1649,10 @@ function interpretTags(string, alterId1, alterId2) {
     if (typeof answers[array_id] != 'undefined') {
       if (question.ANSWERTYPE == "MULTIPLE_SELECTION") {
         for (o in options[question.ID]) {
-          if ($.inArray(options[question.ID][o].ID, answers[array_id].VALUE.split(",")) != -1)
+          if (options[question.ID][o].ID.toString() == answers[array_id].VALUE.toString() || $.inArray(options[question.ID][o].ID.toString(), answers[array_id].VALUE.split(",")) != -1)
             lastAnswerOps.push(options[question.ID][o].NAME);
         }
+        console.log("last answer ops:", answers[array_id].VALUE, question.ID, lastAnswerOps);
         lastAnswer = lastAnswerOps.join("<br>")
       } else {
         lastAnswer = answers[array_id].VALUE;

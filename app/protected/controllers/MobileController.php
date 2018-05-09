@@ -449,7 +449,7 @@ class MobileController extends Controller
 				$newData = Study::replicate($study, $questions, $options, $expressions, $alterPrompts);
 				if($newData){
 					$this->saveAnswers($data, $newData);
-					echo "Study " . $oldStudy->name . " was created because " . $data['study']['NAME'] . " was not found. (" . $oldStudy->modified .  ":" . $data['study']['MODIFIED'] . ")  Generated new study: " . $study->name . ". ";
+					echo "Generated new study: " . $study->name . ". ";
 				}else{
 					echo "Error while attempting to create a new study.";
 				}

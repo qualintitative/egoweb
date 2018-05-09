@@ -899,6 +899,7 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
 }]);
 
 function save(questions, page, url, scope){
+    console.log("saving..")
     var post = node.objectify($('#answerForm'));
     if(typeof interviewId == "undefined"){
         var interview = [
@@ -960,10 +961,12 @@ function save(questions, page, url, scope){
             }
         });
     },function(txn){console.log(txn)}, function(txn){
+      console.log("saving answer")
         db.transaction(function (txn){
             if(typeof questions[0] == "undefined"){
                 for(k in post.ANSWER){
                     answer = post.ANSWER[k];
+                    console.log(answer)
                     if(answer.QUESTIONTYPE == "ALTER")
                         var array_id = answer.QUESTIONID + "-" + answer.ALTERID1;
                     else if(answer.QUESTIONTYPE == "ALTER_PAIR")
@@ -1003,8 +1006,12 @@ function save(questions, page, url, scope){
                             console.log(error);
                         });
                     }else{
+                      answers[array_id].VALUE = answer.VALUE;
+                      answers[array_id].SKIPREASON = answer.SKIPREASON;
+                      answers[array_id].OTHERSPECIFYTEXT = answer.OTHERSPECIFYTEXT;
+                      console.log("updating answer")
                         txn.executeSql('UPDATE answer SET VALUE = ?, SKIPREASON = ?, OTHERSPECIFYTExT = ? WHERE ID = ?', [answers[array_id].VALUE, answers[array_id].SKIPREASON, answers[array_id].OTHERSPECIFYTEXT, answers[array_id].ID], function(tx, res){
-                            console.log("answer " + array_id + " updated");
+                            console.log("answer " + array_id + " updated to " + answers[array_id].VALUE);
                         });
                     }
                 }
