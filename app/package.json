@@ -1,0 +1,15 @@
+{
+  "name": "com.rand.egowebmoble",
+  "version": "0.0.1",
+  "displayName": "EgoWeb Mobile",
+  "cordova": {
+    "platforms": [
+      "ios",
+      "android"
+    ]
+  },
+  "dependencies": {
+    "cordova-android": "^7.0.0",
+    "cordova-ios": "~4.5.4"
+  }
+}
