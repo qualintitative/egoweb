@@ -18,7 +18,7 @@
 }
 </style>
 <?php
-$interviewId = ''; $expressionId = 0; $params = "";
+$interviewId = ''; $expressionId = 0; $params = ""; $starExpressionId = 0;
 if(isset($_GET['interviewId']) && $_GET['interviewId'])
 	$interviewId = $_GET['interviewId'];
 
@@ -27,6 +27,10 @@ if(isset($_GET['expressionId']) && $_GET['expressionId'])
 
 if(isset($_GET['params']) && $_GET['params'])
 	$params = $_GET['params'];
+
+  if(isset($_GET['starExpressionId']) && $_GET['starExpressionId'])
+      $starExpressionId = $_GET['starExpressionId'];
+
 ?>
 <script>
 expressionId = <?= $expressionId ?>;
@@ -40,13 +44,13 @@ function getAdjacencies(newExpressionId){
 printView = true;
 </script>
 <div id="print-view" style="width:960px">
-<?php if($expressionId): ?>
+<?php if($interviewId): ?>
 <div class="col-sm-12 pull-left">
 	<?php echo "<h2 class='margin-top-10'>" .Study::getName($studyId) . " &nbsp| &nbsp" . Interview::getEgoId($interviewId)."</h2>"; ?>
 </div>
 
 <div class="col-sm-12 pull-left">
-<?php $this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$expressionId, 'params'=>$params)); ?>
+  <?php $this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$expressionId, 'event'=>$starExpressionId, 'params'=>$params)); ?>
 </div>
 <div class="col-sm-12 pull-left">
 <h2 class='margin-top-10'>Notes</h2>

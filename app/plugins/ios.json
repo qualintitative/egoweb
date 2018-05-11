@@ -1,15 +1,18 @@
 {
-    "prepare_queue": {
-        "installed": [],
-        "uninstalled": []
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-sqlite-2": {
+      "PACKAGE_NAME": "com.rand.egowebmoble"
     },
-    "config_munge": {
-        "files": {}
-    },
-    "installed_plugins": {
-        "cordova-plugin-statusbar": {
-            "PACKAGE_NAME": "com.rand.egowebmoble"
-        }
-    },
-    "dependent_plugins": {}
+    "cordova-plugin-statusbar": {
+      "PACKAGE_NAME": "com.rand.egowebmoble"
+    }
+  },
+  "dependent_plugins": {}
 }

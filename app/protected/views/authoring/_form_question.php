@@ -14,10 +14,18 @@ $answerTypes = array(
 	'DATE'=>'DATE',
 );
 
-if($model->subjectType == "EGO_ID")
+if($model->subjectType == "EGO_ID"){
 	$answerTypes = array_merge($answerTypes, array('STORED_VALUE'=>'STORED_VALUE', 'RANDOM_NUMBER'=>'RANDOM_NUMBER'));
-else
+}else{
 	$answerTypes = array_merge($answerTypes, array('TIME_SPAN'=>'TIME_SPAN', 'TEXTUAL_PP'=>'TEXTUAL_PP', 'NO_RESPONSE'=>'NO_RESPONSE'));
+}
+$subjectTypes = array(
+	'EGO'=>'EGO',
+	'NAME_GENERATOR'=>'NAME_GENERATOR',
+	'ALTER'=>'ALTER',
+	'ALTER_PAIR'=>'ALTER_PAIR',
+    'NETWORK'=>'NETWORK',
+);
 
 ?>
 
@@ -52,6 +60,8 @@ jQuery(document).ready(function(){
 		jQuery('.panel-<?php echo $model->id; ?>#SELECTION').show();
 	if('<?php echo $model->subjectType; ?>' == 'NETWORK')
 		jQuery('.panel-<?php echo $model->id; ?>#NETWORK').show();
+    if('<?php echo $model->subjectType; ?>' == 'NAME_GENERATOR')
+    	jQuery('.panel-<?php echo $model->id; ?>#NAME_GENERATOR').show();
 	if('<?php echo $model->askingStyleList; ?>' == true)
 		jQuery('.panel-<?php echo $model->id; ?>#ALTER_STYLE').show();
 	if('<?php echo $model->answerType; ?>' == 'TIME_SPAN'){
@@ -85,6 +95,23 @@ jQuery('input.time-".$model->id."').change(function() {
                 <?php echo $form->textField($model,'title',array('id'=>$model->id . "_" . "title", "class"=>"form-control")); ?>
 		    </div>
 		</div>
+
+<?php if($model->subjectType != "EGO_ID"): ?>
+        <div class="form-group">
+            <?php echo $form->labelEx($model,'subjectType', array('for'=>'s-'.$model->id, "class"=>"control-label col-sm-4 input-sm")); ?>
+            <div class="col-sm-8">
+                <?php
+                    echo $form->dropDownList(
+                        $model,
+                        'subjectType',
+                        $subjectTypes,
+                        array('class'=>'subjectTypeSelect', 'id'=>'s-'.$model->id, 'onchange'=>'changeAType(this)', "class"=>"form-control")
+                    );
+                ?>
+            </div>
+        </div>
+<?php endif; ?>
+
 		<div class="form-group">
     		<?php echo $form->labelEx($model,'answerType', array('for'=>'a-'.$model->id, "class"=>"control-label col-sm-4 input-sm")); ?>
     		<div class="col-sm-8">
@@ -127,15 +154,15 @@ jQuery('input.time-".$model->id."').change(function() {
 		<?php echo $form->checkBox($model,'refuseButton', array('id'=>$model->id . "_" . "refuseButton")); ?>
 		<?php echo $form->labelEx($model,'refuseButton', array('for'=>$model->id . "_" . "refuseButton")); ?>
 		<br style="clear:left">
-		<?php echo $form->checkBox($model,'askingStyleList', array('id'=>$model->id . "_" . "askingStyleList", 'onchange'=>'changeStyle($(this), '.$model->id.', "' . $model->subjectType.'")')); ?>
+		<?php echo $form->checkBox($model,'askingStyleList', array('id'=>$model->id . "_" . "askingStyleList", 'class'=>'askingStyle', 'onchange'=>'changeStyle($(this), '.$model->id.', "' . $model->subjectType.'")')); ?>
             <?php if($model->subjectType == "EGO" || $model->subjectType == "NETWORK"): ?>
-            <?php echo CHtml::label("Leaf and Stem Question", $model->id . "_" . "askingStyleList"); ?>
+            <?php echo CHtml::label("Leaf and Stem Question", $model->id . "_" . "askingStyleList", array('class'=>'askingStyle')); ?>
             <?php else: ?>
-			<?php echo $form->labelEx($model,'askingStyleList', array('for'=>$model->id . "_" . "askingStyleList")); ?>
+			<?php echo $form->labelEx($model,'askingStyleList', array('for'=>$model->id . "_" . "askingStyleList", 'class'=>'askingStyle')); ?>
 			<?php endif;?>
 		<?php else: ?>
 		<div class="panel-<?php echo $model->id; ?>" id="TEXTUAL" style="display:none">
-            <?php echo $form->labelEx($model,'useAlterListField', array("class"=>"control-label col-sm-8")); ?>
+        <?php echo $form->labelEx($model,'useAlterListField', array("class"=>"control-label col-sm-8")); ?>
     		<div class="col-sm-4">
         		<?php echo $form->dropDownList(
         			$model,
@@ -151,7 +178,7 @@ jQuery('input.time-".$model->id."').change(function() {
         		<?php echo $form->error($model,'useAlterListField'); ?>
     		</div>
     	</div>
-    	
+
         <div class="panel-<?php echo $model->id; ?>" id="RANDOM_NUMBER" style="display:none">
                 <div class="form-group">
                     <label class="control-label col-sm-4">Min</label>
@@ -291,6 +318,25 @@ jQuery('input.time-".$model->id."').change(function() {
 		</table>
 		</div>
 
+        <div class="panel-<?php echo $model->id; ?>" id="NAME_GENERATOR" style="<?php if(!strstr($model->subjectType, "ALTER_PAIR")){ ?>display:none<?php } ?>">
+            Minimum Alters: <?php echo $form->textField($model,'minLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-minLiteral')); ?>
+            Maximum Alters: <?php echo $form->textField($model,'maxLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-maxLiteral')); ?>
+            <?php echo $form->labelEx($model,'useAlterListField', array("class"=>"control-label col-sm-8")); ?>
+            <div class="col-sm-4">
+                <?php echo $form->dropDownList(
+                  $model,
+                  'useAlterListField',
+                  array(
+                    ''=>'None',
+                    'id'=>'ID',
+                    'email'=>'Email',
+                    'name'=>'Name',
+                  ),
+                  array("class"=>"form-control")
+                ); ?>
+                <?php echo $form->error($model,'useAlterListField'); ?>
+            </div>
+        </div>
 
 	<div id="ALTER" style="<?php if(!strstr($model->subjectType, "ALTER")){ ?>display:none<?php } ?>">
 
@@ -301,6 +347,8 @@ jQuery('input.time-".$model->id."').change(function() {
 				<?php echo $form->error($model,'symmetric'); ?>
 			</div>
 		</div>
+
+
 
 		<div class="panel-<?php echo $model->id; ?>" id="ALTER_STYLE" style="display:none">
 				<table border="0" bgcolor="#dddddd" >
@@ -349,24 +397,43 @@ jQuery('input.time-".$model->id."').change(function() {
 	<?php if($model->subjectType == "NETWORK"): ?>
 
 
-		<div class="row">
+		<div class="col-sm-12">
 			Alters are adjacent when:
 		<?php
-            #OK FOR SQL INJECTION
-			$questionIds = q("SELECT id FROM question WHERE subjectType = 'ALTER_PAIR' AND studyId = ".$model->studyId)->queryColumn();
+			$questionIds = array();
+            $criteria = array(
+                "condition"=>"subjectType = 'ALTER_PAIR' AND studyId = ".$model->studyId,
+            );
+            $questions = Question::model()->findAll($criteria);
+            foreach($questions as $question){
+                $questionIds[] = $question->id;
+            }
 			$questionIds = implode(",", $questionIds);
 			if(!$questionIds)
 				$questionIds = 0;
-            #OK FOR SQL INJECTION
-			$alter_pair_expression_ids = q("SELECT id FROM expression WHERE studyId = " . $model->studyId . " AND questionId in (" . $questionIds . ")")->queryColumn();
+            $criteria = array(
+                'condition'=>"studyId = $model->studyId AND questionId in (" . $questionIds . ")",
+            );
+            $alter_pair_expression = Expression::model()->findAll($criteria);
+            $alter_pair_expression_ids = array();
+            foreach($alter_pair_expression as $expression){
+                $alter_pair_expression_ids[] = $expression->id;
+            }
 			$all_expression_ids = $alter_pair_expression_ids;
-			foreach($alter_pair_expression_ids as $id){
-                #OK FOR SQL INJECTION
-				$all_expression_ids = array_merge(q("SELECT id FROM expression WHERE FIND_IN_SET($id, value)")->queryColumn(),$all_expression_ids);
-			}
+            foreach($alter_pair_expression_ids as $id){
+                $criteria = array(
+                    'condition'=>"FIND_IN_SET($id, value)",
+                );
+                $expressions = Expression::model()->findAll($criteria);
+                foreach($expressions as $e){
+                    $all_expression_ids[] = $e->id;
+                }
+            }
 			if($all_expression_ids){
-			$alter_pair_expressions = q("SELECT * FROM expression WHERE id in (" . implode(",",$all_expression_ids) . ")")->queryAll();
-				$list = array();
+                $criteria = array(
+                    'condition'=>"id in (" . implode(",",$all_expression_ids) . ")",
+                );
+                $alter_pair_expressions = Expression::model()->findAll($criteria);				$list = array();
 				foreach($alter_pair_expressions as $expression){
 					$list[$expression['id']] = substr($expression['name'], 0 , 30);
 				}
@@ -377,15 +444,32 @@ jQuery('input.time-".$model->id."').change(function() {
 			$model,
 			'networkRelationshipExprId',
 			$list,
-			array('empty' => 'Choose One')
+			array('empty' => 'Choose One', "class"=>"form-control")
 		); ?>
 		<?php echo $form->error($model,'networkRelationshipExprId'); ?>
+    <?php $criteria=new CDbCriteria;
+    $criteria=array(
+      'condition'=>"studyId = " . $model->studyId,
+    );
+    ?>
+    Create star network with expression:
+    <?php echo $form->dropdownlist(
+      $model,
+      'uselfExpression',
+      CHtml::listData(
+        Expression::model()->findAll($criteria),
+        'id',
+        function($post) {return CHtml::encode(substr($post->name,0,40));}
+      ),
+      array('empty' => 'Choose One', "class"=>"form-control")
+    ); ?>
 		</div>
 
-	<div id="visualize-bar" class="col-sm-8 pull-left">
+	<div id="visualize-bar" class="pull-left">
 
 	<?php
-	$this->widget('plugins.visualize', array('method'=>'nodecolor', 'id'=>$model->studyId, 'params'=>$model->networkParams));
+    $this->widget('plugins.visualize', array('method'=>'staroptions', 'id'=>$model->studyId, 'params'=>$model->networkParams));
+	  $this->widget('plugins.visualize', array('method'=>'nodecolor', 'id'=>$model->studyId, 'params'=>$model->networkParams));
 		$this->widget('plugins.visualize', array('method'=>'nodeshape', 'id'=>$model->studyId, 'params'=>$model->networkParams));
 		$this->widget('plugins.visualize', array('method'=>'nodesize', 'id'=>$model->studyId, 'params'=>$model->networkParams));
 		$this->widget('plugins.visualize', array('method'=>'edgecolor', 'id'=>$model->studyId, 'params'=>$model->networkParams));
@@ -398,6 +482,9 @@ function refresh(container){
 	var params = new Object;
 	if(typeof container == "undefined")
 		container = $('body');
+  if($('#egoLabel', container).val()){
+    params['egoLabel'] = $('#egoLabel', container).val();
+  }
 	if($('#nodeColorSelect option:selected', container).val()){
 		var nodeColor = new Object;
 		var question = $('#nodeColorSelect option:selected', container).val();
@@ -408,6 +495,24 @@ function refresh(container){
 		});
 		params['nodeColor'] = nodeColor;
 	}
+    if($("#defaultNodeColor option:selected", container).val()){
+        var nodeColor = new Object;
+        if(typeof params['nodeColor'] != "undefined")
+            nodeColor = params['nodeColor'];
+        else
+            nodeColor['options'] = [];
+        nodeColor["options"].push({"id":0, "color" :$("#defaultNodeColor option:selected", container).val()});
+        params['nodeColor'] = nodeColor;
+    }
+    if($('#starNodeColor option:selected', container).val()){
+      var nodeColor = new Object;
+      if(typeof params['nodeColor'] != "undefined")
+          nodeColor = params['nodeColor'];
+      else
+          nodeColor['options'] = [];
+      nodeColor['options'].push({"id":-1,"color":$("#starNodeColor option:selected", container).val()});
+      params['nodeColor'] = nodeColor;
+    }
 	if($('#nodeShapeSelect option:selected', container).val()){
 		var nodeShape = new Object;
 		var question = $('#nodeShapeSelect option:selected', container).val();
@@ -418,6 +523,24 @@ function refresh(container){
 		});
 		params['nodeShape'] = nodeShape;
 	}
+    if($("#defaultNodeShape option:selected", container).val()){
+        var nodeShape = new Object;
+        if(typeof params['nodeShape'] != "undefined")
+            nodeShape = params['nodeShape'];
+        else
+            nodeShape['options'] = [];
+        nodeShape["options"].push({"id":0, "shape" :$("#defaultNodeShape option:selected", container).val()});
+        params['nodeShape'] = nodeShape;
+    }
+    if($("#starNodeShape option:selected", container).val()){
+        var nodeShape = new Object;
+        if(typeof params['nodeShape'] != "undefined")
+            nodeShape = params['nodeShape'];
+        else
+            nodeShape['options'] = [];
+        nodeShape["options"].push({"id":-1, "shape" :$("#starNodeShape option:selected", container).val()});
+        params['nodeShape'] = nodeShape;
+    }
 	if($('#nodeSizeSelect option:selected', container).val()){
 		var nodeSize = new Object;
 		var question = $('#nodeSizeSelect option:selected', container).val();
@@ -428,6 +551,24 @@ function refresh(container){
 		});
 		params['nodeSize'] = nodeSize;
 	}
+    if($("#defaultNodeSize option:selected", container).val()){
+        var nodeSize = new Object;
+        if(typeof params['nodeSize'] != "undefined")
+            nodeSize = params['nodeSize'];
+        else
+            nodeSize['options'] = [];
+        nodeSize["options"].push({"id":0, "size" :$("#defaultNodeSize option:selected", container).val()});
+        params['nodeSize'] = nodeSize;
+    }
+    if($('#starNodeSize option:selected', container).val()){
+      var nodeSize = new Object;
+      if(typeof params['nodeSize'] != "undefined")
+          nodeSize = params['nodeSize'];
+      else
+          nodeSize['options'] = [];
+      nodeSize['options'].push({"id":-1,"size":$("#starNodeSize option:selected", container).val()});
+      params['nodeSize'] = nodeSize;
+    }
 	if($('#edgeColorSelect option:selected', container).val()){
 		var edgeColor = new Object;
 		var question = $('#edgeColorSelect option:selected', container).val();
@@ -438,6 +579,36 @@ function refresh(container){
 		});
 		params['edgeColor'] = edgeColor;
 	}
+    if($("#defaultEdgeColor option:selected", container).val()){
+        var edgeColor = new Object;
+        if(typeof params['edgeColor'] != "undefined")
+            edgeColor = params['edgeColor'];
+        else
+            edgeColor['options'] = [];
+        edgeColor["options"].push({"id":0, "color" :$("#defaultEdgeColor option:selected", container).val()});
+        params['edgeColor'] = edgeColor;
+    }
+    if($("#egoEdgeColorSelect option:selected", container).val()){
+        var egoEdgeColor = new Object;
+        egoEdgeColor['options'] = [];
+        var question = $('#egoEdgeColorSelect option:selected', container).val();
+    		egoEdgeColor['questionId'] = question.replace('_egoEdgeColor','');
+    		$("#" + question + " select", container).each(function(index){
+    			egoEdgeColor['options'].push({"id":$(this).attr('id'),"color":$("option:selected", this).val()});
+    		});
+    		params['egoEdgeColor'] = egoEdgeColor;
+    }
+    if($("#egoEdgeSizeSelect option:selected", container).val()){
+        var egoEdgeSize = new Object;
+        egoEdgeSize['options'] = [];
+        var question = $('#egoEdgeSizeSelect option:selected', container).val();
+        egoEdgeSize['questionId'] = question.replace('_egoEdgeSize','');
+        $("#" + question + " select", container).each(function(index){
+          egoEdgeSize['options'].push({"id":$(this).attr('id'),"size":$("option:selected", this).val()});
+        });
+        params['egoEdgeSize'] = egoEdgeSize;
+        console.log(egoEdgeSize)
+    }
 	if($('#edgeSizeSelect option:selected', container).val()){
 		var edgeSize = new Object;
 		var question = $('#edgeSizeSelect option:selected', container).val();
@@ -448,6 +619,15 @@ function refresh(container){
 		});
 		params['edgeSize'] = edgeSize;
 	}
+    if($("#defaultEdgeSize option:selected", container).val()){
+        var edgeSize = new Object;
+        if(typeof params['edgeSize'] != "undefined")
+            edgeSize = params['edgeSize'];
+        else
+            edgeSize['options'] = [];
+        edgeSize["options"].push({"id":0, "size" :$("#defaultEdgeSize option:selected", container).val()});
+        params['edgeSize'] = edgeSize;
+    }
 	console.log(JSON.stringify(params));
 
 	$("#Graph_params").val(JSON.stringify(params));
@@ -456,6 +636,9 @@ function refresh(container){
 	$('#<?= $model->id; ?> #visualize-bar select').change(function(){
 		$('#<?= $model->id; ?> #Question_networkParams').val(refresh($('#<?= $model->id; ?> #visualize-bar')));
 	});
+  $('#<?= $model->id; ?> #visualize-bar input').change(function(){
+    $('#<?= $model->id; ?> #Question_networkParams').val(refresh($('#<?= $model->id; ?> #visualize-bar')));
+  });
 	</script>
 	<?php endif;?>
 
@@ -463,18 +646,22 @@ function refresh(container){
 
 	<div class="row" style="width:50%; float:left; padding:10px 20px">
 		<?php echo $form->labelEx($model,'prompt', array('onclick'=>'$(".nicEdit-main", this.parentNode)[0].focus()')); ?>
+        <?php if(isset(Yii::app()->params['enableAudioUpload']) && Yii::app()->params['enableAudioUpload']): ?>
 		<div class="audioPlay" id="<?= $model->subjectType; ?>_<?= $model->id; ?>"><?php if(file_exists(Yii::app()->basePath."/../audio/".$model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3")): ?><a class="play-sound" onclick="playSound($(this).attr('file'))" href="#" file="/audio/<?= $model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3"; ?>"><span class="fui-volume"></span></a><?php endif; ?></div>
 		<?php if(!$model->isNewRecord):?>
 		<a class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#myModal" href="/authoring/uploadaudio?type=<?= $model->subjectType; ?>&id=<?= $model->id; ?>&studyId=<?= $model->studyId; ?>">Upload Audio</a>
 		<?php endif;?>
+        <?php endif;?>
 		<?php echo $form->textArea($model,'prompt',array('rows'=>6, 'cols'=>50, 'id'=>'prompt'.$model->id)); ?>
 		<?php echo $form->error($model,'prompt'); ?>
 		<br>
 		<?php echo $form->labelEx($model,'preface', array('onclick'=>'$(".nicEdit-main", this.parentNode)[1].focus()')); ?>
+        <?php if(isset(Yii::app()->params['enableAudioUpload']) && Yii::app()->params['enableAudioUpload']): ?>
 		<div class="audioPlay" id="preface_<?= $model->id; ?>"><?php if(file_exists(Yii::app()->basePath."/../audio/".$model->studyId . "/PREFACE/" . $model->id . ".mp3")): ?><a class="play-sound" onclick="playSound($(this).attr('file'))" href="#" file="/audio/<?= $model->studyId . "/PREFACE/" . $model->id . ".mp3"; ?>"><span class="fui-volume"></span></a><?php endif; ?></div>
 		<?php if(!$model->isNewRecord):?>
 		<a class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#myModal" href="/authoring/uploadaudio?type=PREFACE&id=<?= $model->id; ?>&studyId=<?= $model->studyId; ?>">Upload Audio</a>
 		<?php endif;?>
+        <?php endif;?>
 		<?php echo $form->textArea($model,'preface',array('rows'=>6, 'cols'=>50, 'id'=>'preface'.$model->id)); ?>
 		<?php echo $form->error($model,'preface'); ?>
 		<br>
@@ -493,12 +680,6 @@ function refresh(container){
 		<?php echo $form->labelEx($model,'allOptionString'); ?>
 		<?php echo $form->textField($model,'allOptionString'); ?>
 		<?php echo $form->error($model,'allOptionString'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'uselfExpression'); ?>
-		<?php echo $form->textField($model,'uselfExpression'); ?>
-		<?php echo $form->error($model,'uselfExpression'); ?>
 	</div>
 
 	<div class="row">
@@ -538,6 +719,14 @@ function refresh(container){
 		array('id' => uniqid(), 'live'=>false, 'class'=>"btn btn-info btn-xs")
 	);
 
+    if($model->subjectType == "NAME_GENERATOR"){
+        echo CHtml::ajaxButton (CHtml::encode('Alter Prompts'),
+    		CController::createUrl('alterprompt', array('questionId'=>$model->id, 'studyId'=>$model->studyId)),
+    		array('update' => '#data-'.$model->id),
+    		array('id' => uniqid(), 'live'=>false, 'class'=>"btn btn-default btn-xs")
+    	);
+    }
+
 	echo CHtml::button(
 		CHtml::encode('Duplicate'),
 		array("submit"=>CController::createUrl('duplicate', array('questionId'=>$model->id)), 'class'=>"btn btn-warning btn-xs")
@@ -560,9 +749,6 @@ $(function(){
 	$('#prompt<?php echo $model->id;?>').summernote({
 		toolbar:noteBar,
 		height:200,
-		/*onImageUpload: function(files, editor, welEditable) {
-			uploadImage(files[0], editor, welEditable);
-		},*/
 		onChange: function(contents, $editable) {
 			$('#prompt<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
 		},
@@ -581,9 +767,6 @@ $(function(){
 	$('#preface<?php echo $model->id;?>').summernote({
 		toolbar:noteBar,
 		height:200,
-		/*onImageUpload: function(files, editor, welEditable) {
-			uploadImage(files[0], editor, welEditable);
-		},*/
 		onChange: function(contents, $editable) {
 			$('#preface<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
 		},
@@ -602,9 +785,6 @@ $(function(){
 	$('#citation<?php echo $model->id;?>').summernote({
 		toolbar:noteBar,
 		height:200,
-		/*onImageUpload: function(files, editor, welEditable) {
-			uploadImage(files[0], editor, welEditable);
-		},*/
 		onChange: function(contents, $editable) {
 			$('#citation<?php echo $model->id;?>').val(rebuildEgowebTags(contents));
 		},
@@ -620,5 +800,8 @@ $(function(){
 			}, 10);
 		}
 	});
+    $("#a-<?php echo $model->id;?>").change();
+    $("#s-<?php echo $model->id;?>").change();
+    changeStyle($("#<?php echo $model->id;?>_askingStyleList"), <?php echo $model->id;?>, "<?php echo $model->subjectType;?>")
 });
 </script>

@@ -9,7 +9,7 @@ $this->pageTitle =  "Admin";
 	<td width=50%>
 		<h3><a href="/interview">Interviewing</a></h3>
 		<p>
-			Start a new interview or continue a partially completed interview.  On older browser, you may need to use the <a href="/interviewing">Legacy Interview</a> instead.
+			Start a new interview or continue a partially completed interview.
 		</p>
 	</td>
 	<?php if(Yii::app()->user->isAdmin): ?>

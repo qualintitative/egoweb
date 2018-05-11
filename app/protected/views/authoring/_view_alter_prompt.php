@@ -3,8 +3,6 @@
 <h3>Variable Alter Prompts</h3>
 
 <?php
-if(isset($model))
-    echo $model->getError('name');
 $this->widget('zii.widgets.grid.CGridView', array(
 	'id'=>'alters-prompt-grid',
 	'dataProvider'=>$dataProvider,
@@ -26,7 +24,7 @@ $this->widget('zii.widgets.grid.CGridView', array(
         		'delete' => array
         		(
             		'url'=>'Yii::app()->createUrl("/authoring/ajaxdelete", array("AlterPrompt[id]"=>$data->id, "_"=>"'.uniqid().'"))',
-            		'options'=>array('class'=>'delete-prompt'),
+                    'options'=>array('class'=>'delete-alter-prompt-' . uniqid()),
         		),
         		'update' => array
         		(

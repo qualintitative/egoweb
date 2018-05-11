@@ -87,9 +87,10 @@
   register("cross",genericDrawShape(drawCross),genericDrawBorder(drawCross));
 
   var drawEquilateral = function(node,x,y,size,context) {
-    var pcount = (node.equilateral && node.equilateral.numPoints) || 5;
+    var pcount = (node.equilateral && node.equilateral.numPoints) || 3;
     var rotate = ((node.equilateral && node.equilateral.rotate) || 0)*Math.PI/180;
     var radius = size;
+    console.log("triangle:" + pcount + ":" + radius);
     context.moveTo(x+radius*Math.sin(rotate), y-radius*Math.cos(rotate)); // first point on outer radius, angle 'rotate'
     for(var i=1; i<pcount; i++) {
       context.lineTo(x+Math.sin(rotate+2*Math.PI*i/pcount)*radius, y-Math.cos(rotate+2*Math.PI*i/pcount)*radius);

@@ -9,7 +9,8 @@
   font-size: 1.2em;
   width: 100%;
   padding:0 0.4em;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
+  margin-left:10px;
 }
 
 .autocomplete ul{

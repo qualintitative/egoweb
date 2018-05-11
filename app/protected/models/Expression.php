@@ -162,7 +162,7 @@ class Expression extends CActiveRecord
 					continue;
 				if($this->operator == "Some" && in_array($selectedOption, $options))
 					return true;
-					
+
 
 				if($this->operator == "None" && in_array($selectedOption, $options))
 					return false;
@@ -253,11 +253,14 @@ class Expression extends CActiveRecord
 
 	public function beforeDelete(){
         #OK FOR SQL INJECTION
-		$others = q("SELECT * FROM expression WHERE studyId = " . $this->studyId . " AND (type = 'Counting' OR type = 'Comparison' OR type = 'Compound')")->queryAll();
+        $criteria = array(
+            "condition"=>"studyId = " . $this->studyId . " AND (type = 'Counting' OR type = 'Comparison' OR type = 'Compound')",
+        );
+        $others = Expression::model()->findAll($criteria);
 		foreach($others as $expression){
 			$expressionIds = "";
-			if($expression['type'] == "Counting"){
-				list($times, $expressionIds, $questionIds) = preg_split('/:/', $expression['value']);
+			if($expression->type == "Counting"){
+				list($times, $expressionIds, $questionIds) = preg_split('/:/', $expression->value);
 				$expressionIds = explode(',', $expressionIds);
 				$index = array_search($this->id,$expressionIds);
 				if($index){
@@ -266,10 +269,10 @@ class Expression extends CActiveRecord
 					$data = array(
 						"value"=>$times . ":" . $expressionIds . ":" . $questionIds
 					);
-					u('expression', $data, "id = " . $expression['id']);
+					u('expression', $data, "id = " . $expression->id);
 				}
-			}else if($expression['type'] == "Comparison"){
-				list($value, $expressionId) =  preg_split('/:/', $expression['value']);
+			}else if($expression->type == "Comparison"){
+				list($value, $expressionId) =  preg_split('/:/', $expression->value);
 				$expressionIds = explode(',', $expressionIds);
 				$index = array_search($this->id,$expressionIds);
 				if($index){
@@ -278,10 +281,10 @@ class Expression extends CActiveRecord
 					$data = array(
 						"value"=>$value . ":" . $expressionIds
 					);
-					u('expression', $data, "id = " . $expression['id']);
+					u('expression', $data, "id = " . $expression->id);
 				}
-			}else if($expression['type'] == "Compound"){
-				$expressionIds = explode(',', $expression['value']);
+			}else if($expression->type == "Compound"){
+				$expressionIds = explode(',', $expression->value);
 				$index = array_search($this->id,$expressionIds);
 				if($index){
 					array_splice($expressionIds,$index,1);
@@ -289,7 +292,7 @@ class Expression extends CActiveRecord
 					$data = array(
 						"value"=>$expressionIds
 					);
-					u('expression', $data, "id = " . $expression['id']);
+					u('expression', $data, "id = " . $expression->id);
 				}
 			}
 		}

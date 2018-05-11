@@ -7,43 +7,45 @@ $(function(){
 $(document).keydown(function(e) {
 	if($("textarea").length == 0 &&  e.keyCode == 13){
     		e.preventDefault();
-		if($("#alterFormBox").length != 0 && $("#alterFormBox").html() != "")
+		if($("#alterFormBox").length != 0 && $(".alterSubmit").length != 0)
 			$('.alterSubmit')[0].click();
 		else
 			$('.orangebutton')[0].click();
 	}
-	if (e.keyCode == 37){
-		e.preventDefault();
-		$(".answerInput:focus").parent().prev().find(".answerInput").focus();
-	}
-	if (e.keyCode == 39){
-		e.preventDefault();
-		$(".answerInput:focus").parent().next().find(".answerInput").focus();
-	}
-	if (e.keyCode == 38){
-		e.preventDefault();
-        $(".answerInput").each(function(index){
-            if($(this).is(":focus")){
-                if(typeof $(".answerInput")[index-columns] != "undefined")
-                    $(".answerInput")[index-columns].focus();
-                //else
-                //    $(".answerInput:focus").parent().prev().find(".answerInput").focus();
-                return false;
-            }
-        });
-	}
-	if (e.keyCode == 40){
-		e.preventDefault();
-        $(".answerInput").each(function(index){
-            if($(this).is(":focus")){
-                if(typeof $(".answerInput")[index+columns] != "undefined")
-                    $(".answerInput")[index+columns].focus();
-                //else
-                //    $(".answerInput:focus").parent().next().find(".answerInput").focus();
-                return false;
-            }
-        });
-	}
+    if(alterPromptPage == false){
+    	if (e.keyCode == 37){
+    		e.preventDefault();
+    		$(".answerInput:focus").parent().prev().find(".answerInput").focus();
+    	}
+    	if (e.keyCode == 39){
+    		e.preventDefault();
+    		$(".answerInput:focus").parent().next().find(".answerInput").focus();
+    	}
+    	if (e.keyCode == 38){
+    		e.preventDefault();
+            $(".answerInput").each(function(index){
+                if($(this).is(":focus")){
+                    if(typeof $(".answerInput")[index-columns] != "undefined")
+                        $(".answerInput")[index-columns].focus();
+                    //else
+                    //    $(".answerInput:focus").parent().prev().find(".answerInput").focus();
+                    return false;
+                }
+            });
+    	}
+    	if (e.keyCode == 40){
+    		e.preventDefault();
+            $(".answerInput").each(function(index){
+                if($(this).is(":focus")){
+                    if(typeof $(".answerInput")[index+columns] != "undefined")
+                        $(".answerInput")[index+columns].focus();
+                    //else
+                    //    $(".answerInput:focus").parent().next().find(".answerInput").focus();
+                    return false;
+                }
+            });
+    	}
+    }
 });
 
 function redraw(params){
@@ -60,21 +62,34 @@ function save(questions, page, url, scope){
     }
     var saveUrl = document.location.protocol + "//" + document.location.host + "/interview/save";
     if(typeof questions[0] == "undefined"){
-        $.post(saveUrl, $('#answerForm').serialize(), function(data){
-            if(data != "error"){
-                answers = JSON.parse(data);
-                console.log(answers);
-                for(k in answers){
-                    interviewId = answers[k].INTERVIEWID;
-                    studyId = answers[k].STUDYID;
-                    break;
+        if(scope.answerForm.$pristine == false || scope.conclusion == true){
+            $.post(saveUrl, $('#answerForm').serialize(), function(data){
+                if(data != "error"){
+                    data = JSON.parse(data);
+                    answers = data.answers;
+                    interview = data.interview;
+                    interviewId = interview.ID;
+                    console.log(answers);
+                    console.log(interview);
+                    evalQuestions();
+                    if(typeof hashKey != "undefined"){
+                        page = parseInt(interview.COMPLETED);
+                    }
+                    var nextUrl = document.location.protocol + "//" + document.location.host + "/interview/" + study.ID + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
+                    if(typeof hashKey != "undefined")
+                        nextUrl = nextUrl + "/" + hashKey;
+                    document.location = nextUrl;
+                }else{
+                    scope.errors[0] = "Participant not found";
+                    scope.$apply();
                 }
-                document.location = document.location.protocol + "//" + document.location.host + "/interview/" + studyId + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
-            }else{
-                scope.errors[0] = "Participant not found";
-                scope.$apply();
-            }
-        });
+            });
+        }else{
+            var nextUrl = document.location.protocol + "//" + document.location.host + "/interview/" + study.ID + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
+            if(typeof hashKey != "undefined")
+                nextUrl = nextUrl + "/" + hashKey;
+            document.location = nextUrl;
+        }
     }else if(questions[0].ANSWERTYPE == "CONCLUSION"){
         $.post(saveUrl, $('#answerForm').serialize(), function (data) {
             if (typeof redirect !== 'undefined' && redirect){
@@ -85,7 +100,12 @@ function save(questions, page, url, scope){
             }
         });
     }else{
-        document.location = url + "/page/" + (parseInt(page) + 1);
+        if(questions[0].ANSWERTYPE == "NAME_GENERATOR")
+            buildList();
+        var nextUrl = url + "/page/" + (parseInt(page) + 1);
+        if(typeof hashKey != "undefined")
+            nextUrl = nextUrl + "/" + hashKey;
+        document.location = nextUrl;
     }
 }
 
@@ -109,7 +129,8 @@ function saveSkip(interviewId, questionId, alterId1, alterId2, arrayId)
                 "id":(typeof answers[arrayId] != "undefined" ? answers[arrayId].ID : "")
             }
         },
-        "YII_CSRF_TOKEN":csrf
+        "YII_CSRF_TOKEN":csrf,
+        "studyId":study.ID
     }
 
     var saveUrl = document.location.protocol + "//" + document.location.host + "/interview/save";

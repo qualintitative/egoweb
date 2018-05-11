@@ -78,7 +78,12 @@ class SiteController extends Controller
 	 */
 	public function actionLogin()
 	{
-		$model = $this->captchaRequired()? new LoginForm('captchaRequired') : new LoginForm;
+        if($this->captchaRequired()){
+            $model = new LoginForm('captchaRequired');
+            Yii::log("3 failed login attempst from " . $_SERVER['REMOTE_ADDR']);
+        }else{
+            $model = new LoginForm;
+        }
 
 		// if it is ajax validation request
 		if(isset($_POST['ajax']) && $_POST['ajax']==='login-form')

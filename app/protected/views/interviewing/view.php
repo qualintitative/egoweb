@@ -5,7 +5,7 @@ $this->pageTitle = $study->name;
 $completed = 0;
 if($interviewId)
 	$completed = Interview::model()->findByPk($interviewId)->completed;
-$prompts = array('INTRODUCTION', 'PREFACE', 'ALTER_PROMPT', 'CONCLUSION');
+$prompts = array('INTRODUCTION', 'PREFACE', 'NAME_GENERATOR', 'CONCLUSION');
 if(!isset($key) || !$key){
 	if(isset($_GET['key']))
 		$key = $_GET['key'];
@@ -167,7 +167,7 @@ if(!isset($key) || !$key){
 
 
 <?php // Alter List Box for Alter Prompt Page ?>
-<?php  if(isset($questions[0]) && $questions[0]->answerType == "ALTER_PROMPT"): ?>
+<?php  if(isset($questions[0]) && $questions[0]->answerType == "NAME_GENERATOR"): ?>
 	<div id="alterListBox">
 		<?php
 		// fetch variable alter prompt
@@ -189,7 +189,7 @@ if(!isset($key) || !$key){
 
 <?php if(isset($questions[0])): ?>
 	<?php if(in_array($questions[0]->answerType, $prompts)): ?>
-		<div class="questionText <?php if($questions[0]->answerType == "ALTER_PROMPT"){ echo "col-sm-9"; } ?>">
+		<div class="questionText <?php if($questions[0]->answerType == "NAME_GENERATOR"){ echo "col-sm-9"; } ?>">
 			<?php echo Interview::interpretTags($questions[0]->prompt, $interviewId, $question->alterId1, $question->alterId2); ?>
 			<?php if($questions[0]->answerType == "PREFACE" && file_exists(Yii::app()->basePath."/../audio/".$study->id . "/PREFACE/" . $questions[0]->id . ".mp3")):?>
 				<script>
@@ -197,7 +197,7 @@ if(!isset($key) || !$key){
 				</script>
 				<a class="play-sound" onclick='playSound("/audio/<?= $study->id . "/PREFACE/" . $questions[0]->id . ".mp3" ?>")' href="#"><span class="fui-volume"></span></a>
 			<?php endif; ?>
-			<?php if($questions[0]->answerType == "ALTER_PROMPT" && file_exists(Yii::app()->basePath."/../audio/".$study->id . "/STUDY/ALTERPROMPT.mp3")):?>
+			<?php if($questions[0]->answerType == "NAME_GENERATOR" && file_exists(Yii::app()->basePath."/../audio/".$study->id . "/STUDY/ALTERPROMPT.mp3")):?>
 				<script>
 					var promptAudio_<?=$questions[0]->id;?> = loadAudio("/audio/<?= $study->id . "/STUDY/ALTERPROMPT.mp3"; ?>");
 				</script>
@@ -207,7 +207,7 @@ if(!isset($key) || !$key){
 		</div>
 		<div class="question">
 	<?php endif; ?>
-	<?php if($questions[0]->answerType == 'ALTER_PROMPT'): ?>
+	<?php if($questions[0]->answerType == 'NAME_GENERATOR'): ?>
 		<div id="alterPrompt" class="orangeText" style="width:500px"></div>
 		<div id="alterFormBox"></div>
 		</div>
@@ -485,7 +485,7 @@ $('.".$array_id."-skipReason').click(function(event){
 	}
 	?>
 	<?php $counter++; ?>
-	<?php if(count($questions) == $counter && $question->answerType != "ALTER_PROMPT"): ?>
+	<?php if(count($questions) == $counter && $question->answerType != "NAME_GENERATOR"): ?>
 
 		<?php
 		if($question->allButton && ($question->subjectType == 'ALTER' || $question->subjectType == 'ALTER_PAIR')){

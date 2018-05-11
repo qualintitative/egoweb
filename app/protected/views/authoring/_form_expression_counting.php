@@ -115,12 +115,17 @@ echo $form->dropdownlist($model,
 $study = Study::model()->findByPk($studyId);
 $criteria=new CDbCriteria;
 if($study->multiSessionEgoId){
-    #OK FOR SQL INJECTION
-	$multiIds = q("SELECT id FROM question WHERE title = (SELECT title FROM question WHERE id = " .$study->multiSessionEgoId . ")")->queryColumn();
-    #OK FOR SQL INJECTION
-	$studyIds = q("SELECT id FROM study WHERE multiSessionEgoId in (" . implode(",", $multiIds) . ")")->queryColumn();
+    $criteria = array(
+        "condition"=>"title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")",
+    );
+    $questions = Question::model()->findAll($criteria);
+    $multiIds = array();
+    foreach($questions as $question){
+        $multiIds[] = $question->studyId;
+    }
 	$criteria=array(
-		'condition'=>"studyId in (" . implode(",", $studyIds) . ")",
+		'condition'=>"studyId in (" . implode(",", $multiIds) . ")",
+        'order'=>'ordering',
 	);
 } else {
 	$criteria=array(

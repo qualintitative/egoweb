@@ -35,7 +35,7 @@ describe('Alters', function () {
     });
 
     beforeEach(function () {
-        // every test starts at ALTER_PROMPT
+        // every test starts at NAME_GENERATOR
         IwPage.goToQuestion("ALTER_PROMPT");
     });
 
@@ -153,7 +153,7 @@ describe('Alters', function () {
         // select answers in some rows
 
         browser.scroll(0, 0);
- 
+
         for (i=2; i<6; i++) {
             browser.scroll(0, (i-2)*56);
             IwPage.pause();
@@ -183,11 +183,12 @@ describe('Alters', function () {
 
         // change option for charlie, test skip logic
         IwPage.back();
+        expect(IwPage.questionTitle.getText()).toBe("alter1");
         browser.scroll(0, 0);
         IwPage.getTableCellInputElement(4,2).click();
         browser.scroll(0, 9999);
         IwPage.next();
-        browser.element("span=alterpair1 - alpha").waitForVisible(20000);
+        browser.pause(40000);
         expect(IwPage.questionTitle.getText()).toBe("alterpair1 - alpha");
 
         // go back to alter1
@@ -201,6 +202,7 @@ describe('Alters', function () {
 
     it("should be able to cycle through alter pair pages and create network graph", function() {
         IwPage.goToQuestion('alterpair1 - alpha');
+        browser.element("span=alterpair1 - alpha").waitForVisible(browser.options.egoweb.waitTime);
         var alter_pair_pages = 0;
         for(k in IwPage.navLinks){
             if(k.match("alterpair1")){
@@ -210,26 +212,34 @@ describe('Alters', function () {
 
         expect(alter_pair_pages).toBe(IwPage.fieldValues.ALTER_PROMPT.values.length - 1);
 
+        var edges = 0;
         // iterates through alter pair questions and fills them out randomly
         for(i = 0; i < alter_pair_pages; i++){
-            browser.scroll(0,0);
-            browser.pause();
+            //browser.scroll(0,0);
             browser.element("div=Please select 1 response for each row").waitForVisible(browser.options.egoweb.waitTime);
             for (j=2; j<16-i; j++) {
                 browser.scroll(0, (j-2)*56);
                 IwPage.pause();
                 let x = Math.floor(Math.random()*(4-2+1)+2);
+                if(x == 2)
+                    edges++;
                 IwPage.getTableCellInputElement(j,x).click();
             }
             IwPage.next();
         }
-        
+
         //see if graph has right number of nodes
         browser.pause(5000);
         let result = browser.execute(function() {
             return s.graph.nodes().length;
         })
-        
         expect(result.value).toBe(15);
+
+        //see if graph has right number of edges
+        let result2 = browser.execute(function() {
+            return s.graph.edges().length;
+        })
+        expect(result2.value).toBe(edges);
     });
+
 });

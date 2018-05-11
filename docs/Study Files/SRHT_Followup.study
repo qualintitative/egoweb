@@ -1,0 +1,1151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<study id="342" name="SRHT_Followup" minAlters="0" maxAlters="21" valueDontKnow="-2" valueLogicalSkip="-3" valueNotYetAnswered="-4" valueRefusal="-1" modified="2016-06-08 16:22:38" multiSessionEgoId="32632" useAsAlters="0" restrictAlters="0" fillAlterList="0" hideEgoIdPage="0">
+	<introduction>Thank you for agreeing to participate in this study.</introduction>
+	<egoIdPrompt>Enter the ID Information</egoIdPrompt>
+	<alterPrompt>Now I&#039;d like to ask you some questions about the people that you know. First, &lt;span style=&quot;line-height: 1.72222;&quot;&gt;I’d like for you to name&lt;span style=&quot;text-decoration: underline;&quot;&gt; 20 adults&lt;/span&gt;, over &lt;span style=&quot;text-decoration: underline;&quot;&gt;18 years old&lt;/span&gt;, that have been involved in your life over the past year. &lt;/span&gt;&lt;p&gt;&lt;/p&gt;&lt;p class=&quot;MsoNormal&quot; style=&quot;margin: 0in 0in 10pt;&quot;&gt;&lt;span style=&quot;line-height: 1.72222;&quot;&gt; We do not want their full names -- you can use their first names, initials or descriptions. These should be people you have had contact with sometime in the past year– either face-to-face, by phone, mail, e-mail, text messaging, or online. &lt;/span&gt;&lt;/p&gt;&lt;p class=&quot;MsoNormal&quot; style=&quot;margin: 0in 0in 10pt;&quot;&gt;&lt;span style=&quot;line-height: 1.72222;&quot;&gt; Start by naming the people who have been the most significant to your life – either in a positive way or a negative way. You can decide for yourself who has been significant, but consider those who have had a significant emotional, social, financial, or any other influential impact on your life. We’ll work outwards toward people who have less significance. &lt;/span&gt;&lt;/p&gt;&lt;p class=&quot;MsoNormal&quot; style=&quot;margin: 0in 0in 10pt;&quot;&gt;&lt;span style=&quot;line-height: 1.72222;&quot;&gt; You can name any adults you have interacted with no matter who they are or where they live or how much time you have spent with them.&lt;/span&gt;&lt;/p&gt;&lt;p class=&quot;MsoNormal&quot; style=&quot;margin: 0in 0in 10pt;&quot;&gt;&lt;span style=&quot;line-height: 1.72222;&quot;&gt;INTERVIEWER: CHECK LIST OF PREVIOUS NAMES AND DOUBLE CHECK IF THEY WERE NAMED IN THE PREVIOUS INTERVIEW. IF SAME PERSON ADD NAME VERBATIM AS ENTERED ON LIST.&lt;/span&gt;&lt;/p&gt;&lt;p class=&quot;MsoNormal&quot; style=&quot;margin: 0in 0in 10pt;&quot;&gt;&lt;span style=&quot;line-height: 1.72222;&quot;&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;</alterPrompt>
+	<conclusion>Thank you for completing the survey.</conclusion>
+	<alterPrompts>
+			<alterPrompt id="831" studyId="342" afterAltersEntered="0" display="Please enter 20 alters"/>
+			<alterPrompt id="832" studyId="342" afterAltersEntered="1" display="1 alter named, 19 more to add"/>
+			<alterPrompt id="833" studyId="342" afterAltersEntered="2" display="2 alters named, 18 more to add"/>
+			<alterPrompt id="834" studyId="342" afterAltersEntered="3" display="3 alters named, 17 more to add"/>
+			<alterPrompt id="835" studyId="342" afterAltersEntered="4" display="4 alters named, 16 more to add"/>
+			<alterPrompt id="836" studyId="342" afterAltersEntered="5" display="5 alters named, 15 more to add"/>
+			<alterPrompt id="837" studyId="342" afterAltersEntered="6" display="6 alters named, 14 more to add"/>
+			<alterPrompt id="838" studyId="342" afterAltersEntered="7" display="7 alters named, 13 more to add"/>
+			<alterPrompt id="839" studyId="342" afterAltersEntered="6" display="6 alters named, 14 more to add"/>
+			<alterPrompt id="840" studyId="342" afterAltersEntered="7" display="7 alters named, 13 more to add"/>
+			<alterPrompt id="841" studyId="342" afterAltersEntered="8" display="8 alters named, 12 more to add"/>
+			<alterPrompt id="842" studyId="342" afterAltersEntered="9" display="9 alters named, 11 more to add"/>
+			<alterPrompt id="843" studyId="342" afterAltersEntered="10" display="10 alters named, 10 more to add"/>
+			<alterPrompt id="844" studyId="342" afterAltersEntered="11" display="11 alters named, 9 more to add"/>
+			<alterPrompt id="845" studyId="342" afterAltersEntered="12" display="12 alters named, 8 more to add"/>
+			<alterPrompt id="846" studyId="342" afterAltersEntered="13" display="13 alters named, 7 more to add"/>
+			<alterPrompt id="847" studyId="342" afterAltersEntered="14" display="14 alters named, 6 more to add"/>
+			<alterPrompt id="848" studyId="342" afterAltersEntered="15" display="15 alters named, 5 more to add"/>
+			<alterPrompt id="849" studyId="342" afterAltersEntered="16" display="16 alters named, 4 more to add"/>
+			<alterPrompt id="850" studyId="342" afterAltersEntered="17" display="17 alters named, 3 more to add"/>
+			<alterPrompt id="851" studyId="342" afterAltersEntered="18" display="18 alters named, 2 more to add"/>
+			<alterPrompt id="852" studyId="342" afterAltersEntered="19" display="19 alters named, 1 more to add"/>
+			<alterPrompt id="853" studyId="342" afterAltersEntered="20" display="20 alters named. Click &quot;Next&quot; to continue."/>
+	</alterPrompts>
+	<questions>
+		<question id="32631" title="interviewer ID" answerType="TEXTUAL" subjectType="EGO_ID" askingStyleList="0" ordering="0" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="0" maxCheckableBoxes="0" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;span style=&quot;line-height: 28.1817817687988px;&quot;&gt;TYPE INTERVIEWER NAME&lt;/span&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="32632" title="SRHT_ID_BF" answerType="TEXTUAL" subjectType="EGO_ID" askingStyleList="0" ordering="2" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="0" maxCheckableBoxes="0" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>Enter the resident&#039;s ID.</prompt>
+			<citation></citation>
+		</question>
+		<question id="32633" title="RTCSU-PRE" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="16" answerReasonExpressionId="" otherSpecify="1" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="2" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Thinking about alcohol and any drugs that you have ever used, which substance would you say is the biggest problem for you right now? &lt;/p&gt;&lt;p&gt;INTERVIEWER: IF BOTH ALCOHOL AND DRUGS, SELECT ALCOHOL AND THE TYPE OF DRUG. OTHERWISE JUST SELECT ONE RESPONSE.&lt;/p&gt;&lt;p&gt;SELECT THE RESPONSE AND SPECIFY THE TYPE OF SUBSTANCE THAT THE RESPONDENT USES IF NECESSARY.&lt;/p&gt;&lt;p&gt; &lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125363" name="Alcohol" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125364" name="Heroin" value="2" ordering="1" otherSpecify="1"/>
+			<option id="125365" name="Methadone" value="3" ordering="2" otherSpecify="1"/>
+			<option id="125366" name="Other Opiates/Analgesics" value="4" ordering="3" otherSpecify="1"/>
+			<option id="125367" name="Barbiturates" value="5" ordering="4" otherSpecify="1"/>
+			<option id="125368" name="Sedatives/ Hypnotics/ Tranquilizers" value="6" ordering="5" otherSpecify="1"/>
+			<option id="125369" name="Cocaine" value="7" ordering="6" otherSpecify="1"/>
+			<option id="125370" name="Amphetamines" value="9" ordering="8" otherSpecify="1"/>
+			<option id="125371" name="Cannabis/Marijuana" value="10" ordering="9" otherSpecify="1"/>
+			<option id="125372" name="Hallucinogens" value="11" ordering="10" otherSpecify="1"/>
+			<option id="125373" name="Inhalants" value="12" ordering="11" otherSpecify="1"/>
+			<option id="125374" name="OTHER SPECIFY" value="13" ordering="12" otherSpecify="1"/>
+			<option id="125375" name="crack or freebase" value="8" ordering="7" otherSpecify="1"/>
+			<option id="125376" name="NO CURRENT SUBSTANCE. CLICK AND ENTER MOST RECENT DRUG OF CHOICE" value="14" ordering="13" otherSpecify="1"/>
+		</question>
+		<question id="32634" title="RTCSU-1" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="17" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;&lt;/p&gt;&lt;p&gt;The next set of questions help us to identify how you personally feel about your use of &lt;b&gt;&lt;VAR RTCSU-PRE /&gt; &lt;/b&gt;right now. I will read a series of statements. Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;hr&gt;&quot;I think I use &lt;b&gt;&lt;VAR RTCSU-PRE /&gt; &lt;/b&gt; too much.&quot;</prompt>
+			<citation></citation>
+			<option id="125377" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125378" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32635" title="RTCSU-2" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="18" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&quot;I am trying to use &lt;b&gt;&lt;VAR RTCSU-PRE /&gt; &lt;/b&gt; less than I used to.&quot;</prompt>
+			<citation></citation>
+			<option id="125379" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125380" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32636" title="RTCSU-3" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="19" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;&lt;/p&gt;&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&quot;I enjoy my &lt;b&gt;&lt;VAR RTCSU-PRE /&gt; &lt;/b&gt; but sometimes I consume too much.&quot;</prompt>
+			<citation></citation>
+			<option id="125381" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125382" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32637" title="RTCSU-4" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="20" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;&lt;/p&gt;&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&quot;Sometimes I think I should cut down on &lt;b&gt;&lt;VAR RTCSU-PRE /&gt;&lt;/b&gt;.</prompt>
+			<citation></citation>
+			<option id="125383" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125384" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32638" title="RTCSU-5" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="21" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;&lt;/p&gt;&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&quot;It&#039;s a waste of time thinking about my &lt;b&gt;&lt;VAR RTCSU-PRE /&gt; &lt;/b&gt;use.&quot;</prompt>
+			<citation></citation>
+			<option id="125385" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125386" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32639" title="RTCSU-6" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="22" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;&lt;/p&gt;&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&quot;I have just recently changed my &lt;b&gt;&lt;VAR RTCSU-PRE /&gt; &lt;/b&gt;habits.&quot;</prompt>
+			<citation></citation>
+			<option id="125387" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125388" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32640" title="RTCSU-7" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="23" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;&lt;/p&gt;&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&quot;Anyone can talk about wanting to do something about &lt;b&gt;&lt;VAR RTCSU-PRE /&gt; &lt;/b&gt;but I am actually doing something about it.&quot;</prompt>
+			<citation></citation>
+			<option id="125389" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125390" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32641" title="RTCSU-8" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="24" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;&lt;/p&gt;&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&quot;I am at the stage where I should think about using less &lt;b&gt;&lt;VAR RTCSU-PRE /&gt;&lt;/b&gt;.</prompt>
+			<citation></citation>
+			<option id="125391" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125392" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32642" title="COMP2" answerType="MULTIPLE_SELECTION" subjectType="ALTER" askingStyleList="1" ordering="0" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="1" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;font color=&quot;#000000&quot; face=&quot;Times New Roman&quot; size=&quot;3&quot;&gt;&lt;/font&gt;&lt;p class=&quot;MsoNormal&quot; style=&quot;margin: 0in 0in 10pt;&quot;&gt;Is $$ male, female?&lt;/p&gt;&lt;p class=&quot;MsoNormal&quot; style=&quot;margin: 0in 0in 10pt;&quot;&gt; &lt;/p&gt;&lt;p class=&quot;MsoNormal&quot; style=&quot;margin: 0in 0in 10pt;&quot;&gt;INTERVIEWER: FILL IN BLANK WITH FIRST NAME. AFTER QUESTION IS ANSWERED, SAY, &quot;And how about...&quot; AND READ THE NEXT NAMES ONE BY ONE. REPEAT FORMAT FOR EACH LIST QUESTION.&lt;/p&gt;&lt;p class=&quot;MsoNormal&quot; style=&quot;margin: 0in 0in 10pt;&quot;&gt; &lt;font size=&quot;3&quot;&gt;&lt;font color=&quot;#000000&quot;&gt;&lt;font face=&quot;Calibri&quot;&gt;&lt;span style=&quot;line-height: normal;&quot;&gt;&lt;o:p&gt;&lt;/o:p&gt;&lt;/span&gt;&lt;/font&gt;&lt;/font&gt;&lt;/font&gt;&lt;/p&gt;&lt;font color=&quot;#000000&quot; face=&quot;Times New Roman&quot; size=&quot;3&quot;&gt;&lt;/font&gt;</prompt>
+			<citation></citation>
+			<option id="125393" name="Male" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125394" name="Female" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125395" name="Something else" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32643" title="COMP3" answerType="MULTIPLE_SELECTION" subjectType="ALTER" askingStyleList="1" ordering="1" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="1" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Has $$ ever been homeless?&lt;/p&gt;&lt;p&gt;INTERVIEWER: FOR EACH &quot;YES&quot; ASK FOLLOW-UP: &quot;Has $$ been homeless over the &lt;span style=&quot;text-decoration: underline; font-weight: bold;&quot;&gt;past month&lt;/span&gt;?&quot;&lt;/p&gt;&lt;p&gt;IF NECESSARY, CLARIFY: “Has $$ ever not had a regular place to stay and need to stay in a 1) homeless, emergency or transitional shelter, 2) a public place like an all-night theater but not in a bed, 3) an abandoned building, 4) a car or other vehicle, 5) the street or other outdoor place, or 6) a garage or shed that was not meant for living in?&lt;br&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125396" name="No, has never been homeless" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125397" name="Yes, has been homeless but not in past month" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125398" name="Yes, has been homeless in past month" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32644" title="COMP5b" answerType="MULTIPLE_SELECTION" subjectType="ALTER" askingStyleList="1" ordering="3" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="1" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="NLT_LITERAL" minLiteral="0" minPrevQues="" maxLimitType="NLT_LITERAL" maxLiteral="14" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;During the&lt;span style=&quot;font-weight: bold; text-decoration: underline;&quot;&gt; past month&lt;/span&gt;, how often did you have contact with $$? &lt;/p&gt;&lt;p class=&quot;MsoPlainText&quot; style=&quot;margin: 0in 0in 0pt;&quot;&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD B. &lt;/span&gt;READ RESPONSE OPTIONS AND SELECT ONE RESPONSE. IF NECESSARY, CLARIFY: By contact, I mean things like talking with them in person, talking with them over the phone, sending emails, text messages, communicating with them through other people, etc. You can either tell me the total number of days or the times or the number of times you had contact on average per week. &lt;font size=&quot;2&quot;&gt;&lt;font color=&quot;#000000&quot;&gt;&lt;span style=&quot;font-family: Calibri, sans-serif; font-size: 11pt; line-height: 115%;&quot;&gt;&lt;o:p&gt;&lt;/o:p&gt;&lt;/span&gt;&lt;/font&gt;&lt;/font&gt;&lt;/p&gt;&lt;p style=&quot;font-family: Calibri, sans-serif; font-size: 11pt; line-height: 115%;&quot;&gt;&lt;font color=&quot;#000000&quot; face=&quot;Times New Roman&quot; size=&quot;3&quot;&gt;&lt;/font&gt;&lt;/p&gt;&lt;p&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125399" name="NEVER" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125400" name="ONCE" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125401" name="TWICE" value="2" ordering="2" otherSpecify="0"/>
+			<option id="125402" name="THREE TIMES" value="3" ordering="3" otherSpecify="0"/>
+			<option id="125403" name="ONCE A WEEK" value="4" ordering="4" otherSpecify="0"/>
+			<option id="125404" name="TWICE A WEEK" value="5" ordering="5" otherSpecify="0"/>
+			<option id="125405" name="3 OR 4 TIMES A WEEK" value="6" ordering="6" otherSpecify="0"/>
+			<option id="125406" name="5 OR 6 TIMES A WEEK" value="7" ordering="7" otherSpecify="0"/>
+			<option id="125407" name="EVERY DAY" value="8" ordering="8" otherSpecify="0"/>
+		</question>
+		<question id="32645" title="COMP6" answerType="MULTIPLE_SELECTION" subjectType="ALTER" askingStyleList="1" ordering="4" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="1" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p 2&quot;=&quot;&quot;&gt;Who have you ever had sex with? By &quot;sex&quot; I mean vaginal or anal intercourse, &lt;span style=&quot;font-weight: bold; text-decoration: underline;&quot;&gt;not oral sex only&lt;/span&gt;. I’ll read the list of names one by one.&lt;/p&gt; &lt;p 2&quot;=&quot;&quot;&gt; INTERVIEWER: READ RESPONDENT ALL ALTER NAMES. IF R INDICATES AN ALTER HAS BEEN A SEX PARTNER, ASK THE FOLLOWING FOR EACH ALTER, &quot;Have you had sex with ______ in the &lt;span style=&quot;font-weight: bold; text-decoration: underline;&quot;&gt;past 4 weeks&lt;/span&gt;?&quot;&lt;/p&gt;&lt;p 2&quot;=&quot;&quot;&gt;IF CONCERNED ABOUT PRIVACY, SHOW THE LIST OF ALTERS (IF POSSIBLE BASED ON LIGHTING, SEATING ARRANGEMENT, ETC.) AND HAVE R NAME THE SEX PARTNERS. &lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125408" name="NEVER HAD SEX" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125409" name="YES, HAD SEX WITH BUT NOT IN PAST 4 WEEKS" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125410" name="YES, HAD SEX WITHIN THE PAST 4 WEEKS" value="2" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32646" title="COMP6b" answerType="MULTIPLE_SELECTION" subjectType="ALTER" askingStyleList="0" ordering="5" answerReasonExpressionId="14161" otherSpecify="0" noneButton="0" allButton="1" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="14161" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>When you had sex with &lt;span style=&quot;font-weight: bold; font-size: 24px;&quot;&gt;$$&lt;/span&gt;, how often did you use a condom?&lt;p&gt;&lt;/p&gt;&lt;p&gt;INTERVIEWER: READ RESPONSE OPTIONS AND SELECT BEST RESPONSE&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125411" name="Never" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125412" name="Less than half the time" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125413" name="About half the time" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125414" name="More than half the time" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125415" name="Always" value="5" ordering="4" otherSpecify="0"/>
+		</question>
+		<question id="32647" title="COMP7" answerType="MULTIPLE_SELECTION" subjectType="ALTER" askingStyleList="1" ordering="6" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="1" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Who did you ever &lt;span style=&quot;font-weight: bold;&quot;&gt;drink alcohol&lt;/span&gt; with?&lt;/p&gt;&lt;p class=&quot;MsoList2&quot; style=&quot;margin-left: 0in;&quot;&gt;&lt;span style=&quot;background-image: initial; background-attachment: initial; background-size: initial; background-origin: initial; background-clip: initial; background-position: initial; background-repeat: initial;&quot;&gt;INTERVIEWER: FOR EACH &quot;YES&quot; ask follow up question, &quot;Did you drink alcohol with during the &lt;span style=&quot;text-decoration: underline;&quot;&gt;past 4 weeks&lt;/span&gt;?&lt;/span&gt;&lt;span style=&quot;background-image: initial; background-attachment: initial; background-size: initial; background-origin: initial; background-clip: initial; background-position: initial; background-repeat: initial;&quot;&gt;&quot;&lt;/span&gt;&lt;o:p&gt;&lt;/o:p&gt;&lt;/p&gt;&lt;p class=&quot;MsoList2&quot; style=&quot;margin-left: 0in;&quot;&gt;&lt;span style=&quot;background-image: initial; background-attachment: initial; background-size: initial; background-origin: initial; background-clip: initial; background-position: initial; background-repeat: initial;&quot;&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD E. &lt;/span&gt;REFERS TO BOTH R AND ALTER DRINKING.&lt;/span&gt;&lt;span style=&quot;font-size:10.0pt;font-family:&quot; calibri&quot;,&quot;sans-serif&quot;;mso-bidi-font-family:calibri&quot;=&quot;&quot;&gt;&lt;o:p&gt;&lt;/o:p&gt;&lt;/span&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125416" name="No" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125417" name="Yes, but not in past four weeks" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125418" name="Yes, drank within past four weeks" value="2" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32648" title="COMP8" answerType="MULTIPLE_SELECTION" subjectType="ALTER" askingStyleList="1" ordering="7" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="1" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Who did you ever use drugs with?&lt;/p&gt;&lt;p 2&quot;=&quot;&quot;&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD E. &lt;/span&gt; FOR EACH &quot;YES&quot; ask follow up question, &quot;Did you use drugs with during the &lt;u&gt;past 4 weeks&lt;/u&gt;?&quot;&lt;/p&gt;&lt;p&gt; &lt;/p&gt;&lt;p 2&quot;=&quot;&quot;&gt;INTERVIEWER: REFERS TO BOTH R AND ALTER USING DRUGS.&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125419" name="No" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125420" name="Yes, but not in the past four weeks" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125421" name="Yes within the past four weeks" value="2" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32649" title="COMP9" answerType="MULTIPLE_SELECTION" subjectType="ALTER" askingStyleList="1" ordering="8" answerReasonExpressionId="14184" otherSpecify="0" noneButton="0" allButton="1" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="14184" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Did you ever drink more alcohol than you usually do or do more drugs than you usually do when you were with $$?&lt;/p&gt;&lt;p 2&quot;=&quot;&quot;&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD E.&lt;/span&gt; FOR EACH &quot;YES&quot; ask follow up question, &quot;Did you drink/use more with $$ during the &lt;u&gt;past 4 weeks&lt;/u&gt;?&quot;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125422" name="No" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125423" name="Yes, but not in the past four weeks" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125424" name="Yes within the past four weeks" value="2" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32650" title="COMP10" answerType="MULTIPLE_SELECTION" subjectType="ALTER" askingStyleList="1" ordering="9" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="1" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Has $$ given you emotional support or encouragement? &lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD E.&lt;/span&gt; FOR EACH &quot;YES&quot; ask follow up question, &quot;Did $$ offer you emotional support during the past 4 weeks?&quot; &lt;/p&gt;&lt;p&gt; &lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125425" name="No" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125426" name="Yes, but not in the past 4 weeks" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125427" name="Yes within the past 4 weeks" value="2" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32651" title="COMP11" answerType="MULTIPLE_SELECTION" subjectType="ALTER" askingStyleList="1" ordering="10" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="1" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Has $$ given you advice? &lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD E.&lt;/span&gt; FOR EACH &quot;YES&quot; ask follow up question, &quot;Did $$ give you advice during the past 4 weeks?&quot;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125428" name="No" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125429" name="Yes, but not in the past four weeks" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125430" name="Yes within the past four weeks" value="2" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32652" title="COMP12" answerType="MULTIPLE_SELECTION" subjectType="ALTER" askingStyleList="1" ordering="11" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="1" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Has $$ ever given you money, transportation, food, or other things you needed?&lt;/p&gt;&lt;p 2&quot;=&quot;&quot;&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD E. &lt;/span&gt; FOR EACH &quot;YES&quot; ask follow up question, &quot;Did $$ give you things you needed during the past 4 weeks?&quot;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125431" name="No" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125432" name="Yes, but not in the past four weeks" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125433" name="Yes within the past four weeks" value="2" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32653" title="COMP15" answerType="MULTIPLE_SELECTION" subjectType="ALTER" askingStyleList="1" ordering="13" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="1" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;font color=&quot;#000000&quot; face=&quot;Times New Roman&quot; size=&quot;3&quot;&gt;&lt;/font&gt;&lt;p class=&quot;MsoList2&quot; style=&quot;margin: 0in 0in 0pt;&quot;&gt;Think about how much time you would like to spend with these people over the &lt;span style=&quot;text-decoration: underline; font-weight: bold;&quot;&gt;next month&lt;/span&gt;&lt;span style=&quot;font-family: Calibri, sans-serif; font-size: 10pt;&quot;&gt;.&lt;/span&gt; Who would you like to spend &lt;span style=&quot;font-weight: bold;&quot;&gt;MORE&lt;/span&gt; time with, &lt;span style=&quot;font-weight: bold;&quot;&gt;LESS&lt;/span&gt; time with, or about the same amount of time that you usually spend with them. I’ll go through each name. How about $$?&lt;font color=&quot;#000000&quot;&gt;&lt;span style=&quot;font-family: Calibri, sans-serif; font-size: 10pt;&quot;&gt;&lt;o:p&gt;&lt;/o:p&gt;&lt;/span&gt;&lt;/font&gt;&lt;/p&gt;&lt;font color=&quot;#000000&quot; face=&quot;Times New Roman&quot; size=&quot;3&quot;&gt;&lt;/font&gt;</prompt>
+			<citation></citation>
+			<option id="125434" name="More time" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125435" name="About the same amount of time" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125436" name="Less time" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32654" title="RTCSU-9" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="25" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;&lt;/p&gt;&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&quot;My use of &lt;b&gt;&lt;VAR RTCSU-PRE /&gt; &lt;/b&gt;is a problem sometimes.&quot;</prompt>
+			<citation></citation>
+			<option id="125437" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125438" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32655" title="RTCSU-10" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="26" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;&lt;/p&gt;&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&quot;There is a need for me to think about changing my &lt;b&gt;&lt;VAR RTCSU-PRE /&gt; &lt;/b&gt;use.&quot;</prompt>
+			<citation></citation>
+			<option id="125439" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125440" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32656" title="RTCSU-11" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="27" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;&lt;/p&gt;&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&quot;I am actually changing my &lt;b&gt;&lt;VAR RTCSU-PRE /&gt; &lt;/b&gt;habits right now.&quot;&lt;p&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125441" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125442" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32657" title="RTCSU-12" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="28" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;&lt;/p&gt;&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&quot;it would be a good idea for me to use less &lt;b&gt;&lt;VAR RTCSU-PRE /&gt; &lt;/b&gt;&quot;&lt;p&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125443" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125444" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32658" title="RTCRS-1" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="61" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>Now I am going to ask you questions about your sexual behavior. Think about these statements and tell me if you agree or disagree that they match your situation.&lt;p&gt;&lt;/p&gt;&lt;hr&gt;&lt;span style=&quot;color: rgb(51, 51, 51); line-height: 115%; font-family: Arial, sans-serif; font-size: 18px; font-weight: bold;&quot;&gt;I think I engage in risky sex.&lt;/span&gt;</prompt>
+			<citation></citation>
+			<option id="125445" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125446" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32659" title="RTCRS-2" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="62" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&lt;span style=&quot;color: rgb(51, 51, 51); line-height: 115%; font-family: Arial, sans-serif; font-size: 18px; font-weight: bold;&quot;&gt;I am trying to use a condom more than I used to.&lt;/span&gt;</prompt>
+			<citation></citation>
+			<option id="125447" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125448" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32660" title="RTCRS-3" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="63" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&lt;span style=&quot;color: rgb(51, 51, 51); line-height: 115%; font-family: Arial, sans-serif; font-size: 18px; font-weight: bold;&quot;&gt;Sometimes I have sex without a condom when I’d rather use one.&lt;/span&gt;</prompt>
+			<citation></citation>
+			<option id="125449" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125450" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32661" title="RTCRS-4" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="64" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&lt;span style=&quot;color: rgb(51, 51, 51); line-height: 115%; font-family: Arial, sans-serif; font-size: 18px; font-weight: bold;&quot;&gt;Sometimes I think I should cut down on my unsafe sexual behavior.&lt;/span&gt;</prompt>
+			<citation></citation>
+			<option id="125451" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125452" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32662" title="RTCRS-5" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="65" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&lt;span style=&quot;color: rgb(51, 51, 51); line-height: 115%; font-family: Arial, sans-serif; font-size: 18px; font-weight: bold;&quot;&gt;It’s a waste of time to think about my condom use habits.&lt;/span&gt;</prompt>
+			<citation></citation>
+			<option id="125453" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125454" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32663" title="RTCRS-6" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="66" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&lt;span style=&quot;color: rgb(51, 51, 51); line-height: 115%; font-family: Arial, sans-serif; font-size: 18px; font-weight: bold;&quot;&gt;I have just recently begun using condoms more.&lt;/span&gt;</prompt>
+			<citation></citation>
+			<option id="125455" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125456" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32664" title="RTCRS-7" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="67" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&lt;span style=&quot;color: rgb(51, 51, 51); line-height: 115%; font-family: Arial, sans-serif; font-size: 18px; font-weight: bold;&quot;&gt;Anyone can talk about wanting to do something about using condoms more often, but I’m actually trying to do something about it.&lt;/span&gt;</prompt>
+			<citation></citation>
+			<option id="125457" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125458" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32665" title="RTCRS-8" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="68" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&lt;span style=&quot;color: rgb(51, 51, 51); line-height: 115%; font-family: Arial, sans-serif; font-size: 18px; font-weight: bold;&quot;&gt;I am at a stage where I should think about changing my unsafe sexual behavior.&lt;/span&gt;</prompt>
+			<citation></citation>
+			<option id="125459" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125460" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32666" title="RTCRS-9" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="69" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&lt;span style=&quot;color: rgb(51, 51, 51); line-height: 115%; font-family: Arial, sans-serif; font-size: 18px; font-weight: bold;&quot;&gt;My not using a condom during sex is a problem sometimes.&lt;/span&gt;</prompt>
+			<citation></citation>
+			<option id="125461" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125462" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32667" title="RTCRS-10" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="70" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&lt;span style=&quot;color: rgb(51, 51, 51); line-height: 115%; font-family: Arial, sans-serif; font-size: 18px; font-weight: bold;&quot;&gt;There is a need for me to think about changing my sexual behaviors to be more safe.&lt;/span&gt;</prompt>
+			<citation></citation>
+			<option id="125463" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125464" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32668" title="RTCRS-11" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="71" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Think about these statements and tell me if you agree or disagree that they match your situation.&lt;/p&gt;&lt;hr&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-size: 18px; font-weight: bold;&quot;&gt;I am actually changing my unsafe sexual behaviors right now.&lt;/span&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125465" name="Disagree" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125466" name="Agree" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32669" title="CLADDER2" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="72" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="NLT_LITERAL" minLiteral="0" minPrevQues="" maxLimitType="NLT_LITERAL" maxLiteral="10" maxPrevQues="" minCheckableBoxes="0" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;INTERVIEWER: SHOW UNPROTECTED SEX CONTEMPLATION LADDER. &lt;/p&gt;&lt;p&gt;Each rung on this ladder represents where various people are in their thinking about stopping &lt;span style=&quot;text-decoration: underline;&quot;&gt;engaging in unprotected sex&lt;/span&gt;. Where are you in your thinking about changing your engagement in unprotected sex?&lt;/p&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="32670" title="RESID5" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="2" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="NLT_LITERAL" minLiteral="0" minPrevQues="" maxLimitType="NLT_LITERAL" maxLiteral="28" maxPrevQues="" minCheckableBoxes="0" maxCheckableBoxes="0" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Over the &lt;u&gt;past 4 weeks, since &lt;DATE NOW -1 MONTH /&gt;&lt;/u&gt;, how many nights did you &lt;span style=&quot;font-weight: bold; text-decoration: underline;&quot;&gt;not&lt;/span&gt; stay in your Skid Row Housing Trust room?&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;line-height: 1.72222;&quot;&gt;INTERVIEWER: ENTER A NUMBER FROM 0 TO 28.&lt;/span&gt;&lt;br&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="32671" title="RESID6" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="3" answerReasonExpressionId="14200" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="14162" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="7" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Where else did you stay during the past 4 weeks?&lt;/p&gt;&lt;p&gt;INTERVIEWER: READ OPTIONS AND SELECT ALL THAT APPLY&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125467" name="A homeless emergency shelter or transitional shelter" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125468" name="An indoor public place like an all-night theater but not in a bed" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125469" name="An abandoned building" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125470" name="A car or other vehicle" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125471" name="The street or in some other outdoor place" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125472" name="A garage or shed that was not meant for living in" value="6" ordering="5" otherSpecify="0"/>
+			<option id="125473" name="Somewhere else" value="7" ordering="6" otherSpecify="1"/>
+		</question>
+		<question id="32672" title="CLADDER1" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="29" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="NLT_LITERAL" minLiteral="0" minPrevQues="" maxLimitType="NLT_LITERAL" maxLiteral="10" maxPrevQues="" minCheckableBoxes="0" maxCheckableBoxes="0" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface>Now I am going to ask you a couple questions that we call a contemplation ladder. The idea is for you to rate on a 0 to 10 scale how much you are engaged in the process I ask about.</preface>
+			<prompt>&lt;p&gt;INTERVIEWER: SHOW DRINKING AND DRUGS CONTEMPLATION LADDER.&lt;/p&gt;&lt;p&gt;Each rung on this ladder represents where various people are in their thinking about stopping &lt;span style=&quot;text-decoration: underline;&quot;&gt;using drugs and alcohol&lt;/span&gt;. Where are you in your thinking about changing your use of...? &lt;/p&gt;&lt;p&gt;&lt;VAR SRHT_Followup:RTCSU-PRE /&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="32673" title="AASE1" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="30" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Next I will read a number of situations that lead some people to use. We would like to know how tempted you may be to use in each situation. Check the answer that best describes the feelings of temptation in each situation at the present time.&lt;/p&gt;&lt;hr&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;When I am feeling angry inside.&lt;/span&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;Would you say that you would be ...&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD C. &lt;/span&gt;&lt;span style=&quot;line-height: 1.72222;&quot;&gt;READ RESPONSES, SELECT ONE.&lt;/span&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125474" name="Not at all tempted" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125475" name="Not very tempted" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125476" name="Moderately tempted" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125477" name="Very tempted" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125478" name="Extremely tempted" value="5" ordering="4" otherSpecify="0"/>
+		</question>
+		<question id="32674" title="AASE2" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="31" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Next I will read a number of situations that lead some people to use. We would like to know how tempted you may be to use in each situation. Check the answer that best describes the feelings of temptation in each situation at the present time.&lt;/p&gt;&lt;hr&gt;When I sense everything is going wrong for me.&lt;p&gt;&lt;/p&gt;&lt;p&gt;Would you say that you would be ...&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD C.&lt;/span&gt; READ RESPONSES, SELECT ONE.&lt;br&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125479" name="Not at all tempted" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125480" name="Not very tempted" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125481" name="Moderately tempted" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125482" name="Very tempted" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125483" name="Extremely tempted" value="5" ordering="4" otherSpecify="0"/>
+		</question>
+		<question id="32675" title="AASE3" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="32" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Next I will read a number of situations that lead some people to use. We would like to know how tempted you may be to use in each situation. Check the answer that best describes the feelings of temptation in each situation at the present time.&lt;/p&gt;&lt;hr&gt;&lt;p&gt;When I am feeling depressed.&lt;/p&gt;&lt;p&gt;Would you say that you would be ...&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD C.&lt;/span&gt; READ RESPONSES, SELECT ONE.&lt;br&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125484" name="Not at all tempted" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125485" name="Not very tempted" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125486" name="Moderately tempted" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125487" name="Very tempted" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125488" name="Extremely tempted" value="5" ordering="4" otherSpecify="0"/>
+		</question>
+		<question id="32676" title="AASE4" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="33" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Next I will read a number of situations that lead some people to use. We would like to know how tempted you may be to use in each situation. Check the answer that best describes the feelings of temptation in each situation at the present time.&lt;/p&gt;&lt;hr&gt;When I feel like blowing up because of frustration.&lt;p&gt;&lt;/p&gt;&lt;p&gt;Would you say that you would be ...&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD C&lt;/span&gt;. READ RESPONSES, SELECT ONE.&lt;br&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125489" name="Not at all tempted" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125490" name="Not very tempted" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125491" name="Moderately tempted" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125492" name="Very tempted" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125493" name="Extremely tempted" value="5" ordering="4" otherSpecify="0"/>
+		</question>
+		<question id="32677" title="AASE5" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="34" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Next I will read a number of situations that lead some people to use. We would like to know how tempted you may be to use in each situation. Check the answer that best describes the feelings of temptation in each situation at the present time.&lt;/p&gt;&lt;hr&gt;When I am very worried.&lt;p&gt;&lt;/p&gt;&lt;p&gt;Would you say that you would be...&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD C.&lt;/span&gt; READ RESPONSES, SELECT ONE.&lt;br&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125494" name="Not at all tempted" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125495" name="Not very tempted" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125496" name="Moderately tempted" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125497" name="Very tempted" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125498" name="Extremely tempted" value="5" ordering="4" otherSpecify="0"/>
+		</question>
+		<question id="32678" title="CBEL1" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="49" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface>Now I’m going to ask your opinions about using male condoms. There are no right or wrong responses to any of these statements. For each statement please tell me whether you strongly agree, somewhat agree, somewhat disagree, or strongly disagree based on your opinion. (CARD D) &lt;br&gt;&lt;br&gt;INTERVIEWER: IF R HAS NOT USED MALE CONDOMS, ENCOURAGE THEM TO ANSWER BY SAYING “EVEN IF YOU HAVEN’T USED THEM, YOUR OPINIONS ABOUT CONDOMS ARE STILL IMPORTANT TO US.&quot;</preface>
+			<prompt>&lt;p&gt;For each statement please tell me whether you strongly agree, somewhat agree, somewhat disagree, or strongly disagree based on your opinion. &lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD D&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;hr&gt;Condoms are unreliable – sometimes they work, and sometimes they don’t.&lt;p&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125499" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125500" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125501" name="Somewhat Agree" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125502" name="Strongly Agree" value="4" ordering="3" otherSpecify="0"/>
+		</question>
+		<question id="32679" title="CBEL2" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="50" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;For each statement please tell me whether you strongly agree, somewhat agree, somewhat disagree, or strongly disagree based on your opinion.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD D&lt;/span&gt;&lt;hr&gt;You would be embarrassed to use a condom.&lt;br&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125503" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125504" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125505" name="Somewhat Agree" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125506" name="Strongly Agree" value="4" ordering="3" otherSpecify="0"/>
+		</question>
+		<question id="32680" title="CBEL3" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="51" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;For each statement please tell me whether you strongly agree, somewhat agree, somewhat disagree, or strongly disagree based on your opinion.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD D&lt;/span&gt;&lt;/p&gt;&lt;hr&gt;Condoms do interfere with the enjoyment of sex.</prompt>
+			<citation></citation>
+			<option id="125507" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125508" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125509" name="Somewhat Agree" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125510" name="Strongly Agree" value="4" ordering="3" otherSpecify="0"/>
+		</question>
+		<question id="32681" title="CBEL4" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="52" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;For each statement please tell me whether you strongly agree, somewhat agree, somewhat disagree, or strongly disagree based on your opinion.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD D&lt;/span&gt;&lt;/p&gt;&lt;hr&gt;It would be OK with you if your partner suggested that the two of you use a condom.&lt;br&gt;</prompt>
+			<citation></citation>
+			<option id="125511" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125512" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125513" name="Somewhat Agree" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125514" name="Strongly Agree" value="4" ordering="3" otherSpecify="0"/>
+		</question>
+		<question id="32682" title="CBEL5" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="53" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;For each statement please tell me whether you strongly agree, somewhat agree, somewhat disagree, or strongly disagree based on your opinion.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD D&lt;/span&gt;&lt;/p&gt;&lt;hr&gt;It is hard for you to get condoms.&lt;br&gt;</prompt>
+			<citation></citation>
+			<option id="125515" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125516" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125517" name="Somewhat Agree" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125518" name="Strongly Agree" value="4" ordering="3" otherSpecify="0"/>
+		</question>
+		<question id="32683" title="CBEL7" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="55" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;For each statement please tell me whether you strongly agree, somewhat agree, somewhat disagree, or strongly disagree based on your opinion.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD D&lt;/span&gt;&lt;/p&gt;&lt;hr&gt;You can use a condom without ruining the mood.</prompt>
+			<citation></citation>
+			<option id="125519" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125520" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125521" name="Somewhat Agree" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125522" name="Strongly Agree" value="4" ordering="3" otherSpecify="0"/>
+		</question>
+		<question id="32684" title="CBEL6" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="54" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;For each statement please tell me whether you strongly agree, somewhat agree, somewhat disagree, or strongly disagree based on your opinion.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD D&lt;/span&gt;&lt;/p&gt;&lt;hr&gt;I hesitate suggesting using condoms with a new partner because he or she would think I thought they had a sexually transmitted disease.</prompt>
+			<citation></citation>
+			<option id="125523" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125524" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125525" name="Somewhat Agree" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125526" name="Strongly Agree" value="4" ordering="3" otherSpecify="0"/>
+		</question>
+		<question id="32685" title="CBEL8" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="56" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;For each statement please tell me whether you strongly agree, somewhat agree, somewhat disagree, or strongly disagree based on your opinion.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD D&lt;/span&gt;&lt;/p&gt;&lt;hr&gt;If you are sexually aroused, you can stop before sex to use a condom.</prompt>
+			<citation></citation>
+			<option id="125527" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125528" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125529" name="Somewhat Agree" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125530" name="Strongly Agree" value="4" ordering="3" otherSpecify="0"/>
+		</question>
+		<question id="32686" title="HIV1" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="57" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p 2&quot;=&quot;&quot;&gt;And how much do you agree or disagree with the following statements about HIV or AIDS:&lt;/p&gt;&lt;p 2&quot;=&quot;&quot;&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD D&lt;/span&gt;&lt;/p&gt;&lt;hr&gt;&lt;p&gt; &lt;span style=&quot;line-height: 1.72222;&quot;&gt;It would be easy for you to get (or get reinfected with) the HIV infection or AIDS. &lt;/span&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125531" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125532" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125533" name="Somewhat Agree" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125534" name="Strongly Agree" value="4" ordering="3" otherSpecify="0"/>
+		</question>
+		<question id="32687" title="STRUCT1" answerType="MULTIPLE_SELECTION" subjectType="ALTER_PAIR" askingStyleList="1" ordering="0" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="1" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="1" maxListRange="1" timeUnits="0" symmetric="1" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Going back to the list of people that you mentioned earlier, I am going to ask you about pairs of these people and whether they know each other. &lt;span style=&quot;line-height: 1.72222;&quot;&gt;Does &lt;/span&gt;&lt;span style=&quot;font-weight: bold; font-size: 24px;&quot;&gt;$$1&lt;/span&gt;&lt;span style=&quot;line-height: 1.72222;&quot;&gt;&lt;span style=&quot;font-size: 24px;&quot;&gt; &lt;/span&gt;know...&lt;/span&gt;&lt;/p&gt;&lt;p&gt;INTERVIEWER: &lt;span style=&quot;font-weight: bold;&quot;&gt;SHOW CARD F.&lt;/span&gt; IF YES ASK, “How often do you think that they usually interact? Rarely? Sometimes? Often? If you don’t know for sure, give your best guess.&quot; &lt;span style=&quot;line-height: 1.72222;&quot;&gt;REPEAT IF NECESSARY: By &quot;know,&quot; I mean they have had contact with each other sometime during the past year or so - either face-to-face, by phone, mail or e-mail.)&lt;/span&gt;&lt;/p&gt;&lt;p&gt; &lt;/p&gt;&lt;p&gt;AS SOON AS THE RESPONDENT UNDERSTANDS THAT THE QUESTION IS GOING TO BE REPEATED OVER AND OVER, JUST READ EACH NEW NAME PAIR. &lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125535" name="Do &lt;u&gt;not know&lt;/u&gt; each other" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125536" name="Know but interact &lt;b&gt;rarely&lt;/b&gt;" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125537" name="Know and interact &lt;b&gt;sometimes&lt;/b&gt;" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125538" name="Know and interact &lt;b&gt;often&lt;/b&gt;" value="4" ordering="3" otherSpecify="0"/>
+		</question>
+		<question id="32688" title="COMP5a" answerType="MULTIPLE_SELECTION" subjectType="ALTER" askingStyleList="1" ordering="2" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="1" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;How often did you interact with $$ in the past year? Rarely, sometimes, or often?&lt;/p&gt; &lt;p&gt; &lt;span style=&quot;line-height: 1.72222;&quot;&gt;INTERVIEWER: READ THE RESPONSE OPTIONS AND SELECT ONE RESPONSE. IF NECESSARY, CLARIFY: &quot;By contact, I mean things like talking with them in person, talking with them over the phone, sending emails, text messages, communicating with them through other people, etc.&quot;&lt;/span&gt;&lt;span style=&quot;line-height: 1.72222;&quot;&gt;&lt;/span&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125539" name="Rarely" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125540" name="Sometimes" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125541" name="Often" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32689" title="ALC3" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="4" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="NLT_LITERAL" minLiteral="1" minPrevQues="" maxLimitType="NLT_LITERAL" maxLiteral="99" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Now I am going to ask you questions about drinking and drug use in the past 4 weeks, that is, since &lt;DATE NOW -4 WEEKS /&gt;. &lt;/p&gt;&lt;p&gt;When I say &quot;drink,&quot; I mean a can or bottle of beer, a glass of wine or a wine cooler, a shot of liquor, or a mixed drink with liquor in it. I am not asking about times when you had only a sip or two from a drink.&lt;/p&gt;&lt;hr&gt; During the &lt;u&gt;past 4 weeks&lt;/u&gt;, how often did you usually have any kind of drink containing alcohol?&lt;hr&gt;INTERVIEWER: SHOW CARD B&lt;p&gt;&lt;/p&gt;&lt;p&gt;IF R HAS DIFFICULTY WITH ANY REMAINING ALCOHOL ITEM DUE TO INCONSISTENT DRINKING OVER PAST 4 WEEKS SAY, &quot;Then think about how often, &lt;u&gt;&lt;b&gt;on average&lt;/b&gt;&lt;/u&gt;, you did this during the past 4 weeks.&quot; &lt;/p&gt;&lt;hr&gt;&lt;p&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125542" name="NOT AT ALL IN THE PAST 4 WEEKS" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125543" name="ONCE" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125544" name="TWICE" value="2" ordering="2" otherSpecify="0"/>
+			<option id="125545" name="THREE TIMES" value="3" ordering="3" otherSpecify="0"/>
+			<option id="125546" name="ONCE A WEEK" value="4" ordering="4" otherSpecify="0"/>
+			<option id="125547" name="TWICE A WEEK" value="5" ordering="5" otherSpecify="0"/>
+			<option id="125548" name="3 OR 4 TIMES A WEEK" value="6" ordering="6" otherSpecify="0"/>
+			<option id="125549" name="5 OR 6 TIMES A WEEK" value="7" ordering="7" otherSpecify="0"/>
+			<option id="125550" name="EVERY DAY" value="8" ordering="8" otherSpecify="0"/>
+		</question>
+		<question id="32690" title="ALC4" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="5" answerReasonExpressionId="14193" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="NLT_LITERAL" minLiteral="1" minPrevQues="" maxLimitType="NLT_LITERAL" maxLiteral="99" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;During the &lt;u&gt;past 4 weeks&lt;/u&gt;, how many alcoholic drinks did you have on a typical day when you drank alcohol?&lt;hr&gt;INTERVIEWER: IF NECESSARY, EXPLAIN, &quot;When I say &quot;drink,&quot; I mean a can or bottle of beer, a glass of wine or a wine cooler, a shot of liquor, or a mixed drink with liquor in it. I am not asking about times when you only had a sip or two from a drink.&quot;&lt;/p&gt;&lt;p&gt;IF RESPONDENT INSISTS ON A &quot;0&quot; RESPONSE, RETURN TO ALC3 AND SELECT THE &quot;NOT AT ALL&quot; RESPONSE. &lt;/p&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="32691" title="ALC5" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="6" answerReasonExpressionId="14193" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;During the past &lt;u&gt;4 weeks&lt;/u&gt;, how often did you have 5 or more drinks containing any kind of alcohol within a two-hour period? &lt;/p&gt;&lt;p&gt;INTERVIEWER: SHOW CARD B&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125551" name="NOT AT ALL IN THE PAST 4 WEEKS" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125552" name="ONCE" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125553" name="TWICE" value="2" ordering="2" otherSpecify="0"/>
+			<option id="125554" name="THREE TIMES" value="3" ordering="3" otherSpecify="0"/>
+			<option id="125555" name="ONCE A WEEK" value="4" ordering="4" otherSpecify="0"/>
+			<option id="125556" name="TWICE A WEEK" value="5" ordering="5" otherSpecify="0"/>
+			<option id="125557" name="3 OR 4 TIMES A WEEK" value="6" ordering="6" otherSpecify="0"/>
+			<option id="125558" name="5 OR 6 TIMES A WEEK" value="7" ordering="7" otherSpecify="0"/>
+			<option id="125559" name="EVERY DAY" value="8" ordering="8" otherSpecify="0"/>
+		</question>
+		<question id="32692" title="DRUG2a" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="8" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;During the past&lt;u&gt; 4 weeks&lt;/u&gt; (since &lt;DATE NOW -4 WEEKS /&gt;), did you use&lt;span style=&quot;font-weight: bold;&quot;&gt; cocaine&lt;/span&gt;? INTERVIEWER: IF YES, ASK, &quot;How often?&quot;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD B&lt;/span&gt;&lt;/p&gt;&lt;hr&gt;INTERVIEWER SPEC: POWDER</prompt>
+			<citation></citation>
+			<option id="125560" name="NOT AT ALL IN THE PAST 4 WEEKS" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125561" name="ONCE" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125562" name="TWICE" value="2" ordering="2" otherSpecify="0"/>
+			<option id="125563" name="THREE TIMES" value="3" ordering="3" otherSpecify="0"/>
+			<option id="125564" name="ONCE A WEEK" value="4" ordering="4" otherSpecify="0"/>
+			<option id="125565" name="TWICE A WEEK" value="5" ordering="5" otherSpecify="0"/>
+			<option id="125566" name="3 OR 4 TIMES A WEEK" value="6" ordering="6" otherSpecify="0"/>
+			<option id="125567" name="5 OR 6 TIMES A WEEK" value="7" ordering="7" otherSpecify="0"/>
+			<option id="125568" name="EVERY DAY" value="8" ordering="8" otherSpecify="0"/>
+		</question>
+		<question id="32693" title="DRUG1a" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="7" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface>&lt;p&gt;The next questions are about the use of drugs. Again, I&#039;d like to remind you that this survey is anonymous – I&#039;m not recording your name anywhere and so I cannot connect your name to the responses that you provide. So I hope you will be honest with me. I&#039;ll ask you about the past 4 weeks only.&lt;/p&gt;&lt;p&gt;INTERVIEWER: If R has difficulty with any drug item due to inconsistent drug use over past 4 weeks, say: &quot;Then think about how often, on average, you used [DRUG] during the past 4 weeks.&quot;&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;&lt;/p&gt;</preface>
+			<prompt>&lt;p&gt;During the &lt;u&gt;past 4 weeks&lt;/u&gt; (since &lt;DATE NOW -4 WEEKS /&gt;), did you use &lt;b&gt;marijuana or hashish&lt;/b&gt;? INTERVIEWER: IF YES, ASK, &quot;How often?&quot;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD B&lt;/span&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125569" name="NOT AT ALL IN THE PAST 4 WEEKS" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125570" name="ONCE" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125571" name="TWICE" value="2" ordering="2" otherSpecify="0"/>
+			<option id="125572" name="THREE TIMES" value="3" ordering="3" otherSpecify="0"/>
+			<option id="125573" name="ONCE A WEEK" value="4" ordering="4" otherSpecify="0"/>
+			<option id="125574" name="TWICE A WEEK" value="5" ordering="5" otherSpecify="0"/>
+			<option id="125575" name="3 OR 4 TIMES A WEEK" value="6" ordering="6" otherSpecify="0"/>
+			<option id="125576" name="5 OR 6 TIMES A WEEK" value="7" ordering="7" otherSpecify="0"/>
+			<option id="125577" name="EVERY DAY" value="8" ordering="8" otherSpecify="0"/>
+		</question>
+		<question id="32694" title="DRUG3a" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="9" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;During the past 4 weeks (since &lt;DATE NOW -4 WEEKS /&gt;), did you use &lt;b&gt;crack or freebase&lt;/b&gt;? &lt;span style=&quot;line-height: 1.72222;&quot;&gt;INTERVIEWER: IF YES, ASK, &quot;How often?&quot;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD B &lt;/span&gt;&lt;br&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125578" name="NOT AT ALL IN THE PAST 4 WEEKS" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125579" name="ONCE" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125580" name="TWICE" value="2" ordering="2" otherSpecify="0"/>
+			<option id="125581" name="THREE TIMES" value="3" ordering="3" otherSpecify="0"/>
+			<option id="125582" name="ONCE A WEEK" value="4" ordering="4" otherSpecify="0"/>
+			<option id="125583" name="TWICE A WEEK" value="5" ordering="5" otherSpecify="0"/>
+			<option id="125584" name="3 OR 4 TIMES A WEEK" value="6" ordering="6" otherSpecify="0"/>
+			<option id="125585" name="5 OR 6 TIMES A WEEK" value="7" ordering="7" otherSpecify="0"/>
+			<option id="125586" name="EVERY DAY" value="8" ordering="8" otherSpecify="0"/>
+		</question>
+		<question id="32695" title="DRUG4a" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="10" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;During the past 4 weeks (since &lt;DATE NOW -4 WEEKS /&gt;), did you use &lt;b&gt;heroin&lt;/b&gt;? INTERVIEWER: IF YES, ASK, &quot;How often?&quot; &lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD B &lt;/span&gt;&lt;/p&gt;&lt;p&gt;INTERVIEWER SPEC: HORSE, TAR, CHINA WHITE,JUNK, BROWN POWDER&lt;br&gt;&lt;br&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125587" name="NOT AT ALL IN THE PAST 4 WEEKS" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125588" name="ONCE" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125589" name="TWICE" value="2" ordering="2" otherSpecify="0"/>
+			<option id="125590" name="THREE TIMES" value="3" ordering="3" otherSpecify="0"/>
+			<option id="125591" name="ONCE A WEEK" value="4" ordering="4" otherSpecify="0"/>
+			<option id="125592" name="TWICE A WEEK" value="5" ordering="5" otherSpecify="0"/>
+			<option id="125593" name="3 OR 4 TIMES A WEEK" value="6" ordering="6" otherSpecify="0"/>
+			<option id="125594" name="5 OR 6 TIMES A WEEK" value="7" ordering="7" otherSpecify="0"/>
+			<option id="125595" name="EVERY DAY" value="8" ordering="8" otherSpecify="0"/>
+		</question>
+		<question id="32696" title="DRUG5a" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="11" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface>&lt;span style=&quot;line-height: 30.9999599456787px;&quot;&gt;INTRO: The next questions are about your use of drugs on your own. By &quot;on your own&quot; I mean either without a doctor&#039;s prescription, in larger amounts than prescribed, or for a longer period than prescribed. We are not interested in your use of &quot;over-the-counter&quot; drugs that can be bought in drug stores or grocery stores without a doctor&#039;s prescription. With this definition in mind…&lt;/span&gt;</preface>
+			<prompt>&lt;table border=&quot;0&quot; cellspacing=&quot;0&quot; cellpadding=&quot;0&quot; width=&quot;714&quot;&gt; &lt;tbody&gt;&lt;tr&gt; &lt;td width=&quot;294&quot; valign=&quot;top&quot;&gt;&lt;p&gt; &lt;/p&gt;&lt;p class=&quot;paragraph&quot;&gt;During the past 4 weeks (since &lt;DATE NOW -4 WEEKS /&gt;), did you use &lt;span style=&quot;font-weight: bold;&quot;&gt;prescription pain relievers, tranquilizers, sedatives, or barbiturates &lt;/span&gt;&lt;span style=&quot;text-decoration: underline;&quot;&gt;on your own&lt;/span&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;?&lt;/span&gt;INTERVIEWER: IF YES, ASK, &quot;How often?&quot; &lt;/p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD B &lt;/span&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;[EXAMPLES OF TRANQUILIZERS FOR INTERVIEWER&#039;S REFERENCE: ALPRAZOLAM, ATARAX, ATIVAN, BUSPAR, CLONAZEPAM, DIAZEPAM, EQUANIL, FLEXERIL, KLONOPIN, LIBRIUM, LIMBITROL, LORAZEPAM, MEPROBAMATE, MILTOWN, ROHYPNOL, SERAX, SOMA, TRANXENE, VALIUM, VISTARIL, XANAX] [EXAMPLES OF SEDATIVES FOR INTERVIEWER&#039;S REFERENCE: AMYTAL, BUTALBITAL, BUTISOL, CHLORAL HYDRATE, DALMANE, HALCION, METHAQUALONE, NEMBUTAL, PENTOBARBITAL, PHENOBARBITAL, PLACIDYL, QUAALUDE, RESTORIL, SECOBARBITAL, SECONAL, SOPOR, TEMAZEPAM, TUINAL] &lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;</prompt>
+			<citation></citation>
+			<option id="125596" name="NOT AT ALL IN THE PAST 4 WEEKS" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125597" name="ONCE" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125598" name="TWICE" value="2" ordering="2" otherSpecify="0"/>
+			<option id="125599" name="THREE TIMES" value="3" ordering="3" otherSpecify="0"/>
+			<option id="125600" name="ONCE A WEEK" value="4" ordering="4" otherSpecify="0"/>
+			<option id="125601" name="TWICE A WEEK" value="5" ordering="5" otherSpecify="0"/>
+			<option id="125602" name="3 OR 4 TIMES A WEEK" value="6" ordering="6" otherSpecify="0"/>
+			<option id="125603" name="5 OR 6 TIMES A WEEK" value="7" ordering="7" otherSpecify="0"/>
+			<option id="125604" name="EVERY DAY" value="8" ordering="8" otherSpecify="0"/>
+		</question>
+		<question id="32697" title="DRUG6a" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="12" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;Now let&#039;s talk about amphetamines and methamphetamines – stimulants, uppers, and speed. These could be prescription stimulants you used on your own, or street drugs. During the past 4 weeks (since &lt;DATE NOW -4 WEEKS /&gt;), did you use &lt;b&gt;amphetamines or methamphetamines?&lt;/b&gt; INTERVIEWER: IF YES, ASK, &quot;How often?&quot; &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD B&lt;/b&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125605" name="NOT AT ALL IN THE PAST 4 WEEKS" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125606" name="ONCE" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125607" name="TWICE" value="2" ordering="2" otherSpecify="0"/>
+			<option id="125608" name="THREE TIMES" value="3" ordering="3" otherSpecify="0"/>
+			<option id="125609" name="ONCE A WEEK" value="4" ordering="4" otherSpecify="0"/>
+			<option id="125610" name="TWICE A WEEK" value="5" ordering="5" otherSpecify="0"/>
+			<option id="125611" name="3 OR 4 TIMES A WEEK" value="6" ordering="6" otherSpecify="0"/>
+			<option id="125612" name="5 OR 6 TIMES A WEEK" value="7" ordering="7" otherSpecify="0"/>
+			<option id="125613" name="EVERY DAY" value="8" ordering="8" otherSpecify="0"/>
+		</question>
+		<question id="32698" title="DRUG7" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="13" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p class=&quot;paragraph&quot;&gt;During the &lt;u&gt;past 4 weeks (since &lt;DATE NOW -4 WEEKS /&gt;)&lt;/u&gt;, did you use any other drugs on your own, such as: Ecstasy, LSD, PCP or other hallucinogens; or liquids, sprays, or gases that you sniff or breathe to get high or feel good; or any other drug? &lt;/p&gt; &lt;p class=&quot;paragraph&quot;&gt; &lt;/p&gt; &lt;p class=&quot;paragraph&quot;&gt;[EXAMPLES OF INHALANTS FOR INTERVIEWER&#039;S REFERENCE: amyl nitrate (aka: poppers, rush), cleaning fluid, gasoline or lighter fluid, glue, lacquer thinner or other paint solvents, nitrous oxide (aka: whippets), shoe polish, spray paints, white out] &lt;/p&gt; &lt;p class=&quot;paragraph&quot;&gt; &lt;/p&gt; &lt;p class=&quot;paragraph&quot;&gt;[EXAMPLES OF HALLUCINOGENS FOR INTERVIEWER&#039;S REFERENCE: acid, angel dust, MDMA, mescaline, micro dots, mushrooms (aka: shrooms), peyote, sugar cube, yellow sin] &lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125614" name="no, no other drug" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125615" name="another drug" value="1" ordering="1" otherSpecify="1"/>
+		</question>
+		<question id="32699" title="DRUG7a" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="14" answerReasonExpressionId="14164" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="14164" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;During the past 4 weeks (since &lt;DATE NOW -4 WEEKS /&gt;), how often did you usually use &lt;b&gt;&lt;VAR SRHT_Followup:DRUG7 /&gt; &lt;/b&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD B&lt;/span&gt;&lt;br&gt;&lt;br&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125616" name="NOT AT ALL IN THE PAST 4 WEEKS" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125617" name="ONCE" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125618" name="TWICE" value="2" ordering="2" otherSpecify="0"/>
+			<option id="125619" name="THREE TIMES" value="3" ordering="3" otherSpecify="0"/>
+			<option id="125620" name="ONCE A WEEK" value="4" ordering="4" otherSpecify="0"/>
+			<option id="125621" name="TWICE A WEEK" value="5" ordering="5" otherSpecify="0"/>
+			<option id="125622" name="3 OR 4 TIMES A WEEK" value="6" ordering="6" otherSpecify="0"/>
+			<option id="125623" name="5 OR 6 TIMES A WEEK" value="7" ordering="7" otherSpecify="0"/>
+			<option id="125624" name="EVERY DAY" value="8" ordering="8" otherSpecify="0"/>
+		</question>
+		<question id="32700" title="INJECT1" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="15" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>Did you use a needle to inject drugs in the &lt;u&gt;past 4 weeks (since &lt;DATE NOW -4 WEEKS /&gt;)&lt;/u&gt;? When I say needle, I mean a needle a syringe (rig). By drugs I mean any illegal drugs.&lt;o:p&gt;&lt;/o:p&gt;&lt;p&gt;&lt;/p&gt;&lt;p class=&quot;paragraph&quot; style=&quot;margin:0in;margin-bottom:.0001pt;vertical-align:baseline&quot;&gt;&lt;span class=&quot;normaltextrun&quot; style=&quot;background-color: rgb(255, 255, 255);&quot;&gt; &lt;/span&gt;&lt;/p&gt;&lt;p class=&quot;paragraph&quot; style=&quot;margin:0in;margin-bottom:.0001pt;vertical-align:baseline&quot;&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;&lt;span class=&quot;normaltextrun&quot;&gt;&lt;span style=&quot;background-image: initial; background-attachment: initial; background-size: initial; background-origin: initial; background-clip: initial; background-position: initial; background-repeat: initial;&quot;&gt;&lt;br&gt;INTERVIEWER:INJECT MEANS &quot;SHOOT UP&quot;&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;eop&quot;&gt;&lt;span style=&quot;background-image: initial; background-attachment: initial; background-size: initial; background-origin: initial; background-clip: initial; background-position: initial; background-repeat: initial;&quot;&gt; &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&quot;font-size:6.0pt;background:yellow;mso-highlight:yellow&quot;&gt;&lt;o:p&gt;&lt;/o:p&gt;&lt;/span&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125625" name="No" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125626" name="Yes" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32701" title="SEX2" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="39" answerReasonExpressionId="14188" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="14188" networkParams="" refuseButton="1" allOptionString="" minLimitType="NLT_PREVQUES" minLiteral="0" minPrevQues="421" maxLimitType="" maxLiteral="999" maxPrevQues="" minCheckableBoxes="0" maxCheckableBoxes="0" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;During the &lt;u&gt;past 4 weeks&lt;/u&gt;, how many &lt;span style=&quot;text-decoration: underline;&quot;&gt;total times&lt;/span&gt; did you have sexual intercourse? If you had intercourse more than once with a partner on a single occasion, please count these as separate times.&lt;/p&gt;&lt;p&gt;INTERVIEWER: MINIMUM RESPONSE IS THE NUMBER OF PARTNERS FROM SEX1&lt;/p&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="32702" title="SEX2a" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="40" answerReasonExpressionId="14173" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="14173" networkParams="" refuseButton="1" allOptionString="" minLimitType="NLT_LITERAL" minLiteral="0" minPrevQues="" maxLimitType="NLT_PREVQUES" maxLiteral="0" maxPrevQues="411" minCheckableBoxes="0" maxCheckableBoxes="0" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;IF SEX2 == 1 &quot;Did you use a condom that time?&quot; /&gt;&lt;IF SEX2 &gt; 1 &quot;And of these &lt;b&gt;&lt;VAR SEX2 /&gt;&lt;/b&gt; times, how many &lt;u&gt;times&lt;/u&gt; did you use a condom?&quot; /&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="32703" title="SEX3" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="41" answerReasonExpressionId="14186" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="14186" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;During the past 4 weeks, did you have sex with any of these partners around the same time, such as within a few days or during the same week?&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125627" name="No" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125628" name="Yes" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32704" title="SEX4" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="42" answerReasonExpressionId="14188" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="14188" networkParams="" refuseButton="1" allOptionString="" minLimitType="NLT_LITERAL" minLiteral="0" minPrevQues="" maxLimitType="NLT_PREVQUES" maxLiteral="0" maxPrevQues="411" minCheckableBoxes="0" maxCheckableBoxes="0" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p class=&quot;MsoNormal&quot;&gt;&lt;span style=&quot;background-image: initial; background-attachment: initial; background-size: initial; background-origin: initial; background-clip: initial; background-position: initial; background-repeat: initial; background-color: rgb(255, 255, 255);&quot;&gt;During the &lt;u&gt;past 4 weeks&lt;/u&gt;, did you ever &lt;u&gt;give anyone something to have sex with them&lt;/u&gt; – for example, money, food, a place to stay, alcohol or drugs? &lt;o:p&gt;&lt;/o:p&gt;&lt;/span&gt;&lt;/p&gt;&lt;p class=&quot;MsoNormal&quot;&gt;&lt;span style=&quot;background-image: initial; background-attachment: initial; background-size: initial; background-origin: initial; background-clip: initial; background-position: initial; background-repeat: initial;&quot;&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255);&quot;&gt;INTERVIEWER:IF ANSWER IS NO ENTER 0. IF ANSWER IS YES ASK, “How many times?”&lt;/span&gt;&lt;span style=&quot;background-color: yellow;&quot;&gt;&lt;o:p&gt;&lt;/o:p&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="32705" title="SEX5" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="43" answerReasonExpressionId="14188" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="14188" networkParams="" refuseButton="1" allOptionString="" minLimitType="NLT_LITERAL" minLiteral="0" minPrevQues="" maxLimitType="NLT_PREVQUES" maxLiteral="0" maxPrevQues="411" minCheckableBoxes="0" maxCheckableBoxes="0" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;During the &lt;u&gt;past 4 weeks&lt;/u&gt;, did anyone ever &lt;u&gt;give YOU something to have sex with them&lt;/u&gt; – for example, money, food, a place to stay, alcohol or drugs? &lt;/p&gt; INTERVIEWER: IF ANSWER IS NO ENTER 0. IF ANSWER IS YES ASK, “How many times?”</prompt>
+			<citation></citation>
+		</question>
+		<question id="32706" title="COMP14" answerType="MULTIPLE_SELECTION" subjectType="ALTER" askingStyleList="1" ordering="12" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="1" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>How often do you argue, fight or have an unpleasant disagreements with $$? Never, rarely, sometimes, or often?</prompt>
+			<citation></citation>
+			<option id="125629" name="Never" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125630" name="Rarely" value="1" ordering="1" otherSpecify="0"/>
+			<option id="125631" name="Sometimes" value="2" ordering="2" otherSpecify="0"/>
+			<option id="125632" name="Often" value="3" ordering="3" otherSpecify="0"/>
+		</question>
+		<question id="32707" title="HIV2" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="58" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p 2&quot;=&quot;&quot;&gt;And how much do you agree or disagree with the following statements about HIV or AIDS:&lt;/p&gt;&lt;p 2&quot;=&quot;&quot;&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD D&lt;/span&gt;&lt;/p&gt;&lt;hr&gt;&lt;p&gt;Your behavior puts you at risk of HIV or AIDS.&lt;br&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125633" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125634" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125635" name="Somewhat Agree" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125636" name="Strongly Agree" value="4" ordering="3" otherSpecify="0"/>
+		</question>
+		<question id="32708" title="HIV3" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="59" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p 2&quot;=&quot;&quot;&gt;And how much do you agree or disagree with the following statements about HIV or AIDS:&lt;/p&gt;&lt;p 2&quot;=&quot;&quot;&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD D&lt;/span&gt;&lt;/p&gt;&lt;hr&gt;&lt;p&gt;You worry about getting (or getting reinfected with) HIV or AIDS.&lt;br&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125637" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125638" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125639" name="Somewhat Agree" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125640" name="Strongly Agree" value="4" ordering="3" otherSpecify="0"/>
+		</question>
+		<question id="32709" title="HIV4" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="60" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p 2&quot;=&quot;&quot;&gt;And how much do you agree or disagree with the following statements about HIV or AIDS:&lt;/p&gt;&lt;p 2&quot;=&quot;&quot;&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;INTERVIEWER: SHOW CARD D&lt;/span&gt;&lt;/p&gt;&lt;hr&gt;&lt;p&gt;You try to protect yourself from being (re) infected with HIV or AIDS.&lt;br&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125641" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125642" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125643" name="Somewhat Agree" value="3" ordering="2" otherSpecify="0"/>
+			<option id="125644" name="Strongly Agree" value="4" ordering="3" otherSpecify="0"/>
+		</question>
+		<question id="32710" title="SEX1_CHECK" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="38" answerReasonExpressionId="14196" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="14178" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="NLT_PREVQUES" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;WARNING!!!!!&lt;/p&gt;&lt;p&gt;THE NUMBER OF TOTAL PARTNERS DOES NOT MATCH THE NUMBER OF MALE AND FEMALE PARTNERS. DOUBLE CHECK PARTNER NUMBERS BELOW AND THEN CONTINUE IF CORRECT. IF NOT CORRECT GO BACK AND FIX:&lt;/p&gt;&lt;p&gt; &lt;/p&gt;&lt;p&gt;TOTAL SEX PARTNERS:&lt;VAR SEX1 /&gt;&lt;/p&gt;&lt;p&gt;MALE SEX PARTNERS:&lt;VAR SEX1b /&gt;&lt;/p&gt;&lt;p&gt;FEMALE SEX PARTNERS:&lt;VAR SEX1a /&gt;&lt;/p&gt;&lt;p&gt;&lt;/p&gt;&lt;p&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125645" name="CORRECT, CONTINUE" value="1" ordering="0" otherSpecify="0"/>
+		</question>
+		<question id="32711" title="SEX1" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="35" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="NLT_LITERAL" minLiteral="0" minPrevQues="" maxLimitType="NLT_LITERAL" maxLiteral="999" maxPrevQues="" minCheckableBoxes="0" maxCheckableBoxes="0" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>The next questions are about your recent sexual relationships.&lt;hr&gt;During the past &lt;u&gt;4 weeks&lt;/u&gt;, how many total &lt;b&gt;&lt;u&gt;&lt;IF &lt;CONTAINS SRHT_Baseline:DEMO1 &quot;FEMALE&quot; /&gt; == 1 &quot;male&quot; /&gt; &lt;/b&gt;&lt;/u&gt;&lt;b&gt;&lt;u&gt;&lt;IF &lt;CONTAINS SRHT_Baseline:DEMO1 &quot;MALE&quot; /&gt; == 1 &quot;male and female&quot; /&gt; &lt;/u&gt;&lt;/b&gt;sex partners have you had? By sex partners I mean partners with whom you had vaginal or anal sex. Do not count those with whom you only had &lt;u&gt;oral&lt;/u&gt; sex.</prompt>
+			<citation></citation>
+		</question>
+		<question id="32712" title="SEX1a" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="36" answerReasonExpressionId="14178" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="14178" networkParams="" refuseButton="0" allOptionString="" minLimitType="NLT_LITERAL" minLiteral="0" minPrevQues="" maxLimitType="NLT_PREVQUES" maxLiteral="999" maxPrevQues="421" minCheckableBoxes="0" maxCheckableBoxes="0" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;IF SEX1 == 1 &quot;Was this partner female?&quot; /&gt;&lt;IF SEX1 &gt; 1 &quot;And of these &lt;b&gt;&lt;VAR SEX1 /&gt;&lt;/b&gt; partners, how many were &lt;u&gt;female&lt;/u&gt;?&quot; /&gt;&lt;br&gt;&lt;br&gt;&lt;IF SEX1 == 1 &quot;INTERVIEWER: IF ANSWER IS YES, ENTER 1, IF NO, ENTER 0.&quot; /&gt;&lt;IF SEX1 &gt; 1 &quot;INTERVIEWER: ENTER THE NUMBER OF FEMALE PARTNERS&quot; /&gt;</prompt>
+			<citation>FEMALE</citation>
+		</question>
+		<question id="32713" title="SEX1b" answerType="NUMERICAL" subjectType="EGO" askingStyleList="0" ordering="37" answerReasonExpressionId="14195" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="14187" networkParams="" refuseButton="0" allOptionString="" minLimitType="NLT_LITERAL" minLiteral="0" minPrevQues="" maxLimitType="NLT_PREVQUES" maxLiteral="999" maxPrevQues="421" minCheckableBoxes="0" maxCheckableBoxes="0" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;And of these &lt;b&gt;&lt;VAR SEX1 /&gt;&lt;/b&gt; partners, how many were male?&quot;&lt;/p&gt;&lt;p&gt;INTERVIEWER: ENTER THE NUMBER OF MALE PARTNERS&lt;/p&gt;</prompt>
+			<citation>MALE</citation>
+		</question>
+		<question id="32714" title="HIVTEST1" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="44" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p 2&quot;=&quot;&quot;&gt;&lt;span style=&quot;font-family: Arial, sans-serif; line-height: 30.9999599456787px;&quot;&gt;Now I&#039;m going to ask you a few questions about HIV testing. Have you &lt;/span&gt;&lt;span style=&quot;font-family: Arial, sans-serif; line-height: 30.9999599456787px;&quot;&gt;been tested for HIV in the past 4 weeks (since &lt;DATE NOW -4 WEEKS /&gt;)? Yes or no?&lt;/span&gt;&lt;br&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125646" name="No" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125647" name="Yes" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32715" title="HIVTEST1_b" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="46" answerReasonExpressionId="14191" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="11" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>The &lt;u&gt;last time&lt;/u&gt; you got tested, did you find out your test result?</prompt>
+			<citation></citation>
+			<option id="125648" name="No" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125649" name="Yes" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32716" title="HIVTEST2" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="47" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="11" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>In the past 4 WEEKS (since &lt;DATE NOW -4 WEEKS /&gt;) did a doctor, nurse, or health worker tell you that you have HIV or AIDS?</prompt>
+			<citation></citation>
+			<option id="125650" name="No" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125651" name="Yes" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32717" title="HIVTEST3" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="48" answerReasonExpressionId="14192" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="11" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>Do you have reason to believe that you might have HIV or AIDS?</prompt>
+			<citation></citation>
+			<option id="125652" name="No" value="0" ordering="0" otherSpecify="0"/>
+			<option id="125653" name="Yes" value="1" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32718" title="MNISAT1" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="0" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface>&lt;p&gt;Now for the final set of questions, I am going to ask you about your experience with the four meetings you had with the meeting facilitator when you discussed the pictures of your network. &lt;/p&gt;</preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;The facilitator respected my background, for example my age, gender, race, culture, ethnicity, sexual orientation, disability, lifestyle, etc.</prompt>
+			<citation></citation>
+			<option id="125654" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125655" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125656" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125657" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125658" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32719" title="MNISAT21" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="20" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;&lt;p&gt;The different activities we did in the sessions were helpful.&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125659" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125660" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125661" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125662" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125663" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32720" title="MNISAT20" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="19" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;&lt;p&gt;I could understand the information from the sessions.&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125664" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125665" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125666" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125667" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125668" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32721" title="MNISAT19" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="18" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;&lt;p&gt;I could use information from the sessions in my daily life.&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125669" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125670" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125671" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125672" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125673" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32722" title="MNISAT18" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="17" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;&lt;p&gt;I feel that the things I did in the sessions will help me to make the changes that I want.&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125674" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125675" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125676" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125677" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125678" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32723" title="MNISAT17" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="16" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;&lt;p&gt;The facilitator valued my opinion.&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125679" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125680" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125681" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125682" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125683" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32724" title="MNISAT16" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="15" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;&lt;p&gt;The facilitator and I worked together to set goals.&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125684" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125685" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125686" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125687" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125688" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32725" title="MNISAT15" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="14" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;&lt;p&gt;I felt the facilitator respected where I was at with my alcohol, drug use, or sexual behavior and that any change was up to me.&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125689" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125690" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125691" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125692" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125693" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32726" title="MNISAT14" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="13" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;&lt;p&gt;I left the session with a specific goal in mind about changing my drinking, drug use, or sexual behavior habits.&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125694" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125695" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125696" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125697" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125698" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32727" title="MNISAT13" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="12" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;&lt;p&gt;The facilitator seemed warm and understanding.&lt;br&gt;&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125699" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125700" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125701" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125702" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125703" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32728" title="MNISAT12" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="11" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;&lt;p&gt;The facilitator seemed competent and well-trained.&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125704" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125705" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125706" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125707" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125708" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32729" title="MNISAT11" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="10" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;&lt;p&gt;The information I received will cause me to change my pattern of alcohol use, drug use or sexual behavior.&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125709" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125710" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125711" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125712" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125713" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32730" title="MNISAT10" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="9" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;The facilitator seemed well-organized.</prompt>
+			<citation></citation>
+			<option id="125714" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125715" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125716" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125717" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125718" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32731" title="MNISAT9" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="8" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;The sessions were thorough and complete.</prompt>
+			<citation></citation>
+			<option id="125719" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125720" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125721" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125722" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125723" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32732" title="MNISAT8" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="7" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;&lt;p&gt;The sessions were what I expected.&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125724" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125725" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125726" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125727" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125728" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32733" title="MNISAT7" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="6" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;The information I received will cause me to change some of my lifestyle decisions.</prompt>
+			<citation></citation>
+			<option id="125729" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125730" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125731" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125732" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125733" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32734" title="MNISAT6" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="5" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;Generally, I am satisfied with the sessions.</prompt>
+			<citation></citation>
+			<option id="125734" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125735" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125736" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125737" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125738" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32735" title="MNISAT5" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="4" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;The sessions helped me deal with my problems.</prompt>
+			<citation></citation>
+			<option id="125739" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125740" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125741" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125742" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125743" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32736" title="MNISAT4" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="3" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;&lt;p&gt;I would recommend this type of sessions to another resident.&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125744" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125745" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125746" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125747" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125748" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32737" title="MNISAT3" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="2" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;I have learned skills to help me to better manage my life.</prompt>
+			<citation></citation>
+			<option id="125749" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125750" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125751" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125752" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125753" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32738" title="MNISAT2" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="1" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;The facilitator helped me believe that I could change and improve my life.</prompt>
+			<citation></citation>
+			<option id="125754" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125755" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125756" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125757" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125758" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32739" title="MNISAT22" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="21" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;The facilitator was helpful.</prompt>
+			<citation></citation>
+			<option id="125759" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125760" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125761" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125762" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125763" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32740" title="MNISAT23" answerType="MULTIPLE_SELECTION" subjectType="NETWORK" askingStyleList="0" ordering="22" answerReasonExpressionId="14198" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="null" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;I am going to read several statements. For each statement that I read, I’d like you to tell me if you Strongly Agree, Somewhat Agree, Neither Agree nor Disagree, Somewhat Disagree, or Strongly Disagree. &lt;/p&gt;&lt;p&gt;&lt;b&gt;INTERVIEWER: SHOW CARD G&lt;/b&gt; &lt;/p&gt;&lt;hr&gt;&lt;p&gt;The facilitator and I respected each other.&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125764" name="Strongly disagree" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125765" name="Somewhat Disagree" value="2" ordering="1" otherSpecify="0"/>
+			<option id="125766" name="Somewhat Agree" value="4" ordering="3" otherSpecify="0"/>
+			<option id="125767" name="Strongly Agree" value="5" ordering="4" otherSpecify="0"/>
+			<option id="125768" name="Neither agree nor disagree" value="3" ordering="2" otherSpecify="0"/>
+		</question>
+		<question id="32741" title="HIVTEST1_a" answerType="DATE" subjectType="EGO" askingStyleList="0" ordering="45" answerReasonExpressionId="14191" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="1" networkRelationshipExprId="" networkParams="" refuseButton="1" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="11" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;What was the date of your last HIV test?&lt;/p&gt;&lt;hr&gt; INTERVIEWER: IF ANSWER IS &quot;DON&#039;T KNOW&quot; ASK, &quot;Do you remember, how many weeks ago was it?&quot; INTERVIEWER: IF GIVEN A RANGE OF MONTHS/DAYS/WEEKS AGO, CLARIFY THE MONTH AND YEAR.&lt;p&gt;&lt;/p&gt;&lt;p&gt;IF SPECIFIC DAY UNKNOWN, ENTER TODAY&#039;S DAY OF THE MONTH (TODAY IS &lt;b&gt;&lt;DATE NOW /&gt; &lt;/b&gt;).&lt;/p&gt;</prompt>
+			<citation></citation>
+		</question>
+		<question id="32742" title="NoBaseline" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="0" answerReasonExpressionId="14203" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;WARNING!!!! THIS ID DOES NOT APPEAR TO HAVE A BASELINE INTERVIEW STARTED. CHECK THAT YOU HAVE ENTERED THE CORRECT ID!!!&lt;/p&gt;&lt;p&gt;IF YOU ENTERED IT INCORRECTLY GO BACK TO THE PREVIOUS SCREEN AND ENTER A CORRECT ID&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125769" name="Continue" value="1" ordering="0" otherSpecify="0"/>
+		</question>
+		<question id="32743" title="baseline or followup" answerType="MULTIPLE_SELECTION" subjectType="EGO_ID" askingStyleList="0" ordering="3" answerReasonExpressionId="" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>Confirm if Baseline or Followup Interview with Respondent</prompt>
+			<citation></citation>
+			<option id="125770" name="Baseline" value="1" ordering="0" otherSpecify="0"/>
+			<option id="125771" name="Followup" value="2" ordering="1" otherSpecify="0"/>
+		</question>
+		<question id="32744" title="test" answerType="MULTIPLE_SELECTION" subjectType="EGO" askingStyleList="0" ordering="1" answerReasonExpressionId="14204" otherSpecify="0" noneButton="0" allButton="0" pageLevelDontKnowButton="0" pageLevelRefuseButton="0" dontKnowButton="0" networkRelationshipExprId="" networkParams="" refuseButton="0" allOptionString="" minLimitType="" minLiteral="0" minPrevQues="" maxLimitType="" maxLiteral="0" maxPrevQues="" minCheckableBoxes="1" maxCheckableBoxes="1" withListRange="0" listRangeString="" minListRange="0" maxListRange="0" timeUnits="0" symmetric="0" keepOnSamePage="0" useAlterListField="">
+			<preface></preface>
+			<prompt>&lt;p&gt;WARNING!!!! THIS IS A TEST CASE. PLEASE CONFIRM THAT THIS SHOULD BE A TEST CASE. IF NOT GO BACK AND FIX THE ID.&lt;/p&gt;</prompt>
+			<citation></citation>
+			<option id="125772" name="YES, TEST CASE" value="1" ordering="0" otherSpecify="0"/>
+		</question>
+	</questions>
+	<expressions>
+		<expression id="14160" name="YesCOMP3" questionId="32643" resultForUnanswered="0" type="Selection" operator="All">
+			<value>125397</value>
+		</expression>
+		<expression id="14161" name="Comp6AnyYes" questionId="32645" resultForUnanswered="0" type="Selection" operator="Some">
+			<value>125409,125410</value>
+		</expression>
+		<expression id="14162" name="RESID5less7" questionId="32670" resultForUnanswered="0" type="Number" operator="Less">
+			<value>7</value>
+		</expression>
+		<expression id="14163" name="SEX2 GT 1" questionId="32701" resultForUnanswered="0" type="Number" operator="Greater">
+			<value>1</value>
+		</expression>
+		<expression id="14164" name="DRUG7Yes" questionId="32698" resultForUnanswered="0" type="Selection" operator="Some">
+			<value>125615</value>
+		</expression>
+		<expression id="14165" name="INJECT1Yes" questionId="32700" resultForUnanswered="1" type="Selection" operator="Some">
+			<value>125626</value>
+		</expression>
+		<expression id="14166" name="SumSex1b2b" questionId="0" resultForUnanswered="0" type="Counting" operator="Sum">
+			<value>1::,</value>
+		</expression>
+		<expression id="14167" name="SumSex1b2b eq or gt 2" questionId="0" resultForUnanswered="0" type="Comparison" operator="GreaterOrEqual">
+			<value>2:14166</value>
+		</expression>
+		<expression id="14168" name="sex1" questionId="0" resultForUnanswered="0" type="Counting" operator="Sum">
+			<value>::</value>
+		</expression>
+		<expression id="14169" name="sex2" questionId="0" resultForUnanswered="0" type="Counting" operator="Sum">
+			<value>::32701</value>
+		</expression>
+		<expression id="14170" name="sex1+sex2" questionId="0" resultForUnanswered="0" type="Counting" operator="Sum">
+			<value>1::,32701</value>
+		</expression>
+		<expression id="14171" name="sex1+sex2_gr_eq_2" questionId="0" resultForUnanswered="0" type="Comparison" operator="GreaterOrEqual">
+			<value>2:14170</value>
+		</expression>
+		<expression id="14172" name="SEX1 GT 1 OR SEX2 GT 1 OR SEX1 + SEX2 GT 1" questionId="0" resultForUnanswered="0" type="Compound" operator="Some">
+			<value>,14163,14171</value>
+		</expression>
+		<expression id="14173" name="SEX2 gt 0" questionId="32701" resultForUnanswered="0" type="Number" operator="Greater">
+			<value>0</value>
+		</expression>
+		<expression id="14174" name="SEX1 OR SEX2 GT 1" questionId="0" resultForUnanswered="0" type="Compound" operator="Some">
+			<value>,14163</value>
+		</expression>
+		<expression id="14175" name="SEX1-SEX1a" questionId="0" resultForUnanswered="0" type="Counting" operator="Sum">
+			<value>1:14176:32711</value>
+		</expression>
+		<expression id="14176" name="-1*SEX1a" questionId="0" resultForUnanswered="0" type="Counting" operator="Sum">
+			<value>-1::32712</value>
+		</expression>
+		<expression id="14177" name="SEX1-SEX1a GT 0" questionId="0" resultForUnanswered="0" type="Comparison" operator="Greater">
+			<value>0:14175</value>
+		</expression>
+		<expression id="14178" name="MALE AND HAD SEX" questionId="0" resultForUnanswered="0" type="Compound" operator="All">
+			<value>14188,14201</value>
+		</expression>
+		<expression id="14179" name="-1*(SEX1a+SEX1b)" questionId="0" resultForUnanswered="0" type="Counting" operator="Sum">
+			<value>-1::32712,32713</value>
+		</expression>
+		<expression id="14180" name="SEX1-(SEX1a+SEX1b)" questionId="0" resultForUnanswered="0" type="Counting" operator="Sum">
+			<value>1:14179:32711</value>
+		</expression>
+		<expression id="14181" name="SEX1-(SEX1a+SEX1b) GT 0" questionId="0" resultForUnanswered="0" type="Comparison" operator="Greater">
+			<value>0:14180</value>
+		</expression>
+		<expression id="14182" name="COMP7 = YES DRINKING PARTNER" questionId="32647" resultForUnanswered="0" type="Selection" operator="Some">
+			<value>125417,125418</value>
+		</expression>
+		<expression id="14183" name="COMP8 = YES, DRUG USE PARTNER" questionId="32648" resultForUnanswered="0" type="Selection" operator="Some">
+			<value>125420,125421</value>
+		</expression>
+		<expression id="14184" name="DRINKING OR DRUG PARTNER" questionId="0" resultForUnanswered="0" type="Compound" operator="Some">
+			<value>14182,14183</value>
+		</expression>
+		<expression id="14185" name="COMP14a=NOT NEVER" questionId="32706" resultForUnanswered="0" type="Selection" operator="Some">
+			<value>125630,125631,125632</value>
+		</expression>
+		<expression id="14186" name="SEX1 GT 1" questionId="32711" resultForUnanswered="0" type="Number" operator="Greater">
+			<value>1</value>
+		</expression>
+		<expression id="14187" name="MALE AND HAD SEX AND SEX1 GT 1" questionId="0" resultForUnanswered="0" type="Compound" operator="All">
+			<value>14178,14186</value>
+		</expression>
+		<expression id="14188" name="SEX1 GT 0" questionId="32711" resultForUnanswered="0" type="Number" operator="Greater">
+			<value>0</value>
+		</expression>
+		<expression id="14189" name="SEX1-(SEX1a+SEX1b) LT 0" questionId="0" resultForUnanswered="0" type="Comparison" operator="Less">
+			<value>0:14180</value>
+		</expression>
+		<expression id="14190" name="SEX1-(SEX1a+SEX1b) LT or GT 0" questionId="0" resultForUnanswered="0" type="Compound" operator="Some">
+			<value>14181,14189</value>
+		</expression>
+		<expression id="14191" name="HIVTEST = YES" questionId="32714" resultForUnanswered="0" type="Selection" operator="Some">
+			<value>125647</value>
+		</expression>
+		<expression id="14192" name="HIVTEST2 = NO, DK, REF" questionId="32716" resultForUnanswered="1" type="Selection" operator="Some">
+			<value>125650</value>
+		</expression>
+		<expression id="14193" name="ALC3 = ONCE OR MORE" questionId="32689" resultForUnanswered="1" type="Selection" operator="Some">
+			<value>125543,125544,125545,125546,125547,125548,125549,125550</value>
+		</expression>
+		<expression id="14194" name="Struct1 = know and interact" questionId="32687" resultForUnanswered="0" type="Selection" operator="Some">
+			<value>125536,125537,125538</value>
+		</expression>
+		<expression id="14195" name="MALE AND HAD SEX AND SEX1 -SEX1a GT 0" questionId="0" resultForUnanswered="0" type="Compound" operator="All">
+			<value>14177,14178</value>
+		</expression>
+		<expression id="14196" name="MALE AND HAD SEX AND (SEX1-(SEX1a+SEX1b) LT or GT 0 )" questionId="0" resultForUnanswered="0" type="Compound" operator="All">
+			<value>14178,14190</value>
+		</expression>
+		<expression id="14197" name="(RESID1 NOT DK OR REF) AND RESID5 LT 7" questionId="0" resultForUnanswered="0" type="Compound" operator="All">
+			<value>14162</value>
+		</expression>
+		<expression id="14198" name="Assignment = intervention" questionId="455" resultForUnanswered="0" type="Selection" operator="Some">
+			<value>1544</value>
+		</expression>
+		<expression id="14199" name="Assignment = control" questionId="455" resultForUnanswered="0" type="Selection" operator="Some">
+			<value>1545</value>
+		</expression>
+		<expression id="14200" name="RESID5 GT 0" questionId="32670" resultForUnanswered="0" type="Number" operator="Greater">
+			<value>0</value>
+		</expression>
+		<expression id="14201" name="demo1 = male" questionId="230" resultForUnanswered="0" type="Selection" operator="Some">
+			<value>772</value>
+		</expression>
+		<expression id="14202" name="demo1 = female" questionId="230" resultForUnanswered="0" type="Selection" operator="Some">
+			<value>773</value>
+		</expression>
+		<expression id="14203" name="Baseline background question completed" questionId="338" resultForUnanswered="1" type="Selection" operator="None">
+			<value>1130</value>
+		</expression>
+		<expression id="14204" name="Assignment = test" questionId="455" resultForUnanswered="0" type="Selection" operator="Some">
+			<value>1546</value>
+		</expression>
+	</expressions>
+</study>

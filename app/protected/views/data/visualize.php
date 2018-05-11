@@ -1,13 +1,18 @@
 <?php
-$interviewId = ''; $expressionId = 0; $params = "";
+$interviewId = ''; $expressionId = 0; $params = ""; $starExpressionId = 0;
 if(isset($_GET['interviewId']) && $_GET['interviewId'])
     $interviewId = $_GET['interviewId'];
 
 if(isset($_GET['expressionId']) && $_GET['expressionId'])
     $expressionId = $_GET['expressionId'];
 
+if(isset($_GET['starExpressionId']) && $_GET['starExpressionId'])
+    $starExpressionId = $_GET['starExpressionId'];
+
 if(isset($_GET['params']) && $_GET['params'])
     $params = $_GET['params'];
+
+
 
 ?>
     <script>
@@ -36,7 +41,7 @@ echo "<h3 class='margin-top-10'>".CHtml::link("Analysis &nbsp| &nbsp", $this->cr
                 <?php
                 $list = array();
                 foreach($alter_pair_expressions as $expression){
-                    $list[$expression['id']] = substr($expression['name'], 0 , 30);
+                    $list[$expression->id] = substr($expression->name, 0 , 30);
                 }
                 echo CHtml::dropDownList(
                     'loadAdj',
@@ -54,9 +59,9 @@ echo "<h3 class='margin-top-10'>".CHtml::link("Analysis &nbsp| &nbsp", $this->cr
     </div>
 
 
-<?php if($expressionId): ?>
+<?php if($interviewId): ?>
     <div id="visualizePlugin" class="col-sm-8 pull-right">
-        <?php $this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$expressionId, 'params'=>$params)); ?>
+        <?php $this->widget('plugins.visualize', array('method'=>$interviewId, 'id'=>$expressionId, 'event'=>$starExpressionId, 'params'=>$params)); ?>
     </div>
 
     <div id="visualize-bar" class="col-sm-4 pull-left">

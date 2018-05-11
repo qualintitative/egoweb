@@ -3,6 +3,25 @@
 ?>
 <h1><?php echo $model->subjectType; ?> Questions</h1>
 
+
+<?php
+$ap = Question::model()->findByAttributes(array("studyId"=>$study->id, "subjectType" => "NAME_GENERATOR"));
+if(!$ap){
+?>
+<div class="alert">
+    This is study is using the old format.
+<?php
+    echo CHtml::button(
+        CHtml::encode('Convert'),
+        array("onclick"=>"document.location.href='" . CController::createUrl('convert', array('id'=>$study->id)) ."'", 'class'=>"btn btn-danger btn-sm")
+    );
+?>
+</div>
+<?php
+}
+ ?>
+
+
 <?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/summernote.js'); ?>
 
 <script>
@@ -15,9 +34,24 @@ function changeAType(answerSelect) {
 		value = 'TIME_SPAN';
 		$(".weeks").hide();
 	}
-	var model_id = $(answerSelect).attr('id').substring(2);
-	$('.panel-' + model_id).hide();
+    var model_id = $(answerSelect).attr('id').substring(2);
+    if(value == 'NAME_GENERATOR'){
+        $(".askingStyle").hide();
+        $('#a-' + model_id).val("TEXTUAL");
+        $('#a-' + model_id).prop('disabled', true);
+    }else{
+        $(".askingStyle").show();
+        $('#a-' + model_id).prop('disabled', false);
+    }
+    if( $(answerSelect).attr('id').match("a")){
+      $('.panel-' + model_id).hide();
+      $('.panel-' + model_id + " input").prop('disabled', true);
+      $('.panel-' + model_id + " select").prop('disabled', true);
+    }
 	$('.panel-' + model_id + "#" +value).show();
+  $('.panel-' + model_id + "#" +value + " input").prop('disabled', false);
+  $('.panel-' + model_id + "#" +value + " select").prop('disabled', false);
+
 }
 
 function changeStyle(styleSelect, model_id, subjectType) {

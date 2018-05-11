@@ -76,20 +76,11 @@ echo CHtml::dropdownlist(
 <br clear=all>
 <br clear=all>
 
-
 <div class="panel panel-info">
-    <div class="panel-heading">
-        Export Study
-    </div>
-
-    <div class="panel-body">
-        
-<script>
-function getInterviews(dropdown){
-	$.get('/importExport/ajaxinterviews/' + dropdown.val(), function(data){$('#interviews').html(data);});
-}
-
-</script>
+  <div class="panel-heading">
+    Export Study
+  </div>
+  <div class="panel-body">
 <?php
 // export study
 $form=$this->beginWidget('CActiveForm', array(
@@ -99,32 +90,289 @@ $form=$this->beginWidget('CActiveForm', array(
 ));
 $criteria=new CDbCriteria;
 $criteria->order = 'name';
-
 echo CHtml::dropdownlist(
 	'studyId',
 	'',
 	CHtml::listData(Study::model()->findAll($criteria),'id', 'name'),
 	                array(
                         'empty' => 'Select',
-                        'onchange'=>"js:getInterviews(\$(this))",
+                        'onchange'=>"js:getInterviews(\$(this), '#export-interviews')",
                         'class'=>'form-control'
                     )
 
 );
-echo "<br><br>";
-echo " Include Responses<br><br>";
 ?>
-    <div id="interviews"></div>
-        <div class="form-group">
-            <div class="col-lg-4 ">
-                <button class="btn btn-info">Export</button>
-            </div>
-        </div>
-    <?php $this->endWidget(); ?>
+    <div id="export-interviews"></div>
+    <div class="form-group">
+      <div class="col-lg-4 ">
+        <button class="btn btn-info">Export</button>
+      </div>
     </div>
+    <?php $this->endWidget(); ?>
+  </div>
 </div>
 
-<script type="text/javascript">
+<div class="panel panel-info">
+  <div class="panel-heading">
+    Save External Server Credentials
+  </div>
+  <div class="panel-body">
+    <?php
+    // export study
+    $form=$this->beginWidget('CActiveForm', array(
+        'id'=>'sendForm',
+        'enableAjaxValidation'=>false,
+    ));
+    ?>
+    <div class="form-group">
+      <label class="col-sm-2">User Name</label>
+      <div class='col-sm-4'>
+        <input class="form-control" id="userName" name="Server[username]">
+      </div>
+      <label class="col-sm-2">Password</label>
+      <div class='col-sm-4'>
+        <input type="password" class="form-control" id="userPass"  name="Server[password]">
+      </div>
+    </div>
+      <br>
+      <div class="form-group">
+        <label class="col-sm-2">Server Address</label>
+        <div class='col-sm-8'>
+          <input class="form-control" name="Server[address]" id="sAddress">
+        </div>
+        <div class="col-sm-2">
+          <button  class="btn btn-success" onclick="authenticate(); return false;">Save</button>
+        </div>
+      </div>
+      <?php $this->endWidget(); ?>
+    </div>
+  </div>
+
+<div class="panel panel-info">
+  <div class="panel-heading">
+    Send Study to Server
+  </div>
+  <div class="panel-body">
+<?php
+// export study
+$form=$this->beginWidget('CActiveForm', array(
+    'id'=>'syncForm',
+    'enableAjaxValidation'=>false,
+));
+$criteria=new CDbCriteria;
+$criteria->order = 'name';
+?>
+<div class="form-group">
+  <label class="col-sm-2">Server Address</label>
+  <div class='col-sm-10'>
+    <?php echo CHtml::dropdownlist(
+    	'serverId',
+    	'',
+    	CHtml::listData(Server::model()->findAll(),'id', 'address'),
+        array(
+              'id'=>'serverAddress',
+              'empty' => 'Select',
+              'class'=>'form-control'
+        )
+    );
+    ?>
+  </div>
+</div>
+<br>
+<div class="form-group">
+  <label class="col-sm-2">Study</label>
+  <div class='col-sm-10'>
+<?php echo CHtml::dropdownlist(
+	'studyId',
+	'',
+	CHtml::listData(Study::model()->findAll($criteria),'id', 'name'),
+    array(
+          'id'=>'sendStudy',
+          'empty' => 'Select',
+          'onchange'=>"js:getInterviews(\$(this),'#send-interviews')",
+          'class'=>'form-control'
+    )
+);
+?>
+</div>
+<br>
+
+
+
+    <div id="send-interviews"></div>
+
+    <div id="sendNotice" class="col-sm-12 alert alert-success" style="display:none"></div>
+    <div id="sendError" class="col-sm-12 alert alert-danger" style="display:none"></div>
+    <div class="progress" style="clear:both">
+      <div class="progress-bar progress-bar-striped active" role="progressbar"
+      aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
+      </div>
+    </div>
+    <div class="col-sm-2"  style="clear:both">
+      <button id="sendSync" class="btn btn-info" onclick="getData();return false;">Send</button>
+    </div>
+    <?php $this->endWidget(); ?>
+    <textarea id="sendJson" class="hidden"></textarea>
+  </div>
+</div>
+
+<script>
+servers = <?php echo json_encode($servers); ?>;
+function getInterviews(dropdown, container){
+	$.get('/importExport/ajaxinterviews/' + dropdown.val(), function(data){
+    $("#sendError").hide();
+    $("#sendNotice").hide();
+    $(container).html(data);
+  });
+}
+function authenticate(){
+  url = $("#sAddress").val();
+  if(!url.match("http"))
+    url = "http://" + url;
+  $.ajax({
+    type: "POST",
+    url:  url  +  '/mobile/authenticate/',
+    data: {"LoginForm[username]":$("#userName").val(),"LoginForm[password]":$("#userPass").val()},
+    success: function(msg){
+      if(msg != "failed"){
+        $("#sendForm").submit();
+      }else{
+        alert("Authentication failed");
+      }
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) {
+      alert("Can't connect to server");
+    }
+  });
+}
+var studies = [];
+function getData(){
+  var finished = 0;
+  $(".progress-bar").width(0);
+  $("#sendError").hide();
+  $("#sendNotice").show();
+  $("#sendNotice").html("Preparing data to send..");
+  $("#sendSync").prop("disabled", true);
+  var total = $("#send-interviews .export:checked").length;
+  var batchSize = 1;
+  var interviews = $("#send-interviews .export:checked");
+  var batchPromiseRecursive = function() {
+    // note splice is destructive, removing the first batch off
+    // the array
+    //var batch = studies.splice(0, batchSize);
+    if (interviews.length == 0) {
+      return $.Deferred().resolve().promise();
+    }
+    var thisInt = interviews.splice(0, batchSize);
+
+    console.log($(thisInt).val());
+
+
+    return $.post('/importExport/send/' + $("#sendStudy option:selected").val(), {"YII_CSRF_TOKEN":$("input[name='YII_CSRF_TOKEN']").val(), "serverId":$("#serverAddress option:selected").val(), "export[]":$(thisInt).val()})
+      .done(function(res) {
+        $("#sendNotice").html($("#sendNotice").html() + "<br>" + "Prepared interview... ");
+        if(!servers[$("#serverAddress option:selected").val()].ADDRESS.match("http"))
+          servers[$("#serverAddress option:selected").val()].ADDRESS = 'http://'+ servers[$("#serverAddress option:selected").val()].ADDRESS;
+        $("#sendJson").val(res);
+        $.ajax({
+          type: "POST",
+          url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
+          data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
+          success: function(msg){
+            finished++;
+            msg = "Processed " + finished + " / " + total + " interviews: " + msg;
+            $(".progress-bar").width((finished / total * 100) + "%");
+            $("#sendError").hide();
+            $("#sendNotice").show();
+            $("#sendNotice").html($("#sendNotice").html() + "<br>" + msg);
+          },
+          error: function(XMLHttpRequest, textStatus, errorThrown) {
+            $("#sendNotice").hide();
+            $("#sendError").show();
+            $("#sendError").html("Failed");
+          }
+        });
+        // Do something after each batch finishes.
+        // Update a progress bar is probably a good idea.
+      })
+      .fail(function(e) {
+        // if a batch fails, say server returns 500,
+        // do something here.
+      })
+      .then(function() {
+        return batchPromiseRecursive();
+      });
+  }
+
+
+  batchPromiseRecursive().then(function() {
+    console.log(studies);
+    $("#sendSync").prop("disabled", false);
+
+    // something to do when it's all over.
+
+      //  var total = studies.length + 1;
+      /*
+        $("#sendJson").val(JSON.stringify(firstStudy));
+        $.ajax({
+          type: "POST",
+          url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
+          data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
+          success: function(msg){
+            finished++;
+            msg = "Processed " + finished + " / " + total + " interviews: " + msg;
+            $(".progress-bar").width((finished / total * 100) + "%");
+            $("#sendError").hide();
+            $("#sendNotice").show();
+            $("#sendNotice").html($("#sendNotice").html() + "<br>" + msg);
+            studies.forEach(function(data) {
+              $("#sendJson").val(JSON.stringify(data));
+              $.ajax({
+                type: "POST",
+                url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
+                data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
+                success: function(msg){
+                  finished++;
+                  msg = "Processed " + finished + " / " + total + " interviews: " + msg;
+                  $(".progress-bar").width((finished / total * 100) + "%");
+                  $("#sendError").hide();
+                  $("#sendNotice").show();
+                  $("#sendNotice").html($("#sendNotice").html() + "<br>" + msg);
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                  $("#sendNotice").hide();
+                  $("#sendError").show();
+                  $("#sendError").html("Failed");
+                }
+              });
+            });
+            $("#sendNotice").html($("#sendNotice").html() + "<br>" + "Done!");
+            $("#sendSync").prop("disabled", false);
+          },
+          error: function(XMLHttpRequest, textStatus, errorThrown) {
+            $("#sendNotice").hide();
+            $("#sendError").show();
+            $("#sendError").html("Failed");
+            $("#sendSync").prop("disabled", false);
+          }
+        });
+        */
+  });
+
+
+  /*
+  $("#send-interviews .export:checked").each(function(){
+    var intId = $(this).val();
+    $.post('/importExport/send/' + $("#sendStudy option:selected").val(), {"YII_CSRF_TOKEN":$("input[name='YII_CSRF_TOKEN']").val(), "serverId":$("#serverAddress option:selected").val(), "export[]":intId}, function(res){
+      $("#sendNotice").html($("#sendNotice").html() + "<br>" + "Prepared interview #" + intId);
+      if(!servers[$("#serverAddress option:selected").val()].ADDRESS.match("http"))
+        servers[$("#serverAddress option:selected").val()].ADDRESS = 'http://'+ servers[$("#serverAddress option:selected").val()].ADDRESS;
+      studies.push(JSON.parse(res).shift());
+    });
+  });
+*/
+}
+
 //On import study form submit
 /*
 $( "#importForm" ).submit(function( event) {
@@ -156,4 +404,6 @@ $( "#importForm" ).submit(function( event) {
         return false;
     }
 });*/
+
+
 </script>

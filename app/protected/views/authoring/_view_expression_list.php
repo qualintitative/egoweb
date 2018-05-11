@@ -5,6 +5,8 @@
 	<b><?php
 	if($data->type == "Text" || $data->type == "Number" || $data->type == "Selection")
 		$form = "_form_expression_text";
+    else if($data->type == "Name Generator")
+    	$form = "_form_expression_name_gen";
 	else
 		$form = "_form_expression_". strtolower($data->type);
 	if($data->type == "Comparison"){
