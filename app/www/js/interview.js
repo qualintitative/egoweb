@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 var app = angular.module('egowebApp', ['ngRoute', 'autocomplete']);
 
 app.config(function ($routeProvider) {
@@ -55,7 +54,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams','$sce', 
     $scope.conclusion = false;
     $scope.redirect = false;
     $scope.participants = [];
-    
+
     if(typeof hashKey != "undefined"){
         $scope.hashKey = hashKey;
     }else{
@@ -2675,7 +2674,7 @@ function fixHeader(){
     columnWidths();
 	// Set this variable with the height of your sidebar + header
 	var offsetLeft = parseInt($("#content").css("margin-left")) + parseInt($("#content").css("padding-left"))
-	var offsetPixels = $(".navbar").height(); 
+	var offsetPixels = $(".navbar").height();
     $("#content").css({"background-attachment":"fixed"});
     if(!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
     	$(window).scroll(function(event) {
@@ -5362,4 +5361,3 @@ function unfixHeader() {
   $(window).unbind('touchmove');
   $(window).unbind('resize');
 }
->>>>>>> dev
