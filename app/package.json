@@ -9,7 +9,7 @@
     ]
   },
   "dependencies": {
-    "cordova-android": "^7.0.0",
+    "cordova-android": "^6.2.0",
     "cordova-ios": "~4.5.4"
   }
 }
