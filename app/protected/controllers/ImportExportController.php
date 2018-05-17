@@ -471,9 +471,9 @@ class ImportExportController extends Controller
     									$params = json_decode(htmlspecialchars_decode($value), true);
     									if($params){
     										foreach($params as $k => &$param){
-    											if(is_numeric($param['questionId']))
+    											if(isset($param['questionId']) && is_numeric($param['questionId']))
     												$param['questionId'] = $newQuestionIds[intval($param['questionId'])];
-    											if(count($param['options']) > 0){
+    											if(isset($param['options']) && count($param['options']) > 0){
     												foreach($param['options'] as &$option){
     													$option['id'] = $newOptionIds[intval($option['id'])];
     												}
