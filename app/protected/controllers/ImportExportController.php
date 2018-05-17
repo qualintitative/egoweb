@@ -174,9 +174,9 @@ class ImportExportController extends Controller
             				$newAlterPrompt->questionId = $newQuestionIds[intval($value)];
                 }
               }
-              $newAlterPrompt->studyId = $newStudyId;
+              $newAlterPrompt->studyId = $newStudy->id;
               if(!$newAlterPrompt->save()){
-                print_r($newStudy->attributes);
+                print_r($newAlterPrompt->attributes);
                 echo "Alter prompt: $newStudy->id : $newAlterPrompt->afterAltersEntered :" . print_r($newAlterPrompt->errors);
               }
             }
@@ -322,6 +322,7 @@ class ImportExportController extends Controller
         		}
 
     		}else{
+
                 $questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
                 foreach ($questions as $question) {
                     $qIds[$question->title] = $question->id;
@@ -355,19 +356,19 @@ class ImportExportController extends Controller
 
 
     		if(count($study->interviews) != 0){
+          echo "new study $newStudy->id";
     			foreach($study->interviews->interview as $interview){
     				$newAlterIds = array();
     				$newInterview = new Interview;
-    				$newInterview->studyId = $newStudy->id;
     				foreach($interview->attributes() as $key=>$value){
     					if($key == "id")
     						$oldInterviewId = $value;
     					if($key!="key" && $key != "id")
     						$newInterview->$key = $value;
     				}
-    				$newInterview->studyId = $newStudyId;
+            $newInterview->studyId = $newStudy->id;
     				if(!$newInterview->save()){
-    					echo "New interview: " .  print_r($newInterview->errors);
+    					echo "New interview error: " .  print_r($newInterview->errors);
     				}else{
               $newInterviewId = Yii::app()->db->getLastInsertID();
     					$newInterviewIds[intval($oldInterviewId)] =  $newInterviewId;
@@ -558,7 +559,7 @@ class ImportExportController extends Controller
         						}
     						}
 
-    						$newAnswer->studyId = $newStudyId;
+    						$newAnswer->studyId = $newStudy->id;
                 $newAnswer->interviewId = $newInterviewId;
 
     						if(!isset($newQuestionIds[$oldQId]) || !$newQuestionIds[$oldQId])
@@ -569,7 +570,7 @@ class ImportExportController extends Controller
     							echo $oldQId . "<br>";
     							echo $newQuestionIds[$oldQId]."<br>";
     							print_r($newQuestionIds);
-    							print_r($newAnswer);
+    							print_r($newAnswer->errors);
     							die();
     						}
     					}
@@ -603,7 +604,7 @@ class ImportExportController extends Controller
     			}
     		}
         }
-		$this->redirect(array('/authoring/edit','id'=>$newStudyId));
+		$this->redirect(array('/authoring/edit','id'=>$newStudy->id));
 
 	}
 
