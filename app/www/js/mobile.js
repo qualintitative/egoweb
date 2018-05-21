@@ -1001,6 +1001,7 @@ function save(questions, page, url, scope){
                         var insert = objToArray(answers[array_id]);
                         txn.executeSql('INSERT INTO answer VALUES (' + Array(insert.length).fill("?").join(",") + ')', insert, function(tx, res){
                             answers[array_id].ID = res.insertId;
+                            evalQuestions();
                         }, function(tx, error){
                             console.log(tx);
                             console.log(error);
@@ -1012,6 +1013,7 @@ function save(questions, page, url, scope){
                       console.log("updating answer")
                         txn.executeSql('UPDATE answer SET VALUE = ?, SKIPREASON = ?, OTHERSPECIFYTExT = ? WHERE ID = ?', [answers[array_id].VALUE, answers[array_id].SKIPREASON, answers[array_id].OTHERSPECIFYTEXT, answers[array_id].ID], function(tx, res){
                             console.log("answer " + array_id + " updated to " + answers[array_id].VALUE);
+                            evalQuestions();
                         });
                     }
                 }
@@ -1019,8 +1021,10 @@ function save(questions, page, url, scope){
             if(typeof post.CONCLUSION != "undefined" && post.CONCLUSION == 1){
                 txn.executeSql('UPDATE interview SET COMPLETED = ?, COMPLETE_DATE = ? WHERE ID = ?', [-1, Math.round(Date.now()/1000), interviewId], function(tx, res){
                     for(k in interviews[study.ID]){
-                        if(interviews[study.ID][k].ID == interviewId)
+                        if(interviews[study.ID][k].ID == interviewId){
                             interviews[study.ID][k].COMPLETED = -1;
+                            interviews[study.ID][k].COMPLETE_DATE = Math.round(Date.now()/1000);
+                        }
                     }
                     console.log("interview " + interviewId + " completed");
                 });

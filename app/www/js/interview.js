@@ -1411,7 +1411,7 @@ function qFromList(pageNumber) {
     currentPage = i;
     return masterList[0];
   }
-  for (k in masterList) {
+  for (var k in masterList) {
     questions = {};
     var proceed = false;
     if (!!~jQuery.inArray(parseInt(k), evalQIndex)) {

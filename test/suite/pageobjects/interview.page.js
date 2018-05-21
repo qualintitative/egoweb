@@ -378,7 +378,7 @@ var IwPage = Object.create(Page, {
                     max = val;
                 }
             });
-
+            console.log(browser.options.egoweb.reuseInterview, max)
             if(browser.options.egoweb.reuseInterview == true && max != 0){
 
                 // opens most recent interview
