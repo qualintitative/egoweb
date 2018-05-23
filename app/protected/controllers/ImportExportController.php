@@ -199,7 +199,7 @@ class ImportExportController extends Controller
     					if($newExpression->questionId != "" && isset($newQuestionIds[intval($newExpression->questionId)]))
     						$newExpression->questionId = $newQuestionIds[intval($newExpression->questionId)];
 
-    					$newExpression->value = $expression->value;
+    					//$newExpression->value = $expression->value;
     					if(!$newExpression->save())
     						echo "Expression: " . print_r($newExpression->getErrors());
     					else
@@ -220,9 +220,14 @@ class ImportExportController extends Controller
     					// reference the correct question, since we're not using old ids
     					if($newExpression->type == "Selection"){
     						$optionIds = explode(',', $newExpression->value);
+
     						foreach($optionIds as &$optionId){
-    							if(is_numeric($optionId) && isset($newOptionIds[$optionId]))
-    								$optionId = $newOptionIds[$optionId];
+    							if(is_numeric($optionId) && isset($newOptionIds[$optionId])){
+                    echo $newOptionIds[$optionId];
+                    $optionId = $newOptionIds[$optionId];
+
+                  }
+
     						}
     						$newExpression->value = implode(',', $optionIds);
     					} else if($newExpression->type == "Counting"){
