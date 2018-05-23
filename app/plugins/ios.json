@@ -12,6 +12,9 @@
     },
     "cordova-plugin-statusbar": {
       "PACKAGE_NAME": "com.rand.egowebmoble"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "com.rand.egowebmoble"
     }
   },
   "dependent_plugins": {}

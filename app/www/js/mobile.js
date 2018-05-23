@@ -22,10 +22,14 @@ var checkPlugin = setInterval(function(){ loadPlugin() }, 100);
 
 function loadPlugin() {
     if(typeof window.cordova != "undefined"){
-        if(sqlitePlugin != "undefined"){
+        if(typeof sqlitePlugin != "undefined"){
+          if(window.cordova.platformId == "android"){
+            db = openDatabase('egoweb', '1.0', 'egoweb database', 5 * 1024 * 1024);
+          }else{
             db = sqlitePlugin.openDatabase({name: 'egoweb.db', location:"default"});
-            clearInterval(checkPlugin);
-            loadDb();
+          }
+          clearInterval(checkPlugin);
+          loadDb();
         }else{
             console.log("plugin still needs to load");
         }
@@ -34,6 +38,29 @@ function loadPlugin() {
         clearInterval(checkPlugin);
         loadDb();
     }
+}
+
+function fillQs(arr, value) {
+
+    var O = arr.slice(0);
+    var len = parseInt( O.length, 10 );
+    var start = arguments[1];
+    var relativeStart = parseInt( start, 10 ) || 0;
+    var k = relativeStart < 0
+            ? Math.max( len + relativeStart, 0)
+            : Math.min( relativeStart, len );
+    var end = arguments[2];
+    var relativeEnd = end === undefined
+                      ? len
+                      : ( parseInt( end)  || 0) ;
+    var final = relativeEnd < 0
+                ? Math.max( len + relativeEnd, 0 )
+                : Math.min( relativeEnd, len );
+
+    for (; k < final; k++) {
+        O[k] = value;
+    }
+    return O;
 }
 
 function loadDb() {
@@ -244,7 +271,7 @@ app.factory("saveAlter", function($http, $q) {
             NAMEGENQIDS: $("#Alters_nameGenQIds").val()
         };
         console.log(newAlter);
-        var alterSQL = 'INSERT INTO alters VALUES (' +  Array(objToArray(newAlter).length).fill("?").join(",") + ')';
+        var alterSQL = 'INSERT INTO alters VALUES (' +  fillQs(objToArray(newAlter),"?").join(",") + ')';
     }
     db.transaction(function (txn) {
         txn.executeSql(alterSQL, objToArray(newAlter), function(tx, res){
@@ -700,12 +727,17 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
                 console.log(txn);
             },
             function(txn){
+              console.log(txn);
                 db.transaction(function (txn) {
                     data.study = objToArray(data.study);
                     data.study[28] = data.study[0];
                     data.study[0] = null;
                     data.study[27] = serverId;
-                    txn.executeSql('INSERT INTO study VALUES (' +  Array(data.study.length).fill("?").join(",") + ')', data.study, function(tx, res){
+                    console.log(txn);
+                    var fillQStr = fillQs(data.study,"?").join(",").toString();
+                    console.log('INSERT INTO study VALUES (' +  fillQStr + ')');
+                    console.log(data.study);
+                    txn.executeSql('INSERT INTO study VALUES (' +  fillQStr + ')', data.study, function(tx, res){
                         newId = res.insertId;
                         console.log("made new study " + newId);
                     });
@@ -740,7 +772,7 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
                         data.questions[k][9] = parseInt(data.questions[k][9]);
                         data.questions[k][20] = parseInt(data.questions[k][20]);
                         data.questions[k][23] = parseInt(data.questions[k][23]);
-                        txn.executeSql('INSERT INTO question VALUES (' + Array(data.questions[k].length).fill("?").join(",") + ')',  data.questions[k], function(){console.log("questions imported...");}, function(tx, res){console.log(tx);console.log(res);});
+                        txn.executeSql('INSERT INTO question VALUES (' + fillQs(data.questions[k], "?").join(",") + ')',  data.questions[k], function(){console.log("questions imported...");}, function(tx, res){console.log(tx);console.log(res);});
                     }
                     console.log("questions imported...");
                     for (k in data.options) {
@@ -748,26 +780,26 @@ app.controller('adminController', ['$scope', '$log', '$routeParams', '$sce', '$l
                         data.options[k][0] = parseInt(data.options[k][0]);
                         data.options[k][6] = parseInt(data.options[k][6]);
                         data.options[k][2] = newId;
-                        txn.executeSql('INSERT INTO questionOption VALUES (' + Array(data.options[k].length).fill("?").join(",") + ')',  data.options[k]);
+                        txn.executeSql('INSERT INTO questionOption VALUES (' + fillQs(data.options[k], "?").join(",") + ')',  data.options[k]);
                     }
                     console.log("options imported...");
                     for (k in data.expressions) {
                         data.expressions[k][0] = parseInt(data.expressions[k][0]);
                         data.expressions[k][7] = newId;
-                        txn.executeSql('INSERT INTO expression VALUES (' + Array(data.expressions[k].length).fill("?").join(",") + ')',  data.expressions[k]);
+                        txn.executeSql('INSERT INTO expression VALUES (' + fillQs(data.expressions[k], "?").join(",") + ')',  data.expressions[k]);
                     }
                     console.log("expressions imported...");
                     for (k in data.alterList) {
                         data.alterList[k][0] = parseInt(data.alterList[k][0]);
                         data.alterList[k][1] = newId;
-                        txn.executeSql('INSERT INTO alterList VALUES (' + Array(data.alterList[k].length).fill("?").join(",") + ')',  data.alterList[k]);
+                        txn.executeSql('INSERT INTO alterList VALUES (' + fillQs(data.alterList[k],"?").join(",") + ')',  data.alterList[k]);
                     }
                     console.log("alterList imported...");
                     for (k in data.alterPrompts) {
                         data.alterPrompts[k][0] = parseInt(data.alterPrompts[k][0]);
                         data.alterPrompts[k][1] = newId;
                         console.log(data.alterPrompts[k]);
-                        txn.executeSql('INSERT INTO alterPrompt VALUES (' + Array(data.alterPrompts[k].length).fill("?").join(",") + ')', data.alterPrompts[k]);
+                        txn.executeSql('INSERT INTO alterPrompt VALUES (' + fillQs(data.alterPrompts[k],"?").join(",") + ')', data.alterPrompts[k]);
                     }
                     console.log("alter prompts imported...");
                 },
@@ -910,7 +942,7 @@ function save(questions, page, url, scope){
             Math.round(Date.now()/1000),
             ''
         ];
-        var intSQL = 'INSERT INTO interview VALUES (' + Array(interview.length).fill("?").join(",") + ')';
+        var intSQL = 'INSERT INTO interview VALUES (' + fillQs(interview,"?").join(",") + ')';
     }else{
         var completed = parseInt(page) + 1;
         var interview = [completed, interviewId];
@@ -942,7 +974,7 @@ function save(questions, page, url, scope){
                                 ALTERLISTID: ''
                             };
                             var insert = objToArray(newAlter);
-                            txn.executeSql('INSERT INTO interview VALUES (' + Array(insert).fill("?").join(",") + ')', [], function(tx, res){
+                            txn.executeSql('INSERT INTO interview VALUES (' + fillQs(insert, "?").join(",") + ')', insert, function(tx, res){
                                 alters[res.insertId] = {
                                     ID: res.insertId,
                                     ACTIVE:1,
@@ -999,7 +1031,7 @@ function save(questions, page, url, scope){
                             ANSWERTYPE : answer.ANSWERTYPE
                         };
                         var insert = objToArray(answers[array_id]);
-                        txn.executeSql('INSERT INTO answer VALUES (' + Array(insert.length).fill("?").join(",") + ')', insert, function(tx, res){
+                        txn.executeSql('INSERT INTO answer VALUES (' + fillQs(insert,"?").join(",") + ')', insert, function(tx, res){
                             answers[array_id].ID = res.insertId;
                             evalQuestions();
                         }, function(tx, error){
@@ -1068,7 +1100,7 @@ function saveSkip(interviewId, questionId, alterId1, alterId2, arrayId)
     };
     var insert = objToArray(answers[array_id]);
     db.transaction(function (txn) {
-        txn.executeSql('INSERT INTO answer VALUES (' + Array(insert.length).fill("?").join(",") + ')', insert, function(tx, res){
+        txn.executeSql('INSERT INTO answer VALUES (' + fillQs(insert,"?").join(",") + ')', insert, function(tx, res){
         });
     });
 }
@@ -1081,7 +1113,7 @@ function saveNodes() {
 	$("#Graph_nodes").val(JSON.stringify(nodes));
     var post = node.objectify($('#graph-form'));
     if(typeof graphs[expressionId] == "undefined"){
-        var graphSQL = 'INSERT INTO graphs VALUES (' + Array(insert.length).fill("?").join(",") + ')';
+        var graphSQL = 'INSERT INTO graphs VALUES (' + fillQs(insert,"?").join(",") + ')';
         var insert = graphs[expressionId];
         insert.ID = null;
     }else{
