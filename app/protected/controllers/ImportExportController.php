@@ -91,7 +91,7 @@ class ImportExportController extends Controller
     					}
     					$newAlterList->studyId = $newStudy->id;
     					if(!$newAlterList->save()){
-    						echo "Alter list: $newAlterList->name :" . print_r($newAlterPrompt->errors);
+    						echo "Alter list: $newAlterList->name :" . print_r($newAlterList->errors);
     						die();
     						}
     				}
@@ -172,6 +172,8 @@ class ImportExportController extends Controller
                 if($key == "questionId"){
                   if(isset($newQuestionIds[intval($value)]))
             				$newAlterPrompt->questionId = $newQuestionIds[intval($value)];
+                  else
+                    $newAlterPrompt->questionId = 0;
                 }
               }
               $newAlterPrompt->studyId = $newStudy->id;
