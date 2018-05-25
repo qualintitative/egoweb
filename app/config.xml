@@ -19,6 +19,7 @@
     <allow-intent href="*" />
     <preference name="android-targetSdkVersion" value="18" />
     <preference name="android-minSdkVersion" value="18" />
+    <icon src="www/icons/icon.png" />
     <platform name="ios">
         <config-file parent="NSAppTransportSecurity" target="*-Info.plist">
             <array>
