@@ -83,7 +83,7 @@ class Interview extends CActiveRecord
             'id' => 'ID',
             'random_key' => 'Random Key',
             'active' => 'Active',
-            'studyId' => 'Study',
+            'studyId' => 'Interview Study ID',
             'completed' => 'Completed',
         );
     }

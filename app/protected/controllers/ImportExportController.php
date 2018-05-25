@@ -91,7 +91,7 @@ class ImportExportController extends Controller
     					}
     					$newAlterList->studyId = $newStudy->id;
     					if(!$newAlterList->save()){
-    						echo "Alter list: $newAlterList->name :" . print_r($newAlterPrompt->errors);
+    						echo "Alter list: $newAlterList->name :" . print_r($newAlterList->errors);
     						die();
     						}
     				}
@@ -172,11 +172,13 @@ class ImportExportController extends Controller
                 if($key == "questionId"){
                   if(isset($newQuestionIds[intval($value)]))
             				$newAlterPrompt->questionId = $newQuestionIds[intval($value)];
+                  else
+                    $newAlterPrompt->questionId = 0;
                 }
               }
-              $newAlterPrompt->studyId = $newStudyId;
+              $newAlterPrompt->studyId = $newStudy->id;
               if(!$newAlterPrompt->save()){
-                print_r($newStudy->attributes);
+                print_r($newAlterPrompt->attributes);
                 echo "Alter prompt: $newStudy->id : $newAlterPrompt->afterAltersEntered :" . print_r($newAlterPrompt->errors);
               }
             }
@@ -199,7 +201,7 @@ class ImportExportController extends Controller
     					if($newExpression->questionId != "" && isset($newQuestionIds[intval($newExpression->questionId)]))
     						$newExpression->questionId = $newQuestionIds[intval($newExpression->questionId)];
 
-    					$newExpression->value = $expression->value;
+    					//$newExpression->value = $expression->value;
     					if(!$newExpression->save())
     						echo "Expression: " . print_r($newExpression->getErrors());
     					else
@@ -220,9 +222,14 @@ class ImportExportController extends Controller
     					// reference the correct question, since we're not using old ids
     					if($newExpression->type == "Selection"){
     						$optionIds = explode(',', $newExpression->value);
+
     						foreach($optionIds as &$optionId){
-    							if(is_numeric($optionId) && isset($newOptionIds[$optionId]))
-    								$optionId = $newOptionIds[$optionId];
+    							if(is_numeric($optionId) && isset($newOptionIds[$optionId])){
+                    echo $newOptionIds[$optionId];
+                    $optionId = $newOptionIds[$optionId];
+
+                  }
+
     						}
     						$newExpression->value = implode(',', $optionIds);
     					} else if($newExpression->type == "Counting"){
@@ -282,15 +289,15 @@ class ImportExportController extends Controller
             				$params = json_decode(htmlspecialchars_decode($question->networkParams), true);
             				if($params){
             					foreach($params as $k => &$param){
-            						if(stristr($param['questionId'], "expression")){
+            						if(isset($param['questionId']) && stristr($param['questionId'], "expression")){
             							list($label, $expressionId) = explode("_", $param['questionId']);
             							if(isset($newExpressionIds[intval($expressionId)]))
             								$expressionId = $newExpressionIds[intval($expressionId)];
             							$param['questionId'] = "expression_" . $expressionId;
             						}else{
-            							if(is_numeric($param['questionId']) && isset($newQuestionIds[intval($param['questionId'])]))
+            							if(isset($param['questionId']) && is_numeric($param['questionId']) && isset($newQuestionIds[intval($param['questionId'])]))
             								$param['questionId'] = $newQuestionIds[intval($param['questionId'])];
-            							if(count($param['options']) > 0){
+            							if(isset($param['options']) && count($param['options']) > 0){
             								foreach($param['options'] as &$option){
             									if(isset($newOptionIds[intval($option['id'])]))
             										$option['id'] = $newOptionIds[intval($option['id'])];
@@ -322,6 +329,7 @@ class ImportExportController extends Controller
         		}
 
     		}else{
+
                 $questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
                 foreach ($questions as $question) {
                     $qIds[$question->title] = $question->id;
@@ -355,19 +363,19 @@ class ImportExportController extends Controller
 
 
     		if(count($study->interviews) != 0){
+          echo "new study $newStudy->id";
     			foreach($study->interviews->interview as $interview){
     				$newAlterIds = array();
     				$newInterview = new Interview;
-    				$newInterview->studyId = $newStudy->id;
     				foreach($interview->attributes() as $key=>$value){
     					if($key == "id")
     						$oldInterviewId = $value;
     					if($key!="key" && $key != "id")
     						$newInterview->$key = $value;
     				}
-    				$newInterview->studyId = $newStudyId;
+            $newInterview->studyId = $newStudy->id;
     				if(!$newInterview->save()){
-    					echo "New interview: " .  print_r($newInterview->errors);
+    					echo "New interview error: " .  print_r($newInterview->errors);
     				}else{
               $newInterviewId = Yii::app()->db->getLastInsertID();
     					$newInterviewIds[intval($oldInterviewId)] =  $newInterviewId;
@@ -471,9 +479,9 @@ class ImportExportController extends Controller
     									$params = json_decode(htmlspecialchars_decode($value), true);
     									if($params){
     										foreach($params as $k => &$param){
-    											if(is_numeric($param['questionId']))
+    											if(isset($param['questionId']) && is_numeric($param['questionId']))
     												$param['questionId'] = $newQuestionIds[intval($param['questionId'])];
-    											if(count($param['options']) > 0){
+    											if(isset($param['options']) && count($param['options']) > 0){
     												foreach($param['options'] as &$option){
     													$option['id'] = $newOptionIds[intval($option['id'])];
     												}
@@ -558,7 +566,7 @@ class ImportExportController extends Controller
         						}
     						}
 
-    						$newAnswer->studyId = $newStudyId;
+    						$newAnswer->studyId = $newStudy->id;
                 $newAnswer->interviewId = $newInterviewId;
 
     						if(!isset($newQuestionIds[$oldQId]) || !$newQuestionIds[$oldQId])
@@ -569,7 +577,7 @@ class ImportExportController extends Controller
     							echo $oldQId . "<br>";
     							echo $newQuestionIds[$oldQId]."<br>";
     							print_r($newQuestionIds);
-    							print_r($newAnswer);
+    							print_r($newAnswer->errors);
     							die();
     						}
     					}
@@ -603,7 +611,7 @@ class ImportExportController extends Controller
     			}
     		}
         }
-		$this->redirect(array('/authoring/edit','id'=>$newStudyId));
+		$this->redirect(array('/authoring/edit','id'=>$newStudy->id));
 
 	}
 
