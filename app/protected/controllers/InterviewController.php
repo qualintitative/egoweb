@@ -102,6 +102,30 @@ class InterviewController extends Controller
 	 */
 	public function actionView($id)
 	{
+        if($id == 0 && isset($_GET["study"])){
+          $study = Study::model()->findByAttributes(array("name"=>$_GET["study"]));
+          $interview = new Interview;
+          $interview->studyId = $study->id;
+          if($interview->save()){
+            $interviewId = $interview->id;
+            $egoQs = Question::model()->findAllByAttributes(array("subjectType"=>"EGO_ID", "studyId"=>$study->id));
+            foreach($egoQs as $q){
+              if(!isset($_GET[$q->title]))
+                continue;
+              $a = $q->id;
+              $answers[$a] = new Answer;
+              $answers[$a]->interviewId = $interview->id;
+              $answers[$a]->studyId = $study->id;
+              $answers[$a]->questionType = "EGO_ID";
+              $answers[$a]->answerType = $q->subjectType;
+              $answers[$a]->questionId = $q->id;
+              $answers[$a]->skipReason = "NONE";
+              $answers[$a]->value = $_GET[$q->title];
+              $answers[$a]->save();
+            }
+            $this->redirect("/interview/".$study->id."/". $interview->id . "/#/page/1/");
+          }
+        }
         $study = Study::model()->findByPk($id);
         if ($study->multiSessionEgoId){
             $criteria = array(
