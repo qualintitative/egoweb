@@ -485,10 +485,11 @@ td{
   .prev-alters {
     min-height: 100px!important;
   }
-  .ng-scope label {
-    width:auto;
-    max-width:90%;
-  }
+}
+
+.ng-scope label {
+  width:auto;
+  max-width:90%;
 }
 
 #topbar h3{
