@@ -492,6 +492,11 @@ td{
   max-width:90%;
 }
 
+.ng-scope input[type='checkbox'] {
+  margin-top:10px;
+  vertical-align:top;
+}
+
 #topbar h3{
 	padding-top:15px;
 }
