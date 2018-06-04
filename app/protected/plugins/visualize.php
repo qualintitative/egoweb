@@ -230,12 +230,14 @@ class visualize extends Plugin
 			foreach($this->params['edgeColor']['options'] as $option){
                 if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
                     return $option['color'];
-				if($option['id']== $answerV || in_array($option['id'], $answerV))
+				if($option['id']== $answerV || (is_array($answerV) && in_array($option['id'], $answerV)))
 					return $option['color'];
 			}
-      foreach($this->params['egoEdgeColor']['options'] as $option){
-        if($option['id']== $answerV || in_array($option['id'], $answerV))
-          return $option['color'];
+      if(isset($this->params['egoEdgeColor']['options'] )){
+        foreach($this->params['egoEdgeColor']['options'] as $option){
+          if($option['id']== $answerV || in_array($option['id'], $answerV))
+            return $option['color'];
+        }
       }
 		}
 		return $default;
@@ -264,9 +266,11 @@ class visualize extends Plugin
 				if($option['id'] == $answerV || in_array($option['id'], $answerV))
 					$default = floatval($option['size']);
 			}
-      foreach($this->params['egoEdgeSize']['options'] as $option){
-        if($option['id']== $answerV || in_array($option['id'], $answerV))
-          return $option['size'];
+      if(isset($this->params['egoEdgeSize']['options'])){
+        foreach($this->params['egoEdgeSize']['options'] as $option){
+          if($option['id']== $answerV || in_array($option['id'], $answerV))
+            return $option['size'];
+        }
       }
 		}
 		return $default;
