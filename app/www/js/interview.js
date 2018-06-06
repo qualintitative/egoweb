@@ -1630,6 +1630,8 @@ function countQuestion(questionId, operator, alterId1, alterId2) {
 }
 
 function interpretTags(string, alterId1, alterId2) {
+  if(string == null)
+    return string;
   // parse out and replace variables
   vars = string.match(/<VAR (.+?) \/>/g);
   for (k in vars) {

@@ -470,7 +470,7 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
             csrf = "";
             answers = {};
             audio = [];
-    		alters = {};
+    		    alters = {};
             prevAlters = {};
             graphs = {};
             allNotes = {};
@@ -511,6 +511,7 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
                         interviewIds = getInterviewIds(interviewId, study.ID);
                         var aSQL = "SELECT * FROM answer WHERE interviewId in (" + interviewIds.join(",") + ")";
                     }else{
+                        interviewIds = [interviewId];
                         var aSQL = "SELECT * FROM answer WHERE interviewId = " + interviewId;
                     }
                     txn.executeSql(aSQL,  [], function(tx,res){
@@ -524,16 +525,16 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
                             answers[array_id] = res.rows.item(i);
                         }
                     });
-                    if(typeof interviewIds == "undefined")
-                        interviewIds = [interviewId];
                     for(k = 0; k < interviewIds.length; k++){
                         interviewIds[k] = interviewIds[k].toString();
                         txn.executeSql("SELECT * FROM alters WHERE interviewId = ? OR interviewId LIKE ? OR interviewId LIKE ? OR interviewId LIKE ?",  [interviewIds[k], "%," + interviewIds[k], interviewIds[k] + ",%", "%," + interviewIds[k] + ",%"], function(tx,res){
                             for(i = 0; i < res.rows.length; i++){
                                 var alter = $.extend(true,{}, res.rows.item(i));
                                 alterIntIds = alter.INTERVIEWID.toString().split(",");
+                                console.log("alter name:");
+                                console.log(alter);
                                 console.log(alterIntIds);
-                                if($.inArray(interviewId.toString(), alterIntIds) == -1)
+                                if(multiStudyIds.length > 1 && $.inArray(interviewId.toString(), alterIntIds) == -1)
                                     prevAlters[res.rows.item(i).ID] = res.rows.item(i);
                                 else
                                     alters[res.rows.item(i).ID] = res.rows.item(i);
@@ -587,10 +588,12 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
             data['interviews'] = [];
             for(k in interviews[studyId]){
                 if(interviews[studyId][k].COMPLETED == -1){
-                    txn.executeSql("SELECT * FROM alters WHERE interviewId = " + interviews[studyId][k].ID,  [], function(tx,res){
+                    txn.executeSql("SELECT * FROM alters WHERE interviewId = ? OR interviewId LIKE ? OR interviewId LIKE ? OR interviewId LIKE ?",  [interviews[studyId][k].ID.toString(), "%," + interviews[studyId][k].ID.toString(), interviews[studyId][k].ID.toString() + ",%", "%," + interviews[studyId][k].ID.toString() + ",%"], function(tx,res){
+                    //txn.executeSql("SELECT * FROM alters WHERE interviewId = " + interviews[studyId][k].ID,  [], function(tx,res){
                         for(i = 0; i < res.rows.length; i++){
                             data['alters'].push(res.rows.item(i));
                         }
+                        console.log("alters:",data['alters']);
                     });
                     txn.executeSql("SELECT * FROM answer WHERE interviewId = " + interviews[studyId][k].ID,  [], function(tx,res){
                         for(i = 0; i < res.rows.length; i++){
