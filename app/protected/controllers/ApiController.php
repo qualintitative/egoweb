@@ -1,4 +1,4 @@
-<?php
+t<?php
 class ApiController extends Controller
 {
 	// Members
@@ -97,7 +97,7 @@ class ApiController extends Controller
 			$this->sendResponse( 404, $msg );
 		}
 
-        $questions = QUestion::model()->findByAttributes(array("studyId"=>$study->id));
+        $questions = Question::model()->findByAttributes(array("studyId"=>$study->id));
 
 		$started = count(Interview::model()->findByAttributes(array("studyId"=>$study->id)));
 		$completed = count(Interview::model()->findByAttributes(array("studyId"=>$study->id,"completed"=>-1)));
@@ -328,7 +328,7 @@ class ApiController extends Controller
         foreach($questions as $question){
             $studyIds[] = $question->studyId;
         }
-    
+
 		if(count($studyIds) == 0){
 			$msg = "No MMIC surveys found";
 			return $this->sendResponse( 419, $msg );
