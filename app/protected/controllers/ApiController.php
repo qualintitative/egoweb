@@ -97,7 +97,7 @@ class ApiController extends Controller
 			$this->sendResponse( 404, $msg );
 		}
 
-        $questions = QUestion::model()->findByAttributes(array("studyId"=>$study->id)));
+        $questions = QUestion::model()->findByAttributes(array("studyId"=>$study->id));
 
 		$started = count(Interview::model()->findByAttributes(array("studyId"=>$study->id)));
 		$completed = count(Interview::model()->findByAttributes(array("studyId"=>$study->id,"completed"=>-1)));
@@ -239,7 +239,7 @@ class ApiController extends Controller
 		}
 
         $criteria = new CDbCriteria;
-        $criteria->condition = ('lower(title) = "mmic_prime_key" and studyId = ' $_GET['survey_id']);
+        $criteria->condition = ('lower(title) = "mmic_prime_key" and studyId = ' . $_GET['survey_id']);
         $question = Question::model()->find($criteria);
         $questionId = false;
         if($question)
