@@ -399,7 +399,7 @@ class ApiController extends Controller
 				if( $status != 200 && $status != 201 ){
 					$body = array( 'error'=> $body );
 				}
-				echo json_encode( $body );
+				echo json_encode( $body, JSON_UNESCAPED_SLASHES );
 			}
 			else{
 				echo $body;
