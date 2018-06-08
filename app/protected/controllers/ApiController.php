@@ -328,7 +328,7 @@ class ApiController extends Controller
         foreach($questions as $question){
             $studyIds[] = $question->studyId;
         }
-    
+
 		if(count($studyIds) == 0){
 			$msg = "No MMIC surveys found";
 			return $this->sendResponse( 419, $msg );
@@ -399,7 +399,7 @@ class ApiController extends Controller
 				if( $status != 200 && $status != 201 ){
 					$body = array( 'error'=> $body );
 				}
-				echo json_encode( $body );
+				echo json_encode( $body, JSON_UNESCAPED_SLASHES );
 			}
 			else{
 				echo $body;
