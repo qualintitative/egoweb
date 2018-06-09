@@ -61,8 +61,8 @@ class SurveyController extends Controller {
 
 		$link = $this->generateSurveyURL(  );
 		$payload = $this->encryptPayload( $decoded );
-
-		return ApiController::sendResponse( 200, array( 'link'=>$link, 'payload'=>$payload ) );
+    echo json_encode(array( 'link'=>$link, 'payload'=>$payload ), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+		//return ApiController::sendResponse( 200, array( 'link'=>$link, 'payload'=>$payload ) );
 	}
 
 	/**
@@ -189,7 +189,7 @@ class SurveyController extends Controller {
         else{
             if( isset( $redirect ) )
                 Yii::app()->session['redirect'] = $redirect;
-            
+
             $url = Yii::app()->getBaseUrl(true);
             if(Yii::app()->request->getIsSecureConnection() || $url == "http://egoweb.rand.org" || $url == "http://alpegoweb.rand.org")
                 $url = str_replace("http", "https", $url);
