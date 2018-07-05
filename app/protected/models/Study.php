@@ -49,7 +49,7 @@ class Study extends CActiveRecord
 			array('name', 'required'),
 			array('name', 'filter', 'filter'=>function($param) {return CHtml::encode(strip_tags($param));}),
 			array('active', 'numerical', 'integerOnly'=>true),
-			array('id, active, name, minAlters, maxAlters, multiSessionEgoId', 'length', 'max'=>255),
+			array('id, active, name, minAlters, maxAlters, multiSessionEgoId, , valueRefusal, valueDontKnow, valueLogicalSkip, valueNotYetAnswered', 'length', 'max'=>255),
 			array('introduction, egoIdPrompt, alterPrompt, conclusion, style, javascript, footer, header', 'length', 'max'=>4294967295),
 
 			// The following rule is used by search().
