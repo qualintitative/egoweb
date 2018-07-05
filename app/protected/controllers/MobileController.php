@@ -584,13 +584,15 @@ class MobileController extends Controller
       }else{
         if(stristr($alter['NAMEGENQIDS'], ",")){
           $qIds = explode(",", $alter['NAMEGENQIDS']);
+					$newQids = array();
           foreach($qIds as $qId){
             $qTitle = $questionTitles[$qId];
             if(!isset($newData['newQuestionIds'][$qTitle]))
-              $newAlter->nameGenQIds = $newData['newQuestionIds'][$qTitle];
+              $newQids[] = $newData['newQuestionIds'][$qTitle];
             else
-              $newAlter->nameGenQIds =  $newData["nameGenQId"];
+              $newQids[] = $newData["nameGenQId"];
           }
+					$newAlter->nameGenQIds = implode(",", $newQids);
         }else{
           $qTitle = $questionTitles[$alter['NAMEGENQIDS']];
           if(isset($newData['newQuestionIds'][$qTitle]))
