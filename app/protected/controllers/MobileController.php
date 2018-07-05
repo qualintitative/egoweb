@@ -593,10 +593,10 @@ class MobileController extends Controller
           }
         }else{
           $qTitle = $questionTitles[$alter['NAMEGENQIDS']];
-          if(!isset($newData['newQuestionIds'][$qTitle]))
+          if(isset($newData['newQuestionIds'][$qTitle]))
             $newAlter->nameGenQIds = $newData['newQuestionIds'][$qTitle];
           else
-            $newAlter->nameGenQIds =  $newData["nameGenQId"];
+            $newAlter->nameGenQIds = $newData["nameGenQId"];
         }
       }
 			$newAlter->ordering = $alter['ORDERING'];
