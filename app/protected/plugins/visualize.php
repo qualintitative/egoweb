@@ -130,10 +130,12 @@ class visualize extends Plugin
                         $answerV = "";
                 }
 				foreach($this->params['nodeColor']['options'] as $option){
-                    if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE" || $answer->value < 0))
-                        return $option['color'];
-					if($option['id'] == $answerV || (is_array($answerV) && in_array($option['id'], $answerV)))
-						return $option['color'];
+          if($option['id'] == -1 && $nodeId == -1)
+            $default = $option['color'];
+          else if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE" || $answer->value < 0))
+            $default = $option['color'];
+					else if(($option['id'] == $answerV) || (is_array($answerV) && in_array($option['id'], $answerV)))
+						$default = $option['color'];
 				}
 			}
 		}
@@ -151,10 +153,12 @@ class visualize extends Plugin
             if($answer)
                 $answerV = explode(',', $answer->value);
 			foreach($this->params['nodeShape']['options'] as $option){
-                if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
-                    return $option['shape'];
-				if($option['id'] == $answerV || in_array($option['id'], $answerV))
-					return $option['shape'];
+        if($option['id'] == -1 && $nodeId == -1)
+          $default = $option['shape'];
+        else if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
+          $default = $option['shape'];
+				else if($option['id'] == $answerV || (is_array($answerV) && in_array($option['id'], $answerV)))
+					$default = $option['shape'];
 			}
 		}
 		return $default;
@@ -194,9 +198,11 @@ class visualize extends Plugin
                 if($answer)
                     $answerV = explode(',', $answer->value);
 				foreach($this->params['nodeSize']['options'] as $option){
-                    if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
-                        return intval($option['size']);
-					if($option['id']== $answerV || in_array($option['id'], $answerV))
+          if($option['id'] == -1 && $nodeId == -1)
+            $default = intval($option['size']);
+          else if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
+            $default =  intval($option['size']);
+					else if($option['id']== $answerV || (is_array($answerV) && in_array($option['id'], $answerV)))
 						$default = intval($option['size']);
 				}
 			}
@@ -208,9 +214,15 @@ class visualize extends Plugin
 	private function getEdgeColor($nodeId1, $nodeId2){
 		$default = "#ccc";
 		if(isset($this->params['edgeColor'])){
+        if($nodeId1 != -1){
             $criteria = array(
                 "condition"=>"questionId = '".$this->params['edgeColor']['questionId']. "' AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2,
             );
+        }else{
+          $criteria = array(
+              "condition"=>"questionId = '".$this->params['egoEdgeColor']['questionId']. "' AND alterId1 = " .$nodeId2,
+          );
+        }
             $answerV = "";
             $answer = Answer::model()->find($criteria);
             if($answer)
@@ -218,9 +230,15 @@ class visualize extends Plugin
 			foreach($this->params['edgeColor']['options'] as $option){
                 if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
                     return $option['color'];
-				if($option['id']== $answerV || in_array($option['id'], $answerV))
+				if($option['id']== $answerV || (is_array($answerV) && in_array($option['id'], $answerV)))
 					return $option['color'];
 			}
+      if(isset($this->params['egoEdgeColor']['options'] )){
+        foreach($this->params['egoEdgeColor']['options'] as $option){
+          if($option['id']== $answerV || in_array($option['id'], $answerV))
+            return $option['color'];
+        }
+      }
 		}
 		return $default;
 	}
@@ -228,9 +246,16 @@ class visualize extends Plugin
 	private function getEdgeSize($nodeId1, $nodeId2){
 		$default = 1;
 		if(isset($this->params['edgeSize'])){
-            $criteria = array(
-                "condition"=>"questionId = '".$this->params['edgeSize']['questionId']. "' AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2,
-            );
+      if($nodeId1 != -1){
+        $criteria = array(
+            "condition"=>"questionId = '".$this->params['edgeSize']['questionId']. "' AND alterId1 = " .$nodeId1 . " AND alterId2 = " . $nodeId2,
+        );
+      }else{
+        $criteria = array(
+            "condition"=>"questionId = '".$this->params['egoEdgeSize']['questionId']. "' AND alterId1 = " .$nodeId2,
+        );
+      }
+
             $answerV = "";
             $answer = Answer::model()->find($criteria);
             if($answer)
@@ -241,6 +266,12 @@ class visualize extends Plugin
 				if($option['id'] == $answerV || in_array($option['id'], $answerV))
 					$default = floatval($option['size']);
 			}
+      if(isset($this->params['egoEdgeSize']['options'])){
+        foreach($this->params['egoEdgeSize']['options'] as $option){
+          if($option['id']== $answerV || in_array($option['id'], $answerV))
+            return $option['size'];
+        }
+      }
 		}
 		return $default;
 	}
@@ -256,6 +287,192 @@ class visualize extends Plugin
 			echo "<div style='width:50%;float:left;padding-right:20px;clear:both' class=''><h3>" . $label . " </h3><small>$note->notes</small></div>";
 		}
 	}
+
+  public function actionStarOptions(){
+    $params = json_decode($this->params, true);
+    $egoLabel = "You";
+    if(isset($params['egoLabel'])){
+      $egoLabel = $params['egoLabel'];
+    }
+    if(isset($params['nodeColor'])){
+      foreach($params['nodeColor']['options'] as $option){
+        $nodeColors[$option['id']] = $option['color'];
+      }
+    }
+    if(isset($params['nodeSize'])){
+      foreach($params['nodeSize']['options'] as $option){
+        $nodeSizes[$option['id']] = $option['size'];
+      }
+    }
+    if(isset($params['nodeShape'])){
+      foreach($params['nodeShape']['options'] as $option){
+        $nodeShapes[$option['id']] = $option['shape'];
+      }
+    }
+    $edgeColorId = ''; $edgeColors = array();
+		if(isset($params['egoEdgeColor'])){
+			$edgeColorId = $params['egoEdgeColor']['questionId'];
+			foreach($params['egoEdgeColor']['options'] as $option){
+				$edgeColors[$option['id']] = $option['color'];
+			}
+		}
+    $edgeSizeId = ''; $edgeSizes = array();
+		if(isset($params['egoEdgeSize'])){
+			$edgeSizeId = $params['egoEdgeSize']['questionId'];
+			foreach($params['egoEdgeSize']['options'] as $option){
+				$edgeSizes[$option['id']] = $option['size'];
+			}
+		}
+    echo "<div class='form-horizontal'><label style='width:200px;float:left;font-size: .7em;'>Ego Node Label</label>";
+    echo "<input id='egoLabel' class='form-control' value='$egoLabel'>";
+    echo "<label style='width:200px;float:left;font-size: .7em;'>Ego Node Color</label>";
+    echo CHtml::dropDownList(
+        -1,
+        (isset($nodeColors['-1']) ? $nodeColors['-1'] : ''),
+        $this->nodeColors,
+        array("class"=>"form-control", "id"=>"starNodeColor")
+      );
+      echo "<div><label style='width:200px;float:left;font-size: .7em;'>Ego Node Shape</label>";
+      echo CHtml::dropDownList(
+          -1,
+          (isset($nodeShapes[-1]) ? $nodeShapes[-1] : ''),
+          $this->nodeShapes,
+          array("class"=>"form-control", "id"=>"starNodeShape")
+        ). "</div>";
+      echo "<div><label style='width:200px;float:left;font-size: .7em;'>Ego Node Size</label>";
+      echo CHtml::dropDownList(
+          -1,
+          (isset($nodeSizes[-1]) ? $nodeSizes[-1] : ''),
+          $this->nodeSizes,
+          array("class"=>"form-control", "id"=>"starNodeSize")
+        ). "</div>";
+
+        		$questionIds = array();
+            $criteria = array(
+                "condition"=>"subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id,
+            );
+            $alter_qs = Question::model()->findAll($criteria);
+
+        		foreach($alter_qs as $alter_q){
+        			$questionIds[] = $alter_q->id;
+        		}
+        		$questionIds = implode(",", $questionIds);
+        		if(!$questionIds)
+        			$questionIds = 0;
+            $criteria = array(
+                "condition"=>"studyId = " . $this->id . " AND questionId in (" . $questionIds . ")",
+            );
+            $alter_expressions = Expression::model()->findAll($criteria);
+            $all_expression_ids = array();
+        		foreach($alter_expressions as $exp){
+        			$all_expression_ids[] = $exp->id;
+              $criteria = array(
+                  "condition"=>"FIND_IN_SET($exp->id, value)",
+              );
+              $sub_exps = Expression::model()->findAll($criteria);
+              if($sub_exps){
+                  foreach($sub_exps as $s_exp){
+                      $all_expression_ids[] = $s_exp->id;
+                  }
+              }
+        		}
+        		if(count($all_expression_ids) > 0){
+              $criteria = array(
+                  "condition"=>"id in (" . implode(",",$all_expression_ids) . ")",
+              );
+              $alter_expressions = Expression::model()->findAll($criteria);
+        		}else{
+        			$alter_expressions = array();
+        		}
+
+            echo "<label style='width:200px;float:left;font-size: .7em;'>Ego-Alter Edge Color</label>";
+            echo "<select id='egoEdgeColorSelect' class='form-control' onchange='$(\".egoEdgeColorOptions\").hide();console.log($(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")));$(\"#\" + $(\"option:selected\", this).val()).toggle();'>";
+        		echo "<option value=''> Select </option>";
+        		foreach($alter_expressions as $expression){
+        			$selected = '';
+        			if($nodeColorId == "expression_" . $expression->id)
+        				$selected = "selected";
+        			echo "<option value='expression_"  . $expression->id . "_egoEdgeColor' $selected>" .$expression['name'].  "</option>";
+        		}
+        		foreach($alter_qs as $question){
+        			$selected = '';
+        			if($edgeColorId == $question->id)
+        				$selected = "selected";
+        			echo "<option value='"  . $question->id. "_egoEdgeColor' $selected>" .$question->title.  "</option>";
+        		}
+        		echo "</select>";
+        		foreach($alter_qs as $question){
+        			echo "<div class='egoEdgeColorOptions' id='" .$question->id ."_egoEdgeColor' style='" . ( $question->id != $edgeColorId ? "display:none" : "") . "'>";
+                    $options = QuestionOption::model()->findAllByAttributes(array("questionId"=>$question->id));
+        			foreach($options as $option){
+        				echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option->name . "</label>";
+        				echo CHtml::dropDownList(
+        						$option->id,
+        						(isset($edgeColors[$option->id]) ? $edgeColors[$option->id] : ''),
+        						$this->edgeColors
+        					). "</div>";
+        			}
+                    echo "</div>";
+        		}
+
+        		foreach($alter_expressions as $expression){
+        			echo "<div class='egoEdgeColorOptions' id='expression_" .$expression->id ."_egoEdgeColor' style='" . ( "expression_" . $expression->id != $nodeColorId ? "display:none" : "") . "'>";
+        			$options = array("false", "true");
+        			foreach($options as $index=>$option){
+        				echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option. "</label>";
+        				echo CHtml::dropDownList(
+        						$index,
+        						(isset($edgeColors[$index]) ? $edgeColors[$index] : ''),
+        						$this->edgeColors
+        					). "</div>";
+        			}
+        			echo "</div>";
+        		}
+            echo "<label style='width:200px;float:left;font-size: .7em;'>Ego-Alter Edge Size</label>";
+            echo "<select id='egoEdgeSizeSelect' class='form-control' onchange='$(\".egoEdgeSizeOptions\").hide();console.log($(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")));$(\"#\" + $(\"option:selected\", this).val()).toggle();'>";
+            echo "<option value=''> Select </option>";
+            foreach($alter_expressions as $expression){
+              $selected = '';
+              if($edgeSizeId == "expression_" . $expression->id)
+                $selected = "selected";
+              echo "<option value='expression_"  . $expression->id . "_egoEdgeSize' $selected>" .$expression['name'].  "</option>";
+            }
+            foreach($alter_qs as $question){
+              $selected = '';
+              if($edgeSizeId == $question->id)
+                $selected = "selected";
+              echo "<option value='"  . $question->id. "_egoEdgeSize' $selected>" .$question->title.  "</option>";
+            }
+            echo "</select>";
+            foreach($alter_qs as $question){
+              echo "<div class='egoEdgeSizeOptions' id='" .$question->id ."_egoEdgeSize' style='" . ( $question->id != $edgeSizeId ? "display:none" : "") . "'>";
+                    $options = QuestionOption::model()->findAllByAttributes(array("questionId"=>$question->id));
+              foreach($options as $option){
+                echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option->name . "</label>";
+                echo CHtml::dropDownList(
+                    $option->id,
+                    (isset($edgeSizes[$option->id]) ? $edgeSizes[$option->id] : ''),
+                    $this->edgeSizes
+                  ). "</div>";
+              }
+                    echo "</div>";
+            }
+
+            foreach($alter_expressions as $expression){
+              echo "<div class='egoEdgeSizeOptions' id='expression_" .$expression->id ."_egoEdgeSize' style='" . ( "expression_" . $expression->id != $edgeSizeId ? "display:none" : "") . "'>";
+              $options = array("false", "true");
+              foreach($options as $index=>$option){
+                echo "<div><label style='width:200px;float:left;font-size: .7em;'>". $option. "</label>";
+                echo CHtml::dropDownList(
+                    $index,
+                    (isset($edgeSizes[$index]) ? $edgeSizes[$index] : ''),
+                    $this->edgeSizes
+                  ). "</div>";
+              }
+              echo "</div>";
+            }
+            echo "</div>";
+  }
 
 	public function actionNodecolor(){
 		$params = json_decode($this->params, true);
@@ -289,10 +506,10 @@ class visualize extends Plugin
 		}
 
 		$questionIds = array();
-        $criteria = array(
-            "condition"=>"subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id,
-        );
-        $alter_qs = Question::model()->findAll($criteria);
+    $criteria = array(
+        "condition"=>"subjectType = 'ALTER' AND answerType = 'MULTIPLE_SELECTION' AND studyId = ". $this->id,
+    );
+    $alter_qs = Question::model()->findAll($criteria);
 
 		foreach($alter_qs as $alter_q){
 			$questionIds[] = $alter_q->id;
@@ -300,11 +517,11 @@ class visualize extends Plugin
 		$questionIds = implode(",", $questionIds);
 		if(!$questionIds)
 			$questionIds = 0;
-        $criteria = array(
-            "condition"=>"studyId = " . $this->id . " AND questionId in (" . $questionIds . ")",
-        );
-        $alter_expressions = Expression::model()->findAll($criteria);
-        $all_expression_ids = array();
+    $criteria = array(
+        "condition"=>"studyId = " . $this->id . " AND questionId in (" . $questionIds . ")",
+    );
+    $alter_expressions = Expression::model()->findAll($criteria);
+    $all_expression_ids = array();
 		foreach($alter_expressions as $exp){
 			$all_expression_ids[] = $exp->id;
             $criteria = array(
@@ -510,7 +727,7 @@ class visualize extends Plugin
                 array("class"=>"form-control", "id"=>"defaultEdgeColor")
             ). "</div>";
 
-		echo "<select id='edgeColorSelect' class='form-control' onchange='$(\".edgeColorOptions\").hide();$(\"#\" + $(\"option:selected\", this).val(), $(this).closest(\"#visualize-bar\")).toggle()'>";
+		echo "<select id='edgeColorSelect' class='form-control' onchange='$(\".edgeColorOptions\").hide();$(\"#\" + $(\"option:selected\", this).val()).toggle()'>";
 		echo "<option value=''> Select </option>";
 
 		foreach($alter_pair_qs as $question){
@@ -585,7 +802,7 @@ class visualize extends Plugin
 	}
 
 	public function actionIndex(){
-		if(!$this->method || !$this->id)
+		if(!$this->method)
 			return;
 		$this->params = json_decode($this->params, true);
 		$graph = Graph::model()->findByAttributes(array("interviewId"=>$this->method,"expressionId"=>$this->id));
@@ -604,13 +821,17 @@ class visualize extends Plugin
 			$alterNames[$alter->id] = $alter->name;
 		}
 
-        $expression = Expression::model()->findByPk($this->id);
-        if(!$expression)
-            return;
+    $expression = Expression::model()->findByPk($this->id);
+
+
+    $starExpression = false;
+    if(is_numeric($this->event))
+      $starExpression = Expression::model()->findByPk($this->event);
 
 		$this->stats = new Statistics;
-		$this->stats->initComponents($this->method, $this->id);
-
+    if($expression){
+		    $this->stats->initComponents($this->method, $this->id);
+    }
 		$notes = Note::model()->findAllByAttributes(array("interviewId"=>$this->method, "expressionId"=>$this->id));
 		$alterNotes = array();
 		foreach($notes as $note){
@@ -651,8 +872,8 @@ class visualize extends Plugin
         );
         $alter_pair_expression = Expression::model()->findAll($criteria);
         $alter_pair_expression_ids = array();
-        foreach($alter_pair_expression as $expression){
-            $alter_pair_expression_ids[] = $expression->id;
+        foreach($alter_pair_expression as $e){
+            $alter_pair_expression_ids[] = $e->id;
         }
 		$answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interview->id));
 		foreach($answerList as $answer){
@@ -686,9 +907,26 @@ class visualize extends Plugin
 				}
 			}
 		}
-
 		$alters2 = $alters;
 		$nodes = array();
+    $egoLabel = "You";
+    if(isset($this->params['egoLabel'])){
+      $egoLabel = $this->params['egoLabel'];
+    }
+    if($starExpression){
+      array_push(
+        $nodes,
+        array(
+          'id'=> '-1',
+          'label'=> $egoLabel,
+          'x'=> rand(0, 10) / 10,
+          'y'=> rand(0, 10) / 10,
+          "type"=>$this->getNodeShape(-1),
+          "color"=>$this->getNodeColor(-1),
+          "size"=>$this->getNodeSize(-1),
+        )
+      );
+    }
 		foreach($alters as $alter){
 			array_push(
 				$nodes,
@@ -702,6 +940,16 @@ class visualize extends Plugin
 					"size"=>$this->getNodeSize($alter->id),
 				)
 			);
+
+      if($starExpression && $starExpression->evalExpression($this->method, $alter->id, null, $this->answers)){
+        $edges[] = array(
+          "id" =>  "-_" . $alter->id,
+          "source" => $alter->id,
+          "target" => '-1',
+          "color"=>$this->getEdgeColor(-1, $alter->id),
+          "size"=>$this->getEdgeSize(-1, $alter->id),
+        );
+      }
 			foreach($alters2 as $alter2){
 				if($alter2->id == $alter->id)
 					continue;

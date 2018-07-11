@@ -102,6 +102,30 @@ class InterviewController extends Controller
 	 */
 	public function actionView($id)
 	{
+        if($id == 0 && isset($_GET["study"])){
+          $study = Study::model()->findByAttributes(array("name"=>$_GET["study"]));
+          $interview = new Interview;
+          $interview->studyId = $study->id;
+          if($interview->save()){
+            $interviewId = $interview->id;
+            $egoQs = Question::model()->findAllByAttributes(array("subjectType"=>"EGO_ID", "studyId"=>$study->id));
+            foreach($egoQs as $q){
+              if(!isset($_GET[$q->title]))
+                continue;
+              $a = $q->id;
+              $answers[$a] = new Answer;
+              $answers[$a]->interviewId = $interview->id;
+              $answers[$a]->studyId = $study->id;
+              $answers[$a]->questionType = "EGO_ID";
+              $answers[$a]->answerType = $q->subjectType;
+              $answers[$a]->questionId = $q->id;
+              $answers[$a]->skipReason = "NONE";
+              $answers[$a]->value = $_GET[$q->title];
+              $answers[$a]->save();
+            }
+            $this->redirect("/interview/".$study->id."/". $interview->id . "/#/page/1/");
+          }
+        }
         $study = Study::model()->findByPk($id);
         if ($study->multiSessionEgoId){
             $criteria = array(
@@ -135,7 +159,7 @@ class InterviewController extends Controller
         $questionList = array();
         foreach($results as $result){
             $questions[$result->id] = mToA($result);
-            if($result->studyId == $study->id)
+            if($result->studyId == $study->id && $result->subjectType != "EGO_ID")
                 $questionList[] = mToA($result);
             if(file_exists(Yii::app()->basePath."/../audio/".$study->id . "/PREFACE/" . $result->id . ".mp3"))
                 $audio['PREFACE_' . $result->id] = "/audio/".$study->id . "/PREFACE/" . $result->id . ".mp3";
@@ -175,10 +199,7 @@ class InterviewController extends Controller
         $notes = array();
         $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
         foreach($results as $result){
-            if($result->name)
-                $participantList['name'][] = $result->name;
-            if($result->email)
-                $participantList['email'][] = $result->email;
+            $participantList[] = mToA($result);
         }
         if(isset($_GET['interviewId'])){
             $interviewId = $_GET['interviewId'];
@@ -364,6 +385,7 @@ class InterviewController extends Controller
 			else
 				$array_id = $Answer['questionId'];
 
+        $loadGuest = false;
 			if($Answer['questionType'] == "EGO_ID" && $Answer['value'] != "" && !$interviewId){
 				if(Yii::app()->user->isGuest){
 					foreach($_POST['Answer'] as $ego_id){
@@ -376,24 +398,24 @@ class InterviewController extends Controller
 						}
 					}
 					if(!$key || ($key && User::hashPassword($keystr) != $key)){
-
 						$errors++;
 						break;
 					}
+          $loadGuest = true;
 				}
 
 				if($errors == 0){
-
 					if(Yii::app()->user->isGuest && isset($keystr)){
 						$interview = Interview::getInterviewFromEmail($Answer['studyId'], $keystr);
-                        if(!$interview){
-                            $interview = new Interview;
-                            $interview->studyId = $Answer['studyId'];
-                        }
+            if(!$interview){
+                $interview = new Interview;
+                $interview->studyId = $Answer['studyId'];
+                $loadGuest = false;
+            }
 					}else{
     					$interview = new Interview;
     					$interview->studyId = $Answer['studyId'];
-                    }
+          }
 					if($interview->save()){
     					$randoms = Question::model()->findAllByAttributes(array("answerType"=>"RANDOM_NUMBER", "studyId"=>$Answer['studyId']));
     					foreach($randoms as $q){
@@ -429,7 +451,7 @@ class InterviewController extends Controller
 			}
         }
 		$interview = Interview::model()->findByPk((int)$interviewId);
-		if($interview && $interview->completed != -1 && is_numeric($_POST['page'])){
+		if($loadGuest == false && $interview && $interview->completed != -1 && is_numeric($_POST['page'])){
 			$interview->completed = (int)$_POST['page'];
 			$interview->save();
 		}

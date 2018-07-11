@@ -40,9 +40,12 @@ class AuthoringController extends Controller
 	{
 		if(!is_uploaded_file($_FILES['userfile']['tmp_name'])) //checks that file is uploaded
 			die("Error importing Participant list");
-
+    $nameGenQs = Question::model()->findAllByAttributes(array("studyId"=>$_POST['studyId'], "subjectType"=>"NAME_GENERATOR"));
+    $nameGenQIds = array();
+    foreach($nameGenQs as $nameGenQ){
+      $nameGenQIds[$nameGenQ->title] = $nameGenQ->id;
+    }
 		$file = fopen($_FILES['userfile']['tmp_name'],"r");
-
 		while(! feof($file)){
 			$data = fgetcsv($file);
 			if(isset($data[0]) && $data[0]){
@@ -54,8 +57,19 @@ class AuthoringController extends Controller
 				$model->ordering = $row['ordering'];
 				$model->name = trim($data[0]);
 				$model->email = isset($data[1]) ? $data[1] : "";
+        if(stristr($data[2], ";")){
+          $Qs = explode(";", $data[2]);
+          $qIds = array();
+          foreach($Qs as $title){
+            if(isset($nameGenQIds[$title]))
+              $qIds[] = $nameGenQIds[$title];
+          }
+          $model->nameGenQIds = implode(",", $qIds);
+        }elseif(isset($nameGenQIds[$data[2]])){
+          $model->nameGenQIds = $nameGenQIds[$data[2]];
+        }
 				$model->studyId = $_POST['studyId'];
-				$model->save();
+			  $model->save();
 			}
 
 		}
@@ -179,6 +193,10 @@ class AuthoringController extends Controller
 		if(isset($_POST['Study']))
 		{
 			$model->attributes=$_POST['Study'];
+      $model->valueDontKnow = $_POST['Study']['valueDontKnow'];
+      $model->valueRefusal = $_POST['Study']['valueRefusal'];
+      $model->valueLogicalSkip = $_POST['Study']['valueLogicalSkip'];
+      $model->valueNotYetAnswered = $_POST['Study']['valueNotYetAnswered'];
 			if($model->save()){
 				Study::updated($this->studyId);
 				$this->redirect(array('edit','id'=>$model->id));
@@ -344,10 +362,10 @@ class AuthoringController extends Controller
 	{
         $study = Study::model()->findByPk($id);
         $criteria=new CDbCriteria;
-		$criteria=array(
-			'condition'=>"studyId = " . $id . ' AND subjectType != "EGO_ID"',
-			'order'=>'ordering',
-		);
+    		$criteria=array(
+    			'condition'=>"studyId = " . $id . ' AND subjectType != "EGO_ID"',
+    			'order'=>'ordering',
+    		);
         $ego_questions = array();
         $alter_questions = array();
         $alter_pair_questions = array();
@@ -375,7 +393,18 @@ class AuthoringController extends Controller
         );
         $model->save();
         $nameGenQId = $model->id;
-
+        $interviews = Interview::model()->findAllByAttributes(array("studyId"=>$study->id));
+        foreach($interviews as $interview){
+          $criteria=array(
+            'condition'=>"FIND_IN_SET(" . $interview->id .", interviewId)",
+            'order'=>'ordering',
+          );
+          $alters = Alters::model()->findAll($criteria);
+          foreach($alters as $alter){
+            $alter->nameGenQIds = $nameGenQId;
+            $alter->save();
+          }
+        }
         $i++;
         foreach($alter_questions as $question){
             $question->ordering = $i + $question->ordering;
@@ -1226,15 +1255,17 @@ class AuthoringController extends Controller
 
 			$alter = AlterList::model()->findByPk((int)$_GET['alterListId']);
             $ego_id = Question::model()->findByAttributes(array("studyId"=>$alter->studyId, "subjectType"=>"EGO_ID", "useAlterListField"=>array("name", "email", "id")));
-        //    if($ego_id->useAlterListField == "name")
-    		//	$key = User::hashPassword($alter->name);
-			//else if($ego_id->useAlterListField == "email")
+        if($ego_id->useAlterListField == "name")
+    		  $key = User::hashPassword($alter->name);
+			  else if($ego_id->useAlterListField == "email")
     			$key = User::hashPassword($alter->email);
+          //$key = User::hashPassword("test_a@test.com");
+
 			//else if($ego_id->useAlterListField == "id")
     		//	$key = User::hashPassword($alter->id);
             //else
             //    $key = "";
-			echo "<div style='clear:both'><label>Authorized Link</label><br>" . Yii::app()->getBaseUrl(true) . "/interview/".$alter->studyId."#/page/0/".$key."</div>";
+			echo "<div style='clear:both'><label>Authorized Link for $alter->email</label><br>" . Yii::app()->getBaseUrl(true) . "/interview/".$alter->studyId."#/page/0/".$key."</div>";
 		}
 	}
 	public function actionAjaxmoveup()

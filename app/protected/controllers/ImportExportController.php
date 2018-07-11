@@ -41,10 +41,14 @@ class ImportExportController extends Controller
     		$merge = false;
 
     		foreach($study->attributes() as $key=>$value){
-    			if($key != "id" && $newStudy->hasAttribute($key))
-    				$newStudy->$key = $value;
-                if($_POST['newName'])
-                    $newStudy->name = $_POST['newName'];
+    	//		if($newStudy->hasAttribute($key)){
+            if($key == "active")
+              $value = intval($value);
+            if($key == "id")
+              $value = null;
+            if(in_array($key, array_keys($newStudy->attributes)))
+    				    $newStudy->$key = html_entity_decode($value);
+
     			if($key == "name"){
     				$oldStudy = Study::model()->findByAttributes(array("name"=>$value));
     				if($oldStudy && !$_POST['newName']){
@@ -52,40 +56,28 @@ class ImportExportController extends Controller
     					$newStudy = $oldStudy;
     				}
     			}
+      //  }
     		}
-
     		if(!$merge){
 
     			foreach($study as $key=>$value){
     				if(count($value) == 0 && $key != "answerLists" && $key != "expressions")
     					$newStudy->$key = html_entity_decode ($value);
     			}
-    			if(isset($_POST['newName']) && $_POST['newName'])
-    				$newStudy->name = $_POST['newName'];
+   			if(isset($_POST['newName']) && $_POST['newName'])
+  				$newStudy->name = $_POST['newName'];
 
                 $newStudy->userId = Yii::app()->user->id;
 
-    			if(!$newStudy->save()){
-    				echo "study: " . print_r($newStudy->getErrors());
+    			if($newStudy->save()){
+            $newStudyId = Yii::app()->db->getLastInsertID();
+            $newStudy->id = $newStudyId;
+          }else{
+    				echo "study: " . print_r($newStudy->attributes);
     				die();
     			}
 
-    			if($study->alterPrompts->alterPrompt){
 
-    				foreach($study->alterPrompts->alterPrompt as $alterPrompt){
-    					$newAlterPrompt = new AlterPrompt;
-    					foreach($alterPrompt->attributes() as $key=>$value){
-    						if($key == "afterAltersEntered")
-    							$value = intval($value);
-    						if($key != "id")
-    							$newAlterPrompt->$key = $value;
-
-    					}
-    					$newAlterPrompt->studyId = $newStudy->id;
-    					if(!$newAlterPrompt->save())
-    						echo "Alter prompt: $newAlterPrompt->afterAltersEntered :" . print_r($newAlterPrompt->errors);
-    				}
-    			}
 
     			if($study->alterLists->alterList){
 
@@ -99,7 +91,7 @@ class ImportExportController extends Controller
     					}
     					$newAlterList->studyId = $newStudy->id;
     					if(!$newAlterList->save()){
-    						echo "Alter list: $newAlterList->name :" . print_r($newAlterPrompt->errors);
+    						echo "Alter list: $newAlterList->name :" . print_r($newAlterList->errors);
     						die();
     						}
     				}
@@ -138,7 +130,6 @@ class ImportExportController extends Controller
     					foreach($question->option as $option){
     						$newOption = new QuestionOption;
     						$newOption->studyId = $newStudy->id;
-    						$newOption->questionId = $newQuestion->id;
     						foreach($option->attributes() as $optionkey=>$val){
     							if($optionkey == "id")
     								$oldOptionId = intval($val);
@@ -147,6 +138,7 @@ class ImportExportController extends Controller
     							if($optionkey!="key" && $optionkey != "id")
     								$newOption->$optionkey = $val;
     						}
+                $newOption->questionId = $newQuestion->id;
     						if(!$newOption->save())
     							echo "Option: " . print_r($newOption->getErrors());
     						else
@@ -168,6 +160,30 @@ class ImportExportController extends Controller
     				$newStudy->save();
     			}
 
+          if($study->alterPrompts->alterPrompt){
+
+            foreach($study->alterPrompts->alterPrompt as $alterPrompt){
+              $newAlterPrompt = new AlterPrompt;
+              foreach($alterPrompt->attributes() as $key=>$value){
+                if($key == "afterAltersEntered")
+                  $value = intval($value);
+                if($key != "id")
+                  $newAlterPrompt->$key = $value;
+                if($key == "questionId"){
+                  if(isset($newQuestionIds[intval($value)]))
+            				$newAlterPrompt->questionId = $newQuestionIds[intval($value)];
+                  else
+                    $newAlterPrompt->questionId = 0;
+                }
+              }
+              $newAlterPrompt->studyId = $newStudy->id;
+              if(!$newAlterPrompt->save()){
+                print_r($newAlterPrompt->attributes);
+                echo "Alter prompt: $newStudy->id : $newAlterPrompt->afterAltersEntered :" . print_r($newAlterPrompt->errors);
+              }
+            }
+          }
+
     			if(count($study->expressions) != 0){
     				foreach($study->expressions->expression as $expression){
     					$newExpression = new Expression;
@@ -185,7 +201,7 @@ class ImportExportController extends Controller
     					if($newExpression->questionId != "" && isset($newQuestionIds[intval($newExpression->questionId)]))
     						$newExpression->questionId = $newQuestionIds[intval($newExpression->questionId)];
 
-    					$newExpression->value = $expression->value;
+    					//$newExpression->value = $expression->value;
     					if(!$newExpression->save())
     						echo "Expression: " . print_r($newExpression->getErrors());
     					else
@@ -206,9 +222,14 @@ class ImportExportController extends Controller
     					// reference the correct question, since we're not using old ids
     					if($newExpression->type == "Selection"){
     						$optionIds = explode(',', $newExpression->value);
+
     						foreach($optionIds as &$optionId){
-    							if(is_numeric($optionId) && isset($newOptionIds[$optionId]))
-    								$optionId = $newOptionIds[$optionId];
+    							if(is_numeric($optionId) && isset($newOptionIds[$optionId])){
+                    echo $newOptionIds[$optionId];
+                    $optionId = $newOptionIds[$optionId];
+
+                  }
+
     						}
     						$newExpression->value = implode(',', $optionIds);
     					} else if($newExpression->type == "Counting"){
@@ -243,7 +264,18 @@ class ImportExportController extends Controller
     								$expressionId = $newExpressionIds[$expressionId];
     						}
     						$newExpression->value = implode(',',$expressionIds);
-    					}
+              } else if($newExpression->type == "Name Generator"){
+                if($newExpression->value != ""){
+    							$questionIds = explode(',', $newExpression->value);
+    							foreach($questionIds as &$questionId){
+    								if(isset($newQuestionIds[$questionId]))
+    									$questionId = $newQuestionIds[$questionId];
+    								else
+    									$questionId = '';
+    							}
+    							$newExpression->value = implode(',', $questionIds);
+    						}
+              }
     					$newExpression->save();
     				}
 
@@ -257,15 +289,15 @@ class ImportExportController extends Controller
             				$params = json_decode(htmlspecialchars_decode($question->networkParams), true);
             				if($params){
             					foreach($params as $k => &$param){
-            						if(stristr($param['questionId'], "expression")){
+            						if(isset($param['questionId']) && stristr($param['questionId'], "expression")){
             							list($label, $expressionId) = explode("_", $param['questionId']);
             							if(isset($newExpressionIds[intval($expressionId)]))
             								$expressionId = $newExpressionIds[intval($expressionId)];
             							$param['questionId'] = "expression_" . $expressionId;
             						}else{
-            							if(is_numeric($param['questionId']) && isset($newQuestionIds[intval($param['questionId'])]))
+            							if(isset($param['questionId']) && is_numeric($param['questionId']) && isset($newQuestionIds[intval($param['questionId'])]))
             								$param['questionId'] = $newQuestionIds[intval($param['questionId'])];
-            							if(count($param['options']) > 0){
+            							if(isset($param['options']) && count($param['options']) > 0){
             								foreach($param['options'] as &$option){
             									if(isset($newOptionIds[intval($option['id'])]))
             										$option['id'] = $newOptionIds[intval($option['id'])];
@@ -277,21 +309,27 @@ class ImportExportController extends Controller
             				$question->networkParams = json_encode($params);
         				}
 
-                        if(isset($newExpressionIds[$question->answerReasonExpressionId]))
-        				    $question->answerReasonExpressionId = $newExpressionIds[$question->answerReasonExpressionId];
-                        else
-                            $question->answerReasonExpressionId = "";
+                if(isset($newExpressionIds[$question->answerReasonExpressionId]))
+      				    $question->answerReasonExpressionId = $newExpressionIds[$question->answerReasonExpressionId];
+                else
+                  $question->answerReasonExpressionId = "";
 
         				if(isset($newExpressionIds[$question->networkRelationshipExprId]))
         					$question->networkRelationshipExprId = $newExpressionIds[$question->networkRelationshipExprId];
-                        else
-                            $question->networkRelationshipExprId = "";
+                else
+                  $question->networkRelationshipExprId = "";
+
+                if(isset($newExpressionIds[$question->uselfExpression]))
+      				    $question->uselfExpression = $newExpressionIds[$question->uselfExpression];
+                else
+                  $question->uselfExpression = "";
 
         				$question->save();
         			}
         		}
 
     		}else{
+
                 $questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
                 foreach ($questions as $question) {
                     $qIds[$question->title] = $question->id;
@@ -325,21 +363,23 @@ class ImportExportController extends Controller
 
 
     		if(count($study->interviews) != 0){
+          echo "new study $newStudy->id";
     			foreach($study->interviews->interview as $interview){
     				$newAlterIds = array();
     				$newInterview = new Interview;
-    				$newInterview->studyId = $newStudy->id;
     				foreach($interview->attributes() as $key=>$value){
     					if($key == "id")
     						$oldInterviewId = $value;
     					if($key!="key" && $key != "id")
     						$newInterview->$key = $value;
     				}
-    				$newInterview->studyId = $newStudy->id;
-    				if(!$newInterview->save())
-    					echo "New interview: " .  print_r($newInterview->errors);
-    				else
-    					$newInterviewIds[intval($oldInterviewId)] = $newInterview->id;
+            $newInterview->studyId = $newStudy->id;
+    				if(!$newInterview->save()){
+    					echo "New interview error: " .  print_r($newInterview->errors);
+    				}else{
+              $newInterviewId = Yii::app()->db->getLastInsertID();
+    					$newInterviewIds[intval($oldInterviewId)] =  $newInterviewId;
+            }
 
     				if(count($interview->alters->alter) != 0){
     					foreach($interview->alters->alter as $alter){
@@ -350,6 +390,7 @@ class ImportExportController extends Controller
     							if($key!="key" && $key != "id")
     								$newAlter->$key = $value;
                                 if($key == "nameGenQIds"){
+                                  $value = intval($value);
                                     if(isset($newQuestionIds[$value]))
                                         $newAlter->$key = $newQuestionIds[$value];
                                 }
@@ -357,12 +398,12 @@ class ImportExportController extends Controller
                             if(!$newAlter->nameGenQIds)
                                 $newAlter->nameGenQIds = 0;
     						if(!preg_match("/,/", $newAlter->interviewId)){
-    							$newAlter->interviewId = $newInterview->id;
+    							$newAlter->interviewId = $newInterviewId;
                             }else{
                                 $interviewIds = explode(",", $newAlter->interviewId);
                                 foreach($interviewIds as &$interviewId){
                                     if($interviewId == $oldInterviewId)
-                                        $interviewId = $newInterview->id;
+                                        $interviewId = $newInterviewId;
                                 }
                                 $newAlter->interviewId = implode(",", $interviewIds);
                             }
@@ -371,7 +412,7 @@ class ImportExportController extends Controller
 
     						if(!$newAlter->save()){
     							echo "Alter: ";
-                                print_r($newAlter->getErrors());
+                  print_r($newAlter->getErrors());
     							die();
     						}else{
     							$newAlterIds[intval($thisAlterId)] = $newAlter->id;
@@ -387,7 +428,7 @@ class ImportExportController extends Controller
     								$newNote->$key = $value;
     						}
     						if(!preg_match("/,/", $newNote->interviewId))
-    							$newNote->interviewId = $newInterview->id;
+    							$newNote->interviewId = $newInterviewId;
 
                             if(!isset($newExpressionIds[intval($newNote->expressionId)]) || !isset($newAlterIds[intval($newNote->alterId)]))
                                 continue;
@@ -438,9 +479,9 @@ class ImportExportController extends Controller
     									$params = json_decode(htmlspecialchars_decode($value), true);
     									if($params){
     										foreach($params as $k => &$param){
-    											if(is_numeric($param['questionId']))
+    											if(isset($param['questionId']) && is_numeric($param['questionId']))
     												$param['questionId'] = $newQuestionIds[intval($param['questionId'])];
-    											if(count($param['options']) > 0){
+    											if(isset($param['options']) && count($param['options']) > 0){
     												foreach($param['options'] as &$option){
     													$option['id'] = $newOptionIds[intval($option['id'])];
     												}
@@ -463,7 +504,7 @@ class ImportExportController extends Controller
     							}
     						}
     						if(!preg_match("/,/", $newGraph->interviewId))
-    							$newGraph->interviewId = $newInterview->id;
+    							$newGraph->interviewId = $newInterviewId;
 
                             if(isset($newExpressionIds[intval($newGraph->expressionId)]))
         						$newGraph->expressionId = $newExpressionIds[intval($newGraph->expressionId)];
@@ -497,6 +538,7 @@ class ImportExportController extends Controller
 
     									if($key == "answerType")
     										$answerType = $value;
+
     						}
 
 
@@ -525,7 +567,7 @@ class ImportExportController extends Controller
     						}
 
     						$newAnswer->studyId = $newStudy->id;
-    						$newAnswer->interviewId = $newInterview->id;
+                $newAnswer->interviewId = $newInterviewId;
 
     						if(!isset($newQuestionIds[$oldQId]) || !$newQuestionIds[$oldQId])
     							continue;
@@ -535,7 +577,7 @@ class ImportExportController extends Controller
     							echo $oldQId . "<br>";
     							echo $newQuestionIds[$oldQId]."<br>";
     							print_r($newQuestionIds);
-    							print_r($newAnswer);
+    							print_r($newAnswer->errors);
     							die();
     						}
     					}
@@ -591,7 +633,21 @@ class ImportExportController extends Controller
 
 	public function actionIndex()
 	{
-		$this->render('index');
+    if(isset($_POST['Server'])){
+      $server = new Server;
+      $server->attributes = $_POST['Server'];
+      $server->userId = Yii::app()->user->id;
+      $server->save();
+      Yii::app()->request->redirect("/importExport");
+    }
+    $result = Server::model()->findAllByAttributes(array("userId"=>Yii::app()->user->id));
+    $servers = array();
+    foreach($result as $server){
+      $servers[$server->id] = mToA($server);
+    }
+		$this->render('index', array(
+      "servers"=>$servers,
+    ));
 	}
 
 	public function actionAjaxInterviews($id)
@@ -617,5 +673,98 @@ class ImportExportController extends Controller
 		header("Content-Type: application/force-download");
 
 		echo $study->export($_POST['export']);
+	}
+
+  public function actionSend($id)
+	{
+        $study = Study::model()->findByPk($id);
+        $expressions = array();
+        $results = Expression::model()->findAllByAttributes(array("studyId"=>$id));
+        foreach($results as $result)
+            $expressions[] = mToA($result);
+        $questions = array();
+        $results = Question::model()->findAllByAttributes(array("studyId"=>$id), array('order'=>'ordering'));
+        foreach($results as $result){
+            $questions[] = mToA($result);
+        }
+        $results = QuestionOption::model()->findAllByAttributes(array("studyId"=>$id));
+        foreach($results as $result){
+          $options[] = mToA($result);
+        }
+        $participantList = array();
+        $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
+        foreach($results as $result){
+            if($result->name)
+                $participantList['name'][] = $result->name;
+            if($result->email)
+                $participantList['email'][] = $result->email;
+        }
+        $alterPrompts = array();
+        $results = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$id));
+        foreach($results as $result){
+            if(!$result->questionId)
+                $result->questionId = 0;
+            $alterPrompts[] = mToA($result);
+        }
+        if(is_array($_POST['export']))
+          $interviewIds = $_POST['export'];
+        else
+          $interviewIds = array(0);
+        if(count($options) == 0)
+          $options = new stdClass();
+        $studies = array();
+        foreach($interviewIds as $interviewId){
+          $interviews = array();
+          $answers = array();
+          $alters = array();
+          $graphs = array();
+          $notes = array();
+          if($interviewId != 0){
+            $interviewData = mToA(Interview::model()->findByPK($interviewId));
+            $interviewData['EGOID'] = Interview::getEgoId($interviewId);
+            $interviews[] = $interviewData;
+
+  	        $results = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+            foreach($results as $result){
+              $answers[] = mToA($result);
+            }
+      			$criteria = array(
+      				'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId)",
+      				'order'=>'ordering',
+      			);
+  			    $results = Alters::model()->findAll($criteria);
+            foreach($results as $result){
+              $alters[] = mToA($result);
+            }
+      			$results = Graph::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+      			foreach($results as $result){
+          			$graphs[] = mToA($result);
+      			}
+        		$results = Note::model()->findAllByAttributes(array("interviewId"=>$interviewId));
+        		foreach($results as $result){
+        			$notes[] = $result->notes;
+        		}
+          }
+          $studies[] = array(
+             "study"=>mToA($study),
+             "questions"=>$questions,
+             "expressions"=>$expressions,
+             "questionOptions"=>$options,
+             "alterPrompts"=>$alterPrompts,
+             "participantList"=>$participantList,
+             "interviews" => $interviews,
+             "answers"=>$answers,
+             "alters"=>$alters,
+             "graphs"=>$graphs,
+             "notes"=>$notes,
+         );
+        }
+      if(count($alters) == 0)
+        $alters = new stdClass();
+      if(count($studies) > 1)
+        $data = $studies;
+      else
+        $data = $studies[0];
+      echo json_encode($data);
 	}
 }

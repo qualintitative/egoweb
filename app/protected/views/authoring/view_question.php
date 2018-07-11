@@ -43,8 +43,15 @@ function changeAType(answerSelect) {
         $(".askingStyle").show();
         $('#a-' + model_id).prop('disabled', false);
     }
-	$('.panel-' + model_id).hide();
+    if( $(answerSelect).attr('id').match("a")){
+      $('.panel-' + model_id).hide();
+      //$('.panel-' + model_id + " input").prop('disabled', true);
+      //$('.panel-' + model_id + " select").prop('disabled', true);
+    }
 	$('.panel-' + model_id + "#" +value).show();
+  $('.panel-' + model_id + "#" +value + " input").prop('disabled', false);
+  $('.panel-' + model_id + "#" +value + " select").prop('disabled', false);
+
 }
 
 function changeStyle(styleSelect, model_id, subjectType) {

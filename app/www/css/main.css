@@ -415,10 +415,9 @@ textarea {
 .orangebutton{
 	background-color:#db7522;
 	float:left;
-	margin:0 10px 10px 0;
-    width:120px;
-    margin-left:15px;
-    color:#eee;
+	margin:0 0 10px 15px;
+  width:120px;
+  color:#eee;
 }
 
 hr{
@@ -474,6 +473,28 @@ td{
   .nav {
     margin-left:0;
   }
+  #alterListBox{
+    padding-left: 0!important;
+    height:auto!important;
+    margin-right:0!important;
+    overflow-y: auto;
+  }
+  .orangebutton{
+  	margin-left:10px!important;
+  }
+  .prev-alters {
+    min-height: 100px!important;
+  }
+}
+
+.ng-scope label {
+  width:auto;
+  max-width:90%;
+}
+
+.ng-scope input[type='checkbox'] {
+  margin-top:10px;
+  vertical-align:top;
 }
 
 #topbar h3{
@@ -588,10 +609,9 @@ td{
 	width:200px;
 }
 #alterListBox{
-	height:530px;
 	padding-right:0;
-    padding-left: 30px;
-    margin-right: -15px;
+  padding-left: 30px;
+  margin-right: -15px;
 	overflow-y:scroll;
 	float:right;
 }

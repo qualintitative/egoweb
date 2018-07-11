@@ -61,8 +61,8 @@ class SurveyController extends Controller {
 
 		$link = $this->generateSurveyURL(  );
 		$payload = $this->encryptPayload( $decoded );
-
-		return ApiController::sendResponse( 200, array( 'link'=>$link, 'payload'=>$payload ) );
+    echo json_encode(array( 'link'=>$link, 'payload'=>$payload ), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+		//return ApiController::sendResponse( 200, array( 'link'=>$link, 'payload'=>$payload ) );
 	}
 
 	/**
@@ -180,15 +180,18 @@ class SurveyController extends Controller {
             return ApiController::sendResponse( 404, $msg );
         }
         else if( $interview->completed == -1 ){
+			if ($redirect){
+				self::redirect($redirect);
+			}
             $msg = "User already completed survey";
             return ApiController::sendResponse( 420, $msg );
         }
         else{
             if( isset( $redirect ) )
                 Yii::app()->session['redirect'] = $redirect;
-            
+
             $url = Yii::app()->getBaseUrl(true);
-            if(Yii::app()->request->getIsSecureConnection() || $url == "http://egoweb.rand.org")
+            if(Yii::app()->request->getIsSecureConnection() || $url == "http://egoweb.rand.org" || $url == "http://alpegoweb.rand.org")
                 $url = str_replace("http", "https", $url);
 
             Yii::app()->request->redirect($url  .  "/interview/".$study->id."/".
