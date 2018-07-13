@@ -899,17 +899,19 @@ class DataController extends Controller
 					$alters = Alters::model()->findAllByAttributes(array('interviewId'=>$interview->id));
 					foreach($alters as $alter){
     					$answer = array();
-                        $optionIds = explode(",", $answers[$question->id . "-" . $alter->id]->value);
+            //  print_r($other_qs);
+              //echo $question->id;
+                        //$optionIds = $other_qs[$question->id];  //explode(",", $answers[$question->id . "-" . $alter->id]->value);
                         $answerArray = array();
-                        foreach  ($optionIds as $optionId)
+                        foreach  ($other_options as $option)
                         {
-                            if (isset($other_options[$optionId])) {
-                                $otherSpecify = OtherSpecify::model()->findByAttributes(array("optionId"=>$optionId, "interviewId"=>$interview->id, "alterId"=>$alter->id));
+                //            if (isset($other_options[$optionId])) {
+                                $otherSpecify = OtherSpecify::model()->findByAttributes(array("optionId"=>$option->id, "interviewId"=>$interview->id, "alterId"=>$alter->id));
                                 if ($otherSpecify)
-                                    $answerArray[$other_options[$optionId]->name] =  $otherSpecify->value;
-                                else
-                                    $answerArray[$other_options[$optionId]->name] = "";
-                            }
+                                    $answerArray[$option->name] =  $otherSpecify->value;
+                            //    else
+                            //        $answerArray[$option->name] = "";
+                          //  }
                         }
 
                         foreach($answerArray as $i=>$a){
@@ -943,8 +945,8 @@ class DataController extends Controller
                             $otherSpecify = OtherSpecify::model()->findByAttributes(array("optionId"=>$optionId, "interviewId"=>$interview->id));
                             if ($otherSpecify)
                                 $answerArray[$other_options[$optionId]->name] =  $otherSpecify->value;
-                            else
-                                $answerArray[$other_options[$optionId]->name] = "";
+                        //    else
+                          //      $answerArray[$other_options[$optionId]->name] = "";
                         }
                     }
 
