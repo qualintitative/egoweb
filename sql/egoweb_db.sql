@@ -618,6 +618,6 @@ INSERT INTO `tbl_migration` (`version`, `apply_time`) VALUES
 ('m170127_113542_add_matched_interviews', 1485613302),
 ('m170317_083540_add_alter_matcher', 1489740523),
 ('m170912_064545_name_generators', 1505200157),
-('m171010_091427_add_var_prompt_q_id', 1507650908);
+('m171010_091427_add_var_prompt_q_id', 1507650908),
 ('m180320_124446_add_alterlist_namegen', 1521550344),
 ('m180413_082300_server_table', 1523728116);
