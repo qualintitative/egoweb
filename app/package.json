@@ -4,8 +4,8 @@
   "displayName": "EgoWeb Mobile",
   "cordova": {
     "platforms": [
-      "ios",
-      "android"
+      "android",
+      "ios"
     ],
     "plugins": {
       "cordova-plugin-whitelist": {}

@@ -145,6 +145,17 @@ echo CHtml::dropdownlist(
         </div>
       </div>
       <?php $this->endWidget(); ?>
+      <?php
+$servers = Server::model()->findAll();
+      ?>
+      <ul class="list-group">
+        <?php foreach($servers as $server): ?>
+        <li class="list-group-item">
+        <?php echo $server->address; ?>
+        <a class="btn btn-xs pull-right btn-danger" href="#">Delete</a>
+      </li>
+      <?php endforeach; ?>
+      <ul>
     </div>
   </div>
 
