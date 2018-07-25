@@ -13,6 +13,16 @@
 <?php echo $form->labelEx($model,'email'); ?>
 <?php echo $form->textField($model,'email', array('style'=>'width:100px')); ?>
 <?php echo $form->error($model,'email'); ?>
+<?php echo $form->dropdownlist(
+  $model,
+  'interviewerId',
+  CHtml::listData(
+    Question::model()->findAllByAttributes(array("studyId"=>$studyId)),
+    'id',
+    'title'
+  ),
+  array('empty' => 'None')
+); ?>
 		<?php echo $form->dropdownlist(
 			$model,
 			'interviewerId',

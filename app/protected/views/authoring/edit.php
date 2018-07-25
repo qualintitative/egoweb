@@ -331,6 +331,18 @@ function deleteAlterList(studyId){
 				<?php echo $form->labelEx($alterList,'email'); ?>
 				<?php echo $form->textField($alterList,'email', array('style'=>'width:100px')); ?>
 				<?php echo $form->error($alterList,'email'); ?>
+        <?php
+$alterlist = new AlterList;
+        echo $form->dropdownlist(
+          $alterlist,
+          'nameGenQIds',
+          CHtml::listData(
+            Question::model()->findAllByAttributes(array("studyId"=>$model->id, "subjectType"=>"NAME_GENERATOR")),
+            'id',
+            'title'
+          ),
+          array('empty' => 'None')
+        ); ?>
 				<?php
                 $result = Interviewer::model()->findAllByAttributes(array("studyId"=>$model->id));
                 $interviewers = array();
