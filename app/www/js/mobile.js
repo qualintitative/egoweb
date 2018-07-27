@@ -85,6 +85,7 @@ function loadDb() {
                 console.log(studies);
             });
             txn.executeSql("SELECT * FROM question WHERE subjectType = 'EGO_ID' ORDER BY ORDERING",  [], function(tx,res){
+                egoIdQs = [];
                 for(i = 0; i < res.rows.length; i++){
                     if(typeof egoIdQs[res.rows.item(i).STUDYID] == "undefined")
                         egoIdQs[res.rows.item(i).STUDYID] = [];
@@ -92,6 +93,7 @@ function loadDb() {
                         multiIdQs[res.rows.item(i).STUDYID] = res.rows.item(i);
                     egoIdQs[res.rows.item(i).STUDYID].push(res.rows.item(i));
                 }
+                multiIds = {};
                 for(k in multiIdQs){
                     if(typeof multiIds[multiIdQs[k].TITLE] == "undefined")
                         multiIds[multiIdQs[k].TITLE] = [];
@@ -111,6 +113,7 @@ function loadDb() {
                 }
             });
             txn.executeSql('SELECT * FROM interview',  [], function(tx,res){
+                interviews = [];
                 for(i = 0; i < res.rows.length; i++){
                     if(typeof interviews[res.rows.item(i).STUDYID] == "undefined")
                         interviews[res.rows.item(i).STUDYID] = [];
