@@ -881,6 +881,7 @@ class AuthoringController extends Controller
 				$model->ordering = $row['ordering'];
 			}
 			$model->attributes=$_POST['AlterList'];
+      $model->nameGenQIds = implode(",", $_POST['AlterList']["nameGenQIds"]);
 			$model->name = trim($model->name);
 			$model->save();
 			Study::updated($_POST['AlterList']['studyId']);
