@@ -146,11 +146,11 @@ echo CHtml::dropdownlist(
       </div>
       <?php $this->endWidget(); ?>
       <?php
-$servers = Server::model()->findAll();
+$s = Server::model()->findAll();
       ?>
       <br><br>
       <ul class="list-group">
-        <?php foreach($servers as $server): ?>
+        <?php foreach($s as $server): ?>
         <li class="list-group-item"><?php echo $server->address; ?>
         <a class="btn btn-xs pull-right btn-danger" href="javascript:void(0);" onclick="deleteServer(<?php echo $server->id; ?>)">Delete</a>
       </li>
