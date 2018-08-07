@@ -135,9 +135,11 @@ function saveSkip(interviewId, questionId, alterId1, alterId2, arrayId)
 
     var saveUrl = document.location.protocol + "//" + document.location.host + "/interview/save";
     $.post(saveUrl, skipAnswer, function(data){
-        answers = JSON.parse(data);
+        data = JSON.parse(data);
+        answers = data.answers;
+        interview = data.interview;
+        interviewId = interview.ID;
         console.log("saving skip value");
-        console.log(answers);
     });
 }
 
