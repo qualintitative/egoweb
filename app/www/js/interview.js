@@ -2442,7 +2442,7 @@ function initStats(question) {
           node.y = savedNodes[k].y;
         }
       }
-    } else {
+    } else {/*
       s.startForceAtlas2({
         "worker": false,
         "outboundAttractionDistribution": true,
@@ -2457,6 +2457,7 @@ function initStats(question) {
         "simpleIntervals": 1000
       });
       setTimeout("s.stopForceAtlas2(); saveNodes(); $('#fullscreenButton').prop('disabled', false);", 5000);
+      */
     }
     s.refresh();
     initNotes(s);

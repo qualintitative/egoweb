@@ -89,8 +89,10 @@ function loadDb() {
                 for(i = 0; i < res.rows.length; i++){
                     if(typeof egoIdQs[res.rows.item(i).STUDYID] == "undefined")
                         egoIdQs[res.rows.item(i).STUDYID] = [];
-                    if(studies[res.rows.item(i).STUDYID].MULTISESSIONEGOID > 0)
-                        multiIdQs[res.rows.item(i).STUDYID] = res.rows.item(i);
+                    if(studies[res.rows.item(i).STUDYID].MULTISESSIONEGOID > 0){
+                        if(res.rows.item(i).USEALTERLISTFIELD)
+                          multiIdQs[res.rows.item(i).STUDYID] = res.rows.item(i);
+                    }
                     egoIdQs[res.rows.item(i).STUDYID].push(res.rows.item(i));
                 }
                 multiIds = {};
@@ -479,9 +481,7 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
             allNotes = {};
             otherGraphs = {};
             alterPrompts = [];
-            participantList = {};
-        	participantList['email'] = [];
-        	participantList['name'] = [];
+            participantList = [];
         	if(typeof intId == "undefined"){
             	interviewId = undefined;
             	interview = false;
@@ -546,15 +546,16 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
                     }
                     txn.executeSql("SELECT * FROM alterList WHERE studyId = " + study.ID,  [], function(tx,res){
                         for(i = 0; i < res.rows.length; i++){
-                            if(res.rows.item(i).EMAIL)
-                                participantList['email'].push(res.rows.item(i).EMAIL);
-                            if(res.rows.item(i).NAME)
-                                participantList['name'].push(res.rows.item(i).NAME);
+                            console.log("participant from list", res.rows.item(i));
+                            participantList.push(res.rows.item(i));
                         }
                     });
                     txn.executeSql("SELECT * FROM alterPrompt WHERE studyId = " + study.ID,  [], function(tx,res){
                         for(i = 0; i < res.rows.length; i++){
-                            alterPrompts[res.rows.item(i).AFTERALTERSENTERED] = res.rows.item(i).DISPLAY;
+                          console.log(res.rows.item(i));
+                          if(typeof alterPrompts[res.rows.item(i).QUESTIONID] == "undefined")
+                            alterPrompts[res.rows.item(i).QUESTIONID] = [];
+                          alterPrompts[res.rows.item(i).QUESTIONID][res.rows.item(i).AFTERALTERSENTERED] = res.rows.item(i).DISPLAY;
                         }
                     });
                 }, function(txn){console.log(txn)}, function(txn){
@@ -970,12 +971,12 @@ function save(questions, page, url, scope){
                 });
                 if(study.FILLALTERLIST == true){
                     db.transaction(function (txn){
-                        for(k in participantList['name']){
+                        for(k in participantList){
                             var newAlter = {
                                 ID: null,
                                 ACTIVE:1,
                                 ORDERING: k,
-                                NAME: participantList['name'],
+                                NAME: participantList[k].NAME,
                                 INTERVIEWID: interviewId,
                                 ALTERLISTID: ''
                             };
@@ -985,7 +986,7 @@ function save(questions, page, url, scope){
                                     ID: res.insertId,
                                     ACTIVE:1,
                                     ORDERING: k,
-                                    NAME: participantList['name'],
+                                    NAME: participantList[k].NAME,
                                     INTERVIEWID: interviewId,
                                     ALTERLISTID: ''
                                 };
@@ -1069,6 +1070,10 @@ function save(questions, page, url, scope){
             }
         }, null, function(txn){
             console.log("going to next page");
+            if(typeof s != "undefined" && typeof s.isForceAtlas2Running != "undefined" && s.isForceAtlas2Running()){
+                s.stopForceAtlas2();
+                saveNodes();
+            }
             if(typeof questions[0] != "undefined" && questions[0].ANSWERTYPE == "NAME_GENERATOR")
                 buildList();
         	if(typeof questions[0] != "undefined" && questions[0].ANSWERTYPE == "CONCLUSION"){
@@ -1112,7 +1117,12 @@ function saveSkip(interviewId, questionId, alterId1, alterId2, arrayId)
 }
 
 function saveNodes() {
+  /*
 	var nodes = {};
+  if(typeof s != "undefined" && typeof s.isForceAtlas2Running != "undefined" && s.isForceAtlas2Running()){
+      s.stopForceAtlas2();
+      saveNodes();
+  }
 	for(var k in s.graph.nodes()){
 		nodes[s.graph.nodes()[k].id] = s.graph.nodes()[k];
 	}
@@ -1133,6 +1143,7 @@ function saveNodes() {
             graphs[expressionId] = post.GRAPH;
         })
     });
+    */
 }
 
 function getInterviewIds(intId, studyId){
