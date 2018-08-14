@@ -1074,8 +1074,8 @@ function save(questions, page, url, scope){
                 s.stopForceAtlas2();
                 saveNodes();
             }
-            if(typeof questions[0] != "undefined" && questions[0].ANSWERTYPE == "NAME_GENERATOR")
-                buildList();
+          //  if(typeof questions[0] != "undefined" && questions[0].ANSWERTYPE == "NAME_GENERATOR")
+            //    buildList();
         	if(typeof questions[0] != "undefined" && questions[0].ANSWERTYPE == "CONCLUSION"){
         		document.location = url + "/";
         	}else{

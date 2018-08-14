@@ -154,9 +154,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     if (Object.keys($scope.listedAlters).length > 0) {
       for (n in $scope.listedAlters) {
         if(study.RESTRICTALTERS){
-          console.log($scope.listedAlters[n].NAME.toString() == "test_d@test.com")
-          console.log($scope.participants);
-          console.log(($.inArray($scope.listedAlters[n].NAME, $scope.participants)))
           if ($.inArray($scope.listedAlters[n].NAME, $scope.participants) == -1)
             $scope.participants.push($scope.listedAlters[n].NAME);
         }else{
@@ -370,7 +367,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
     if ($scope.questions[k].SUBJECTTYPE == "NETWORK") {
       var expressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
-      console.log("expr:" + expressionId + $scope.questions[k].USELFEXPRESSION)
       notes = [];
       if (typeof otherGraphs[$scope.questions[k].ID] != "undefined")
         $scope.otherGraphs = otherGraphs[$scope.qId];
@@ -441,7 +437,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   }
 
   $scope.submitForm = function(isValid) {
-    console.log(isValid);
     // check to make sure the form is completely valid
     if (isValid) {
       save($scope.questions, $routeParams.page, $location.absUrl().replace($location.url(), ''), $scope);
@@ -462,9 +457,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     // check pre-defined participant list
     if ($scope.participants.length > 0 && study.RESTRICTALTERS == true) {
       if ($scope.participants.indexOf($("#Alters_name").val().trim()) == -1) {
-        console.log($scope.participants);
-        console.log($("#Alters_name").val().trim());
-        console.log($scope.participants.indexOf($("#Alters_name").val().trim()));
         $scope.errors[0] = 'Name not found in list';
       }
     }
@@ -472,8 +464,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     if ($("#Alters_name").val().trim() == "") {
       $scope.errors[0] = 'Name cannot be blank';
     }
-
-    console.log($scope.errors[0]);
 
     // check to make sure the form is completely valid
     if ($scope.errors[0] == false) {
@@ -498,7 +488,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   $scope.removeAlter = function(alterId, nameGenQId) {
     $("#deleteAlterId").val(alterId);
     $("#deleteNameGenQId").val(nameGenQId);
-    console.log(alterId);
     // check to make sure the form is completely valid
     deleteAlter.getAlters().then(function(data) {
       alters = JSON.parse(data);
@@ -529,7 +518,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       }
     }
     $scope.answers[array_id].OTHERSPECIFYTEXT = specify.join(";;");
-    console.log($scope.answers[array_id].OTHERSPECIFYTEXT);
+    //console.log($scope.answers[array_id].OTHERSPECIFYTEXT);
   }
 
   $scope.multiSelect = function(v, index, array_id) {
@@ -546,7 +535,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     if (v == "DONT_KNOW" || v == "REFUSE") {
       if ($scope.options[array_id][index].checked) {
         for (k in $scope.options[array_id]) {
-          //console.log(k + ":" + index)
           if (k != index)
             $scope.options[array_id][k].checked = false;
         }
@@ -636,7 +624,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       if ($scope.options[array_id][k].ID == "DONT_KNOW" || $scope.options[array_id][k].ID == "REFUSE")
         $scope.options[array_id][k].checked = false;
     }
-    //console.log(date);
   }
 
   $scope.dateValue = function(array_id) {
@@ -662,7 +649,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       if ($scope.options[array_id][k].ID == "DONT_KNOW" || $scope.options[array_id][k].ID == "REFUSE")
         $scope.options[array_id][k].checked = false;
     }
-    //console.log(date);
 
   }
 
@@ -723,11 +709,9 @@ app.directive('checkAnswer', [function() {
           } else {
             delete scope.errors[array_id];
           }
-          //console.log(scope.answers[array_id].SKIPREASON +  ":" + value + ":" + valid + ":" + scope.errors[array_id]);
         }
 
         if (attr.answerType == "NUMERICAL") {
-          //console.log("check numeric");
           var min = "";
           var max = "";
           var numberErrors = 0;
@@ -769,7 +753,6 @@ app.directive('checkAnswer', [function() {
         }
 
         if (attr.answerType == "DATE") {
-          //console.log(attr.answerType);
           if (scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW") {
             var date = value.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
             var month = value.match(/January|February|March|April|May|June|July|August|September|October|November|December/);
@@ -864,7 +847,6 @@ app.directive('checkAnswer', [function() {
           var checks = 0;
           if (typeof question != "undefined" && parseInt(question.WITHLISTRANGE) != 0) {
             for (i in scope.answers) {
-              console.log(scope.answers[i].VALUE + ":" + question.LISTRANGESTRING);
               if (scope.answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1) {
                 checks++;
               }
@@ -927,7 +909,6 @@ app.directive('checkAnswer', [function() {
           } else {
             delete scope.errors[array_id];
           }
-          //console.log(scope.answers[array_id].SKIPREASON +  ":" + value + ":" + valid);
         }
         if (attr.answerType == "NUMERICAL") {
           var min = "";
@@ -1030,8 +1011,6 @@ app.directive('checkAnswer', [function() {
             numberErrors++;
           if (max !== "" && max != null)
             numberErrors = numberErrors + 2;
-
-          //console.log(numberErrors);
 
           checkedBoxes = value.split(',').length;
           if (!value)
@@ -1183,7 +1162,6 @@ function buildList() {
       alter_non_list_qs = [];
     }
     if (questionList[j-1] != undefined && (questionList[j].SUBJECTTYPE != "EGO" || questionList[j].ASKINGSTYLELIST != 1 ||  questionList[j].PROMPT != questionList[j-1].PROMPT)  && questionList[j-1].SUBJECTTYPE == "EGO" && Object.keys(ego_question_list).length > 0) {
-      console.log(questionList[j])
       console.log("wait over " + Object.keys(ego_question_list).length);
       if (ego_question_list[Object.keys(ego_question_list)[0]].ANSWERREASONEXPRESSIONID > 0)
         evalQIndex.push(i);
@@ -1241,7 +1219,6 @@ function buildList() {
             if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
               evalQIndex.push(i);
             masterList[i][0] = $.extend(true, {}, preface);
-            console.log(preface);
             preface.PROMPT = "";
             i++;
             masterList[i] = new Object;
@@ -1416,13 +1393,12 @@ function qFromList(pageNumber) {
     var proceed = false;
     if (!!~jQuery.inArray(parseInt(k), evalQIndex)) {
       for (j in masterList[k]) {
-        console.log(k + ":" + j);
         if (evalQList[masterList[k][j].array_id] == true) {
           proceed = true;
           questions[j] = masterList[k][j];
         } else {
-          if (typeof answers[masterList[k][j].array_id] == "undefined" || answers[masterList[k][j].array_id] != study.VALUELOGICALSKIP) {
-            console.log("saving skip of " + masterList[k][j].TITLE);
+          if (typeof answers[masterList[k][j].array_id] == "undefined" || parseInt(answers[masterList[k][j].array_id].VALUE) != parseInt(study.VALUELOGICALSKIP)) {
+            console.log("saving skip of " + masterList[k][j].TITLE, answers[masterList[k][j].array_id]);
             saveSkip(interviewId, masterList[k][j].ID, masterList[k][j].ALTERID1, masterList[k][j].ALTERID2, masterList[k][j].array_id);
           }
         }
@@ -1580,19 +1556,18 @@ function evalExpression(id, alterId1, alterId2) {
       var genList = expressions[id].VALUE.split(",");
     else
       var genList = [expressions[id].VALUE];
-    console.log(genList);
     aList = []
     if (alters[alterId1] != undefined) {
       if (alters[alterId1].NAMEGENQIDS.match(","))
         var aList = alters[alterId1].NAMEGENQIDS.split(",");
       else
         var aList = [alters[alterId1].NAMEGENQIDS];
-      console.log(aList);
     }
     for (n in aList) {
       if (genList.indexOf(aList[n]) > -1)
         return true;
     }
+    console.log("name gen exp: false");
     return false;
   }
   console.log(expressions[id].NAME + ":false");
