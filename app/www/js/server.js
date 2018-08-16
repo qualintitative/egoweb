@@ -1,3 +1,22 @@
+function elementInViewport(el) {
+  var top = el.offsetTop;
+  var left = el.offsetLeft;
+  var width = el.offsetWidth;
+  var height = el.offsetHeight;
+
+  while(el.offsetParent) {
+    el = el.offsetParent;
+    top += el.offsetTop;
+    left += el.offsetLeft;
+  }
+
+  return (
+    top < (window.pageYOffset + window.innerHeight) &&
+    left < (window.pageXOffset + window.innerWidth) &&
+    (top + height) > window.pageYOffset &&
+    (left + width) > window.pageXOffset
+  );
+}
 $(function(){
     setTimeout(function(){
         if(typeof $(".answerInput")[0] != "undefined")
@@ -25,8 +44,12 @@ $(document).keydown(function(e) {
     		e.preventDefault();
             $(".answerInput").each(function(index){
                 if($(this).is(":focus")){
-                    if(typeof $(".answerInput")[index-columns] != "undefined")
+                    if(typeof $(".answerInput")[index-columns] != "undefined"){
+                       if($($(".answerInput")[index-columns]).offset().top < $("#floatHeader").offset().top + $("#floatHeader").height()){
+                          window.scrollBy(0, -112);
+                        }
                         $(".answerInput")[index-columns].focus();
+                    }
                     //else
                     //    $(".answerInput:focus").parent().prev().find(".answerInput").focus();
                     return false;
@@ -37,8 +60,12 @@ $(document).keydown(function(e) {
     		e.preventDefault();
             $(".answerInput").each(function(index){
                 if($(this).is(":focus")){
-                    if(typeof $(".answerInput")[index+columns] != "undefined")
+                    if(typeof $(".answerInput")[index+columns] != "undefined"){
+                        if(!elementInViewport($(".answerInput")[index+columns])){
+                          window.scrollBy(0, 112);
+                        }
                         $(".answerInput")[index+columns].focus();
+                    }
                     //else
                     //    $(".answerInput:focus").parent().next().find(".answerInput").focus();
                     return false;

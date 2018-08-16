@@ -1116,6 +1116,14 @@ function saveSkip(interviewId, questionId, alterId1, alterId2, arrayId)
     });
 }
 
+function getNote(node){
+    var url = "/data/getnote?interviewId=" + interviewId + "&expressionId=" + expressionId + "&alterId=" + node.id;
+    $.get(url, function(data){
+        $("#left-container").html(data);
+
+    });
+}
+
 function saveNodes() {
   /*
 	var nodes = {};
