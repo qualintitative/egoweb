@@ -2558,6 +2558,7 @@ function fixHeader() {
         "margin-top": $("#floatHeader").height() + "px"
       });
     });
+    $(window).scroll();
   } else {
     $(window).on('touchmove', function(event) {
       $("#floatHeader").css({
