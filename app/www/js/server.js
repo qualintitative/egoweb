@@ -185,7 +185,7 @@ function saveNodes()
 }
 
 function getNote(node){
-    var url = "/data/getnote?interviewId=" + interviewId + "&expressionId=" + expressionId + "&alterId=" + node.id;
+    var url = "/data/getnote?interviewId=" + interviewId + "&expressionId=" + graphExpressionId + "&alterId=" + node.id;
     $.get(url, function(data){
         $("#left-container").html(data);
 

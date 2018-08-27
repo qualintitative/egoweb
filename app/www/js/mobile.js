@@ -499,6 +499,7 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
                             page = 0;
                     });
                     txn.executeSql("SELECT * FROM graphs WHERE interviewId = " + interviewId,  [], function(tx,res){
+                      console.log(res);
                         for(i = 0; i < res.rows.length; i++){
                             graphs[res.rows.item(i).EXPRESSIONID] = res.rows.item(i);
                         }
@@ -507,7 +508,7 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
                         for(i = 0; i < res.rows.length; i++){
                             if(typeof allNotes[res.rows.item(i).EXPRESSIONID] == "undefined")
                                 allNotes[res.rows.item(i).EXPRESSIONID] = {};
-                            allNotes[res.rows.item(i).EXPRESSIONID][res.rows.item(i).ALTERID] = res.rows.item(i);
+                            allNotes[res.rows.item(i).EXPRESSIONID][res.rows.item(i).ALTERID] = res.rows.item(i).NOTES;
                         }
                     });
                     if(typeof study.MULTISESSIONEGOID != "undefined" && parseInt(study.MULTISESSIONEGOID) != 0){
@@ -590,6 +591,8 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
             data['questionOptions'] = [];
             data['expressions'] = [];
             data['interviews'] = [];
+            data['graphs'] = [];
+            data['notes'] = [];
             for(k in interviews[studyId]){
                 if(interviews[studyId][k].COMPLETED == -1){
                     txn.executeSql("SELECT * FROM alters WHERE interviewId = ? OR interviewId LIKE ? OR interviewId LIKE ? OR interviewId LIKE ?",  [interviews[studyId][k].ID.toString(), "%," + interviews[studyId][k].ID.toString(), interviews[studyId][k].ID.toString() + ",%", "%," + interviews[studyId][k].ID.toString() + ",%"], function(tx,res){
@@ -604,6 +607,18 @@ app.controller('studiesController', ['$scope', '$log', '$routeParams', '$sce', '
                             var answer = res.rows.item(i);
                             answer.STUDYID = data['study'].ID;
                             data['answers'].push(answer);
+                        }
+                    });
+                    txn.executeSql("SELECT * FROM notes WHERE interviewId = " + interviews[studyId][k].ID,  [], function(tx,res){
+                        for(i = 0; i < res.rows.length; i++){
+                            var note = res.rows.item(i);
+                            data['notes'].push(note);
+                        }
+                    });
+                    txn.executeSql("SELECT * FROM graphs WHERE interviewId = " + interviews[studyId][k].ID,  [], function(tx,res){
+                        for(i = 0; i < res.rows.length; i++){
+                            var graph = res.rows.item(i);
+                            data['graphs'].push(graph);
                         }
                     });
                     var interview = $.extend(true,{}, interviews[studyId][k]);
@@ -1117,41 +1132,86 @@ function saveSkip(interviewId, questionId, alterId1, alterId2, arrayId)
 }
 
 function getNote(node){
-    var url = "/data/getnote?interviewId=" + interviewId + "&expressionId=" + expressionId + "&alterId=" + node.id;
-    $.get(url, function(data){
-        $("#left-container").html(data);
-
-    });
+  $("#modalBody").val("");
+  $("#modalHeader").html(alters[parseInt(node.id)].NAME);
+  if(typeof notes[parseInt(node.id)] != "undefined"){
+    $("#modalBody").val(notes[parseInt(node.id)]);
+  }
+  $("#alterId").val(parseInt(node.id));
+  $("#myModal").modal();
 }
 
+function saveNote(){
+    var newNote = {
+      ID: null,
+      INTERVIEWID: interviewId,
+      EXPRESSIONID: parseInt(graphExpressionId),
+      ALTERID: parseInt($("#alterId").val()),
+      NOTES: $("#modalBody").val()
+    };
+    if(typeof notes[parseInt($("#alterId").val())] == "undefined"){
+      var noteSQL = 'INSERT INTO notes VALUES (' +  fillQs(objToArray(newNote),"?").join(",") + ')';
+      var insert = objToArray(newNote);
+      var node = s.graph.nodes(parseInt($("#alterId").val()));
+      node.label = node.label + " �";
+      console.log("made new note");
+    }else{
+      var noteSQL = 'UPDATE notes SET NOTES = ? WHERE INTERVIEWID = ? AND EXPRESSIONID = ? AND ALTERID = ?';
+      var insert = [$("#modalBody").val(), interviewId, graphExpressionId, parseInt($("#alterId").val())];
+      console.log("update note");
+    }
+db.transaction(function (txn) {
+    txn.executeSql(noteSQL, insert, function(tx, res){
+        $('#myModal').modal('hide');
+        notes[parseInt($("#alterId").val())] = $("#modalBody").val();
+         $("#modalBody").val("");
+         $("#alterId").val("");
+    });
+  });
+}
+
+function deleteNote(){
+  db.transaction(function (txn) {
+    txn.executeSql('DELETE FROM notes WHERE INTERVIEWID = ' + interviewId + ' AND ALTERID = ' + parseInt($("#alterId").val()) + " AND EXPRESSIONID = " + graphExpressionId, [], function(tx, res) {
+      console.log(interviewId, parseInt($("#alterId").val()), graphExpressionId, res);
+      delete notes[parseInt($("#alterId").val())];
+      var node = s.graph.nodes(parseInt($("#alterId").val()));
+      node.label = node.label.replace(" �","");
+      $('#myModal').modal('hide');
+    });
+  });
+}
 function saveNodes() {
-  /*
 	var nodes = {};
   if(typeof s != "undefined" && typeof s.isForceAtlas2Running != "undefined" && s.isForceAtlas2Running()){
       s.stopForceAtlas2();
-      saveNodes();
   }
 	for(var k in s.graph.nodes()){
 		nodes[s.graph.nodes()[k].id] = s.graph.nodes()[k];
 	}
 	$("#Graph_nodes").val(JSON.stringify(nodes));
+  console.log($("#Graph_nodes").val());
     var post = node.objectify($('#graph-form'));
-    if(typeof graphs[expressionId] == "undefined"){
+    if(typeof graphs[graphExpressionId] == "undefined"){
+      post.GRAPH.ID = null;
+      post.GRAPH.EXPRESSIONID = parseInt(post.GRAPH.EXPRESSIONID);
+      post.GRAPH.INTERVIEWID = parseInt(post.GRAPH.INTERVIEWID);
+      var insert = objToArray(post.GRAPH);
+      console.log(insert);
         var graphSQL = 'INSERT INTO graphs VALUES (' + fillQs(insert,"?").join(",") + ')';
-        var insert = graphs[expressionId];
-        insert.ID = null;
     }else{
         var graphSQL = "UPDATE graphs SET NODES = ?, PARAMS = ? WHERE ID = ?";
         var insert = [ post.GRAPH.NODES,  post.GRAPH.PARAMS,  post.GRAPH.ID];
     }
     db.transaction(function (txn) {
         txn.executeSql(graphSQL, insert, function(tx, res){
+          console.log("saved graph");
+          graphs[graphExpressionId] = post.GRAPH;
             if(res.insertId)
-                graphs[expressionId].ID = res.insertId;
-            graphs[expressionId] = post.GRAPH;
+                graphs[graphExpressionId].ID = res.insertId;
         })
     });
-    */
+
 }
 
 function getInterviewIds(intId, studyId){
@@ -1163,7 +1223,9 @@ function getInterviewIds(intId, studyId){
     console.log(multiKey);
     for(i = 0; i < multiStudyIds.length; i++){
         for(k in interviews[multiStudyIds[i]]){
-            if(multiKey == egoAnswers[interviews[multiStudyIds[i]][k].ID][multiIdQs[multiStudyIds[i]].ID])
+          if(egoAnswers[interviews[multiStudyIds[i]][k].ID] == undefined)
+            continue;
+            if(multiKey == egoAnswers[interviews[multiStudyIds[i]][k].ID][multiIdQs[interviews[multiStudyIds[i]][k].STUDYID].ID])
                 interviewIds.push(interviews[multiStudyIds[i]][k].ID);
         }
     }
@@ -1294,6 +1356,10 @@ function deleteInterview(intId){
         txn.executeSql('DELETE FROM alters WHERE INTERVIEWID = ' + intId, [], function(tx, res) {
         });
         txn.executeSql('DELETE FROM answer WHERE INTERVIEWID = ' + intId, [], function(tx, res) {
+        });
+        txn.executeSql('DELETE FROM notes WHERE INTERVIEWID = ' + intId, [], function(tx, res) {
+        });
+        txn.executeSql('DELETE FROM graphs WHERE INTERVIEWID = ' + intId, [], function(tx, res) {
         });
         for(k in interviews){
             for(i = 0; i < interviews[k].length; i++){

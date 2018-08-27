@@ -373,6 +373,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       if (typeof graphs[expressionId] != "undefined") {
         $scope.graphId = graphs[expressionId].ID;
         $scope.graphExpressionId = graphs[expressionId].EXPRESSIONID;
+        graphExpressionId = $scope.graphExpressionId;
         $scope.graphInterviewId = graphs[expressionId].INTERVIEWID;
         $scope.graphNodes = graphs[expressionId].NODES;
         $scope.graphParams = $scope.questions[k].NETWORKPARAMS;
@@ -380,6 +381,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
           notes = allNotes[expressionId];
       } else {
         $scope.graphExpressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
+        graphExpressionId = $scope.graphExpressionId;
+        if (typeof allNotes[graphExpressionId] != "undefined")
+          notes = allNotes[graphExpressionId];
         $scope.graphInterviewId = interviewId;
         $scope.graphParams = $scope.questions[k].NETWORKPARAMS;
 
@@ -2417,22 +2421,23 @@ function initStats(question) {
           node.y = savedNodes[k].y;
         }
       }
-    } else {/*
-      s.startForceAtlas2({
-        "worker": false,
-        "outboundAttractionDistribution": true,
-        "speed": 2000,
-        "gravity": 0.2,
-        "jitterTolerance": 0,
-        "strongGravityMode": true,
-        "barnesHutOptimize": false,
-        "totalSwinging": 0,
-        "totalEffectiveTraction": 0,
-        "complexIntervals": 500,
-        "simpleIntervals": 1000
-      });
-      setTimeout("s.stopForceAtlas2(); saveNodes(); $('#fullscreenButton').prop('disabled', false);", 5000);
-      */
+    } else {
+      if(!s.isForceAtlas2Running()){
+        s.startForceAtlas2({
+          "worker": false,
+          "outboundAttractionDistribution": true,
+          "speed": 2000,
+          "gravity": 0.2,
+          "jitterTolerance": 0,
+          "strongGravityMode": true,
+          "barnesHutOptimize": false,
+          "totalSwinging": 0,
+          "totalEffectiveTraction": 0,
+          "complexIntervals": 500,
+          "simpleIntervals": 1000
+        });
+        setTimeout("s.stopForceAtlas2(); saveNodes(); $('#fullscreenButton').prop('disabled', false);", 5000);
+      }
     }
     s.refresh();
     initNotes(s);
