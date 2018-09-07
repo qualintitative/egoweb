@@ -24,12 +24,12 @@ $(function(){
     }, 100);
 })
 $(document).keydown(function(e) {
-	if($("textarea").length == 0 &&  e.keyCode == 13){
-    		e.preventDefault();
+	if($("textarea").length == 1 &&  e.keyCode == 13){
+    e.preventDefault();
 		if($("#alterFormBox").length != 0 && $(".alterSubmit").length != 0)
 			$('.alterSubmit')[0].click();
 		else
-			$('.orangebutton')[0].click();
+			$('#next').click();
 	}
     if(alterPromptPage == false){
     	if (e.keyCode == 37){
