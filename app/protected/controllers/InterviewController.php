@@ -208,16 +208,17 @@ class InterviewController extends Controller
     		$prevIds = array();
     		if(is_array($interviewIds))
         		$prevIds = array_diff($interviewIds, array($interviewId));
-    		if(is_array($interviewIds)){
+    		if(is_array($prevIds)){
     		    $answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewIds));
                 foreach($network_questions as $nq){
-                    if(!isset($otherGraphs[$nq['ID']]))
-                        $otherGraphs[$nq['ID']] = array();
-                    foreach($interviewIds as $i_id){
+                    if(!isset($otherGraphs[$nq['TITLE']]))
+                        $otherGraphs[$nq['TITLE']] = array();
+                    foreach($prevIds as $i_id){
                         if($i_id == $interviewId)
                             continue;
+                          $oldInterview = Interview::model()->findByPK($i_id);
                         $graphId = "";
-                        $s = Study::model()->findByPk($interview->studyId);
+                        $s = Study::model()->findByPk($oldInterview->studyId);
                         $criteria = array(
                             "condition"=>"title = '" . $nq['TITLE'] . "' AND studyId = " . $s->id,
                         );
@@ -230,7 +231,7 @@ class InterviewController extends Controller
                             $graphId = Graph::model()->find($criteria);
                         }
                         if($graphId){
-                            $otherGraphs[$nq['ID']][] = array(
+                            $otherGraphs[$nq['TITLE']][] = array(
                                 "interviewId" => $i_id,
                                 "expressionId" => $networkExprId,
                                 "studyName" => $s->name,

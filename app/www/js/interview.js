@@ -368,8 +368,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     if ($scope.questions[k].SUBJECTTYPE == "NETWORK") {
       var expressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
       notes = [];
-      if (typeof otherGraphs[$scope.questions[k].ID] != "undefined")
-        $scope.otherGraphs = otherGraphs[$scope.qId];
+      if (typeof otherGraphs[$scope.questions[k].TITLE] != "undefined")
+        $scope.otherGraphs = otherGraphs[$scope.questions[k].TITLE];
       if (typeof graphs[expressionId] != "undefined") {
         $scope.graphId = graphs[expressionId].ID;
         $scope.graphExpressionId = graphs[expressionId].EXPRESSIONID;
@@ -2422,7 +2422,6 @@ function initStats(question) {
         }
       }
     } else {
-      if(!s.isForceAtlas2Running()){
         s.startForceAtlas2({
           "worker": false,
           "outboundAttractionDistribution": true,
@@ -2437,7 +2436,6 @@ function initStats(question) {
           "simpleIntervals": 1000
         });
         setTimeout("s.stopForceAtlas2(); saveNodes(); $('#fullscreenButton').prop('disabled', false);", 5000);
-      }
     }
     s.refresh();
     initNotes(s);
