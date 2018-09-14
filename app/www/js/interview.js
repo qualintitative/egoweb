@@ -415,7 +415,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
   $scope.errors = new Object;
 
-  $scope.print = function(e_Id, i_Id) {
+  $scope.print = function(e_Id, i_Id, params) {
     if (typeof e_Id == "undefined")
       e_Id = $scope.graphExpressionId;
     if (typeof i_Id == "undefined")
@@ -424,7 +424,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       s_Id = "";
     else
       s_Id = "&starExpressionId=" + $scope.starExpressionId;
-    url = "/data/visualize?print&expressionId=" + e_Id + "&interviewId=" + i_Id + s_Id + "&params=" + encodeURIComponent($("#Graph_params").val()) + "&labelThreshold=" + s.renderers[0].settings("labelThreshold");
+    url = "/data/visualize?print&expressionId=" + e_Id + "&interviewId=" + i_Id + s_Id + "&params=" + encodeURIComponent(params) + "&labelThreshold=" + s.renderers[0].settings("labelThreshold");
     window.open(url);
   }
 
