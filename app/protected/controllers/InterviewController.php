@@ -235,7 +235,7 @@ class InterviewController extends Controller
                                 "interviewId" => $i_id,
                                 "expressionId" => $networkExprId,
                                 "studyName" => $s->name,
-                                "params"=> $graphId->params,
+                                "params"=> $nq["NETWORKPARAMS"],
                             );
                         }
                     }
