@@ -256,10 +256,10 @@ class visualize extends Plugin
         );
       }
 
-            $answerV = "";
-            $answer = Answer::model()->find($criteria);
-            if($answer)
-                $answerV = explode(',', $answer->value);
+      $answerV = "";
+      $answer = Answer::model()->find($criteria);
+      if($answer)
+          $answerV = explode(',', $answer->value);
 			foreach($this->params['edgeSize']['options'] as $option){
                 if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
                     return floatval($option['size']);
