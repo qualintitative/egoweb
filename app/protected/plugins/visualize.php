@@ -263,7 +263,7 @@ class visualize extends Plugin
 			foreach($this->params['edgeSize']['options'] as $option){
                 if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
                     return floatval($option['size']);
-				if($option['id'] == $answerV || (is_array($option['id']) && in_array($option['id'], $answerV)))
+				if($option['id'] == $answerV || (is_array($answerV) && in_array($option['id'], $answerV)))
 					$default = floatval($option['size']);
 			}
       if(isset($this->params['egoEdgeSize']['options'])){
