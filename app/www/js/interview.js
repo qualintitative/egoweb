@@ -395,12 +395,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     setTimeout(
       function() {
         eval($scope.questions[k].JAVASCRIPT);
-        $(window).scrollTop(0);
         if ($scope.askingStyleList != false) {
           fixHeader();
         } else {
           unfixHeader();
         }
+        $(window).scrollTop(0);
         if (typeof $(".answerInput")[0] != "undefined")
           $(".answerInput")[0].focus();
         if (!isGuest && $("#menu_" + $scope.page).length != 0)
@@ -410,8 +410,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   }
 
   setTimeout(function() {
+    $(window).scrollTop(0);
     eval(study.JAVASCRIPT);
-  }, 1);
+  }, 150);
 
   $scope.errors = new Object;
 
@@ -2542,6 +2543,7 @@ function columnWidths() {
 }
 
 function fixHeader() {
+
   columnWidths();
   // Set this variable with the height of your sidebar + header
   var offsetLeft = $("#realHeader").offset().left
