@@ -396,6 +396,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       function() {
         eval($scope.questions[k].JAVASCRIPT);
         if ($scope.askingStyleList != false) {
+          $("#floatHeader").css({
+            "position": "fixed",
+            "left": $("#realHeader").offset().left - $(window).scrollLeft() + "px",
+          });
           fixHeader();
         } else {
           unfixHeader();
@@ -410,6 +414,15 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   }
 
   setTimeout(function() {
+    if ($scope.askingStyleList != false) {
+      $("#floatHeader").css({
+        "position": "fixed",
+        "left": $("#realHeader").offset().left - $(window).scrollLeft() + "px",
+      });
+      fixHeader();
+    } else {
+      unfixHeader();
+    }
     $(window).scrollTop(0);
     eval(study.JAVASCRIPT);
   }, 150);
@@ -2585,13 +2598,12 @@ $(window).on('resize', function(e) {
   resizeTimer = setTimeout(function() {
 
     $(window).unbind('scroll');
-    var offsetLeft = $("#realHeader").offset().left
     $("#content").css({
       "background-attachment": "fixed"
     });
     $("#floatHeader").css({
       "position": "fixed",
-      "left": offsetLeft - $(window).scrollLeft() + "px",
+      "left": $("#realHeader").offset().left - $(window).scrollLeft() + "px",
     });
     fixHeader();
   }, 250);
