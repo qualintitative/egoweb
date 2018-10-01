@@ -976,7 +976,8 @@ class AuthoringController extends Controller
 				$questionId = $model->id;
 				if(file_exists(Yii::app()->basePath."/../audio/".$model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3"))
 					unlink(Yii::app()->basePath."/../audio/".$model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3");
-				$model->delete();
+        $sType = $model->subjectType;
+      	$model->delete();
 				Question::sortOrder($ordering, $studyId);
 				$expressions = Expression::model()->findAllByAttributes(array('questionId'=>$questionId));
 				foreach($expressions as $expression){
@@ -986,7 +987,7 @@ class AuthoringController extends Controller
 			}
 			$criteria=new CDbCriteria;
 			$criteria=array(
-				'condition'=>"studyId = " . $studyId ." AND subjectType = '" . $subjectType ."'",
+				'condition'=>"studyId = " . $studyId  .  ($sType == "EGO_ID" ? ' AND subjectType = "EGO_ID"' : ' AND subjectType != "EGO_ID"'),
 				'order'=>'ordering',
 			);
 			$dataProvider=new CActiveDataProvider('Question',array(
