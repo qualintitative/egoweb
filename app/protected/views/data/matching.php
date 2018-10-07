@@ -22,27 +22,39 @@ for(j in alters1){
         name2 = alters2[k].toLowerCase().split(" ");
         last1 = false;
         last2 = false;
-        if(name1.length > 1)
-            last1 = name1[name1.length-1].charAt(0).toLowerCase();
-        if(name2.length > 1)
-            last2 = name2[name2.length-1].charAt(0).toLowerCase();
+        first1 = name1[0].charAt(0).toLowerCase();
+        first2 = name2[0].charAt(0).toLowerCase();
 
-        ls = new Levenshtein(name1[0], name2[0]);
-        if(ls.distance < altersL[j]){
-            if(!last1 || !last2 || last1 == last2){
-                altersL[j] = ls.distance;
-                altersLId[j] = k;
-            }
+        if(name1.length > 1){
+            last1 = name1[name1.length-1].charAt(0).toLowerCase();
         }
+        if(name2.length > 1){
+            last2 = name2[name2.length-1].charAt(0).toLowerCase();
+        }
+
+
         d1 = dm.doubleMetaphone(name1[0]).primary;
         d2 = dm.doubleMetaphone(name2[0]).primary;
-        ls = new Levenshtein(d1, d2);
-        if(ls.distance < altersD[j]){
+        ds = new Levenshtein(d1, d2);
+        console.log("d ist", ds.distance, d1,d2);
+        if(ds.distance < altersD[j]){
             if(!last1 || !last2 || last1 == last2){
-                altersD[j] = ls.distance;
+                altersD[j] = ds.distance;
                 altersDId[j] = k;
             }
         }
+        if(name1.length > 1 && name2.length > 1){
+          l1 = dm.doubleMetaphone(name1[name1.length-1]).primary;
+          l2 = dm.doubleMetaphone(name2[name2.length-1]).primary;
+          ls = new Levenshtein(l1, l2);
+          if(ls.distance < altersL[j]){
+              if(first1 == first2){
+                  altersL[j] = ls.distance;
+                  altersLId[j] = k;
+              }
+            }
+        }
+
     }
 
 }
@@ -138,11 +150,11 @@ function exportMatches(){
 
     <div class="panel-body">
         <div class="form-group">
-            <label class="control-label col-lg-1">Metaphone Tolerence</label>
+            <label class="control-label col-lg-1">First Name Tolerence</label>
             <div class="col-lg-3">
-            <input class="form-control" id="dTol" type="number" value="1">
+            <input class="form-control" id="dTol" type="number" value="2">
             </div>
-            <label class="control-label col-lg-1">Levenshtein Tolerence</label>
+            <label class="control-label col-lg-1">Last Name Tolerence</label>
             <div class="col-lg-3">
                 <input class="form-control" id="lTol" type="number" value="2">
             </div>
