@@ -18,8 +18,8 @@ for(j in alters1){
     altersL[j] = 999;
     altersD[j] = 999;
     for(k in alters2){
-        name1 = alters1[j].toLowerCase().split(" ");
-        name2 = alters2[k].toLowerCase().split(" ");
+        name1 = alters1[j].trim().toLowerCase().split(" ");
+        name2 = alters2[k].trim().toLowerCase().split(" ");
         last1 = false;
         last2 = false;
         first1 = name1[0].charAt(0).toLowerCase();
@@ -150,13 +150,13 @@ function exportMatches(){
 
     <div class="panel-body">
         <div class="form-group">
-            <label class="control-label col-lg-1">First Name Tolerence</label>
+            <label class="control-label col-lg-1">First Name Tolerance</label>
             <div class="col-lg-3">
-            <input class="form-control" id="dTol" type="number" value="2">
+            <input class="form-control" id="dTol" type="number" value="1">
             </div>
-            <label class="control-label col-lg-1">Last Name Tolerence</label>
+            <label class="control-label col-lg-1">Last Name Tolerance</label>
             <div class="col-lg-3">
-                <input class="form-control" id="lTol" type="number" value="2">
+                <input class="form-control" id="lTol" type="number" value="1">
             </div>
             <div class="col-lg-4">
                 <button class="btn btn-primary" onclick="autoMatch();">Match</button>
