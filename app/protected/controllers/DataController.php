@@ -333,7 +333,7 @@ class DataController extends Controller
         	if($_POST['alterId1'] == 0)
         	    $mark = "Remove Mark";
         	if($match->save())
-                echo "<button class='btn btn-xs btn-danger unMatch-" . $_POST['alterId1'] . "' onclick='unMatch(" . $_POST['alterId1'] . ", " . $_POST['alterId2'] . ")'>$mark</button>";
+                echo "<button class='btn btn-xs btn-danger unMatch-" . $_POST['alterId1'] . "' onclick='unMatch(" .$_POST['studyId'].  "," . $_POST['alterId1'] . ", " . $_POST['alterId2'] . ")'>$mark</button>";
             else
                 print_r($match->errors);
 
