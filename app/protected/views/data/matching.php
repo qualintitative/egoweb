@@ -53,6 +53,9 @@ for(j in alters1){
                   altersLId[j] = k;
               }
             }
+        }else{
+          altersL[j] = 0;
+          altersLId[j] = k;
         }
 
     }
@@ -152,7 +155,7 @@ function exportMatches(){
         <div class="form-group">
             <label class="control-label col-lg-1">First Name Tolerance</label>
             <div class="col-lg-3">
-            <input class="form-control" id="dTol" type="number" value="1">
+            <input class="form-control" id="dTol" type="number" value="2">
             </div>
             <label class="control-label col-lg-1">Last Name Tolerance</label>
             <div class="col-lg-3">
