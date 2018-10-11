@@ -38,10 +38,10 @@ for(j in alters1){
         ds = new Levenshtein(d1, d2);
         console.log("d ist", ds.distance, d1,d2);
         if(ds.distance < altersD[j]){
-            if(!last1 || !last2 || last1 == last2){
+        //    if(!last1 || !last2 || last1 == last2){
                 altersD[j] = ds.distance;
                 altersDId[j] = k;
-            }
+          //  }
         }
         if(name1.length > 1 && name2.length > 1){
           l1 = dm.doubleMetaphone(name1[name1.length-1]).primary;
