@@ -13,22 +13,24 @@ altersLId = new Object;
 altersDId = new Object;
 
 dm = new DoubleMetaphone;
+discardNames = ["i", "ii", "iii", "iv", "v", "jr", "sr"]
 dm.maxCodeLen = 64;
 for(j in alters1){
     altersL[j] = 999;
     altersD[j] = 999;
     for(k in alters2){
-        name1 = alters1[j].trim().toLowerCase().split(" ");
-        name2 = alters2[k].trim().toLowerCase().split(" ");
+        name1 = alters1[j].toLowerCase().replace(/\./g,' ').trim().split(" ");
+        name2 = alters2[k].toLowerCase().replace(/\./g,' ').trim().split(" ");
+
         last1 = false;
         last2 = false;
         first1 = name1[0].charAt(0).toLowerCase();
         first2 = name2[0].charAt(0).toLowerCase();
 
-        if(name1.length > 1){
+        if(name1.length > 1 && !discardNames.includes(name1[name1.length-1])){
             last1 = name1[name1.length-1].charAt(0).toLowerCase();
         }
-        if(name2.length > 1){
+        if(name2.length > 1 && !discardNames.includes(name2[name2.length-1])){
             last2 = name2[name2.length-1].charAt(0).toLowerCase();
         }
 
@@ -36,28 +38,48 @@ for(j in alters1){
         d1 = dm.doubleMetaphone(name1[0]).primary;
         d2 = dm.doubleMetaphone(name2[0]).primary;
         ds = new Levenshtein(d1, d2);
-        console.log("d ist", ds.distance, d1,d2);
         if(ds.distance < altersD[j]){
+          console.log("first dist", ds.distance, d1,d2);
+
         //    if(!last1 || !last2 || last1 == last2){
                 altersD[j] = ds.distance;
                 altersDId[j] = k;
           //  }
         }
-        if(name1.length > 1 && name2.length > 1){
+        if(last1 && last2){
           l1 = dm.doubleMetaphone(name1[name1.length-1]).primary;
           l2 = dm.doubleMetaphone(name2[name2.length-1]).primary;
           ls = new Levenshtein(l1, l2);
+
           if(ls.distance < altersL[j]){
+              console.log("last dist", ls.distance, l1,l2);
               if(first1 == first2){
                   altersL[j] = ls.distance;
-                  altersLId[j] = k;
+                  if(altersDId[j] != k){
+                    if(altersD[j] <= altersL[j]){
+                      altersLId[j] = altersDId[j];
+                    } else{
+                      altersLId[j] = k;
+                      altersDId[j] = k;
+                    }
+                  }else{
+                    altersLId[j] = k;
+                  }
               }
             }
-        }else{
-          altersL[j] = 0;
-          altersLId[j] = k;
+        }else if(name1.length > 1 && name2.length  == 1 && altersD[j] == 0){
+          altersLId[j] = altersDId[j];
+          altersL[j] = altersD[j];
+        }else if(name2.length > 1 && name1.length  == 1 && altersD[j] == 0){
+          altersLId[j] = altersDId[j];
+          altersL[j] = altersD[j];
         }
 
+    }
+    if(altersD[j] <= 2 && altersL[j] == 999){
+      console.log(alters1[j])
+      altersL[j] = 0;
+      altersLId[j] = altersDId[j];
     }
 
 }
@@ -173,7 +195,7 @@ function exportMatches(){
     echo CHtml::dropdownlist(
         'question',
         '',
-        $questions,
+        CHtml::listData(Question::model()->findAllByAttributes(array('subjectType'=>"ALTER", "studyId"=>$study->id), array( 'order'=>"ordering")), 'id', 'title'),
         array('empty' => 'Choose Question', "class"=>"pull-left","onChange"=>'loadR($(this).val());$("#prompt").html(prompts[$(this).val()])')
     );
     ?>

@@ -265,6 +265,7 @@ class DataController extends Controller
     		}
             $answers[$answer->questionId][$answer->alterId1] = $answer->value;
 		}
+
         $result = Question::model()->findAllByAttributes(array("subjectType"=>"ALTER", "studyId"=>$interview1->studyId));
         foreach($result as $question){
             $questions[$question->id] = $question->title;
