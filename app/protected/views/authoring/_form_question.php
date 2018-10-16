@@ -169,7 +169,6 @@ jQuery('input.time-".$model->id."').change(function() {
         			'useAlterListField',
         			array(
         				''=>'None',
-        				'id'=>'ID',
         				'email'=>'Email',
         				'name'=>'Name',
         			),
@@ -318,9 +317,11 @@ jQuery('input.time-".$model->id."').change(function() {
 		</table>
 		</div>
 
+<?php if($model->subjectType != "EGO_ID"): ?>
         <div class="panel-<?php echo $model->id; ?>" id="NAME_GENERATOR" style="<?php if(!strstr($model->subjectType, "ALTER_PAIR")){ ?>display:none<?php } ?>">
             Minimum Alters: <?php echo $form->textField($model,'minLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-minLiteral')); ?>
             Maximum Alters: <?php echo $form->textField($model,'maxLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-maxLiteral')); ?>
+
             <?php echo $form->labelEx($model,'useAlterListField', array("class"=>"control-label col-sm-8")); ?>
             <div class="col-sm-4">
                 <?php echo $form->dropDownList(
@@ -328,7 +329,6 @@ jQuery('input.time-".$model->id."').change(function() {
                   'useAlterListField',
                   array(
                     ''=>'None',
-                    'id'=>'ID',
                     'email'=>'Email',
                     'name'=>'Name',
                   ),
@@ -337,7 +337,7 @@ jQuery('input.time-".$model->id."').change(function() {
                 <?php echo $form->error($model,'useAlterListField'); ?>
             </div>
         </div>
-
+<?php endif; ?>
 	<div id="ALTER" style="<?php if(!strstr($model->subjectType, "ALTER")){ ?>display:none<?php } ?>">
 
 		<div id="ALTER_PAIR" style="<?php if(!strstr($model->subjectType, "ALTER_PAIR")){ ?>display:none<?php } ?>">
