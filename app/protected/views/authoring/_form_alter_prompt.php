@@ -6,6 +6,9 @@
     );
     $dataProvider=new CActiveDataProvider('AlterPrompt',array(
         'criteria'=>$criteria,
+        'pagination'=>array(
+            'pageSize'=>50,
+        )
     ));
 
 ?>
