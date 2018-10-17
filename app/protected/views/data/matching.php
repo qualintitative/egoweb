@@ -39,12 +39,13 @@ for(j in alters1){
         d2 = dm.doubleMetaphone(name2[0]).primary;
         ds = new Levenshtein(d1, d2);
         if(ds.distance < altersD[j]){
-          console.log("first dist", ds.distance, d1,d2);
 
-        //    if(!last1 || !last2 || last1 == last2){
+            if(!last1 || !last2 || last1 == last2){
+              console.log("first match", ds.distance, name1[0],d1,name2[0],d2, " list dist ", altersL[j]);
+
                 altersD[j] = ds.distance;
                 altersDId[j] = k;
-          //  }
+            }
         }
         if(last1 && last2){
           l1 = dm.doubleMetaphone(name1[name1.length-1]).primary;
@@ -67,16 +68,17 @@ for(j in alters1){
                   }
               }
             }
-        }else if(name1.length > 1 && name2.length  == 1 && altersD[j] == 0){
-          altersLId[j] = altersDId[j];
-          altersL[j] = altersD[j];
-        }else if(name2.length > 1 && name1.length  == 1 && altersD[j] == 0){
+        }
+
+        else if(name1.length > 1 && name2.length  == 1 && altersD[j] == 0 && altersL[j] != 0){
+          console.log("replaced last with first " + alters2[k])
           altersLId[j] = altersDId[j];
           altersL[j] = altersD[j];
         }
 
+
     }
-    if(altersD[j] <= 2 && altersL[j] == 999){
+    if(altersD[j] <= 1 && altersL[j] == 999){
       console.log(alters1[j])
       altersL[j] = 0;
       altersLId[j] = altersDId[j];
