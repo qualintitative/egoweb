@@ -319,8 +319,8 @@ jQuery('input.time-".$model->id."').change(function() {
 
 <?php if($model->subjectType != "EGO_ID"): ?>
         <div class="panel-<?php echo $model->id; ?>" id="NAME_GENERATOR" style="<?php if(!strstr($model->subjectType, "ALTER_PAIR")){ ?>display:none<?php } ?>">
-            Minimum Alters: <?php echo $form->textField($model,'minLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-minLiteral')); ?>
-            Maximum Alters: <?php echo $form->textField($model,'maxLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-maxLiteral')); ?>
+            Minimum Alters: <input style='width:60px; margin:0' id="minAltrNum" onchange="$('#<?php echo $model->id; ?>-minLiteral').val($(this).val())" value="<?php echo $model->minLiteral; ?>">
+            Maximum Alters: <input style='width:60px; margin:0' id="maxAltrNum" onchange="$('#<?php echo $model->id; ?>-maxLiteral').val($(this).val())" value="<?php echo $model->maxLiteral; ?>">
 
             <?php echo $form->labelEx($model,'useAlterListField', array("class"=>"control-label col-sm-8")); ?>
             <div class="col-sm-4">
