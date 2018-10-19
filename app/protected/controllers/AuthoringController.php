@@ -910,17 +910,6 @@ class AuthoringController extends Controller
 			$model->save();
 			Study::updated($model->studyId);
 
-			$studyId = $model->studyId;
-			$criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"studyId = " . $studyId . " AND questionId = " . $model->questionId,
-			);
-			$dataProvider=new CActiveDataProvider('AlterPrompt',array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
-			));
-
-
       $study = Study::model()->findByPk($model->studyId);
       $question = Question::model()->findByPk($model->questionId);
       $this->renderPartial('_form_alter_prompt', array('question'=>$question, 'study'=>$study, 'ajax'=>true), false, true);
