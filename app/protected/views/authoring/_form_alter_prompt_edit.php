@@ -16,8 +16,8 @@
 	<?php echo $form->error($model,'display'); ?>
 	<?php if($ajax == true): ?>
 		<?php echo CHtml::ajaxSubmitButton ("Update",
-        	CController::createUrl('ajaxupdate'), 
-        	array('update' => '#alterPrompt'),
+        	CController::createUrl('ajaxupdate'),
+        	array('update' => '#data-' . $question->id),
         	array('id'=>uniqid(), 'live'=>false, 'style'=>'float:left; margin:3px 5px;'));
 		?>
 	<?php else: ?>

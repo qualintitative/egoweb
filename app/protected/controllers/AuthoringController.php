@@ -589,7 +589,7 @@ class AuthoringController extends Controller
 
     public function actionAlterprompt(){
         Yii::app()->clientScript->scriptMap['jquery.js'] = false;
-		Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
+		    Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
         $study = Study::model()->findByPk($_GET['studyId']);
         $question = Question::model()->findByPk($_GET['questionId']);
         $this->renderPartial('_form_alter_prompt', array('question'=>$question, 'study'=>$study, 'ajax'=>true), false, true);
@@ -909,6 +909,7 @@ class AuthoringController extends Controller
 			$model->attributes=$_POST['AlterPrompt'];
 			$model->save();
 			Study::updated($model->studyId);
+
 			$studyId = $model->studyId;
 			$criteria=new CDbCriteria;
 			$criteria=array(
@@ -918,7 +919,13 @@ class AuthoringController extends Controller
 				'criteria'=>$criteria,
 				'pagination'=>false,
 			));
-   			$this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$studyId, 'ajax'=>true), false, true);
+
+
+      $study = Study::model()->findByPk($model->studyId);
+      $question = Question::model()->findByPk($model->questionId);
+      $this->renderPartial('_form_alter_prompt', array('question'=>$question, 'study'=>$study, 'ajax'=>true), false, true);
+
+   		//	$this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$studyId, 'ajax'=>true), false, true);
 		}else if(isset($_POST['AnswerList'])){
 			$model = new AnswerList;
 			$model->attributes = $_POST['AnswerList'];
