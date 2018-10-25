@@ -1,0 +1,29 @@
+update_dev:
+  allow_failure: false
+  only:
+    branches: dev
+  before_script:
+    - ssh boxy.rand.org "mkdir $CI_JOB_ID"
+    - scp -r * boxy.rand.org:$CI_JOB_ID
+  script:
+  - ssh boxy.rand.org "cp -r $CI_JOB_ID/app/* /var/www/html/egoweb;
+    mkdir -p /var/www/html/egoweb/assets;
+    mkdir -p /var/www/html/egoweb/protected/runtime;"
+  environment:
+    name: dev
+    url: http://egowebdev.rand.org/
+
+update_alp_dev:
+  allow_failure: false
+  only:
+    branches: alp
+  before_script:
+  - ssh boxy.rand.org "mkdir $CI_JOB_ID"
+  - scp -r * boxy.rand.org:$CI_JOB_ID
+  script:
+  - ssh boxy.rand.org "cp -r $CI_JOB_ID/app/* /var/www/html/alpegoweb;
+    mkdir -p /var/www/html/alpegoweb/assets;
+    mkdir -p /var/www/html/alpegoweb/protected/runtime;"
+  environment:
+    name: alp
+    url: http://alpegowebdev.rand.org/
