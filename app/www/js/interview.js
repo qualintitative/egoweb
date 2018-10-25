@@ -223,7 +223,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       $scope.answers[array_id].INTERVIEWID = interviewId;
       $scope.answers[array_id].SKIPREASON = "NONE";
     } else {
-      if ($scope.answers[array_id].VALUE == "-4")
+      if ($scope.answers[array_id].VALUE == study.VALUELOGICALSKIP || $scope.answers[array_id].VALUE == study.VALUENOTYETANSWERED)
         $scope.answers[array_id].VALUE = "";
     }
     if ($scope.questions[k].ANSWERTYPE == "TIME_SPAN") {

@@ -1055,7 +1055,6 @@ function save(questions, page, url, scope){
                         var insert = objToArray(answers[array_id]);
                         txn.executeSql('INSERT INTO answer VALUES (' + fillQs(insert,"?").join(",") + ')', insert, function(tx, res){
                             answers[array_id].ID = res.insertId;
-                            evalQuestions();
                         }, function(tx, error){
                             console.log(tx);
                             console.log(error);
@@ -1067,7 +1066,6 @@ function save(questions, page, url, scope){
                       console.log("updating answer")
                         txn.executeSql('UPDATE answer SET VALUE = ?, SKIPREASON = ?, OTHERSPECIFYTExT = ? WHERE ID = ?', [answers[array_id].VALUE, answers[array_id].SKIPREASON, answers[array_id].OTHERSPECIFYTEXT, answers[array_id].ID], function(tx, res){
                             console.log("answer " + array_id + " updated to " + answers[array_id].VALUE);
-                            evalQuestions();
                         });
                     }
                 }
@@ -1089,6 +1087,7 @@ function save(questions, page, url, scope){
                 s.stopForceAtlas2();
                 saveNodes();
             }
+            evalQuestions();
           //  if(typeof questions[0] != "undefined" && questions[0].ANSWERTYPE == "NAME_GENERATOR")
             //    buildList();
         	if(typeof questions[0] != "undefined" && questions[0].ANSWERTYPE == "CONCLUSION"){
