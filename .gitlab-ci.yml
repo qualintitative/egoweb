@@ -1,7 +1,8 @@
 update_dev:
   allow_failure: false
   only:
-    branches: dev
+    refs:
+      - dev
   before_script:
     - ssh boxy.rand.org "mkdir $CI_JOB_ID"
     - scp -r * boxy.rand.org:$CI_JOB_ID
@@ -16,7 +17,8 @@ update_dev:
 update_alp_dev:
   allow_failure: false
   only:
-    branches: alp
+    refs:
+    - alp
   before_script:
   - ssh boxy.rand.org "mkdir $CI_JOB_ID"
   - scp -r * boxy.rand.org:$CI_JOB_ID
