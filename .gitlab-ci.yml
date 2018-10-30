@@ -27,5 +27,25 @@ update_alp_dev:
     mkdir -p /var/www/html/alpegoweb/assets;
     mkdir -p /var/www/html/alpegoweb/protected/runtime;"
   environment:
-    name: alp
+    name: alp_dev
     url: http://alpegowebdev.rand.org/
+
+update_alp_prod:
+  allow_failure: false
+  only:
+    refs:
+    - alp
+  before_script:
+  - ssh smgolding.randcorp.org "mkdir $CI_JOB_ID"
+  - scp -r * smgolding.randcorp.org:$CI_JOB_ID
+  script:
+  - ssh smgolding.randcorp.org "rm -rf backup;
+    mkdir -p backup;
+    yes | cp -rf  /var/www/alpegoweb backup;
+    yes | cp -rf $CI_JOB_ID/app/* /var/www/alpegoweb;
+    mkdir -p /var/www/alpegoweb/assets;
+    mkdir -p /var/www/alpegoweb/protected/runtime;"
+  environment:
+    name: alp_prod
+    url: http://alpegoweb.rand.org/
+  when: manual
