@@ -29,7 +29,7 @@
                 </dict>
             </array>
         </config-file>
-        <icon height="1024" height="1024" src="www/icons/icon-1024.png" />
+        <icon height="1024" src="www/icons/icon-1024.png" />
         <icon height="76" src="www/icons/icon-76.png" width="76" />
         <icon height="152" src="www/icons/icon-76@2x.png" width="152" />
         <icon height="72" src="www/icons/icon-72.png" width="72" />

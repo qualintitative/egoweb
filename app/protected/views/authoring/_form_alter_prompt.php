@@ -36,10 +36,27 @@
         		(
             		'delete' => array
             		(
-                        //'url'=>'"javascript:deletePrompt(\"" . Yii::app()->createUrl("/authoring/ajaxdelete", array("AlterPrompt[id]"=>$data->id, "form"=>"_form_alter_prompt_edit", "_"=>"'.uniqid().'")) . "\")"',
+                      //  'url'=>'"javascript:deletePrompt(\"" . Yii::app()->createUrl("/authoring/ajaxdelete", array("AlterPrompt[id]"=>$data->id, "form"=>"_form_alter_prompt_edit", "_"=>"'.uniqid().'")) . "\")"',
                 		'url'=>'Yii::app()->createUrl("/authoring/ajaxdelete", array("AlterPrompt[id]"=>$data->id, "_"=>"'.uniqid().'"))',
                 		'options'=>array('class'=>'delete-alter-prompt-' . uniqid()),
-            		),
+                  ),
+/*
+                    'options' => array(
+                        'confirm' => 'Are you sure you want to delete this item?',
+                        'ajax' => array(
+                            'type' => 'GET',
+                        //    'data'=>''
+                            'url' => "js:$(this).attr('href')",
+                            'success' => 'function(data){
+                                if(data.response=="false"){
+                                    alert(data.errorMessage);
+                                }else{
+                                    $.fn.yiiGridView.update("data-' . $question->id . '");
+                                }
+                            }'
+                        ),
+                    ),
+            		),*/
             		'update' => array
             		(
                 		'url'=>'"javascript:updatePrompt(\"" . Yii::app()->createUrl("/authoring/ajaxload", array("alterPromptId"=>$data->id, "form"=>"_form_alter_prompt_edit", "_"=>"'.uniqid().'")) . "\")"',

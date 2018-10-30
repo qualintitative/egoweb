@@ -1087,15 +1087,11 @@ class AuthoringController extends Controller
 				$model->delete();
 				Study::updated($model->studyId);
 			}
-			$criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"studyId = " . $studyId,
-			);
-			$dataProvider=new CActiveDataProvider('AlterPrompt',array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
-			));
-			$this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'studyId'=>$studyId, 'ajax'=>true), false, true);
+
+      $study = Study::model()->findByPk($model->studyId);
+      $question = Question::model()->findByPk($model->questionId);
+      $this->renderPartial('_form_alter_prompt', array('question'=>$question, 'study'=>$study, 'ajax'=>true), false, true);
+
 		}else if(isset($_GET['AnswerList'])){
 			$model = AnswerList::model()->findByPk((int)$_GET['AnswerList']['id']);
 			if($model)
