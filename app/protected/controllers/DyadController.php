@@ -1,6 +1,6 @@
 <?php
 
-class ArchiveController extends Controller
+class DyadController extends Controller
 {
 
 	public function filters()
@@ -33,7 +33,7 @@ class ArchiveController extends Controller
 	{
 
 		$condition = "id != 0";
-		if(!Yii::app()->user->isSuperAdmin){            
+		if(!Yii::app()->user->isSuperAdmin){
             $studies = array();
             $criteria = new CDbCriteria;
             $criteria->condition = "active = 1 AND interviewerId = " . Yii::app()->user->id;

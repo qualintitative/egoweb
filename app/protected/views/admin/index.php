@@ -28,9 +28,9 @@ $this->pageTitle =  "Admin";
 		</p>
 	</td>
 	<td>
-		<h3><a href="/archive">Archive</a></h3>
+		<h3><a href="/dyad">Dyad Matching</a></h3>
 		<p>
-			Archive studies that are no longer active.
+      Match alters from related interviews
 		</p>
 	</td>
 	</tr>
