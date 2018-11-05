@@ -75,7 +75,7 @@ function exportAlterList(){
 	$('#analysis').submit();
 }
 function matchAlters(){
-	$('#analysis').attr('action', '/data/matching');
+	$('#analysis').attr('action', '/dyad/matching');
 	$('#analysis').submit();
 }
 function deleteInterviews(){
@@ -90,31 +90,8 @@ $(function(){
 });
 */
 </script>
-Network Statistics
-<?php echo CHtml::dropdownlist(
-    'adjacencyExpressionId',
-    "",
-    $expressions,
-    array(
-    	'empty' => '(none)',
-		'onchange' => '$("#expressionId").val($(this).val())'
-    )
-);
-?>
-<br>
-<br>
-<div id="status"></div>
-<div class="progress">
-  <div class="progress-bar progress-bar-striped active" role="progressbar"
-  aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
-  </div>
-</div>
-<button onclick='exportEgo()' class='authorButton'>Export Ego-Alter Data</button><br style='clear:both'>
-<button onclick='exportAlterPair()' class='authorButton'>Export Alter Pair Data</button><br style='clear:both'>
-<button onclick='exportOther()' class='authorButton'>Export Other Specify Data</button><br style='clear:both'>
-<button onclick='exportOtherLegacy()' class='authorButton'>Export Legacy Other Specify Data</button><br style='clear:both'>
-<button onclick='exportAlterList()' class='authorButton'>Export Pre-defined Alter List</button><br style='clear:both'>
-<button onclick='deleteInterviews()' class='authorButton'>Delete Interviews</button><br style='clear:both'>
+
+<button onclick='matchAlters()' class='authorButton'>Dyad Match</button><br style='clear:both'>
 
 
 
