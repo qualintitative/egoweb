@@ -742,12 +742,12 @@ class ImportExportController extends Controller
         if(count($options) == 0)
           $options = new stdClass();
         $studies = array();
+        $interviews = array();
+        $answers = array();
+        $alters = array();
+        $graphs = array();
+        $notes = array();
         foreach($interviewIds as $interviewId){
-          $interviews = array();
-          $answers = array();
-          $alters = array();
-          $graphs = array();
-          $notes = array();
           if($interviewId != 0){
             $interviewData = mToA(Interview::model()->findByPK($interviewId));
             $interviewData['EGOID'] = Interview::getEgoId($interviewId);

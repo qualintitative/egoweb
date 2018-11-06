@@ -267,16 +267,22 @@ function getData(){
   var total = $("#send-interviews .export:checked").length;
   var batchSize = 1;
   var interviews = $("#send-interviews .export:checked");
+  if (interviews.length == 0){
+    var x = document.createElement("INPUT");
+    //x.setAttribute("type", "text");
+    interviews = [x];
+    total = 1;
+    console.log(interviews.length)
+  }
   var batchPromiseRecursive = function() {
     // note splice is destructive, removing the first batch off
     // the array
     //var batch = studies.splice(0, batchSize);
     if (interviews.length == 0) {
-      return $.Deferred().resolve().promise();
+      return;
     }
     var thisInt = interviews.splice(0, batchSize);
-
-    console.log($(thisInt).val());
+    console.log($("exporting",thisInt).val());
 
 
     return $.post('/importExport/send/' + $("#sendStudy option:selected").val(), {"YII_CSRF_TOKEN":$("input[name='YII_CSRF_TOKEN']").val(), "serverId":$("#serverAddress option:selected").val(), "export[]":$(thisInt).val()})
