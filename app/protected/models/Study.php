@@ -970,7 +970,7 @@ class Study extends CActiveRecord
     }
     $x->writeElement('introduction', $this->introduction);
     $x->writeElement('egoIdPrompt', $this->egoIdPrompt);
-    $x->writeElement('introduction', $this->alterPrompt);
+    $x->writeElement('alterPrompt', $this->alterPrompt);
     $x->writeElement('conclusion', $this->conclusion);
 		if(count($alterLists) > 0){
       $x->startElement('alterLists');
