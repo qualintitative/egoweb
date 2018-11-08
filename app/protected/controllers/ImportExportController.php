@@ -184,9 +184,17 @@ class ImportExportController extends Controller
     				$newQuestion->save();
     			}
 
+
+          $newStudy = Study::model()->findbyPk($newStudy->id);
     			if($newStudy->multiSessionEgoId != 0 && isset($newQuestionIds[intval($newStudy->multiSessionEgoId)])){
-    				$newStudy->multiSessionEgoId = $newQuestionIds[intval($newStudy->multiSessionEgoId)];
-    				$newStudy->save();
+            $newStudy->multiSessionEgoId = $newQuestionIds[intval($newStudy->multiSessionEgoId)];
+    				if($newStudy->save()){
+              echo $newStudy->multiSessionEgoId;
+              echo "<br>";
+            }else{
+              echo "Multi-ssssion: ";
+              print_r($newStudy->getErrors());
+            }
     			}
 
           if($study->alterPrompts->alterPrompt){
@@ -254,7 +262,7 @@ class ImportExportController extends Controller
 
     						foreach($optionIds as &$optionId){
     							if(is_numeric($optionId) && isset($newOptionIds[$optionId])){
-                    echo $newOptionIds[$optionId];
+                  //  echo $newOptionIds[$optionId];
                     $optionId = $newOptionIds[$optionId];
 
                   }
@@ -392,7 +400,8 @@ class ImportExportController extends Controller
 
 
     		if(count($study->interviews) != 0){
-          echo "new study $newStudy->id";
+          echo "new study $newStudy->id : ";
+          echo $newStudy->multiSessionEgoId;
     			foreach($study->interviews->interview as $interview){
     				$newAlterIds = array();
     				$newInterview = new Interview;
@@ -640,7 +649,7 @@ class ImportExportController extends Controller
     			}
     		}
         }
-		$this->redirect(array('/authoring/edit','id'=>$newStudy->id));
+	  	$this->redirect(array('/authoring/edit','id'=>$newStudy->id));
 
 	}
 
