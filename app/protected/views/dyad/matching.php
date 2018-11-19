@@ -219,7 +219,9 @@ function exportMatches(){
         <th>Responses</th>
 
         <th>Matched Alter name</th>
-    </tr><?php foreach($alters1 as $alterId=>$alter): ?>
+    </tr>
+    <?php if($alters1):?>
+    <?php foreach($alters1 as $alterId=>$alter): ?>
 
     <tr>
         <td><?php echo $alter; ?></td>
@@ -257,6 +259,7 @@ function exportMatches(){
 
         </td>
     </tr><?php endforeach; ?>
+  <?php endif;?>
 </table>
 <div id="markMatch">
 <?php if($marked): ?>

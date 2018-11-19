@@ -232,6 +232,18 @@ class DyadController extends Controller
                 'expressions'=>$expressions,
             ));
         }
+
+        public function actionAjaxInterviews($id)
+      	{
+      		$study = Study::model()->findByPk($id);
+      		$interviews = Interview::model()->findAllByAttributes(array('studyId'=>$id));
+      		$this->renderPartial('_interviews',
+      			array(
+      				'study'=>$study,
+      				'interviews'=>$interviews,
+      			), false, false
+      		);
+      	}
 	// Uncomment the following methods and override them if needed
 	/*
 	public function filters()
