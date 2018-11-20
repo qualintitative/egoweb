@@ -28,7 +28,7 @@ $this->pageTitle =  "Admin";
 		</p>
 	</td>
 	<td>
-		<h3><a href="/dyad">Dyad Matching</a></h3>
+		<h3><a href="/dyad">Alter Matching</a></h3>
 		<p>
       Match alters from related interviews
 		</p>

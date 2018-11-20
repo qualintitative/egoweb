@@ -12,7 +12,7 @@ function getInterviews(dropdown, container){
 }
 </script>
 <div class="panel panel-default">
-<div class="panel-heading">Match Different Studies</div>
+<div class="panel-heading">Single Study Match</div>
 <div class="panel-body">
 <?php foreach($studies as $data): ?>
 	<?php echo CHtml::link(
@@ -23,7 +23,7 @@ function getInterviews(dropdown, container){
 </div>
 </div>
 <div class="panel panel-default">
-<div class="panel-heading">Single Study Match</div>
+<div class="panel-heading">Match Different Studies</div>
 <div class="panel-body">
 <?php
     echo CHtml::form('dyad/matching', 'post', array('id'=>'analysis'));

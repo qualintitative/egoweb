@@ -76,6 +76,18 @@ class DyadController extends Controller
           arsort($interviewIds);
           $interview1 = Interview::model()->findByPK($interviewIds[0]);
           $interview2 = Interview::model()->findByPK($interviewIds[1]);
+          if($interview1->studyId != $interview1->studyId){
+            $questions1 = Question::model()->findAllByAttributes(array("studyId"=>$interview1->studyId));
+            foreach($questions1 as $question){
+              $questionIds[$question->title] = $question->id;
+            }
+            $questions2 = Question::model()->findAllByAttributes(array("studyId"=>$interview2->studyId));
+            foreach($questions2 as $question){
+              if(isset( $questionIds[$question->title] )){
+                $questionIds1[$question->id] = $questionIds[$question->title];
+              }
+            }
+          }
           $study = Study::model()->findByPk($interview1->studyId);
   		$criteria = array(
   			'condition'=>"FIND_IN_SET(" . $interview1->id . ", interviewId)",
@@ -145,13 +157,19 @@ class DyadController extends Controller
                       $answer->value = implode("; ", $answerArray);
 
       		}
+          if($interview1->id == $answer->interviewId || $interview1->studyId == $interview1->studyId){
               $answers[$answer->questionId][$answer->alterId1] = $answer->value;
+            }elseif($interview2->id == $answer->interviewId){
+              $answers[$questionIds1[$answer->questionId]][$answer->alterId1] = $answer->value;
+            }
   		}
 
           $result = Question::model()->findAllByAttributes(array("subjectType"=>"ALTER", "studyId"=>$interview1->studyId));
           foreach($result as $question){
+            if(isset($questionIds1[$question->id]) || $interview1->studyId == $interview1->studyId){
               $questions[$question->id] = $question->title;
               $prompts[$question->id] = $question->prompt;
+            }
           }
   		$this->render('matching', array(
   			'interview1'=>$interview1,
