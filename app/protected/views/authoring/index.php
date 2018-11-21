@@ -4,8 +4,10 @@
 $this->pageTitle = "Authoring";
 ?>
 
-<div class="form">
-
+<div class="col-sm-12">
+<div class="panel panel-default">
+	<div class="panel-heading">Create New Study</div>
+  <div class="panel-body">
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'study-form',
 	'enableAjaxValidation'=>false,
@@ -13,29 +15,35 @@ $this->pageTitle = "Authoring";
 
 	<?php echo $form->errorSummary($model); ?>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'name'); ?>
-		<?php echo $form->textField($model,'name',array('size'=>60,'maxlength'=>100)); ?>
+	<div class="form-inline">
+		<?php echo $form->textField($model,'name',array('size'=>60,'maxlength'=>100, 'class'=>"form-control", "placeholder"=>"Name")); ?>
 		<?php echo $form->error($model,'name'); ?>
-	</div>
-
-	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
+    <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
 	</div>
 
 <?php $this->endWidget(); ?>
 </div>
+</div>
+</div>
 
-<div class="view" style="width:360px;float:left;margin-right:30px">
-	<h2>Single Session Studies</h2>
+<div class="col-sm-6">
+<div class="panel panel-default">
+	<div class="panel-heading">Single Session Studies</div>
+  <div class="panel-body">
 	<?php foreach($single as $data): ?>
 	<?php echo CHtml::link(CHtml::encode($data->name), array('edit', 'id'=>$data->id))."<br>"; ?>
 	<?php endforeach; ?>
+  </div>
+</div>
 </div>
 
-<div class="view" style="width:360px;float:left;margin-right:30px">
-	<h2>Multi Session Studies</h2>
+<div class="col-sm-6">
+<div class="panel panel-default">
+	<div class="panel-heading">Multi Session Studies</div>
+  <div class="panel-body">
 	<?php foreach($multi as $data): ?>
 	<?php echo CHtml::link(CHtml::encode($data->name), array('edit', 'id'=>$data->id))."<br>"; ?>
 	<?php endforeach; ?>
+  </div>
+</div>
 </div>
