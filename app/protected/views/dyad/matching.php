@@ -125,10 +125,11 @@ function loadR(questionId){
 function matchUp(s){
     var id = $(s).attr("id");
     var id2 = $(s).val();
+    var matchId = $(s).attr("matchId");
     if($(s).val() != ""){
         $("#" + id + "-name").show();
         $("#" + id + "-name").val($("option:selected", s).text());
-        $("#" + id + "-buttons").html("<button class='btn btn-xs btn-success btn-xs' onclick='save(" + studyId + "," +id + "," + id2 +")'>save</button>");;
+        $("#" + id + "-buttons").html("<button class='btn btn-xs btn-success btn-xs' onclick='save(" + studyId + "," +id + "," + id2 +","+ matchId+")'>save</button>");;
     }else{
         $("#" + id + "-alter2").html("");
         $("#" + id + "-name").hide();
@@ -138,12 +139,12 @@ function matchUp(s){
     loadR($("#question").val());
 
 }
-function save(sId, id1, id2){
+function save(sId, id1, id2, matchId){
     var alterName = $("#" + id1 + "-name").val();
     if(typeof alterName != "undefined" && alterName.trim() == ""){
         alert ("Please enter a name!");
     }else{
-        $.post("/data/savematch", {studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, userId: <?php echo Yii::app()->user->id; ?>, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
+        $.post("/data/savematch", {id:matchId, studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, userId: <?php echo Yii::app()->user->id; ?>, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
             if(id1 == "0")
                 document.location.href = "/data/study/" + sId; //$("#markMatch").html(data);
             else
@@ -236,16 +237,18 @@ function exportMatches(){
             if($match){
                 $selected = $match->alterId2;
                 $selectedName = $match->matchedName;
+                $matchId = $match->id;
             }else{
                 $selected = "";
                 $selectedName = "";
+                $matchId = "";
             }
                     if(count($alters2) > 0){
                         echo CHtml::dropdownlist(
                             'alterId2',
                             $selected,
                             $alters2,
-                            array('empty' => 'No Match', "class"=>"aMatch", "id"=>$alterId, "onChange"=>'matchUp(this)')
+                            array('empty' => 'No Match', "class"=>"aMatch", "id"=>$alterId, "matchId"=>$matchId, "onChange"=>'matchUp(this)')
                         );
                     }
                 ?></td>
@@ -254,7 +257,7 @@ function exportMatches(){
         <td id="<?php echo $alterId; ?>-buttons">
             <?php
                 if(isset($match))
-                    echo "<button class='btn btn-xs btn-danger unMatch-$alterId' onclick='unMatch(studyId, $alterId, $selected)'>Unmatch</button>";
+                    echo "<button class='btn btn-xs btn-danger unMatch-$alterId' onclick='unMatch(studyId, $match->id, $selected)'>Unmatch</button>";
             ?>
 
         </td>

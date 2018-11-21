@@ -325,7 +325,11 @@ class DataController extends Controller
 	public function actionSavematch()
 	{
     	if(isset($_POST)){
-        	$match = new MatchedAlters;
+          if(isset($_POST['id'])){
+            $match = MatchedAlters::model()->findByPk($_POST['id']);
+          }else{
+        	   $match = new MatchedAlters;
+          }
         	$match->attributes = $_POST;
         	if($match->matchedName == ""){
             	$match->matchedName = "marked";
