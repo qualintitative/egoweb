@@ -369,6 +369,7 @@ $alterlist = new AlterList;
 				);
 				?>
 				<?php $this->endWidget(); ?>
+        <button class="btn btn-info btn-xs" onclick="deleteAlterList(<?php echo $model->id; ?>)">ExportPre-defined Participant List</button>
 				<button class="btn btn-danger btn-xs" onclick="deleteAlterList(<?php echo $model->id; ?>)">Delete Participant List</button>
 			</div>
 			<div id="edit-alterList" style="margin-bottom:15px;"></div>
