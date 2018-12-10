@@ -263,7 +263,9 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
     `networkEColorQId` int(11) DEFAULT NULL,
     `networkESizeQId` int(11) DEFAULT NULL,
     `useAlterListField` text,
-    `javascript` longtext
+    `javascript` longtext,
+    `restrictList` tinyint(1) DEFAULT NULL,
+    `autocompleteList` tinyint(1) DEFAULT NULL
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
   -- --------------------------------------------------------
@@ -620,4 +622,5 @@ INSERT INTO `tbl_migration` (`version`, `apply_time`) VALUES
 ('m170912_064545_name_generators', 1505200157),
 ('m171010_091427_add_var_prompt_q_id', 1507650908),
 ('m180320_124446_add_alterlist_namegen', 1521550344),
-('m180413_082300_server_table', 1523728116);
+('m180413_082300_server_table', 1523728116),
+('m181210_202059_question_autofill_restrict', 1544474812);
