@@ -1244,6 +1244,50 @@ class AuthoringController extends Controller
 		}
 	}
 
+  public function actionExportalterlist()
+	{
+		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
+			die("nothing to export");
+
+		$study = Study::model()->findByPk((int)$_POST['studyId']);
+        #OK FOR SQL INJECTION
+		$alters = AlterList::model()->findAllByAttributes(array("studyId"=>$study->id));
+
+		// start generating export file
+		header("Content-Type: application/octet-stream");
+		header("Content-Disposition: attachment; filename=".seoString($study->name)."-predefined-alters".".csv");
+		header("Content-Type: application/force-download");
+
+		$headers = array();
+		$headers[] = 'Study ID';
+		$headers[] = "Alter ID";
+		$headers[] = "Alter Name";
+		$headers[] = "Alter Email";
+		$headers[] = "Link With Key";
+		echo implode(',', $headers) . "\n";
+
+        $ego_id = Question::model()->findByAttributes(array("studyId"=>$study->id, "subjectType"=>"EGO_ID", "useAlterListField"=>array("name", "email", "id")));
+
+		foreach($alters as $alter){
+			$row = array();
+			if($ego_id->useAlterListField == "name")
+    			$key = User::hashPassword($alter->name);
+			else if($ego_id->useAlterListField == "email")
+    			$key = User::hashPassword($alter->email);
+			else if($ego_id->useAlterListField == "id")
+    			$key = User::hashPassword($alter->id);
+            else
+                $key = "";
+			$row[] = $study->id;
+			$row[] = $alter->id;
+			$row[] = $alter->name;
+			$row[] = $alter->email;
+			$row[] =  Yii::app()->getBaseUrl(true) . "/interview/".$study->id."#/page/0/".$key;
+			echo implode(',', $row) . "\n";
+		}
+		Yii::app()->end();
+	}
+
 	public function actionAjaxshowlink()
 	{
 		if(isset($_GET['alterListId'])){

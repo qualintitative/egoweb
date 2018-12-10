@@ -122,6 +122,10 @@ function deleteAlterList(studyId){
         });
     }
 }
+function exportAlterList(){
+  $("#exportlistform").submit();
+}
+
 </script>
 
 <?php $form=$this->beginWidget('CActiveForm', array(
@@ -369,7 +373,7 @@ $alterlist = new AlterList;
 				);
 				?>
 				<?php $this->endWidget(); ?>
-        <button class="btn btn-info btn-xs" onclick="deleteAlterList(<?php echo $model->id; ?>)">ExportPre-defined Participant List</button>
+        <button class="btn btn-info btn-xs" onclick="exportAlterList()">Export Pre-defined Participant List</button>
 				<button class="btn btn-danger btn-xs" onclick="deleteAlterList(<?php echo $model->id; ?>)">Delete Participant List</button>
 			</div>
 			<div id="edit-alterList" style="margin-bottom:15px;"></div>
@@ -382,6 +386,9 @@ $alterlist = new AlterList;
             	<input name="userfile" type="file" />
             	<input type="hidden" name="studyId" value="<?= $model->id; ?>" />
             	<input class="btn btn-primary" type="submit" value="Import Participant List" />
+            </form>
+            <?php echo CHtml::form('/authoring/exportalterlist', 'post', array('id'=>'exportlistform')) ?>
+            <input type="hidden" name="studyId" value="<?= $model->id; ?>" />
             </form>
 	    </div>
 	</div>
