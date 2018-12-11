@@ -175,7 +175,16 @@ jQuery('input.time-".$model->id."').change(function() {
         			array("class"=>"form-control")
         		); ?>
         		<?php echo $form->error($model,'useAlterListField'); ?>
+
     		</div>
+        <div class="col-sm-12">
+          <?php echo $form->checkBox($model,'restrictList', array('id'=>$model->id . "_" . "restrictList")); ?>
+          <?php echo $form->labelEx($model,'restrictList', array('for'=>$model->id . "_" . "restrictList")); ?>
+        </div>
+        <div class="col-sm-12">
+          <?php echo $form->checkBox($model,'autocompleteList', array('id'=>$model->id . "_" . "autocompleteList")); ?>
+          <?php echo $form->labelEx($model,'autocompleteList', array('for'=>$model->id . "_" . "autocompleteList")); ?>
+        </div>
     	</div>
 
         <div class="panel-<?php echo $model->id; ?>" id="RANDOM_NUMBER" style="display:none">

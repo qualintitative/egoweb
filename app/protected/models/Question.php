@@ -46,7 +46,9 @@
  * @property integer $networkNSizeQId
  * @property integer $networkEColorQId
  * @property integer $networkESizeQId
- * @property text $useAlterListField
+ * @property string $useAlterListField
+ * @property integer $restrictList
+ * @property integer $autocompleteList
  */
 class Question extends CActiveRecord
 {
@@ -88,7 +90,7 @@ class Question extends CActiveRecord
 				'setOnEmpty'=>true,'on'=>'insert'
 			),
             array('prompt, preface, citation, javascript', 'length', 'max'=>4294967295),
-			array('id, active, title, subjectType, answerType, askingStyleList, ordering, otherSpecify, noneButton, allButton, pageLevelDontKnowButton, pageLevelRefuseButton, dontKnowButton, refuseButton, allOptionString, uselfExpression, minLimitType, minLiteral, minPrevQues, maxLimitType, maxLiteral, maxPrevQues, minCheckableBoxes, maxCheckableBoxes, withListRange, listRangeString, minListRange, maxListRange, timeUnits, symmetric, keepOnSamePage, studyId, answerReasonExpressionId, networkRelationshipExprId, networkParams, networkNColorQId, networkNSizeQId, networkEColorQId, networkESizeQId, useAlterListField', 'length', 'max'=>4096),
+			array('id, active, title, subjectType, answerType, askingStyleList, ordering, otherSpecify, noneButton, allButton, pageLevelDontKnowButton, pageLevelRefuseButton, dontKnowButton, refuseButton, allOptionString, uselfExpression, minLimitType, minLiteral, minPrevQues, maxLimitType, maxLiteral, maxPrevQues, minCheckableBoxes, maxCheckableBoxes, withListRange, listRangeString, minListRange, maxListRange, timeUnits, symmetric, keepOnSamePage, studyId, answerReasonExpressionId, networkRelationshipExprId, networkParams, networkNColorQId, networkNSizeQId, networkEColorQId, networkESizeQId, useAlterListField, restrictList, autocompleteList', 'length', 'max'=>4096),
 			array('id, active, title, prompt, preface, citation, subjectType, answerType, askingStyleList, ordering, otherSpecify, noneButton, allButton, pageLevelDontKnowButton, pageLevelRefuseButton, dontKnowButton, refuseButton, allOptionString, uselfExpression, minLimitType, minLiteral, minPrevQues, maxLimitType, maxLiteral, maxPrevQues, minCheckableBoxes, maxCheckableBoxes, withListRange, listRangeString, minListRange, maxListRange, timeUnits, symmetric, keepOnSamePage, studyId, answerReasonExpressionId, networkRelationshipExprId, networkParams, networkNColorQId, networkNSizeQId, networkEColorQId, networkESizeQId', 'safe', 'on'=>'search'),
 		);
 	}
@@ -154,7 +156,8 @@ class Question extends CActiveRecord
 			'networkEColorQId' => 'Network Edge Color Q',
 			'networkESizeQId' => 'Network Edge Size Q',
 			'useAlterListField' => 'Use Participant List Field',
-
+			'restrictList' => 'Restrict Response to Participant List',
+    	'autocompleteList' => 'Fill Autocomplete with Participant List',
 		);
 	}
 

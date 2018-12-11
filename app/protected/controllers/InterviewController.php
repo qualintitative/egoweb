@@ -389,13 +389,13 @@ class InterviewController extends Controller
 
         $loadGuest = false;
 			if($Answer['questionType'] == "EGO_ID" && $Answer['value'] != "" && !$interviewId){
-				if(Yii::app()->user->isGuest){
+				if(Yii::app()->user->isGuest || $key != ""){
 					foreach($_POST['Answer'] as $ego_id){
 						$array_id = $ego_id['questionId'];
 						$answers[$array_id] = new Answer;
 						$answers[$array_id]->attributes = $ego_id;
 						$ego_id_q = Question::model()->findByPk($ego_id['questionId']);
-						if(in_array($ego_id_q->useAlterListField, array("name", "email"))){
+						if($ego_id_q->restrictList == true && in_array($ego_id_q->useAlterListField, array("name", "email"))){
 							$keystr = $ego_id['value'];
 						}
 					}
@@ -525,7 +525,7 @@ class InterviewController extends Controller
                     //echo encrypt($_POST['Alters']['name']);
 
                     $params->dataType = PDO::PARAM_STR;
-        			if(!in_array($_POST['Alters']['name'], $pre_names) && $study->restrictAlters){
+        			if(!in_array($_POST['Alters']['name'], $pre_names) && $question->restrictList){
 						$model->addError('name', $_POST['Alters']['name']. ' is not in our list of participants');
                     }
 				}
