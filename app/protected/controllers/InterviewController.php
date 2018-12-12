@@ -359,6 +359,7 @@ class InterviewController extends Controller
         if(isset($_POST["studyId"]))
             $study = Study::model()->findByPK($_POST["studyId"]);
         $interviewId = null;
+        $loadGuest = false;
 		foreach($_POST['Answer'] as $Answer){
 
             if($Answer['interviewId'])
@@ -387,7 +388,6 @@ class InterviewController extends Controller
 			else
 				$array_id = $Answer['questionId'];
 
-        $loadGuest = false;
 			if($Answer['questionType'] == "EGO_ID" && $Answer['value'] != "" && !$interviewId){
 				if(Yii::app()->user->isGuest || $key != ""){
 					foreach($_POST['Answer'] as $ego_id){
@@ -407,7 +407,7 @@ class InterviewController extends Controller
 				}
 
 				if($errors == 0){
-					if(Yii::app()->user->isGuest && isset($keystr)){
+					if(isset($keystr)){
 						$interview = Interview::getInterviewFromEmail($Answer['studyId'], $keystr);
             if(!$interview){
                 $interview = new Interview;

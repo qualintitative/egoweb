@@ -48,7 +48,7 @@
           <form ng-if="!questions[0].MAXLITERAL || keys(alters).length < questions[0].MAXLITERAL" id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
               <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
               <div class="form-group">
-                  <input name="Alters[name]" id="Alters_name" type="text" value="{{ alterName }}" ng-if="question.AUTOCOMPLETELIST != true">
+                  <input class="answerInput" name="Alters[name]" id="Alters_name" type="text" value="{{ alterName }}" style="float:left" ng-if="question.AUTOCOMPLETELIST != true">
                   <input name="Alters[name]" id="Alters_name" type="hidden" value="{{ alterName }}" ng-if="question.AUTOCOMPLETELIST == true">
                   <autocomplete attr-input-class="answerInput" ng-disabled="interview.COMPLETED == -1" style="float:left" ng-model="alterName" data="participants" ng-if="question.AUTOCOMPLETELIST == true"></autocomplete>
                   <input value="{{ interviewId }}" name="Alters[interviewId]" id="Alters_interviewId" type="hidden">
