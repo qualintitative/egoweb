@@ -389,16 +389,35 @@ class InterviewController extends Controller
 				$array_id = $Answer['questionId'];
 
 			if($Answer['questionType'] == "EGO_ID" && $Answer['value'] != "" && !$interviewId){
+        foreach($_POST['Answer'] as $ego_id){
+          $array_id = $ego_id['questionId'];
+          $answers[$array_id] = new Answer;
+          $answers[$array_id]->attributes = $ego_id;
+          $ego_id_q = Question::model()->findByPk($ego_id['questionId']);
+          if($ego_id_q->restrictList == true && in_array($ego_id_q->useAlterListField, array("name", "email"))){
+            $keystr = $ego_id['value'];
+            break;
+          }else{
+            $ego_id_q = false;
+          }
+        }
+        if($ego_id_q){
+          $participantList = AlterList::model()->findAllByAttributes(array("studyId"=>$study->id, "interviewerId"=>Yii::app()->user->id));
+          if(count($participantList) == 0){
+            $errors++;
+          }else{
+            $check = false;
+            foreach($participantList as $participant){
+              $prop = $ego_id_q->useAlterListField;
+              if($participant->$prop == $keystr)
+                $check = true;
+            }
+            if($check == false)
+              $errors++;
+          }
+        }
+
 				if(Yii::app()->user->isGuest || $key != ""){
-					foreach($_POST['Answer'] as $ego_id){
-						$array_id = $ego_id['questionId'];
-						$answers[$array_id] = new Answer;
-						$answers[$array_id]->attributes = $ego_id;
-						$ego_id_q = Question::model()->findByPk($ego_id['questionId']);
-						if($ego_id_q->restrictList == true && in_array($ego_id_q->useAlterListField, array("name", "email"))){
-							$keystr = $ego_id['value'];
-						}
-					}
 					if(!$key || ($key && User::hashPassword($keystr) != $key)){
 						$errors++;
 						break;

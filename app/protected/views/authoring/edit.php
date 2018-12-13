@@ -354,10 +354,10 @@ $alterlist = new AlterList;
       </div>
       Interviewer
 				<?php
-                $result = Interviewer::model()->findAllByAttributes(array("studyId"=>$model->id));
-                $interviewers = array();
-                foreach($result as $interviewer){
-					$interviewers[$interviewer->id] = User::getName($interviewer->id);
+        $result = Interviewer::model()->findAllByAttributes(array("studyId"=>$model->id));
+        $interviewers = array();
+        foreach($result as $interviewer){
+					$interviewers[$interviewer->id] = User::getName($interviewer->interviewerId);
 				}
 				?>
 				<?php echo $form->dropdownlist(
