@@ -18,6 +18,7 @@ paths:
       responses:
         200:
           description: "User successfully logged into survey"
+          Content-Type: application/json
           body: >
             '{
                 "link": <string>, #.e.g. "https://alpegoweb.rand.org/survey"
