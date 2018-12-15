@@ -17,7 +17,7 @@ paths:
         }'
       responses:
         200:
-          description: "User successfully logged into survey"
+          description: "Survey payload successfully encoded"
           Content-Type: application/json
           body: >
             '{
