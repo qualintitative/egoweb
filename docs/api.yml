@@ -2,7 +2,7 @@
 HEADERS: 
   api_key: <string>
 basePath: /api
-host: egoweb
+host: alpegoweb
 paths: 
   /survey:
     post:
