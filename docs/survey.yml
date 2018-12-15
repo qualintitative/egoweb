@@ -14,7 +14,7 @@ paths:
           "survey_id": <integer>, #e.g. 5
           "redirect": <string>, #e.g. "http://alp-respondent-portal:8888/index.php"
           "questions": <array>, #e.g. { "question1:":"answer1", "question2:":"answer2"}
-          "prefill": <array>, #e.g.
+          "prefill": <array>, #e.g. Ego ID prefill "65:1"
         }
       responses:
         200:
