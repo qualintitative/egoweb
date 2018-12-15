@@ -1,0 +1,31 @@
+---
+HEADERS:
+  Content-Type: application/json
+basePath: /survey
+host: alpegoweb
+paths:
+/getlink:
+    post:
+      STATUS: COMPLETE
+      body:
+        {
+          "action": <string>, #e.g. "passthrough"
+          "user_id": <string>,  #e.g. "65:1"
+          "survey_id": <integer>, #e.g. 5
+          "redirect": <string>, #e.g. "http://alp-respondent-portal:8888/index.php"
+          "questions": <array>, #e.g. { "question1:":"answer1", "question2:":"answer2"}
+          "prefill": <array>, #e.g.
+        }
+      responses:
+        200:
+          description: "User successfully logged into survey"
+          body:
+            application/json:
+              redirect_url: {
+                              "link": <string>, #.e.g. "https://alpegoweb.rand.org/survey"
+                              "payload": <string> #e.g. encrypted JSON, "Zywzd0hQZmnYBiipc8jbxHGqy0CkE6qdlK5S6Ei7Bb5QLlw8RyvkILoYDlBOXjMjLVQEadS7l/1/FAVqov+mgQkOuMnqBvN2vyTho0o+zvBLbYrNSBgzPkh3hkqEp62Q1nHG14IVrMoyc0yNfzJ8l5fncTK2AxgOG/Cdf2MDOgphIbdXLKIX8lxbvUvF6qiTSE2+EYBAAG43+DQXpsPn/Q=="
+                            }
+        419:
+          description: "Missing payload"
+        422:
+          description: "Unable to decode payload"
