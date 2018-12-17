@@ -82,7 +82,7 @@ class InterviewController extends Controller
                     $restrictions = ' and id = -1';
             }
         }
-        if(Yii::app()->user->isSuperAdmin || Yii::app()->user->isAmin)
+        if(Yii::app()->user->isSuperAdmin || Yii::app()->user->isAdmin)
             $restrictions = "";
 		$criteria=array(
 			'condition'=>'completed > -1 AND studyId = '.$id . $restrictions,
@@ -198,9 +198,16 @@ class InterviewController extends Controller
         $graphs = array();
         $notes = array();
         $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
+        $ego_id_a = Answer::model()->findAllByAttributes(array("studyId"=>$id, "questionType"=>"EGO_ID"));
+        $ego_id_answers = array();
+        foreach($ego_id_a as $a){
+          $ego_id_answers[] = $a->value;
+        }
         foreach($results as $result){
-            if(Yii::app()->user->isSuperAdmin || ($result->interviewerId == Yii::app()->user->id || !$result->interviewerId))
-              $participantList[] = mToA($result);
+            if(Yii::app()->user->isSuperAdmin || ($result->interviewerId == Yii::app()->user->id || !$result->interviewerId)){
+              if(!in_array($result->name, $ego_id_answers) && !in_array($result->email, $ego_id_answers))
+                $participantList[] = mToA($result);
+            }
         }
         if(isset($_GET['interviewId'])){
             $interviewId = $_GET['interviewId'];
