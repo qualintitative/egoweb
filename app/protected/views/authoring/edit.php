@@ -357,7 +357,7 @@ $alterlist = new AlterList;
         $result = Interviewer::model()->findAllByAttributes(array("studyId"=>$model->id));
         $interviewers = array();
         foreach($result as $interviewer){
-					$interviewers[$interviewer->id] = User::getName($interviewer->interviewerId);
+					$interviewers[$interviewer->interviewerId] = User::getName($interviewer->interviewerId);
 				}
 				?>
 				<?php echo $form->dropdownlist(

@@ -82,7 +82,7 @@ class InterviewController extends Controller
                     $restrictions = ' and id = -1';
             }
         }
-        if(Yii::app()->user->isSuperAdmin)
+        if(Yii::app()->user->isSuperAdmin || Yii::app()->user->isAmin)
             $restrictions = "";
 		$criteria=array(
 			'condition'=>'completed > -1 AND studyId = '.$id . $restrictions,
@@ -199,7 +199,8 @@ class InterviewController extends Controller
         $notes = array();
         $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
         foreach($results as $result){
-            $participantList[] = mToA($result);
+            if(Yii::app()->user->isSuperAdmin || ($result->interviewerId == Yii::app()->user->id || !$result->interviewerId))
+              $participantList[] = mToA($result);
         }
         if(isset($_GET['interviewId'])){
             $interviewId = $_GET['interviewId'];
