@@ -91,7 +91,7 @@ function save(questions, page, url, scope){
     if(typeof questions[0] == "undefined"){
         if(scope.answerForm.$pristine == false || scope.conclusion == true){
             $.post(saveUrl, $('#answerForm').serialize(), function(data){
-                if(data != "error"){
+                if(!data.match("error")){
                     data = JSON.parse(data);
                     answers = data.answers;
                     interview = data.interview;
@@ -107,7 +107,8 @@ function save(questions, page, url, scope){
                         nextUrl = nextUrl + "/" + hashKey;
                     document.location = nextUrl;
                 }else{
-                    scope.errors[0] = "Participant not found";
+                    errorMsg = JSON.parse(data);
+                    scope.errors[0] = errorMsg.error;
                     scope.$apply();
                 }
             });
