@@ -399,13 +399,13 @@ class InterviewController extends Controller
             if($Answer['questionType'] == "EGO_ID" && $Answer['value'] != "" && !$interviewId){
                 foreach($_POST['Answer'] as $ego_id){
                     $ego_id_q = Question::model()->findByPk($ego_id['questionId']);
-                    if($ego_id_q->restrictList == true && in_array($ego_id_q->useAlterListField, array("name", "email"))){
+                    if(($key || $ego_id_q->restrictList == true) && in_array($ego_id_q->useAlterListField, array("name", "email"))){
                         $keystr = $ego_id['value'];
                     }
                 }
                 if(!isset($keystr))
                     $ego_id_q = false;
-                if($ego_id_q){
+                if($ego_id_q && !$key){
                     $participantList = AlterList::model()->findAllByAttributes(array("studyId"=>$study->id, "interviewerId"=>array(0, Yii::app()->user->id)));
                     $ego_id_a = Answer::model()->findAllByAttributes(array("studyId"=>$study->id, "questionType"=>"EGO_ID"));
                     $ego_id_answers = array();
@@ -438,7 +438,7 @@ class InterviewController extends Controller
                     if(!$key || ($key && User::hashPassword($keystr) != $key)){
                         $errors++;
                         $errorMsg = "Participant not found";
-                        break;
+                      //  break;
                     }
                     $loadGuest = true;
                 }
@@ -501,6 +501,7 @@ class InterviewController extends Controller
         }
         if($interview)
             $json["interview"] = mToA($interview);
+
         foreach($answers as $index => $answer){
             $json["answers"][$index] = mToA($answer);
         }
