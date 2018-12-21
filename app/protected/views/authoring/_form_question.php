@@ -8,22 +8,22 @@
 
 // create answertypes based on subjecttype
 $answerTypes = array(
-	'TEXTUAL'=>'TEXTUAL',
-	'NUMERICAL'=>'NUMERICAL',
-	'MULTIPLE_SELECTION'=>'MULTIPLE_SELECTION',
-	'DATE'=>'DATE',
+    'TEXTUAL'=>'TEXTUAL',
+    'NUMERICAL'=>'NUMERICAL',
+    'MULTIPLE_SELECTION'=>'MULTIPLE_SELECTION',
+    'DATE'=>'DATE',
 );
 
 if($model->subjectType == "EGO_ID"){
-	$answerTypes = array_merge($answerTypes, array('STORED_VALUE'=>'STORED_VALUE', 'RANDOM_NUMBER'=>'RANDOM_NUMBER'));
+    $answerTypes = array_merge($answerTypes, array('STORED_VALUE'=>'STORED_VALUE', 'RANDOM_NUMBER'=>'RANDOM_NUMBER'));
 }else{
-	$answerTypes = array_merge($answerTypes, array('TIME_SPAN'=>'TIME_SPAN', 'TEXTUAL_PP'=>'TEXTUAL_PP', 'NO_RESPONSE'=>'NO_RESPONSE'));
+    $answerTypes = array_merge($answerTypes, array('TIME_SPAN'=>'TIME_SPAN', 'TEXTUAL_PP'=>'TEXTUAL_PP', 'NO_RESPONSE'=>'NO_RESPONSE'));
 }
 $subjectTypes = array(
-	'EGO'=>'EGO',
-	'NAME_GENERATOR'=>'NAME_GENERATOR',
-	'ALTER'=>'ALTER',
-	'ALTER_PAIR'=>'ALTER_PAIR',
+    'EGO'=>'EGO',
+    'NAME_GENERATOR'=>'NAME_GENERATOR',
+    'ALTER'=>'ALTER',
+    'ALTER_PAIR'=>'ALTER_PAIR',
     'NETWORK'=>'NETWORK',
 );
 
@@ -31,10 +31,10 @@ $subjectTypes = array(
 
 <?php
 $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'question-form',
-	'enableAjaxValidation'=>$ajax,
-	"htmlOptions"=>array("class"=>"form-horizontal")
-));
+        'id'=>'question-form',
+        'enableAjaxValidation'=>$ajax,
+        "htmlOptions"=>array("class"=>"form-horizontal")
+    ));
 ?>
 <div class="form" style="height:315px; overflow-y:auto;">
 
@@ -46,7 +46,7 @@ $form=$this->beginWidget('CActiveForm', array(
 <?php
 // set arbitrary number for model id, need to do this for dropdown list retrieval (list looks us values from previous questions)
 if(!is_numeric($model->id))
-	$model->id = 99999999999;
+    $model->id = 99999999999;
 ?>
 
 <script>
@@ -101,13 +101,13 @@ jQuery('input.time-".$model->id."').change(function() {
             <?php echo $form->labelEx($model,'subjectType', array('for'=>'s-'.$model->id, "class"=>"control-label col-sm-4 input-sm")); ?>
             <div class="col-sm-8">
                 <?php
-                    echo $form->dropDownList(
-                        $model,
-                        'subjectType',
-                        $subjectTypes,
-                        array('class'=>'subjectTypeSelect', 'id'=>'s-'.$model->id, 'onchange'=>'changeAType(this)', "class"=>"form-control")
-                    );
-                ?>
+echo $form->dropDownList(
+    $model,
+    'subjectType',
+    $subjectTypes,
+    array('class'=>'subjectTypeSelect', 'id'=>'s-'.$model->id, 'onchange'=>'changeAType(this)', "class"=>"form-control")
+);
+?>
             </div>
         </div>
 <?php endif; ?>
@@ -116,34 +116,34 @@ jQuery('input.time-".$model->id."').change(function() {
     		<?php echo $form->labelEx($model,'answerType', array('for'=>'a-'.$model->id, "class"=>"control-label col-sm-4 input-sm")); ?>
     		<div class="col-sm-8">
         		<?php
-        			echo $form->dropDownList(
-        				$model,
-        				'answerType',
-        				$answerTypes,
-        				array('class'=>'answerTypeSelect', 'id'=>'a-'.$model->id, 'onchange'=>'changeAType(this)', "class"=>"form-control")
-        			);
-        		?>
+echo $form->dropDownList(
+    $model,
+    'answerType',
+    $answerTypes,
+    array('class'=>'answerTypeSelect', 'id'=>'a-'.$model->id, 'onchange'=>'changeAType(this)', "class"=>"form-control")
+);
+?>
     		</div>
 		</div>
 
         <div class="form-group">
     		<?php echo $form->labelEx($model,'Skip Logic Expression', array('for'=>$model->id."_"."answerReasonExpressionId", "class"=>"control-label col-sm-4 input-sm")); ?>
     		<?php $criteria=new CDbCriteria;
-    		$criteria=array(
-    			'condition'=>"studyId = " . $model->studyId,
-    		);
-    		?>
+$criteria=array(
+    'condition'=>"studyId = " . $model->studyId,
+);
+?>
     		<div class="col-sm-8">
     		<?php echo $form->dropdownlist(
-    			$model,
-    			'answerReasonExpressionId',
-    			CHtml::listData(
-    				Expression::model()->findAll($criteria),
-    				'id',
-    				function($post) {return CHtml::encode(substr($post->name,0,40));}
-    			),
-    			array('empty' => 'Choose One', 'id'=>$model->id."_"."answerReasonExpressionId", "class"=>"form-control")
-    		); ?>
+    $model,
+    'answerReasonExpressionId',
+    CHtml::listData(
+        Expression::model()->findAll($criteria),
+        'id',
+        function($post) {return CHtml::encode(substr($post->name,0,40));}
+    ),
+    array('empty' => 'Choose One', 'id'=>$model->id."_"."answerReasonExpressionId", "class"=>"form-control")
+); ?>
     		</div>
         </div>
 
@@ -165,15 +165,15 @@ jQuery('input.time-".$model->id."').change(function() {
         <?php echo $form->labelEx($model,'useAlterListField', array("class"=>"control-label col-sm-8")); ?>
     		<div class="col-sm-4">
         		<?php echo $form->dropDownList(
-        			$model,
-        			'useAlterListField',
-        			array(
-        				''=>'None',
-        				'email'=>'Email',
-        				'name'=>'Name',
-        			),
-        			array("class"=>"form-control")
-        		); ?>
+    $model,
+    'useAlterListField',
+    array(
+        ''=>'None',
+        'email'=>'Email',
+        'name'=>'Name',
+    ),
+    array("class"=>"form-control")
+); ?>
         		<?php echo $form->error($model,'useAlterListField'); ?>
 
     		</div>
@@ -230,71 +230,71 @@ jQuery('input.time-".$model->id."').change(function() {
 		<div class="panel-<?php echo $model->id; ?>" id="NUMERICAL" style="display:none">
 
 			<?php
-		$criteria=new CDbCriteria;
-		if(!isset($model->ordering))
-			$model->ordering = 999;
-		$criteria=array(
-			'condition'=>"studyId = " . $model->studyId . " AND ordering < " . $model->ordering . " AND answerType = 'NUMERICAL'",
-			'order'=>'ordering',
-		);
-			?>
+$criteria=new CDbCriteria;
+if(!isset($model->ordering))
+    $model->ordering = 999;
+$criteria=array(
+    'condition'=>"studyId = " . $model->studyId . " AND ordering < " . $model->ordering . " AND answerType = 'NUMERICAL'",
+    'order'=>'ordering',
+);
+?>
 				<table border="0" bgcolor="#dddddd" >
 			<tr><td colspan="4">Bounds for NUMERICAL Entry:</td></tr>
 			<tr><td>Min:</td>
 			<td width=100>
 			<?php echo $form->radioButtonList(
-				$model,
-				'minLimitType',
-				array(
-					'NLT_LITERAL'=>'Literal',
-					'NLT_PREVQUES'=>'Previous',
-					'NLT_NONE'=>'None'
-				),
-				array(
-					'template'=>'<div style="width:100px; height:30px; float:left">{input}<div style="float:left; padding-left:5px">{label}</div></div>',
-					'baseID'=>$model->id.'_minLimitType',
-				)
-			); ?>
+    $model,
+    'minLimitType',
+    array(
+        'NLT_LITERAL'=>'Literal',
+        'NLT_PREVQUES'=>'Previous',
+        'NLT_NONE'=>'None'
+    ),
+    array(
+        'template'=>'<div style="width:100px; height:30px; float:left">{input}<div style="float:left; padding-left:5px">{label}</div></div>',
+        'baseID'=>$model->id.'_minLimitType',
+    )
+); ?>
 			</td><td>
 				<div style="height:30px;">
 					<?php echo $form->textField($model,'minLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-minLiteral')); ?>
 				</div>
 				<div style="height:30px;">
 			<?php echo $form->dropdownlist(
-				$model,
-				'minPrevQues',
-				CHtml::listData(Question::model()->findAll($criteria), 'id', 'title'),
-				array('style'=>'margin:0','empty' => 'Choose One')
-			); ?>
+    $model,
+    'minPrevQues',
+    CHtml::listData(Question::model()->findAll($criteria), 'id', 'title'),
+    array('style'=>'margin:0','empty' => 'Choose One')
+); ?>
 			</div>
 			</td>
 			</tr>
 			<tr><td>Max:</td>
 			<td>
 			<?php echo $form->radioButtonList(
-				$model,
-				'maxLimitType',
-				array(
-					'NLT_LITERAL'=>'Literal',
-					'NLT_PREVQUES'=>'Previous',
-					'NLT_NONE'=>'None'
-				),
-				array(
-					'template'=>'<div style="width:100px; height:30px; float:left">{input}<div style="float:left; padding-left:5px">{label}</div></div>',
-					'baseID'=>$model->id.'_maxLimitType',
-				)
-			); ?>
+    $model,
+    'maxLimitType',
+    array(
+        'NLT_LITERAL'=>'Literal',
+        'NLT_PREVQUES'=>'Previous',
+        'NLT_NONE'=>'None'
+    ),
+    array(
+        'template'=>'<div style="width:100px; height:30px; float:left">{input}<div style="float:left; padding-left:5px">{label}</div></div>',
+        'baseID'=>$model->id.'_maxLimitType',
+    )
+); ?>
 			</td><td>
 				<div style="height:30px;">
 					<?php echo $form->textField($model,'maxLiteral', array('style'=>'width:60px; margin:0', "id"=>$model->id .'-maxLiteral')); ?>
 				</div>
 				<div style="height:30px;">
 			<?php echo $form->dropdownlist(
-				$model,
-				'maxPrevQues',
-				CHtml::listData(Question::model()->findAll($criteria), 'id', 'title'),
-				array('empty' => 'Choose One')
-			); ?>
+    $model,
+    'maxPrevQues',
+    CHtml::listData(Question::model()->findAll($criteria), 'id', 'title'),
+    array('empty' => 'Choose One')
+); ?>
 		</div>
 			</td>
 			</tr>
@@ -334,18 +334,29 @@ jQuery('input.time-".$model->id."').change(function() {
             <?php echo $form->labelEx($model,'useAlterListField', array("class"=>"control-label col-sm-8")); ?>
             <div class="col-sm-4">
                 <?php echo $form->dropDownList(
-                  $model,
-                  'useAlterListField',
-                  array(
-                    ''=>'None',
-                    'email'=>'Email',
-                    'name'=>'Name',
-                  ),
-                  array("class"=>"form-control")
-                ); ?>
-                <?php echo $form->error($model,'useAlterListField'); ?>
+    $model,
+    'useAlterListField',
+    array(
+        ''=>'None',
+        'email'=>'Email',
+        'name'=>'Name',
+    ),
+    array("class"=>"form-control")
+); ?>
+</div>
+                <div class="col-sm-12">
+                  <?php echo $form->checkBox($model,'restrictList', array('id'=>$model->id . "_" . "restrictList")); ?>
+                  <?php echo $form->labelEx($model,'restrictList', array('for'=>$model->id . "_" . "restrictList")); ?>
+                </div>
+                <div class="col-sm-12">
+                  <?php echo $form->checkBox($model,'autocompleteList', array('id'=>$model->id . "_" . "autocompleteList")); ?>
+                  <?php echo $form->labelEx($model,'autocompleteList', array('for'=>$model->id . "_" . "autocompleteList")); ?>
+                </div>
+                <div class="col-sm-12">
+                  <?php echo $form->checkBox($model,'prefillList', array('id'=>$model->id . "_" . "prefillList")); ?>
+                  <?php echo $form->labelEx($model,'prefillList', array('for'=>$model->id . "_" . "prefillList")); ?>
+                </div>
             </div>
-        </div>
 <?php endif; ?>
 	<div id="ALTER" style="<?php if(!strstr($model->subjectType, "ALTER")){ ?>display:none<?php } ?>">
 
@@ -371,19 +382,19 @@ jQuery('input.time-".$model->id."').change(function() {
 				</tr><tr>
 				<td colspan="2" style="padding-left:5px; padding-right:0; white-space:nowrap;" align="right">Count Response:
 			<?php
-		$criteria=new CDbCriteria;
-		$criteria=array(
-			'condition'=>"questionId = " . $model->id,
-			'order'=>'ordering',
-		);
-			?>
+$criteria=new CDbCriteria;
+$criteria=array(
+    'condition'=>"questionId = " . $model->id,
+    'order'=>'ordering',
+);
+?>
 
 			<?php echo $form->dropdownlist(
-				$model,
-				'listRangeString',
-				CHtml::listData(QuestionOption::model()->findAll($criteria), 'id', 'name'),
-				array('empty' => 'Choose One')
-			); ?></td>
+    $model,
+    'listRangeString',
+    CHtml::listData(QuestionOption::model()->findAll($criteria), 'id', 'name'),
+    array('empty' => 'Choose One')
+); ?></td>
 				</tr>
 				<tr>
 				<td style="padding-left:0; padding-right:0; white-space:nowrap;">PAGE-LEVEL Buttons: </td>
@@ -409,82 +420,82 @@ jQuery('input.time-".$model->id."').change(function() {
 		<div class="col-sm-12">
 			Alters are adjacent when:
 		<?php
-			$questionIds = array();
-            $criteria = array(
-                "condition"=>"subjectType = 'ALTER_PAIR' AND studyId = ".$model->studyId,
-            );
-            $questions = Question::model()->findAll($criteria);
-            foreach($questions as $question){
-                $questionIds[] = $question->id;
-            }
-			$questionIds = implode(",", $questionIds);
-			if(!$questionIds)
-				$questionIds = 0;
-            $criteria = array(
-                'condition'=>"studyId = $model->studyId AND questionId in (" . $questionIds . ")",
-            );
-            $alter_pair_expression = Expression::model()->findAll($criteria);
-            $alter_pair_expression_ids = array();
-            foreach($alter_pair_expression as $expression){
-                $alter_pair_expression_ids[] = $expression->id;
-            }
-			$all_expression_ids = $alter_pair_expression_ids;
-            foreach($alter_pair_expression_ids as $id){
-                $criteria = array(
-                    'condition'=>"FIND_IN_SET($id, value)",
-                );
-                $expressions = Expression::model()->findAll($criteria);
-                foreach($expressions as $e){
-                    $all_expression_ids[] = $e->id;
-                }
-            }
-			if($all_expression_ids){
-                $criteria = array(
-                    'condition'=>"id in (" . implode(",",$all_expression_ids) . ")",
-                );
-                $alter_pair_expressions = Expression::model()->findAll($criteria);				$list = array();
-				foreach($alter_pair_expressions as $expression){
-					$list[$expression['id']] = substr($expression['name'], 0 , 30);
-				}
-			}else{
-				$list = array();
-			}
-		echo $form->dropdownlist(
-			$model,
-			'networkRelationshipExprId',
-			$list,
-			array('empty' => 'Choose One', "class"=>"form-control")
-		); ?>
+    $questionIds = array();
+$criteria = array(
+    "condition"=>"subjectType = 'ALTER_PAIR' AND studyId = ".$model->studyId,
+);
+$questions = Question::model()->findAll($criteria);
+foreach($questions as $question){
+    $questionIds[] = $question->id;
+}
+$questionIds = implode(",", $questionIds);
+if(!$questionIds)
+    $questionIds = 0;
+$criteria = array(
+    'condition'=>"studyId = $model->studyId AND questionId in (" . $questionIds . ")",
+);
+$alter_pair_expression = Expression::model()->findAll($criteria);
+$alter_pair_expression_ids = array();
+foreach($alter_pair_expression as $expression){
+    $alter_pair_expression_ids[] = $expression->id;
+}
+$all_expression_ids = $alter_pair_expression_ids;
+foreach($alter_pair_expression_ids as $id){
+    $criteria = array(
+        'condition'=>"FIND_IN_SET($id, value)",
+    );
+    $expressions = Expression::model()->findAll($criteria);
+    foreach($expressions as $e){
+        $all_expression_ids[] = $e->id;
+    }
+}
+if($all_expression_ids){
+    $criteria = array(
+        'condition'=>"id in (" . implode(",",$all_expression_ids) . ")",
+    );
+    $alter_pair_expressions = Expression::model()->findAll($criteria);    $list = array();
+    foreach($alter_pair_expressions as $expression){
+        $list[$expression['id']] = substr($expression['name'], 0 , 30);
+    }
+}else{
+    $list = array();
+}
+echo $form->dropdownlist(
+    $model,
+    'networkRelationshipExprId',
+    $list,
+    array('empty' => 'Choose One', "class"=>"form-control")
+); ?>
 		<?php echo $form->error($model,'networkRelationshipExprId'); ?>
     <?php $criteria=new CDbCriteria;
-    $criteria=array(
-      'condition'=>"studyId = " . $model->studyId,
-    );
-    ?>
+$criteria=array(
+    'condition'=>"studyId = " . $model->studyId,
+);
+?>
     Create star network with expression:
     <?php echo $form->dropdownlist(
-      $model,
-      'uselfExpression',
-      CHtml::listData(
+    $model,
+    'uselfExpression',
+    CHtml::listData(
         Expression::model()->findAll($criteria),
         'id',
         function($post) {return CHtml::encode(substr($post->name,0,40));}
-      ),
-      array('empty' => 'Choose One', "class"=>"form-control")
-    ); ?>
+    ),
+    array('empty' => 'Choose One', "class"=>"form-control")
+); ?>
 		</div>
 
 	<div id="visualize-bar" class="pull-left">
 
 	<?php
-    $this->widget('plugins.visualize', array('method'=>'staroptions', 'id'=>$model->studyId, 'params'=>$model->networkParams));
-	  $this->widget('plugins.visualize', array('method'=>'nodecolor', 'id'=>$model->studyId, 'params'=>$model->networkParams));
-		$this->widget('plugins.visualize', array('method'=>'nodeshape', 'id'=>$model->studyId, 'params'=>$model->networkParams));
-		$this->widget('plugins.visualize', array('method'=>'nodesize', 'id'=>$model->studyId, 'params'=>$model->networkParams));
-		$this->widget('plugins.visualize', array('method'=>'edgecolor', 'id'=>$model->studyId, 'params'=>$model->networkParams));
-		$this->widget('plugins.visualize', array('method'=>'edgesize', 'id'=>$model->studyId, 'params'=>$model->networkParams));
+$this->widget('plugins.visualize', array('method'=>'staroptions', 'id'=>$model->studyId, 'params'=>$model->networkParams));
+$this->widget('plugins.visualize', array('method'=>'nodecolor', 'id'=>$model->studyId, 'params'=>$model->networkParams));
+$this->widget('plugins.visualize', array('method'=>'nodeshape', 'id'=>$model->studyId, 'params'=>$model->networkParams));
+$this->widget('plugins.visualize', array('method'=>'nodesize', 'id'=>$model->studyId, 'params'=>$model->networkParams));
+$this->widget('plugins.visualize', array('method'=>'edgecolor', 'id'=>$model->studyId, 'params'=>$model->networkParams));
+$this->widget('plugins.visualize', array('method'=>'edgesize', 'id'=>$model->studyId, 'params'=>$model->networkParams));
 
-	?>
+?>
 	</div>
 	<script>
 function refresh(container){
@@ -642,11 +653,11 @@ function refresh(container){
 	$("#Graph_params").val(JSON.stringify(params));
 	return JSON.stringify(params);
 }
-	$('#<?= $model->id; ?> #visualize-bar select').change(function(){
-		$('#<?= $model->id; ?> #Question_networkParams').val(refresh($('#<?= $model->id; ?> #visualize-bar')));
+	$('#<?php echo $model->id; ?> #visualize-bar select').change(function(){
+		$('#<?php echo $model->id; ?> #Question_networkParams').val(refresh($('#<?php echo $model->id; ?> #visualize-bar')));
 	});
-  $('#<?= $model->id; ?> #visualize-bar input').change(function(){
-    $('#<?= $model->id; ?> #Question_networkParams').val(refresh($('#<?= $model->id; ?> #visualize-bar')));
+  $('#<?php echo $model->id; ?> #visualize-bar input').change(function(){
+    $('#<?php echo $model->id; ?> #Question_networkParams').val(refresh($('#<?php echo $model->id; ?> #visualize-bar')));
   });
 	</script>
 	<?php endif;?>
@@ -656,9 +667,9 @@ function refresh(container){
 	<div class="row" style="width:50%; float:left; padding:10px 20px">
 		<?php echo $form->labelEx($model,'prompt', array('onclick'=>'$(".nicEdit-main", this.parentNode)[0].focus()')); ?>
         <?php if(isset(Yii::app()->params['enableAudioUpload']) && Yii::app()->params['enableAudioUpload']): ?>
-		<div class="audioPlay" id="<?= $model->subjectType; ?>_<?= $model->id; ?>"><?php if(file_exists(Yii::app()->basePath."/../audio/".$model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3")): ?><a class="play-sound" onclick="playSound($(this).attr('file'))" href="#" file="/audio/<?= $model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3"; ?>"><span class="fui-volume"></span></a><?php endif; ?></div>
+		<div class="audioPlay" id="<?php echo $model->subjectType; ?>_<?php echo $model->id; ?>"><?php if(file_exists(Yii::app()->basePath."/../audio/".$model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3")): ?><a class="play-sound" onclick="playSound($(this).attr('file'))" href="#" file="/audio/<?php echo $model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3"; ?>"><span class="fui-volume"></span></a><?php endif; ?></div>
 		<?php if(!$model->isNewRecord):?>
-		<a class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#myModal" href="/authoring/uploadaudio?type=<?= $model->subjectType; ?>&id=<?= $model->id; ?>&studyId=<?= $model->studyId; ?>">Upload Audio</a>
+		<a class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#myModal" href="/authoring/uploadaudio?type=<?php echo $model->subjectType; ?>&id=<?php echo $model->id; ?>&studyId=<?php echo $model->studyId; ?>">Upload Audio</a>
 		<?php endif;?>
         <?php endif;?>
 		<?php echo $form->textArea($model,'prompt',array('rows'=>6, 'cols'=>50, 'id'=>'prompt'.$model->id)); ?>
@@ -666,9 +677,9 @@ function refresh(container){
 		<br>
 		<?php echo $form->labelEx($model,'preface', array('onclick'=>'$(".nicEdit-main", this.parentNode)[1].focus()')); ?>
         <?php if(isset(Yii::app()->params['enableAudioUpload']) && Yii::app()->params['enableAudioUpload']): ?>
-		<div class="audioPlay" id="preface_<?= $model->id; ?>"><?php if(file_exists(Yii::app()->basePath."/../audio/".$model->studyId . "/PREFACE/" . $model->id . ".mp3")): ?><a class="play-sound" onclick="playSound($(this).attr('file'))" href="#" file="/audio/<?= $model->studyId . "/PREFACE/" . $model->id . ".mp3"; ?>"><span class="fui-volume"></span></a><?php endif; ?></div>
+		<div class="audioPlay" id="preface_<?php echo $model->id; ?>"><?php if(file_exists(Yii::app()->basePath."/../audio/".$model->studyId . "/PREFACE/" . $model->id . ".mp3")): ?><a class="play-sound" onclick="playSound($(this).attr('file'))" href="#" file="/audio/<?php echo $model->studyId . "/PREFACE/" . $model->id . ".mp3"; ?>"><span class="fui-volume"></span></a><?php endif; ?></div>
 		<?php if(!$model->isNewRecord):?>
-		<a class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#myModal" href="/authoring/uploadaudio?type=PREFACE&id=<?= $model->id; ?>&studyId=<?= $model->studyId; ?>">Upload Audio</a>
+		<a class="btn btn-primary pull-right btn-xs" data-toggle="modal" data-target="#myModal" href="/authoring/uploadaudio?type=PREFACE&id=<?php echo $model->id; ?>&studyId=<?php echo $model->studyId; ?>">Upload Audio</a>
 		<?php endif;?>
         <?php endif;?>
 		<?php echo $form->textArea($model,'preface',array('rows'=>6, 'cols'=>50, 'id'=>'preface'.$model->id)); ?>
@@ -703,51 +714,51 @@ function refresh(container){
 <div class="btn-group" style="padding:5px">
 <?php if($ajax == true): ?>
 	<?php echo CHtml::ajaxSubmitButton (
-		$model->isNewRecord ? 'Create' : 'Save',
-		CController::createUrl('ajaxupdate?_'.uniqid()),
-		array(
-			'success' => 'js:function(data){data=data.split(";;;");console.log(data);$("#' . $model->id .' > h3").html($("#' . $model->id .' > h3").html().replace(data[0], data[1]));$(".optionLink").click(function(e){clickOption[$(this).parent().parent().attr("id")] = true;});$("#' . $model->id .' > h3").click();}',
-		),
-		array('id'=>uniqid(), 'live'=>false, 'class'=>"btn btn-success btn-xs"));
-	?>
+        $model->isNewRecord ? 'Create' : 'Save',
+        CController::createUrl('ajaxupdate?_'.uniqid()),
+        array(
+            'success' => 'js:function(data){data=data.split(";;;");console.log(data);$("#' . $model->id .' > h3").html($("#' . $model->id .' > h3").html().replace(data[0], data[1]));$(".optionLink").click(function(e){clickOption[$(this).parent().parent().attr("id")] = true;});$("#' . $model->id .' > h3").click();}',
+        ),
+        array('id'=>uniqid(), 'live'=>false, 'class'=>"btn btn-success btn-xs"));
+?>
 <?php else: ?>
 	<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save', array('class'=>"btn btn-success btn-xs")); ?>
 <?php endif; ?>
 <?php if(!$model->isNewRecord): ?>
 <?php
 
-	echo CHtml::ajaxButton ("Delete",
-		CController::createUrl('ajaxdelete', array('form'=>'_form_question', 'Question[id]'=>$model->id)),
-		array('success' => 'js:function(data){$("#question-list").html(data);initList();}'),
-		array('id' => 'delete-'.$model->id, 'live'=>false, 'class'=>"btn btn-danger btn-xs")
-	);
+    echo CHtml::ajaxButton ("Delete",
+        CController::createUrl('ajaxdelete', array('form'=>'_form_question', 'Question[id]'=>$model->id)),
+        array('success' => 'js:function(data){$("#question-list").html(data);initList();}'),
+        array('id' => 'delete-'.$model->id, 'live'=>false, 'class'=>"btn btn-danger btn-xs")
+    );
 
-	echo CHtml::ajaxButton (CHtml::encode('Preview'),
-		CController::createUrl('preview', array('questionId'=>$model->id)),
-		array('update' => '#data-'.$model->id),
-		array('id' => uniqid(), 'live'=>false, 'class'=>"btn btn-info btn-xs")
-	);
+echo CHtml::ajaxButton (CHtml::encode('Preview'),
+    CController::createUrl('preview', array('questionId'=>$model->id)),
+    array('update' => '#data-'.$model->id),
+    array('id' => uniqid(), 'live'=>false, 'class'=>"btn btn-info btn-xs")
+);
 
-    if($model->subjectType == "NAME_GENERATOR"){
-        echo CHtml::ajaxButton (CHtml::encode('Alter Prompts'),
-    		CController::createUrl('alterprompt', array('questionId'=>$model->id, 'studyId'=>$model->studyId)),
-    		array('update' => '#data-'.$model->id),
-    		array('id' => uniqid(), 'live'=>false, 'class'=>"btn btn-default btn-xs")
-    	);
-    }
+if($model->subjectType == "NAME_GENERATOR"){
+    echo CHtml::ajaxButton (CHtml::encode('Alter Prompts'),
+        CController::createUrl('alterprompt', array('questionId'=>$model->id, 'studyId'=>$model->studyId)),
+        array('update' => '#data-'.$model->id),
+        array('id' => uniqid(), 'live'=>false, 'class'=>"btn btn-default btn-xs")
+    );
+}
 
-	echo CHtml::button(
-		CHtml::encode('Duplicate'),
-		array("submit"=>CController::createUrl('duplicate', array('questionId'=>$model->id)), 'class'=>"btn btn-warning btn-xs")
-	);
+echo CHtml::button(
+    CHtml::encode('Duplicate'),
+    array("submit"=>CController::createUrl('duplicate', array('questionId'=>$model->id)), 'class'=>"btn btn-warning btn-xs")
+);
 
-	if($model->subjectType == "NETWORK"){
-		echo CHtml::ajaxButton (CHtml::encode('Legend'),
-			CController::createUrl('ajaxload', array('questionId'=>$model->id, 'form'=>'_form_legend', 'studyId'=>$model->studyId)),
-			array('update' => '#data-'.$model->id),
-			array('id' => uniqid(), 'live'=>false, 'class'=>"btn btn-default btn-xs")
-		);
-	}
+if($model->subjectType == "NETWORK"){
+    echo CHtml::ajaxButton (CHtml::encode('Legend'),
+        CController::createUrl('ajaxload', array('questionId'=>$model->id, 'form'=>'_form_legend', 'studyId'=>$model->studyId)),
+        array('update' => '#data-'.$model->id),
+        array('id' => uniqid(), 'live'=>false, 'class'=>"btn btn-default btn-xs")
+    );
+}
 ?>
 <?php endif; ?>
 </div>

@@ -170,8 +170,35 @@ class InterviewController extends Controller
                     $ego_id_questions[] = mToA($result);
                 if($result->subjectType == "EGO")
                     $ego_questions[] = mToA($result);
-                if($result->subjectType == "NAME_GENERATOR")
+                if($result->subjectType == "NAME_GENERATOR"){
+                    if(isset($_GET['interviewId']) && $result->prefillList){
+                        $criteria = array(
+                            "condition"=>"interviewId = " . $_GET['interviewId'],
+                        );
+                        $check = Alters::model()->findAll($criteria);
+                        if(count($check) == 0){
+                            $criteria = array(
+                                "condition"=>"studyId = " . $study->id,
+                            );
+                            $alterList = AlterList::model()->findAll($criteria);
+                            $names = array();
+                            foreach($alterList as $a){
+                                $names[] = $a->name;
+                            }
+                            $count = 0;
+                            foreach($alterList as $a){
+                                $alter = new Alters;
+                                $alter->ordering = $count;
+                                $alter->interviewId = $_GET['interviewId'];
+                                $alter->name = $a->name;
+                                $alter->nameGenQIds = $a->nameGenQIds;
+                                $alter->save();
+                                $count++;
+                            }
+                        }
+                    }
                     $name_gen_questions[] = mToA($result);
+                }
                 if($result->subjectType == "ALTER")
                     $alter_questions[] = mToA($result);
                 if($result->subjectType == "ALTER_PAIR")
@@ -275,34 +302,6 @@ class InterviewController extends Controller
                 $results = Alters::model()->findAll($criteria);
                 foreach($results as $result){
                     $prevAlters[$result->id] = mToA($result);
-                }
-            }
-            if(isset($_GET['interviewId']) && $study->fillAlterList){
-                $criteria = array(
-                    "condition"=>"interviewId = " . $interviewId,
-                );
-                $check = Alters::model()->findAll($criteria);
-                if(count($check) > 0){
-                    $criteria = array(
-                        "condition"=>"studyId = " . $study->id,
-                    );
-                    $alterList = AlterList::model()->findAll($criteria);
-                    $names = array();
-                    foreach($alterList as $a){
-                        $names[] = $a->name;
-                    }
-                    $count = 0;
-                    foreach($names as $name){
-                        $alter = new Alters;
-                        if(strlen($name) >= 8)
-                            $alter->name = decrypt($name);
-                        else
-                            continue;
-                        $alter->ordering = $count;
-                        $alter->interviewId = $interviewId;
-                        $alter->save();
-                        $count++;
-                    }
                 }
             }
             $alters = array();
@@ -438,7 +437,6 @@ class InterviewController extends Controller
                     if(!$key || ($key && User::hashPassword($keystr) != $key)){
                         $errors++;
                         $errorMsg = "Participant not found";
-                      //  break;
                     }
                     $loadGuest = true;
                 }
