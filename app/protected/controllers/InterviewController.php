@@ -433,12 +433,19 @@ class InterviewController extends Controller
                     }
                 }
 
-                if(Yii::app()->user->isGuest || $key != ""){
+                if(Yii::app()->user->isGuest){
+                  if($key != ""){
                     if(!$key || ($key && User::hashPassword($keystr) != $key)){
                         $errors++;
                         $errorMsg = "Participant not found";
                     }
                     $loadGuest = true;
+                  }else{
+                    if(!$key || ($key && User::hashPassword($keystr) != $key)){
+                        $errors++;
+                        $errorMsg = "Participant not found";
+                    }
+                  }
                 }
 
                 if($errors == 0){
@@ -448,12 +455,17 @@ class InterviewController extends Controller
                             $interview = new Interview;
                             $interview->studyId = $Answer['studyId'];
                             $loadGuest = false;
+                        }else{
+                            if(!Yii::app()->user->isGuest){
+                              $errors++;
+                              $errorMsg = "Participant already in existing interview";
+                            }
                         }
                     }else{
                         $interview = new Interview;
                         $interview->studyId = $Answer['studyId'];
                     }
-                    if($interview->save()){
+                    if($errors == 0 && $interview->save()){
                         $randoms = Question::model()->findAllByAttributes(array("answerType"=>"RANDOM_NUMBER", "studyId"=>$Answer['studyId']));
                         foreach($randoms as $q){
                             $a = $q->id;
