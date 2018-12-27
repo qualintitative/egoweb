@@ -473,7 +473,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     }
 
     // check pre-defined participant list
-    if ($scope.participants.length > 0 && study.RESTRICTALTERS == true) {
+    if ($scope.participants.length > 0 && $scope.questions[0].RESTRICTLIST == true) {
       if ($scope.participants.indexOf($("#Alters_name").val().trim()) == -1) {
         $scope.errors[0] = 'Name not found in list';
       }

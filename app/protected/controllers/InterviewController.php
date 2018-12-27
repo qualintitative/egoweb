@@ -157,6 +157,7 @@ class InterviewController extends Controller
         $name_gen_questions = array();
         $network_questions = array();
         $questionList = array();
+        $autocompleteList = false;
         foreach($results as $result){
             $questions[$result->id] = mToA($result);
             if($result->studyId == $study->id && $result->subjectType != "EGO_ID")
@@ -171,6 +172,8 @@ class InterviewController extends Controller
                 if($result->subjectType == "EGO")
                     $ego_questions[] = mToA($result);
                 if($result->subjectType == "NAME_GENERATOR"){
+                    if(isset($_GET['interviewId']) && $result->autocompleteList)
+                      $autocompleteList = true;
                     if(isset($_GET['interviewId']) && $result->prefillList){
                         $criteria = array(
                             "condition"=>"interviewId = " . $_GET['interviewId'],
@@ -231,9 +234,11 @@ class InterviewController extends Controller
             $ego_id_answers[] = $a->value;
         }
         foreach($results as $result){
-            if(Yii::app()->user->isSuperAdmin || ($result->interviewerId == Yii::app()->user->id || !$result->interviewerId)){
+            if($autocompleteList == false && (Yii::app()->user->isSuperAdmin || ($result->interviewerId == Yii::app()->user->id || !$result->interviewerId))){
                 if(!in_array($result->name, $ego_id_answers) && !in_array($result->email, $ego_id_answers))
                     $participantList[] = mToA($result);
+            }else if($autocompleteList == true){
+              $participantList[] = mToA($result);
             }
         }
         if(isset($_GET['interviewId'])){
@@ -568,18 +573,18 @@ class InterviewController extends Controller
             #OK FOR SQL INJECTION
             $study = Study::model()->findByPk((int)$studyId);
 
+            $restrictList = false;
+            $results = Question::model()->findAllByAttributes(array("studyId"=>$studyId, "subjectType"=>"NAME_GENERATOR"), array('order'=>'ordering'));
+            foreach($results as $result){
+              if($result->restrictList == true){
+                $restrictList = true;
+              }
+            }
             // check to see if pre-defined alters exist.  If they do exist, check name against list
-            if($study->useAsAlters){
+            if($restrictList){
                 #OK FOR SQL INJECTION
                 if(count($pre_names) > 0){
-                    #OK FOR SQL INJECTION
-                    $params = new stdClass();
-                    $params->name = ':name';
-                    $params->value = encrypt($_POST['Alters']['name']);
-                    //echo encrypt($_POST['Alters']['name']);
-
-                    $params->dataType = PDO::PARAM_STR;
-                    if(!in_array($_POST['Alters']['name'], $pre_names) && $question->restrictList){
+                    if(!in_array($_POST['Alters']['name'], $pre_names)){
                         $model->addError('name', $_POST['Alters']['name']. ' is not in our list of participants');
                     }
                 }
