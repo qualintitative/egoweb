@@ -46,6 +46,12 @@ class AuthoringController extends Controller
       $nameGenQIds[$nameGenQ->title] = $nameGenQ->id;
     }
 		$file = fopen($_FILES['userfile']['tmp_name'],"r");
+    $results = Interviewer::model()->findAllByAttributes(array("studyId"=>$_POST['studyId']));
+    $interviewers = array();
+    foreach($results as $result){
+      $user = User::model()->findByPk($result->interviewerId);
+      $interviewers[$result->interviewerId] = $user->name;
+    }
 		while(! feof($file)){
 			$data = fgetcsv($file);
 			if(isset($data[0]) && $data[0]){
@@ -57,19 +63,31 @@ class AuthoringController extends Controller
 				$model->ordering = $row['ordering'];
 				$model->name = trim($data[0]);
 				$model->email = isset($data[1]) ? $data[1] : "";
-        if(stristr($data[2], ";")){
-          $Qs = explode(";", $data[2]);
+        $interviewerColumn = false;
+        $nameGenColumn = false;
+        if(count($data) == 3){
+          $nameGenColumn = 2;
+        }else if(count($data) == 4){
+          $interviewerColumn = 2;
+          $nameGenColumn = 3;
+        }
+        if($nameGenColumn && stristr($data[$nameGenColumn], ";")){
+          $Qs = explode(";", $data[$nameGenColumn]);
           $qIds = array();
           foreach($Qs as $title){
             if(isset($nameGenQIds[$title]))
               $qIds[] = $nameGenQIds[$title];
           }
           $model->nameGenQIds = implode(",", $qIds);
-        }elseif(isset($nameGenQIds[$data[2]])){
-          $model->nameGenQIds = $nameGenQIds[$data[2]];
+        }elseif(isset($nameGenQIds[$data[$nameGenColumn]])){
+          $model->nameGenQIds = $nameGenQIds[$data[$nameGenColumn]];
+        }
+        if($interviewerColumn && isset($data[$interviewerColumn])){
+              $model->interviewerId =  array_search($data[$interviewerColumn], $interviewers);
         }
 				$model->studyId = $_POST['studyId'];
 			  $model->save();
+
 			}
 
 		}
