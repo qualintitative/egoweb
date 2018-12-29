@@ -46,6 +46,12 @@ class AuthoringController extends Controller
       $nameGenQIds[$nameGenQ->title] = $nameGenQ->id;
     }
 		$file = fopen($_FILES['userfile']['tmp_name'],"r");
+    $results = Interviewer::model()->findAllByAttributes(array("studyId"=>$_POST['studyId']));
+    $interviewers = array();
+    foreach($results as $result){
+      $user = User::model()->findByPk($result->interviewerId);
+      $interviewers[$result->interviewerId] = $user->name;
+    }
 		while(! feof($file)){
 			$data = fgetcsv($file);
 			if(isset($data[0]) && $data[0]){
@@ -57,19 +63,31 @@ class AuthoringController extends Controller
 				$model->ordering = $row['ordering'];
 				$model->name = trim($data[0]);
 				$model->email = isset($data[1]) ? $data[1] : "";
-        if(stristr($data[2], ";")){
-          $Qs = explode(";", $data[2]);
+        $interviewerColumn = false;
+        $nameGenColumn = false;
+        if(count($data) == 3){
+          $nameGenColumn = 2;
+        }else if(count($data) == 4){
+          $interviewerColumn = 2;
+          $nameGenColumn = 3;
+        }
+        if($nameGenColumn && stristr($data[$nameGenColumn], ";")){
+          $Qs = explode(";", $data[$nameGenColumn]);
           $qIds = array();
           foreach($Qs as $title){
             if(isset($nameGenQIds[$title]))
               $qIds[] = $nameGenQIds[$title];
           }
           $model->nameGenQIds = implode(",", $qIds);
-        }elseif(isset($nameGenQIds[$data[2]])){
-          $model->nameGenQIds = $nameGenQIds[$data[2]];
+        }elseif(isset($nameGenQIds[$data[$nameGenColumn]])){
+          $model->nameGenQIds = $nameGenQIds[$data[$nameGenColumn]];
+        }
+        if($interviewerColumn && isset($data[$interviewerColumn])){
+              $model->interviewerId =  array_search($data[$interviewerColumn], $interviewers);
         }
 				$model->studyId = $_POST['studyId'];
 			  $model->save();
+
 			}
 
 		}
@@ -589,7 +607,7 @@ class AuthoringController extends Controller
 
     public function actionAlterprompt(){
         Yii::app()->clientScript->scriptMap['jquery.js'] = false;
-		Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
+		    Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
         $study = Study::model()->findByPk($_GET['studyId']);
         $question = Question::model()->findByPk($_GET['questionId']);
         $this->renderPartial('_form_alter_prompt', array('question'=>$question, 'study'=>$study, 'ajax'=>true), false, true);
@@ -881,6 +899,8 @@ class AuthoringController extends Controller
 				$model->ordering = $row['ordering'];
 			}
 			$model->attributes=$_POST['AlterList'];
+      if($_POST['AlterList']["nameGenQIds"])
+        $model->nameGenQIds = implode(",", $_POST['AlterList']["nameGenQIds"]);
 			$model->name = trim($model->name);
 			$model->save();
 			Study::updated($_POST['AlterList']['studyId']);
@@ -907,16 +927,12 @@ class AuthoringController extends Controller
 			$model->attributes=$_POST['AlterPrompt'];
 			$model->save();
 			Study::updated($model->studyId);
-			$studyId = $model->studyId;
-			$criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"studyId = " . $studyId . " AND questionId = " . $model->questionId,
-			);
-			$dataProvider=new CActiveDataProvider('AlterPrompt',array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
-			));
-   			$this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$studyId, 'ajax'=>true), false, true);
+
+      $study = Study::model()->findByPk($model->studyId);
+      $question = Question::model()->findByPk($model->questionId);
+      $this->renderPartial('_form_alter_prompt', array('question'=>$question, 'study'=>$study, 'ajax'=>true), false, true);
+
+   		//	$this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$studyId, 'ajax'=>true), false, true);
 		}else if(isset($_POST['AnswerList'])){
 			$model = new AnswerList;
 			$model->attributes = $_POST['AnswerList'];
@@ -975,7 +991,8 @@ class AuthoringController extends Controller
 				$questionId = $model->id;
 				if(file_exists(Yii::app()->basePath."/../audio/".$model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3"))
 					unlink(Yii::app()->basePath."/../audio/".$model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3");
-				$model->delete();
+        $sType = $model->subjectType;
+      	$model->delete();
 				Question::sortOrder($ordering, $studyId);
 				$expressions = Expression::model()->findAllByAttributes(array('questionId'=>$questionId));
 				foreach($expressions as $expression){
@@ -985,7 +1002,7 @@ class AuthoringController extends Controller
 			}
 			$criteria=new CDbCriteria;
 			$criteria=array(
-				'condition'=>"studyId = " . $studyId ." AND subjectType = '" . $subjectType ."'",
+				'condition'=>"studyId = " . $studyId  .  ($sType == "EGO_ID" ? ' AND subjectType = "EGO_ID"' : ' AND subjectType != "EGO_ID"'),
 				'order'=>'ordering',
 			);
 			$dataProvider=new CActiveDataProvider('Question',array(
@@ -1088,15 +1105,11 @@ class AuthoringController extends Controller
 				$model->delete();
 				Study::updated($model->studyId);
 			}
-			$criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"studyId = " . $studyId,
-			);
-			$dataProvider=new CActiveDataProvider('AlterPrompt',array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
-			));
-			$this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'studyId'=>$studyId, 'ajax'=>true), false, true);
+
+      $study = Study::model()->findByPk($model->studyId);
+      $question = Question::model()->findByPk($model->questionId);
+      $this->renderPartial('_form_alter_prompt', array('question'=>$question, 'study'=>$study, 'ajax'=>true), false, true);
+
 		}else if(isset($_GET['AnswerList'])){
 			$model = AnswerList::model()->findByPk((int)$_GET['AnswerList']['id']);
 			if($model)
@@ -1247,6 +1260,50 @@ class AuthoringController extends Controller
 				u('question', $data, "id = " . $questionId);
 			}
 		}
+	}
+
+  public function actionExportalterlist()
+	{
+		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
+			die("nothing to export");
+
+		$study = Study::model()->findByPk((int)$_POST['studyId']);
+        #OK FOR SQL INJECTION
+		$alters = AlterList::model()->findAllByAttributes(array("studyId"=>$study->id));
+
+		// start generating export file
+		header("Content-Type: application/octet-stream");
+		header("Content-Disposition: attachment; filename=".seoString($study->name)."-predefined-alters".".csv");
+		header("Content-Type: application/force-download");
+
+		$headers = array();
+		$headers[] = 'Study ID';
+		$headers[] = "Alter ID";
+		$headers[] = "Alter Name";
+		$headers[] = "Alter Email";
+		$headers[] = "Link With Key";
+		echo implode(',', $headers) . "\n";
+
+        $ego_id = Question::model()->findByAttributes(array("studyId"=>$study->id, "subjectType"=>"EGO_ID", "useAlterListField"=>array("name", "email", "id")));
+
+		foreach($alters as $alter){
+			$row = array();
+			if($ego_id->useAlterListField == "name")
+    			$key = User::hashPassword($alter->name);
+			else if($ego_id->useAlterListField == "email")
+    			$key = User::hashPassword($alter->email);
+			else if($ego_id->useAlterListField == "id")
+    			$key = User::hashPassword($alter->id);
+            else
+                $key = "";
+			$row[] = $study->id;
+			$row[] = $alter->id;
+			$row[] = $alter->name;
+			$row[] = $alter->email;
+			$row[] =  Yii::app()->getBaseUrl(true) . "/interview/".$study->id."#/page/0/".$key;
+			echo implode(',', $row) . "\n";
+		}
+		Yii::app()->end();
 	}
 
 	public function actionAjaxshowlink()

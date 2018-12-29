@@ -113,8 +113,6 @@ Network Statistics
 <button onclick='exportAlterPair()' class='authorButton'>Export Alter Pair Data</button><br style='clear:both'>
 <button onclick='exportOther()' class='authorButton'>Export Other Specify Data</button><br style='clear:both'>
 <button onclick='exportOtherLegacy()' class='authorButton'>Export Legacy Other Specify Data</button><br style='clear:both'>
-<button onclick='exportAlterList()' class='authorButton'>Export Pre-defined Alter List</button><br style='clear:both'>
-<button onclick='matchAlters()' class='authorButton'>Dyad Match</button><br style='clear:both'>
 <button onclick='deleteInterviews()' class='authorButton'>Delete Interviews</button><br style='clear:both'>
 
 

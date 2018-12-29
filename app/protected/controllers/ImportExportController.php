@@ -1,6 +1,35 @@
 <?php
 class ImportExportController extends Controller
 {
+
+  /**
+   * @return array action filters
+   */
+  public function filters()
+  {
+    return array(
+      'accessControl', // perform access control for CRUD operations
+      //'postOnly + delete', // we only allow deletion via POST request
+    );
+  }
+
+  /**
+   * Specifies the access control rules.
+   * This method is used by the 'accessControl' filter.
+   * @return array access control rules
+   */
+  public function accessRules()
+  {
+    return array(
+      array('allow', // allow authenticated user to perform 'create' and 'update' actions
+        'users'=>array('@'),
+      ),
+      array('deny',  // deny all users
+        'users'=>array('*'),
+      ),
+    );
+  }
+
 	public function actionImportstudy()
 	{
         switch( $_FILES['files']['error'][0]) {
@@ -155,9 +184,17 @@ class ImportExportController extends Controller
     				$newQuestion->save();
     			}
 
+
+          $newStudy = Study::model()->findbyPk($newStudy->id);
     			if($newStudy->multiSessionEgoId != 0 && isset($newQuestionIds[intval($newStudy->multiSessionEgoId)])){
-    				$newStudy->multiSessionEgoId = $newQuestionIds[intval($newStudy->multiSessionEgoId)];
-    				$newStudy->save();
+            $newStudy->multiSessionEgoId = $newQuestionIds[intval($newStudy->multiSessionEgoId)];
+    				if($newStudy->save()){
+              echo $newStudy->multiSessionEgoId;
+              echo "<br>";
+            }else{
+              echo "Multi-ssssion: ";
+              print_r($newStudy->getErrors());
+            }
     			}
 
           if($study->alterPrompts->alterPrompt){
@@ -225,7 +262,7 @@ class ImportExportController extends Controller
 
     						foreach($optionIds as &$optionId){
     							if(is_numeric($optionId) && isset($newOptionIds[$optionId])){
-                    echo $newOptionIds[$optionId];
+                  //  echo $newOptionIds[$optionId];
                     $optionId = $newOptionIds[$optionId];
 
                   }
@@ -363,7 +400,8 @@ class ImportExportController extends Controller
 
 
     		if(count($study->interviews) != 0){
-          echo "new study $newStudy->id";
+          echo "new study $newStudy->id : ";
+          echo $newStudy->multiSessionEgoId;
     			foreach($study->interviews->interview as $interview){
     				$newAlterIds = array();
     				$newInterview = new Interview;
@@ -611,7 +649,7 @@ class ImportExportController extends Controller
     			}
     		}
         }
-		$this->redirect(array('/authoring/edit','id'=>$newStudy->id));
+	  	$this->redirect(array('/authoring/edit','id'=>$newStudy->id));
 
 	}
 
@@ -713,12 +751,12 @@ class ImportExportController extends Controller
         if(count($options) == 0)
           $options = new stdClass();
         $studies = array();
+        $interviews = array();
+        $answers = array();
+        $alters = array();
+        $graphs = array();
+        $notes = array();
         foreach($interviewIds as $interviewId){
-          $interviews = array();
-          $answers = array();
-          $alters = array();
-          $graphs = array();
-          $notes = array();
           if($interviewId != 0){
             $interviewData = mToA(Interview::model()->findByPK($interviewId));
             $interviewData['EGOID'] = Interview::getEgoId($interviewId);
@@ -767,4 +805,19 @@ class ImportExportController extends Controller
         $data = $studies[0];
       echo json_encode($data);
 	}
+
+  public function actionDeleteserver()
+  {
+    if(isset($_POST['serverId'])){
+      $server = Server::model()->findByPK($_POST['serverId']);
+      if($server){
+        $server->delete();
+        echo "success";
+      }else{
+        echo "fail";
+      }
+    }else{
+      echo "fail";
+    }
+  }
 }

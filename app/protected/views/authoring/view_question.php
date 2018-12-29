@@ -6,7 +6,7 @@
 
 <?php
 $ap = Question::model()->findByAttributes(array("studyId"=>$study->id, "subjectType" => "NAME_GENERATOR"));
-if(!$ap){
+if(!$ap && $study->alterPrompt){
 ?>
 <div class="alert">
     This is study is using the old format.

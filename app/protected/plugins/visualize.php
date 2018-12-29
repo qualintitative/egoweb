@@ -256,14 +256,14 @@ class visualize extends Plugin
         );
       }
 
-            $answerV = "";
-            $answer = Answer::model()->find($criteria);
-            if($answer)
-                $answerV = explode(',', $answer->value);
+      $answerV = "";
+      $answer = Answer::model()->find($criteria);
+      if($answer)
+          $answerV = explode(',', $answer->value);
 			foreach($this->params['edgeSize']['options'] as $option){
                 if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE"))
                     return floatval($option['size']);
-				if($option['id'] == $answerV || in_array($option['id'], $answerV))
+				if($option['id'] == $answerV || (is_array($answerV) && in_array($option['id'], $answerV)))
 					$default = floatval($option['size']);
 			}
       if(isset($this->params['egoEdgeSize']['options'])){

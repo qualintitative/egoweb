@@ -154,9 +154,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     if (Object.keys($scope.listedAlters).length > 0) {
       for (n in $scope.listedAlters) {
         if(study.RESTRICTALTERS){
-          console.log($scope.listedAlters[n].NAME.toString() == "test_d@test.com")
-          console.log($scope.participants);
-          console.log(($.inArray($scope.listedAlters[n].NAME, $scope.participants)))
           if ($.inArray($scope.listedAlters[n].NAME, $scope.participants) == -1)
             $scope.participants.push($scope.listedAlters[n].NAME);
         }else{
@@ -226,7 +223,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       $scope.answers[array_id].INTERVIEWID = interviewId;
       $scope.answers[array_id].SKIPREASON = "NONE";
     } else {
-      if ($scope.answers[array_id].VALUE == "-4")
+      if ($scope.answers[array_id].VALUE == study.VALUELOGICALSKIP || $scope.answers[array_id].VALUE == study.VALUENOTYETANSWERED)
         $scope.answers[array_id].VALUE = "";
     }
     if ($scope.questions[k].ANSWERTYPE == "TIME_SPAN") {
@@ -370,13 +367,13 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
     if ($scope.questions[k].SUBJECTTYPE == "NETWORK") {
       var expressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
-      console.log("expr:" + expressionId + $scope.questions[k].USELFEXPRESSION)
       notes = [];
-      if (typeof otherGraphs[$scope.questions[k].ID] != "undefined")
-        $scope.otherGraphs = otherGraphs[$scope.qId];
+      if (typeof otherGraphs[$scope.questions[k].TITLE] != "undefined")
+        $scope.otherGraphs = otherGraphs[$scope.questions[k].TITLE];
       if (typeof graphs[expressionId] != "undefined") {
         $scope.graphId = graphs[expressionId].ID;
         $scope.graphExpressionId = graphs[expressionId].EXPRESSIONID;
+        graphExpressionId = $scope.graphExpressionId;
         $scope.graphInterviewId = graphs[expressionId].INTERVIEWID;
         $scope.graphNodes = graphs[expressionId].NODES;
         $scope.graphParams = $scope.questions[k].NETWORKPARAMS;
@@ -384,6 +381,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
           notes = allNotes[expressionId];
       } else {
         $scope.graphExpressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
+        graphExpressionId = $scope.graphExpressionId;
+        if (typeof allNotes[graphExpressionId] != "undefined")
+          notes = allNotes[graphExpressionId];
         $scope.graphInterviewId = interviewId;
         $scope.graphParams = $scope.questions[k].NETWORKPARAMS;
 
@@ -395,12 +395,16 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     setTimeout(
       function() {
         eval($scope.questions[k].JAVASCRIPT);
-        $(window).scrollTop(0);
         if ($scope.askingStyleList != false) {
+          $("#floatHeader").css({
+            "position": "fixed",
+            "left": $("#realHeader").offset().left - $(window).scrollLeft() + "px",
+          });
           fixHeader();
         } else {
           unfixHeader();
         }
+        $(window).scrollTop(0);
         if (typeof $(".answerInput")[0] != "undefined")
           $(".answerInput")[0].focus();
         if (!isGuest && $("#menu_" + $scope.page).length != 0)
@@ -410,12 +414,22 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   }
 
   setTimeout(function() {
+    if ($scope.askingStyleList != false) {
+      $("#floatHeader").css({
+        "position": "fixed",
+        "left": $("#realHeader").offset().left - $(window).scrollLeft() + "px",
+      });
+      fixHeader();
+    } else {
+      unfixHeader();
+    }
+    $(window).scrollTop(0);
     eval(study.JAVASCRIPT);
-  }, 1);
+  }, 150);
 
   $scope.errors = new Object;
 
-  $scope.print = function(e_Id, i_Id) {
+  $scope.print = function(e_Id, i_Id, params) {
     if (typeof e_Id == "undefined")
       e_Id = $scope.graphExpressionId;
     if (typeof i_Id == "undefined")
@@ -424,7 +438,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       s_Id = "";
     else
       s_Id = "&starExpressionId=" + $scope.starExpressionId;
-    url = "/data/visualize?print&expressionId=" + e_Id + "&interviewId=" + i_Id + s_Id + "&params=" + encodeURIComponent($("#Graph_params").val()) + "&labelThreshold=" + s.renderers[0].settings("labelThreshold");
+    url = "/data/visualize?print&expressionId=" + e_Id + "&interviewId=" + i_Id + s_Id + "&params=" + encodeURIComponent(params) + "&labelThreshold=" + s.renderers[0].settings("labelThreshold");
     window.open(url);
   }
 
@@ -441,7 +455,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   }
 
   $scope.submitForm = function(isValid) {
-    console.log(isValid);
     // check to make sure the form is completely valid
     if (isValid) {
       save($scope.questions, $routeParams.page, $location.absUrl().replace($location.url(), ''), $scope);
@@ -460,11 +473,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     }
 
     // check pre-defined participant list
-    if ($scope.participants.length > 0 && study.RESTRICTALTERS == true) {
+    if ($scope.participants.length > 0 && $scope.questions[0].RESTRICTLIST == true) {
       if ($scope.participants.indexOf($("#Alters_name").val().trim()) == -1) {
-        console.log($scope.participants);
-        console.log($("#Alters_name").val().trim());
-        console.log($scope.participants.indexOf($("#Alters_name").val().trim()));
         $scope.errors[0] = 'Name not found in list';
       }
     }
@@ -472,8 +482,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     if ($("#Alters_name").val().trim() == "") {
       $scope.errors[0] = 'Name cannot be blank';
     }
-
-    console.log($scope.errors[0]);
 
     // check to make sure the form is completely valid
     if ($scope.errors[0] == false) {
@@ -498,7 +506,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   $scope.removeAlter = function(alterId, nameGenQId) {
     $("#deleteAlterId").val(alterId);
     $("#deleteNameGenQId").val(nameGenQId);
-    console.log(alterId);
     // check to make sure the form is completely valid
     deleteAlter.getAlters().then(function(data) {
       alters = JSON.parse(data);
@@ -529,7 +536,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       }
     }
     $scope.answers[array_id].OTHERSPECIFYTEXT = specify.join(";;");
-    console.log($scope.answers[array_id].OTHERSPECIFYTEXT);
+    //console.log($scope.answers[array_id].OTHERSPECIFYTEXT);
   }
 
   $scope.multiSelect = function(v, index, array_id) {
@@ -546,7 +553,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     if (v == "DONT_KNOW" || v == "REFUSE") {
       if ($scope.options[array_id][index].checked) {
         for (k in $scope.options[array_id]) {
-          //console.log(k + ":" + index)
           if (k != index)
             $scope.options[array_id][k].checked = false;
         }
@@ -636,7 +642,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       if ($scope.options[array_id][k].ID == "DONT_KNOW" || $scope.options[array_id][k].ID == "REFUSE")
         $scope.options[array_id][k].checked = false;
     }
-    //console.log(date);
   }
 
   $scope.dateValue = function(array_id) {
@@ -662,7 +667,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       if ($scope.options[array_id][k].ID == "DONT_KNOW" || $scope.options[array_id][k].ID == "REFUSE")
         $scope.options[array_id][k].checked = false;
     }
-    //console.log(date);
 
   }
 
@@ -723,11 +727,9 @@ app.directive('checkAnswer', [function() {
           } else {
             delete scope.errors[array_id];
           }
-          //console.log(scope.answers[array_id].SKIPREASON +  ":" + value + ":" + valid + ":" + scope.errors[array_id]);
         }
 
         if (attr.answerType == "NUMERICAL") {
-          //console.log("check numeric");
           var min = "";
           var max = "";
           var numberErrors = 0;
@@ -769,7 +771,6 @@ app.directive('checkAnswer', [function() {
         }
 
         if (attr.answerType == "DATE") {
-          //console.log(attr.answerType);
           if (scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW") {
             var date = value.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{1,2}) (\d{4})/);
             var month = value.match(/January|February|March|April|May|June|July|August|September|October|November|December/);
@@ -864,7 +865,6 @@ app.directive('checkAnswer', [function() {
           var checks = 0;
           if (typeof question != "undefined" && parseInt(question.WITHLISTRANGE) != 0) {
             for (i in scope.answers) {
-              console.log(scope.answers[i].VALUE + ":" + question.LISTRANGESTRING);
               if (scope.answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1) {
                 checks++;
               }
@@ -927,7 +927,6 @@ app.directive('checkAnswer', [function() {
           } else {
             delete scope.errors[array_id];
           }
-          //console.log(scope.answers[array_id].SKIPREASON +  ":" + value + ":" + valid);
         }
         if (attr.answerType == "NUMERICAL") {
           var min = "";
@@ -1030,8 +1029,6 @@ app.directive('checkAnswer', [function() {
             numberErrors++;
           if (max !== "" && max != null)
             numberErrors = numberErrors + 2;
-
-          //console.log(numberErrors);
 
           checkedBoxes = value.split(',').length;
           if (!value)
@@ -1183,7 +1180,6 @@ function buildList() {
       alter_non_list_qs = [];
     }
     if (questionList[j-1] != undefined && (questionList[j].SUBJECTTYPE != "EGO" || questionList[j].ASKINGSTYLELIST != 1 ||  questionList[j].PROMPT != questionList[j-1].PROMPT)  && questionList[j-1].SUBJECTTYPE == "EGO" && Object.keys(ego_question_list).length > 0) {
-      console.log(questionList[j])
       console.log("wait over " + Object.keys(ego_question_list).length);
       if (ego_question_list[Object.keys(ego_question_list)[0]].ANSWERREASONEXPRESSIONID > 0)
         evalQIndex.push(i);
@@ -1241,7 +1237,6 @@ function buildList() {
             if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
               evalQIndex.push(i);
             masterList[i][0] = $.extend(true, {}, preface);
-            console.log(preface);
             preface.PROMPT = "";
             i++;
             masterList[i] = new Object;
@@ -1416,13 +1411,12 @@ function qFromList(pageNumber) {
     var proceed = false;
     if (!!~jQuery.inArray(parseInt(k), evalQIndex)) {
       for (j in masterList[k]) {
-        console.log(k + ":" + j);
         if (evalQList[masterList[k][j].array_id] == true) {
           proceed = true;
           questions[j] = masterList[k][j];
         } else {
-          if (typeof answers[masterList[k][j].array_id] == "undefined" || answers[masterList[k][j].array_id] != study.VALUELOGICALSKIP) {
-            console.log("saving skip of " + masterList[k][j].TITLE);
+          if (typeof answers[masterList[k][j].array_id] == "undefined" || parseInt(answers[masterList[k][j].array_id].VALUE) != parseInt(study.VALUELOGICALSKIP)) {
+            console.log("saving skip of " + masterList[k][j].TITLE, answers[masterList[k][j].array_id]);
             saveSkip(interviewId, masterList[k][j].ID, masterList[k][j].ALTERID1, masterList[k][j].ALTERID2, masterList[k][j].array_id);
           }
         }
@@ -1580,19 +1574,18 @@ function evalExpression(id, alterId1, alterId2) {
       var genList = expressions[id].VALUE.split(",");
     else
       var genList = [expressions[id].VALUE];
-    console.log(genList);
     aList = []
     if (alters[alterId1] != undefined) {
       if (alters[alterId1].NAMEGENQIDS.match(","))
         var aList = alters[alterId1].NAMEGENQIDS.split(",");
       else
         var aList = [alters[alterId1].NAMEGENQIDS];
-      console.log(aList);
     }
     for (n in aList) {
       if (genList.indexOf(aList[n]) > -1)
         return true;
     }
+    console.log("name gen exp: false");
     return false;
   }
   console.log(expressions[id].NAME + ":false");
@@ -2443,20 +2436,20 @@ function initStats(question) {
         }
       }
     } else {
-      s.startForceAtlas2({
-        "worker": false,
-        "outboundAttractionDistribution": true,
-        "speed": 2000,
-        "gravity": 0.2,
-        "jitterTolerance": 0,
-        "strongGravityMode": true,
-        "barnesHutOptimize": false,
-        "totalSwinging": 0,
-        "totalEffectiveTraction": 0,
-        "complexIntervals": 500,
-        "simpleIntervals": 1000
-      });
-      setTimeout("s.stopForceAtlas2(); saveNodes(); $('#fullscreenButton').prop('disabled', false);", 5000);
+        s.startForceAtlas2({
+          "worker": false,
+          "outboundAttractionDistribution": true,
+          "speed": 2000,
+          "gravity": 0.2,
+          "jitterTolerance": 0,
+          "strongGravityMode": true,
+          "barnesHutOptimize": false,
+          "totalSwinging": 0,
+          "totalEffectiveTraction": 0,
+          "complexIntervals": 500,
+          "simpleIntervals": 1000
+        });
+        setTimeout("s.stopForceAtlas2(); saveNodes(); $('#fullscreenButton').prop('disabled', false);", 5000);
     }
     s.refresh();
     initNotes(s);
@@ -2563,6 +2556,7 @@ function columnWidths() {
 }
 
 function fixHeader() {
+
   columnWidths();
   // Set this variable with the height of your sidebar + header
   var offsetLeft = $("#realHeader").offset().left
@@ -2582,6 +2576,7 @@ function fixHeader() {
         "margin-top": $("#floatHeader").height() + "px"
       });
     });
+    $(window).scroll();
   } else {
     $(window).on('touchmove', function(event) {
       $("#floatHeader").css({
@@ -2603,13 +2598,12 @@ $(window).on('resize', function(e) {
   resizeTimer = setTimeout(function() {
 
     $(window).unbind('scroll');
-    var offsetLeft = $("#realHeader").offset().left
     $("#content").css({
       "background-attachment": "fixed"
     });
     $("#floatHeader").css({
       "position": "fixed",
-      "left": offsetLeft - $(window).scrollLeft() + "px",
+      "left": $("#realHeader").offset().left - $(window).scrollLeft() + "px",
     });
     fixHeader();
   }, 250);

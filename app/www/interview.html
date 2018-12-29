@@ -8,9 +8,9 @@
     <div class="col-sm-4" id="left-container"></div>
     <div class="col-sm-4 pull-right">
         <button id="fullscreenButton" onclick="fullscreen()" class="btn btn-info print-button" id="fullscreenButton">Fullscreen</button>
-        <button id="printButton" class="btn btn-primary print-button" style="margin-top:10px" ng-click="print()">Print Preview</button>
+        <button id="printButton" class="btn btn-primary print-button" style="margin-top:10px" ng-click="print(graphExpressionId, graphInterviewId, graphParams)">Print Preview</button>
         <div ng-repeat="graph in otherGraphs" style="margin-top:10px">
-            <a href="javascript:void(0)" ng-click="print(graph.expressionId, graph.interviewId)">{{graph.studyName}} graph</a><br>
+            <a href="javascript:void(0)" ng-click="print(graph.expressionId, graph.interviewId, graph.params)">{{graph.studyName}} graph</a><br>
         </div>
         <button id="toggleButton" class="btn btn-warning print-button" style="margin-top:10px" onclick="toggleLabels()">Toggle Labels</button>
         <form id="graph-form" method="post">
@@ -48,8 +48,11 @@
           <form ng-if="!questions[0].MAXLITERAL || keys(alters).length < questions[0].MAXLITERAL" id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
               <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
               <div class="form-group">
-                  <input name="Alters[name]" id="Alters_name" type="hidden" value="{{ alterName }}">
-                  <autocomplete attr-input-class="answerInput" ng-disabled="interview.COMPLETED == -1" style="float:left" ng-model="alterName" data="participants"></autocomplete>
+                  <input class="answerInput" name="Alters[name]" id="Alters_name" type="text" value="{{ alterName }}" style="float:left" ng-if="questions[0].AUTOCOMPLETELIST != true">
+                  <div ng-if="questions[0].AUTOCOMPLETELIST == true">
+                      <input name="Alters[name]" id="Alters_name" type="hidden" value="{{ alterName }}">
+                      <autocomplete attr-input-class="answerInput" ng-disabled="interview.COMPLETED == -1" style="float:left" ng-model="alterName" data="participants"></autocomplete>
+                  </div>
                   <input value="{{ interviewId }}" name="Alters[interviewId]" id="Alters_interviewId" type="hidden">
                   <input value="{{ questions[0].ID }}" name="Alters[nameGenQIds]" id="Alters_nameGenQIds" type="hidden">
                   <input class="btn orangebutton alterSubmit" type="submit" name="yt0" value="+ Add">
@@ -115,11 +118,10 @@
 
         <h4 ng-if="question.SUBJECTTYPE == 'EGO_ID' && question.ANSWERTYPE != 'RANDOM_NUMBER' && question.ANSWERTYPE != 'STORED_VALUE'">{{ question.PROMPT }}</h4>
         <h4 ng-if="question.SUBJECTTYPE == 'EGO_ID' && (question.ANSWERTYPE == 'RANDOM_NUMBER' || question.ANSWERTYPE == 'STORED_VALUE')">{{ question.TITLE }}</h4>
-
         <div ng-if="askingStyleList == false && (question.ANSWERTYPE == 'TEXTUAL' || question.ANSWERTYPE == 'NUMERICAL' || question.ANSWERTYPE == 'STORED_VALUE' || question.ANSWERTYPE == 'RANDOM_NUMBER')">
-            <input ng-if="question.USEALTERLISTFIELD == 'name' || question.USEALTERLISTFIELD == 'email'" name="Answer[{{ question.array_id }}][value]" value="{{answers[question.array_id].VALUE}}" type="hidden" id="Answer_{{ question.array_id }}_VALUE">
-            <autocomplete attr-input-class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="(question.USEALTERLISTFIELD == 'name' || question.USEALTERLISTFIELD == 'email') && study.USEASALTERS == true" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" data="participants" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'></autocomplete>
-            <input question="{{ question.TITLE }}" class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="study.USEASALTERS == false || (study.USEASALTERS == true && question.USEALTERLISTFIELD != 'name' && question.USEALTERLISTFIELD != 'email')" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'>
+            <input ng-if="question.AUTOCOMPLETELIST == true" name="Answer[{{ question.array_id }}][value]" value="{{answers[question.array_id].VALUE}}" type="hidden" id="Answer_{{ question.array_id }}_VALUE">
+            <autocomplete attr-input-class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="question.AUTOCOMPLETELIST == true" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" data="participants" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'></autocomplete>
+            <input question="{{ question.TITLE }}" class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="question.AUTOCOMPLETELIST != true" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'>
         </div>
         <div ng-if="question.ANSWERTYPE == 'TEXTUAL_PP'" class="row form-group col-sm-6">
             <textarea question="{{ question.TITLE }}" class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'></textarea>
@@ -249,7 +251,7 @@
             <input question="{{ question.TITLE }}" class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="question.USEALTERLISTFIELD != 'name'&& question.USEALTERLISTFIELD != 'email'" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'>
         </div>
 
-        <div ng-class="{'col-sm-9': questions[0].ANSWERTYPE == 'NAME_GENERATOR'}" ng-repeat="option in options[question.array_id]" ng-class="{'bg-danger':answerForm.$submitted && errors[question.array_id]}" ng-if=" (question.ANSWERTYPE != 'NAME_GENERATOR' && (question.ANSWERTYPE == 'MULTIPLE_SELECTION' || options[question.array_id]))">
+        <div ng-class="{'col-sm-9': questions[0].ANSWERTYPE == 'NAME_GENERATOR'}" ng-repeat="option in options[question.array_id]" ng-class="{'bg-danger':answerForm.$submitted && errors[question.array_id]}" ng-if=" (question.ANSWERTYPE != 'NAME_GENERATOR' && (question.ANSWERTYPE == 'MULTIPLE_SELECTION' || options[question.array_id]))" style="clear:both">
             <input id="multiselect-1515_{{ $index }}" class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-model="option.checked" type="checkbox" ng-change="multiSelect('{{ option.ID }}', '{{$index}}', '{{question.array_id}}')">
             <label ng-show="question.ASKINGSTYLELIST == false || !question.ASKINGSTYLELIST" for="multiselect-1515_{{ $index }}">{{ option.NAME }}</label>
             <input ng-if="(otherSpecify[question.array_id][option.ID] === '' || otherSpecify[question.array_id][option.ID] != false)" ng-show="option.checked" ng-model="otherSpecify[question.array_id][option.ID]" ng-change="changeOther(question.array_id)">
@@ -290,10 +292,30 @@
     <input ng-if="conclusion == true" name="conclusion" value='1' type="hidden">
 
     <div class="form-group clear-left btn-top">
-        <button ng-if="page > 0 && questions[0].ANSWERTYPE != 'CONCLUSION'" id="next" class='btn graybutton' ng-click="goBack();" onclick="return false;">Back</button>
+        <button ng-if="page > 0 && questions[0].ANSWERTYPE != 'CONCLUSION'" id="back" class='btn graybutton' ng-click="goBack();" onclick="return false;">Back</button>
     	<button ng-if="(questions[0].ANSWERTYPE != 'CONCLUSION' && conclusion == false) || (questions[0].ANSWERTYPE == 'NAME_GENERATOR' && conclusion == true)" id="next" class='btn orangebutton' type="submit">Next</button>
     	<button ng-if="questions[0].ANSWERTYPE == 'CONCLUSION' && redirect != false" id="next" class='btn orangebutton' type="submit">Return</button>
     	<button ng-if="questions[0].ANSWERTYPE != 'NAME_GENERATOR' && conclusion == true" id="next" class='btn orangebutton' type="submit">Finish</button>
     </div>
 </form>
 <div class="col-sm-12" ng-if="footer != ''" ng-bind-html="footer">{{ footer }}</div>
+<!-- Modal -->
+ <div class="modal fade" id="myModal" role="dialog">
+   <div class="modal-dialog modal-sm">
+     <div class="modal-content">
+       <div class="modal-header">
+         <button type="button" class="close" data-dismiss="modal">&times;</button>
+         <h4 class="modal-title" id="modalHeader">Modal Header</h4>
+       </div>
+       <div class="modal-body">
+         <input type="hidden" id="alterId">
+         <textarea id="modalBody"></textarea>
+       </div>
+       <div class="modal-footer">
+         <button type="button" class="btn btn-success" onclick="saveNote()">Save</button>
+         <button type="button" class="btn btn-danger" onclick="deleteNote()">Delete</button>
+         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+       </div>
+     </div>
+   </div>
+ </div>

@@ -145,6 +145,17 @@ echo CHtml::dropdownlist(
         </div>
       </div>
       <?php $this->endWidget(); ?>
+      <?php
+$s = Server::model()->findAll();
+      ?>
+      <br><br>
+      <ul class="list-group">
+        <?php foreach($s as $server): ?>
+        <li class="list-group-item"><?php echo $server->address; ?>
+        <a class="btn btn-xs pull-right btn-danger" href="javascript:void(0);" onclick="deleteServer(<?php echo $server->id; ?>)">Delete</a>
+      </li>
+      <?php endforeach; ?>
+      <ul>
     </div>
   </div>
 
@@ -256,16 +267,22 @@ function getData(){
   var total = $("#send-interviews .export:checked").length;
   var batchSize = 1;
   var interviews = $("#send-interviews .export:checked");
+  if (interviews.length == 0){
+    var x = document.createElement("INPUT");
+    //x.setAttribute("type", "text");
+    interviews = [x];
+    total = 1;
+    console.log(interviews.length)
+  }
   var batchPromiseRecursive = function() {
     // note splice is destructive, removing the first batch off
     // the array
     //var batch = studies.splice(0, batchSize);
     if (interviews.length == 0) {
-      return $.Deferred().resolve().promise();
+      return;
     }
     var thisInt = interviews.splice(0, batchSize);
-
-    console.log($(thisInt).val());
+    console.log($("exporting",thisInt).val());
 
 
     return $.post('/importExport/send/' + $("#sendStudy option:selected").val(), {"YII_CSRF_TOKEN":$("input[name='YII_CSRF_TOKEN']").val(), "serverId":$("#serverAddress option:selected").val(), "export[]":$(thisInt).val()})
@@ -405,5 +422,11 @@ $( "#importForm" ).submit(function( event) {
     }
 });*/
 
-
+function deleteServer(id){
+  if(confirm("Do you want to delete this server?")){
+    $.post("/importExport/deleteserver/", {"serverId": id, "YII_CSRF_TOKEN": $("[name*='YII_CSRF_TOKEN']").val()}, function(data){
+      location.reload();
+    });
+  }
+}
 </script>

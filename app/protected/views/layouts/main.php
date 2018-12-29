@@ -87,7 +87,7 @@
 									<?php endforeach; ?>
 								</ul>
 							</li>
-							<li><a href="/archive">Archive</a></li>
+							<li><a href="/dyad">Alter Matching</a></li>
 							<li><a href="/importExport">Import & Export Studies</a></li>
 							<?php endif; ?>
 							<?php if(Yii::app()->user->isSuperAdmin): ?>

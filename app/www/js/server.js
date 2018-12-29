@@ -1,3 +1,22 @@
+function elementInViewport(el) {
+  var top = el.offsetTop;
+  var left = el.offsetLeft;
+  var width = el.offsetWidth;
+  var height = el.offsetHeight;
+
+  while(el.offsetParent) {
+    el = el.offsetParent;
+    top += el.offsetTop;
+    left += el.offsetLeft;
+  }
+
+  return (
+    top < (window.pageYOffset + window.innerHeight) &&
+    left < (window.pageXOffset + window.innerWidth) &&
+    (top + height) > window.pageYOffset &&
+    (left + width) > window.pageXOffset
+  );
+}
 $(function(){
     setTimeout(function(){
         if(typeof $(".answerInput")[0] != "undefined")
@@ -5,12 +24,12 @@ $(function(){
     }, 100);
 })
 $(document).keydown(function(e) {
-	if($("textarea").length == 0 &&  e.keyCode == 13){
-    		e.preventDefault();
+	if($("textarea").length == 1 &&  e.keyCode == 13){
+    e.preventDefault();
 		if($("#alterFormBox").length != 0 && $(".alterSubmit").length != 0)
 			$('.alterSubmit')[0].click();
 		else
-			$('.orangebutton')[0].click();
+			$('#next').click();
 	}
     if(alterPromptPage == false){
     	if (e.keyCode == 37){
@@ -25,8 +44,12 @@ $(document).keydown(function(e) {
     		e.preventDefault();
             $(".answerInput").each(function(index){
                 if($(this).is(":focus")){
-                    if(typeof $(".answerInput")[index-columns] != "undefined")
+                    if(typeof $(".answerInput")[index-columns] != "undefined"){
+                       if($($(".answerInput")[index-columns]).offset().top < $("#floatHeader").offset().top + $("#floatHeader").height()){
+                          window.scrollBy(0, -112);
+                        }
                         $(".answerInput")[index-columns].focus();
+                    }
                     //else
                     //    $(".answerInput:focus").parent().prev().find(".answerInput").focus();
                     return false;
@@ -37,8 +60,12 @@ $(document).keydown(function(e) {
     		e.preventDefault();
             $(".answerInput").each(function(index){
                 if($(this).is(":focus")){
-                    if(typeof $(".answerInput")[index+columns] != "undefined")
+                    if(typeof $(".answerInput")[index+columns] != "undefined"){
+                        if(!elementInViewport($(".answerInput")[index+columns])){
+                          window.scrollBy(0, 112);
+                        }
                         $(".answerInput")[index+columns].focus();
+                    }
                     //else
                     //    $(".answerInput:focus").parent().next().find(".answerInput").focus();
                     return false;
@@ -64,7 +91,7 @@ function save(questions, page, url, scope){
     if(typeof questions[0] == "undefined"){
         if(scope.answerForm.$pristine == false || scope.conclusion == true){
             $.post(saveUrl, $('#answerForm').serialize(), function(data){
-                if(data != "error"){
+                if(!data.match("error")){
                     data = JSON.parse(data);
                     answers = data.answers;
                     interview = data.interview;
@@ -80,7 +107,8 @@ function save(questions, page, url, scope){
                         nextUrl = nextUrl + "/" + hashKey;
                     document.location = nextUrl;
                 }else{
-                    scope.errors[0] = "Participant not found";
+                    errorMsg = JSON.parse(data);
+                    scope.errors[0] = errorMsg.error;
                     scope.$apply();
                 }
             });
@@ -135,9 +163,11 @@ function saveSkip(interviewId, questionId, alterId1, alterId2, arrayId)
 
     var saveUrl = document.location.protocol + "//" + document.location.host + "/interview/save";
     $.post(saveUrl, skipAnswer, function(data){
-        answers = JSON.parse(data);
+        data = JSON.parse(data);
+        answers = data.answers;
+        interview = data.interview;
+        interviewId = interview.ID;
         console.log("saving skip value");
-        console.log(answers);
     });
 }
 
@@ -156,7 +186,7 @@ function saveNodes()
 }
 
 function getNote(node){
-    var url = "/data/getnote?interviewId=" + interviewId + "&expressionId=" + expressionId + "&alterId=" + node.id;
+    var url = "/data/getnote?interviewId=" + interviewId + "&expressionId=" + graphExpressionId + "&alterId=" + node.id;
     $.get(url, function(data){
         $("#left-container").html(data);
 

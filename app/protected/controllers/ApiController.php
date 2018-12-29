@@ -1,4 +1,4 @@
-t<?php
+<?php
 class ApiController extends Controller
 {
 	// Members
