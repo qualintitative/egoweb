@@ -18,7 +18,7 @@ update_alp_dev:
   allow_failure: false
   only:
     refs:
-    - alp
+    - alpdev
   before_script:
   - ssh boxy.rand.org "mkdir $CI_JOB_ID"
   - scp -r * boxy.rand.org:$CI_JOB_ID
