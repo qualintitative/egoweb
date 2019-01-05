@@ -405,6 +405,7 @@ class InterviewController extends Controller
                     $ego_id_q = Question::model()->findByPk($ego_id['questionId']);
                     if(($key || $ego_id_q->restrictList == true) && in_array($ego_id_q->useAlterListField, array("name", "email"))){
                         $keystr = $ego_id['value'];
+                        break;
                     }
                 }
                 if(!isset($keystr))
@@ -422,8 +423,8 @@ class InterviewController extends Controller
                         $errorMsg = "$keystr is either not in the participant list or has been assigned to another interviewer";
                     }else{
                         $check = false;
+                        $prop = $ego_id_q->useAlterListField;
                         foreach($participantList as $participant){
-                            $prop = $ego_id_q->useAlterListField;
                             if(in_array($keystr, $ego_id_answers))
                                 $errorMsg = "$keystr has already been used in an interview";
                             if((($participant->name == $keystr && $prop == "name") || ($participant->email == $keystr && $prop == "email")) && !in_array($keystr, $ego_id_answers)){
