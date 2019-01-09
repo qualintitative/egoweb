@@ -274,15 +274,35 @@ class DyadController extends Controller
               }
           }
 
-          public function actionUpdatematch()
-            {
-                if(isset($_POST)){
-                    $match = MatchedAlters::model()->findByAttributes(array("alterId1"=>$_POST['alterId1'], "alterId2"=>$_POST['alterId2']));
-                    if($match)
-                        $match->delete();
-                      else
-                        die("not found");
-                }
+          public function actionSavematch()
+          {
+              if(isset($_POST)){
+                  if(isset($_POST['id'])){
+                    $match = MatchedAlters::model()->findByPk($_POST['id']);
+                  }else{
+                     $match = new MatchedAlters;
+                  }
+                  $match->attributes = $_POST;
+                  if($match->matchedName == ""){
+                      $match->matchedName = "marked";
+                  }
+                  $mark = "Unmatch";
+                  if($_POST['alterId1'] == 0)
+                      $mark = "Remove Mark";
+                  if($match->save()){
+                        $data = array(
+                          "studyId"=>$_POST['studyId'],
+                          "alterId1"=>$_POST['alterId1'],
+                          "alterId2"=>$_POST['alterId2'],
+                          "matchId"=>$match->id,
+                          "mark"=>$mark,
+                        );
+                        echo json_encode($data);
+                  }else{
+                        print_r($match->errors);
+                  }
+
+              }
             }
 
 	// Uncomment the following methods and override them if needed

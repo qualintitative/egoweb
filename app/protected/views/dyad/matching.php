@@ -144,11 +144,17 @@ function save(sId, id1, id2, matchId){
     if(typeof alterName != "undefined" && alterName.trim() == ""){
         alert ("Please enter a name!");
     }else{
-        $.post("/data/savematch", {id:matchId, studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, userId: <?php echo Yii::app()->user->id; ?>, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
-            if(id1 == "0")
+        $.post("/dyad/savematch", {id:matchId, studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, userId: <?php echo Yii::app()->user->id; ?>, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
+            if(id1 == "0"){
                 document.location.href = "/data/study/" + sId; //$("#markMatch").html(data);
-            else
-                $("#" + id1 + "-buttons").html(data);
+            }else{
+              data = JSON.parse(data);
+               var html = "<button class='btn btn-xs btn-danger unMatch-" + data.alterId1 + "' onclick='unMatch(" + data.studyId + "," + data.alterId1 + ", " + data.alterId2 +  ")'>" + data.mark + "</button>";
+               console.log(data,data.matchId);
+               console.log($("#" + id1));
+              $("#" + id1).attr("matchId", data.matchId);
+              $("#" + id1 + "-buttons").html(html);
+            }
         })
     }
 }
@@ -161,6 +167,7 @@ function unMatch(sId, id1, id2){
             $("#" + id1 + "-buttons").html("");
             $("#" + id1 + "-name").val("");
             $("#" + id1).val("");
+            $("#" + id1).attr("matchId", "");
             $("#" + id1).change();
         }
     })

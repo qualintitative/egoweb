@@ -322,29 +322,6 @@ class DataController extends Controller
 		Yii::app()->end();
     }
 
-	public function actionSavematch()
-	{
-    	if(isset($_POST)){
-          if(isset($_POST['id'])){
-            $match = MatchedAlters::model()->findByPk($_POST['id']);
-          }else{
-        	   $match = new MatchedAlters;
-          }
-        	$match->attributes = $_POST;
-        	if($match->matchedName == ""){
-            	$match->matchedName = "marked";
-        	}
-        	$mark = "Unmatch";
-        	if($_POST['alterId1'] == 0)
-        	    $mark = "Remove Mark";
-        	if($match->save())
-                echo "<button class='btn btn-xs btn-danger unMatch-" . $_POST['alterId1'] . "' onclick='unMatch(" .$_POST['studyId'].  "," . $_POST['alterId1'] . ", " . $_POST['alterId2'] . ")'>$mark</button>";
-            else
-                print_r($match->errors);
-
-    	}
-    }
-
 	public function actionUnmatch()
     {
         if(isset($_POST)){
