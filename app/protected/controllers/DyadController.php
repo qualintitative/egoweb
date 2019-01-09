@@ -262,6 +262,29 @@ class DyadController extends Controller
       			), false, false
       		);
       	}
+
+        public function actionUnmatch()
+          {
+              if(isset($_POST)){
+                  $match = MatchedAlters::model()->findByAttributes(array("alterId1"=>$_POST['alterId1'], "alterId2"=>$_POST['alterId2']));
+                  if($match)
+                      $match->delete();
+                    else
+                      die("not found");
+              }
+          }
+
+          public function actionUpdatematch()
+            {
+                if(isset($_POST)){
+                    $match = MatchedAlters::model()->findByAttributes(array("alterId1"=>$_POST['alterId1'], "alterId2"=>$_POST['alterId2']));
+                    if($match)
+                        $match->delete();
+                      else
+                        die("not found");
+                }
+            }
+
 	// Uncomment the following methods and override them if needed
 	/*
 	public function filters()

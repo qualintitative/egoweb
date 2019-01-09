@@ -154,7 +154,7 @@ function save(sId, id1, id2, matchId){
 }
 
 function unMatch(sId, id1, id2){
-    $.post("/data/unmatch", {studyId:sId, alterId1:id1, alterId2:id2, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>}, function(data){
+    $.post("/dyad/unmatch", {studyId:sId, alterId1:id1, alterId2:id2, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>}, function(data){
         if(id1 == 0){
             $("#markMatch").html("<button onclick='save(studyId, 0, 0)' class='btn btn-success'>Mark as matched</button>");
         }else{
@@ -257,7 +257,7 @@ function exportMatches(){
         <td id="<?php echo $alterId; ?>-buttons">
             <?php
                 if(isset($match))
-                    echo "<button class='btn btn-xs btn-danger unMatch-$alterId' onclick='unMatch(studyId, $match->id, $selected)'>Unmatch</button>";
+                    echo "<button class='btn btn-xs btn-danger unMatch-$alterId' onclick='unMatch(studyId, $match->alterId1, $selected)'>Unmatch</button>";
             ?>
 
         </td>
