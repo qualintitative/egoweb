@@ -47,7 +47,7 @@ var IwPage = Object.create(Page, {
     },
     alterTextBox: {
         get: function () {
-            return browser.element("form#alterForm div autocomplete div input");
+            return browser.element("form#alterForm .answerInput");
         }
     },
     alterAddButton: {

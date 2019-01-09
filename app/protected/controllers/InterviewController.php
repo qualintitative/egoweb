@@ -405,6 +405,7 @@ class InterviewController extends Controller
                     $ego_id_q = Question::model()->findByPk($ego_id['questionId']);
                     if(($key || $ego_id_q->restrictList == true) && in_array($ego_id_q->useAlterListField, array("name", "email"))){
                         $keystr = $ego_id['value'];
+                        break;
                     }
                 }
                 if(!isset($keystr))
@@ -422,11 +423,11 @@ class InterviewController extends Controller
                         $errorMsg = "$keystr is either not in the participant list or has been assigned to another interviewer";
                     }else{
                         $check = false;
+                        $prop = $ego_id_q->useAlterListField;
                         foreach($participantList as $participant){
-                            $prop = $ego_id_q->useAlterListField;
                             if(in_array($keystr, $ego_id_answers))
                                 $errorMsg = "$keystr has already been used in an interview";
-                            if(($participant->name == $keystr || $participant->email == $keystr) && !in_array($keystr, $ego_id_answers)){
+                            if((($participant->name == $keystr && $prop == "name") || ($participant->email == $keystr && $prop == "email")) && !in_array($keystr, $ego_id_answers)){
                                 $check = true;
                             }
                         }
@@ -570,9 +571,7 @@ class InterviewController extends Controller
             foreach($preset_alters as $alter){
                 $pre_names[] = $alter->name;
             }
-            #OK FOR SQL INJECTION
             $study = Study::model()->findByPk((int)$studyId);
-
             $restrictList = false;
             $results = Question::model()->findAllByAttributes(array("studyId"=>$studyId, "subjectType"=>"NAME_GENERATOR"), array('order'=>'ordering'));
             foreach($results as $result){
@@ -582,7 +581,6 @@ class InterviewController extends Controller
             }
             // check to see if pre-defined alters exist.  If they do exist, check name against list
             if($restrictList){
-                #OK FOR SQL INJECTION
                 if(count($pre_names) > 0){
                     if(!in_array($_POST['Alters']['name'], $pre_names)){
                         $model->addError('name', $_POST['Alters']['name']. ' is not in our list of participants');
@@ -594,7 +592,6 @@ class InterviewController extends Controller
             if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
                 $interviewIds = Interview::multiInterviewIds($_POST['Alters']['interviewId'], $study);
                 //$interviewIds = array_diff(array_unique($interviewIds), array($_POST['Alters']['interviewId']));
-
                 foreach($interviewIds as $iId){
                     $criteria=array(
                         'condition'=>"FIND_IN_SET (" . $iId . ", interviewId) ",
