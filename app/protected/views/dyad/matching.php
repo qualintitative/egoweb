@@ -150,8 +150,6 @@ function save(sId, id1, id2, matchId){
             }else{
               data = JSON.parse(data);
                var html = "<button class='btn btn-xs btn-danger unMatch-" + data.alterId1 + "' onclick='unMatch(" + data.studyId + "," + data.alterId1 + ", " + data.alterId2 +  ")'>" + data.mark + "</button>";
-               console.log(data,data.matchId);
-               console.log($("#" + id1));
               $("#" + id1).attr("matchId", data.matchId);
               $("#" + id1 + "-buttons").html(html);
             }
