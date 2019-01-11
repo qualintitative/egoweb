@@ -283,6 +283,7 @@ class DyadController extends Controller
                      $match = new MatchedAlters;
                   }
                   $match->attributes = $_POST;
+                  $match->userId = Yii::app()->user->id;
                   if($match->matchedName == ""){
                       $match->matchedName = "marked";
                   }

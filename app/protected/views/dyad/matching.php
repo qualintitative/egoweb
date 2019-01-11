@@ -148,6 +148,7 @@ function save(sId, id1, id2, matchId){
             if(id1 == "0"){
                 document.location.href = "/data/study/" + sId; //$("#markMatch").html(data);
             }else{
+              $(".markButton").hide();
               data = JSON.parse(data);
                var html = "<button class='btn btn-xs btn-danger unMatch-" + data.alterId1 + "' onclick='unMatch(" + data.studyId + "," + data.alterId1 + ", " + data.alterId2 +  ")'>" + data.mark + "</button>";
               $("#" + id1).attr("matchId", data.matchId);
@@ -162,6 +163,7 @@ function unMatch(sId, id1, id2){
         if(id1 == 0){
             $("#markMatch").html("<button onclick='save(studyId, 0, 0)' class='btn btn-success'>Mark as matched</button>");
         }else{
+            $("#matchButton").show();
             $("#" + id1 + "-buttons").html("");
             $("#" + id1 + "-name").val("");
             $("#" + id1).val("");
@@ -176,10 +178,10 @@ function exportMatches(){
 }
 </script>
 <?php
-    		$criteria = array(
-    			'condition'=>"(interviewId1 = $interview1->id OR interviewId2 = $interview1->id) AND alterId1 = 0 AND alterId2 = 0",
-    		);
-    		$marked = MatchedAlters::model()->find($criteria);
+$criteria = array(
+	'condition'=>"(interviewId1 = $interview1->id OR interviewId2 = $interview1->id) AND alterId1 = 0 AND alterId2 = 0",
+);
+$marked = MatchedAlters::model()->find($criteria);
 ?>
 <div class="panel panel-success">
     <div class="panel-heading">
@@ -271,8 +273,8 @@ function exportMatches(){
 </table>
 <div id="markMatch">
 <?php if($marked): ?>
-<button onclick="unMatch(studyId, '0', '0')" class="btn btn-danger btn-xs">Remove Mark</button>
+<button class="markButton" onclick="unMatch(studyId, '0', '0')" class="btn btn-danger btn-xs">Remove Mark</button>
 <?php else: ?>
-<button onclick="save(studyId, '0', '0')" class="btn btn-success btn-xs">Mark as matched</button>
+<button class="markButton" id="matchButton" onclick="save(studyId, '0', '0')" class="btn btn-success btn-xs">Mark as matched</button>
 <?php endif; ?>
 </div>
