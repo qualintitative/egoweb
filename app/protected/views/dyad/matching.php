@@ -146,9 +146,8 @@ function save(sId, id1, id2, matchId){
     }else{
         $.post("/dyad/savematch", {id:matchId, studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, userId: <?php echo Yii::app()->user->id; ?>, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
             if(id1 == "0"){
-                document.location.href = "/data/study/" + sId; //$("#markMatch").html(data);
+                document.location.href = document.referrer; //$("#markMatch").html(data);
             }else{
-              $(".markButton").hide();
               data = JSON.parse(data);
                var html = "<button class='btn btn-xs btn-danger unMatch-" + data.alterId1 + "' onclick='unMatch(" + data.studyId + "," + data.alterId1 + ", " + data.alterId2 +  ")'>" + data.mark + "</button>";
               $("#" + id1).attr("matchId", data.matchId);
@@ -161,9 +160,8 @@ function save(sId, id1, id2, matchId){
 function unMatch(sId, id1, id2){
     $.post("/dyad/unmatch", {studyId:sId, alterId1:id1, alterId2:id2, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>}, function(data){
         if(id1 == 0){
-            $("#markMatch").html("<button onclick='save(studyId, 0, 0)' class='btn btn-success'>Mark as matched</button>");
+            $("#markMatch").html("<button onclick='save(studyId, 0, 0)' class='btn btn-success'>Finished Matching</button>");
         }else{
-            $("#matchButton").show();
             $("#" + id1 + "-buttons").html("");
             $("#" + id1 + "-name").val("");
             $("#" + id1).val("");
@@ -272,9 +270,5 @@ $marked = MatchedAlters::model()->find($criteria);
   <?php endif;?>
 </table>
 <div id="markMatch">
-<?php if($marked): ?>
-<button class="markButton" onclick="unMatch(studyId, '0', '0')" class="btn btn-danger btn-xs">Remove Mark</button>
-<?php else: ?>
-<button class="markButton" id="matchButton" onclick="save(studyId, '0', '0')" class="btn btn-success btn-xs">Mark as matched</button>
-<?php endif; ?>
+<button id="matchButton" onclick="save(studyId, '0', '0')" class="btn btn-success">Finished Matching</button>
 </div>
