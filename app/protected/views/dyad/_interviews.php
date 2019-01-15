@@ -25,7 +25,7 @@
         if($interview->hasMatches){
             $mark = "class='success'";
     		$criteria = array(
-    			'condition'=>"interviewId1 = $interview->id OR interviewId2 = $interview->id",
+    			'condition'=>"interviewId1 = $interview->id OR interviewId2 = $interview->id ORDER BY id DESC",
     		);
     		$match = MatchedAlters::model()->find($criteria);
             if($interview->id == $match->interviewId1)
