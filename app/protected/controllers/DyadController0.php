@@ -57,7 +57,7 @@ class DyadController extends Controller
       'order'=>'id DESC',
     );
 
-    $studies = Study::model()->findAll($condition);
+        $studies = Study::model()->findAll($condition);
 
     $this->render('index', array(
       'studies'=>$studies,

@@ -683,8 +683,35 @@ class ImportExportController extends Controller
     foreach($result as $server){
       $servers[$server->id] = mToA($server);
     }
+    $condition = "id != 0";
+    if(!Yii::app()->user->isSuperAdmin){
+        if(Yii::app()->user->id){
+            $criteria = array(
+          'condition'=>"interviewerId = " . Yii::app()->user->id,
+            );
+            $interviewers = Interviewer::model()->findAll($criteria);
+            $studies = array();
+            foreach($interviewers as $i){
+                $studies[] = $i->studyId;
+            }
+        }else{
+            $studies = false;
+        }
+        if($studies)
+          $condition = "id IN (" . implode(",", $studies) . ")";
+        else
+          $condition = "id = -1";
+    }
+
+    $criteria = array(
+      'condition'=>$condition,
+      'order'=>'id DESC',
+    );
+
+    $studies = Study::model()->findAll($condition);
 		$this->render('index', array(
       "servers"=>$servers,
+      "studies"=>$studies,
     ));
 	}
 

@@ -53,7 +53,7 @@ $criteria->order = 'name';
 echo CHtml::dropdownlist(
     'studyId',
     '',
-    CHtml::listData(Study::model()->findAll($criteria), 'id', 'name'),
+    CHtml::listData($studies, 'id', 'name'),
     array("class"=>"form-control")
 );
 ?>
@@ -93,7 +93,7 @@ $criteria->order = 'name';
 echo CHtml::dropdownlist(
 	'studyId',
 	'',
-	CHtml::listData(Study::model()->findAll($criteria),'id', 'name'),
+	CHtml::listData($studies,'id', 'name'),
 	                array(
                         'empty' => 'Select',
                         'onchange'=>"js:getInterviews(\$(this), '#export-interviews')",
@@ -196,7 +196,7 @@ $criteria->order = 'name';
 <?php echo CHtml::dropdownlist(
 	'studyId',
 	'',
-	CHtml::listData(Study::model()->findAll($criteria),'id', 'name'),
+	CHtml::listData($studies,'id', 'name'),
     array(
           'id'=>'sendStudy',
           'empty' => 'Select',
