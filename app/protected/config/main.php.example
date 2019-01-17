@@ -100,10 +100,15 @@ return array(
                         'api'
                     )
                 ),
-
+/*
 		'securityManager'=>array(
 			'cryptAlgorithm' => 'blowfish',
 			'encryptionKey' => 'One morning I shot an elephant in my pajamas.',
+		)
+*/
+    'securityManager'=>array(
+			'cryptAlgorithm' => 'rijndael-128',
+            'encryptionKey' => 'old_key',
 		)
 	),
 
