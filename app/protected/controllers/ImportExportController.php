@@ -768,11 +768,11 @@ class ImportExportController extends Controller
 
       $interviewIds = $_POST['export'];
 
-      $questions = Question::model()->findAllByAttributes(array('studyId'=>$this->id),array('order'=>'subjectType, ordering'));
-      $expressions = Expression::model()->findAllByAttributes(array('studyId'=>$this->id));
+      $questions = Question::model()->findAllByAttributes(array('studyId'=>$study->id),array('order'=>'subjectType, ordering'));
+      $expressions = Expression::model()->findAllByAttributes(array('studyId'=>$study->id));
       //$answerLists = AnswerList::model()->findAllByAttributes(array('studyId'=>$this->id));
-      $alterLists = AlterList::model()->findAllByAttributes(array("studyId"=>$this->id));
-      $alterPrompts = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$this->id));
+      $alterLists = AlterList::model()->findAllByAttributes(array("studyId"=>$study->id));
+      $alterPrompts = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$study->id));
 
       $study->introduction = sanitizeXml($study->introduction);
       $study->egoIdPrompt = sanitizeXml($study->egoIdPrompt);
