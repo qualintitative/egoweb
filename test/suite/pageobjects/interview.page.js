@@ -209,9 +209,15 @@ var IwPage = Object.create(Page, {
 
     goForwardToQuestion: {
         value: function (question) {
+	        let prevQuestion = null;
             // keep hitting "next" button until we get to the question
             // TODO - put some "maximum" in this loop, and fail if it doesn't find the question
             while ((curfield = IwPage.questionTitle.getText()) != question) {
+	            if (curfield == prevQuestion){
+		            console.log("Infinite Loop Detected, stuck on question " + curfield);
+		            fail("Infinite Loop Detected");
+		            throw "Infinite Loop Detected";
+	            }
                 if (curfield in this.fieldValues) {
                     let fv = this.fieldValues[curfield];
                     switch (fv.type) {
@@ -237,6 +243,7 @@ var IwPage = Object.create(Page, {
                             break;
                     }
                 }
+                prevQuestion = curfield;
                 this.next();
             }
         }
@@ -273,6 +280,8 @@ var IwPage = Object.create(Page, {
 
     addAlter: {
         value: function(name) {
+	        this.alterTextBox.waitForExist(browser.options.egoweb.waitTime);
+	        this.pause();
             this.alterTextBox.setValue(name);
             this.alterAddButton.click();
             this.pause();
@@ -287,8 +296,11 @@ var IwPage = Object.create(Page, {
 
     removeNthAlter: {
         value: function(num) {
-            this.removeNthAlterButton(num).click();
+            let btn = this.removeNthAlterButton(num);
             this.pause();
+	        if(btn.isExisting()) {
+		        btn.click();
+	        }
         }
     },
 
@@ -297,7 +309,8 @@ var IwPage = Object.create(Page, {
             let btn = this.removeNthAlterButton(1);
 
             while (btn.isExisting()) {
-                btn.click();
+	            this.pause();
+	            btn.click();
                 this.pause();
                 btn = this.removeNthAlterButton(1);
             }
@@ -363,6 +376,9 @@ var IwPage = Object.create(Page, {
     openInterview: {
         value: function (interview, startPage) {
             this.open('interview');
+            if(!$("=" + interview).isExisting()){
+	            throw new Error('Interview '+interview+' not assigned to the current user!');
+            }
             browser.element("=" + interview).click();
 
             // search existing IDs to find max
@@ -378,7 +394,6 @@ var IwPage = Object.create(Page, {
                     max = val;
                 }
             });
-            console.log(browser.options.egoweb.reuseInterview, max)
             if(browser.options.egoweb.reuseInterview == true && max != 0){
 
                 // opens most recent interview

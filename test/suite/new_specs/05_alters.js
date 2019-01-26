@@ -78,8 +78,8 @@ describe('Alters', function () {
     });
 
     it("should add and remove alters", function() {
-        // clear any alters that are already entered
-        IwPage.removeAllAlters();
+	    // clear any alters that are already entered
+	    IwPage.removeAllAlters();
 
         alters = IwPage.fieldValues['ALTER_PROMPT']['values'];
 
@@ -90,8 +90,9 @@ describe('Alters', function () {
         IwPage.addAlter(alters[3]);
         expect(IwPage.getAlterCount()).toBe(4);
 
-        // remove 3rd alter
-        IwPage.removeNthAlter(3);
+	    // remove 3rd alter
+	    IwPage.removeNthAlter(3);
+	    IwPage.pause();
         expect(IwPage.getAlterCount()).toBe(3);
         expect(browser.isExisting("td="+alters[0])).toBe(true);
         expect(browser.isExisting("td="+alters[1])).toBe(true);
@@ -153,50 +154,51 @@ describe('Alters', function () {
         // select answers in some rows
 
         browser.scroll(0, 0);
+	    browser.execute(function(){unfixHeader()});
 
-        for (i=2; i<6; i++) {
-            browser.scroll(0, (i-2)*56);
-            IwPage.pause();
-            IwPage.getTableCellInputElement((i-1)*2,i).click();
+	    for (i=2; i<6; i++) {
+			browser.scroll(0, (i-2)*56);
+		    IwPage.pause();
+		    IwPage.getTableCellInputElement((i-1)*2,i).click();
             expect(IwPage.getTableRowHighlight((i-1)*2)).toBe(false);
         }
 
-        // click next, even though no cell is selected
+	    // click next, even though no cell is selected
         IwPage.next();
 
         // should stay on same page with error message
         expect(IwPage.questionTitle.getText()).toBe("alter1");
         browser.element("div.alert=Select 1 response for each row please.").waitForVisible(browser.options.egoweb.waitTime);
 
-        // click a "Set All" button
+	    // click a "Set All" button
         IwPage.getTableCellInputElement(17,2).click();
 
-        // check that no rows are highlighted
+	    // check that no rows are highlighted
         for (i=0; i<15; i++) {
             expect(IwPage.getTableRowHighlight(i+2)).toBe(false);
         }
 
-        // click next and test skip logic
+	    // click next and test skip logic
         IwPage.next();
         expect(IwPage.questionTitle.getText()).toBe("alter2");
         expect(browser.element(IwPage.getTableCellSelector(2,1)).getText()).toBe("charlie");
 
-        // change option for charlie, test skip logic
+	    // change option for charlie, test skip logic
         IwPage.back();
         expect(IwPage.questionTitle.getText()).toBe("alter1");
         browser.scroll(0, 0);
-        IwPage.getTableCellInputElement(4,2).click();
-        browser.scroll(0, 9999);
+	    IwPage.getTableCellInputElement(4,2).click();
+	    browser.scroll(0, 9999);
         IwPage.next();
         browser.pause(40000);
         expect(IwPage.questionTitle.getText()).toBe("alterpair1 - alpha");
 
-        // go back to alter1
+	    // go back to alter1
         IwPage.back();
         expect(IwPage.questionTitle.getText()).toBe("alter1");
-        // check that no rows are highlighted
+	    // check that no rows are highlighted
         for (i=0; i<15; i++) {
-            expect(IwPage.getTableRowHighlight(i+2)).toBe(false);
+	        expect(IwPage.getTableRowHighlight(i+2)).toBe(false);
         }
     });
 
