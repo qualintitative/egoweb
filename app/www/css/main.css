@@ -612,7 +612,7 @@ td{
 	padding-right:0;
   padding-left: 30px;
   margin-right: -15px;
-	overflow-y:scroll;
+	overflow-y:auto;/*scroll;*/
 	float:right;
 }
 .alterPosition{
