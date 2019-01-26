@@ -4,68 +4,80 @@
 $this->pageTitle =  "Admin";
 
 ?>
-	<table cellspacing=0 cellpadding=0 class="admin">
-	<tr>
-	<td width=50%>
+
+<?php if(Yii::app()->user->user->permissions >= 3): ?>
+<div class="panel panel-default col-sm-6">
+  <div class="panel-body">
 		<h3><a href="/interview">Interviewing</a></h3>
 		<p>
 			Start a new interview or continue a partially completed interview.
 		</p>
-	</td>
+	</div>
+</div>
+<?php endif; ?>
+
 	<?php if(Yii::app()->user->isAdmin): ?>
-	<td>
+
+    <div class="panel panel-default col-sm-6">
+      <div class="panel-body">
+
 		<h3><a href="/authoring">Authoring</a></h3>
 		<p>
 			Create a new interview, add or change questions for an existing interview.
 		</p>
-	</td>
-	</tr>
-	<tr>
-	<td>
+  </div>
+</div>
+<div class="panel panel-default col-sm-6">
+  <div class="panel-body">
+
 		<h3><a href="/data">Data Processing</a></h3>
 		<p>
-			Analyze the data from completed interviews.
+			Analyze the data from completed interviews.<br>
 		</p>
-	</td>
-	<td>
+  </div>
+</div>
+<?php endif; ?>
+
+<div class="panel panel-default col-sm-6">
+  <div class="panel-body">
 		<h3><a href="/dyad">Alter Matching</a></h3>
 		<p>
-      Match alters from related interviews
+      Match alters from related interviews<br><br>
 		</p>
-	</td>
-	</tr>
-	<tr>
-	<td>
+  </div>
+</div>
+<div class="panel panel-default col-sm-6">
+  <div class="panel-body">
 		<h3><a href="/importExport">Import &amp; Export Studies</a></h3>
 		<p>
-			Save study and respondent data as files for archiving or
-			transferring between computers.
+			Save study and respondent data as files or
+			transfer to another server.
 		</p>
-	</td>
+  </div>
+</div>
 		<?php if(Yii::app()->user->isSuperAdmin): ?>
-		<td>
+      <div class="panel panel-default col-sm-6">
+        <div class="panel-body">
 			<h3><a href="/admin/user">User Admin</a></h3>
 			<p>
-				Add new users.
+				Add new users.<br><br>
 			</p>
-		</td>
+    </div>
+  </div>
 		<?php endif; ?>
-	</tr>
-	<?php endif; ?>
-	</tr>
-	<tr>
-	<td>
+    <div class="panel panel-default col-sm-6">
+      <div class="panel-body">
 		<h3><a href="/mobile">Mobile</a></h3>
 		<p>
-			Apps for iOS and Android.
+			Apps for iOS and Android.<br><br>
 		</p>
-	</td>
-	<td>
+  </div>
+</div>
+<div class="panel panel-default col-sm-6">
+  <div class="panel-body">
 		<h3><a href="/site/logout">Logout</a></h3>
 		<p>
-			Logout of Admin Mode.
+			Logout of Admin Mode.<br><br>
 		</p>
-	</td>
-	</tr>
-	</table>
-	<span style="color: #fff"><?php echo Yii::app()->getBaseUrl(true);?></span>
+  </div>
+</div>

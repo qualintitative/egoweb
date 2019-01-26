@@ -19,11 +19,7 @@ $form = $this->beginWidget('CActiveForm', array(
 <?php echo $form->dropdownlist(
 	$user,
 	'permissions',
-		array(
-			1=>"interviewer",
-			5=>"admin",
-			11=>"super admin"
-		),
+		User::model()->roles(),
 
 	array('empty' => 'Select Permission')
 ); ?>

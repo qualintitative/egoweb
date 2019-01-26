@@ -41,12 +41,13 @@
         echo "<td class='hidden-xs'>".$completed."</td>";
         echo "<td class='hidden-xs'>".$matchId."</td>";
         echo "<td class='hidden-xs'>".$matchUser."</td>";
-        echo "<td>";
-        if($interview->completed == -1)
-            echo CHtml::button('Edit',array('submit'=>$this->createUrl('/data/edit/' . $interview->id)));
-
-        echo CHtml::button('Review',array('submit'=>$this->createUrl('/interview/'.$study->id.'/'.$interview->id.'/#/page/0')));
-        echo CHtml::button('Visualize',array('submit'=>$this->createUrl('/data/visualize?expressionId=&interviewId='.$interview->id)))."</td>";
+        if(Yii::app()->user->user->permissions >= 3){
+            echo "<td>";
+            if($interview->completed == -1)
+              echo CHtml::button('Edit',array('submit'=>$this->createUrl('/data/edit/' . $interview->id)));
+            echo CHtml::button('Review',array('submit'=>$this->createUrl('/interview/'.$study->id.'/'.$interview->id.'/#/page/0')));
+            echo CHtml::button('Visualize',array('submit'=>$this->createUrl('/data/visualize?expressionId=&interviewId='.$interview->id)))."</td>";
+        }
         echo "</tr>";
     }
 ?>
