@@ -7,8 +7,9 @@
         <th class="hidden-xs">Completed</th>
         <th class="hidden-xs">Dyad Match ID</th>
         <th class="hidden-xs">Match User</th>
+        <?php if(Yii::app()->user->user->permissions >= 3): ?>
         <th><em class="fa fa-cog"></em></th>
-
+        <?php endif;?>
     </tr>
   </thead>
   <tbody>

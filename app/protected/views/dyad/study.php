@@ -111,8 +111,9 @@ $(function(){
                         <th class="hidden-xs">Completed</th>
                         <th class="hidden-xs">Dyad Match ID</th>
                         <th class="hidden-xs">Match User</th>
+                        <?php if(Yii::app()->user->user->permissions >= 3): ?>
                         <th><em class="fa fa-cog"></em></th>
-
+                        <?php endif; ?>
                     </tr>
                   </thead>
                   <tbody>
@@ -146,12 +147,14 @@ $(function(){
         echo "<td class='hidden-xs'>".$completed."</td>";
         echo "<td class='hidden-xs'>".$matchId."</td>";
         echo "<td class='hidden-xs'>".$matchUser."</td>";
-        echo "<td>";
-        if($interview->completed == -1)
-            echo CHtml::button('Edit',array('submit'=>$this->createUrl('/data/edit/' . $interview->id)));
+        if(Yii::app()->user->user->permissions >= 3){
+            echo "<td>";
+            if($interview->completed == -1)
+                echo CHtml::button('Edit',array('submit'=>$this->createUrl('/data/edit/' . $interview->id)));
 
-        echo CHtml::button('Review',array('submit'=>$this->createUrl('/interview/'.$study->id.'/'.$interview->id.'/#/page/0')));
-        echo CHtml::button('Visualize',array('submit'=>$this->createUrl('/data/visualize?expressionId=&interviewId='.$interview->id)))."</td>";
+            echo CHtml::button('Review',array('submit'=>$this->createUrl('/interview/'.$study->id.'/'.$interview->id.'/#/page/0')));
+            echo CHtml::button('Visualize',array('submit'=>$this->createUrl('/data/visualize?expressionId=&interviewId='.$interview->id)))."</td>";
+        }
         echo "</tr>";
     }
 ?>
