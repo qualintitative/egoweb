@@ -39,7 +39,25 @@ class AdminController extends Controller
 
 	public function actionIndex()
 	{
-		$this->render('index');
+    echo Yii::app()->getBasePath() . DIRECTORY_SEPARATOR . "migrations" . DIRECTORY_SEPARATOR;
+    $count = 0;
+    $fi = new FilesystemIterator(Yii::app()->getBasePath() . DIRECTORY_SEPARATOR . "migrations" . DIRECTORY_SEPARATOR, FilesystemIterator::SKIP_DOTS);
+    foreach($fi as $file)
+    {
+        if(substr($file->getFilename(), -4) == ".php")
+          $count++;
+    }
+    $dbCount = Yii::app()->db->createCommand()
+    ->select('count(version)')
+    ->from( 'tbl_migration' )
+    ->queryScalar();
+    $alert = false;
+    if($count > $dbCount){
+      $alert = $this->runMigrationTool();
+    }
+    $this->render('index', array(
+      "alert"=>$alert,
+    ));
 	}
 
 	public function actionUser()
@@ -213,9 +231,9 @@ class AdminController extends Controller
     }
 
     public function actionUpdate() {
-        $this->runGitUpdate();
+        echo $this->runGitUpdate();
     }
-    
+
     private function runMigrationTool() {
         $commandPath = Yii::app()->getBasePath() . DIRECTORY_SEPARATOR . 'commands';
         $runner = new CConsoleCommandRunner();
@@ -225,14 +243,14 @@ class AdminController extends Controller
         $args = array('yiic', 'migrate', '--interactive=0');
         ob_start();
         $runner->run($args);
-        echo htmlentities(ob_get_clean(), null, Yii::app()->charset);
+        return htmlentities(ob_get_clean(), null, Yii::app()->charset);
     }
 
     private function runGitUpdate() {
         $commandPath = Yii::app()->getBasePath() . "/../../";
         $runner = new CConsoleCommandRunner();
         $runner->addCommands($commandPath);
-        
+
         $commandPath = Yii::getFrameworkPath() . DIRECTORY_SEPARATOR . 'cli' . DIRECTORY_SEPARATOR . 'commands';
         $runner->addCommands($commandPath);
         $args = array('git', 'pull', '');

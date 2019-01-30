@@ -277,7 +277,7 @@ class DyadController extends Controller
           public function actionSavematch()
           {
               if(isset($_POST)){
-                  if(isset($_POST['id'])){
+                  if(isset($_POST['id']) && $_POST['id'] != 0){
                     $match = MatchedAlters::model()->findByPk($_POST['id']);
                   }else{
                      $match = new MatchedAlters;

@@ -4,7 +4,12 @@
 $this->pageTitle =  "Admin";
 
 ?>
-
+<?php if($alert): ?>
+<div class="alert alert-success">
+  <strong>System Update</strong><br>
+  <?php echo $alert; ?>
+</div>
+<?php endif; ?>
 <?php if(Yii::app()->user->user->permissions >= 3): ?>
 <div class="panel panel-default col-sm-6">
   <div class="panel-body">
