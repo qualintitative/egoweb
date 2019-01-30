@@ -120,5 +120,8 @@ return array(
 		'exportFilePath' => '',
         // Enabling audio upload may make your server less secure
         'enableAudioUpload' => false,
+        'surveyURL' => 'http://'.$_SERVER['HTTP_HOST'].'/survey',
+        'APIPassword' => 'yourpasswordhere',
+
 	)
 );

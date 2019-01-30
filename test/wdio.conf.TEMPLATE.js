@@ -1,5 +1,5 @@
 var debug = process.env.DEBUG;
-var defaultTimeoutInterval = 5000;
+var defaultTimeoutInterval = 15000;
 
 exports.config = {
 
@@ -13,7 +13,7 @@ exports.config = {
             password: 'CONFIG_INTERVIEWERPASSWORD'
         },
         // waitTime - length of time to wait for page elements to be ready; recommend 5000ms
-        waitTime: 5000,
+        waitTime: 15000,
         // pauseTime - length of time to wait after button clicks (back/pref) for Angular to finish processing; recommend 500ms
         pauseTime: 500
     },
@@ -76,7 +76,8 @@ exports.config = {
         maxInstances: 5,
         //
         browserName: 'phantomjs',
-        'phantomjs.binary.path': './node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs'
+        //'phantomjs.binary.path': './node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs'
+        'phantomjs.binary.path': 'phantomjs.exe'
     }],
     //
     // ===================
@@ -103,7 +104,7 @@ exports.config = {
     baseUrl: 'CONFIG_BASEURL',
     //
     // Default timeout for all waitFor* commands.
-    waitforTimeout: 10000,
+    waitforTimeout: 150000,
     //
     // Default timeout in milliseconds for request
     // if Selenium Grid doesn't send response
@@ -163,7 +164,7 @@ exports.config = {
         //
         // Jasmine default timeout
         //defaultTimeoutInterval: 10000,
-        defaultTimeoutInterval: debug ? (24 * 60 * 60 * 1000) : 10000,
+        defaultTimeoutInterval: debug ? (24 * 60 * 60 * 1000) : 330000,
 
 
         //

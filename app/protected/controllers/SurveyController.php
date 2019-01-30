@@ -48,20 +48,26 @@ class SurveyController extends Controller {
 	 */
 	public function actionGetLink(){
 		$input = file_get_contents('php://input');
-
-		if( !isset( $input ) ){
-			$msg = 'Missing payload';
-			return ApiController::sendResponse( 419, $msg );
+		if(empty( $input ) ){
+			return ApiController::sendResponse( 419, 'Missing payload' );
 		}
-
 		$decoded = json_decode( trim( $input ), true );
 		if( !isset( $decoded ) ){
+//          header("Access-Control-Allow-Origin: *");
+//			header("Access-Control-Allow-Headers : Content-Type");
+//			header("Access-Control-Allow-Methods : POST, OPTIONS");
 			return ApiController::sendResponse( 422, 'Unable to decode payload' );
 		}
 
+		//test for the password and make sure it has been changed from the default
+		if(empty( $decoded['password']) || $decoded['password'] != Yii::app()->params['APIPassword'] || Yii::app()->params['APIPassword'] == 'yourpasswordhere'){
+			return ApiController::sendResponse( 401, 'Please provide a valid password to access this feature.' );
+		}
+
+
 		$link = $this->generateSurveyURL(  );
 		$payload = $this->encryptPayload( $decoded );
-    echo json_encode(array( 'link'=>$link, 'payload'=>$payload ), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+	    echo json_encode(array( 'link'=>$link, 'payload'=>$payload ), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 		//return ApiController::sendResponse( 200, array( 'link'=>$link, 'payload'=>$payload ) );
 	}
 
