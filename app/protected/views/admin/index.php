@@ -32,7 +32,16 @@ $this->pageTitle =  "Admin";
 
 		<h3><a href="/data">Data Processing</a></h3>
 		<p>
-			Analyze the data from completed interviews.<br>
+			Analyze the data from completed interviews.<br><br>
+		</p>
+  </div>
+</div>
+<div class="panel panel-default col-sm-6">
+  <div class="panel-body">
+		<h3><a href="/importExport">Import &amp; Export Studies</a></h3>
+		<p>
+			Save study and respondent data as files or
+			transfer to another server.
 		</p>
   </div>
 </div>
@@ -46,15 +55,7 @@ $this->pageTitle =  "Admin";
 		</p>
   </div>
 </div>
-<div class="panel panel-default col-sm-6">
-  <div class="panel-body">
-		<h3><a href="/importExport">Import &amp; Export Studies</a></h3>
-		<p>
-			Save study and respondent data as files or
-			transfer to another server.
-		</p>
-  </div>
-</div>
+
 		<?php if(Yii::app()->user->isSuperAdmin): ?>
       <div class="panel panel-default col-sm-6">
         <div class="panel-body">
@@ -64,15 +65,16 @@ $this->pageTitle =  "Admin";
 			</p>
     </div>
   </div>
-		<?php endif; ?>
-    <div class="panel panel-default col-sm-6">
-      <div class="panel-body">
-		<h3><a href="/mobile">Mobile</a></h3>
-		<p>
-			Apps for iOS and Android.<br><br>
-		</p>
-  </div>
+  <div class="panel panel-default col-sm-6">
+    <div class="panel-body">
+  <h3><a href="/mobile">Mobile</a></h3>
+  <p>
+    Apps for iOS and Android.<br><br>
+  </p>
 </div>
+</div>
+		<?php endif; ?>
+
 <div class="panel panel-default col-sm-6">
   <div class="panel-body">
 		<h3><a href="/site/logout">Logout</a></h3>
