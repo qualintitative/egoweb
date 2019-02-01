@@ -128,12 +128,16 @@ $(function(){
         $mark = "";
         $matchId = "";
         $matchUser = "";
-        if($interview->hasMatches){
-            $mark = "class='success'";
-    		$criteria = array(
-    			'condition'=>"interviewId1 = $interview->id OR interviewId2 = $interview->id ORDER BY id DESC",
-    		);
-    		$match = MatchedAlters::model()->find($criteria);
+        $hasMatches = $interview->hasMatches;
+        if($hasMatches){
+            if($hasMatches == 1)
+              $mark = "class='success'";
+            else
+              $mark = "class='warning'";
+        		$criteria = array(
+        			'condition'=>"interviewId1 = $interview->id OR interviewId2 = $interview->id ORDER BY id DESC",
+        		);
+    		    $match = MatchedAlters::model()->find($criteria);
             if($interview->id == $match->interviewId1)
                 $matchInt = Interview::model()->findByPk($match->interviewId2);
             else

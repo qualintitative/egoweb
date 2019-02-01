@@ -23,8 +23,12 @@
         $mark = "";
         $matchId = "";
         $matchUser = "";
-        if($interview->hasMatches){
+        $hasMatches = $interview->hasMatches;
+        if($hasMatches){
+          if($hasMatches == 1)
             $mark = "class='success'";
+          else
+            $mark = "class='warning'";
     		$criteria = array(
     			'condition'=>"interviewId1 = $interview->id OR interviewId2 = $interview->id ORDER BY id DESC",
     		);

@@ -58,8 +58,12 @@ class Interview extends CActiveRecord
 			'condition'=>"interviewId1 = $this->id OR interviewId2 = $this->id",
 		);
         $matches = MatchedAlters::model()->findAll($criteria);
+        foreach($matches as $match){
+          if($match->notes != "")
+            return 2;
+        }
         if(count($matches) > 0)
-            return true;
+            return 1;
         return false;
     }
 
