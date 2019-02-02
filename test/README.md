@@ -52,3 +52,8 @@ DEBUG=true ./node_modules/.bin/wdio wdio.conf.js`
 and a red F for every failed test.
 * The output will also be saved in JUnit format in the junitresults directory. These can be read by many software packages,
 such as Build/CI systems, or use a tool to generate a HTML report.
+
+## Executing API Tests
+```
+php APITest/testAPI.php <EGOWEB_URL> <APIPassword>
+```

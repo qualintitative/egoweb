@@ -1,7 +1,15 @@
 <?php
-const URL = "http://egoweb.localhost";
+
+if ($argc < 2 )
+{
+    exit( "Usage: testAPI <egoweb_URL> <survey_link_password>\n" );
+}
+
+$EGOWEB_URL = $argv[1];
+$SURVEY_PASSWD = $argv[2];
 function callAPI($json){
-	$url = URL.'/survey/getlink';
+    global $EGOWEB_URL;
+	$url = $EGOWEB_URL.'/survey/getlink';
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_POST, true);
@@ -32,14 +40,14 @@ function callAPI($json){
 }
 
 //positive test
-
 try {
+    global $SURVEY_PASSWD;
 	print ("Positive test:");
 	$json = json_encode(array(
-		"password"=>"<please add your password here>",
+		"password"=>"$SURVEY_PASSWD",
 		"action"=> "passthrough",
 		"user_id"=> "65:1",
-		"survey_id"=> 5,
+		"survey_id"=> 1,
 		"redirect"=> "http://alp-respondent-portal:8888/index.php",
 		"questions"=> null,
 		"prefill"=> null
