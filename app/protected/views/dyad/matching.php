@@ -281,7 +281,7 @@ $marked = MatchedAlters::model()->find($criteria);
         <td id="<?php echo $alterId; ?>-alter2" class="responses" alterId=<?php echo $selected; ?>></td>
         <td><?php echo CHtml::textField("name",$selectedName ,array("id"=>$alterId."-name", "style"=>($selectedName == "" ? "display:none;": ""))); ?></td>
         <td><?php echo CHtml::checkBox("$alterId-hasNotes", $notes ?  true : false, array("id"=>"$alterId-hasNotes","onclick"=>"toggleNotes($alterId)","style"=>($match ?  "": "display:none;"))); ?></td>
-        <td><?php echo CHtml::textField($alterId."-notes", $notes ,array("id"=>$alterId."-notes", "onchange"=>"$('#$alterId-save').show()", "style"=>($notes ?  "": "display:none;"))); ?></td>
+        <td><?php echo CHtml::textField($alterId."-notes", $notes ,array("id"=>$alterId."-notes", "onkeyup"=>"$('#$alterId-save').show()", "style"=>($notes ?  "": "display:none;"))); ?></td>
 
         <td id="<?php echo $alterId; ?>-buttons">
             <?php
