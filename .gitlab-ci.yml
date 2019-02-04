@@ -1,8 +1,5 @@
-stages:
-  - update_alp_dev
-  - test_alp_dev
-
 update_dev:
+  stage: build
   allow_failure: false
   only:
     refs:
@@ -19,7 +16,7 @@ update_dev:
     url: http://egowebdev.rand.org/
 
 update_alp_dev:
-  stage: update_alp_dev
+  stage: build
   allow_failure: false
   only:
     refs:
@@ -36,12 +33,19 @@ update_alp_dev:
     url: http://alpegowebdev.rand.org/
 
 test_alp_dev_api:
-  stage: test_alp_dev
+  stage: test
   allow_failure: false
+  only:
+    refs:
+      - alpdev
   script:
     - php ./test/APITest/testAPI.php $ALP_DEV_URL $ALP_DEV_PASSWD
+  environment:
+    name: alp_dev
+    url: http://alpegowebdev.rand.org/
 
 update_alp_prod:
+  stage: deploy
   allow_failure: false
   only:
     refs:
