@@ -39,7 +39,7 @@ test_alp_dev_api:
     refs:
       - alpdev
   script:
-    - php ./test/APITest/testAPI.php $ALP_DEV_URL $ALP_DEV_PASSWD
+    - php ./test/APITest/testAPI.php $ALP_DEV_URL APIP@SS
   environment:
     name: alp_dev
     url: $ALP_DEV_URL
