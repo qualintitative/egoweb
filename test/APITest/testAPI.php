@@ -5,6 +5,8 @@ if ($argc < 2 )
     exit( "Usage: testAPI <egoweb_URL> <survey_link_password>\n" );
 }
 
+$FAILED_TESTS = 0;
+
 $EGOWEB_URL = $argv[1];
 $SURVEY_PASSWD = $argv[2];
 function callAPI($json){
@@ -63,6 +65,7 @@ try {
 	print ("Passed\n");
 
 }catch (Exception $e){
+    $FAILED_TESTS++;
 	print "Failed: " . $e->getMessage()."\n";
 }
 
@@ -76,7 +79,8 @@ try {
 	if ($message == 'Missing payload'){
 		print("Passed\n");
 	}else {
-		print "Failed, got message: " . $e->getMessage() . "\n";
+        $FAILED_TESTS++;
+        print "Failed, got message: " . $e->getMessage() . "\n";
 	}
 }
 
@@ -91,7 +95,8 @@ try {
 	if ($message == 'Unable to decode payload'){
 		print("Passed\n");
 	}else {
-		print "Failed, got message: " . $e->getMessage() . "\n";
+        $FAILED_TESTS++;
+        print "Failed, got message: " . $e->getMessage() . "\n";
 	}
 }
 
@@ -115,7 +120,8 @@ try {
 	if ($message == 'Please provide a valid password to access this feature.'){
 		print("Passed\n");
 	}else {
-		print "Failed, got message: " . $e->getMessage() . "\n";
+        $FAILED_TESTS++;
+        print "Failed, got message: " . $e->getMessage() . "\n";
 	}
 }
 
@@ -140,6 +146,9 @@ try {
 	if ($message == 'Please provide a valid password to access this feature.'){
 		print("Passed\n");
 	}else {
-		print "Failed, got message: " . $e->getMessage() . "\n";
+        $FAILED_TESTS++;
+        print "Failed, got message: " . $e->getMessage() . "\n";
 	}
 }
+
+exit($FAILED_TESTS);
