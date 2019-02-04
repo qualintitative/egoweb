@@ -1,3 +1,7 @@
+stages:
+  - update_alp_dev
+  - test_alp_dev
+
 update_dev:
   allow_failure: false
   only:
@@ -15,6 +19,7 @@ update_dev:
     url: http://egowebdev.rand.org/
 
 update_alp_dev:
+  stage: update_alp_dev
   allow_failure: false
   only:
     refs:
@@ -29,6 +34,12 @@ update_alp_dev:
   environment:
     name: alp_dev
     url: http://alpegowebdev.rand.org/
+
+test_alp_dev_api:
+  stage: test_alp_dev
+  allow_failure: false
+  script:
+    - php ./test/APITest/testAPI.php $ALP_DEV_URL $ALP_DEV_PASSWD
 
 update_alp_prod:
   allow_failure: false
