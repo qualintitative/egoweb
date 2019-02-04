@@ -30,7 +30,7 @@ update_alp_dev:
     mkdir -p /var/www/html/alpegoweb/protected/runtime;"
   environment:
     name: alp_dev
-    url: http://alpegowebdev.rand.org/
+    url: $ALP_DEV_URL
 
 test_alp_dev_api:
   stage: test
@@ -42,7 +42,7 @@ test_alp_dev_api:
     - php ./test/APITest/testAPI.php $ALP_DEV_URL $ALP_DEV_PASSWD
   environment:
     name: alp_dev
-    url: http://alpegowebdev.rand.org/
+    url: $ALP_DEV_URL
 
 update_alp_prod:
   stage: deploy
