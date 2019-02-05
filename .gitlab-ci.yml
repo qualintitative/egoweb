@@ -32,6 +32,21 @@ update_alp_dev:
     name: alp_dev
     url: $ALP_DEV_URL
 
+test_alp_dev:
+  stage: test
+  allow_failure: false
+  only:
+    refs:
+      - alpdev
+  script:
+    - java -jar /home/gitlab-runner/selenium-server-standalone-2.53.1.jar &
+    - selenium_pid=$!
+    - echo "selenium is running at $selenium_pid"
+    - kill $selenium_pid
+  environment:
+    name: alp_dev
+    url: $ALP_DEV_URL
+
 test_alp_dev_api:
   stage: test
   allow_failure: false
