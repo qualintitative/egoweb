@@ -9,6 +9,8 @@
  * @property integer $alterId1
  * @property integer $alterId2
  * @property string $matchedName
+ * @property string $notes
+
  */
 class MatchedAlters extends CActiveRecord
 {
@@ -30,10 +32,10 @@ class MatchedAlters extends CActiveRecord
 		return array(
 			array('matchedName', 'required'),
 			array('studyId, alterId1, alterId2, interviewId1, interviewId2, userId', 'numerical', 'integerOnly'=>true),
-			array('matchedName', 'length', 'max'=>255),
+			array('matchedName, notes', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, studyId, alterId1, alterId2, matchedName', 'safe', 'on'=>'search'),
+			array('id, studyId, alterId1, alterId2, matchedName, notes', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -59,6 +61,7 @@ class MatchedAlters extends CActiveRecord
 			'alterId1' => 'Alter Id1',
 			'alterId2' => 'Alter Id2',
 			'matchedName' => 'Matched Name',
+      'notes' => 'Notes',
 		);
 	}
 
@@ -85,6 +88,7 @@ class MatchedAlters extends CActiveRecord
 		$criteria->compare('alterId1',$this->alterId1);
 		$criteria->compare('alterId2',$this->alterId2);
 		$criteria->compare('matchedName',$this->matchedName,true);
+    $criteria->compare('notes',$this->notes,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
