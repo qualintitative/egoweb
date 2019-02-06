@@ -6,12 +6,12 @@ exports.config = {
 
     egoweb: {
         loginAdmin: {
-            username: 'test@test.com',
-            password: 'test1234'
+            username: 'CONFIG_ADMINUSER',
+            password: 'CONFIG_ADMINPASSWORD'
         },
         loginInterviewer: {
-            username: 'test@test.com',
-            password: 'test1234'
+            username: 'CONFIG_INTERVIEWERUSER',
+            password: 'CONFIG_INTERVIEWERPASSWORD'
         },
         // waitTime - length of time to wait for page elements to be ready; recommend 5000ms
         waitTime: 15000,
@@ -90,7 +90,7 @@ exports.config = {
         maxInstances: 1,
         //
         browserName: 'phantomjs',
-        'phantomjs.binary.path': './node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs'
+        'phantomjs.binary.path': 'CONFIG_PHANTOMJS_PATH'
     }],
     singleton: true,
     //
@@ -115,7 +115,7 @@ exports.config = {
     //
     // Set a base URL in order to shorten url command calls. If your url parameter starts
     // with "/", then the base url gets prepended.
-    baseUrl: 'http://egoweb/',
+    baseUrl: "CONFIG_BASEURL",
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 5000,
