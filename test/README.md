@@ -22,8 +22,8 @@ npm install
   * Add the location of Chromedriver to your path
 * Configure WebdriverIO
   * In this test/ directory, copy wdio.conf.TEMPLATE.js to wdio.conf.js
-  * In wdio.conf.js, change the configuration options to match your EgoWeb installation. In particular, configuration
-the URL for EgoWeb, as well as the username/passwords for EgoWeb administrator and interviewer accounts.
+  * In wdio.conf.js, change the configuration options starting with "CONFIG_" to match your EgoWeb installation. In particular, configuration
+the EgoWeb URL, EgoWeb administrator and interviewer account username/passwords, and phantomjs path.
 * Import tests
   * Import each of the studies in the suite/studies/ directory into your EgoWeb installation. Ensure that the name of the
  study in EgoWeb is the same as the file, without the ".study" extension.
