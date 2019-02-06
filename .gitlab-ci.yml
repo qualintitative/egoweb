@@ -49,7 +49,7 @@ test_alp_dev:
     - java -jar /home/gitlab-runner/selenium-server-standalone-2.53.1.jar &
     - selenium_pid=$!
     - echo "selenium is running at $selenium_pid"
-    - ./test/node_modules/.bin/wdio wdio.conf.js
+    - ./test/node_modules/.bin/wdio ./test/wdio.conf.js
     - kill $selenium_pid
   environment:
     name: alp_dev
