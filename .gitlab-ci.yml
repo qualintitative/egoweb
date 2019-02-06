@@ -45,11 +45,13 @@ test_alp_dev:
     - sed -i "s/CONFIG_INTERVIEWERUSER/$TEST_ALP_DEV_USER/g" ./test/wdio.conf.js
     - sed -i "s/CONFIG_INTERVIEWERPASSWORD/$TEST_ALP_DEV_PASSWD/g" ./test/wdio.conf.js
     - sed -i "s/phantomjs\.exe/\/home\/gitlab-runner\/\.local\/bin\/phantomjs/g" ./test/wdio.conf.js
-    - sed -i "s~CONFIG_BASEURL~$ALP_DEV_URL~g" ./test/wdio.conf.js
+    - sed -i "" "s~CONFIG_BASEURL~$ALP_DEV_URL~g" ./test/wdio.conf.js
+    - cd ./test
+    - npm install
     - java -jar /home/gitlab-runner/selenium-server-standalone-2.53.1.jar &
     - selenium_pid=$!
     - echo "selenium is running at $selenium_pid"
-    - ./test/node_modules/.bin/wdio ./test/wdio.conf.js
+    - ./node_modules/.bin/wdio wdio.conf.js
     - kill $selenium_pid
   artifacts:
     reports:
