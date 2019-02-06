@@ -61,7 +61,7 @@ echo CHtml::dropdownlist(
         </div>
         <div class="form-group">
             <div class="col-lg-3">
-                <?php echo CHtml::textField('name', '',array('class'=>"form-control", "placeholder"=>"new name")); ?>
+                <?php echo CHtml::textField('name', '', array('class'=>"form-control", "placeholder"=>"new name")); ?>
             </div>
         </div>
         <div class="form-group">
@@ -91,10 +91,10 @@ $form=$this->beginWidget('CActiveForm', array(
 $criteria=new CDbCriteria;
 $criteria->order = 'name';
 echo CHtml::dropdownlist(
-	'studyId',
-	'',
-	CHtml::listData($studies,'id', 'name'),
-	                array(
+    'studyId',
+    '',
+    CHtml::listData($studies, 'id', 'name'),
+                    array(
                         'empty' => 'Select',
                         'onchange'=>"js:getInterviews(\$(this), '#export-interviews')",
                         'class'=>'form-control'
@@ -157,7 +157,7 @@ $s = Server::model()->findAll();
       ?>
       <br><br>
       <ul class="list-group">
-        <?php foreach($s as $server): ?>
+        <?php foreach ($s as $server): ?>
         <li class="list-group-item"><?php echo $server->address; ?>
         <a class="btn btn-xs pull-right btn-danger" href="javascript:void(0);" onclick="deleteServer(<?php echo $server->id; ?>)">Delete</a>
       </li>
@@ -184,9 +184,9 @@ $criteria->order = 'name';
   <label class="col-sm-2">Server Address</label>
   <div class='col-sm-10'>
     <?php echo CHtml::dropdownlist(
-    	'serverId',
-    	'',
-    	CHtml::listData(Server::model()->findAll(),'id', 'address'),
+        'serverId',
+        '',
+        CHtml::listData(Server::model()->findAll(), 'id', 'address'),
         array(
               'id'=>'serverAddress',
               'empty' => 'Select',
@@ -201,9 +201,9 @@ $criteria->order = 'name';
   <label class="col-sm-2">Study</label>
   <div class='col-sm-10'>
 <?php echo CHtml::dropdownlist(
-	'studyId',
-	'',
-	CHtml::listData($studies,'id', 'name'),
+    'studyId',
+    '',
+    CHtml::listData($studies, 'id', 'name'),
     array(
           'id'=>'sendStudy',
           'empty' => 'Select',
