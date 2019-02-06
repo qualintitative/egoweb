@@ -52,6 +52,9 @@ test_alp_dev:
     - echo "selenium is running at $selenium_pid"
     - ./test/node_modules/.bin/wdio ./test/wdio.conf.js
     - kill $selenium_pid
+  artifacts:
+    reports:
+      junit: ./build/junitresults/WDIO*.xml
   environment:
     name: alp_dev
     url: $ALP_DEV_URL
