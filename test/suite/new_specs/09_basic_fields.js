@@ -187,7 +187,7 @@ describe('Basic Fields', function () {
         // next page
         expect(IwPage.questionTitle.getText()).not.toBe("num0to100");
     });
-    
+
     it("should show error if textual value is blank", function() {
         IwPage.goToQuestion("textual");
         IwPage.inputField().setValue("");

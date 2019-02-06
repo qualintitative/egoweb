@@ -29,4 +29,3 @@ describe('login', function () {
         // TODO: check cookie?
     });
 });
-

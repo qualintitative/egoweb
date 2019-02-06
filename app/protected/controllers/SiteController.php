@@ -104,6 +104,7 @@ class SiteController extends Controller
 				// Otherwise, increment the login attempt counter for captcha
 				$this->counter = Yii::app()->session->itemAt('captchaRequired') + 1;
 				Yii::app()->session->add('captchaRequired',$this->counter);
+
 			}
 		}
 		// display the login form

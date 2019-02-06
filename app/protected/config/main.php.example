@@ -100,10 +100,15 @@ return array(
                         'api'
                     )
                 ),
-
+/*
 		'securityManager'=>array(
 			'cryptAlgorithm' => 'blowfish',
 			'encryptionKey' => 'One morning I shot an elephant in my pajamas.',
+		)
+*/
+    'securityManager'=>array(
+			'cryptAlgorithm' => 'rijndael-128',
+            'encryptionKey' => 'old_key1old_key1',
 		)
 	),
 
@@ -120,8 +125,5 @@ return array(
 		'exportFilePath' => '',
         // Enabling audio upload may make your server less secure
         'enableAudioUpload' => false,
-        'surveyURL' => 'http://'.$_SERVER['HTTP_HOST'].'/survey',
-        'APIPassword' => 'yourpasswordhere',
-
 	)
 );
