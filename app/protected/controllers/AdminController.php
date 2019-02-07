@@ -97,10 +97,15 @@ class AdminController extends Controller
 
                     if (strlen(trim($row["name"])) > 0) {
                         $changeArray['name'] = decrypt($row["name"]);
+                        if (false === mb_check_encoding ($changeArray['name'] , "UTF-8" ) ){
+                          $changeArray['name'] = utf8_encode($changeArray['name']);
+                        }
                     }
-
                     if (strlen(trim($row["email"])) > 0) {
                         $changeArray['email'] = decrypt($row["email"]);
+                        if (false === mb_check_encoding ($changeArray['email'] , "UTF-8" ) ){
+                          $changeArray['email'] = utf8_encode($changeArray['email']);
+                        }
                     }
 
                     if (count($changeArray) > 0) {
