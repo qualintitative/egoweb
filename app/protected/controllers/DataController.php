@@ -265,6 +265,7 @@ class DataController extends Controller
     		}
             $answers[$answer->questionId][$answer->alterId1] = $answer->value;
 		}
+
         $result = Question::model()->findAllByAttributes(array("subjectType"=>"ALTER", "studyId"=>$interview1->studyId));
         foreach($result as $question){
             $questions[$question->id] = $question->title;
@@ -319,25 +320,6 @@ class DataController extends Controller
         }
 
 		Yii::app()->end();
-    }
-
-	public function actionSavematch()
-	{
-    	if(isset($_POST)){
-        	$match = new MatchedAlters;
-        	$match->attributes = $_POST;
-        	if($match->matchedName == ""){
-            	$match->matchedName = "marked";
-        	}
-        	$mark = "Unmatch";
-        	if($_POST['alterId1'] == 0)
-        	    $mark = "Remove Mark";
-        	if($match->save())
-                echo "<button class='btn btn-xs btn-danger unMatch-" . $_POST['alterId1'] . "' onclick='unMatch(" . $_POST['alterId1'] . ", " . $_POST['alterId2'] . ")'>$mark</button>";
-            else
-                print_r($match->errors);
-
-    	}
     }
 
 	public function actionUnmatch()
@@ -899,17 +881,19 @@ class DataController extends Controller
 					$alters = Alters::model()->findAllByAttributes(array('interviewId'=>$interview->id));
 					foreach($alters as $alter){
     					$answer = array();
-                        $optionIds = explode(",", $answers[$question->id . "-" . $alter->id]->value);
+            //  print_r($other_qs);
+              //echo $question->id;
+                        //$optionIds = $other_qs[$question->id];  //explode(",", $answers[$question->id . "-" . $alter->id]->value);
                         $answerArray = array();
-                        foreach  ($optionIds as $optionId)
+                        foreach  ($other_options as $option)
                         {
-                            if (isset($other_options[$optionId])) {
-                                $otherSpecify = OtherSpecify::model()->findByAttributes(array("optionId"=>$optionId, "interviewId"=>$interview->id, "alterId"=>$alter->id));
+                //            if (isset($other_options[$optionId])) {
+                                $otherSpecify = OtherSpecify::model()->findByAttributes(array("optionId"=>$option->id, "interviewId"=>$interview->id, "alterId"=>$alter->id));
                                 if ($otherSpecify)
-                                    $answerArray[$other_options[$optionId]->name] =  $otherSpecify->value;
-                                else
-                                    $answerArray[$other_options[$optionId]->name] = "";
-                            }
+                                    $answerArray[$option->name] =  $otherSpecify->value;
+                            //    else
+                            //        $answerArray[$option->name] = "";
+                          //  }
                         }
 
                         foreach($answerArray as $i=>$a){
@@ -943,8 +927,8 @@ class DataController extends Controller
                             $otherSpecify = OtherSpecify::model()->findByAttributes(array("optionId"=>$optionId, "interviewId"=>$interview->id));
                             if ($otherSpecify)
                                 $answerArray[$other_options[$optionId]->name] =  $otherSpecify->value;
-                            else
-                                $answerArray[$other_options[$optionId]->name] = "";
+                        //    else
+                          //      $answerArray[$other_options[$optionId]->name] = "";
                         }
                     }
 

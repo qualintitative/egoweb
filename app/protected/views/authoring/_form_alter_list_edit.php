@@ -13,6 +13,23 @@
 <?php echo $form->labelEx($model,'email'); ?>
 <?php echo $form->textField($model,'email', array('style'=>'width:100px')); ?>
 <?php echo $form->error($model,'email'); ?>
+<div class="form-group">
+  Name Generator<br>
+<?php
+$alterlist = new AlterList;
+//echo $form->checkBoxList($model, 'originalFileCalendars', CHtml::listData(OriginalFile::model()->getCalendarType(), 'ct_id', 'type_name'));
+$model->nameGenQIds = explode(",",$model->nameGenQIds);
+echo $form->checkBoxList(
+  $model,
+  'nameGenQIds',
+  CHtml::listData(
+    Question::model()->findAllByAttributes(array("studyId"=>$model->studyId, "subjectType"=>"NAME_GENERATOR")),
+    'id',
+    'title'
+  ),
+  array('empty' => 'None')
+); ?>
+</div>
 		<?php echo $form->dropdownlist(
 			$model,
 			'interviewerId',

@@ -87,7 +87,7 @@
 									<?php endforeach; ?>
 								</ul>
 							</li>
-							<li><a href="/archive">Archive</a></li>
+							<li><a href="/dyad">Alter Matching</a></li>
 							<li><a href="/importExport">Import & Export Studies</a></li>
 							<?php endif; ?>
 							<?php if(Yii::app()->user->isSuperAdmin): ?>
@@ -107,7 +107,7 @@
 					</li>
 				</ul>
 				<?php endif; ?>
-				<a class="titlelink" href="/admin">EgoWeb 2.0</a><span class="title hidden-xs"><?php echo CHtml::encode($this->pageTitle); ?></span><?php if(!Yii::app()->user->isGuest): ?><span class="title" id="questionTitle"></span><?php endif; ?>
+				<a class="titlelink" href="/admin">EgoWeb 2.0</a><span class="title hidden-xs"><?php echo CHtml::encode($this->pageTitle); ?></span><?php if(!Yii::app()->user->isGuest): ?><span class="title hidden-xs" id="questionTitle"></span><?php endif; ?>
 
 				<ul id="navbox" class="nav navbar-nav navbar-right">
 					<li id="questionMenu" class="dropdown hidden">

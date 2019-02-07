@@ -21,8 +21,8 @@ if($study->multiSessionEgoId){
     );
     $questions = Question::model()->findAll($criteria);
     $multiIds = array();
-    foreach($questions as $question){
-        $multiIds[] = $question->studyId;
+    foreach($questions as $q){
+        $multiIds[] = $q->studyId;
     }
 	$criteria=array(
 		'condition'=>"studyId in (" . implode(",", $multiIds) . ")",

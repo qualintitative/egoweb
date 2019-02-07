@@ -107,7 +107,7 @@ app.directive('autocomplete', function() {
 
       // Default atts
       scope.attrs = {
-        "placeholder": "start typing...",
+        "placeholder": "Enter name...",
         "class": "",
         "id": "",
         "inputclass": "",

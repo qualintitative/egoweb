@@ -335,11 +335,31 @@ class MobileController extends Controller
   	}
 
 	public function actionSyncData(){
-			header("Access-Control-Allow-Origin: *");
+		header("Access-Control-Allow-Origin: *");
+    header('Access-Control-Allow-Credentials: true');
+    header('Access-Control-Max-Age: 86400');
+    $data = json_decode($_POST['data'],true);
 		$errorMsg = "";
 		if(count($_POST)){
       if(!isset($_POST['LoginForm']))
   		{
+        header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
+        die();
+      }
+      $egoIds = array();
+      if(isset($data['study']['NAME'])){
+        $oldStudy = Study::model()->findByAttributes(array("name"=>$data['study']['NAME']));
+        if($oldStudy){
+          $interviews = Interview::model()->findAllByAttributes(array("studyId"=>$oldStudy->id));
+          foreach($interviews as $interview){
+            $egoId = Interview::getEgoId($interview->id);
+            if($egoId == $data['interviews'][0]["EGOID"]){
+              echo $egoId . ": interview already exists";
+              die();
+            }
+          }
+        }
+      }else{
         header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
         die();
       }
@@ -352,22 +372,39 @@ class MobileController extends Controller
     			header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
           die();
     	}
-			header("Access-Control-Allow-Origin: *");
-			header('Access-Control-Allow-Credentials: true');
-			header('Access-Control-Max-Age: 86400');
 			$errors = 0;
 			$errorMsgs = array();
 			Yii::log($_POST['data']);
-			$data = json_decode($_POST['data'],true);
 			if(!$data['study']['ID']){
-				echo "Study object broken:";
-				print_r($data['study']);
+				//echo "Study object broken:";
+				//print_r($data['study']);
 				header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
 				die();
 			}
-      $oldStudy = Study::model()->findByAttributes(array("name"=>$data['study']['NAME']));
 			if($oldStudy){
-				$this->saveAnswers($data);
+        $questions = Question::model()->findAllByAttributes(array("studyId"=>$oldStudy->id));
+        $newQuestionIds = array();
+        $newQuestionTitles = array();
+        foreach($questions as $question){
+          if($question->subjectType == "NAME_GENERATOR")
+            $nameGenQId = $question->id;
+          $newQuestionIds[$question->title] = $question->id;
+          $newQuestionTitles[$question->id] = $question->title;
+        }
+        $options = QuestionOption::model()->findAllByAttributes(array("studyId"=>$oldStudy->id));
+        $newOptionIds = array();
+        foreach($options as $option){
+          $newOptionIds[$newQuestionTitles[$option->questionId]."_".$option->name] = $option->id;
+        }
+        echo "Merging with existing study $oldStudy->name. ";
+        $data['interviews'][0]['STUDYID'] = $oldStudy->id;
+        $newData = array(
+          "studyId"=>$oldStudy->id,
+          "newQuestionIds"=>$newQuestionIds,
+          "newOptionIds"=>$newOptionIds,
+          "nameGenQId"=>$nameGenQId,
+        );
+				$this->saveAnswersMerge($data, $newData);
 		  }else{
 				$study = new Study;
 				foreach($study->attributes as $key=>$value){
@@ -399,11 +436,20 @@ class MobileController extends Controller
 					}
 					array_push($expressions, $expression);
 				}
-        echo "questions ". count($questions);
-				$newData = Study::replicate($study, $questions, $options, $expressions, array());
+        $alterPrompts = array();
+        if(isset($data['alterPrompts'])){
+          foreach($data['alterPrompts'] as $a){
+            $alterPrompt = new AlterPrompt;
+            foreach($alterPrompt->attributes as $key=>$value){
+              $alterPrompt->$key = $a[strtoupper($key)];
+            }
+            array_push($alterPrompts, $alterPrompt);
+          }
+        }
+				$newData = Study::replicate($study, $questions, $options, $expressions, $alterPrompts);
 				if($newData){
 					$this->saveAnswers($data, $newData);
-					echo "Study " . $oldStudy->name . " was modified. (" . $oldStudy->modified .  ":" . $data['study']['MODIFIED'] . ")  Generated new study: " . $study->name . ". ";
+					echo "Generated new study: " . $study->name . ". ";
 				}else{
 					echo "Error while attempting to create a new study.";
 				}
@@ -448,7 +494,7 @@ class MobileController extends Controller
 
 			if(!$newAlter->save()){
 				$errors++;
-                echo $alter['NAMEGENQIDS'];
+        echo $alter['NAMEGENQIDS'];
 				print_r($newAlter->getErrors());
 				die();
 			}else{
@@ -457,51 +503,207 @@ class MobileController extends Controller
 		}
 		}
 		foreach($data['answers'] as $answer){
-		$newAnswer = new Answer;
-		if($newData){
-			if(!isset($newData['newQuestionIds'][$answer['QUESTIONID']]))
+  		$newAnswer = new Answer;
+  		if($newData){
+  			if(!isset($newData['newQuestionIds'][$answer['QUESTIONID']]))
+  				continue;
+  			$newAnswer->questionId = $newData['newQuestionIds'][$answer['QUESTIONID']];
+  			$newAnswer->studyId = $newData['studyId'];
+  			if($answer['ANSWERTYPE'] == "MULTIPLE_SELECTION"){
+  				$values = explode(',', $answer['VALUE']);
+  				foreach($values as &$value){
+  					if(isset($newData['newOptionIds'][$value]))
+  						$value = $newData['newOptionIds'][$value];
+  				}
+  				$answer['VALUE'] = implode(',', $values);
+  			}
+  			$newAnswer->value = $answer['VALUE'];
+  			if($answer['OTHERSPECIFYTEXT']){
+  				foreach(preg_split('/;;/', $answer['OTHERSPECIFYTEXT']) as $other){
+  				if($other && strstr($other, ':')){
+  					list($key, $val) = preg_split('/:/', $other);
+  					$responses[] = $newData['newOptionIds'][$key] . ":" .$val;
+  				}
+  				}
+  				$answer['OTHERSPECIFYTEXT'] = implode(";;", $responses);
+  			}
+  		}else{
+  			if(!isset($answer['QUESTIONID']))
+  				continue;
+  			$newAnswer->questionId = $answer['QUESTIONID'];
+  			$newAnswer->studyId = $newInterview->studyId;
+  			$newAnswer->value = $answer['VALUE'];
+  		}
+  		$newAnswer->questionType = $answer['QUESTIONTYPE'];
+  		$newAnswer->answerType = $answer['ANSWERTYPE'];
+  		$newAnswer->otherSpecifyText = $answer['OTHERSPECIFYTEXT'];
+  		$newAnswer->skipReason = $answer['SKIPREASON'];
+  		$newAnswer->interviewId = $newInterviewIds[$answer['INTERVIEWID']];
+  		if(is_numeric($answer['ALTERID1']) && isset($newAlterIds[$answer['ALTERID1']]))
+  			$newAnswer->alterId1 = $newAlterIds[$answer['ALTERID1']];
+  		if(is_numeric($answer['ALTERID2']) && isset($newAlterIds[$answer['ALTERID2']]))
+  			$newAnswer->alterId2 = $newAlterIds[$answer['ALTERID2']];
+  		if(!$newAnswer->save()){
+  			print_r($newAnswer->getErrors());
+  			die();
+  		}
+		}
+    foreach($data['notes'] as $note){
+      $newNote = new Note;
+      $newNote->alterId = $newAlterIds[(int)$note["ALTERID"]];
+      $newNote->expressionId = $note["EXPRESSIONID"];
+      $newNote->interviewId = $newInterviewIds[(int)$note["INTERVIEWID"]];
+      $newNote->notes = $note["NOTES"];
+      $newNote->save();
+    }
+    foreach($data['graphs'] as $graph){
+      $newGraph = new Graph;
+      $newGraph->expressionId = $graph["EXPRESSIONID"];
+      $newGraph->interviewId = $newInterviewIds[(int)$graph["INTERVIEWID"]];
+      $newGraph->params = $graph["PARAMS"];
+      $nodes = json_decode($graph["NODES"]);
+      $newNodes = array();
+      foreach($nodes as $index=>$node){
+        $newNodeId = $newAlterIds[(int)$index];
+        $newNodes[$newNodeId] = $node;
+        $newNodes[$newNodeId]->id = $newAlterIds[$index];
+      }
+      $newGraph->nodes = json_encode($newNodes, JSON_FORCE_OBJECT);
+      //print_r($newNodes);
+      //die();
+      if($newGraph->save()){
+      }else{
+          $errors++;
+          print_r($newGraph->getErrors());
+      }
+    }
+	}
+
+  private function saveAnswersMerge($data, $newData)
+	{
+    if(count($data['interviews']) == 0)
+      return false;
+		foreach($data['interviews'] as $interview){
+    		$newInterview = new Interview;
+    		$newInterview->studyId = $newData['studyId'];
+    		$newInterview->completed = $interview['COMPLETED'];
+    		$newInterview->start_date = $interview['START_DATE'];
+    		$newInterview->complete_date = $interview['COMPLETE_DATE'];
+    		if($newInterview->save()){
+                $newInterviewIds[$interview['ID']] = $newInterview->id;
+            }else{
+                $errors++;
+                print_r($newInterview->getErrors());
+				die();
+            }
+		}
+    $questionTitles = array();
+    foreach($data['questions'] as $q){
+      $questionTitles[$q['ID']] = $q['TITLE'];
+    }
+		if(isset($data['alters'])){
+		foreach($data['alters'] as $alter){
+			if(!isset($newInterviewIds[$alter['INTERVIEWID']]))
 				continue;
-			$newAnswer->questionId = $newData['newQuestionIds'][$answer['QUESTIONID']];
-			$newAnswer->studyId = $newData['studyId'];
-			if($answer['ANSWERTYPE'] == "MULTIPLE_SELECTION"){
-				$values = explode(',', $answer['VALUE']);
-				foreach($values as &$value){
-					if(isset($newData['newOptionIds'][$value]))
-						$value = $newData['newOptionIds'][$value];
-				}
-				$answer['VALUE'] = implode(',', $values);
+			$newAlter = new Alters;
+			$newAlter->name = $alter['NAME'];
+			$newAlter->interviewId = $newInterviewIds[$alter['INTERVIEWID']];
+      if(!isset($alter['NAMEGENQIDS'])){
+        $newAlter->nameGenQIds = $newData["nameGenQId"];
+      }else{
+        if(stristr($alter['NAMEGENQIDS'], ",")){
+          $qIds = explode(",", $alter['NAMEGENQIDS']);
+					$newQids = array();
+          foreach($qIds as $qId){
+            $qTitle = $questionTitles[$qId];
+            if(!isset($newData['newQuestionIds'][$qTitle]))
+              $newQids[] = $newData['newQuestionIds'][$qTitle];
+            else
+              $newQids[] = $newData["nameGenQId"];
+          }
+					$newAlter->nameGenQIds = implode(",", $newQids);
+        }else{
+          $qTitle = $questionTitles[$alter['NAMEGENQIDS']];
+          if(isset($newData['newQuestionIds'][$qTitle]))
+            $newAlter->nameGenQIds = $newData['newQuestionIds'][$qTitle];
+          else
+            $newAlter->nameGenQIds = $newData["nameGenQId"];
+        }
+      }
+			$newAlter->ordering = $alter['ORDERING'];
+			if(!$newAlter->save()){
+				$errors++;
+        echo $questionTitles[$alter['NAMEGENQIDS']];
+        echo $newData["nameGenQId"];
+        echo $alter['NAMEGENQIDS'];
+				print_r($newAlter->getErrors());
+				die();
+			}else{
+				$newAlterIds[$alter['ID']] = $newAlter->id;
 			}
-			$newAnswer->value = $answer['VALUE'];
-			if($answer['OTHERSPECIFYTEXT']){
-				foreach(preg_split('/;;/', $answer['OTHERSPECIFYTEXT']) as $other){
-				if($other && strstr($other, ':')){
-					list($key, $val) = preg_split('/:/', $other);
-					$responses[] = $newData['newOptionIds'][$key] . ":" .$val;
-				}
-				}
-				$answer['OTHERSPECIFYTEXT'] = implode(";;", $responses);
-			}
-		}else{
-			if(!isset($answer['QUESTIONID']))
-				continue;
-			$newAnswer->questionId = $answer['QUESTIONID'];
-			$newAnswer->studyId = $answer['STUDYID'];
-			$newAnswer->value = $answer['VALUE'];
-		}
-		$newAnswer->questionType = $answer['QUESTIONTYPE'];
-		$newAnswer->answerType = $answer['ANSWERTYPE'];
-		$newAnswer->otherSpecifyText = $answer['OTHERSPECIFYTEXT'];
-		$newAnswer->skipReason = $answer['SKIPREASON'];
-		$newAnswer->interviewId = $newInterviewIds[$answer['INTERVIEWID']];
-		if(is_numeric($answer['ALTERID1']) && isset($newAlterIds[$answer['ALTERID1']]))
-			$newAnswer->alterId1 = $newAlterIds[$answer['ALTERID1']];
-		if(is_numeric($answer['ALTERID2']) && isset($newAlterIds[$answer['ALTERID2']]))
-			$newAnswer->alterId2 = $newAlterIds[$answer['ALTERID2']];
-		if(!$newAnswer->save()){
-			print_r($newAnswer->getErrors());
-			die();
 		}
 		}
+    $optionNames = array();
+    foreach($data['questionOptions'] as $o){
+      $optionNames[$o['ID']] = $o['NAME'];
+    }
+		foreach($data['answers'] as $answer){
+  		$newAnswer = new Answer;
+  		if($newData){
+        $qTitle = $questionTitles[$answer['QUESTIONID']];
+  			if(!isset($newData['newQuestionIds'][$qTitle]))
+  				continue;
+  			$newAnswer->questionId = $newData['newQuestionIds'][$qTitle];
+  			$newAnswer->studyId = $newData['studyId'];
+  			if($answer['ANSWERTYPE'] == "MULTIPLE_SELECTION"){
+  				$values = explode(',', $answer['VALUE']);
+  				foreach($values as &$value){
+  					if(isset($newData['newOptionIds'][$qTitle . "_" . $optionNames[$value]]))
+  						$value = $newData['newOptionIds'][$qTitle . "_" . $optionNames[$value]];
+  				}
+  				$answer['VALUE'] = implode(',', $values);
+  			}
+  			$newAnswer->value = $answer['VALUE'];
+  			if($answer['OTHERSPECIFYTEXT']){
+  				foreach(preg_split('/;;/', $answer['OTHERSPECIFYTEXT']) as $other){
+  				if($other && strstr($other, ':')){
+  					list($key, $val) = preg_split('/:/', $other);
+  					$responses[] = $newData['newOptionIds'][$optionNames[$key]] . ":" .$val;
+  				}
+  				}
+  				$answer['OTHERSPECIFYTEXT'] = implode(";;", $responses);
+  			}
+  		}
+  		$newAnswer->questionType = $answer['QUESTIONTYPE'];
+  		$newAnswer->answerType = $answer['ANSWERTYPE'];
+  		$newAnswer->otherSpecifyText = $answer['OTHERSPECIFYTEXT'];
+  		$newAnswer->skipReason = $answer['SKIPREASON'];
+  		$newAnswer->interviewId = $newInterviewIds[$answer['INTERVIEWID']];
+  		if(is_numeric($answer['ALTERID1']) && isset($newAlterIds[$answer['ALTERID1']]))
+  			$newAnswer->alterId1 = $newAlterIds[$answer['ALTERID1']];
+  		if(is_numeric($answer['ALTERID2']) && isset($newAlterIds[$answer['ALTERID2']]))
+  			$newAnswer->alterId2 = $newAlterIds[$answer['ALTERID2']];
+  		if(!$newAnswer->save()){
+  			print_r($newAnswer->getErrors());
+  			die();
+  		}
+		}
+    foreach($data['notes'] as $note){
+      $newNote = new Note;
+      $newNote->alterId = $newAlterIds[(int)$note["ALTERID"]];
+      $newNote->expressionId = $note["EXPRESSIONID"];
+      $newNote->interviewId = $newInterviewIds[(int)$note["INTERVIEWID"]];
+      $newNote->notes = $note["NOTES"];
+      $newNote->save();
+    }
+    foreach($data['graphs'] as $graph){
+      $newGraph = new Graph;
+      $newGraph->expressionId = $note["EXPRESSIONID"];
+      $newGraph->interviewId = $newInterviewIds[(int)$note["INTERVIEWID"]];
+      $newGraph->params = $note["PARAMS"];
+      $newGraph->nodes = $note["NODES"];
+      $newGraph->save();
+    }
 	}
 
 	// Uncomment the following methods and override them if needed

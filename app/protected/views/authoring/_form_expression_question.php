@@ -36,7 +36,7 @@ echo CHtml::activeDropDownList($model,
 echo $after . "<br>";
 ?>
 <?php
-    
+
 echo CHtml::activeHiddenField($model, 'id', array('value'=>$model->id));
 echo CHtml::activeHiddenField($model, 'questionId', array('value'=>$question->id));
 

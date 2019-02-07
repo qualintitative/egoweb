@@ -122,6 +122,10 @@ function deleteAlterList(studyId){
         });
     }
 }
+function exportAlterList(){
+  $("#exportlistform").submit();
+}
+
 </script>
 
 <?php $form=$this->beginWidget('CActiveForm', array(
@@ -331,11 +335,29 @@ function deleteAlterList(studyId){
 				<?php echo $form->labelEx($alterList,'email'); ?>
 				<?php echo $form->textField($alterList,'email', array('style'=>'width:100px')); ?>
 				<?php echo $form->error($alterList,'email'); ?>
+        <div class="form-group">
+          Name Generator<br>
+        <?php
+$alterlist = new AlterList;
+//echo $form->checkBoxList($model, 'originalFileCalendars', CHtml::listData(OriginalFile::model()->getCalendarType(), 'ct_id', 'type_name'));
+
+        echo $form->checkBoxList(
+          $alterlist,
+          'nameGenQIds',
+          CHtml::listData(
+            Question::model()->findAllByAttributes(array("studyId"=>$model->id, "subjectType"=>"NAME_GENERATOR")),
+            'id',
+            'title'
+          ),
+          array('empty' => 'None')
+        ); ?>
+      </div>
+      Interviewer
 				<?php
-                $result = Interviewer::model()->findAllByAttributes(array("studyId"=>$model->id));
-                $interviewers = array();
-                foreach($result as $interviewer){
-					$interviewers[$interviewer->id] = User::getName($interviewer->id);
+        $result = Interviewer::model()->findAllByAttributes(array("studyId"=>$model->id));
+        $interviewers = array();
+        foreach($result as $interviewer){
+					$interviewers[$interviewer->interviewerId] = User::getName($interviewer->interviewerId);
 				}
 				?>
 				<?php echo $form->dropdownlist(
@@ -351,6 +373,7 @@ function deleteAlterList(studyId){
 				);
 				?>
 				<?php $this->endWidget(); ?>
+        <button class="btn btn-info btn-xs" onclick="exportAlterList()">Export Pre-defined Participant List</button>
 				<button class="btn btn-danger btn-xs" onclick="deleteAlterList(<?php echo $model->id; ?>)">Delete Participant List</button>
 			</div>
 			<div id="edit-alterList" style="margin-bottom:15px;"></div>
@@ -363,6 +386,9 @@ function deleteAlterList(studyId){
             	<input name="userfile" type="file" />
             	<input type="hidden" name="studyId" value="<?= $model->id; ?>" />
             	<input class="btn btn-primary" type="submit" value="Import Participant List" />
+            </form>
+            <?php echo CHtml::form('/authoring/exportalterlist', 'post', array('id'=>'exportlistform')) ?>
+            <input type="hidden" name="studyId" value="<?= $model->id; ?>" />
             </form>
 	    </div>
 	</div>

@@ -47,7 +47,7 @@ var IwPage = Object.create(Page, {
     },
     alterTextBox: {
         get: function () {
-            return browser.element("form#alterForm div autocomplete div input");
+            return browser.element("form#alterForm .answerInput");
         }
     },
     alterAddButton: {
@@ -378,7 +378,7 @@ var IwPage = Object.create(Page, {
                     max = val;
                 }
             });
-
+            console.log(browser.options.egoweb.reuseInterview, max)
             if(browser.options.egoweb.reuseInterview == true && max != 0){
 
                 // opens most recent interview

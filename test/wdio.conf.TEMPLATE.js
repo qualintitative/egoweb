@@ -1,21 +1,23 @@
 var debug = process.env.DEBUG;
 var defaultTimeoutInterval = 5000;
 
+
 exports.config = {
 
     egoweb: {
         loginAdmin: {
-            username: 'CONFIG_ADMINUSER',
-            password: 'CONFIG_ADMINPASSWORD'
+            username: 'test@test.com',
+            password: 'test1234'
         },
         loginInterviewer: {
-            username: 'CONFIG_INTERVIEWERUSER',
-            password: 'CONFIG_INTERVIEWERPASSWORD'
+            username: 'test@test.com',
+            password: 'test1234'
         },
         // waitTime - length of time to wait for page elements to be ready; recommend 5000ms
-        waitTime: 5000,
+        waitTime: 15000,
         // pauseTime - length of time to wait after button clicks (back/pref) for Angular to finish processing; recommend 500ms
-        pauseTime: 500
+        pauseTime: 3000,
+        reuseInterview: true,
     },
 
     //
@@ -28,10 +30,18 @@ exports.config = {
     // directory is where your package.json resides, so `wdio` will be called from there.
     //
     specs: [
-        './suite/specs/*.js'
+        //'./suite/new_specs/*.js'
+        './suite/new_specs/10_login.js',
+        './suite/new_specs/09_basic_fields.js',
+        './suite/new_specs/08_multiple_select.js',
+        './suite/new_specs/07_skiplogic_simple.js',
+        './suite/new_specs/06_skiplogic_compound.js',
+        './suite/new_specs/05_alters.js',
+        './suite/new_specs/00_finish.js'
     ],
     // Patterns to exclude.
     exclude: [
+        './suite/new_specs/10_login.js'
         // 'path/to/excluded/files'
     ],
     //
@@ -61,9 +71,13 @@ exports.config = {
             // maxInstances can get overwritten per capability. So if you have an in-house Selenium
             // grid with only 5 firefox instance available you can make sure that not more than
             // 5 instance gets started at a time.
-            maxInstances: 1,
+            maxInstances: 10,
             //
-            browserName: 'chrome'
+            browserName: 'chrome',
+
+            chromeOptions:{
+                detach: true
+            },
             //browserName: 'firefox'
             //browserName: 'phantomjs',
             //'phantomjs.binary.path': './node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs'
@@ -73,11 +87,12 @@ exports.config = {
         // maxInstances can get overwritten per capability. So if you have an in-house Selenium
         // grid with only 5 firefox instance available you can make sure that not more than
         // 5 instance gets started at a time.
-        maxInstances: 5,
+        maxInstances: 1,
         //
         browserName: 'phantomjs',
         'phantomjs.binary.path': './node_modules/phantomjs-prebuilt/lib/phantom/bin/phantomjs'
     }],
+    singleton: true,
     //
     // ===================
     // Test Configurations
@@ -100,10 +115,10 @@ exports.config = {
     //
     // Set a base URL in order to shorten url command calls. If your url parameter starts
     // with "/", then the base url gets prepended.
-    baseUrl: 'CONFIG_BASEURL',
+    baseUrl: 'http://egoweb/',
     //
     // Default timeout for all waitFor* commands.
-    waitforTimeout: 10000,
+    waitforTimeout: 5000,
     //
     // Default timeout in milliseconds for request
     // if Selenium Grid doesn't send response
@@ -163,7 +178,7 @@ exports.config = {
         //
         // Jasmine default timeout
         //defaultTimeoutInterval: 10000,
-        defaultTimeoutInterval: debug ? (24 * 60 * 60 * 1000) : 10000,
+        defaultTimeoutInterval: debug ? (24 * 60 * 60 * 1000) : 1000000,
 
 
         //
@@ -174,7 +189,7 @@ exports.config = {
             // do something
         }
     },
-    
+
     //
     // =====
     // Hooks
@@ -223,12 +238,13 @@ exports.config = {
     // },
     //
     // Function to be executed after a test (in Mocha/Jasmine) or a step (in Cucumber) starts.
-    // afterTest: function (test) {
-    // },
+    afterTest: function (test) {
+        console.log(test.passed + ":" + test.fullName);
+    },
     //
     // Hook that gets executed after the suite has ended
-    // afterSuite: function (suite) {
-    // },
+    afterSuite: function (suite) {
+    },
     //
     // Gets executed after all tests are done. You still have access to all global variables from
     // the test.

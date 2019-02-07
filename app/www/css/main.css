@@ -487,6 +487,16 @@ td{
   }
 }
 
+.ng-scope label {
+  width:auto;
+  max-width:90%;
+}
+
+.ng-scope input[type='checkbox'] {
+  margin-top:10px;
+  vertical-align:top;
+}
+
 #topbar h3{
 	padding-top:15px;
 }
@@ -599,11 +609,10 @@ td{
 	width:200px;
 }
 #alterListBox{
-	height:530px;
 	padding-right:0;
-    padding-left: 30px;
-    margin-right: -15px;
-	overflow-y:scroll;
+  padding-left: 30px;
+  margin-right: -15px;
+	overflow-y:auto;/*scroll;*/
 	float:right;
 }
 .alterPosition{

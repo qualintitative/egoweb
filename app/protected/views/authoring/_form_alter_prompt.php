@@ -6,6 +6,9 @@
     );
     $dataProvider=new CActiveDataProvider('AlterPrompt',array(
         'criteria'=>$criteria,
+        'pagination'=>array(
+            'pageSize'=>50,
+        )
     ));
 
 ?>
@@ -33,10 +36,28 @@
         		(
             		'delete' => array
             		(
-                        //'url'=>'"javascript:deletePrompt(\"" . Yii::app()->createUrl("/authoring/ajaxdelete", array("AlterPrompt[id]"=>$data->id, "form"=>"_form_alter_prompt_edit", "_"=>"'.uniqid().'")) . "\")"',
+                      //  'url'=>'"javascript:deletePrompt(\"" . Yii::app()->createUrl("/authoring/ajaxdelete", array("AlterPrompt[id]"=>$data->id, "form"=>"_form_alter_prompt_edit", "_"=>"'.uniqid().'")) . "\")"',
                 		'url'=>'Yii::app()->createUrl("/authoring/ajaxdelete", array("AlterPrompt[id]"=>$data->id, "_"=>"'.uniqid().'"))',
-                		'options'=>array('class'=>'delete-alter-prompt-' . uniqid()),
-            		),
+                		//'options'=>array('class'=>'delete-alter-prompt-' . uniqid()),
+                    'options' => array(
+                        'confirm' => 'Are you sure you want to delete this item?',
+                        'ajax' => array(
+                            'type' => 'POST',
+                            'data'=> array("YII_CSRF_TOKEN"=> Yii::app()->request->csrfToken),
+                            'url' => "js:$(this).attr('href')",
+                            'success' => 'function(data){
+                                if(data.response=="false"){
+                                    alert(data.errorMessage);
+                                }else{
+                                   $("#data-' . $question->id . '").html(data);
+                                }
+                            }'
+                        ),
+                    ),
+                  ),
+/*
+
+            		),*/
             		'update' => array
             		(
                 		'url'=>'"javascript:updatePrompt(\"" . Yii::app()->createUrl("/authoring/ajaxload", array("alterPromptId"=>$data->id, "form"=>"_form_alter_prompt_edit", "_"=>"'.uniqid().'")) . "\")"',
@@ -58,7 +79,7 @@
         $alterPrompt = new AlterPrompt;
         $form=$this->beginWidget('CActiveForm', array(
             'id'=>'add-alter-prompt-form',
-            'enableAjaxValidation'=>true,
+            'enableAjaxValidation'=>false,
         ));
     ?>
     <?php echo $form->hiddenField($alterPrompt,'id',array('value'=>$alterPrompt->id)); ?>
@@ -72,7 +93,7 @@
     <?php echo $form->error($alterPrompt,'display'); ?>
     <?php echo CHtml::ajaxSubmitButton ("Add",
         CController::createUrl('ajaxupdate'),
-        array('update' => '#alterPrompt'),
+        array('update' => '#data-' . $question->id),
         array('id'=>uniqid(), 'live'=>false, 'style'=>'float:left; margin:3px 5px;', "class"=>"btn btn-primary btn-xs"));
     ?>
     <?php $this->endWidget(); ?>

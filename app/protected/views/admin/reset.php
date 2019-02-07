@@ -12,29 +12,29 @@
 
 <div class="form halfsize">
 
-<h1>Reset Password</h1>
-
 <?php $form=$this->beginWidget('CActiveForm', array(
 	'id'=>'reset-form',
 	'enableClientValidation'=>false,
+  'htmlOptions'=>array('class'=>'form-horizontal'),
 	'clientOptions'=>array(
 		'validateOnSubmit'=>true,
 	),
 )); ?>
 
-	<div class="row">
+	<div class="form-group">
 		<?php echo $form->labelEx($model,'password'); ?>
-		<?php echo $form->passwordField($model,'password',array('rows'=>6, 'cols'=>50)); ?>
+		<?php echo $form->passwordField($model,'password',array('class'=>'form-control input-sm')); ?>
 		<?php echo $form->error($model,'password'); ?>
 	</div>
 
-	<div class="row">
+	<div class="form-group">
 		<?php echo $form->labelEx($model,'confirm'); ?>
-		<?php echo $form->passwordField($model,'confirm',array('rows'=>6, 'cols'=>50)); ?>
+		<?php echo $form->passwordField($model,'confirm',array('class'=>'form-control input-sm')); ?>
 		<?php echo $form->error($model,'confirm'); ?>
 	</div>
-
-		<?php echo CHtml::submitButton('Submit'); ?>
+  <div class="form-group">
+		<?php echo CHtml::submitButton('Submit', array("class"=>"btn btn-primary")); ?>
+  </div>
 	<?php $this->endWidget(); ?>
 
 

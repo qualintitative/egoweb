@@ -6,7 +6,7 @@
 
 <?php
 $ap = Question::model()->findByAttributes(array("studyId"=>$study->id, "subjectType" => "NAME_GENERATOR"));
-if(!$ap){
+if(!$ap && $study->alterPrompt){
 ?>
 <div class="alert">
     This is study is using the old format.
@@ -45,8 +45,8 @@ function changeAType(answerSelect) {
     }
     if( $(answerSelect).attr('id').match("a")){
       $('.panel-' + model_id).hide();
-      $('.panel-' + model_id + " input").prop('disabled', true);
-      $('.panel-' + model_id + " select").prop('disabled', true);
+      //$('.panel-' + model_id + " input").prop('disabled', true);
+      //$('.panel-' + model_id + " select").prop('disabled', true);
     }
 	$('.panel-' + model_id + "#" +value).show();
   $('.panel-' + model_id + "#" +value + " input").prop('disabled', false);
