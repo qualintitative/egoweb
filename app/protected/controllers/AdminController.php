@@ -67,8 +67,8 @@ class AdminController extends Controller
             if ($_POST['interviewId'] == "0") {
                 $time_start = microtime(true);
                 $encKey = $_POST['newKey'];
-                Yii::app()->db->createCommand("ALTER TABLE `alterList` CHANGE `name` `name` TEXT NULL DEFAULT NULL;")->execute();
-                Yii::app()->db->createCommand("ALTER TABLE `alterList` CHANGE `email` `email` TEXT NULL DEFAULT NULL;")->execute();
+                Yii::app()->db->createCommand("ALTER TABLE `alterList` CHANGE `name` `name` TEXT NULL CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL")->execute();
+                Yii::app()->db->createCommand("ALTER TABLE `alterList` CHANGE `email` `email` TEXT NULL CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL")->execute();
                 $cmd = Yii::app()->db->createCommand("SELECT * FROM user");
                 $rows = $cmd->queryAll();
 
