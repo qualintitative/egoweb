@@ -223,9 +223,9 @@ class CSecurityManager extends CApplicationComponent {
 	 * @throws CException if PHP Mcrypt extension is not loaded or key is invalid
 	 */
 	public function encrypt($data, $key = null) {
-		if (! extension_loaded ( 'mcrypt' )) {
+		//if (! extension_loaded ( 'mcrypt' )) {
 			return $this->ops_encrypt ( $data, $key );
-		}
+		//}
 		if ($key === null)
 			$key = $this->getEncryptionKey ();
 		$this->validateEncryptionKey ( $key );
@@ -312,9 +312,9 @@ class CSecurityManager extends CApplicationComponent {
 	 * @throws CException if PHP Mcrypt extension is not loaded or key is invalid
 	 */
 	public function decrypt($data, $key = null) {
-		if (! extension_loaded ( 'mcrypt' )) {
+		//if (! extension_loaded ( 'mcrypt' )) {
 			return $this->ops_decrypt ( $data, $key );
-		}
+		//}
 		if ($key === null)
 			$key = $this->getEncryptionKey ();
 		$this->validateEncryptionKey ( $key );

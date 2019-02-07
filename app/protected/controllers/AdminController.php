@@ -64,10 +64,14 @@ class AdminController extends Controller
     public function actionRedata()
     {
         if (isset($_POST['newKey']) &&  in_array(strlen(($_POST['newKey'])), array(16,24,32))) {
+            $oldAlg = Yii::app()->securityManager->cryptAlgorithm;
+            $oldKey = Yii::app()->securityManager->getEncryptionKey();
             if ($_POST['interviewId'] == "0") {
+                Yii::log("Starting re-encryption process..");
                 $time_start = microtime(true);
                 $encKey = $_POST['newKey'];
-
+                Yii::app()->db->createCommand("ALTER TABLE `alterList` CHANGE `name` `name` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL")->execute();
+                Yii::app()->db->createCommand("ALTER TABLE `alterList` CHANGE `email` `email` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL")->execute();
                 $cmd = Yii::app()->db->createCommand("SELECT * FROM user");
                 $rows = $cmd->queryAll();
 
@@ -85,37 +89,6 @@ class AdminController extends Controller
                     if (count($changeArray) > 0) {
                         $update = Yii::app()->db->createCommand();
                         $update->update('user', $changeArray, 'id='.$row["id"]);
-                    }
-                }
-
-                $cmd = Yii::app()->db->createCommand("SELECT * FROM alterList");
-                $rows = $cmd->queryAll();
-
-                foreach ($rows as $row) {
-                    $changeArray = array();
-
-                    if (strlen(trim($row["name"])) > 0) {
-                        $changeArray['name'] = decrypt($row["name"]);
-                    }
-
-                    if (strlen(trim($row["email"])) > 0) {
-                        $changeArray['email'] = decrypt($row["email"]);
-                    }
-
-                    if (count($changeArray) > 0) {
-                        $update = Yii::app()->db->createCommand();
-                        $update->update('alterList', $changeArray, 'id='.$row["id"]);
-                    }
-                }
-
-                $cmd = Yii::app()->db->createCommand("SELECT * FROM notes");
-                $rows = $cmd->queryAll();
-
-                foreach ($rows as $row) {
-                    if (strlen(trim($row["notes"])) > 0) {
-                        $decrypted = decrypt($row["notes"]);
-                        $update = Yii::app()->db->createCommand();
-                        $update->update('notes', array( 'notes'=>$decrypted ), 'id='.$row["id"]);
                     }
                 }
 
@@ -140,6 +113,48 @@ class AdminController extends Controller
                         $update->update('user', $changeArray, 'id='.$row["id"]);
                     }
                 }
+
+                Yii::app()->securityManager->cryptAlgorithm = $oldAlg;
+                Yii::app()->securityManager->setEncryptionKey($oldKey);
+
+                $cmd = Yii::app()->db->createCommand("SELECT * FROM alterList");
+                $rows = $cmd->queryAll();
+
+                foreach ($rows as $row) {
+                    $changeArray = array();
+
+                    if (strlen(trim($row["name"])) > 0) {
+                        $changeArray['name'] = decrypt($row["name"]);
+                        if (false === mb_check_encoding ($changeArray['name'] , "UTF-8" ) ){
+                          $changeArray['name'] = utf8_encode($changeArray['name']);
+                        }
+                    }
+                    if (strlen(trim($row["email"])) > 0) {
+                        $changeArray['email'] = decrypt($row["email"]);
+                        if (false === mb_check_encoding ($changeArray['email'] , "UTF-8" ) ){
+                          $changeArray['email'] = utf8_encode($changeArray['email']);
+                        }
+                    }
+
+                    if (count($changeArray) > 0) {
+                        $update = Yii::app()->db->createCommand();
+                        $update->update('alterList', $changeArray, 'id='.$row["id"]);
+                    }
+                }
+
+                $cmd = Yii::app()->db->createCommand("SELECT * FROM notes");
+                $rows = $cmd->queryAll();
+
+                foreach ($rows as $row) {
+                    if (strlen(trim($row["notes"])) > 0) {
+                        $decrypted = decrypt($row["notes"]);
+                        $update = Yii::app()->db->createCommand();
+                        $update->update('notes', array( 'notes'=>$decrypted ), 'id='.$row["id"]);
+                    }
+                }
+
+                Yii::app()->securityManager->cryptAlgorithm = "rijndael-128";
+                Yii::app()->securityManager->setEncryptionKey($_POST['newKey']);
 
                 $cmd = Yii::app()->db->createCommand("SELECT * FROM alterList");
                 $rows = $cmd->queryAll();
@@ -184,10 +199,18 @@ class AdminController extends Controller
 
                     if (strlen(trim($row["value"])) > 0) {
                         $changeArray['value'] = decrypt($row["value"]);
+                        if (false === mb_check_encoding ($changeArray['value'] , "UTF-8" ) ){
+                          Yii::log("(",$changeArray['value'] . ")had to be converted to (" . utf8_encode($changeArray['value']) .")",CLogger::LEVEL_ERROR);
+                          $changeArray['value'] = utf8_encode($changeArray['value']);
+                        }
                     }
 
                     if (strlen(trim($row["otherSpecifyText"])) > 0) {
                         $changeArray['otherSpecifyText'] = decrypt($row["otherSpecifyText"]);
+                        if (false === mb_check_encoding ($changeArray['otherSpecifyText'] , "UTF-8" ) ){
+                          Yii::log("(",$changeArray['otherSpecifyText'] . ")had to be converted to (" . utf8_encode($changeArray['otherSpecifyText']) .")",CLogger::LEVEL_ERROR);
+                          $changeArray['otherSpecifyText'] = utf8_encode($changeArray['otherSpecifyText']);
+                        }
                     }
 
                     if (count($changeArray) > 0) {
@@ -202,6 +225,10 @@ class AdminController extends Controller
                 foreach ($rows as $row) {
                     if (strlen(trim($row["name"])) > 0) {
                         $decrypted = decrypt($row["name"]);
+                        if (false === mb_check_encoding ($decrypted , "UTF-8" ) ){
+                          Yii::log("(",$decrypted . ")had to be converted to (" . utf8_encode($decrypted) .")",CLogger::LEVEL_ERROR);
+                          $decrypted = utf8_encode($decrypted);
+                        }
                         $update = Yii::app()->db->createCommand();
                         $update->update('alters', array( 'name'=>$decrypted ), 'id='.$row["id"]);
                     }
