@@ -226,16 +226,16 @@ class CSecurityManager extends CApplicationComponent {
     if (! extension_loaded ( 'mcrypt' ) || $this->cryptAlgorithm == 'rijndael-128') {
 			return $this->ops_encrypt ( $data, $key );
 		}
-		if ($key === null)
-			$key = $this->getEncryptionKey ();
-		$this->validateEncryptionKey ( $key );
-		$module = $this->openCryptModule ();
-		srand ();
-		$iv = @mcrypt_create_iv ( mcrypt_enc_get_iv_size ( $module ), MCRYPT_RAND );
-		@mcrypt_generic_init ( $module, $key, $iv );
-		$encrypted = $iv . @mcrypt_generic ( $module, $data );
-		@mcrypt_generic_deinit ( $module );
-		@mcrypt_module_close ( $module );
+    if($key===null)
+			$key=$this->getEncryptionKey();
+		$this->validateEncryptionKey($key);
+		$module=$this->openCryptModule();
+		srand();
+		$iv=mcrypt_create_iv(mcrypt_enc_get_iv_size($module), MCRYPT_RAND);
+		mcrypt_generic_init($module,$key,$iv);
+		$encrypted=$iv.mcrypt_generic($module,$data);
+		mcrypt_generic_deinit($module);
+		mcrypt_module_close($module);
 		return $encrypted;
 	}
 	/**
@@ -315,19 +315,17 @@ class CSecurityManager extends CApplicationComponent {
 		if (! extension_loaded ( 'mcrypt' ) || $this->cryptAlgorithm == 'rijndael-128') {
 			return $this->ops_decrypt ( $data, $key );
 		}
-		if ($key === null)
-			$key = $this->getEncryptionKey ();
-		$this->validateEncryptionKey ( $key );
-		$module = $this->openCryptModule ();
-		$ivSize = @mcrypt_enc_get_iv_size ( $module );
-		$iv = $this->substr ( $data, 0, $ivSize );
-		@mcrypt_generic_init ( $module, $key, $iv );
-		$decrypted = @mdecrypt_generic ( $module, $this->substr ( $data, $ivSize, $this->strlen ( $data ) ) );
-		@mcrypt_generic_deinit ( $module );
-		@mcrypt_module_close ( $module );
-		return $this->ops_pkcs5_unpad ( $decrypted );
-		// original way
-		// return rtrim ( $decrypted, "\0" );
+    if($key===null)
+			$key=$this->getEncryptionKey();
+		$this->validateEncryptionKey($key);
+		$module=$this->openCryptModule();
+		$ivSize=mcrypt_enc_get_iv_size($module);
+		$iv=$this->substr($data,0,$ivSize);
+		mcrypt_generic_init($module,$key,$iv);
+		$decrypted=mdecrypt_generic($module,$this->substr($data,$ivSize,$this->strlen($data)));
+		mcrypt_generic_deinit($module);
+		mcrypt_module_close($module);
+		return rtrim($decrypted,"\0");
 	}
 
 	/**
