@@ -191,7 +191,7 @@ class AdminController extends Controller
                     if (strlen(trim($row["value"])) > 0) {
                         $changeArray['value'] = decrypt($row["value"]);
                         if (false === mb_check_encoding ($changeArray['value'] , "UTF-8" ) ){
-                          Yii::log("(",$changeArray['value'] . ")had to be converted to (" . utf8_encode($changeArray['value']) .")");
+                          Yii::log("(",$changeArray['value'] . ")had to be converted to (" . utf8_encode($changeArray['value']) .")",CLogger::LEVEL_ERROR);
                           $changeArray['value'] = utf8_encode($changeArray['value']);
                         }
                     }
@@ -199,7 +199,7 @@ class AdminController extends Controller
                     if (strlen(trim($row["otherSpecifyText"])) > 0) {
                         $changeArray['otherSpecifyText'] = decrypt($row["otherSpecifyText"]);
                         if (false === mb_check_encoding ($changeArray['otherSpecifyText'] , "UTF-8" ) ){
-                          Yii::log("(",$changeArray['otherSpecifyText'] . ")had to be converted to (" . utf8_encode($changeArray['otherSpecifyText']) .")");
+                          Yii::log("(",$changeArray['otherSpecifyText'] . ")had to be converted to (" . utf8_encode($changeArray['otherSpecifyText']) .")",CLogger::LEVEL_ERROR);
                           $changeArray['otherSpecifyText'] = utf8_encode($changeArray['otherSpecifyText']);
                         }
                     }
