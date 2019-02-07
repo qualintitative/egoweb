@@ -65,10 +65,11 @@ class AdminController extends Controller
     {
         if (isset($_POST['newKey']) &&  in_array(strlen(($_POST['newKey'])), array(16,24,32))) {
             if ($_POST['interviewId'] == "0") {
+                Yii::log("Starting re-encryption process..");
                 $time_start = microtime(true);
                 $encKey = $_POST['newKey'];
-                Yii::app()->db->createCommand("ALTER TABLE `alterList` CHANGE `name` `name` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL")->execute();
-                Yii::app()->db->createCommand("ALTER TABLE `alterList` CHANGE `email` `email` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL")->execute();
+                //Yii::app()->db->createCommand("ALTER TABLE `alterList` CHANGE `name` `name` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL")->execute();
+                //Yii::app()->db->createCommand("ALTER TABLE `alterList` CHANGE `email` `email` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL")->execute();
                 $cmd = Yii::app()->db->createCommand("SELECT * FROM user");
                 $rows = $cmd->queryAll();
 
