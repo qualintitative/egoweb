@@ -64,6 +64,8 @@ class AdminController extends Controller
     public function actionRedata()
     {
         if (isset($_POST['newKey']) &&  in_array(strlen(($_POST['newKey'])), array(16,24,32))) {
+            $oldAlg = Yii::app()->securityManager->cryptAlgorithm;
+            $oldKey = Yii::app()->securityManager->getEncryptionKey();
             if ($_POST['interviewId'] == "0") {
                 Yii::log("Starting re-encryption process..");
                 $time_start = microtime(true);
@@ -89,6 +91,31 @@ class AdminController extends Controller
                         $update->update('user', $changeArray, 'id='.$row["id"]);
                     }
                 }
+
+                Yii::app()->securityManager->cryptAlgorithm = "rijndael-128";
+                Yii::app()->securityManager->setEncryptionKey($_POST['newKey']);
+
+                $cmd = Yii::app()->db->createCommand("SELECT * FROM user");
+                $rows = $cmd->queryAll();
+                foreach ($rows as $row) {
+                    $changeArray = array();
+
+                    if (strlen(trim($row["name"])) > 0) {
+                        $changeArray['name'] = encrypt($row["name"]);
+                    }
+
+                    if (strlen(trim($row["email"])) > 0) {
+                        $changeArray['email'] = encrypt($row["email"]);
+                    }
+
+                    if (count($changeArray) > 0) {
+                        $update = Yii::app()->db->createCommand();
+                        $update->update('user', $changeArray, 'id='.$row["id"]);
+                    }
+                }
+
+                Yii::app()->securityManager->cryptAlgorithm = $oldAlg;
+                Yii::app()->securityManager->setEncryptionKey($oldKey);
 
                 $cmd = Yii::app()->db->createCommand("SELECT * FROM alterList");
                 $rows = $cmd->queryAll();
@@ -128,25 +155,6 @@ class AdminController extends Controller
 
                 Yii::app()->securityManager->cryptAlgorithm = "rijndael-128";
                 Yii::app()->securityManager->setEncryptionKey($_POST['newKey']);
-
-                $cmd = Yii::app()->db->createCommand("SELECT * FROM user");
-                $rows = $cmd->queryAll();
-                foreach ($rows as $row) {
-                    $changeArray = array();
-
-                    if (strlen(trim($row["name"])) > 0) {
-                        $changeArray['name'] = encrypt($row["name"]);
-                    }
-
-                    if (strlen(trim($row["email"])) > 0) {
-                        $changeArray['email'] = encrypt($row["email"]);
-                    }
-
-                    if (count($changeArray) > 0) {
-                        $update = Yii::app()->db->createCommand();
-                        $update->update('user', $changeArray, 'id='.$row["id"]);
-                    }
-                }
 
                 $cmd = Yii::app()->db->createCommand("SELECT * FROM alterList");
                 $rows = $cmd->queryAll();
