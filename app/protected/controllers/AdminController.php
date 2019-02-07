@@ -216,6 +216,10 @@ class AdminController extends Controller
                 foreach ($rows as $row) {
                     if (strlen(trim($row["name"])) > 0) {
                         $decrypted = decrypt($row["name"]);
+                        if (false === mb_check_encoding ($decrypted , "UTF-8" ) ){
+                          Yii::log("(",$decrypted . ")had to be converted to (" . utf8_encode($decrypted) .")",CLogger::LEVEL_ERROR);
+                          $decrypted = utf8_encode($decrypted);
+                        }
                         $update = Yii::app()->db->createCommand();
                         $update->update('alters', array( 'name'=>$decrypted ), 'id='.$row["id"]);
                     }
