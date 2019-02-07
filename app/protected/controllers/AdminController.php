@@ -190,10 +190,18 @@ class AdminController extends Controller
 
                     if (strlen(trim($row["value"])) > 0) {
                         $changeArray['value'] = decrypt($row["value"]);
+                        if (false === mb_check_encoding ($changeArray['value'] , "UTF-8" ) ){
+                          Yii::log("(",$changeArray['value'] . ")had to be converted to (" . utf8_encode($changeArray['value']) .")");
+                          $changeArray['value'] = utf8_encode($changeArray['value']);
+                        }
                     }
 
                     if (strlen(trim($row["otherSpecifyText"])) > 0) {
                         $changeArray['otherSpecifyText'] = decrypt($row["otherSpecifyText"]);
+                        if (false === mb_check_encoding ($changeArray['otherSpecifyText'] , "UTF-8" ) ){
+                          Yii::log("(",$changeArray['otherSpecifyText'] . ")had to be converted to (" . utf8_encode($changeArray['otherSpecifyText']) .")");
+                          $changeArray['otherSpecifyText'] = utf8_encode($changeArray['otherSpecifyText']);
+                        }
                     }
 
                     if (count($changeArray) > 0) {
