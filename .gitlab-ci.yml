@@ -44,7 +44,7 @@ test_alp_dev:
     - sed -i "s/CONFIG_ADMINPASSWORD/$TEST_ALP_DEV_ADMIN_PASSWD/g" ./test/wdio.conf.js
     - sed -i "s/CONFIG_INTERVIEWERUSER/$TEST_ALP_DEV_USER/g" ./test/wdio.conf.js
     - sed -i "s/CONFIG_INTERVIEWERPASSWORD/$TEST_ALP_DEV_PASSWD/g" ./test/wdio.conf.js
-    - sed -i "s/CONFIG_PHANTOMJS_PATH/\/\./node_modules\/\.bin\/phantomjs/g" ./test/wdio.conf.js
+    - sed -i "s~CONFIG_PHANTOMJS_PATH~./node_modules/.bin/phantomjs~g" ./test/wdio.conf.js
     - sed -i "s~CONFIG_BASEURL~$ALP_DEV_URL~g" ./test/wdio.conf.js
     - cd ./test
     - npm install
