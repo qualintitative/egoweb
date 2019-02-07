@@ -53,7 +53,7 @@ $criteria->order = 'name';
 echo CHtml::dropdownlist(
     'studyId',
     '',
-    CHtml::listData(Study::model()->findAll($criteria), 'id', 'name'),
+    CHtml::listData($studies, 'id', 'name'),
     array("class"=>"form-control")
 );
 ?>
@@ -61,7 +61,7 @@ echo CHtml::dropdownlist(
         </div>
         <div class="form-group">
             <div class="col-lg-3">
-                <?php echo CHtml::textField('name', '',array('class'=>"form-control", "placeholder"=>"new name")); ?>
+                <?php echo CHtml::textField('name', '', array('class'=>"form-control", "placeholder"=>"new name")); ?>
             </div>
         </div>
         <div class="form-group">
@@ -76,7 +76,7 @@ echo CHtml::dropdownlist(
 <br clear=all>
 <br clear=all>
 
-<div class="panel panel-info">
+<div id="export-panel" class="panel panel-info">
   <div class="panel-heading">
     Export Study
   </div>
@@ -91,10 +91,10 @@ $form=$this->beginWidget('CActiveForm', array(
 $criteria=new CDbCriteria;
 $criteria->order = 'name';
 echo CHtml::dropdownlist(
-	'studyId',
-	'',
-	CHtml::listData(Study::model()->findAll($criteria),'id', 'name'),
-	                array(
+    'studyId',
+    '',
+    CHtml::listData($studies, 'id', 'name'),
+                    array(
                         'empty' => 'Select',
                         'onchange'=>"js:getInterviews(\$(this), '#export-interviews')",
                         'class'=>'form-control'
@@ -103,9 +103,16 @@ echo CHtml::dropdownlist(
 );
 ?>
     <div id="export-interviews"></div>
+    <div id="exportNotice" class="col-sm-12 alert alert-success" style="display:none"></div>
+    <div id="exportError" class="col-sm-12 alert alert-danger" style="display:none"></div>
+    <div class="progress" style="clear:both">
+      <div class="progress-bar progress-bar-striped active" role="progressbar"
+      aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
+      </div>
+    </div>
     <div class="form-group">
       <div class="col-lg-4 ">
-        <button class="btn btn-info">Export</button>
+        <button class="btn btn-info" onclick="exportEgo(); return false;">Export</button>
       </div>
     </div>
     <?php $this->endWidget(); ?>
@@ -145,12 +152,21 @@ echo CHtml::dropdownlist(
         </div>
       </div>
       <?php $this->endWidget(); ?>
+<<<<<<< HEAD
       <?php
 $s = Server::model()->findAll();
       ?>
       <br><br>
       <ul class="list-group">
         <?php foreach($s as $server): ?>
+=======
+      <?php
+$s = Server::model()->findAll();
+      ?>
+      <br><br>
+      <ul class="list-group">
+        <?php foreach ($s as $server): ?>
+>>>>>>> dev
         <li class="list-group-item"><?php echo $server->address; ?>
         <a class="btn btn-xs pull-right btn-danger" href="javascript:void(0);" onclick="deleteServer(<?php echo $server->id; ?>)">Delete</a>
       </li>
@@ -177,9 +193,9 @@ $criteria->order = 'name';
   <label class="col-sm-2">Server Address</label>
   <div class='col-sm-10'>
     <?php echo CHtml::dropdownlist(
-    	'serverId',
-    	'',
-    	CHtml::listData(Server::model()->findAll(),'id', 'address'),
+        'serverId',
+        '',
+        CHtml::listData(Server::model()->findAll(), 'id', 'address'),
         array(
               'id'=>'serverAddress',
               'empty' => 'Select',
@@ -194,9 +210,9 @@ $criteria->order = 'name';
   <label class="col-sm-2">Study</label>
   <div class='col-sm-10'>
 <?php echo CHtml::dropdownlist(
-	'studyId',
-	'',
-	CHtml::listData(Study::model()->findAll($criteria),'id', 'name'),
+    'studyId',
+    '',
+    CHtml::listData($studies, 'id', 'name'),
     array(
           'id'=>'sendStudy',
           'empty' => 'Select',
@@ -269,7 +285,10 @@ function getData(){
   var interviews = $("#send-interviews .export:checked");
   if (interviews.length == 0){
     var x = document.createElement("INPUT");
+<<<<<<< HEAD
     //x.setAttribute("type", "text");
+=======
+>>>>>>> dev
     interviews = [x];
     total = 1;
     console.log(interviews.length)
@@ -321,75 +340,69 @@ function getData(){
       });
   }
 
+  batchPromiseRecursive().then(function() {
+    console.log(studies);
+    $("#sendSync").prop("disabled", false);
+  });
+
+}
+function exportEgo(){
+  var finished = 0;
+  $(".progress-bar").width(0);
+  $("#sendError").hide();
+  $("#sendNotice").show();
+  $("#sendNotice").html("Preparing data to send..");
+  $("#sendSync").prop("disabled", true);
+  var total = $("#export-interviews .export:checked").length;
+  var batchSize = 1;
+  var interviews = $("#export-interviews .export:checked");
+  if (interviews.length == 0){
+    var x = document.createElement("INPUT");
+    interviews = [x];
+    total = 1;
+    console.log(interviews.length)
+  }
+  var batchPromiseRecursive = function() {
+    // note splice is destructive, removing the first batch off
+    // the array
+    //var batch = studies.splice(0, batchSize);
+    if (interviews.length == 0) {
+      return;
+    }
+    var thisInt = interviews.splice(0, batchSize);
+    console.log("exporting", $(thisInt).val());
+
+
+    return $.ajax({
+          type: "POST",
+          url: '/importExport/ajaxexport/',
+          data: {"interviewId":  $(thisInt).val(), "YII_CSRF_TOKEN":$("input[name='YII_CSRF_TOKEN']").val()},
+          success: function(msg){
+            finished++;
+            msg = "Processed " + finished + " / " + total + " interviews: " + msg;
+            $("#export-panel .progress-bar").width((finished / total * 100) + "%");
+            $("#exportError").hide();
+            $("#exportNotice").show();
+            $("#exportNotice").html($("#exportNotice").html() + "<br>" + msg);
+            return batchPromiseRecursive();
+          },
+          error: function(XMLHttpRequest, textStatus, errorThrown) {
+            $("#exportNotice").hide();
+            $("#exportError").show();
+            $("#exportError").html("Failed");
+          }
+        });
+
+  }
 
   batchPromiseRecursive().then(function() {
     console.log(studies);
     $("#sendSync").prop("disabled", false);
-
-    // something to do when it's all over.
-
-      //  var total = studies.length + 1;
-      /*
-        $("#sendJson").val(JSON.stringify(firstStudy));
-        $.ajax({
-          type: "POST",
-          url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
-          data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
-          success: function(msg){
-            finished++;
-            msg = "Processed " + finished + " / " + total + " interviews: " + msg;
-            $(".progress-bar").width((finished / total * 100) + "%");
-            $("#sendError").hide();
-            $("#sendNotice").show();
-            $("#sendNotice").html($("#sendNotice").html() + "<br>" + msg);
-            studies.forEach(function(data) {
-              $("#sendJson").val(JSON.stringify(data));
-              $.ajax({
-                type: "POST",
-                url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
-                data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
-                success: function(msg){
-                  finished++;
-                  msg = "Processed " + finished + " / " + total + " interviews: " + msg;
-                  $(".progress-bar").width((finished / total * 100) + "%");
-                  $("#sendError").hide();
-                  $("#sendNotice").show();
-                  $("#sendNotice").html($("#sendNotice").html() + "<br>" + msg);
-                },
-                error: function(XMLHttpRequest, textStatus, errorThrown) {
-                  $("#sendNotice").hide();
-                  $("#sendError").show();
-                  $("#sendError").html("Failed");
-                }
-              });
-            });
-            $("#sendNotice").html($("#sendNotice").html() + "<br>" + "Done!");
-            $("#sendSync").prop("disabled", false);
-          },
-          error: function(XMLHttpRequest, textStatus, errorThrown) {
-            $("#sendNotice").hide();
-            $("#sendError").show();
-            $("#sendError").html("Failed");
-            $("#sendSync").prop("disabled", false);
-          }
-        });
-        */
+    $("#export").submit();
   });
-
-
-  /*
-  $("#send-interviews .export:checked").each(function(){
-    var intId = $(this).val();
-    $.post('/importExport/send/' + $("#sendStudy option:selected").val(), {"YII_CSRF_TOKEN":$("input[name='YII_CSRF_TOKEN']").val(), "serverId":$("#serverAddress option:selected").val(), "export[]":intId}, function(res){
-      $("#sendNotice").html($("#sendNotice").html() + "<br>" + "Prepared interview #" + intId);
-      if(!servers[$("#serverAddress option:selected").val()].ADDRESS.match("http"))
-        servers[$("#serverAddress option:selected").val()].ADDRESS = 'http://'+ servers[$("#serverAddress option:selected").val()].ADDRESS;
-      studies.push(JSON.parse(res).shift());
-    });
-  });
-*/
 }
 
+<<<<<<< HEAD
 //On import study form submit
 /*
 $( "#importForm" ).submit(function( event) {
@@ -422,6 +435,8 @@ $( "#importForm" ).submit(function( event) {
     }
 });*/
 
+=======
+>>>>>>> dev
 function deleteServer(id){
   if(confirm("Do you want to delete this server?")){
     $.post("/importExport/deleteserver/", {"serverId": id, "YII_CSRF_TOKEN": $("[name*='YII_CSRF_TOKEN']").val()}, function(data){

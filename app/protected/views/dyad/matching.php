@@ -128,8 +128,11 @@ function matchUp(s){
     var matchId = $(s).attr("matchId");
     if($(s).val() != ""){
         $("#" + id + "-name").show();
+        $("#" + id + "-hasNotes").show();
+        $("#" + id + "-notes").val("");
+        $("#" + id + "-notes").hide();
         $("#" + id + "-name").val($("option:selected", s).text());
-        $("#" + id + "-buttons").html("<button class='btn btn-xs btn-success btn-xs' onclick='save(" + studyId + "," +id + "," + id2 +","+ matchId+")'>save</button>");;
+        $("#" + id + "-buttons").html("<button id='" + id + "-save' class='btn btn-xs btn-success btn-xs' onclick='save(" + studyId + "," +id + "," + id2 +","+ (matchId ? matchId : 0) +", $(\"#"+id+"-notes\").val())'>save</button>");;
     }else{
         $("#" + id + "-alter2").html("");
         $("#" + id + "-name").hide();
@@ -139,31 +142,51 @@ function matchUp(s){
     loadR($("#question").val());
 
 }
-function save(sId, id1, id2, matchId){
+function save(sId, id1, id2, matchId, notes){
     var alterName = $("#" + id1 + "-name").val();
     if(typeof alterName != "undefined" && alterName.trim() == ""){
         alert ("Please enter a name!");
     }else{
-        $.post("/data/savematch", {id:matchId, studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, userId: <?php echo Yii::app()->user->id; ?>, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
-            if(id1 == "0")
-                document.location.href = "/data/study/" + sId; //$("#markMatch").html(data);
-            else
-                $("#" + id1 + "-buttons").html(data);
+        $.post("/dyad/savematch", {id:matchId, studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, notes: notes, userId: <?php echo Yii::app()->user->id; ?>, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
+            if(id1 == "0"){
+                document.location.href = document.referrer; //$("#markMatch").html(data);
+            }else{
+              data = JSON.parse(data);
+               var html = "<button class='btn btn-xs btn-danger unMatch-" + data.alterId1 + "' onclick='unMatch(" + data.studyId + "," + data.alterId1 + ", " + data.alterId2 +  ")'>" + data.mark + "</button>";
+               html += "<button style='display:none;' id='" + data.alterId1 + "-save' class='btn btn-xs btn-success btn-xs' onclick='save(" + data.studyId + "," +data.alterId1 + "," + data.alterId2 +","+  data.matchId +", $(\"#"+data.alterId1+"-notes\").val())'>save</button>";
+              $("#" + id1).attr("matchId", data.matchId);
+              $("#" + id1 + "-buttons").html(html);
+            }
         })
     }
 }
 
 function unMatch(sId, id1, id2){
-    $.post("/data/unmatch", {studyId:sId, alterId1:id1, alterId2:id2, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>}, function(data){
+    $.post("/dyad/unmatch", {studyId:sId, alterId1:id1, alterId2:id2, <?php echo Yii::app()->request->csrfTokenName . ':"' . Yii::app()->request->csrfToken . '"' ?>}, function(data){
         if(id1 == 0){
-            $("#markMatch").html("<button onclick='save(studyId, 0, 0)' class='btn btn-success'>Mark as matched</button>");
+            $("#markMatch").html("<button onclick='save(studyId, 0, 0)' class='btn btn-success'>Finished Matching</button>");
         }else{
             $("#" + id1 + "-buttons").html("");
             $("#" + id1 + "-name").val("");
+            $("#" + id1 + "-notes").val("");
+            $("#" + id1 + "-notes").hide();
             $("#" + id1).val("");
+            $("#" + id1).attr("matchId", "");
             $("#" + id1).change();
         }
     })
+}
+
+function toggleNotes(id1){
+  var checked = $("#" + id1 + "-hasNotes").prop("checked");
+  if(checked){
+    $("#" + id1 + "-notes").show();
+  }else{
+    $("#" + id1 + "-notes").val("");
+    $("#" + id1 + "-notes").hide();
+    $("#" + id1 + "-save").show();
+
+  }
 }
 
 function exportMatches(){
@@ -171,10 +194,10 @@ function exportMatches(){
 }
 </script>
 <?php
-    		$criteria = array(
-    			'condition'=>"(interviewId1 = $interview1->id OR interviewId2 = $interview1->id) AND alterId1 = 0 AND alterId2 = 0",
-    		);
-    		$marked = MatchedAlters::model()->find($criteria);
+$criteria = array(
+	'condition'=>"(interviewId1 = $interview1->id OR interviewId2 = $interview1->id) AND alterId1 = 0 AND alterId2 = 0",
+);
+$marked = MatchedAlters::model()->find($criteria);
 ?>
 <div class="panel panel-success">
     <div class="panel-heading">
@@ -220,6 +243,7 @@ function exportMatches(){
         <th>Responses</th>
 
         <th>Matched Alter name</th>
+        <th>Notes</th>
     </tr>
     <?php if($alters1):?>
     <?php foreach($alters1 as $alterId=>$alter): ?>
@@ -238,10 +262,12 @@ function exportMatches(){
                 $selected = $match->alterId2;
                 $selectedName = $match->matchedName;
                 $matchId = $match->id;
+                $notes = $match->notes;
             }else{
                 $selected = "";
                 $selectedName = "";
                 $matchId = "";
+                $notes = "";
             }
                     if(count($alters2) > 0){
                         echo CHtml::dropdownlist(
@@ -254,10 +280,15 @@ function exportMatches(){
                 ?></td>
         <td id="<?php echo $alterId; ?>-alter2" class="responses" alterId=<?php echo $selected; ?>></td>
         <td><?php echo CHtml::textField("name",$selectedName ,array("id"=>$alterId."-name", "style"=>($selectedName == "" ? "display:none;": ""))); ?></td>
+        <td><?php echo CHtml::checkBox("$alterId-hasNotes", $notes ?  true : false, array("id"=>"$alterId-hasNotes","onclick"=>"toggleNotes($alterId)","style"=>($match ?  "": "display:none;"))); ?></td>
+        <td><?php echo CHtml::textField($alterId."-notes", $notes ,array("id"=>$alterId."-notes", "onkeyup"=>"$('#$alterId-save').show()", "style"=>($notes ?  "": "display:none;"))); ?></td>
+
         <td id="<?php echo $alterId; ?>-buttons">
             <?php
-                if(isset($match))
-                    echo "<button class='btn btn-xs btn-danger unMatch-$alterId' onclick='unMatch(studyId, $match->id, $selected)'>Unmatch</button>";
+                if(isset($match)){
+                    echo "<button class='btn btn-xs btn-danger unMatch-$alterId' onclick='unMatch(studyId, $match->alterId1, $selected)'>Unmatch</button>";
+                    echo "<button style='display:none;' id='$alterId-save' class='btn btn-xs btn-success' onclick='save(studyId, $match->alterId1, $selected, $match->id, \$(\"#$alterId-notes\").val())'>Save</button>";
+                }
             ?>
 
         </td>
@@ -265,9 +296,5 @@ function exportMatches(){
   <?php endif;?>
 </table>
 <div id="markMatch">
-<?php if($marked): ?>
-<button onclick="unMatch(studyId, '0', '0')" class="btn btn-danger btn-xs">Remove Mark</button>
-<?php else: ?>
-<button onclick="save(studyId, '0', '0')" class="btn btn-success btn-xs">Mark as matched</button>
-<?php endif; ?>
+<button id="matchButton" onclick="save(studyId, '0', '0')" class="btn btn-success">Finished Matching</button>
 </div>
