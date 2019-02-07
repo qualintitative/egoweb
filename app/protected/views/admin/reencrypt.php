@@ -42,7 +42,7 @@ $this->pageTitle =  "Re-encryption Tool";
 function reEncrypt(){
   if($("#newKey").val().trim().length != 16 && $("#newKey").val().trim().length != 24 && $("#newKey").val().trim().length != 32){
     alert("The encryption key must have a length of 16, 24, or 32 characters!");
-    return;
+    return false;
   }
   var finished = 0;
   interviews = <?php echo $interviews ?>;
