@@ -73,6 +73,10 @@ class AdminController extends Controller
                 Yii::app()->db->createCommand("ALTER TABLE `alterList` CHANGE `name` `name` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL")->execute();
                 Yii::app()->db->createCommand("ALTER TABLE `alterList` CHANGE `email` `email` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL")->execute();
                 Yii::app()->db->createCommand("ALTER TABLE `notes` CHANGE `notes` `notes` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL")->execute();
+                Yii::app()->db->createCommand("ALTER TABLE `answer` CHANGE `value` `value` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL")->execute();
+                Yii::app()->db->createCommand("ALTER TABLE `answer` CHANGE `otherSpecifyText` `otherSpecifyText` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL")->execute();
+                Yii::app()->db->createCommand("ALTER TABLE `alters` CHANGE `name` `name` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL")->execute();
+
                 $cmd = Yii::app()->db->createCommand("SELECT * FROM user");
                 $rows = $cmd->queryAll();
 
