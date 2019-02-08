@@ -72,6 +72,7 @@ class AdminController extends Controller
                 $encKey = $_POST['newKey'];
                 Yii::app()->db->createCommand("ALTER TABLE `alterList` CHANGE `name` `name` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL")->execute();
                 Yii::app()->db->createCommand("ALTER TABLE `alterList` CHANGE `email` `email` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL")->execute();
+                Yii::app()->db->createCommand("ALTER TABLE `notes` CHANGE `notes` `notes` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL")->execute();
                 $cmd = Yii::app()->db->createCommand("SELECT * FROM user");
                 $rows = $cmd->queryAll();
 
@@ -148,6 +149,9 @@ class AdminController extends Controller
                 foreach ($rows as $row) {
                     if (strlen(trim($row["notes"])) > 0) {
                         $decrypted = decrypt($row["notes"]);
+                        if (false === mb_check_encoding ($decrypted , "UTF-8" ) ){
+                          $decrypted = utf8_encode($decrypted);
+                        }
                         $update = Yii::app()->db->createCommand();
                         $update->update('notes', array( 'notes'=>$decrypted ), 'id='.$row["id"]);
                     }
