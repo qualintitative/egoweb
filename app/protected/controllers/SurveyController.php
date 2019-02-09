@@ -53,9 +53,6 @@ class SurveyController extends Controller {
 		}
 		$decoded = json_decode( trim( $input ), true );
 		if( !isset( $decoded ) ){
-//          header("Access-Control-Allow-Origin: *");
-//			header("Access-Control-Allow-Headers : Content-Type");
-//			header("Access-Control-Allow-Methods : POST, OPTIONS");
 			return ApiController::sendResponse( 422, 'Unable to decode payload' );
 		}
 
@@ -67,8 +64,7 @@ class SurveyController extends Controller {
 		if( self::checkSurveyId($decoded['survey_id']) ){
             $link = $this->generateSurveyURL();
             $payload = $this->encryptPayload($decoded);
-            echo json_encode(array('link' => $link, 'payload' => $payload), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-            //return ApiController::sendResponse( 200, array( 'link'=>$link, 'payload'=>$payload ) );
+            return ApiController::sendResponse( 200, array( 'link'=>$link, 'payload'=>$payload ) );
         }
 	}
 
