@@ -49,10 +49,9 @@ test_alp_dev:
     - cd ./test
     - npm install
     - java -jar /home/gitlab-runner/selenium-server-standalone-2.53.1.jar &
-    - selenium_pid=$!
     - echo "selenium is running at $selenium_pid"
     - ./node_modules/.bin/wdio wdio.conf.js
-    - kill $selenium_pid
+    - pkill -f selenium-server-standalone-2.53.1.jar
   artifacts:
     reports:
       junit: ./test/junitresults/WDIO*.xml
