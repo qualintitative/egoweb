@@ -111,8 +111,14 @@ $(function(){
                         <th class="hidden-xs">Completed</th>
                         <th class="hidden-xs">Dyad Match ID</th>
                         <th class="hidden-xs">Match User</th>
+<<<<<<< HEAD
                         <th><em class="fa fa-cog"></em></th>
 
+=======
+                        <?php if(Yii::app()->user->user->permissions >= 3): ?>
+                        <th><em class="fa fa-cog"></em></th>
+                        <?php endif; ?>
+>>>>>>> dev
                     </tr>
                   </thead>
                   <tbody>
@@ -127,12 +133,25 @@ $(function(){
         $mark = "";
         $matchId = "";
         $matchUser = "";
+<<<<<<< HEAD
         if($interview->hasMatches){
             $mark = "class='success'";
     		$criteria = array(
     			'condition'=>"interviewId1 = $interview->id OR interviewId2 = $interview->id",
     		);
     		$match = MatchedAlters::model()->find($criteria);
+=======
+        $hasMatches = $interview->hasMatches;
+        if($hasMatches){
+            if($hasMatches == 1)
+              $mark = "class='success'";
+            else
+              $mark = "class='warning'";
+        		$criteria = array(
+        			'condition'=>"interviewId1 = $interview->id OR interviewId2 = $interview->id ORDER BY id DESC",
+        		);
+    		    $match = MatchedAlters::model()->find($criteria);
+>>>>>>> dev
             if($interview->id == $match->interviewId1)
                 $matchInt = Interview::model()->findByPk($match->interviewId2);
             else
@@ -146,12 +165,23 @@ $(function(){
         echo "<td class='hidden-xs'>".$completed."</td>";
         echo "<td class='hidden-xs'>".$matchId."</td>";
         echo "<td class='hidden-xs'>".$matchUser."</td>";
+<<<<<<< HEAD
         echo "<td>";
         if($interview->completed == -1)
             echo CHtml::button('Edit',array('submit'=>$this->createUrl('/data/edit/' . $interview->id)));
 
         echo CHtml::button('Review',array('submit'=>$this->createUrl('/interview/'.$study->id.'/'.$interview->id.'/#/page/0')));
         echo CHtml::button('Visualize',array('submit'=>$this->createUrl('/data/visualize?expressionId=&interviewId='.$interview->id)))."</td>";
+=======
+        if(Yii::app()->user->user->permissions >= 3){
+            echo "<td>";
+            if($interview->completed == -1)
+                echo CHtml::button('Edit',array('submit'=>$this->createUrl('/data/edit/' . $interview->id)));
+
+            echo CHtml::button('Review',array('submit'=>$this->createUrl('/interview/'.$study->id.'/'.$interview->id.'/#/page/0')));
+            echo CHtml::button('Visualize',array('submit'=>$this->createUrl('/data/visualize?expressionId=&interviewId='.$interview->id)))."</td>";
+        }
+>>>>>>> dev
         echo "</tr>";
     }
 ?>
