@@ -64,11 +64,12 @@ class SurveyController extends Controller {
 			return ApiController::sendResponse( 401, 'Please provide a valid password to access this feature.' );
 		}
 
-
-		$link = $this->generateSurveyURL(  );
-		$payload = $this->encryptPayload( $decoded );
-	    echo json_encode(array( 'link'=>$link, 'payload'=>$payload ), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-		//return ApiController::sendResponse( 200, array( 'link'=>$link, 'payload'=>$payload ) );
+		if( self::checkSurveyId($decoded['survey_id']) ){
+            $link = $this->generateSurveyURL();
+            $payload = $this->encryptPayload($decoded);
+            echo json_encode(array('link' => $link, 'payload' => $payload), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            //return ApiController::sendResponse( 200, array( 'link'=>$link, 'payload'=>$payload ) );
+        }
 	}
 
 	/**
@@ -205,6 +206,15 @@ class SurveyController extends Controller {
                             "#/page/".$interview->completed
                             );
         }
+    }
+
+    public static function checkSurveyId($surveyId){
+        $study = Study::model()->findByPk( $surveyId );
+        if( !$study ){
+            $msg = "Invalid survey_id";
+            return ApiController::sendResponse( 418, $msg );
+        }
+        return True;
     }
 
 }
