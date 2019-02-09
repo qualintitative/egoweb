@@ -1,14 +1,15 @@
 <?php
 
-if ($argc < 2 )
+if ($argc < 3 )
 {
-    exit( "Usage: testAPI <egoweb_URL> <survey_link_password>\n" );
+    exit( "Usage: testAPI <egoweb_URL> <survey_link_password> <survey_link_id>\n" );
 }
 
 $FAILED_TESTS = 0;
 
 $EGOWEB_URL = $argv[1];
 $SURVEY_PASSWD = $argv[2];
+$SURVEY_ID = $argv[3];
 function callAPI($json){
     global $EGOWEB_URL;
 	$url = $EGOWEB_URL.'/survey/getlink';
@@ -49,7 +50,7 @@ try {
 		"password"=>"$SURVEY_PASSWD",
 		"action"=> "passthrough",
 		"user_id"=> "65:1",
-		"survey_id"=> 1,
+		"survey_id"=> $SURVEY_ID,
 		"redirect"=> "http://alp-respondent-portal:8888/index.php",
 		"questions"=> null,
 		"prefill"=> null
@@ -106,7 +107,7 @@ try {
 	$json = json_encode(array(
 		"action"=> "passthrough",
 		"user_id"=> "65:1",
-		"survey_id"=> 5,
+		"survey_id"=> $SURVEY_ID,
 		"redirect"=> "http://alp-respondent-portal:8888/index.php",
 		"questions"=> null,
 		"prefill"=> null
@@ -132,7 +133,7 @@ try {
 		"password"=>"yourpasswordhere",
 		"action"=> "passthrough",
 		"user_id"=> "65:1",
-		"survey_id"=> 5,
+		"survey_id"=> $SURVEY_ID,
 		"redirect"=> "http://alp-respondent-portal:8888/index.php",
 		"questions"=> null,
 		"prefill"=> null
