@@ -55,7 +55,7 @@ test_alp_dev:
     - kill $selenium_pid
   artifacts:
     reports:
-      junit: ./build/junitresults/WDIO*.xml
+      junit: ./test/junitresults/WDIO*.xml
   environment:
     name: alp_dev
     url: $ALP_DEV_URL
