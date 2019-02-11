@@ -48,10 +48,8 @@ test_alp_dev:
     - sed -i "s~CONFIG_BASEURL~$ALP_DEV_URL~g" ./test/wdio.conf.js
     - cd ./test
     - npm install
-    - java -jar /home/gitlab-runner/selenium-server-standalone-2.53.1.jar &
     - echo "selenium is running at $selenium_pid"
     - ./node_modules/.bin/wdio wdio.conf.js
-    - pkill -f selenium-server-standalone-2.53.1.jar
   artifacts:
     reports:
       junit: ./test/junitresults/WDIO*.xml
