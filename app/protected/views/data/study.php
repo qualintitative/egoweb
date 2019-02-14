@@ -1,9 +1,10 @@
 <h2><?php echo $study->name; ?></h2>
 <script>
-function exportEgo(){
+function exportEgo(noAlters){
     var total = $("input[type='checkbox'][name*='export']:checked").length;
     var finished = 0;
-
+    if(typeof noAlters == "undefined")
+      noAlters = 0;
     $(".progress-bar").width(0);
     $("input[type='checkbox']:checked").each(function(index){
         if(!$(this).attr("id"))
@@ -13,7 +14,7 @@ function exportEgo(){
         start = d.getTime();
         $.post(
             "/data/exportegoalter",
-            {studyId: $("#studyId").val(), interviewId:  interviewId, expressionId: $("#expressionId").val(), YII_CSRF_TOKEN:$("input[name='YII_CSRF_TOKEN']").val()},
+            {studyId: $("#studyId").val(), interviewId:  interviewId, noAlters: noAlters, expressionId: $("#expressionId").val(), YII_CSRF_TOKEN:$("input[name='YII_CSRF_TOKEN']").val()},
             function(data){
                 if(data == "success"){
                     finished++;
@@ -109,6 +110,7 @@ Network Statistics
   aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
   </div>
 </div>
+<button onclick='exportEgo(1)' class='authorButton'>Export Ego Data</button><br style='clear:both'>
 <button onclick='exportEgo()' class='authorButton'>Export Ego-Alter Data</button><br style='clear:both'>
 <button onclick='exportAlterPair()' class='authorButton'>Export Alter Pair Data</button><br style='clear:both'>
 <button onclick='exportOther()' class='authorButton'>Export Other Specify Data</button><br style='clear:both'>

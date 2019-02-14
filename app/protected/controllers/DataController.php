@@ -366,110 +366,6 @@ class DataController extends Controller
 		));
 	}
 
-	public function actionExportegoalterall_other()
-	{
-		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
-			die("nothing to export");
-
-		if(isset($_POST['expressionId']))
-			$expressionId = $_POST['expressionId'];
-		else
-			$expressionId = '';
-
-		$study = Study::model()->findByPk((int)$_POST['studyId']);
-        $criteria = array(
-            "condition"=>"studyId = " . $study->id,
-        );
-        $optionsRaw = QuestionOption::model()->findAll($criteria);
-
-		// create an array with option ID as key
-		$options = array();
-		foreach ($optionsRaw as $option){
-			$options[$option->id] = $option->value;
-		}
-
-		// fetch questions
-        $criteria=new CDbCriteria;
-        $criteria->condition = ("studyId = $study->id and subjectType = 'EGO_ID'");
-        $criteria->order = "ordering";
-        $ego_id_questions = Question::model()->findAll($criteria);
-
-        $criteria=new CDbCriteria;
-        $criteria->condition = ("studyId = $study->id and subjectType = 'NAME_GENERATOR'");
-        $criteria->order = "ordering";
-        $name_gen_questions = Question::model()->findAll($criteria);
-
-        $criteria=new CDbCriteria;
-        $criteria->condition = ("studyId = $study->id and subjectType != 'EGO_ID' and subjectType != 'NAME_GENERATOR'");
-        $criteria->order = "ordering";
-        $questions = Question::model()->findAll($criteria);
-
-		$headers = array();
-		$headers[] = 'Interview ID';
-		$headers[] = "EgoID";
-		$headers[] = 'Start Time';
-		$headers[] = 'End Time';
-		foreach ($ego_id_questions as $question){
-			$headers[] = $question->title;
-		}
-		foreach ($questions as $question){
-			$headers[] = $question->title;
-		}
-        foreach($name_gen_questions as $question){
-            $headers[] = $question->title;
-        }
-		if($expressionId){
-			$headers[] = "Density";
-			$headers[] = "Max Degree Value";
-			$headers[] = "Max Betweenness Value";
-			$headers[] = "Max Eigenvector Value";
-			$headers[] = "Degree Centralization";
-			$headers[] = "Betweenness Centralization";
-			$headers[] = "Components";
-			$headers[] = "Dyads";
-			$headers[] = "Isolates";
-        }
-        $matchAtAll = MatchedAlters::model()->find( array(
-            'condition'=>"studyId = " . $study->id,
-        ));
-        if($matchAtAll){
-    		$headers[] = "Dyad Match ID";
-            $headers[] = "Match User";
-    		$headers[] = "Alter Number";
-    		$headers[] = "Alter Name";
-            $headers[] = "Matched Alter Name";
-    		$headers[] = "Alter Pair ID";
-        }else{
-            $headers[] = "Alter Number";
-    		$headers[] = "Alter Name";
-        }
-		if($expressionId){
-			$headers[] = "Degree";
-			$headers[] = "Betweenness";
-			$headers[] = "Eigenvector";
-		}
-
-        $interviewIds = array();
-        foreach($_POST['export'] as $key=>$value){
-            $interviewIds[] = $key;
-        }
-
-		// start generating export file
-		header("Content-Type: application/octet-stream");
-		header("Content-Disposition: attachment; filename=".seoString($study->name)."-ego-alter-data".".csv");
-		header("Content-Type: application/force-download");
-		echo implode(',', $headers) . "\n";
-		foreach ($interviewIds as $interviewId){
-    		$filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . "-ego-alter.csv";
-    		  if (file_exists($filePath)) {
-                echo file_get_contents($filePath);
-                unlink($filePath);
-            }
-		}
-		Yii::app()->end();
-
-	}
-
     public function actionExportegoalterall()
 	{
 		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
@@ -603,10 +499,14 @@ class DataController extends Controller
         if (!is_dir($filePath))
             mkdir($filePath, 0777, true);
 
+        $noAlters = false;
+        if (isset($_POST['noAlters']))
+          $noAlters = boolval($_POST['noAlters']);
+
         $interview = Interview::model()->findByPk($_POST['interviewId']);
         if ($interview) {
             $file = fopen($filePath . "/" . $_POST['interviewId'] . "-ego-alter.csv", "w") or die("Unable to open file!");
-            $interview->exportEgoAlterData($file);
+            $interview->exportEgoAlterData($file, $noAlters);
 	    	//fwrite($file, $text);
     		echo "success";
     		Yii::app()->end();

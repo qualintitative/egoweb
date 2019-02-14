@@ -896,7 +896,7 @@ class Interview extends CActiveRecord
         //return $text;
     }
 
-    public function exportEgoAlterData($file)
+    public function exportEgoAlterData($file, $noAlters = false)
     {
         $criteria=new CDbCriteria;
         $criteria->condition = ("studyId = $this->studyId and subjectType = 'EGO_ID'");
@@ -925,7 +925,7 @@ class Interview extends CActiveRecord
 
         $alters = Alters::model()->findAll(array('order'=>'id', 'condition'=>'FIND_IN_SET(:x, interviewId)', 'params'=>array(':x'=>$this->id)));
 
-        if (!$alters)
+        if (!$alters || $noAlters === true)
         {
             $alters = array('0'=>array('id'=>null));
         } else
