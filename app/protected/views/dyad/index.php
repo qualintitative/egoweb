@@ -36,11 +36,7 @@ $criteria->order = 'name';
 echo CHtml::dropdownlist(
 	'studyId',
 	'',
-<<<<<<< HEAD
-	CHtml::listData(Study::model()->findAll($criteria),'id', 'name'),
-=======
 	CHtml::listData($studies,'id', 'name'),
->>>>>>> dev
 	                array(
                         'empty' => 'Select',
                         'onchange'=>"js:getInterviews(\$(this), '#interview-1')",
@@ -56,11 +52,7 @@ $criteria->order = 'name';
 echo CHtml::dropdownlist(
 	'studyId',
 	'',
-<<<<<<< HEAD
-	CHtml::listData(Study::model()->findAll($criteria),'id', 'name'),
-=======
 	CHtml::listData($studies,'id', 'name'),
->>>>>>> dev
 	                array(
                         'empty' => 'Select',
                         'onchange'=>"js:getInterviews(\$(this), '#interview-2')",

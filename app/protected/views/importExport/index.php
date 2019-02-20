@@ -152,21 +152,12 @@ echo CHtml::dropdownlist(
         </div>
       </div>
       <?php $this->endWidget(); ?>
-<<<<<<< HEAD
-      <?php
-$s = Server::model()->findAll();
-      ?>
-      <br><br>
-      <ul class="list-group">
-        <?php foreach($s as $server): ?>
-=======
       <?php
 $s = Server::model()->findAll();
       ?>
       <br><br>
       <ul class="list-group">
         <?php foreach ($s as $server): ?>
->>>>>>> dev
         <li class="list-group-item"><?php echo $server->address; ?>
         <a class="btn btn-xs pull-right btn-danger" href="javascript:void(0);" onclick="deleteServer(<?php echo $server->id; ?>)">Delete</a>
       </li>
@@ -285,10 +276,6 @@ function getData(){
   var interviews = $("#send-interviews .export:checked");
   if (interviews.length == 0){
     var x = document.createElement("INPUT");
-<<<<<<< HEAD
-    //x.setAttribute("type", "text");
-=======
->>>>>>> dev
     interviews = [x];
     total = 1;
     console.log(interviews.length)
@@ -401,42 +388,6 @@ function exportEgo(){
     $("#export").submit();
   });
 }
-
-<<<<<<< HEAD
-//On import study form submit
-/*
-$( "#importForm" ).submit(function( event) {
-    var userfile = document.getElementById('userfile').files[0];
-
-    if(userfile && userfile.size < <?php Yii::app()->params['maxUploadFileSize']; ?> ) { //This size is in bytes.
-
-        var res_field = document.getElementById('userfile').value;
-        var extension = res_field.substr(res_field.lastIndexOf('.') + 1).toLowerCase();
-        var allowedExtensions = ['study'];
-        event.preventDefault();
-        if (res_field.length > 0)
-        {
-            if( allowedExtensions.indexOf(extension) === -1 )
-            {
-                event.preventDefault();
-                alert('Invalid file Format. Only ' + allowedExtensions.join(', ') + ' allowed.');
-                return false;
-            }
-        }
-        else{
-            //Submit form
-            $("#importForm").submit();
-        }
-    } else {
-        //Prevent default and display error
-        event.preventDefault();
-        alert("Upload file cannot exceed <?php echo number_format(Yii::app()->params['maxUploadFileSize'] / 1048576, 1) . ' MB'; ?>");
-        return false;
-    }
-});*/
-
-=======
->>>>>>> dev
 function deleteServer(id){
   if(confirm("Do you want to delete this server?")){
     $.post("/importExport/deleteserver/", {"serverId": id, "YII_CSRF_TOKEN": $("[name*='YII_CSRF_TOKEN']").val()}, function(data){
