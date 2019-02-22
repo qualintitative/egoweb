@@ -108,7 +108,7 @@ return array(
 */
     'securityManager'=>array(
 			'cryptAlgorithm' => 'rijndael-128',
-            'encryptionKey' => 'old_key1old_key1',
+      'encryptionKey' => 'old_key1old_key1',
 		)
 	),
 
