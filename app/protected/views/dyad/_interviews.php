@@ -7,8 +7,9 @@
         <th class="hidden-xs">Completed</th>
         <th class="hidden-xs">Dyad Match ID</th>
         <th class="hidden-xs">Match User</th>
+        <?php if(Yii::app()->user->user->permissions >= 3): ?>
         <th><em class="fa fa-cog"></em></th>
-
+        <?php endif;?>
     </tr>
   </thead>
   <tbody>
@@ -22,10 +23,14 @@
         $mark = "";
         $matchId = "";
         $matchUser = "";
-        if($interview->hasMatches){
+        $hasMatches = $interview->hasMatches;
+        if($hasMatches){
+          if($hasMatches == 1)
             $mark = "class='success'";
+          else
+            $mark = "class='warning'";
     		$criteria = array(
-    			'condition'=>"interviewId1 = $interview->id OR interviewId2 = $interview->id",
+    			'condition'=>"interviewId1 = $interview->id OR interviewId2 = $interview->id ORDER BY id DESC",
     		);
     		$match = MatchedAlters::model()->find($criteria);
             if($interview->id == $match->interviewId1)
@@ -41,12 +46,13 @@
         echo "<td class='hidden-xs'>".$completed."</td>";
         echo "<td class='hidden-xs'>".$matchId."</td>";
         echo "<td class='hidden-xs'>".$matchUser."</td>";
-        echo "<td>";
-        if($interview->completed == -1)
-            echo CHtml::button('Edit',array('submit'=>$this->createUrl('/data/edit/' . $interview->id)));
-
-        echo CHtml::button('Review',array('submit'=>$this->createUrl('/interview/'.$study->id.'/'.$interview->id.'/#/page/0')));
-        echo CHtml::button('Visualize',array('submit'=>$this->createUrl('/data/visualize?expressionId=&interviewId='.$interview->id)))."</td>";
+        if(Yii::app()->user->user->permissions >= 3){
+            echo "<td>";
+            if($interview->completed == -1)
+              echo CHtml::button('Edit',array('submit'=>$this->createUrl('/data/edit/' . $interview->id)));
+            echo CHtml::button('Review',array('submit'=>$this->createUrl('/interview/'.$study->id.'/'.$interview->id.'/#/page/0')));
+            echo CHtml::button('Visualize',array('submit'=>$this->createUrl('/data/visualize?expressionId=&interviewId='.$interview->id)))."</td>";
+        }
         echo "</tr>";
     }
 ?>

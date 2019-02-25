@@ -57,7 +57,7 @@ class DyadController extends Controller
       'order'=>'id DESC',
     );
 
-        $studies = Study::model()->findAll($condition);
+    $studies = Study::model()->findAll($condition);
 
     $this->render('index', array(
       'studies'=>$studies,
@@ -76,7 +76,7 @@ class DyadController extends Controller
           arsort($interviewIds);
           $interview1 = Interview::model()->findByPK($interviewIds[0]);
           $interview2 = Interview::model()->findByPK($interviewIds[1]);
-          if($interview1->studyId != $interview1->studyId){
+          if($interview1->studyId != $interview2->studyId){
             $questions1 = Question::model()->findAllByAttributes(array("studyId"=>$interview1->studyId));
             foreach($questions1 as $question){
               $questionIds[$question->title] = $question->id;
@@ -157,7 +157,7 @@ class DyadController extends Controller
                       $answer->value = implode("; ", $answerArray);
 
       		}
-          if($interview1->id == $answer->interviewId || $interview1->studyId == $interview1->studyId){
+          if($interview1->id == $answer->interviewId || $interview1->studyId == $interview2->studyId){
               $answers[$answer->questionId][$answer->alterId1] = $answer->value;
             }elseif($interview2->id == $answer->interviewId){
               $answers[$questionIds1[$answer->questionId]][$answer->alterId1] = $answer->value;
@@ -262,6 +262,50 @@ class DyadController extends Controller
       			), false, false
       		);
       	}
+
+        public function actionUnmatch()
+          {
+              if(isset($_POST)){
+                  $match = MatchedAlters::model()->findByAttributes(array("alterId1"=>$_POST['alterId1'], "alterId2"=>$_POST['alterId2']));
+                  if($match)
+                      $match->delete();
+                    else
+                      die("not found");
+              }
+          }
+
+          public function actionSavematch()
+          {
+              if(isset($_POST)){
+                  if(isset($_POST['id']) && $_POST['id'] != 0){
+                    $match = MatchedAlters::model()->findByPk($_POST['id']);
+                  }else{
+                     $match = new MatchedAlters;
+                  }
+                  $match->attributes = $_POST;
+                  $match->userId = Yii::app()->user->id;
+                  if($match->matchedName == ""){
+                      $match->matchedName = "marked";
+                  }
+                  $mark = "Unmatch";
+                  if($_POST['alterId1'] == 0)
+                      $mark = "Remove Mark";
+                  if($match->save()){
+                        $data = array(
+                          "studyId"=>$_POST['studyId'],
+                          "alterId1"=>$_POST['alterId1'],
+                          "alterId2"=>$_POST['alterId2'],
+                          "matchId"=>$match->id,
+                          "mark"=>$mark,
+                        );
+                        echo json_encode($data);
+                  }else{
+                        print_r($match->errors);
+                  }
+
+              }
+            }
+
 	// Uncomment the following methods and override them if needed
 	/*
 	public function filters()

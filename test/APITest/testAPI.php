@@ -1,7 +1,18 @@
 <?php
-const URL = "http://egoweb.localhost";
+
+if ($argc < 3 )
+{
+    exit( "Usage: testAPI <egoweb_URL> <survey_link_password> <survey_link_id>\n" );
+}
+
+$FAILED_TESTS = 0;
+
+$EGOWEB_URL = $argv[1];
+$SURVEY_PASSWD = $argv[2];
+$SURVEY_ID = $argv[3];
 function callAPI($json){
-	$url = URL.'/survey/getlink';
+    global $EGOWEB_URL;
+	$url = $EGOWEB_URL.'/survey/getlink';
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_POST, true);
@@ -32,14 +43,14 @@ function callAPI($json){
 }
 
 //positive test
-
 try {
+    global $SURVEY_PASSWD;
 	print ("Positive test:");
 	$json = json_encode(array(
-		"password"=>"<please add your password here>",
+		"password"=>"$SURVEY_PASSWD",
 		"action"=> "passthrough",
 		"user_id"=> "65:1",
-		"survey_id"=> 5,
+		"survey_id"=> $SURVEY_ID,
 		"redirect"=> "http://alp-respondent-portal:8888/index.php",
 		"questions"=> null,
 		"prefill"=> null
@@ -55,6 +66,7 @@ try {
 	print ("Passed\n");
 
 }catch (Exception $e){
+    $FAILED_TESTS++;
 	print "Failed: " . $e->getMessage()."\n";
 }
 
@@ -68,7 +80,8 @@ try {
 	if ($message == 'Missing payload'){
 		print("Passed\n");
 	}else {
-		print "Failed, got message: " . $e->getMessage() . "\n";
+        $FAILED_TESTS++;
+        print "Failed, got message: " . $e->getMessage() . "\n";
 	}
 }
 
@@ -83,7 +96,8 @@ try {
 	if ($message == 'Unable to decode payload'){
 		print("Passed\n");
 	}else {
-		print "Failed, got message: " . $e->getMessage() . "\n";
+        $FAILED_TESTS++;
+        print "Failed, got message: " . $e->getMessage() . "\n";
 	}
 }
 
@@ -93,7 +107,7 @@ try {
 	$json = json_encode(array(
 		"action"=> "passthrough",
 		"user_id"=> "65:1",
-		"survey_id"=> 5,
+		"survey_id"=> $SURVEY_ID,
 		"redirect"=> "http://alp-respondent-portal:8888/index.php",
 		"questions"=> null,
 		"prefill"=> null
@@ -107,7 +121,8 @@ try {
 	if ($message == 'Please provide a valid password to access this feature.'){
 		print("Passed\n");
 	}else {
-		print "Failed, got message: " . $e->getMessage() . "\n";
+        $FAILED_TESTS++;
+        print "Failed, got message: " . $e->getMessage() . "\n";
 	}
 }
 
@@ -118,7 +133,7 @@ try {
 		"password"=>"yourpasswordhere",
 		"action"=> "passthrough",
 		"user_id"=> "65:1",
-		"survey_id"=> 5,
+		"survey_id"=> $SURVEY_ID,
 		"redirect"=> "http://alp-respondent-portal:8888/index.php",
 		"questions"=> null,
 		"prefill"=> null
@@ -132,6 +147,9 @@ try {
 	if ($message == 'Please provide a valid password to access this feature.'){
 		print("Passed\n");
 	}else {
-		print "Failed, got message: " . $e->getMessage() . "\n";
+        $FAILED_TESTS++;
+        print "Failed, got message: " . $e->getMessage() . "\n";
 	}
 }
+
+exit($FAILED_TESTS);

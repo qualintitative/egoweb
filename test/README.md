@@ -22,8 +22,8 @@ npm install
   * Add the location of Chromedriver to your path
 * Configure WebdriverIO
   * In this test/ directory, copy wdio.conf.TEMPLATE.js to wdio.conf.js
-  * In wdio.conf.js, change the configuration options to match your EgoWeb installation. In particular, configuration
-the URL for EgoWeb, as well as the username/passwords for EgoWeb administrator and interviewer accounts.
+  * In wdio.conf.js, change the configuration options starting with "CONFIG_" to match your EgoWeb installation. In particular, configuration
+the EgoWeb URL, EgoWeb administrator and interviewer account username/passwords, and phantomjs path.
 * Import tests
   * Import each of the studies in the suite/studies/ directory into your EgoWeb installation. Ensure that the name of the
  study in EgoWeb is the same as the file, without the ".study" extension.
@@ -52,3 +52,8 @@ DEBUG=true ./node_modules/.bin/wdio wdio.conf.js`
 and a red F for every failed test.
 * The output will also be saved in JUnit format in the junitresults directory. These can be read by many software packages,
 such as Build/CI systems, or use a tool to generate a HTML report.
+
+## Executing API Tests
+```
+php APITest/testAPI.php <EGOWEB_URL> <API_Password> <Survey_ID>
+```

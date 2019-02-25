@@ -18,6 +18,15 @@ class User extends CActiveRecord
 
     public $confirm;
 
+    public function roles(){
+      return array(
+        1=>"matcher",
+  			3=>"interviewer",
+  			5=>"admin",
+  			11=>"super admin"
+  		);
+    }
+
     public static function model($className=__CLASS__)
     {
         return parent::model($className);
@@ -122,12 +131,7 @@ class User extends CActiveRecord
     }
 
 	public function getPermission(){
-		if($this->permissions == 5)
-			return "admin";
-		if($this->permissions == 11)
-			return "super admin";
-		if(!Yii::app()->user->isGuest)
-			return "interviewer";
+		return $this->roles()[$this->permissions];
 	}
 
     /**

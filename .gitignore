@@ -12,6 +12,8 @@
 ehthumbs.db
 Thumbs.db
 
+*.bak*
+
 
 # Yii Files #
 #############

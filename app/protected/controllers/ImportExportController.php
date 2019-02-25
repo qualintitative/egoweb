@@ -683,8 +683,35 @@ class ImportExportController extends Controller
     foreach($result as $server){
       $servers[$server->id] = mToA($server);
     }
+    $condition = "id != 0";
+    if(!Yii::app()->user->isSuperAdmin){
+        if(Yii::app()->user->id){
+            $criteria = array(
+          'condition'=>"interviewerId = " . Yii::app()->user->id,
+            );
+            $interviewers = Interviewer::model()->findAll($criteria);
+            $studies = array();
+            foreach($interviewers as $i){
+                $studies[] = $i->studyId;
+            }
+        }else{
+            $studies = false;
+        }
+        if($studies)
+          $condition = "id IN (" . implode(",", $studies) . ")";
+        else
+          $condition = "id = -1";
+    }
+
+    $criteria = array(
+      'condition'=>$condition,
+      'order'=>'id DESC',
+    );
+
+    $studies = Study::model()->findAll($condition);
 		$this->render('index', array(
       "servers"=>$servers,
+      "studies"=>$studies,
     ));
 	}
 
@@ -700,6 +727,35 @@ class ImportExportController extends Controller
 		);
 	}
 
+  public function actionAjaxexport()
+	{
+    $interview = Interview::model()->findByPk($_POST['interviewId']);
+    if ($interview) {
+        $filePath = getcwd() . "/assets/" .  $interview->studyId . "/";
+        if (!is_dir($filePath))
+            mkdir($filePath, 0777, true);
+            $columns = array();
+            $columns['study'] = Yii::app()->db->schema->getTable("study")->getColumnNames();
+            $columns['question'] = Yii::app()->db->schema->getTable("question")->getColumnNames();
+            $columns['questionOption'] = Yii::app()->db->schema->getTable("questionOption")->getColumnNames();
+            $columns['expression'] = Yii::app()->db->schema->getTable("expression")->getColumnNames();
+            $columns['answer'] = Yii::app()->db->schema->getTable("answer")->getColumnNames();
+            $columns['alters'] = Yii::app()->db->schema->getTable("alters")->getColumnNames();
+            $columns['interview'] = Yii::app()->db->schema->getTable("interview")->getColumnNames();
+            $columns['alterList'] = Yii::app()->db->schema->getTable("alterList")->getColumnNames();
+            $columns['alterPrompt'] = Yii::app()->db->schema->getTable("alterPrompt")->getColumnNames();
+            $columns['alterList'] = Yii::app()->db->schema->getTable("alterList")->getColumnNames();
+            $columns['graphs'] = Yii::app()->db->schema->getTable("graphs")->getColumnNames();
+            $columns['notes'] = Yii::app()->db->schema->getTable("notes")->getColumnNames();
+        $file = fopen($filePath . "/" .  $interview->id . ".xml", "w") or die("Unable to open file!");
+        fclose($file);
+        $interview->exportStudyInterview($filePath . "/" .  $interview->id . ".xml", $columns);
+        echo "success";
+        Yii::app()->end();
+    }
+    echo "fail";
+  }
+
 	public function actionExportstudy(){
 		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
 			die("nothing to export");
@@ -710,8 +766,143 @@ class ImportExportController extends Controller
 		header("Content-Disposition: attachment; filename=".$study->name.".study");
 		header("Content-Type: application/force-download");
 
-		echo $study->export($_POST['export']);
-	}
+      $interviewIds = $_POST['export'];
+
+      $questions = Question::model()->findAllByAttributes(array('studyId'=>$study->id),array('order'=>'subjectType, ordering'));
+      $expressions = Expression::model()->findAllByAttributes(array('studyId'=>$study->id));
+      //$answerLists = AnswerList::model()->findAllByAttributes(array('studyId'=>$this->id));
+      $alterLists = AlterList::model()->findAllByAttributes(array("studyId"=>$study->id));
+      $alterPrompts = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$study->id));
+
+      $study->introduction = sanitizeXml($study->introduction);
+      $study->egoIdPrompt = sanitizeXml($study->egoIdPrompt);
+      $study->alterPrompt = sanitizeXml($study->alterPrompt);
+      $study->conclusion = sanitizeXml($study->conclusion);
+
+      if(count($interviewIds) > 0){
+        $interviews = Interview::model()->findAllByAttributes(array("id"=>$interviewIds));
+        foreach($interviews as $result){
+          $interview[$result->id] = $result;
+          $answer = Answer::model()->findAllByAttributes(array("interviewId"=>$result->id));
+          $answers[$result->id] = $answer;
+          $criteria = array(
+            'condition'=>"FIND_IN_SET(" . $result->id . ", interviewId)",
+          );
+          $alter = Alters::model()->findAll($criteria);
+          $alters[$result->id] = $alter;
+          $graph = Graph::model()->findAllByAttributes(array("interviewId"=>$result->id));
+          $graphs[$result->id] = $graph;
+          $note = Note::model()->findAllByAttributes(array("interviewId"=>$result->id));
+          $notes[$result->id] = $note;
+          $other = array();
+          //$other = OtherSpecify::model()->findAllByAttributes(array("interviewId"=>$result->id));
+          $others[$result->id] = $other;
+        }
+      }
+      $columns = array();
+      $columns['study'] = Yii::app()->db->schema->getTable("study")->getColumnNames();
+      $columns['question'] = Yii::app()->db->schema->getTable("question")->getColumnNames();
+      $columns['questionOption'] = Yii::app()->db->schema->getTable("questionOption")->getColumnNames();
+      $columns['expression'] = Yii::app()->db->schema->getTable("expression")->getColumnNames();
+      $columns['answer'] = Yii::app()->db->schema->getTable("answer")->getColumnNames();
+      $columns['alters'] = Yii::app()->db->schema->getTable("alters")->getColumnNames();
+      $columns['interview'] = Yii::app()->db->schema->getTable("interview")->getColumnNames();
+      $columns['alterList'] = Yii::app()->db->schema->getTable("alterList")->getColumnNames();
+      $columns['alterPrompt'] = Yii::app()->db->schema->getTable("alterPrompt")->getColumnNames();
+      $columns['alterList'] = Yii::app()->db->schema->getTable("alterList")->getColumnNames();
+      $columns['graphs'] = Yii::app()->db->schema->getTable("graphs")->getColumnNames();
+      $columns['notes'] = Yii::app()->db->schema->getTable("notes")->getColumnNames();
+      $exclude = array("studyId", "active");
+      $x=new XMLWriter();
+      $x->openMemory();
+      $x->setIndent(true);
+      $x->startDocument('1.0','UTF-8');
+      $x->startElement('study');
+      foreach($columns['study'] as $attr){
+        $x->writeAttribute($attr, $study->$attr);
+      }
+      $x->writeElement('introduction', $study->introduction);
+      $x->writeElement('egoIdPrompt', $study->egoIdPrompt);
+      $x->writeElement('alterPrompt', $study->alterPrompt);
+      $x->writeElement('conclusion', $study->conclusion);
+      if(count($alterLists) > 0){
+        $x->startElement('alterLists');
+        foreach($alterLists as $alterList){
+          $x->startElement('alterList');
+          foreach($columns['alterList'] as $attr){
+            if(!in_array($attr, $exclude))
+              $x->writeAttribute($attr, $alterList->$attr);
+          }
+          $x->endElement();
+        }
+        $x->endElement();
+      }
+      if(count($alterPrompts) > 0){
+        $x->startElement('alterPrompts');
+        foreach($alterPrompts as $alterPrompt){
+          $x->startElement('alterPrompt');
+          foreach($columns['alterPrompt'] as $attr){
+            if(!in_array($attr, $exclude))
+              $x->writeAttribute($attr, $alterPrompt->$attr);
+          }
+          $x->endElement();
+        }
+        $x->endElement();
+      }
+      if(count($questions) > 0){
+        $x->startElement('questions');
+        foreach($questions as $question){
+          $x->startElement('question');
+          foreach($columns['question'] as $attr){
+            if(!in_array($attr, $exclude))
+              $x->writeAttribute($attr, $question->$attr);
+          }
+          if($question->answerType == "SELECTION" || $question->answerType == "MULTIPLE_SELECTION"){
+            $options = QuestionOption::model()->findAllByAttributes(
+              array("studyId"=>$_POST['studyId'], "questionId"=>$question->id)
+            );
+            foreach($options as $option){
+              $x->startElement('option');
+              foreach($columns['questionOption'] as $attr){
+                if(!in_array($attr, $exclude))
+                  $x->writeAttribute($attr, $option->$attr);
+              }
+              $x->endElement();
+            }
+          }
+          $x->endElement();
+        }
+        $x->endElement();
+      }
+      if(count($expressions) > 0){
+        $x->startElement('expressions');
+        foreach($expressions as $expression){
+          $x->startElement('expression');
+          foreach($columns['expression'] as $attr){
+            if(!in_array($attr, $exclude))
+              $x->writeAttribute($attr, $expression->$attr);
+          }
+          $x->endElement();
+        }
+        $x->endElement();
+      }
+      $x->startElement('interviews');
+      $x->text("");
+      $text = $x->outputMemory();
+      echo $text."\r\n";
+      if(count($interviewIds) > 0){
+
+          foreach ($interviewIds as $interviewId){
+              $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . ".xml";
+                if (file_exists($filePath)) {
+                      echo file_get_contents($filePath);
+                      unlink($filePath);
+                  }
+          }
+        echo "</interviews>\r\n";
+      }
+      echo "</study>\r\n";
+    }
 
   public function actionSend($id)
 	{
@@ -757,6 +948,7 @@ class ImportExportController extends Controller
         $graphs = array();
         $notes = array();
         foreach($interviewIds as $interviewId){
+
           if($interviewId != 0){
             $interviewData = mToA(Interview::model()->findByPK($interviewId));
             $interviewData['EGOID'] = Interview::getEgoId($interviewId);

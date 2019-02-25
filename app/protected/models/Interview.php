@@ -58,8 +58,12 @@ class Interview extends CActiveRecord
 			'condition'=>"interviewId1 = $this->id OR interviewId2 = $this->id",
 		);
         $matches = MatchedAlters::model()->findAll($criteria);
+        foreach($matches as $match){
+          if($match->notes != "")
+            return 2;
+        }
         if(count($matches) > 0)
-            return true;
+            return 1;
         return false;
     }
 
@@ -892,7 +896,7 @@ class Interview extends CActiveRecord
         //return $text;
     }
 
-    public function exportEgoAlterData($file)
+    public function exportEgoAlterData($file, $noAlters = false)
     {
         $criteria=new CDbCriteria;
         $criteria->condition = ("studyId = $this->studyId and subjectType = 'EGO_ID'");
@@ -921,7 +925,7 @@ class Interview extends CActiveRecord
 
         $alters = Alters::model()->findAll(array('order'=>'id', 'condition'=>'FIND_IN_SET(:x, interviewId)', 'params'=>array(':x'=>$this->id)));
 
-        if (!$alters)
+        if (!$alters || $noAlters === true)
         {
             $alters = array('0'=>array('id'=>null));
         } else
@@ -1303,6 +1307,83 @@ class Interview extends CActiveRecord
 		}
     }
 
+    public function exportStudyInterview($filePath, $columns){
+        $exclude = array("studyId", "active");
+        $interview = $this;
+        $answer = Answer::model()->findAllByAttributes(array("interviewId"=>$interview->id));
+        $answers[$interview->id] = $answer;
+        $criteria = array(
+          'condition'=>"FIND_IN_SET(" . $interview->id . ", interviewId)",
+        );
+        $alter = Alters::model()->findAll($criteria);
+        $alters[$interview->id] = $alter;
+        $graph = Graph::model()->findAllByAttributes(array("interviewId"=>$interview->id));
+        $graphs[$interview->id] = $graph;
+        $note = Note::model()->findAllByAttributes(array("interviewId"=>$interview->id));
+        $notes[$interview->id] = $note;
+        $other = array();
+        //$other = OtherSpecify::model()->findAllByAttributes(array("interviewId"=>$result->id));
+        $others[$interview->id] = $other;
+        $x=new XMLWriter();
+        $x->openMemory();
+        $x->setIndent(true);
+          $x->startElement('interview');
+          foreach($columns['interview'] as $attr){
+            if(!in_array($attr, $exclude))
+              $x->writeAttribute($attr, $interview->$attr);
+          }
+          if(isset($answers[$interview->id])){
+            $x->startElement('answers');
+            foreach($answers[$interview->id] as $answer){
+              $x->startElement('answer');
+              foreach($columns['answer'] as $attr){
+                if(!in_array($attr, $exclude))
+                $x->writeAttribute($attr, $answer->$attr);
+              }
+              $x->endElement();
+            }
+            $x->endElement();
+          }
+          if(isset($alters[$interview->id])){
+            $x->startElement('alters');
+            foreach($alters[$interview->id] as $alter){
+              $x->startElement('alter');
+              foreach($columns['alters'] as $attr){
+                if(!in_array($attr, $exclude))
+                  $x->writeAttribute($attr, $alter->$attr);
+              }
+              $x->endElement();
+            }
+            $x->endElement();
+          }
+          if(isset($graphs[$interview->id])){
+            $x->startElement('graphs');
+            foreach($graphs[$interview->id] as $graph){
+              $x->startElement('graph');
+              foreach($columns['graphs'] as $attr){
+                if(!in_array($attr, $exclude))
+                  $x->writeAttribute($attr, $graph->$attr);
+              }
+              $x->endElement();
+            }
+            $x->endElement();
+          }
+          if(isset($notes[$interview->id])){
+            $x->startElement('notes');
+            foreach($notes[$interview->id] as $note){
+              $x->startElement('note');
+              foreach($columns['notes'] as $attr){
+                if(!in_array($attr, $exclude))
+                  $x->writeAttribute($attr, $note->$attr);
+              }
+              $x->endElement();
+            }
+            $x->endElement();
+          }
+          $x->endElement();
+          $output = $x->outputMemory();
+          file_put_contents($filePath, $output);
+    }
     /**
      * Retrieves a list of models based on the current search/filter conditions.
      * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
