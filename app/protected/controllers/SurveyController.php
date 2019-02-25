@@ -71,6 +71,38 @@ class SurveyController extends Controller {
 		//return ApiController::sendResponse( 200, array( 'link'=>$link, 'payload'=>$payload ) );
 	}
 
+	public function actionGetStatus(){
+		$input = file_get_contents('php://input');
+		if(empty( $input ) ){
+			return ApiController::sendResponse( 419, 'Missing payload' );
+		}
+		$decoded = json_decode( trim( $input ), true );
+		if( !isset( $decoded ) ){
+			return ApiController::sendResponse( 422, 'Unable to decode payload' );
+		}
+
+		if(empty( $decoded['password']) || $decoded['password'] != Yii::app()->params['APIPassword'] || Yii::app()->params['APIPassword'] == 'yourpasswordhere'){
+			return ApiController::sendResponse( 401, 'Please provide a valid password to access this feature.' );
+		}
+
+		if (empty($decoded['user_id']) || empty($decoded['survey_id'])){
+			return ApiController::sendResponse( 422, 'Missing user_id and/or survey_id');
+		}
+
+		$interview = Interview::getInterviewFromPrimekey($decoded['survey_id'], $decoded['user_id'],array());
+		if (empty($interview)){
+			return ApiController::sendResponse( 422, 'Invalid survey_id');
+		}
+		echo json_encode(array(
+				'active' => $interview->active,
+	            'completed' => $interview->completed,
+	            'start_date' => $interview->start_date,
+	            'complete_date' => $interview->complete_date,
+				'status' => empty($interview->start_date) ? 'not started' : empty($interview->complete_date) ? 'started' : 'completed'
+	        ), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+	}
+
 	/**
 	 * handles the request payload
 	 * @param string $payload
