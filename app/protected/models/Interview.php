@@ -186,7 +186,7 @@ class Interview extends CActiveRecord
         {
             $question = Question::model()->findByAttributes(array("title"=>$title, "studyId"=>$studyId));
             $answer = Answer::model()->findByAttributes(array("interviewId"=>$interviewId, "questionId"=>$question->id));
-            if(!$answer)
+            if($answer)
                 continue;
             $answer = new Answer;
             $answer->interviewId = $interviewId;
