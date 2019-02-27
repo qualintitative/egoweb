@@ -85,9 +85,9 @@ try {
 	}
 }
 
-//missing payload
+//invalid payload
 try {
-	print ("none-json content test:");
+	print ("non-json content test:");
 	$json = "some none-json content";
 	$response = callAPI($json);
 	print "Failed: Should have not got here\n";

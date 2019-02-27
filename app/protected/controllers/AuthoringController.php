@@ -696,7 +696,7 @@ class AuthoringController extends Controller
 			$model = new Interviewer;
 			$model->attributes = $_POST['Interviewer'];
 			if($model->save())
-				Yii::app()->request->redirect("/authoring/edit/" . $model->studyId);
+				Yii::app()->request->redirect($this->createUrl("/authoring/edit/" . $model->studyId));
 			else
 				print_r($model->getErrors());
 		}
@@ -707,7 +707,7 @@ class AuthoringController extends Controller
 		if($model){
 			$model->delete();
 		}
-		Yii::app()->request->redirect("/authoring/edit/" . $model->studyId);
+		Yii::app()->request->redirect($this->createUrl("/authoring/edit/" . $model->studyId));
 	}
 
 	public function actionDelete($id){
@@ -717,7 +717,7 @@ class AuthoringController extends Controller
 		}else{
 			$study = Study::model()->findByPk($id);
 			$study->delete();
-			Yii::app()->request->redirect("/authoring");
+			Yii::app()->request->redirect($this->createUrl('/authoring'));
 		}
 	}
 
@@ -729,7 +729,7 @@ class AuthoringController extends Controller
 			$study = Study::model()->findByPk($id);
 			$study->active = 0;
 			$study->save();
-			Yii::app()->request->redirect("/archive");
+			Yii::app()->request->redirect($this->createUrl("/archive"));
 		}
 	}
 

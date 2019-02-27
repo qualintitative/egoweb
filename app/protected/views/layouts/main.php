@@ -59,7 +59,7 @@
 							<span class="fui-list"></span>
 						</a>
 						<ul class="dropdown-menu">
-							<li><a href="/interview">Interviewing</a>
+							<li><?=CHtml::link('Interviewing', $this->createUrl("/interview"))?>
 								<ul>
 									<?php foreach($studies as $data): ?>
 									<li>
@@ -69,7 +69,7 @@
 								</ul>
 							</li>
 							<?php if(Yii::app()->user->isAdmin): ?>
-							<li><a href="/authoring">Authoring</a>
+							<li><?=CHtml::link('Authoring', $this->createUrl("/authoring"))?>
 								<ul>
 									<?php foreach($studies as $data): ?>
 									<li>
@@ -78,7 +78,7 @@
 									<?php endforeach; ?>
 								</ul>
 							</li>
-							<li><a href="/data">Data Processing</a>
+							<li><?=CHtml::link('Data Processing', $this->createUrl("/data"))?>
 								<ul>
 									<?php foreach($studies as $data): ?>
 									<li>
@@ -87,14 +87,14 @@
 									<?php endforeach; ?>
 								</ul>
 							</li>
-							<li><a href="/dyad">Alter Matching</a></li>
-							<li><a href="/importExport">Import & Export Studies</a></li>
+							<li><?=CHtml::link('Alter Matching', $this->createUrl("/dyad"))?></li>
+							<li><?=CHtml::link('Import & Export Studies', $this->createUrl("/importExport"))?></li>
 							<?php endif; ?>
 							<?php if(Yii::app()->user->isSuperAdmin): ?>
-							<li><a href="/admin/user">User Admin</a>
+							<li><?=CHtml::link('User Admin', $this->createUrl("/admin/user"))?>
 							<?php endif; ?>
-							<li><a href="/mobile">Mobile</a>
-							<li><a href="/site/logout">Log Out</a>
+							<li><?=CHtml::link('Mobile', $this->createUrl("/mobile"))?>
+							<li><?=CHtml::link('Log Out', $this->createUrl("/site/logout"))?>
 						</ul>
 					</li>
 				</ul>
@@ -107,7 +107,7 @@
 					</li>
 				</ul>
 				<?php endif; ?>
-				<a class="titlelink" href="/admin">EgoWeb 2.0</a><span class="title hidden-xs"><?php echo CHtml::encode($this->pageTitle); ?></span><?php if(!Yii::app()->user->isGuest): ?><span class="title hidden-xs" id="questionTitle"></span><?php endif; ?>
+				<a class="titlelink" href="<?=$this->createUrl("/admin/")?>">EgoWeb 2.0</a><span class="title hidden-xs"><?php echo CHtml::encode($this->pageTitle); ?></span><?php if(!Yii::app()->user->isGuest): ?><span class="title hidden-xs" id="questionTitle"></span><?php endif; ?>
 
 				<ul id="navbox" class="nav navbar-nav navbar-right">
 					<li id="questionMenu" class="dropdown hidden">

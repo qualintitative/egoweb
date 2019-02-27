@@ -117,7 +117,7 @@ $(function(){
 });
 function deleteAlterList(studyId){
     if(confirm("Are you sure you want to delete all the participants in the list?")){
-        $.get("/authoring/ajaxdelete?studyId=" + studyId + "&AlterList[id]=all", function(data){
+        $.get("<?=$this->createUrl('/authoring/ajaxdelete?studyId=')?>" + studyId + "&AlterList[id]=all", function(data){
             $("#alterList").html(data);
         });
     }
@@ -274,7 +274,7 @@ function exportAlterList(){
 			"Delete",
 			array(
 				"class"=>"btn btn-danger btn-sm pull-left",
-				"onclick"=>"js:if(confirm('Are you sure you want to delete this study?')){document.location.href='/authoring/delete/".$model->id. "'}"
+				"onclick"=>"js:if(confirm('Are you sure you want to delete this study?')){document.location.href='".$this->createUrl("/authoring/delete/".$model->id)."'}"
 			)
 		); ?>
 	<?php endif; ?>

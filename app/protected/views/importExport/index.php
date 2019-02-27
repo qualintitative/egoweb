@@ -8,7 +8,7 @@
     </div>
 
     <div class="panel-body">
-        <?php echo CHtml::form('/importExport/importstudy', 'post', array('id'=>'importForm','enctype'=>'multipart/form-data')); ?>
+        <?php echo CHtml::form($this->createUrl("/importExport/importstudy"), 'post', array('id'=>'importForm','enctype'=>'multipart/form-data')); ?>
         <div class="form-group">
             <div class="col-lg-3">
                 <input id="userfile" name="files[]" class="form-control" type="file" multiple/>
@@ -42,7 +42,7 @@
         $form=$this->beginWidget('CActiveForm', array(
             'id'=>'replicate',
             'enableAjaxValidation'=>false,
-            'action'=>'/importExport/replicate'
+            'action'=>$this->createUrl("/importExport/replicate")
         ));
         ?>
         <div class="form-group">
@@ -86,15 +86,15 @@ echo CHtml::dropdownlist(
 $form=$this->beginWidget('CActiveForm', array(
     'id'=>'export',
     'enableAjaxValidation'=>false,
-    'action'=>'/importExport/exportstudy'
+    'action'=>$this->createUrl("/importExport/exportstudy")
 ));
 $criteria=new CDbCriteria;
 $criteria->order = 'name';
 echo CHtml::dropdownlist(
-    'studyId',
-    '',
+	'studyId',
+	'',
     CHtml::listData($studies, 'id', 'name'),
-                    array(
+	                array(
                         'empty' => 'Select',
                         'onchange'=>"js:getInterviews(\$(this), '#export-interviews')",
                         'class'=>'form-control'
@@ -184,8 +184,8 @@ $criteria->order = 'name';
   <label class="col-sm-2">Server Address</label>
   <div class='col-sm-10'>
     <?php echo CHtml::dropdownlist(
-        'serverId',
-        '',
+    	'serverId',
+    	'',
         CHtml::listData(Server::model()->findAll(), 'id', 'address'),
         array(
               'id'=>'serverAddress',
@@ -201,8 +201,8 @@ $criteria->order = 'name';
   <label class="col-sm-2">Study</label>
   <div class='col-sm-10'>
 <?php echo CHtml::dropdownlist(
-    'studyId',
-    '',
+	'studyId',
+	'',
     CHtml::listData($studies, 'id', 'name'),
     array(
           'id'=>'sendStudy',
@@ -237,7 +237,7 @@ $criteria->order = 'name';
 <script>
 servers = <?php echo json_encode($servers); ?>;
 function getInterviews(dropdown, container){
-	$.get('/importExport/ajaxinterviews/' + dropdown.val(), function(data){
+	$.get('<?=$this->createUrl("/importExport/ajaxinterviews/")?>' + dropdown.val(), function(data){
     $("#sendError").hide();
     $("#sendNotice").hide();
     $(container).html(data);
@@ -291,7 +291,7 @@ function getData(){
     console.log($("exporting",thisInt).val());
 
 
-    return $.post('/importExport/send/' + $("#sendStudy option:selected").val(), {"YII_CSRF_TOKEN":$("input[name='YII_CSRF_TOKEN']").val(), "serverId":$("#serverAddress option:selected").val(), "export[]":$(thisInt).val()})
+    return $.post('<?=$this->createUrl("/importExport/send/")?>' + $("#sendStudy option:selected").val(), {"YII_CSRF_TOKEN":$("input[name='YII_CSRF_TOKEN']").val(), "serverId":$("#serverAddress option:selected").val(), "export[]":$(thisInt).val()})
       .done(function(res) {
         $("#sendNotice").html($("#sendNotice").html() + "<br>" + "Prepared interview... ");
         if(!servers[$("#serverAddress option:selected").val()].ADDRESS.match("http"))
@@ -336,8 +336,8 @@ function getData(){
 function exportEgo(){
   var finished = 0;
   $(".progress-bar").width(0);
-  $("#sendError").hide();
-  $("#sendNotice").show();
+            $("#sendError").hide();
+            $("#sendNotice").show();
   $("#sendNotice").html("Preparing data to send..");
   $("#sendSync").prop("disabled", true);
   var total = $("#export-interviews .export:checked").length;
@@ -361,36 +361,36 @@ function exportEgo(){
 
 
     return $.ajax({
-          type: "POST",
+                type: "POST",
           url: '/importExport/ajaxexport/',
           data: {"interviewId":  $(thisInt).val(), "YII_CSRF_TOKEN":$("input[name='YII_CSRF_TOKEN']").val()},
-          success: function(msg){
-            finished++;
-            msg = "Processed " + finished + " / " + total + " interviews: " + msg;
+                success: function(msg){
+                  finished++;
+                  msg = "Processed " + finished + " / " + total + " interviews: " + msg;
             $("#export-panel .progress-bar").width((finished / total * 100) + "%");
             $("#exportError").hide();
             $("#exportNotice").show();
             $("#exportNotice").html($("#exportNotice").html() + "<br>" + msg);
             return batchPromiseRecursive();
-          },
-          error: function(XMLHttpRequest, textStatus, errorThrown) {
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
             $("#exportNotice").hide();
             $("#exportError").show();
             $("#exportError").html("Failed");
-          }
-        });
+                }
+              });
 
-  }
+          }
 
   batchPromiseRecursive().then(function() {
     console.log(studies);
     $("#sendSync").prop("disabled", false);
     $("#export").submit();
-  });
+    });
 }
 function deleteServer(id){
   if(confirm("Do you want to delete this server?")){
-    $.post("/importExport/deleteserver/", {"serverId": id, "YII_CSRF_TOKEN": $("[name*='YII_CSRF_TOKEN']").val()}, function(data){
+    $.post("<?=$this->createUrl('importExport/deleteserver')?>", {"serverId": id, "YII_CSRF_TOKEN": $("[name*='YII_CSRF_TOKEN']").val()}, function(data){
       location.reload();
     });
   }
