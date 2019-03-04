@@ -40,3 +40,5 @@ test/node_modules/
 www/app/node_modules/
 test/junitresults/
 test/errorShots/
+test/chromedriver
+test/selenium-server-standalone-2.53.1.jar
