@@ -46,7 +46,7 @@ For normal mode using PhantomJS, run the following command.
 ```
 For debug mode using Chrome, run the following command.
 ```
-DEBUG=true ./node_modules/.bin/wdio wdio.conf.js`
+DEBUG=true ./node_modules/.bin/wdio wdio.conf.js
 ```
 * The output will be shown on the command line, using the Dot reporter. This will show a green dot for every successful test spec,
 and a red F for every failed test.
