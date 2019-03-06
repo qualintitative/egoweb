@@ -33,9 +33,12 @@ app/protected/runtime/*
 # device specific files #
 #########################
 app/platforms/*
+app/node_modules/
 
 #test files
 test/wdio.conf.js
 test/node_modules/
 test/junitresults/
 test/errorShots/
+test/chromedriver
+test/selenium-server-standalone-2.53.1.jar

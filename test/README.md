@@ -46,14 +46,17 @@ For normal mode using PhantomJS, run the following command.
 ```
 For debug mode using Chrome, run the following command.
 ```
-DEBUG=true ./node_modules/.bin/wdio wdio.conf.js`
+DEBUG=true ./node_modules/.bin/wdio wdio.conf.js
 ```
 * The output will be shown on the command line, using the Dot reporter. This will show a green dot for every successful test spec,
 and a red F for every failed test.
 * The output will also be saved in JUnit format in the junitresults directory. These can be read by many software packages,
 such as Build/CI systems, or use a tool to generate a HTML report.
+<<<<<<< HEAD
 
 ## Executing API Tests
 ```
 php APITest/testAPI.php <EGOWEB_URL> <API_Password> <Survey_ID>
 ```
+=======
+>>>>>>> dev
