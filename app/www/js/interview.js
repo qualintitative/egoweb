@@ -395,16 +395,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     setTimeout(
       function() {
         eval($scope.questions[k].JAVASCRIPT);
-        if ($scope.askingStyleList != false) {
-          $("#floatHeader").css({
-            "position": "fixed",
-            "left": $("#realHeader").offset().left - $(window).scrollLeft() + "px",
-          });
-          fixHeader();
-        } else {
-          unfixHeader();
-        }
-        $(window).scrollTop(0);
         if (typeof $(".answerInput")[0] != "undefined")
           $(".answerInput")[0].focus();
         if (!isGuest && $("#menu_" + $scope.page).length != 0)
@@ -414,7 +404,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   }
 
   setTimeout(function() {
-    if ($scope.askingStyleList != false) {
+    if ($scope.askingStyleList != false && $(window).width() >= 768) {
       $("#floatHeader").css({
         "position": "fixed",
         "left": $("#realHeader").offset().left - $(window).scrollLeft() + "px",
