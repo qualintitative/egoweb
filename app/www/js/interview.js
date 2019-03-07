@@ -404,14 +404,20 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   }
 
   setTimeout(function() {
-    if ($scope.askingStyleList != false && $(window).width() >= 768) {
+    if ($scope.askingStyleList != false && $(window).width() >= 1024) {
+      //$("#realHeader").show();
       $("#floatHeader").css({
         "position": "fixed",
         "left": $("#realHeader").offset().left - $(window).scrollLeft() + "px",
       });
       fixHeader();
-    } else {
+    }else{
+  //    $("#realHeader").css("display","none");
+  $("#floater").hide();
       unfixHeader();
+      $("#realHeader").css("height","1px");
+
+//      $("#realHeader").height(1);
     }
     $(window).scrollTop(0);
     eval(study.JAVASCRIPT);

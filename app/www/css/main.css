@@ -493,7 +493,10 @@ td{
 }
 
 .ng-scope input[type='checkbox'] {
-  margin-top:10px;
+  width:16px;
+	height:16px;
+  zoom:1.2;
+  margin-top:6px;
   vertical-align:top;
 }
 
@@ -895,7 +898,7 @@ label.prompt , .grid-view label {
 }
 
 .multiBox .multi-header {
-    visibility: hidden;
+/*    visibility: hidden;*/
 }
 
 .clear-left {
@@ -935,11 +938,6 @@ label.prompt , .grid-view label {
 
 .btn-top{
     padding-top:15px;
-}
-
-input[type=checkbox]{
-	width:18px;
-	height:18px;
 }
 
 #second {
