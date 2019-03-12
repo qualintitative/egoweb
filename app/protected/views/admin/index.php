@@ -28,7 +28,7 @@ $this->pageTitle =  "Admin";
 
 		<h3><?=CHtml::link('Authoring', $this->createUrl("/authoring"))?></h3>
 		<p>
-			Create a new interview, add or change questions for an existing interview.
+			Create a new study, add or change questions for an existing study.
 		</p>
   </div>
 </div>
@@ -39,7 +39,6 @@ $this->pageTitle =  "Admin";
 		<p>
 			Analyze the data from completed interviews.<br><br>
 		</p>
-		<h3><?=CHtml::link('Alter Matching', $this->createUrl("/dyad"))?></h3>
   </div>
 </div>
 <div class="panel panel-default col-sm-6">

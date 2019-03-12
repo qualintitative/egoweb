@@ -1352,7 +1352,9 @@ function deleteInterview(intId){
     db.transaction(function (txn) {
         txn.executeSql('DELETE FROM interview WHERE ID = ' + intId, [], function(tx, res) {
         });
-        txn.executeSql('DELETE FROM alters WHERE INTERVIEWID = ' + intId, [], function(tx, res) {
+        txn.executeSql('DELETE FROM alters WHERE INTERVIEWID = ?', [intId.toString()], function(tx, res) {
+        }, function(tx, res) {
+          console.log(res);
         });
         txn.executeSql('DELETE FROM answer WHERE INTERVIEWID = ' + intId, [], function(tx, res) {
         });
@@ -1379,4 +1381,13 @@ function displayAlert(message, type){
     $("#status").html(message);
     $("#status").show();
     console.log(message);
+}
+
+function testSQL(sql){
+  sql = sql;
+  db.readTransaction(function (txn) {
+      txn.executeSql(sql,  [], function(tx,res){
+          return res;
+      });
+  });
 }

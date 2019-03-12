@@ -419,7 +419,11 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
 //      $("#realHeader").height(1);
     }
-    $(window).scrollTop(0);
+    //$(window).scrollTop(0);
+    if (typeof $scope.questions[0] != "undefined"){
+      if($scope.questions[0].SUBJECTTYPE != "NAME_GENERATOR")
+        window.scrollTo(0,0);
+    }
     eval(study.JAVASCRIPT);
   }, 150);
 
