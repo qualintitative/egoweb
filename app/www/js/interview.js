@@ -2568,6 +2568,7 @@ function fixHeader() {
     $(window).scroll(function(event) {
       $("#floatHeader").css({
         "position": "fixed",
+        "z-index": "111",
         "top": offsetPixels + "px",
         "left": offsetLeft - $(window).scrollLeft() + "px",
         "padding-top": parseInt($("#content").css("padding-top")) + "px"

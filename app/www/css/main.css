@@ -844,7 +844,7 @@ label.prompt , .grid-view label {
 #infovis {
     position:relative;
     width:100%;
-    height:480px;
+    height:360px;
     margin:auto;
     background-color: #fff;
     overflow:hidden;
