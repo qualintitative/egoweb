@@ -418,7 +418,10 @@ class AdminController extends Controller
                 $users = User::model()->findAll();
                 foreach ($users as $user) {
                     if ($user->email == $_GET['email']) {
-                        echo "Password Reset Link for ". $user->name . "<br>" . Yii::app()->getBaseUrl(true).$this->createUrl('admin/resetpass').'/'.$user->id.':'.
+                      $link = Yii::app()->getBaseUrl(true);
+                        if($_SERVER['SERVER_PORT'] == 443)
+                            $link =str_replace("http:", "https:", $link);
+                        echo "Password Reset Link for ". $user->name . "<br>" .$link . $this->createUrl('admin/resetpass').'/'.$user->id.':'.
                         User::model()->hashPassword($user->password, 'miranda');
                     }
                 }

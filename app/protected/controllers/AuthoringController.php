@@ -1322,7 +1322,10 @@ class AuthoringController extends Controller
     		//	$key = User::hashPassword($alter->id);
             //else
             //    $key = "";
-			echo "<div style='clear:both'><label>Authorized Link for $alter->email</label><br>" . Yii::app()->getBaseUrl(true) . "/interview/".$alter->studyId."#/page/0/".$key."</div>";
+			$link = Yii::app()->getBaseUrl(true) . "/interview/".$alter->studyId."#/page/0/".$key;
+		  if($_SERVER['SERVER_PORT'] == 443)
+				$link =str_replace("http:", "https:", $link);
+			echo "<div style='clear:both'><label>Authorized Link for $alter->email</label><br>$link</div>";
 		}
 	}
 	public function actionAjaxmoveup()
