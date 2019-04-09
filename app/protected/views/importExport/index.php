@@ -237,7 +237,7 @@ $criteria->order = 'name';
 <script>
 servers = <?php echo json_encode($servers); ?>;
 function getInterviews(dropdown, container){
-	$.get('<?=$this->createUrl("/importExport/ajaxinterviews/")?>' + dropdown.val(), function(data){
+	$.get('<?=$this->createUrl("/importExport/ajaxinterviews")?>' + "/" + dropdown.val(), function(data){
     $("#sendError").hide();
     $("#sendNotice").hide();
     $(container).html(data);

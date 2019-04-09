@@ -886,12 +886,12 @@ class ImportExportController extends Controller
         }
         $x->endElement();
       }
-      $x->startElement('interviews');
-      $x->text("");
+      //$x->startElement('interviews');
+      //$x->text("");
       $text = $x->outputMemory();
       echo $text."\r\n";
       if(count($interviewIds) > 0){
-
+        echo "<interviews>\r\n";
           foreach ($interviewIds as $interviewId){
               $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . ".xml";
                 if (file_exists($filePath)) {
