@@ -29,6 +29,12 @@ class visualize extends Plugin
 		'#f00'=>'red',
 		'#c0f'=>'purple',
 	);
+	public $gradientColors = array(
+		'black'=>'black',
+		'blue'=>'blue',
+		'green'=>'green',
+		'red'=>'red',
+	);
 	public $nodeShapes = array(
 		'circle'=>'circle',
 		'star'=>'star',
@@ -64,6 +70,7 @@ class visualize extends Plugin
 	);
 	*/
 	public $gradient = array(
+	"red" => array(
 		0=>"#F5D6D6",
 		1=>"#ECBEBE",
 		2=>"#E2A6A6",
@@ -74,6 +81,44 @@ class visualize extends Plugin
 		7=>"#B32F2F",
 		8=>"#A91717",
 		9=>"#A00000",
+	),
+
+	"blue" => array(
+		0=>"#E3E5FF",
+		1=>"#C9D2FF",
+		2=>"#B0BFFF",
+		3=>"#97ACFF",
+		4=>"#7E99FF",
+		5=>"#6487FF",
+		6=>"#4B74FF",
+		7=>"#3261FF",
+		8=>"#194EFF",
+		9=>"#003CFF",
+	),
+	"green" => array(
+		0=>"#C7FFDD",
+		1=>"#B2F4C7",
+		2=>"#9EEAB2",
+		3=>"#8AE09D",
+		4=>"#76D688",
+		5=>"#62CB72",
+		6=>"#4EC15D",
+		7=>"#3AB748",
+		8=>"#26AD33",
+		9=>"#12A31E",
+	),
+	"black" => array(
+		0=>"#EEEEEE",
+		1=>"#D3D3D3",
+		2=>"#B9B9B9",
+		3=>"#9E9E9E",
+		4=>"#848484",
+		5=>"#696969",
+		6=>"#4F4F4F",
+		7=>"#343434",
+		8=>"#1A1A1A",
+		9=>"#000000",
+	),
 	);
 	public $stats = "";
 	public $answers = array();
@@ -100,19 +145,24 @@ class visualize extends Plugin
 				$range = $max - $min;
 				if($range == 0)
 					$range = 1;
+				$g_color = "red";
+				foreach($this->params['nodeColor']['options'] as $option){
+					if($option['id'] == $this->params['nodeColor']['questionId'])
+						$g_color = $option['color'];
+				}
 				$value = round((($value-$min) / ($range)) * 9);
-				return $this->gradient[$value];
+				return $this->gradient[$g_color][$value];
 			}else if(stristr($this->params['nodeColor']['questionId'], "expression")){
 				list($label, $expressionId) = explode("_", $this->params['nodeColor']['questionId']);
 				$expression = Expression::model()->findByPk($expressionId);
 				if($expression->evalExpression($this->method, $nodeId, null, $this->answers)){
 					foreach($this->params['nodeColor']['options'] as $option){
-						if($option->id == 1)
+						if($option['id'] == 1)
 							return $option['color'];
 					}
 				}else{
 					foreach($this->params['nodeColor']['options'] as $option){
-						if($option->id == 0)
+						if($option['id'] == 0)
 							return $option['color'];
 					}
 				}
@@ -587,8 +637,21 @@ class visualize extends Plugin
 
 		foreach($centralities as $centrality){
 			echo "<div class='nodeColorOptions' id='" .$centrality ."_nodeColor' style='" . ($centrality != $nodeColorId ? "display:none" : "") . "'>";
-			for($i = 0; $i<10; $i++){
-				echo '<span style="color:' . $this->gradient[$i] . '; font-size:20px">■</span>';
+			echo CHtml::dropDownList(
+					$centrality,
+					(isset($nodeColors[$centrality]) ? $nodeColors[$centrality] : ''),
+					$this->gradientColors,
+					array("onchange"=>"$('.gradientColorOptions').hide();$('#". $centrality . "_gradient_' + $('option:selected',this).val()).show();")
+				);
+			foreach($this->gradientColors as $index=>$gc){
+				$selected_gc = "";
+				if(isset($nodeColors[$centrality]) && $nodeColors[$centrality] == $gc)
+					$selected_gc = $nodeColors[$centrality];
+				echo "<div class='gradientColorOptions' id='" . $centrality . "_gradient_$gc' " .  ($selected_gc ? "" : "style='display:none'") . ">";
+				for($i = 0; $i<10; $i++){
+					echo '<span style="color:' . $this->gradient[$gc][$i] . '; font-size:20px">■</span>';
+				}
+				echo "</div>";
 			}
 			echo "</div>";
 		}

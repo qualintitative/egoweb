@@ -2133,16 +2133,54 @@ function initStats(question) {
     20: '10',
   };
   this.gradient = {
-    0: "#F5D6D6",
-    1: "#ECBEBE",
-    2: "#E2A6A6",
-    3: "#D98E8E",
-    4: "#CF7777",
-    5: "#C65F5F",
-    6: "#BC4747",
-    7: "#B32F2F",
-    8: "#A91717",
-    9: "#A00000",
+    "red": {
+      0: "#F5D6D6",
+      1: "#ECBEBE",
+      2: "#E2A6A6",
+      3: "#D98E8E",
+      4: "#CF7777",
+      5: "#C65F5F",
+      6: "#BC4747",
+      7: "#B32F2F",
+      8: "#A91717",
+      9: "#A00000"
+    },
+    "blue": {
+      0: "#E3E5FF",
+      1: "#C9D2FF",
+      2: "#B0BFFF",
+      3: "#97ACFF",
+      4: "#7E99FF",
+      5: "#6487FF",
+      6: "#4B74FF",
+      7: "#3261FF",
+      8: "#194EFF",
+      9: "#003CFF"
+    },
+    "green": {
+      0: "#C7FFDD",
+      1: "#B2F4C7",
+      2: "#9EEAB2",
+      3: "#8AE09D",
+      4: "#76D688",
+      5: "#62CB72",
+      6: "#4EC15D",
+      7: "#3AB748",
+      8: "#26AD33",
+      9: "#12A31E"
+    },
+    "black" : {
+      0: "#EEEEEE",
+      1: "#D3D3D3",
+      2: "#B9B9B9",
+      3: "#9E9E9E",
+      4: "#848484",
+      5: "#696969",
+      6: "#4F4F4F",
+      7: "#343434",
+      8: "#1A1A1A",
+      9: "#000000"
+    }
   };
 
   this.getNodeColor = function(nodeId) {
@@ -2169,7 +2207,12 @@ function initStats(question) {
         if (range == 0)
           range = 1;
         value = Math.round(((value - min) / (range)) * 9);
-        return this.gradient[value];
+        var gc_color = "red";
+        for (p in this.params['nodeColor']['options']) {
+          if (this.params['nodeColor']['options'][p]['id'] == this.params['nodeColor']['questionId'])
+            gc_color = this.params['nodeColor']['options'][p]['color'];
+        }
+        return this.gradient[gc_color][value];
       } else if (typeof this.params['nodeColor']['questionId'] != "undefined" && this.params['nodeColor']['questionId'].search("expression") != -1) {
         var qId = this.params['nodeColor']['questionId'].split("_");
         if (evalExpression(qId[1], nodeId) == true) {
