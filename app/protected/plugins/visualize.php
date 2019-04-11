@@ -147,8 +147,10 @@ class visualize extends Plugin
 					$range = 1;
 				$g_color = "red";
 				foreach($this->params['nodeColor']['options'] as $option){
-					if($option['id'] == $this->params['nodeColor']['questionId'])
+					if($option['id'] == $this->params['nodeColor']['questionId']){
 						$g_color = $option['color'];
+						break;
+					}
 				}
 				$value = round((($value-$min) / ($range)) * 9);
 				return $this->gradient[$g_color][$value];
