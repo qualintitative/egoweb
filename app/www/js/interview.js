@@ -404,7 +404,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   }
 
   setTimeout(function() {
-    if ($scope.askingStyleList != false && $(window).width() >= 1024) {
+    if ($scope.askingStyleList != false && $(window).width() >= 800) {
       //$("#realHeader").show();
       $("#floatHeader").css({
         "position": "fixed",
@@ -2599,7 +2599,7 @@ function columnWidths() {
 }
 
 function fixHeader() {
-
+  console.log("fixing header");
   columnWidths();
   // Set this variable with the height of your sidebar + header
   var offsetLeft = $("#realHeader").offset().left
