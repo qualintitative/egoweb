@@ -405,11 +405,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
   setTimeout(function() {
     if ($scope.askingStyleList != false && $(window).width() >= 800) {
-      //$("#realHeader").show();
+      $("#realHeader").show();
       $("#floatHeader").css({
         "position": "fixed",
         "left": $("#realHeader").offset().left - $(window).scrollLeft() + "px",
       });
+      fixHeader();
       fixHeader();
     }else{
   //    $("#realHeader").css("display","none");
@@ -425,7 +426,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         window.scrollTo(0,0);
     }
     eval(study.JAVASCRIPT);
-  }, 150);
+  }, 100);
 
   $scope.errors = new Object;
 
