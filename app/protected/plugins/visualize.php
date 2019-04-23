@@ -9,7 +9,7 @@ class visualize extends Plugin
 		'#07f'=>'blue',
 		'#0c0'=>'green',
 		'#F80'=>'orange',
-		'#fa0'=>'yellow',
+		'#fd0'=>'yellow',
 		'#f00'=>'red',
 		'#c0f'=>'purple',
 	);
@@ -25,7 +25,7 @@ class visualize extends Plugin
 		'#07f'=>'blue',
 		'#0c0'=>'green',
 		'#F80'=>'orange',
-		'#fa0'=>'yellow',
+		'#fd0'=>'yellow',
 		'#f00'=>'red',
 		'#c0f'=>'purple',
 	);

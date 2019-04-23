@@ -2092,8 +2092,8 @@ function initStats(question) {
     '#ccc': 'gray',
     '#07f': 'blue',
     '#0c0': 'green',
-    '#F80': 'orange',
-    '#fa0': 'yellow',
+    '#f80': 'orange',
+    '#fd0': 'yellow',
     '#f00': 'red',
     '#c0f': 'purple',
   };
@@ -2108,8 +2108,8 @@ function initStats(question) {
     '#ccc': 'gray',
     '#07f': 'blue',
     '#0c0': 'green',
-    '#F80': 'orange',
-    '#fa0': 'yellow',
+    '#f80': 'orange',
+    '#fd0': 'yellow',
     '#f00': 'red',
     '#c0f': 'purple',
   };
