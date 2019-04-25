@@ -11,7 +11,7 @@ Include Response Data<br>
         echo "<div class='multiRow' style='width:200px;text-align:left'>".CHtml::checkbox('export[]', false,array('class'=>"export",'value'=>$interview->id, "id"=>"export-$interview->id,")). " " . Interview::getEgoId($interview->id)."</div>";
         echo "<div class='multiRow' style='width:120px'>".$completed."</div>";
         echo "<div class='multiRow'>".CHtml::button('Review',array('onclick'=>"document.location='".$this->createUrl('/interview/'.$study->id.'/'.$interview->id . "#/page/0'")))."</div>";
-        echo "<div class='multiRow'>".CHtml::button('Visualize',array('submit'=>$this->createUrl('/data/visualize?expressionId=&interviewId='.$interview->id)))."</div>";
+        echo "<div class='multiRow'>".CHtml::button('Visualize',array('submit'=>$this->createUrl(rootUrl + '/data/visualize?expressionId=&interviewId='.$interview->id)))."</div>";
         echo "<br style='clear:both'>";
     }
 ?>

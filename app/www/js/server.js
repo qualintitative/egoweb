@@ -76,7 +76,7 @@ $(document).keydown(function(e) {
 });
 
 function redraw(params){
-	url = "/data/deleteGraph?id=" + $("#Graph_id").val();
+	url = rootUrl + "/data/deleteGraph?id=" + $("#Graph_id").val();
 	$.get(url, function(data){
 		document.location.reload();
 	});
@@ -87,7 +87,7 @@ function save(questions, page, url, scope){
         s.stopForceAtlas2();
         saveNodes();
     }
-    var saveUrl = document.location.protocol + "//" + document.location.host + "/interview/save";
+    var saveUrl = rootUrl + "/interview/save";
     if(typeof questions[0] == "undefined"){
         if(scope.answerForm.$pristine == false || scope.conclusion == true){
             $.post(saveUrl, $('#answerForm').serialize(), function(data){
@@ -102,7 +102,7 @@ function save(questions, page, url, scope){
                     if(typeof hashKey != "undefined"){
                         page = parseInt(interview.COMPLETED);
                     }
-                    var nextUrl = document.location.protocol + "//" + document.location.host + "/interview/" + study.ID + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
+                    var nextUrl = rootUrl + "/interview/" + study.ID + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
                     if(typeof hashKey != "undefined")
                         nextUrl = nextUrl + "/" + hashKey;
                     document.location = nextUrl;
@@ -113,7 +113,7 @@ function save(questions, page, url, scope){
                 }
             });
         }else{
-            var nextUrl = document.location.protocol + "//" + document.location.host + "/interview/" + study.ID + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
+            var nextUrl =  rootUrl + "/interview/" + study.ID + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
             if(typeof hashKey != "undefined")
                 nextUrl = nextUrl + "/" + hashKey;
             document.location = nextUrl;
@@ -124,7 +124,7 @@ function save(questions, page, url, scope){
                 document.location = redirect;
             }
             else {
-                document.location = document.location.protocol + "//" + document.location.host + "/admin";
+                document.location =  rootUrl + "/admin";
             }
         });
     }else{

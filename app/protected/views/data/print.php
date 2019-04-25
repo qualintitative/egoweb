@@ -37,7 +37,7 @@ expressionId = <?= $expressionId ?>;
 interviewId = <?= $interviewId ?>;
 
 function getAdjacencies(newExpressionId){
-	url = "/data/visualize?expressionId=" + newExpressionId + "&interviewId=" + interviewId;
+	url = rootUrl + "/data/visualize?expressionId=" + newExpressionId + "&interviewId=" + interviewId;
 	document.location = url;
 }
 

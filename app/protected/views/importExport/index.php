@@ -362,7 +362,7 @@ function exportEgo(){
 
     return $.ajax({
                 type: "POST",
-          url: '/importExport/ajaxexport/',
+          url: rootUrl + '/importExport/ajaxexport/',
           data: {"interviewId":  $(thisInt).val(), "YII_CSRF_TOKEN":$("input[name='YII_CSRF_TOKEN']").val()},
                 success: function(msg){
                   finished++;

@@ -380,12 +380,6 @@ $alterlist = new AlterList;
 		</div>
 		<div style="float:left; width:400px; clear:left">
             <?php echo CHtml::form('/authoring/importlist', 'post', array('id'=>'importListForm', 'enctype'=>'multipart/form-data')) ?>
-            	<!-- MAX_FILE_SIZE must precede the file input field -->
-            	<!-- Name of input element determines name in $_FILES array -->
-<<<<<<< HEAD
-=======
-            	<input type="hidden" name="MAX_FILE_SIZE" />
->>>>>>> dev
             	<input name="userfile" type="file" />
             	<input type="hidden" name="studyId" value="<?= $model->id; ?>" />
             	<input class="btn btn-primary" type="submit" value="Import Participant List" />
@@ -398,13 +392,7 @@ $alterlist = new AlterList;
 	<script type="text/javascript">
 		//On import study form submit
 		$( "#importListForm" ).submit(function( event) {
-			var userfile = document.getElementById('userfile').files[0];
-<<<<<<< HEAD
-=======
-
-			if(userfile) { //This size is in bytes.
-
->>>>>>> dev
+				var userfile = document.getElementById('userfile').files[0];
 				var res_field = document.getElementById('userfile').value;
 				var extension = res_field.substr(res_field.lastIndexOf('.') + 1).toLowerCase();
 				var allowedExtensions = ['csv'];

@@ -1,5 +1,6 @@
 <script>
-baseUrl = "/www/";
+
+baseUrl = rootUrl + "/www/";
 study = <?php echo $study ?>;
 questions = <?php echo $questions ?>;
 ego_id_questions = <?php echo $ego_id_questions ?>;

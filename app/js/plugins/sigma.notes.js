@@ -1,5 +1,5 @@
 function getNote(node){
-    var url = "/data/getnote?interviewId=" + interviewId + "&expressionId=" + expressionId + "&alterId=" + node.id;
+    var url = rootUrl + "/data/getnote?interviewId=" + interviewId + "&expressionId=" + expressionId + "&alterId=" + node.id;
     $.get(url, function(data){
         $("#left-container").html(data);
 
@@ -8,12 +8,12 @@ function getNote(node){
 
 function saveNote(){
     var noteContent = $("#Note_notes").val();
-    $.post("/data/savenote", $("#note-form").serialize(), function(nodeId){
+    $.post(rootUrl + "/data/savenote", $("#note-form").serialize(), function(nodeId){
         var node = s.graph.nodes(nodeId);
         if(node && !node.id.match(/graphNote/) && !node.label.match("�"))
             node.label = node.label + " �";
         s.refresh();
-        var url = "/data/getnote?interviewId=" + interviewId + "&expressionId=" + expressionId + "&alterId=" + nodeId;
+        var url = rootUrl + "/data/getnote?interviewId=" + interviewId + "&expressionId=" + expressionId + "&alterId=" + nodeId;
         $.get(url, function(data){
             notes[nodeId] = noteContent;
             $("#left-container").html(data);

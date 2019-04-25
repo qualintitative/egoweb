@@ -65,7 +65,7 @@ function reEncrypt(){
 
     return $.ajax({
           type: "POST",
-          url: '/admin/redata/',
+          url: baseUrl + '/admin/redata/',
           data: {"interviewId":  thisInt, "newKey": $("#newKey").val().trim(),  "YII_CSRF_TOKEN":$("input[name='YII_CSRF_TOKEN']").val()}
         })
           .done(function(msg){

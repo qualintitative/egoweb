@@ -69,7 +69,7 @@ questionPanel = '';
 
 function loadData(id, form){
 	$("#data-" + id).html('');
-	url = "/authoring/ajaxload?form=" + form + "&questionId=" + id + "&_=" + "<?php echo uniqid(); ?>";
+	url = rootUrl + "/authoring/ajaxload?form=" + form + "&questionId=" + id + "&_=" + "<?php echo uniqid(); ?>";
 	$.get(url, function(data){
 		$("#data-" + id).html(data);
 		$("#data-" + id).height($("#data-" + id + ":first-child").height())

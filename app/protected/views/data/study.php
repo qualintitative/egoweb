@@ -13,7 +13,7 @@ function exportEgo(noAlters){
         var d = new Date();
         start = d.getTime();
         $.post(
-            "/data/exportegoalter",
+            rootUrl + "/data/exportegoalter",
             {studyId: $("#studyId").val(), interviewId:  interviewId, noAlters: noAlters, expressionId: $("#expressionId").val(), YII_CSRF_TOKEN:$("input[name='YII_CSRF_TOKEN']").val()},
             function(data){
                 if(data == "success"){
@@ -24,7 +24,7 @@ function exportEgo(noAlters){
                     $(".progress-bar").width((finished / total * 100) + "%");
                     if(finished == total){
                         $("#status").html("Done!");
-                    	$('#analysis').attr('action', '/data/exportegoalterall');
+                    	$('#analysis').attr('action', rootUrl + '/data/exportegoalterall');
                         $('#analysis').submit();
                     }
                 }
@@ -44,7 +44,7 @@ function exportAlterPair(){
         var d = new Date();
         start = d.getTime();
         $.post(
-            "/data/exportalterpair",
+            rootUrl + "/data/exportalterpair",
             {studyId: $("#studyId").val(), interviewId:  interviewId, expressionId: $("#expressionId").val(), YII_CSRF_TOKEN:$("input[name='YII_CSRF_TOKEN']").val()},
             function(data){
                 if(data == "success"){
@@ -55,7 +55,7 @@ function exportAlterPair(){
                     $(".progress-bar").width((finished / total * 100) + "%");
                     if(finished == total){
                         $("#status").html("Done!");
-                    	$('#analysis').attr('action', '/data/exportalterpairall');
+                    	$('#analysis').attr('action', rootUrl + '/data/exportalterpairall');
                         $('#analysis').submit();
                     }
                 }
@@ -64,24 +64,24 @@ function exportAlterPair(){
     });
 }
 function exportOther(){
-	$('#analysis').attr('action', '/data/exportother');
+	$('#analysis').attr('action', rootUrl + '/data/exportother');
 	$('#analysis').submit();
 }
 function exportOtherLegacy(){
-	$('#analysis').attr('action', '/data/legacyexportother');
+	$('#analysis').attr('action', rootUrl + '/data/legacyexportother');
 	$('#analysis').submit();
 }
 function exportAlterList(){
-	$('#analysis').attr('action', '/data/exportalterlist');
+	$('#analysis').attr('action', rootUrl + '/data/exportalterlist');
 	$('#analysis').submit();
 }
 function matchAlters(){
-	$('#analysis').attr('action', '/data/matching');
+	$('#analysis').attr('action', rootUrl + '/data/matching');
 	$('#analysis').submit();
 }
 function deleteInterviews(){
 	if(confirm("Are you sure you want to DELETE these interviews?  The data will not be retrievable.")){
-		$('#analysis').attr('action', '/data/deleteinterviews');
+		$('#analysis').attr('action', rootUrl + '/data/deleteinterviews');
 		$('#analysis').submit();
 	}
 }
