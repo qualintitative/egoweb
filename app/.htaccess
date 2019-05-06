@@ -2,7 +2,9 @@ Options +FollowSymLinks
 IndexIgnore */*
 
 RewriteEngine on
-RewriteBase /egoweb/app/
+# change RewriteBase if app root is not the server's DocumentRoot.  for esample:
+# RewriteBase /egoweb/app/
+#RewriteBase /
 
 # if a directory or a file exists, use it directly
 RewriteCond %{REQUEST_FILENAME} !-f

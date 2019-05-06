@@ -2501,7 +2501,7 @@ function initStats(question) {
 }
 
 function fullscreen() {
-  elem = document.getElementById("visualizePlugin");
+  elem = document.getElementById("infovis");
   if (typeof elem.requestFullscreen != "undefined") {
     elem.requestFullscreen();
   } else if (typeof elem.msRequestFullscreen != "undefined") {
