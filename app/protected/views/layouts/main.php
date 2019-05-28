@@ -147,14 +147,9 @@
             				array('label'=>'Study Settings', 'url'=>array('edit','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'edit'),
             				array('label'=>'Ego ID Questions', 'url'=>array('ego_id','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'ego_id'),
                             array('label'=>'Questions', 'url'=>array('questions','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'questions'),
-/*
-                        	array('label'=>'Ego Questions', 'url'=>array('ego','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'ego'),
-            				array('label'=>'Alter Questions', 'url'=>array('alter','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'alter'),
-            				array('label'=>'Alter Pair Questions', 'url'=>array('alterpair','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'alterpair'),
-            				array('label'=>'Network Questions', 'url'=>array('network','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'network'),
-*/
             				array('label'=>'Expressions', 'url'=>array('expression','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'expression'),
-            				array('label'=>'Option Lists', 'url'=>array('optionlist','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'optionlist'),
+							array('label'=>'Option Lists', 'url'=>array('optionlist','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'optionlist'),
+							array('label'=>'Code Book', 'url'=>array('codebook','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'codebook'),
             			);
 
             		}

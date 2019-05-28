@@ -36,6 +36,12 @@ class AuthoringController extends Controller
 		);
 	}
 
+	// Generate codebook from study
+	public function actionCodebook()
+	{
+		
+	}
+
 	public function actionImportlist()
 	{
 		if(!is_uploaded_file($_FILES['userfile']['tmp_name'])) //checks that file is uploaded
