@@ -29,10 +29,10 @@ update_dev:
    ##
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    - ssh boxy.rand.org "mkdir $CI_JOB_ID"
-    - scp -r * boxy.rand.org:$CI_JOB_ID
+    - ssh root@boxy.rand.org "mkdir $CI_JOB_ID"
+    - scp -r * root@boxy.rand.org:$CI_JOB_ID
   script:
-  - ssh boxy.rand.org "cp -r $CI_JOB_ID/app/* /var/www/html/egoweb;
+  - ssh root@boxy.rand.org "cp -r $CI_JOB_ID/app/* /var/www/html/egoweb;
     mkdir -p /var/www/html/egoweb/assets;
     mkdir -p /var/www/html/egoweb/protected/runtime;"
   environment:
