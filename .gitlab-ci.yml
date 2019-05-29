@@ -1,4 +1,11 @@
- before_script:
+update_dev:
+  stage: build
+  allow_failure: false
+  only:
+    refs:
+      - dev
+  before_script:
+   before_script:
    ##
    ## Install ssh-agent if not already installed, it is required by Docker.
    ## (change apt-get to yum if you use an RPM-based image)
@@ -23,14 +30,6 @@
    ##
    - mkdir -p ~/.ssh
    - chmod 700 ~/.ssh
-
-update_dev:
-  stage: build
-  allow_failure: false
-  only:
-    refs:
-      - dev
-  before_script:
     - ssh boxy.rand.org "mkdir $CI_JOB_ID"
     - scp -r * boxy.rand.org:$CI_JOB_ID
   script:
