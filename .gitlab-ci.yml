@@ -27,7 +27,7 @@ update_dev:
    ##
    ## Create the SSH directory and give it the right permissions
    ##
-  - echo "$CI_SERVER_NAME"
+   - echo "$CI_SERVER_NAME"
    - mkdir -p ~/.ssh
    - chmod 700 ~/.ssh
     - ssh boxy.rand.org "mkdir $CI_JOB_ID"
