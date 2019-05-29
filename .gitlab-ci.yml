@@ -1,3 +1,5 @@
+variables:
+  SSH_PRIVATE_KEY: "test"
 update_dev:
   stage: build
   allow_failure: false
@@ -27,11 +29,11 @@ update_dev:
    ##
    ## Create the SSH directory and give it the right permissions
    ##
-   - ls -l
+   - echo $CI_SERVER_NAME
    - mkdir -p ~/.ssh
    - chmod 700 ~/.ssh
-    - ssh boxy.rand.org "mkdir $CI_JOB_ID"
-    - scp -r * boxy.rand.org:$CI_JOB_ID
+   - ssh boxy.rand.org "mkdir $CI_JOB_ID"
+   - scp -r * boxy.rand.org:$CI_JOB_ID
   script:
   - ssh boxy.rand.org "cp -r $CI_JOB_ID/app/* /var/www/html/egoweb;
     mkdir -p /var/www/html/egoweb/assets;
