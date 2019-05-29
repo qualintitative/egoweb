@@ -29,7 +29,7 @@ update_dev:
    ##
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    - ssh-keygen -R boxy.rand.orgx
+    - ssh-keygen -R "boxy.rand.org"
     - ssh root@boxy.rand.org "mkdir $CI_JOB_ID"
     - scp -r * root@boxy.rand.org:$CI_JOB_ID
   script:
