@@ -32,12 +32,11 @@ update_dev:
    ##
 
     - mkdir /tmp/$CI_JOB_ID
-    #- cp -r * /tmp/$CI_JOB_ID
+    - cp -r * /tmp/$CI_JOB_ID
   script:
-  - ls -l
-  - cp -r app/* /var/www/html/egoweb;
+  - cp -r /tmp/$CI_JOB_ID/app/* /var/www/html/egoweb;
     mkdir -p /var/www/html/egoweb/assets;
-    mkdir -p /var/www/html/egoweb/protected/runtime;"
+    mkdir -p /var/www/html/egoweb/protected/runtime;
   environment:
     name: dev
     url: http://egowebdev.rand.org/
