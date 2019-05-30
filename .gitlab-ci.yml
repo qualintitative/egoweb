@@ -34,7 +34,8 @@ update_dev:
     #- mkdir /tmp/$CI_JOB_ID
     #- cp -r * /tmp/$CI_JOB_ID
   script:
-  - sudo cp -r app/* /var/www/html/egoweb;
+  - sudo -s
+    cp -r app/* /var/www/html/egoweb;
     mkdir -p /var/www/html/egoweb/assets;
     mkdir -p /var/www/html/egoweb/protected/runtime;
   environment:
