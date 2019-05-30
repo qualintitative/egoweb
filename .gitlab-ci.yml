@@ -31,8 +31,8 @@ update_dev:
    ## Create the SSH directory and give it the right permissions
    ##
 
-    - mkdir /tmp/$CI_JOB_ID
-    - cp -r * /tmp/$CI_JOB_ID
+    #- mkdir /tmp/$CI_JOB_ID
+    #- cp -r * /tmp/$CI_JOB_ID
   script:
   - cp -r /tmp/$CI_JOB_ID/app/* /var/www/html/egoweb;
     mkdir -p /var/www/html/egoweb/assets;
