@@ -23,7 +23,7 @@ update_dev:
    ## https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
    ##
     - ssh-add <(echo "$SSH_PRIVATE_KEY" | base64 --decode)
-    - ssh root@boxy.rand.org
+    - ssh -i /dev/fd/63 root@boxy.rand.org
    ##
    ## Create the SSH directory and give it the right permissions
    ##
