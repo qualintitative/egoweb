@@ -22,13 +22,14 @@ update_dev:
    ## without extra base64 encoding.
    ## https://gitlab.com/gitlab-examples/ssh-private-key/issues/1#note_48526556
    ##
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
     - ssh-add <(echo "$SSH_PRIVATE_KEY" | base64 --decode)
-    - ssh -i /dev/fd/63 root@boxy.rand.org
+    - ssh root@boxy.rand.org
    ##
    ## Create the SSH directory and give it the right permissions
    ##
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
+
     - ssh root@boxy.rand.org "mkdir $CI_JOB_ID"
     - scp -r * root@boxy.rand.org:$CI_JOB_ID
   script:
