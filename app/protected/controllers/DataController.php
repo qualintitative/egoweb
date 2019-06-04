@@ -514,7 +514,7 @@ class DataController extends Controller
         }
 
         $filePath = getcwd()."/assets/".$_POST['studyId'];
-        if (file_exists($filePath . "/" . $_POST['interviewId'] . "-ego-study.csv")) {
+        if (file_exists($filePath . "/" . $_POST['interviewId'] . "-ego-level-data.csv")) {
             echo "success";
             Yii::app()->end();
         }
@@ -530,7 +530,7 @@ class DataController extends Controller
 
         $interview = Interview::model()->findByPk($_POST['interviewId']);
         if ($interview) {
-            $file = fopen($filePath . "/" . $_POST['interviewId'] . "-ego-study.csv", "w") or die("Unable to open file!");
+            $file = fopen($filePath . "/" . $_POST['interviewId'] . "-ego-level-data.csv", "w") or die("Unable to open file!");
             $interview->exportEgoStudy($file);
             echo "success";
             Yii::app()->end();
@@ -607,6 +607,7 @@ class DataController extends Controller
         foreach ($network_questions as $question) {
             $headers[] = $question->title;
         }
+/*
         if ($expressionId) {
             $headers[] = "Density";
             $headers[] = "Max Degree Value";
@@ -643,18 +644,18 @@ class DataController extends Controller
             $headers[] = "Betweenness";
             $headers[] = "Eigenvector";
         }
-
+*/
         $interviewIds = array();
         foreach ($_POST['export'] as $key=>$value) {
             $interviewIds[] = $key;
         }
         // start generating export file
         header("Content-Type: application/octet-stream");
-        header("Content-Disposition: attachment; filename=".seoString($study->name)."-ego-study-data".".csv");
+        header("Content-Disposition: attachment; filename=".seoString($study->name)."-ego-level-data".".csv");
         header("Content-Type: application/force-download");
         echo implode(',', $headers) . "\n";
         foreach ($interviewIds as $interviewId) {
-            $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . "-ego-study.csv";
+            $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . "-ego-level-data.csv";
             if (file_exists($filePath)) {
                 echo file_get_contents($filePath);
                 unlink($filePath);

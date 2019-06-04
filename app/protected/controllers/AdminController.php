@@ -243,7 +243,7 @@ class AdminController extends Controller
                     }
                 }
 
-                $cmd = Yii::app()->db->createCommand("SELECT * FROM alters WHERE FIND_IN_SET(" . $_POST["interviewId"] . ", interviewId)");
+                $cmd = Yii::app()->db->createCommand("SELECT * FROM alters");
                 $rows = $cmd->queryAll();
 
                 foreach ($rows as $row) {

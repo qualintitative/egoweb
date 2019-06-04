@@ -155,7 +155,7 @@
         </div>
         <div class="form">
         <div class="form-group">
-        <input type="checkbox" id="withAlters1"> Include Ego Data 
+        <input type="checkbox" id="withAlters1"> Include Alter Names 
         </div>
         <div class="form-group">
         Network Statistics
@@ -171,7 +171,7 @@
         ?>
         </div>
     </div>
-        <button onclick='exportEgoStudy()' class='authorButton'>Export Ego Study Data</button>
+        <button onclick='exportEgoStudy()' class='authorButton'>Export Ego Level Data</button>
         <button onclick='exportEgo()' class='authorButton'>Export Ego Alter Data</button>
         <button onclick='exportAlterPair()' class='authorButton'>Export Alter Pair Data</button>
         <button onclick='exportOther()' class='authorButton'>Export Other Specify Data</button>
