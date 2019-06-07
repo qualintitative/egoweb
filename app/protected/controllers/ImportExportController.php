@@ -764,7 +764,7 @@ class ImportExportController extends Controller
 
 		header("Content-type: text/xml; charset=utf-8");
 		header("Content-Disposition: attachment; filename=".$study->name.".study");
-		header("Content-Type: application/force-download");
+		header("Content-Type: application/octet-stream");
 
       $interviewIds = $_POST['export'];
 
@@ -901,7 +901,8 @@ class ImportExportController extends Controller
           }
         echo "</interviews>\r\n";
       }
-      echo "</study>\r\n";
+			echo "</study>\r\n";
+			exit;
     }
 
   public function actionSend($id)
