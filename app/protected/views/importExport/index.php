@@ -291,7 +291,7 @@ function getData(){
     console.log($("exporting",thisInt).val());
 
 
-    return $.post('<?=$this->createUrl("/importExport/send/")?>' + $("#sendStudy option:selected").val(), {"YII_CSRF_TOKEN":$("input[name='YII_CSRF_TOKEN']").val(), "serverId":$("#serverAddress option:selected").val(), "export[]":$(thisInt).val()})
+    return $.post('<?=$this->createUrl("/importExport/send/")?>' + "/" + $("#sendStudy option:selected").val(), {"YII_CSRF_TOKEN":$("input[name='YII_CSRF_TOKEN']").val(), "serverId":$("#serverAddress option:selected").val(), "export[]":$(thisInt).val()})
       .done(function(res) {
         $("#sendNotice").html($("#sendNotice").html() + "<br>" + "Prepared interview... ");
         if(!servers[$("#serverAddress option:selected").val()].ADDRESS.match("http"))

@@ -1,7 +1,7 @@
 <?php
 ini_set('memory_limit','3072M');
 ini_set('max_execution_time', 3000);
-error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE & ~E_DEPRECATED);
+error_reporting(E_ALL & ~E_STRICT & ~E_NOTICE & ~E_DEPRECATED & ~E_WARNING);
 
 // change the following paths if necessary
 $yii=dirname(__FILE__).'/system/framework/yii.php';
