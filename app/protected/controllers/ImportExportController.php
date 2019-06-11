@@ -753,7 +753,7 @@ class ImportExportController extends Controller
         echo "success";
         Yii::app()->end();
     }
-    echo "fail";
+    echo "success";
   }
 
 	public function actionExportstudy(){

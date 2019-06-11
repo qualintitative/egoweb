@@ -57,7 +57,6 @@
           array("class" => "form-control")
         );
         ?>
-<<<<<<< HEAD
       </div>
     </div>
     <div class="form-group">
@@ -69,33 +68,6 @@
       <div class="col-lg-4 ">
         <button class="btn btn-warning">Replicate</button>
       </div>
-=======
-        <div class="form-group">
-            <div class="col-lg-3">
-<?php
-$criteria=new CDbCriteria;
-$criteria->order = 'name';
-echo CHtml::dropdownlist(
-    'studyId',
-    '',
-    CHtml::listData($studies, 'id', 'name'),
-    array("class"=>"form-control")
-);
-?>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-lg-3">
-                <?php echo CHtml::textField('name', '', array('class'=>"form-control", "placeholder"=>"new name")); ?>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-lg-4 ">
-                <button class="btn btn-warning">Replicate</button>
-            </div>
-        </div>
-        <?php $this->endWidget(); ?>
->>>>>>> dev
     </div>
     <?php $this->endWidget(); ?>
   </div>
@@ -109,7 +81,6 @@ echo CHtml::dropdownlist(
     Export Study
   </div>
   <div class="panel-body">
-<<<<<<< HEAD
     <?php
     // export study
     $form = $this->beginWidget('CActiveForm', array(
@@ -128,26 +99,6 @@ echo CHtml::dropdownlist(
         'onchange' => "js:getInterviews(\$(this), '#export-interviews')",
         'class' => 'form-control'
       )
-=======
-<?php
-// export study
-$form=$this->beginWidget('CActiveForm', array(
-    'id'=>'export',
-    'enableAjaxValidation'=>false,
-    'action'=>$this->createUrl("/importExport/exportstudy")
-));
-$criteria=new CDbCriteria;
-$criteria->order = 'name';
-echo CHtml::dropdownlist(
-	'studyId',
-	'',
-    CHtml::listData($studies, 'id', 'name'),
-	                array(
-                        'empty' => 'Select',
-                        'onchange'=>"js:getInterviews(\$(this), '#export-interviews')",
-                        'class'=>'form-control'
-                    )
->>>>>>> dev
 
     );
     ?>
@@ -219,7 +170,6 @@ echo CHtml::dropdownlist(
     Send Study to Server
   </div>
   <div class="panel-body">
-<<<<<<< HEAD
     <?php
     // export study
     $form = $this->beginWidget('CActiveForm', array(
@@ -263,51 +213,6 @@ echo CHtml::dropdownlist(
         ?>
       </div>
       <br>
-=======
-<?php
-// export study
-$form=$this->beginWidget('CActiveForm', array(
-    'id'=>'syncForm',
-    'enableAjaxValidation'=>false,
-));
-$criteria=new CDbCriteria;
-$criteria->order = 'name';
-?>
-<div class="form-group">
-  <label class="col-sm-2">Server Address</label>
-  <div class='col-sm-10'>
-    <?php echo CHtml::dropdownlist(
-    	'serverId',
-    	'',
-        CHtml::listData(Server::model()->findAll(), 'id', 'address'),
-        array(
-              'id'=>'serverAddress',
-              'empty' => 'Select',
-              'class'=>'form-control'
-        )
-    );
-    ?>
-  </div>
-</div>
-<br>
-<div class="form-group">
-  <label class="col-sm-2">Study</label>
-  <div class='col-sm-10'>
-<?php echo CHtml::dropdownlist(
-	'studyId',
-	'',
-    CHtml::listData($studies, 'id', 'name'),
-    array(
-          'id'=>'sendStudy',
-          'empty' => 'Select',
-          'onchange'=>"js:getInterviews(\$(this),'#send-interviews')",
-          'class'=>'form-control'
-    )
-);
-?>
-</div>
-<br>
->>>>>>> dev
 
 
 
@@ -338,7 +243,6 @@ $criteria->order = 'name';
       });
     }
 
-<<<<<<< HEAD
     function authenticate() {
       url = $("#sAddress").val();
       if (!url.match("http"))
@@ -355,30 +259,6 @@ $criteria->order = 'name';
             $("#sendForm").submit();
           } else {
             alert("Authentication failed");
-=======
-    return $.post('<?=$this->createUrl("/importExport/send/")?>' + "/" + $("#sendStudy option:selected").val(), {"YII_CSRF_TOKEN":$("input[name='YII_CSRF_TOKEN']").val(), "serverId":$("#serverAddress option:selected").val(), "export[]":$(thisInt).val()})
-      .done(function(res) {
-        $("#sendNotice").html($("#sendNotice").html() + "<br>" + "Prepared interview... ");
-        if(!servers[$("#serverAddress option:selected").val()].ADDRESS.match("http"))
-          servers[$("#serverAddress option:selected").val()].ADDRESS = 'http://'+ servers[$("#serverAddress option:selected").val()].ADDRESS;
-        $("#sendJson").val(res);
-        $.ajax({
-          type: "POST",
-          url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
-          data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
-          success: function(msg){
-            finished++;
-            msg = "Processed " + finished + " / " + total + " interviews: " + msg;
-            $(".progress-bar").width((finished / total * 100) + "%");
-            $("#sendError").hide();
-            $("#sendNotice").show();
-            $("#sendNotice").html($("#sendNotice").html() + "<br>" + msg);
-          },
-          error: function(XMLHttpRequest, textStatus, errorThrown) {
-            $("#sendNotice").hide();
-            $("#sendError").show();
-            $("#sendError").html("Failed");
->>>>>>> dev
           }
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -405,9 +285,6 @@ $criteria->order = 'name';
         console.log(interviews.length)
       }
       var batchPromiseRecursive = function() {
-        // note splice is destructive, removing the first batch off
-        // the array
-        //var batch = studies.splice(0, batchSize);
         if (interviews.length == 0) {
           return;
         }
@@ -415,7 +292,7 @@ $criteria->order = 'name';
         console.log($("exporting", thisInt).val());
 
 
-        return $.post('<?= $this->createUrl("/importExport/send/") ?>' + $("#sendStudy option:selected").val(), {
+        return $.post('<?= $this->createUrl("/importExport/send/") ?>' + "/" + $("#sendStudy option:selected").val(), {
             "YII_CSRF_TOKEN": $("input[name='YII_CSRF_TOKEN']").val(),
             "serverId": $("#serverAddress option:selected").val(),
             "export[]": $(thisInt).val()
@@ -466,6 +343,7 @@ $criteria->order = 'name';
 
     }
 
+    // Batch export
     function exportEgo() {
       var finished = 0;
       $(".progress-bar").width(0);
@@ -479,47 +357,42 @@ $criteria->order = 'name';
       if (interviews.length == 0) {
         var x = document.createElement("INPUT");
         interviews = [x];
-        total = 1;
+        total = 0;
         console.log(interviews.length)
       }
       var batchPromiseRecursive = function() {
-        // note splice is destructive, removing the first batch off
-        // the array
-        //var batch = studies.splice(0, batchSize);
         if (interviews.length == 0) {
-          return $.Deferred().resolve().promise();
+          return;
         }
         var thisInt = interviews.splice(0, batchSize);
         console.log("exporting", $(thisInt).val());
-
-
         return $.ajax({
           type: "POST",
           url: rootUrl + '/importExport/ajaxexport/',
           data: {
             "interviewId": $(thisInt).val(),
             "YII_CSRF_TOKEN": $("input[name='YII_CSRF_TOKEN']").val()
-          }}).done(
-          function(msg) {
+          }}).done( function(msg) {
             finished++;
-            msg = "Processed " + finished + " / " + total + " interviews: " + msg;
+            if(total != 0){
+              msg = "Processed " + finished + " / " + total + " interviews: " + msg;
+            }else{
+              msg = "Exporting study without interviews: " + msg;
+              total = 1;
+            }
             $("#export-panel .progress-bar").width((finished / total * 100) + "%");
             $("#exportError").hide();
             $("#exportNotice").show();
             $("#exportNotice").html($("#exportNotice").html() + "<br>" + msg);
-           // return batchPromiseRecursive();
           }).fail(
           function(XMLHttpRequest, textStatus, errorThrown) {
             $("#exportNotice").hide();
             $("#exportError").show();
-            $("#exportError").html("Failed");
-          }
-        ).then(function() {
-      return batchPromiseRecursive();
-    });
-
+            $("#exportError").html(errorThrown);
+          }).then(function() {
+            return batchPromiseRecursive();
+          });
       }
-
       batchPromiseRecursive().then(function() {
         console.log(studies);
         $("#sendSync").prop("disabled", false);
