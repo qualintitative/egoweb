@@ -57,6 +57,7 @@
           array("class" => "form-control")
         );
         ?>
+<<<<<<< HEAD
       </div>
     </div>
     <div class="form-group">
@@ -68,6 +69,33 @@
       <div class="col-lg-4 ">
         <button class="btn btn-warning">Replicate</button>
       </div>
+=======
+        <div class="form-group">
+            <div class="col-lg-3">
+<?php
+$criteria=new CDbCriteria;
+$criteria->order = 'name';
+echo CHtml::dropdownlist(
+    'studyId',
+    '',
+    CHtml::listData($studies, 'id', 'name'),
+    array("class"=>"form-control")
+);
+?>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-3">
+                <?php echo CHtml::textField('name', '', array('class'=>"form-control", "placeholder"=>"new name")); ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-lg-4 ">
+                <button class="btn btn-warning">Replicate</button>
+            </div>
+        </div>
+        <?php $this->endWidget(); ?>
+>>>>>>> dev
     </div>
     <?php $this->endWidget(); ?>
   </div>
@@ -81,6 +109,7 @@
     Export Study
   </div>
   <div class="panel-body">
+<<<<<<< HEAD
     <?php
     // export study
     $form = $this->beginWidget('CActiveForm', array(
@@ -99,6 +128,26 @@
         'onchange' => "js:getInterviews(\$(this), '#export-interviews')",
         'class' => 'form-control'
       )
+=======
+<?php
+// export study
+$form=$this->beginWidget('CActiveForm', array(
+    'id'=>'export',
+    'enableAjaxValidation'=>false,
+    'action'=>$this->createUrl("/importExport/exportstudy")
+));
+$criteria=new CDbCriteria;
+$criteria->order = 'name';
+echo CHtml::dropdownlist(
+	'studyId',
+	'',
+    CHtml::listData($studies, 'id', 'name'),
+	                array(
+                        'empty' => 'Select',
+                        'onchange'=>"js:getInterviews(\$(this), '#export-interviews')",
+                        'class'=>'form-control'
+                    )
+>>>>>>> dev
 
     );
     ?>
@@ -170,6 +219,7 @@
     Send Study to Server
   </div>
   <div class="panel-body">
+<<<<<<< HEAD
     <?php
     // export study
     $form = $this->beginWidget('CActiveForm', array(
@@ -213,6 +263,51 @@
         ?>
       </div>
       <br>
+=======
+<?php
+// export study
+$form=$this->beginWidget('CActiveForm', array(
+    'id'=>'syncForm',
+    'enableAjaxValidation'=>false,
+));
+$criteria=new CDbCriteria;
+$criteria->order = 'name';
+?>
+<div class="form-group">
+  <label class="col-sm-2">Server Address</label>
+  <div class='col-sm-10'>
+    <?php echo CHtml::dropdownlist(
+    	'serverId',
+    	'',
+        CHtml::listData(Server::model()->findAll(), 'id', 'address'),
+        array(
+              'id'=>'serverAddress',
+              'empty' => 'Select',
+              'class'=>'form-control'
+        )
+    );
+    ?>
+  </div>
+</div>
+<br>
+<div class="form-group">
+  <label class="col-sm-2">Study</label>
+  <div class='col-sm-10'>
+<?php echo CHtml::dropdownlist(
+	'studyId',
+	'',
+    CHtml::listData($studies, 'id', 'name'),
+    array(
+          'id'=>'sendStudy',
+          'empty' => 'Select',
+          'onchange'=>"js:getInterviews(\$(this),'#send-interviews')",
+          'class'=>'form-control'
+    )
+);
+?>
+</div>
+<br>
+>>>>>>> dev
 
 
 
@@ -243,6 +338,7 @@
       });
     }
 
+<<<<<<< HEAD
     function authenticate() {
       url = $("#sAddress").val();
       if (!url.match("http"))
@@ -259,6 +355,30 @@
             $("#sendForm").submit();
           } else {
             alert("Authentication failed");
+=======
+    return $.post('<?=$this->createUrl("/importExport/send/")?>' + "/" + $("#sendStudy option:selected").val(), {"YII_CSRF_TOKEN":$("input[name='YII_CSRF_TOKEN']").val(), "serverId":$("#serverAddress option:selected").val(), "export[]":$(thisInt).val()})
+      .done(function(res) {
+        $("#sendNotice").html($("#sendNotice").html() + "<br>" + "Prepared interview... ");
+        if(!servers[$("#serverAddress option:selected").val()].ADDRESS.match("http"))
+          servers[$("#serverAddress option:selected").val()].ADDRESS = 'http://'+ servers[$("#serverAddress option:selected").val()].ADDRESS;
+        $("#sendJson").val(res);
+        $.ajax({
+          type: "POST",
+          url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
+          data: {"LoginForm[username]":servers[$("#serverAddress option:selected").val()].USERNAME,"LoginForm[password]":servers[$("#serverAddress option:selected").val()].PASSWORD,"data":$("#sendJson").val()},
+          success: function(msg){
+            finished++;
+            msg = "Processed " + finished + " / " + total + " interviews: " + msg;
+            $(".progress-bar").width((finished / total * 100) + "%");
+            $("#sendError").hide();
+            $("#sendNotice").show();
+            $("#sendNotice").html($("#sendNotice").html() + "<br>" + msg);
+          },
+          error: function(XMLHttpRequest, textStatus, errorThrown) {
+            $("#sendNotice").hide();
+            $("#sendError").show();
+            $("#sendError").html("Failed");
+>>>>>>> dev
           }
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
