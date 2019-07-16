@@ -315,7 +315,7 @@ class AdminController extends Controller
     ->queryScalar();
         $alert = false;
         if ($count > $dbCount) {
-            $alert = $this->runMigrationTool() . "<br>";
+            $alert = $this->runMigrationTool() . "<br>done!";
         }
         if (Yii::app()->user->isSuperAdmin && extension_loaded('openssl') && Yii::app()->securityManager->cryptAlgorithm != "rijndael-128") {
             $alert = "The encryption on your server is outdated and will not run on Php 7.2 or above.  If you have access to the config file (main.php), please consider running the re-encryption tool.  <a href='/admin/reencrypt'>Click here to run the re-encryption tool</a>";
@@ -497,7 +497,7 @@ class AdminController extends Controller
 
     public function actionMigrate()
     {
-        $this->runMigrationTool();
+        echo $this->runMigrationTool()  . "<br>done!";
     }
 
     public function actionUpdate()
@@ -507,6 +507,7 @@ class AdminController extends Controller
 
     private function runMigrationTool()
     {
+        echo "running migration tool...";
         $commandPath = Yii::app()->getBasePath() . DIRECTORY_SEPARATOR . 'commands';
         $runner = new CConsoleCommandRunner();
         $runner->addCommands($commandPath);

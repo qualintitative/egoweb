@@ -9,6 +9,12 @@ body
 	overflow-y: scroll;
 }
 */
+#realHeader {
+	background-color: #fff;
+}
+#promptHeader {
+	text-align:left;
+}
 .name-title {
     background-color: #000;
     color: #fff;
@@ -57,6 +63,9 @@ div.container{
 	background-color: #fff;
 }
 
+.floatThead-table {
+	background-color: #fff;
+}
 .ui-accordion .ui-accordion-content {
 	padding:0 !important;
 }
@@ -751,6 +760,14 @@ ul.authoring li a:hover{
 a.btn {
 	color:#fff;
 	margin-top:10px;
+}
+
+.multi label {
+	padding-left:10px;
+}
+
+#qTable, .floatThead-table {
+	text-align:center;
 }
 
 #visualize-bar label, #expression-bar label, #load-bar label,#inner-details label {

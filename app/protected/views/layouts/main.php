@@ -15,6 +15,7 @@
 		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/bootstrap.min.js'); ?>
 		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/summernote.js'); ?>
 		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/plugins/summernote-ext-fontstyle.js'); ?>
+		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/jquery.floatThead.js'); ?>
 		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/egoweb.js'); ?>
 		<?php Yii::app()->clientScript->registerCoreScript('jquery'); ?>
 		<?php Yii::app()->clientScript->registerCoreScript('jquery.ui'); ?>

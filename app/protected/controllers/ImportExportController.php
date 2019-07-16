@@ -59,7 +59,11 @@ class ImportExportController extends Controller
 			die("Error importing study: " . $message);
 
         foreach($_FILES['files']['tmp_name'] as $tmp_name){
-    		$study = simplexml_load_file($tmp_name);
+			$study = simplexml_load_file($tmp_name);
+			if(!$study){
+				echo "Improperly formated XML study file";
+				die();
+			}
     		$newStudy = new Study;
     		$newQuestionIds = array();
     		$newOptionIds = array();

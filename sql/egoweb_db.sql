@@ -600,7 +600,6 @@ INSERT INTO `tbl_migration` (`version`, `apply_time`) VALUES
 ('m140924_052523_add_dates_to_study', 1453111846),
 ('m141015_042552_legend', 1453111947),
 ('m141020_221311_encrypt_answer', 1453111947),
-('m141021_013819_encrypt_questionOption', 1453111948),
 ('m141023_003707_encrypt_alters', 1453111948),
 ('m141023_004706_encrypt_alterList', 1453111948),
 ('m141023_005646_encrypt_notes', 1453111948),
