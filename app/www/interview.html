@@ -38,6 +38,7 @@
         <a ng-if='audio[subjectType + qId]' class="play-sound" ng-click='playSound(subjectType + qId)' href="javascript:void(0)"><span class="fui-volume"></span></a>
         <a ng-if='audio["PREFACE" + qId]' class="play-sound" ng-click='playSound("PREFACE" + qId)' href="javascript:void(0)"><span class="fui-volume"></span></a>
         <div id="alterFormBox" ng-if="questions[0].ANSWERTYPE == 'NAME_GENERATOR'">
+            <div ng-if='prompt != ""' ng-bind-html="prompt">{{ prompt }}</div>
             <div ng-if='alterPrompt != ""'>{{ alterPrompt }}</div>
             <a ng-if='audio["ALTERPROMPT"]' class="play-sound" ng-click='playSound("ALTERPROMPT")' href="javascript:void(0)"><span class="fui-volume"></span></a>
             <form ng-if="!questions[0].MAXLITERAL || keys(alters).length < questions[0].MAXLITERAL" id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
@@ -285,7 +286,7 @@
         </tbody>
     </table>
 
-    <div ng-if="subjectType != 'ALTER_PAIR' && (keys(questions).length == 1 || subjectType == 'EGO_ID')" ng-class="{multiBox: askingStyleList != false}">
+    <div ng-if="subjectType != 'ALTER_PAIR' && subjectType != 'NAME_GENERATOR' && (keys(questions).length == 1 || subjectType == 'EGO_ID')" ng-class="{multiBox: askingStyleList != false}">
         <div ng-if="prompt != ''" ng-bind-html="prompt">{{ prompt }}</div>
 
         <div id="realHeader" class="panel multi multi-header" ng-if="askingStyleList != false">
