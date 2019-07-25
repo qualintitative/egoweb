@@ -359,7 +359,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     }
 
     if ($scope.questions[k].SUBJECTTYPE != "EGO_ID") {
-      $scope.prompt = $sce.trustAsHtml(interpretTags($scope.questions[k].PROMPT, $scope.questions[k].ALTERID1, $scope.questions[k].ALTERID2));
+      $scope.prompt = $sce.trustAsHtml(interpretTags($scope.questions[k].PROMPT, $scope.questions[k].ALTERID1, $scope.questions[k].ALTERID2) + '<br><div class="orangeText">' + $scope.phrase + "</div>");
     } else {
       $scope.prompt = $sce.trustAsHtml(study.EGOIDPROMPT);
       $scope.questions[k].PROMPT = $scope.questions[k].PROMPT.replace(/(<([^>]+)>)/ig, '');

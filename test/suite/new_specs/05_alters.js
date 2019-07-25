@@ -112,16 +112,16 @@ describe('Alters', function () {
 
         // clear all data in the table, using "Set All" checkboxes at bottom
         for (i=2; i<=6; i++) {
-            let opt1 = IwPage.getTableCellInputElement(17,i);
+            let opt1 = IwPage.getTableCellInputElement(16,i);
             if (!(opt1.isSelected())) {
                 // if Set All is off, turn it on to select the entire column
-                browser.execute(function(){$("#answerForm div.multiBox").children()[16].scrollIntoView()});
+                browser.execute(function(){$("#answerForm #qTable tbody").children()[15].scrollIntoView()});
 
                 opt1.click();
                 IwPage.pause();
             }
             // turn Set All to off, to unselect the entire column
-            opt1 = IwPage.getTableCellInputElement(17,i);
+            opt1 = IwPage.getTableCellInputElement(16,i);
             opt1.click();
             IwPage.pause();
         }
@@ -129,7 +129,7 @@ describe('Alters', function () {
         // check that table has 15 rows, one per alter. Skip header/SetAll rows
         for (i=0; i<15; i++) {
             // check that 1st col has alter name
-            expect(browser.element(IwPage.getTableCellSelector(i+2,1)).getText()).toBe(alters[i]);
+            expect(browser.element(IwPage.getTableCellSelector(i+1,1)).getText()).toBe(alters[i]);
         }
 
         // check the table headers
@@ -147,7 +147,7 @@ describe('Alters', function () {
         browser.element("div.alert=Select 1 response for each row please.").waitForVisible(browser.options.egoweb.waitTime);
         // check that all rows are highlighted
         for (i=0; i<15; i++) {
-            expect(IwPage.getTableRowHighlight(i+2)).toBe(true);
+            expect(IwPage.getTableRowHighlight(i+1)).toBe(true);
         }
 
         // select answers in some rows
@@ -217,8 +217,8 @@ describe('Alters', function () {
         for(i = 0; i < alter_pair_pages; i++){
             //browser.scroll(0,0);
             browser.element("div=Please select 1 response for each row").waitForVisible(browser.options.egoweb.waitTime);
-            for (j=2; j<16-i; j++) {
-                browser.scroll(0, (j-2)*56);
+            for (j=1; j<15-i; j++) {
+                browser.scroll(0, (j-2)*41);
                 IwPage.pause();
                 let x = Math.floor(Math.random()*(4-2+1)+2);
                 if(x == 2)

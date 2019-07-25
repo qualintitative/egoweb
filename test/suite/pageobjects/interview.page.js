@@ -313,19 +313,19 @@ var IwPage = Object.create(Page, {
 
     getTableCellSelector: {
         value: function(row, col) {
-            return "form#answerForm>div.multiBox>div.multi:nth-child("+parseInt(row)+")>div:nth-child("+parseInt(col)+")";
+            return "form#answerForm>#qTable>tbody>tr.multi:nth-child("+parseInt(row)+")>td:nth-child("+parseInt(col)+")";
         }
     },
 
     getTableRowSelector: {
         value: function(row) {
-            return "form#answerForm>div.multiBox>div.multi:nth-child("+parseInt(row)+")";
+            return "form#answerForm>#qTable>tbody>tr.multi:nth-child("+parseInt(row)+")";
         }
     },
 
     getTableHeaderText: {
         value: function(col) {
-            let selector = this.getTableCellSelector(1,col);
+            let selector = "form#answerForm>#qTable>thead>tr.multi:nth-child("+parseInt(1)+")>td:nth-child("+parseInt(col)+")";
             return browser.element(selector).getHTML(false);
         }
     },

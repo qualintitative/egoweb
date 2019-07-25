@@ -100,9 +100,8 @@
 
 <form id="answerForm" name="answerForm" ng-submit="submitForm(answerForm.$valid)" novalidate>
 
-    <table id="qTable" ng-class="{multiBox: askingStyleList != false}" ng-if="keys(questions).length > 1 && subjectType != 'EGO_ID'">
+    <table id="qTable" ng-class="{multiBox: askingStyleList != false}" ng-if="(keys(questions).length > 1 || subjectType == 'ALTER_PAIR') && subjectType != 'EGO_ID'">
         <thead>
-            <span class="orangeText" ng-if="keys(questions).length > 1">{{ phrase }}</span></td>
             <div id="realHeader" ng-if="prompt != ''" style="padding-top:10px">
                 <td id="promptHeader" colspan=100 ng-bind-html="prompt">{{ prompt }}<br>
             </div>
@@ -112,6 +111,7 @@
                 <td ng-repeat="option in options[askingStyleList]" style="width:120px">{{ option.NAME }}</td>
             </tr>
         </thead>
+        <tbody>
         <tr class="panel" ng-if="hideQ == false" ng-class="{multi: question.ASKINGSTYLELIST == true}" ng-repeat="question in questions">
 
             <td ng-if="question.SUBJECTTYPE == 'EGO_ID' && question.ANSWERTYPE != 'RANDOM_NUMBER' && question.ANSWERTYPE != 'STORED_VALUE'">
@@ -282,12 +282,11 @@
                 <input class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-model="option.checked" type="checkbox" ng-change="setAll('{{ option.ID }}', '{{$index}}')">
             </td>
         </tr>
+        </tbody>
     </table>
 
-    <div ng-if="keys(questions).length == 1 || subjectType == 'EGO_ID'" ng-class="{multiBox: askingStyleList != false}">
+    <div ng-if="subjectType != 'ALTER_PAIR' && (keys(questions).length == 1 || subjectType == 'EGO_ID')" ng-class="{multiBox: askingStyleList != false}">
         <div ng-if="prompt != ''" ng-bind-html="prompt">{{ prompt }}</div>
-        <div ng-if="phrase != ''   && keys(questions).length == 1" class="orangeText col-xs-12 no-padding">{{ phrase }}
-        </div>
 
         <div id="realHeader" class="panel multi multi-header" ng-if="askingStyleList != false">
             <div style="width:180px"></div>
