@@ -430,7 +430,7 @@
                 <input question="{{ question.TITLE }}" class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="question.USEALTERLISTFIELD != 'name'&& question.USEALTERLISTFIELD != 'email'" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'>
             </div>
 
-            <div ng-class="{'col-sm-9': questions[0].ANSWERTYPE == 'NAME_GENERATOR'}" ng-repeat="option in options[question.array_id]" ng-class="{'bg-danger':answerForm.$submitted && errors[question.array_id]}" ng-if=" (question.ANSWERTYPE != 'NAME_GENERATOR' && (question.ANSWERTYPE == 'MULTIPLE_SELECTION' || options[question.array_id]))" style="clear:both">
+            <div ng-class="{'col-sm-9': questions[0].ANSWERTYPE == 'NAME_GENERATOR'}" ng-repeat="option in options[question.array_id]" ng-class="{'bg-danger':answerForm.$submitted && errors[question.array_id]}" ng-if=" ((question.ANSWERTYPE == 'MULTIPLE_SELECTION' || options[question.array_id]))" style="clear:both">
                 <input id="multiselect-1515_{{ $index }}" class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-model="option.checked" type="checkbox" ng-change="multiSelect('{{ option.ID }}', '{{$index}}', '{{question.array_id}}')">
                 <label ng-show="question.ASKINGSTYLELIST == false || !question.ASKINGSTYLELIST" for="multiselect-1515_{{ $index }}">{{ option.NAME }}</label>
                 <input ng-if="(otherSpecify[question.array_id][option.ID] === '' || otherSpecify[question.array_id][option.ID] != false)" ng-show="option.checked" ng-model="otherSpecify[question.array_id][option.ID]" ng-change="changeOther(question.array_id)">
@@ -452,17 +452,10 @@
                 <input name="Answer[{{ question.array_id }}][id]" value="{{ answers[question.array_id].ID }}" type="hidden">
             </div>
         </div>
-
-        <div class="multi" ng-if="askingStyleList != false && options['all']">
-            <div class="palette-sun-flower">
-                <label>Set All</label></div>
-            <div class="palette-sun-flower" ng-repeat="option in options['all']" style="width:{{ fixedWidth }}">
-                <input class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-model="option.checked" type="checkbox" ng-change="setAll('{{ option.ID }}', '{{$index}}')">
-            </div>
-        </div>
     </div>
-
-    <input name="Answer[{{ questions[0].array_id }}][value]" ng-if="questions[0].ANSWERTYPE == 'NAME_GENERATOR'" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='0' answer-type='{{ questions[0].ANSWERTYPE }}' type="hidden">
+    <div class="hidden">
+        <input id="Answer_{{ questions[0].array_id }}_VALUE" name="Answer[{{ questions[0].array_id }}][value]" ng-if="questions[0].ANSWERTYPE == 'NAME_GENERATOR'" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ questions[0].ID }}' array-id='{{ questions[0].array_id }}' answer-type='{{ questions[0].ANSWERTYPE }}'>
+    </div>
     <input name="page" value='{{ page }}' type="hidden">
     <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
     <input name="studyId" value='{{ study.ID }}' type="hidden">
