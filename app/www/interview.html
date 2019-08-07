@@ -101,7 +101,7 @@
 
 <form id="answerForm" name="answerForm" ng-submit="submitForm(answerForm.$valid)" novalidate>
 
-    <table id="qTable" ng-class="{multiBox: askingStyleList != false}" ng-if="(keys(questions).length > 1 || subjectType == 'ALTER_PAIR') && subjectType != 'EGO_ID'">
+    <table id="qTable" ng-class="{qTable: askingStyleList != false}" ng-if="(keys(questions).length > 1 || subjectType == 'ALTER_PAIR') && subjectType != 'EGO_ID'">
         <thead>
             <div id="realHeader" ng-if="prompt != ''" style="padding-top:10px">
                 <td id="promptHeader" colspan=100 ng-bind-html="prompt">{{ prompt }}<br>

@@ -766,7 +766,7 @@ a.btn {
 	padding-left:10px;
 }
 
-#qTable, .floatThead-table {
+table.qTable, .floatThead-table {
 	text-align:center;
 }
 

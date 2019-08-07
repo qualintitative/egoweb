@@ -413,14 +413,16 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       });
       fixHeader();
       */
+
      console.log("fixing header")
      $("#qTable").floatThead({top:$("#topbar").height()})
      window.scrollTo(0,0);
+     $(window).resize();
     }else{
   //    $("#realHeader").css("display","none");
-  $("#floater").hide();
-      unfixHeader();
-      $("#realHeader").css("height","1px");
+    //$("#floater").hide();
+      //unfixHeader();
+      //$("#realHeader").css("height","1px");
 
 //      $("#realHeader").height(1);
     }
@@ -2659,7 +2661,7 @@ $(window).on('resize', function(e) {
     });
     fixHeader();
 */
-    $("#qTable").floatThead({top:$("#topbar").height()})
+  // $("#qTable").floatThead({top:$("#topbar").height()})
   }, 250);
 
 });
