@@ -910,7 +910,7 @@ app.directive('checkAnswer', [function() {
         var question = questions[attr.questionId];
         if (attr.answerType == "NAME_GENERATOR") {
           if ((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.alters).length < scope.questions[0].MINLITERAL) {
-            scope.errors[array_id] = 'bPlease list at least ' + scope.questions[0].MINLITERAL + ' people';
+            scope.errors[array_id] = 'Please list at least ' + scope.questions[0].MINLITERAL + ' people';
             valid = false;
           } else {
             delete scope.errors[0];
