@@ -459,10 +459,13 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   }
 
   $scope.submitForm = function(isValid) {
-    console.log(isValid)
     // check to make sure the form is completely valid
+    console.log(isValid)
     if (isValid) {
       save($scope.questions, $routeParams.page, $location.absUrl().replace($location.url(), ''), $scope);
+    }else{
+      window.scrollTo(0,0);
+      $(window).resize();
     }
   };
 
