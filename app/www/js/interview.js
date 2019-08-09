@@ -415,7 +415,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       */
 
      console.log("fixing header")
-     $("#qTable").floatThead({top:$("#topbar").height()})
+     $("table.qTable").floatThead({top:$("#topbar").height()})
      window.scrollTo(0,0);
      $(window).resize();
     }else{
@@ -465,7 +465,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       save($scope.questions, $routeParams.page, $location.absUrl().replace($location.url(), ''), $scope);
     }else{
       window.scrollTo(0,0);
-      $(window).resize();
+      $("table.qTable").floatThead('reflow');
     }
   };
 
@@ -913,6 +913,7 @@ app.directive('checkAnswer', [function() {
         var valid = true;
         var array_id = attr.arrayId;
         var question = questions[attr.questionId];
+        console.log("check formatters")
         if (attr.answerType == "NAME_GENERATOR") {
           if ((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.alters).length < scope.questions[0].MINLITERAL) {
             scope.errors[array_id] = 'Please list at least ' + scope.questions[0].MINLITERAL + ' people';
@@ -1112,9 +1113,7 @@ app.directive('checkAnswer', [function() {
             }
           }
         }
-
-
-
+        $("table.qTable").floatThead('reflow');
         ngModel.$setValidity('checkAnswer', valid);
         return value;
       });
