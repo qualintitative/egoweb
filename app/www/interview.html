@@ -108,7 +108,7 @@
                 <td id="promptHeader" colspan=100 ng-bind-html="prompt">{{ prompt }}<br>
             </div>
             <tr class="panel multi multi-header" ng-if="askingStyleList != false">
-                <td style="width:180px"></td>
+                <td style="min-width:180px"></td>
                 <td ng-if="(answerType == 'TEXTUAL' || answerType == 'NUMERICAL') && askingStyleList != false" style="width:{{ fixedWidth }}"></td>
                 <td ng-repeat="option in options[askingStyleList]">{{ option.NAME }}</td>
             </tr>
