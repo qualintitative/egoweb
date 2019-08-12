@@ -904,7 +904,7 @@ app.directive('checkAnswer', [function() {
             }
           }
         }
-
+        $("table.qTable").floatThead('reflow');
         ngModel.$setValidity('checkAnswer', valid);
         return valid ? value : undefined;
       });
