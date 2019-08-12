@@ -110,7 +110,7 @@
             <tr class="panel multi multi-header" ng-if="askingStyleList != false">
                 <td style="width:180px"></td>
                 <td ng-if="(answerType == 'TEXTUAL' || answerType == 'NUMERICAL') && askingStyleList != false" style="width:{{ fixedWidth }}"></td>
-                <td ng-repeat="option in options[askingStyleList]" style="width:120px">{{ option.NAME }}</td>
+                <td ng-repeat="option in options[askingStyleList]">{{ option.NAME }}</td>
             </tr>
         </thead>
         <tbody>
@@ -295,7 +295,7 @@
         <div id="realHeader" class="panel multi multi-header" ng-if="askingStyleList != false">
             <div style="width:180px"></div>
             <div ng-if="(answerType == 'TEXTUAL' || answerType == 'NUMERICAL') && askingStyleList != false" style="width:{{ fixedWidth }}"></div>
-            <div ng-repeat="option in options[askingStyleList]" style="width:120px">{{ option.NAME }}</div>
+            <div ng-repeat="option in options[askingStyleList]">{{ option.NAME }}</div>
         </div>
         <div class="panel" ng-if="hideQ == false" ng-class="{multi: question.ASKINGSTYLELIST == true}" ng-repeat="question in questions">
             <h4 ng-if="question.SUBJECTTYPE == 'EGO_ID' && question.ANSWERTYPE != 'RANDOM_NUMBER' && question.ANSWERTYPE != 'STORED_VALUE'">{{ question.PROMPT }}</h4>
