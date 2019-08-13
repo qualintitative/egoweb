@@ -105,7 +105,7 @@
     <table id="qTable" ng-class="{qTable: askingStyleList != false}" ng-if="askingStyleList != false">
         <thead>
             <div id="realHeader" ng-if="prompt != ''" style="padding-top:10px">
-                <td id="promptHeader" colspan=100 ng-bind-html="prompt">{{ prompt }}<br>
+                <td id="promptHeader" colspan={{colspan}} ng-bind-html="prompt">{{ prompt }}<br>
             </div>
             <tr class="panel multi multi-header" ng-if="askingStyleList != false">
                 <td style="min-width:180px"></td>
@@ -281,7 +281,9 @@
         </tr>
         <tr class="multi" ng-if="askingStyleList != false && options['all']">
             <td class="palette-sun-flower">
-                <label>Set All</label></td>
+                <label>Set All</label>
+            </td>
+            <td class="palette-sun-flower" ng-if="(answerType == 'TEXTUAL' || answerType == 'NUMERICAL') && askingStyleList != false" style="width:{{ fixedWidth }}"></td>
             <td class="palette-sun-flower" ng-repeat="option in options['all']" style="width:{{ fixedWidth }}">
                 <input class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-model="option.checked" type="checkbox" ng-change="setAll('{{ option.ID }}', '{{$index}}')">
             </td>
