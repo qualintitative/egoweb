@@ -766,8 +766,9 @@ a.btn {
 	padding-left:10px;
 }
 
-#qTable, .floatThead-table {
+table.qTable, .floatThead-table {
 	text-align:center;
+	width:100%;
 }
 
 #visualize-bar label, #expression-bar label, #load-bar label,#inner-details label {

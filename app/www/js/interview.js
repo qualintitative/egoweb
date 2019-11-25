@@ -65,6 +65,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   $scope.participants = [];
   $scope.listedAlters = {};
   $scope.starExpressionId = false;
+  $scope.colspan = false;
 
   if (typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR") {
     alterPromptPage = true;
@@ -187,7 +188,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     if ($scope.questions[k].ASKINGSTYLELIST == true)
       $scope.askingStyleList = $scope.questions[k].array_id;
     if ($scope.askingStyleList != false)
-      $scope.fixedWidth = "120px";
+      $scope.fixedWidth = "auto";
     else
       $scope.fixedWidth = "auto";
 
@@ -329,14 +330,13 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         button.checked = true;
       $scope.options[array_id][Object.keys($scope.options[array_id]).length] = button;
     }
-
-    columns = Object.keys($scope.options[array_id]).length;
-    if (columns == 0)
-      columns = 1;
-    if ($scope.askingStyleList == false)
-      columns = 1;
-    if ($scope.askingStyleList != false && ($scope.questions[k].ANSWERTYPE == "NUMERICAL" || $scope.questions[k].ANSWERTYPE == "TEXTUal"))
-      columns = columns + 1;
+    if($scope.colspan == false){
+      $scope.colspan = 1
+      $scope.colspan = $scope.colspan + Object.keys($scope.options[array_id]).length;
+      if ($scope.askingStyleList != false && ($scope.questions[k].ANSWERTYPE == "NUMERICAL" || $scope.questions[k].ANSWERTYPE == "TEXTUAL")){
+        $scope.colspan = $scope.colspan + 1;
+      }
+    }
     if (typeof $scope.answers[array_id].OTHERSPECIFYTEXT != "undefined" && $scope.answers[array_id].OTHERSPECIFYTEXT != null && $scope.answers[array_id].OTHERSPECIFYTEXT != "") {
       $scope.otherSpecify[array_id] = {};
       var specify = $scope.answers[array_id].OTHERSPECIFYTEXT.split(";;");
@@ -413,21 +413,21 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       });
       fixHeader();
       */
+
      console.log("fixing header")
-      $("#qTable").floatThead({top:$("#topbar").height()})
+     $("table.qTable").floatThead({top:$("#topbar").height()})
+     window.scrollTo(0,0);
+     $(window).resize();
     }else{
   //    $("#realHeader").css("display","none");
-  $("#floater").hide();
-      unfixHeader();
-      $("#realHeader").css("height","1px");
+    //$("#floater").hide();
+      //unfixHeader();
+      //$("#realHeader").css("height","1px");
 
 //      $("#realHeader").height(1);
     }
     //$(window).scrollTop(0);
-    if (typeof $scope.questions[0] != "undefined"){
-      if($scope.questions[0].SUBJECTTYPE != "NAME_GENERATOR")
-        window.scrollTo(0,0);
-    }
+    window.scrollTo(0,0);
     eval(study.JAVASCRIPT);
   }, 100);
 
@@ -460,8 +460,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
   $scope.submitForm = function(isValid) {
     // check to make sure the form is completely valid
+    console.log(isValid)
     if (isValid) {
       save($scope.questions, $routeParams.page, $location.absUrl().replace($location.url(), ''), $scope);
+    }else{
+      window.scrollTo(0,0);
+      $("table.qTable").floatThead('reflow');
     }
   };
 
@@ -572,9 +576,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         }
         if (typeof $scope.errors[array_id] != "undefined")
           delete $scope.errors[array_id];
+        if (typeof $scope.errors[0] != "undefined")
+          delete $scope.errors[0];
         $('#Answer_' + array_id + '_VALUE').val("SKIPREASON").change();
         $('#Answer_' + array_id + '_VALUE').val("").change();
-
       } else {
         $scope.answers[array_id].SKIPREASON = "NONE";
         $('#Answer_' + array_id + '_VALUE').val("SKIPREASON").change();
@@ -899,7 +904,7 @@ app.directive('checkAnswer', [function() {
             }
           }
         }
-
+        $("table.qTable").floatThead('reflow');
         ngModel.$setValidity('checkAnswer', valid);
         return valid ? value : undefined;
       });
@@ -908,7 +913,7 @@ app.directive('checkAnswer', [function() {
         var valid = true;
         var array_id = attr.arrayId;
         var question = questions[attr.questionId];
-
+        console.log("check formatters")
         if (attr.answerType == "NAME_GENERATOR") {
           if ((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.alters).length < scope.questions[0].MINLITERAL) {
             scope.errors[array_id] = 'Please list at least ' + scope.questions[0].MINLITERAL + ' people';
@@ -1108,9 +1113,7 @@ app.directive('checkAnswer', [function() {
             }
           }
         }
-
-
-
+        $("table.qTable").floatThead('reflow');
         ngModel.$setValidity('checkAnswer', valid);
         return value;
       });
@@ -2660,8 +2663,7 @@ $(window).on('resize', function(e) {
     });
     fixHeader();
 */
-    $("#qTable").floatThead({top:$("#topbar").height() })
-
+  // $("#qTable").floatThead({top:$("#topbar").height()})
   }, 250);
 
 });
