@@ -234,6 +234,8 @@ class Interview extends CActiveRecord
     public static function getEgoId($id)
     {
         $interview = Interview::model()->findByPk($id);
+        if(!$interview)
+            return "IDERROR";
         $criteria = array(
             "condition" => "subjectType = 'EGO_ID' AND studyId = " . $interview->studyId . " AND answerType NOT IN ('STORED_VALUE', 'RANDOM_NUMBER')",
             "order" => "ordering",

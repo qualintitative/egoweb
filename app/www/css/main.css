@@ -968,3 +968,7 @@ label.prompt , .grid-view label {
 #content {
     margin-top:50px;
 }
+
+.table-cell {
+	display: table-cell;
+}

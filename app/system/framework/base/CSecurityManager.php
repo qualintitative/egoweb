@@ -223,11 +223,18 @@ class CSecurityManager extends CApplicationComponent {
 	 * @throws CException if PHP Mcrypt extension is not loaded or key is invalid
 	 */
 	public function encrypt($data, $key = null) {
-    if (! extension_loaded ( 'mcrypt' ) || $this->cryptAlgorithm == 'rijndael-128') {
+    	if (! extension_loaded ( 'mcrypt' ) && $this->cryptAlgorithm == 'rijndael-128') {
 			return $this->ops_encrypt ( $data, $key );
 		}
-    if($key===null)
+    	if($key===null)
 			$key=$this->getEncryptionKey();
+		if(! extension_loaded ( 'mcrypt' ) || $this->cryptAlgorithm == "blowfish"){
+			$method = "BF-CBC";
+			$ivSize = openssl_cipher_iv_length (  $method );
+			$iv = random_bytes($ivSize);
+			$encrypted = $iv.openssl_encrypt($data, $method, $key, $options=OPENSSL_RAW_DATA, $iv);
+			return $encrypted;
+		}
 		$this->validateEncryptionKey($key);
 		$module=$this->openCryptModule();
 		srand();
@@ -312,11 +319,19 @@ class CSecurityManager extends CApplicationComponent {
 	 * @throws CException if PHP Mcrypt extension is not loaded or key is invalid
 	 */
 	public function decrypt($data, $key = null) {
-		if (! extension_loaded ( 'mcrypt' ) || $this->cryptAlgorithm == 'rijndael-128') {
+		if (! extension_loaded ( 'mcrypt' ) && $this->cryptAlgorithm == 'rijndael-128') {
 			return $this->ops_decrypt ( $data, $key );
 		}
-    if($key===null)
+		if($key===null)
 			$key=$this->getEncryptionKey();
+		if(! extension_loaded ( 'mcrypt' ) || $this->cryptAlgorithm == "blowfish"){
+			$method = "BF-CBC";
+			$ivSize = openssl_cipher_iv_length (  $method );
+			$iv=$this->substr($data,0,$ivSize);
+			$decrypted = openssl_decrypt( $this->substr($data,$ivSize,$this->strlen($data)),$method, $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING | OPENSSL_DONT_ZERO_PAD_KEY, $iv);
+			//echo "openssl:".$ivSize."<br>".$iv."<br>".$data."<br>". $decrypted;
+			return rtrim($decrypted,"\0");
+		}
 		$this->validateEncryptionKey($key);
 		$module=$this->openCryptModule();
 		$ivSize=mcrypt_enc_get_iv_size($module);
@@ -367,11 +382,11 @@ class CSecurityManager extends CApplicationComponent {
 	protected function ops_validateEncryptionKey($key) {
 		if (is_string ( $key )) {
 			if ($this->cryptAlgorithm != 'rijndael-128') {
-				throw new CException ( Yii::t ( 'yii', 'the CSecurityManager is modified by other guy to support php 7.2. currently  this midified version only support the rijndael-128,if you need other encryption algorithm you need to change the code in here!by the way ,in the yii framework 2 the encryption algorithm only allows using AES-128-CBC ,AES-192-CBC,AES-256-CBC' ) );
+			//	throw new CException ( Yii::t ( 'yii', 'the CSecurityManager is modified by other guy to support php 7.2. currently  this midified version only support the rijndael-128,if you need other encryption algorithm you need to change the code in here!by the way ,in the yii framework 2 the encryption algorithm only allows using AES-128-CBC ,AES-192-CBC,AES-256-CBC' ) );
 			}
 			list ( $ivSize, $keySize ) = $this->ops_allowedCiphers [$this->ops_cipher];
 			if ($this->strlen ( $key ) != $keySize) {
-				throw new CException ( Yii::t ( 'yii', "the key length of the CSecurityManager must be {$keySize}. " ) );
+				//throw new CException ( Yii::t ( 'yii', $this->ops_cipher ."the key length of the CSecurityManager must be {$keySize}. " ) );
 			}
 			if (! extension_loaded ( 'openssl' )) {
 				throw new InvalidConfigException ( 'Encryption requires the OpenSSL PHP extension' );
@@ -809,4 +824,42 @@ class CSecurityManager extends CApplicationComponent {
 			return '';
 		return $this->substr ( $decoded, $length, $length ) ^ $this->substr ( $decoded, 0, $length );
 	}
+
+	function mcrypt_blowfish_encrypt_hex($key, $str)
+{
+    $encrypted = mcrypt_encrypt(MCRYPT_BLOWFISH, $key, $str, MCRYPT_MODE_ECB);
+    return bin2hex($encrypted);
+}
+
+function make_openssl_blowfish_key($key)
+{
+    if("$key" === '')
+        return $key;
+
+    $len = (16+2) * 4;
+    while(strlen($key) < $len) {
+        $key .= $key;
+    }
+    $key = substr($key, 0, $len);
+    return $key;
+}
+
+function openssl_blowfish_encrypt_hex($key, $str)
+{
+    $blockSize = 8;
+    $len = strlen($str);
+    $paddingLen = intval(($len + $blockSize - 1) / $blockSize) * $blockSize - $len;
+    $padding = str_repeat("\0", $paddingLen);
+    $data = $str . $padding;
+    $key = make_openssl_blowfish_key($key);
+    $encrypted = openssl_encrypt($data, 'BF-ECB', $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING);
+    return bin2hex($encrypted);
+}
+
+function openssl_blowfish_decrypt_hex($key, $hex)
+{
+    $key = make_openssl_blowfish_key($key);
+    $decrypted = openssl_decrypt(hex2bin($hex), 'BF-ECB', $key, OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING);
+    return rtrim($decrypted, "\0");
+}
 }
