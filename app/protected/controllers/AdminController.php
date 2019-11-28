@@ -243,7 +243,7 @@ class AdminController extends Controller
                     }
                 }
 
-                $cmd = Yii::app()->db->createCommand("SELECT * FROM alters");
+                $cmd = Yii::app()->db->createCommand("SELECT * FROM alters WHERE active is null AND FIND_IN_SET(" . $_POST["interviewId"] . ", interviewId)");
                 $rows = $cmd->queryAll();
 
                 foreach ($rows as $row) {
@@ -285,14 +285,14 @@ class AdminController extends Controller
                         $update->update('answer', $changeArray, 'id='.$row["id"]);
                     }
                 }
-                $cmd = Yii::app()->db->createCommand("SELECT * FROM alters WHERE FIND_IN_SET(" . $_POST["interviewId"] . ", interviewId)");
+                $cmd = Yii::app()->db->createCommand("SELECT * FROM alters WHERE active is null AND FIND_IN_SET(" . $_POST["interviewId"] . ", interviewId)");
                 $rows = $cmd->queryAll();
 
                 foreach ($rows as $row) {
                     if (strlen(trim($row["name"])) > 0) {
                         $encrypted = encrypt($row["name"]);
                         $update = Yii::app()->db->createCommand();
-                        $update->update('alters', array( 'name'=>$encrypted ), 'id='.$row["id"]);
+                        $update->update('alters', array( 'name'=>$encrypted, 'active'=>2), 'id='.$row["id"]);
                     }
                 }
                 echo "success";
