@@ -30,48 +30,50 @@ $(document).keydown(function(e) {
 			$('.alterSubmit')[0].click();
 		else
 			$('#next').click();
-	}
-    if(alterPromptPage == false){
-    	if (e.keyCode == 37){
-    		e.preventDefault();
-    		$(".answerInput:focus").parent().prev().find(".answerInput").focus();
-    	}
-    	if (e.keyCode == 39){
-    		e.preventDefault();
-    		$(".answerInput:focus").parent().next().find(".answerInput").focus();
-    	}
-    	if (e.keyCode == 38){
-    		e.preventDefault();
-            $(".answerInput").each(function(index){
-                if($(this).is(":focus")){
-                    if(typeof $(".answerInput")[index-columns] != "undefined"){
-                       if($($(".answerInput")[index-columns]).offset().top < $("#floatHeader").offset().top + $("#floatHeader").height()){
-                          window.scrollBy(0, -112);
+    }
+    if($("textarea").length == 0){
+        if(alterPromptPage == false){
+            if (e.keyCode == 37){
+                e.preventDefault();
+                $(".answerInput:focus").parent().prev().find(".answerInput").focus();
+            }
+            if (e.keyCode == 39){
+                e.preventDefault();
+                $(".answerInput:focus").parent().next().find(".answerInput").focus();
+            }
+            if (e.keyCode == 38){
+                e.preventDefault();
+                $(".answerInput").each(function(index){
+                    if($(this).is(":focus")){
+                        if(typeof $(".answerInput")[index-columns] != "undefined"){
+                        if($($(".answerInput")[index-columns]).offset().top < $("#floatHeader").offset().top + $("#floatHeader").height()){
+                            window.scrollBy(0, -112);
+                            }
+                            $(".answerInput")[index-columns].focus();
                         }
-                        $(".answerInput")[index-columns].focus();
+                        //else
+                        //    $(".answerInput:focus").parent().prev().find(".answerInput").focus();
+                        return false;
                     }
-                    //else
-                    //    $(".answerInput:focus").parent().prev().find(".answerInput").focus();
-                    return false;
-                }
-            });
-    	}
-    	if (e.keyCode == 40){
-    		e.preventDefault();
-            $(".answerInput").each(function(index){
-                if($(this).is(":focus")){
-                    if(typeof $(".answerInput")[index+columns] != "undefined"){
-                        if(!elementInViewport($(".answerInput")[index+columns])){
-                          window.scrollBy(0, 112);
+                });
+            }
+            if (e.keyCode == 40){
+                e.preventDefault();
+                $(".answerInput").each(function(index){
+                    if($(this).is(":focus")){
+                        if(typeof $(".answerInput")[index+columns] != "undefined"){
+                            if(!elementInViewport($(".answerInput")[index+columns])){
+                            window.scrollBy(0, 112);
+                            }
+                            $(".answerInput")[index+columns].focus();
                         }
-                        $(".answerInput")[index+columns].focus();
+                        //else
+                        //    $(".answerInput:focus").parent().next().find(".answerInput").focus();
+                        return false;
                     }
-                    //else
-                    //    $(".answerInput:focus").parent().next().find(".answerInput").focus();
-                    return false;
-                }
-            });
-    	}
+                });
+            }
+        }
     }
 });
 

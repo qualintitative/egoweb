@@ -310,7 +310,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       if ($scope.questions[k].ASKINGSTYLELIST == 1 && $scope.questions[k].WITHLISTRANGE == false && $scope.phrase != "" && !$scope.phrase.match("for each row"))
         $scope.phrase += " for each row";
     }
-
+    $scope.answers[array_id].VALUE = htmldecode( $scope.answers[array_id].VALUE );
     if ($scope.questions[k].DONTKNOWBUTTON == true) {
       var button = new Object;
       button.NAME = "Don't Know";
@@ -2697,4 +2697,10 @@ function unfixHeader() {
   $(window).unbind('scroll');
   $(window).unbind('touchmove');
   $(window).unbind('resize');
+}
+
+function htmldecode (str){
+  var txt = document.createElement('textarea');
+  txt.innerHTML = str;
+  return txt.value;
 }

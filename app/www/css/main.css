@@ -503,11 +503,11 @@ td{
 
 .ng-scope input[type='checkbox'] {
   width:16px;
-	height:16px;
+  height:16px;
   transform: scale(1.2,1.2);
   -webkit-transform: scale(1.2,1.2);
-  margin-top:8px;
-  /*vertical-align:top;*/
+  margin-top:10px;
+  vertical-align:top;
 }
 
 #topbar h3{
