@@ -204,7 +204,7 @@ echo CHtml::hiddenField('withAlters', "", array('id' => 'withAlters'));
         <?php
         foreach ($interviews as $interview) {
             if ($interview->completed == -1)
-                $completed = "<span style='color:#0B0'>" . date("Y-m-d h:i:s", $interview->complete_date) . "</span>";
+                $completed = "<span style='color:#0B0'>" . date("Y-m-d H:i:s", $interview->complete_date) . "</span>";
             else
                 $completed = "";
             $mark = "";
@@ -225,7 +225,7 @@ echo CHtml::hiddenField('withAlters', "", array('id' => 'withAlters'));
             }
             echo "<tr $mark>";
             echo "<td>" . CHtml::checkbox('export[' . $interview['id'] . ']') . "</td><td>" . Interview::getEgoId($interview->id) . "</td>";
-            echo "<td class='hidden-xs'>" . date("Y-m-d h:i:s", $interview->start_date) . "</td>";
+            echo "<td class='hidden-xs'>" . date("Y-m-d H:i:s", $interview->start_date) . "</td>";
             echo "<td class='hidden-xs'>" . $completed . "</td>";
             echo "<td class='hidden-xs'>" . $matchId . "</td>";
             echo "<td class='hidden-xs'>" . $matchUser . "</td>";
