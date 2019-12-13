@@ -2254,7 +2254,7 @@ function initStats(question) {
   this, getNodeSize = function(nodeId) {
     var defaultNodeSize = 4;
     console.log(this.params)
-    if (typeof this.params['nodeSize'] != "undefined") {
+    if (nodeId != -1 && typeof this.params['nodeSize'] != "undefined") {
       if (typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "degree") {
         max = maxDegree;
         min = minDegree;
@@ -2265,7 +2265,7 @@ function initStats(question) {
         value = Math.round(((value - min) / (range)) * 9) + 1;
         return value * 2;
       }
-      if (typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "betweenness") {
+      if (nodeId != -1 && typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "betweenness") {
         max = maxBetweenness;
         min = minBetweenness;
         value = betweennesses[nodeId];
@@ -2275,7 +2275,7 @@ function initStats(question) {
         value = Math.round(((value - min) / (range)) * 9) + 1;
         return value * 2;
       }
-      if (typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "eigenvector") {
+      if (nodeId != -1 && typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "eigenvector") {
         max = maxEigenvector;
         min = minEigenvector;
         value = eigenvectors[nodeId];
