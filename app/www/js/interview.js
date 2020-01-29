@@ -23,6 +23,9 @@ app.config(function($routeProvider) {
 });
 
 app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce', '$location', '$route', "saveAlter", "deleteAlter", function($scope, $log, $routeParams, $sce, $location, $route, saveAlter, deleteAlter) {
+  for (xx in answers){
+    answers[xx].VALUE = answers[xx].VALUE.replace(/[\u0000-\u001F]+/ig, "")
+  }
   if (masterList.length == 0) {
     buildList();
     evalQuestions();
@@ -310,7 +313,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       if ($scope.questions[k].ASKINGSTYLELIST == 1 && $scope.questions[k].WITHLISTRANGE == false && $scope.phrase != "" && !$scope.phrase.match("for each row"))
         $scope.phrase += " for each row";
     }
-    $scope.answers[array_id].VALUE = htmldecode( $scope.answers[array_id].VALUE );
+    //if($scope.questions[k].ANSWERTYPE == "TEXTUAL" || $scope.questions[k].ANSWERTYPE == "TEXTUAL_PP")
+      $scope.answers[array_id].VALUE = htmldecode( $scope.answers[array_id].VALUE );
+
     if ($scope.questions[k].DONTKNOWBUTTON == true) {
       var button = new Object;
       button.NAME = "Don't Know";
@@ -2701,6 +2706,6 @@ function unfixHeader() {
 
 function htmldecode (str){
   var txt = document.createElement('textarea');
-  txt.innerHTML = str;
-  return txt.value;
+  txt.innerHTML = str.trim();
+  return $(txt).val();
 }
