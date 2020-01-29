@@ -2548,7 +2548,7 @@ function toggleLabels() {
 
 function exitHandler() {
   if (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement !== null) {
-    $("#infovis").height(480);
+    $("#infovis").height(360);
     document.removeEventListener('webkitfullscreenchange', exitHandler, false);
     document.removeEventListener('mozfullscreenchange', exitHandler, false);
     document.removeEventListener('fullscreenchange', exitHandler, false);

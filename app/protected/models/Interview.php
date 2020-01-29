@@ -739,7 +739,8 @@ class Interview extends CActiveRecord
                         }
                         $answers[] = $answer->value;
                     } else {
-                        $answers[] = $answer->value;
+                        $answer->value = preg_replace('/amp;/g', "", $answer->value);
+                        $answers[] = htmlspecialchars_decode($answer->value);
                     }
                 } else if ($answer->skipReason == "DONT_KNOW") {
                     $answers[] = $study->valueDontKnow;
@@ -773,7 +774,8 @@ class Interview extends CActiveRecord
                         }
                         $answers[] = implode('; ', $list);
                     } else {
-                        $answers[] = $answer->value;
+                        $answer->value = preg_replace('/amp;/g', "", $answer->value);
+                        $answers[] = htmlspecialchars_decode($answer->value);
                     }
                 } else if ($answer->skipReason == "DONT_KNOW") {
                     $answers[] = $study->valueDontKnow;
@@ -856,7 +858,7 @@ class Interview extends CActiveRecord
                             else
                                 $answers[] = implode('; ', $list);
                         } else {
-                            $answers[] = $answer->value;
+                            $answers[] =  htmlspecialchars_decode($answer->value);
                         }
                     } else if ($answer->skipReason == "DONT_KNOW") {
                         $answers[] = $study->valueDontKnow;
@@ -1017,7 +1019,8 @@ class Interview extends CActiveRecord
                     }
                     $answers[] = $answer->value;
                 } else {
-                    $answers[] = $answer->value;
+                    $answer->value = str_replace('amp;', "", $answer->value);
+                    $answers[] = htmlspecialchars_decode($answer->value);
                 }
             } else if ($answer->skipReason == "DONT_KNOW") {
                 $answers[] = $study->valueDontKnow;
@@ -1051,7 +1054,8 @@ class Interview extends CActiveRecord
                     }
                     $answers[] = implode('; ', $list);
                 } else {
-                    $answers[] = $answer->value;
+                    $answer->value = str_replace('amp;', "", $answer->value);
+                    $answers[] = htmlspecialchars_decode($answer->value);
                 }
             } else if ($answer->skipReason == "DONT_KNOW") {
                 $answers[] = $study->valueDontKnow;
