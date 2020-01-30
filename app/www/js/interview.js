@@ -2522,7 +2522,10 @@ function fullscreen() {
   } else if (typeof elem.webkitRequestFullscreen != "undefined") {
     elem.webkitRequestFullscreen();
   }
-  $("#infovis").height(640);
+  graphWidth = $("#infovis").width()
+  $("#infovis").height(screen.height);
+  $("#infovis").width(screen.width);
+
   setTimeout(function() {
     document.addEventListener('webkitfullscreenchange', exitHandler, false);
     document.addEventListener('mozfullscreenchange', exitHandler, false);
@@ -2549,6 +2552,7 @@ function toggleLabels() {
 function exitHandler() {
   if (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement !== null) {
     $("#infovis").height(360);
+    $("#infovis").width(graphWidth)
     document.removeEventListener('webkitfullscreenchange', exitHandler, false);
     document.removeEventListener('mozfullscreenchange', exitHandler, false);
     document.removeEventListener('fullscreenchange', exitHandler, false);
