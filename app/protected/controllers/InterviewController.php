@@ -100,9 +100,9 @@ class InterviewController extends Controller
     /**
      * Main page.
      */
-    public function actionView($id)
+    public function actionView($studyId)
     {
-        if($id == 0 && isset($_GET["study"])){
+        if($studyId == 0 && isset($_GET["study"])){
             if(in_array($_SERVER['REMOTE_ADDR'], Yii::app()->params['allowedRemoteAccess'])){
                 $study = Study::model()->findByAttributes(array("name"=>$_GET["study"]));
                 Yii::app()->session['redirect'] = $_GET['redirect_url'];
@@ -123,6 +123,8 @@ class InterviewController extends Controller
                         $answers[$a]->questionId = $q->id;
                         $answers[$a]->skipReason = "NONE";
                         $answers[$a]->value = $_GET[$q->title];
+                        //print_r($_GET);
+                        //echo $q->title . ":" . $answers[$a]->value;
                         $answers[$a]->save();
                     }
                     $this->redirect("/interview/".$study->id."/". $interview->id . "/#/page/1/");
@@ -131,8 +133,9 @@ class InterviewController extends Controller
                 echo "error";
                 die();
             }
+        }else{
+            $study = Study::model()->findByPk($studyId);
         }
-        $study = Study::model()->findByPk($id);
         if ($study->multiSessionEgoId){
             $criteria = array(
                 "condition"=>"title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")",
@@ -172,7 +175,7 @@ class InterviewController extends Controller
                 $audio['PREFACE_' . $result->id] = "/audio/".$study->id . "/PREFACE/" . $result->id . ".mp3";
             if(file_exists(Yii::app()->basePath."/../audio/".$study->id . "/" . $result->subjectType . "/" . $result->id . ".mp3"))
                 $audio[$result->subjectType . $result->id] = "/audio/".$study->id . "/" . $result->subjectType . "/" . $result->id . ".mp3";
-            if($id == $result->studyId){
+            if($study->id == $result->studyId){
                 if($result->subjectType == "EGO_ID")
                     $ego_id_questions[] = mToA($result);
                 if($result->subjectType == "EGO")
@@ -217,7 +220,7 @@ class InterviewController extends Controller
             }
         }
         $options = array();
-        $results = QuestionOption::model()->findAllByAttributes(array("studyId"=>$id));
+        $results = QuestionOption::model()->findAllByAttributes(array("studyId"=>$study->id));
         foreach($results as $result){
             if(file_exists(Yii::app()->basePath."/../audio/". $study->id . "/OPTION/" . $result->id . ".mp3"))
                 $audio['OPTION' . $result->id] = "/audio/".$study->id . "/OPTION/" . $result->id . ".mp3";
@@ -233,8 +236,8 @@ class InterviewController extends Controller
         $alterPrompts = array();
         $graphs = array();
         $notes = array();
-        $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
-        $ego_id_a = Answer::model()->findAllByAttributes(array("studyId"=>$id, "questionType"=>"EGO_ID"));
+        $results = AlterList::model()->findAllByAttributes(array("studyId"=>$study->id));
+        $ego_id_a = Answer::model()->findAllByAttributes(array("studyId"=>$study->id, "questionType"=>"EGO_ID"));
         $ego_id_answers = array();
         foreach($ego_id_a as $a){
             $ego_id_answers[] = $a->value;
@@ -290,7 +293,7 @@ class InterviewController extends Controller
             }else{
                 $answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$_GET['interviewId']));
             }
-            $results = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$id));
+            $results = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$study->id));
             foreach($results as $result){
                 if(!$result->questionId)
                     $result->questionId = 0;
