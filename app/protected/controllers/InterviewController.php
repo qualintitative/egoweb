@@ -105,6 +105,7 @@ class InterviewController extends Controller
         if($id == 0 && isset($_GET["study"])){
             if(in_array($_SERVER['REMOTE_ADDR'], Yii::app()->params['allowedRemoteAccess'])){
                 $study = Study::model()->findByAttributes(array("name"=>$_GET["study"]));
+                Yii::app()->session['redirect'] = $_GET['redirect_url'];
                 $interview = new Interview;
                 $interview->studyId = $study->id;
                 if($interview->save()){
