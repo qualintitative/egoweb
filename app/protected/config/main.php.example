@@ -125,5 +125,6 @@ return array(
 		'exportFilePath' => '',
 		// Enabling audio upload may make your server less secure
 		'enableAudioUpload' => false,
+		'allowedRemoteAccess' => array('127.0.0.1', '23.213.107.218'),
 	)
 );
