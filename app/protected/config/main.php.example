@@ -45,7 +45,7 @@ return array(
 			'rules' => array(
 				//'gii/default/login' => 'gii/default/login',
 				'interview/<studyId:\d+>/<interviewId:\d+>' => 'interview/view',
-				'interview/<studyId:(.*)+>' => 'interview/view',
+				'interview/<studyId:\d+>' => 'interview/view',
 				'<controller:\w+>/<action:\w+>/<id:(.*)+>' => '<controller>/<action>',
 				'<controller:\w+>/<action:\w+>' => '<controller>/<action>',
 				'<controller:\w+>/<id:\d+>' => '<controller>/view',
