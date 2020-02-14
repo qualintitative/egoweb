@@ -2553,6 +2553,17 @@ function exitHandler() {
   if (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement !== null) {
     $("#infovis").height(360);
     $("#infovis").width(graphWidth)
+    $("#infovis canvas").height(360);
+    $("#infovis canvas").width(graphWidth);
+    $("#infovis canvas").attr("height", 360 );
+    $("#infovis canvas").attr("width", graphWidth);
+    //window.dispatchEvent(new Event('resize'));
+    setTimeout(function(){
+      window.dispatchEvent(new Event('resize'));
+
+      //s.cameras[0].goTo({ x: 0, y: 0, angle: 0, ratio: 1 });
+      //s.refresh();
+    },100);
     document.removeEventListener('webkitfullscreenchange', exitHandler, false);
     document.removeEventListener('mozfullscreenchange', exitHandler, false);
     document.removeEventListener('fullscreenchange', exitHandler, false);
