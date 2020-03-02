@@ -19,14 +19,6 @@
 		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/egoweb.js'); ?>
 		<?php Yii::app()->clientScript->registerCoreScript('jquery'); ?>
 		<?php Yii::app()->clientScript->registerCoreScript('jquery.ui'); ?>
-        <style>
-        <?php
-        if(Yii::app()->getController()->getId() == "interview" && Yii::app()->request->getQuery('id')){
-            $study = Study::model()->findByPk(Yii::app()->request->getQuery('id'));
-            echo $study->style;
-        }
-        ?>
-        </style>
 	</head>
 	<body>
         <nav class="navbar navbar-fixed-top" id="topbar">

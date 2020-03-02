@@ -24,6 +24,7 @@
     "webdriverio": "^4.2.5"
   },
   "dependencies": {
-    "phantomjs": "^2.1.7"
+    "phantomjs": "^2.1.7",
+    "wdio-spec-reporter": "^0.1.5"
   }
 }
