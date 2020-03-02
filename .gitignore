@@ -1,6 +1,7 @@
-# PHPStorm files #
+# IDE files      #
 ##################
 .idea/
+.vscode/
 
 # OS generated files #
 ######################
