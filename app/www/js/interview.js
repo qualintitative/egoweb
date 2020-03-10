@@ -6,7 +6,7 @@ var currentPage = 0;
 var alterPromptPage = false;
 deletedPrevAlters = {};
 
-app.config(function($routeProvider) {
+app.config(function ($routeProvider) {
 
   $routeProvider
 
@@ -22,8 +22,8 @@ app.config(function($routeProvider) {
 
 });
 
-app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce', '$location', '$route', "saveAlter", "deleteAlter", function($scope, $log, $routeParams, $sce, $location, $route, saveAlter, deleteAlter) {
-  for (xx in answers){
+app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce', '$location', '$route', "saveAlter", "deleteAlter", function ($scope, $log, $routeParams, $sce, $location, $route, saveAlter, deleteAlter) {
+  for (xx in answers) {
     answers[xx].VALUE = answers[xx].VALUE.replace(/[\u0000-\u001F]+/ig, "")
   }
   if (masterList.length == 0) {
@@ -31,12 +31,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     evalQuestions();
   }
   var style = document.createElement('style');
-style.innerHTML = study.STYLE;
+  style.innerHTML = study.STYLE;
 
-// Get the first script tag
-var ref = document.querySelector('head');
+  // Get the first script tag
+  var ref = document.querySelector('head');
 
-// Insert our new styles before the first script tag
+  // Insert our new styles before the first script tag
   $('head').append(style);
   $scope.questions = qFromList($routeParams.page)
   $scope.page = $routeParams.page;
@@ -77,7 +77,6 @@ var ref = document.querySelector('head');
   $scope.listedAlters = {};
   $scope.starExpressionId = false;
   $scope.colspan = false;
-
   if (typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR") {
     alterPromptPage = true;
   } else {
@@ -135,40 +134,40 @@ var ref = document.querySelector('head');
   for (var k in $scope.questions) {
     var array_id = $scope.questions[k].array_id;
     if ($scope.questions[k].USEALTERLISTFIELD == "name" || $scope.questions[k].USEALTERLISTFIELD == "email") {
-      for(p in participantList){
+      for (p in participantList) {
         var qIds = [];
-        if(participantList[p].NAMEGENQIDS && participantList[p].NAMEGENQIDS.match(","))
+        if (participantList[p].NAMEGENQIDS && participantList[p].NAMEGENQIDS.match(","))
           qIds = participantList[p].NAMEGENQIDS.split(",");
-        else if(participantList[p].NAMEGENQIDS)
+        else if (participantList[p].NAMEGENQIDS)
           qIds.push(participantList[p].NAMEGENQIDS);
-        if(qIds.length != 0){
-          if($.inArray($scope.questions[k].ID.toString(), qIds) != -1 && $.inArray(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()], $scope.participants) == -1){
+        if (qIds.length != 0) {
+          if ($.inArray($scope.questions[k].ID.toString(), qIds) != -1 && $.inArray(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()], $scope.participants) == -1) {
             $scope.participants.push(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()]);
-          }else if($scope.questions[k].SUBJECTTYPE == "EGO_ID"){
+          } else if ($scope.questions[k].SUBJECTTYPE == "EGO_ID") {
             $scope.participants.push(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()]);
           }
-        }else{
-          if($.inArray(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()], $scope.participants) == -1)
+        } else {
+          if ($.inArray(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()], $scope.participants) == -1)
             $scope.participants.push(participantList[p][$scope.questions[k].USEALTERLISTFIELD.toUpperCase()]);
         }
       }
     }
     if (Object.keys($scope.prevAlters).length > 0) {
       for (n in $scope.prevAlters) {
-        if(study.RESTRICTALTERS){
+        if (study.RESTRICTALTERS) {
           if ($scope.participants.indexOf($scope.prevAlters[n].NAME) == -1)
             $scope.participants.push($scope.prevAlters[n].NAME);
-        }else{
+        } else {
           $scope.participants.push($scope.prevAlters[n].NAME);
         }
       }
     }
     if (Object.keys($scope.listedAlters).length > 0) {
       for (n in $scope.listedAlters) {
-        if(study.RESTRICTALTERS){
+        if (study.RESTRICTALTERS) {
           if ($.inArray($scope.listedAlters[n].NAME, $scope.participants) == -1)
             $scope.participants.push($scope.listedAlters[n].NAME);
-        }else{
+        } else {
           $scope.participants.push($scope.listedAlters[n].NAME);
         }
       }
@@ -195,8 +194,7 @@ var ref = document.querySelector('head');
       }
     }
     $scope.options[array_id] = $.extend(true, {}, options[$scope.questions[k].ID]);
-
-    if ($scope.questions[k].ASKINGSTYLELIST == true)
+    if ($scope.questions[k].ASKINGSTYLELIST != false)
       $scope.askingStyleList = $scope.questions[k].array_id;
     if ($scope.askingStyleList != false)
       $scope.fixedWidth = "auto";
@@ -322,7 +320,7 @@ var ref = document.querySelector('head');
         $scope.phrase += " for each row";
     }
     //if($scope.questions[k].ANSWERTYPE == "TEXTUAL" || $scope.questions[k].ANSWERTYPE == "TEXTUAL_PP")
-      $scope.answers[array_id].VALUE = htmldecode( $scope.answers[array_id].VALUE );
+    $scope.answers[array_id].VALUE = htmldecode($scope.answers[array_id].VALUE);
 
     if ($scope.questions[k].DONTKNOWBUTTON == true) {
       var button = new Object;
@@ -343,10 +341,10 @@ var ref = document.querySelector('head');
         button.checked = true;
       $scope.options[array_id][Object.keys($scope.options[array_id]).length] = button;
     }
-    if($scope.colspan == false){
+    if ($scope.colspan == false) {
       $scope.colspan = 1
       $scope.colspan = $scope.colspan + Object.keys($scope.options[array_id]).length;
-      if ($scope.askingStyleList != false && ($scope.questions[k].ANSWERTYPE == "NUMERICAL" || $scope.questions[k].ANSWERTYPE == "TEXTUAL")){
+      if ($scope.askingStyleList != false && ($scope.questions[k].ANSWERTYPE == "NUMERICAL" || $scope.questions[k].ANSWERTYPE == "TEXTUAL")) {
         $scope.colspan = $scope.colspan + 1;
       }
     }
@@ -401,12 +399,12 @@ var ref = document.querySelector('head');
         $scope.graphParams = $scope.questions[k].NETWORKPARAMS;
 
       }
-      if($scope.questions[k].USELFEXPRESSION && parseInt($scope.questions[k].USELFEXPRESSION) != 0)
-        $scope.starExpressionId =  parseInt($scope.questions[k].USELFEXPRESSION);
+      if ($scope.questions[k].USELFEXPRESSION && parseInt($scope.questions[k].USELFEXPRESSION) != 0)
+        $scope.starExpressionId = parseInt($scope.questions[k].USELFEXPRESSION);
       initStats($scope.questions[k]);
     }
     setTimeout(
-      function() {
+      function () {
         eval($scope.questions[k].JAVASCRIPT);
         if (typeof $(".answerInput")[0] != "undefined")
           $(".answerInput")[0].focus();
@@ -416,37 +414,28 @@ var ref = document.querySelector('head');
       1);
   }
 
-  setTimeout(function() {
+  setTimeout(function () {
     if ($scope.askingStyleList != false && $(window).width() >= 480) {
-      /*
-      $("#realHeader").show();
-      $("#floatHeader").css({
-        "position": "fixed",
-        "left": $("#realHeader").offset().left - $(window).scrollLeft() + "px",
-      });
-      fixHeader();
-      */
-
-     console.log("fixing header")
-     $("table.qTable").floatThead({top:$("#topbar").height()})
-     window.scrollTo(0,0);
-     $(window).resize();
-    }else{
-  //    $("#realHeader").css("display","none");
-    //$("#floater").hide();
+      console.log("fixing header")
+      $("table.qTable").floatThead({ top: $("#topbar").height() })
+      window.scrollTo(0, 0);
+      $(window).resize();
+    } else {
+      //    $("#realHeader").css("display","none");
+      //$("#floater").hide();
       //unfixHeader();
       //$("#realHeader").css("height","1px");
 
-//      $("#realHeader").height(1);
+      //      $("#realHeader").height(1);
     }
     //$(window).scrollTop(0);
-    window.scrollTo(0,0);
+    window.scrollTo(0, 0);
     eval(study.JAVASCRIPT);
   }, 100);
 
   $scope.errors = new Object;
 
-  $scope.print = function(e_Id, i_Id, params) {
+  $scope.print = function (e_Id, i_Id, params) {
     if (typeof e_Id == "undefined")
       e_Id = $scope.graphExpressionId;
     if (typeof i_Id == "undefined")
@@ -459,11 +448,11 @@ var ref = document.querySelector('head');
     window.open(url);
   }
 
-  $scope.playSound = function(file) {
+  $scope.playSound = function (file) {
     $scope.audioFiles[file].play();
   }
 
-  $scope.goBack = function() {
+  $scope.goBack = function () {
     var url = $location.absUrl().replace($location.url(), '');
     url = url + "page/" + (parseInt($routeParams.page) - 1);
     if (typeof hashKey != "undefined")
@@ -471,18 +460,18 @@ var ref = document.querySelector('head');
     document.location = url;
   }
 
-  $scope.submitForm = function(isValid) {
+  $scope.submitForm = function (isValid) {
     // check to make sure the form is completely valid
     console.log(isValid)
     if (isValid) {
       save($scope.questions, $routeParams.page, $location.absUrl().replace($location.url(), ''), $scope);
-    }else{
-      window.scrollTo(0,0);
+    } else {
+      window.scrollTo(0, 0);
       $("table.qTable").floatThead('reflow');
     }
   };
 
-  $scope.addAlter = function(isValid) {
+  $scope.addAlter = function (isValid) {
     $scope.errors[0] = false;
     for (k in alters) {
       if ($("#Alters_name").val() == alters[k].NAME) {
@@ -506,7 +495,7 @@ var ref = document.querySelector('head');
 
     // check to make sure the form is completely valid
     if ($scope.errors[0] == false) {
-      saveAlter.getAlters().then(function(data) {
+      saveAlter.getAlters().then(function (data) {
         alters = JSON.parse(data);
         for (k in alters) {
           if (typeof prevAlters[k] != "undefined") {
@@ -524,11 +513,11 @@ var ref = document.querySelector('head');
     }
   };
 
-  $scope.removeAlter = function(alterId, nameGenQId) {
+  $scope.removeAlter = function (alterId, nameGenQId) {
     $("#deleteAlterId").val(alterId);
     $("#deleteNameGenQId").val(nameGenQId);
     // check to make sure the form is completely valid
-    deleteAlter.getAlters().then(function(data) {
+    deleteAlter.getAlters().then(function (data) {
       alters = JSON.parse(data);
       if (typeof deletedPrevAlters[alterId] != "undefined" && typeof prevAlters[alterId] == "undefined" && typeof alters[alterId] == "undefined") {
         prevAlters[alterId] = $.extend(true, {}, deletedPrevAlters[alterId]);
@@ -540,7 +529,7 @@ var ref = document.querySelector('head');
     });
   };
 
-  $scope.unSkip = function(array_id) {
+  $scope.unSkip = function (array_id) {
     if (typeof $scope.answers[array_id].VALUE != "undefined" && $scope.answers[array_id].VALUE != "" && $scope.answers[array_id].VALUE != "SKIPREASON") {
       for (k in $scope.options[array_id]) {
         $scope.options[array_id][k].checked = false;
@@ -549,7 +538,7 @@ var ref = document.querySelector('head');
     }
   }
 
-  $scope.changeOther = function(array_id) {
+  $scope.changeOther = function (array_id) {
     var specify = [];
     for (a in $scope.options[array_id]) {
       if ($scope.otherSpecify[array_id][$scope.options[array_id][a].ID] != false && $scope.otherSpecify[array_id][$scope.options[array_id][a].ID] != "") {
@@ -560,7 +549,7 @@ var ref = document.querySelector('head');
     //console.log($scope.answers[array_id].OTHERSPECIFYTEXT);
   }
 
-  $scope.multiSelect = function(v, index, array_id) {
+  $scope.multiSelect = function (v, index, array_id) {
 
     if (typeof $scope.questions[array_id] != "undefined")
       var question = $scope.questions[array_id];
@@ -628,7 +617,7 @@ var ref = document.querySelector('head');
 
   }
 
-  $scope.setAll = function(v, index) {
+  $scope.setAll = function (v, index) {
     for (k in $scope.questions) {
       var array_id = $scope.questions[k].array_id;
       if ($scope.answers[array_id].VALUE == undefined)
@@ -644,7 +633,7 @@ var ref = document.querySelector('head');
     }
   }
 
-  $scope.timeValue = function(array_id) {
+  $scope.timeValue = function (array_id) {
     var date = [];
     if (!isNaN($scope.time_spans[array_id].YEARS))
       date.push($scope.time_spans[array_id].YEARS + ' YEARS');
@@ -666,7 +655,7 @@ var ref = document.querySelector('head');
     }
   }
 
-  $scope.dateValue = function(array_id) {
+  $scope.dateValue = function (array_id) {
     var date = "";
     if ($scope.dates[array_id].MONTH)
       date += $scope.dates[array_id].MONTH + ' ';
@@ -692,7 +681,7 @@ var ref = document.querySelector('head');
 
   }
 
-  $scope.timeBits = function(timeUnits, span) {
+  $scope.timeBits = function (timeUnits, span) {
     timeArray = [];
     bitVals = {
       'BIT_YEAR': 1,
@@ -715,12 +704,12 @@ var ref = document.querySelector('head');
   }
 }]);
 
-app.directive('checkAnswer', [function() {
+app.directive('checkAnswer', [function () {
   return {
     require: 'ngModel',
-    link: function(scope, elem, attr, ngModel) {
+    link: function (scope, elem, attr, ngModel) {
       //For DOM . model validation
-      ngModel.$parsers.unshift(function(value) {
+      ngModel.$parsers.unshift(function (value) {
         var valid = true;
         var array_id = attr.arrayId;
         var question = questions[attr.questionId];
@@ -922,7 +911,7 @@ app.directive('checkAnswer', [function() {
         return valid ? value : undefined;
       });
 
-      ngModel.$formatters.unshift(function(value) {
+      ngModel.$formatters.unshift(function (value) {
         var valid = true;
         var array_id = attr.arrayId;
         var question = questions[attr.questionId];
@@ -1199,7 +1188,7 @@ function buildList() {
       }
       alter_non_list_qs = [];
     }
-    if (questionList[j-1] != undefined && (questionList[j].SUBJECTTYPE != "EGO" || questionList[j].ASKINGSTYLELIST != 1 ||  questionList[j].PROMPT != questionList[j-1].PROMPT)  && questionList[j-1].SUBJECTTYPE == "EGO" && Object.keys(ego_question_list).length > 0) {
+    if (questionList[j - 1] != undefined && (questionList[j].SUBJECTTYPE != "EGO" || questionList[j].ASKINGSTYLELIST != 1 || questionList[j].PROMPT != questionList[j - 1].PROMPT) && questionList[j - 1].SUBJECTTYPE == "EGO" && Object.keys(ego_question_list).length > 0) {
       console.log("wait over " + Object.keys(ego_question_list).length);
       if (ego_question_list[Object.keys(ego_question_list)[0]].ANSWERREASONEXPRESSIONID > 0)
         evalQIndex.push(i);
@@ -1289,7 +1278,7 @@ function buildList() {
         }
         alter_pair_question_list = new Object;
         for (l in alters2) {
-          if (alters[k].ID == alters2[l].ID)
+          if (alters[k].ID == alters2[l].ID && question.SYMMETRIC == 1)
             continue;
           var question = $.extend(true, {}, questionList[j]);
           question.PROMPT = question.PROMPT.replace(/\$\$1/g, alters[k].NAME);
@@ -1304,7 +1293,7 @@ function buildList() {
             if (preface.PROMPT != "") {
               if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
                 evalQIndex.push(i);
-              masterList[i][0] = $.extend(true, {}, preface);
+              masterList[i][question.array_id] = $.extend(true, {}, preface);
               preface.PROMPT = "";
               i++;
               masterList[i] = new Object;
@@ -1359,19 +1348,19 @@ function buildList() {
     }
     if (questionList[j].SUBJECTTYPE == "EGO") {
       questionList[j].array_id = questionList[j].ID;
-/*
-      if (Object.keys(ego_question_list).length > 0 && (parseInt(questionList[j].ASKINGSTYLELIST) != 1 || prompt != questionList[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm, ""))) {
-        console.log(questionList[j])
-        console.log("wait over " + Object.keys(ego_question_list).length);
-        if (ego_question_list[Object.keys(ego_question_list)[0]].ANSWERREASONEXPRESSIONID > 0)
-          evalQIndex.push(i);
-        masterList[i] = ego_question_list;
-        ego_question_list = new Object;
-        prompt = "";
-        i++;
-        masterList[i] = new Object;
-      }
-      */
+      /*
+            if (Object.keys(ego_question_list).length > 0 && (parseInt(questionList[j].ASKINGSTYLELIST) != 1 || prompt != questionList[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm, ""))) {
+              console.log(questionList[j])
+              console.log("wait over " + Object.keys(ego_question_list).length);
+              if (ego_question_list[Object.keys(ego_question_list)[0]].ANSWERREASONEXPRESSIONID > 0)
+                evalQIndex.push(i);
+              masterList[i] = ego_question_list;
+              ego_question_list = new Object;
+              prompt = "";
+              i++;
+              masterList[i] = new Object;
+            }
+            */
       if (questionList[j].PREFACE != "") {
         preface = new Object;
         preface.ID = questionList[j].ID;
@@ -1446,6 +1435,7 @@ function qFromList(pageNumber) {
       questions = masterList[k];
     }
     if (pageNumber == i && proceed == true) {
+      console.log(questions);
       currentPage = i;
       return questions;
     }
@@ -1643,7 +1633,7 @@ function countQuestion(questionId, operator, alterId1, alterId2) {
 }
 
 function interpretTags(string, alterId1, alterId2) {
-  if(string == null)
+  if (string == null)
     return string;
   // parse out and replace variables
   vars = string.match(/<VAR (.+?) \/>/g);
@@ -1915,7 +1905,7 @@ function initStats(question) {
     }
   }
 
-  this.getDistance = function(visited, node2) {
+  this.getDistance = function (visited, node2) {
     var node1 = visited[visited.length - 1];
 
     if ($.inArray(node2, connections[node1]) != -1) {
@@ -2036,7 +2026,7 @@ function initStats(question) {
     }
   }
 
-  this.nextEigenvectorGuess = function(guess) {
+  this.nextEigenvectorGuess = function (guess) {
     var results = [];
     for (g in guess) {
       var result = 0.0;
@@ -2052,7 +2042,7 @@ function initStats(question) {
 
   this.tinyNum = 0.0000001;
 
-  this.normalize = function(vec) {
+  this.normalize = function (vec) {
     var magnitudeSquared = 0.0;
     for (g in vec) {
       magnitudeSquared = magnitudeSquared + Math.pow(vec[g], 2);
@@ -2066,7 +2056,7 @@ function initStats(question) {
     return normalized;
   }
 
-  this.change = function(vec1, vec2) {
+  this.change = function (vec1, vec2) {
     var total = 0.0;
     for (g in vec1) {
       total = total + Math.abs(vec1[g] - vec2[g]);
@@ -2189,7 +2179,7 @@ function initStats(question) {
       8: "#26AD33",
       9: "#12A31E"
     },
-    "black" : {
+    "black": {
       0: "#EEEEEE",
       1: "#D3D3D3",
       2: "#B9B9B9",
@@ -2203,7 +2193,7 @@ function initStats(question) {
     }
   };
 
-  this.getNodeColor = function(nodeId) {
+  this.getNodeColor = function (nodeId) {
     var defaultNodeColor = "#07f";
     console.log(this.params['nodeColor'])
     if (typeof this.params['nodeColor'] != "undefined") {
@@ -2264,7 +2254,7 @@ function initStats(question) {
     return defaultNodeColor;
   }
 
-  this, getNodeSize = function(nodeId) {
+  this, getNodeSize = function (nodeId) {
     var defaultNodeSize = 4;
     console.log(this.params)
     if (nodeId != -1 && typeof this.params['nodeSize'] != "undefined") {
@@ -2314,7 +2304,7 @@ function initStats(question) {
     return defaultNodeSize;
   }
 
-  this.getNodeShape = function(nodeId) {
+  this.getNodeShape = function (nodeId) {
     var defaultNodeShape = "chircle";
     if (typeof this.params['nodeShape'] != "undefined") {
       if (typeof this.params['nodeShape']['questionId'] != "undefined" && typeof answers[this.params['nodeShape']['questionId'] + "-" + nodeId] != "undefined")
@@ -2333,7 +2323,7 @@ function initStats(question) {
     return defaultNodeShape;
   }
 
-  this.getEdgeColor = function(nodeId1, nodeId2) {
+  this.getEdgeColor = function (nodeId1, nodeId2) {
     var defaultEdgeColor = "#ccc";
     if (typeof this.params['edgeColor'] != "undefined") {
       if (typeof this.params['edgeColor']['questionId'] != "undefined" && typeof answers[this.params['edgeColor']['questionId'] + "-" + nodeId1 + "and" + nodeId2] != "undefined")
@@ -2350,7 +2340,7 @@ function initStats(question) {
     return defaultEdgeColor;
   }
 
-  this.getEgoEdgeColor = function(nodeId1) {
+  this.getEgoEdgeColor = function (nodeId1) {
     var defaultEdgeColor = "#ccc";
     if (typeof this.params['egoEdgeColor'] != "undefined") {
       if (typeof this.params['egoEdgeColor']['questionId'] != "undefined" && typeof answers[this.params['egoEdgeColor']['questionId'] + "-" + nodeId1] != "undefined")
@@ -2367,7 +2357,7 @@ function initStats(question) {
     return defaultEdgeColor;
   }
 
-  this.getEdgeSize = function(nodeId1, nodeId2) {
+  this.getEdgeSize = function (nodeId1, nodeId2) {
     var defaultEdgeSize = 1;
     if (typeof this.params['edgeSize'] != "undefined") {
       if (typeof this.params['edgeSize']['questionId'] != "undefined" && typeof answers[this.params['edgeSize']['questionId'] + "-" + nodeId1 + "and" + nodeId2] != "undefined")
@@ -2384,7 +2374,7 @@ function initStats(question) {
     return defaultEdgeSize;
   }
 
-  this.getEgoEdgeSize = function(nodeId1, nodeId2) {
+  this.getEgoEdgeSize = function (nodeId1, nodeId2) {
     var defaultEdgeSize = 1;
     if (typeof this.params['egoEdgeSize'] != "undefined") {
       if (typeof this.params['egoEdgeSize']['questionId'] != "undefined" && typeof answers[this.params['egoEdgeSize']['questionId'] + "-" + nodeId1] != "undefined")
@@ -2470,7 +2460,7 @@ function initStats(question) {
   }
   max_edge_size = Math.max.apply(Math, sizes);
 
-  setTimeout(function() {
+  setTimeout(function () {
     sigma.renderers.def = sigma.renderers.canvas;
     s = new sigma({
       graph: g,
@@ -2499,20 +2489,20 @@ function initStats(question) {
         }
       }
     } else {
-        s.startForceAtlas2({
-          "worker": false,
-          "outboundAttractionDistribution": true,
-          "speed": 2000,
-          "gravity": 0.2,
-          "jitterTolerance": 0,
-          "strongGravityMode": true,
-          "barnesHutOptimize": false,
-          "totalSwinging": 0,
-          "totalEffectiveTraction": 0,
-          "complexIntervals": 500,
-          "simpleIntervals": 1000
-        });
-        setTimeout("s.stopForceAtlas2(); saveNodes(); $('#fullscreenButton').prop('disabled', false);", 5000);
+      s.startForceAtlas2({
+        "worker": false,
+        "outboundAttractionDistribution": true,
+        "speed": 2000,
+        "gravity": 0.2,
+        "jitterTolerance": 0,
+        "strongGravityMode": true,
+        "barnesHutOptimize": false,
+        "totalSwinging": 0,
+        "totalEffectiveTraction": 0,
+        "complexIntervals": 500,
+        "simpleIntervals": 1000
+      });
+      setTimeout("s.stopForceAtlas2(); saveNodes(); $('#fullscreenButton').prop('disabled', false);", 5000);
     }
     s.refresh();
     initNotes(s);
@@ -2534,7 +2524,7 @@ function fullscreen() {
   $("#infovis").height(screen.height);
   $("#infovis").width(screen.width);
 
-  setTimeout(function() {
+  setTimeout(function () {
     document.addEventListener('webkitfullscreenchange', exitHandler, false);
     document.addEventListener('mozfullscreenchange', exitHandler, false);
     document.addEventListener('fullscreenchange', exitHandler, false);
@@ -2563,15 +2553,15 @@ function exitHandler() {
     $("#infovis").width(graphWidth)
     $("#infovis canvas").height(360);
     $("#infovis canvas").width(graphWidth);
-    $("#infovis canvas").attr("height", 360 );
+    $("#infovis canvas").attr("height", 360);
     $("#infovis canvas").attr("width", graphWidth);
     //window.dispatchEvent(new Event('resize'));
-    setTimeout(function(){
+    setTimeout(function () {
       window.dispatchEvent(new Event('resize'));
 
       //s.cameras[0].goTo({ x: 0, y: 0, angle: 0, ratio: 1 });
       //s.refresh();
-    },100);
+    }, 100);
     document.removeEventListener('webkitfullscreenchange', exitHandler, false);
     document.removeEventListener('mozfullscreenchange', exitHandler, false);
     document.removeEventListener('fullscreenchange', exitHandler, false);
@@ -2582,7 +2572,7 @@ function exitHandler() {
 function navFromList(pageNumber, scope) {
   var i = 0;
   var pages = [];
-  this.checkPage = function(iPage, pageNumber, text) {
+  this.checkPage = function (iPage, pageNumber, text) {
     if (iPage == pageNumber) {
       $("#questionTitle").html(text);
       text = "<b>" + text + "</b>";
@@ -2619,7 +2609,7 @@ function columnWidths() {
   var tWidth;
   var cWidths = [];
   tWidth = $("#realHeader").width();
-  $("#realHeader").children().each(function(index) {
+  $("#realHeader").children().each(function (index) {
     cWidths[index] = $(this).width();
   });
   $("#floatHeader").width(tWidth);
@@ -2629,7 +2619,7 @@ function columnWidths() {
   $("#realHeader").parent().css({
     "margin-top": "-" + $("#floater").height() + "px"
   });
-  $("#floater").children().each(function(index) {
+  $("#floater").children().each(function (index) {
     $(this).width(cWidths[index]);
   });
 }
@@ -2676,38 +2666,38 @@ function fixHeader() {
   }
   var resizeTimer;
 
-$(window).on('resize', function(e) {
+  $(window).on('resize', function (e) {
 
-  clearTimeout(resizeTimer);
-  resizeTimer = setTimeout(function() {
-/*
-    $(window).unbind('scroll');
-    $("#content").css({
-      "background-attachment": "fixed"
-    });
-    $("#floatHeader").css({
-      "position": "fixed",
-      "left": $("#realHeader").offset().left - $(window).scrollLeft() + "px",
-    });
-    fixHeader();
-*/
-  // $("#qTable").floatThead({top:$("#topbar").height()})
-  }, 250);
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      /*
+          $(window).unbind('scroll');
+          $("#content").css({
+            "background-attachment": "fixed"
+          });
+          $("#floatHeader").css({
+            "position": "fixed",
+            "left": $("#realHeader").offset().left - $(window).scrollLeft() + "px",
+          });
+          fixHeader();
+      */
+      // $("#qTable").floatThead({top:$("#topbar").height()})
+    }, 250);
 
-});
-/*
-  $(window).resize(function() {
-    $(window).unbind('scroll');
-    var offsetLeft = $("#realHeader").offset().left
-    $("#content").css({
-      "background-attachment": "fixed"
-    });
-    $("#floatHeader").css({
-      "position": "fixed",
-      "left": offsetLeft - $(window).scrollLeft() + "px",
-    });
-    fixHeader();
-  });*/
+  });
+  /*
+    $(window).resize(function() {
+      $(window).unbind('scroll');
+      var offsetLeft = $("#realHeader").offset().left
+      $("#content").css({
+        "background-attachment": "fixed"
+      });
+      $("#floatHeader").css({
+        "position": "fixed",
+        "left": offsetLeft - $(window).scrollLeft() + "px",
+      });
+      fixHeader();
+    });*/
 }
 
 function unfixHeader() {
@@ -2727,7 +2717,7 @@ function unfixHeader() {
   $(window).unbind('resize');
 }
 
-function htmldecode (str){
+function htmldecode(str) {
   var txt = document.createElement('textarea');
   txt.innerHTML = str.trim();
   return $(txt).val();

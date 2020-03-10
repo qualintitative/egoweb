@@ -291,9 +291,8 @@
         </tbody>
     </table>
 
-    <div ng-if="askingStyleList == false && subjectType != 'ALTER_PAIR' && subjectType != 'NAME_GENERATOR' && (keys(questions).length == 1 || subjectType == 'EGO_ID')" ng-class="{multiBox: askingStyleList != false}">
+    <div ng-if="askingStyleList == false && subjectType != 'NAME_GENERATOR' && (keys(questions).length == 1 || subjectType == 'EGO_ID')">
         <div ng-if="prompt != ''" ng-bind-html="prompt">{{ prompt }}</div>
-
         <div id="realHeader" class="panel multi multi-header" ng-if="askingStyleList != false">
             <div style="width:180px"></div>
             <div ng-if="(answerType == 'TEXTUAL' || answerType == 'NUMERICAL') && askingStyleList != false" style="width:{{ fixedWidth }}"></div>
