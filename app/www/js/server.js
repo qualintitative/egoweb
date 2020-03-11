@@ -24,14 +24,15 @@ $(function(){
     }, 100);
 })
 $(document).keydown(function(e) {
+    columns = $("#qTable")[0].rows[0].cells.length - 1;
 	if($("textarea").length == 1 &&  e.keyCode == 13){
-    e.preventDefault();
+        e.preventDefault();
 		if($("#alterFormBox").length != 0 && $(".alterSubmit").length != 0)
 			$('.alterSubmit')[0].click();
 		else
 			$('#next').click();
     }
-    if($("textarea").length == 0){
+    if($("textarea").length  == 1){
         if(alterPromptPage == false){
             if (e.keyCode == 37){
                 e.preventDefault();
