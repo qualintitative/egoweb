@@ -173,7 +173,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       }
     }
     if (typeof $scope.questions[k].CITATION == "string")
-      $scope.questions[k].CITATION = $sce.trustAsHtml($scope.questions[k].CITATION);
+      $scope.questions[k].CITATION = $sce.trustAsHtml(interpretTags($scope.questions[k].CITATION, $scope.questions[k].ALTERID1, $scope.questions[k].ALTERID2));
 
     if ($scope.questions[k].ALLBUTTON == true && !$scope.options["all"]) {
       $scope.options['all'] = $.extend(true, {}, options[$scope.questions[k].ID]);
@@ -1192,6 +1192,10 @@ function buildList() {
       console.log("wait over " + Object.keys(ego_question_list).length);
       if (ego_question_list[Object.keys(ego_question_list)[0]].ANSWERREASONEXPRESSIONID > 0)
         evalQIndex.push(i);
+      var stemTitle =  ego_question_list[Object.keys(ego_question_list)[0]].TITLE
+      for(sl = 1; sl < Object.keys(ego_question_list).length; sl++){
+        ego_question_list[Object.keys(ego_question_list)[sl]].TITLE = stemTitle;
+      }
       masterList[i] = ego_question_list;
       ego_question_list = new Object;
       prompt = "";
