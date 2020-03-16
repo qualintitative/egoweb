@@ -518,7 +518,9 @@ td{
 	margin-top: 0;
 	margin-bottom: 0;
 }
-
+#qTable td, #qTable th {
+	padding: 5px!important;
+}
 #menubar{
 	font-size: 12px;
 	background:url('/images/menubar.png');
