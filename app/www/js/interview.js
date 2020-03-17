@@ -273,13 +273,13 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
     if ($scope.questions[k].ANSWERTYPE == "MULTIPLE_SELECTION") {
       $scope.phrase = "Please select ";
-      if ($scope.questions[k].MINCHECKABLEBOXES != null && $scope.questions[k].MINCHECKABLEBOXES != "" && $scope.questions[k].MAXCHECKABLEBOXES != "" && $scope.questions[k].MINCHECKABLEBOXES == $scope.questions[k].MAXCHECKABLEBOXES)
+      if ($scope.questions[k].MINCHECKABLEBOXES != null && $scope.questions[k].MINCHECKABLEBOXES != null && $scope.questions[k].MAXCHECKABLEBOXES != "" && $scope.questions[k].MINCHECKABLEBOXES == $scope.questions[k].MAXCHECKABLEBOXES)
         $scope.phrase += $scope.questions[k].MAXCHECKABLEBOXES;
-      else if ($scope.questions[k].MINCHECKABLEBOXES != "" && $scope.questions[k].MAXCHECKABLEBOXES != "" && $scope.questions[k].MINCHECKABLEBOXES != $scope.questions[k].MAXCHECKABLEBOXES)
+      else if ($scope.questions[k].MINCHECKABLEBOXES != null && $scope.questions[k].MAXCHECKABLEBOXES != null && $scope.questions[k].MINCHECKABLEBOXES != $scope.questions[k].MAXCHECKABLEBOXES)
         $scope.phrase += $scope.questions[k].MINCHECKABLEBOXES + " to " + $scope.questions[k].MAXCHECKABLEBOXES;
-      else if ($scope.questions[k].MINCHECKABLEBOXES == "" && $scope.questions[k].MAXCHECKABLEBOXES != "")
+      else if ($scope.questions[k].MINCHECKABLEBOXES == null && $scope.questions[k].MAXCHECKABLEBOXES != null)
         $scope.phrase += " up to " + $scope.questions[k].MAXCHECKABLEBOXES;
-      else if ($scope.questions[k].MINCHECKABLEBOXES != "" && $scope.questions[k].MAXCHECKABLEBOXES == "")
+      else if ($scope.questions[k].MINCHECKABLEBOXES != null && $scope.questions[k].MAXCHECKABLEBOXES == null)
         $scope.phrase += " at least " + $scope.questions[k].MINCHECKABLEBOXES;
 
       if ($scope.questions[k].MAXCHECKABLEBOXES == 1)
