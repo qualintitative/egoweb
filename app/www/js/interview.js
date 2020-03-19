@@ -838,9 +838,9 @@ app.directive('checkAnswer', [function () {
           var numberErrors = 0;
           var showError = false;
           var errorMsg = "";
-          if (min !== "" && min != null)
+          if (min !== null && min != null)
             numberErrors++;
-          if (max !== "" && max != null)
+          if (max !== null && max != null)
             numberErrors = numberErrors + 2;
 
           checkedBoxes = value.split(',').length;

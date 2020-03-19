@@ -125,7 +125,7 @@ function save(questions, page, url, scope){
     }else if(questions[0].ANSWERTYPE == "CONCLUSION"){
         $.post(saveUrl, $('#answerForm').serialize(), function (data) {
             if (typeof redirect !== 'undefined' && redirect){
-                document.location = redirect;
+                document.location = redirect + "&ext_st=1&Termpoint8=&intlen=" + Math.round((Math.round(Date.now() /1000) - interview.START_DATE) / 60);
             }
             else {
                 document.location =  rootUrl + "/admin";
