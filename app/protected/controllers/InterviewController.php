@@ -103,7 +103,7 @@ class InterviewController extends Controller
     public function actionView($studyId)
     {
         if($studyId == 0 && isset($_GET["study"])){
-            if(in_array($_SERVER['REMOTE_ADDR'], Yii::app()->params['allowedRemoteAccess'])){
+            //if(in_array($_SERVER['REMOTE_ADDR'], Yii::app()->params['allowedRemoteAccess'])){
                 $study = Study::model()->findByAttributes(array("name"=>$_GET["study"]));
                 Yii::app()->session['redirect'] = $_GET['redirect_url'];
                 $interview = new Interview;
@@ -129,10 +129,10 @@ class InterviewController extends Controller
                     }
                     $this->redirect("/interview/".$study->id."/". $interview->id . "/#/page/1/");
                 }
-            }else{
-                echo "error";
-                die();
-            }
+            //}else{
+             //   echo "error";
+             //   die();
+            //}
         }else{
             $study = Study::model()->findByPk($studyId);
         }
