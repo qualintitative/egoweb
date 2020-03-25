@@ -279,13 +279,14 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         $scope.phrase += $scope.questions[k].MINCHECKABLEBOXES + " to " + $scope.questions[k].MAXCHECKABLEBOXES;
       else if ($scope.questions[k].MINCHECKABLEBOXES == null && $scope.questions[k].MAXCHECKABLEBOXES != null)
         $scope.phrase += " up to " + $scope.questions[k].MAXCHECKABLEBOXES;
-      else if ($scope.questions[k].MINCHECKABLEBOXES != null && $scope.questions[k].MAXCHECKABLEBOXES == null)
-        $scope.phrase += " at least " + $scope.questions[k].MINCHECKABLEBOXES;
-
-      if ($scope.questions[k].MAXCHECKABLEBOXES == 1)
-        $scope.phrase += " response";
-      else
-        $scope.phrase += " responses";
+      if ($scope.questions[k].MINCHECKABLEBOXES != null && $scope.questions[k].MAXCHECKABLEBOXES == null){
+        $scope.phrase += " all that apply" //" at least " + $scope.questions[k].MINCHECKABLEBOXES;
+      } else {
+        if ($scope.questions[k].MAXCHECKABLEBOXES > 1 ||  $scope.questions[k].MINCHECKABLEBOXES > 1)
+          $scope.phrase += " responses";
+        else
+          $scope.phrase += " response";
+      }
       if ($scope.questions[k].ASKINGSTYLELIST == 1 && $scope.questions[k].WITHLISTRANGE == false)
         $scope.phrase += " for each row";
     }
@@ -847,7 +848,7 @@ app.directive('checkAnswer', [function () {
           if (!value)
             checkedBoxes = 0;
 
-          if (numberErrors != 0 && (checkedBoxes < min || checkedBoxes > max) && scope.answers[array_id].SKIPREASON == "NONE")
+          if (numberErrors != 0 && (checkedBoxes < min || checkedBoxes > parseInt(max)) && scope.answers[array_id].SKIPREASON == "NONE")
             showError = true;
           //console.log('min:' + min + ':max:' + max + ':checked:' + checkedBoxes+ ":answer:" + value + ":showerror:" + showError);
 
@@ -1045,7 +1046,7 @@ app.directive('checkAnswer', [function () {
           if (!value)
             checkedBoxes = 0;
 
-          if (numberErrors != 0 && (checkedBoxes < min || checkedBoxes > max) && scope.answers[array_id].SKIPREASON == "NONE")
+          if (numberErrors != 0 && (checkedBoxes < min || checkedBoxes > parseInt(max)) && scope.answers[array_id].SKIPREASON == "NONE")
             showError = true;
 
           //console.log('min:' + min + ':max:' + max + ':checked:' + checkedBoxes+ ":answer:" + value + ":showerror:" + showError);
