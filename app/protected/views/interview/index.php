@@ -5,7 +5,7 @@ $this->pageTitle = "Interviewing";
 
 ?>
 
-<div class="view" style="width:360px;float:left;margin-right:30px">
+<div class="col-sm-6">
 <?php if(isset($_GET['studyId'])): ?>
 <script>
 $(function(){
@@ -32,5 +32,5 @@ $(function(){
 
 </div>
 
-<div id="interviewList">
+<div class="col-sm-6" id="interviewList">
 </div>

@@ -1,4 +1,3 @@
-<div class="view" style="width:360px;float:left;">
 <h2><?php echo Study::getName($studyId); ?></h2>
 
 <h3><a href="/interview/<?php echo $studyId; ?>#/page/0">Start new interview</a></h3>
@@ -22,4 +21,3 @@ $this->widget('zii.widgets.grid.CGridView', array(
 	),
 ));
 ?>
-</div>
