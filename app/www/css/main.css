@@ -519,8 +519,8 @@ td{
 	margin-bottom: 0;
 }
 .qTable td, .qTable th {
-	padding-left: 8px!important;
-	padding-right: 8px!important;
+	padding-left: 10px!important;
+	padding-right: 10px!important;
 }
 #menubar{
 	font-size: 12px;
