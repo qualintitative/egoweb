@@ -40,7 +40,7 @@
         <a ng-if='audio["PREFACE" + qId]' class="play-sound" ng-click='playSound("PREFACE" + qId)' href="javascript:void(0)"><span class="fui-volume"></span></a>
         <div id="alterFormBox" ng-if="questions[0].ANSWERTYPE == 'NAME_GENERATOR'">
             <div ng-if='prompt != ""' ng-bind-html="prompt">{{ prompt }}</div>
-            <div ng-if='alterPrompt != ""'>{{ alterPrompt }}</div>
+            <div id="variablePrompt" ng-if='alterPrompt != ""'>{{ alterPrompt }}</div>
             <a ng-if='audio["ALTERPROMPT"]' class="play-sound" ng-click='playSound("ALTERPROMPT")' href="javascript:void(0)"><span class="fui-volume"></span></a>
             <form ng-if="!questions[0].MAXLITERAL || keys(alters).length < questions[0].MAXLITERAL" id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
                 <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">

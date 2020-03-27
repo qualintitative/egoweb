@@ -33,9 +33,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   var style = document.createElement('style');
   style.innerHTML = study.STYLE;
 
-  // Get the first script tag
-  var ref = document.querySelector('head');
-
   // Insert our new styles before the first script tag
   $('head').append(style);
   $scope.questions = qFromList($routeParams.page)
