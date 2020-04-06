@@ -1755,13 +1755,20 @@ function interpretTags(string, alterId1, alterId2) {
     "July", "August", "September", "October", "November", "December"
   ];
   for (k in dates) {
-    var date = dates[k].match(/<DATE (.+?) \/>/)[1]
+    var date = dates[k].match(/<DATE (.+?) \/>/)[1]    
     var parts =  date.split(" ");
     var qTitle = parts[0];
-    var amount = parts[1];
+    var amount = parseInt(parts[1]);
     var period = parts[2];
     if (qTitle.toLowerCase() == "now") {
       var dateVal = new Date
+      if(period.match(/DAY/i)){
+        dateVal.setDate(dateVal.getDate() + amount);
+      }else if(period.match(/MONTH/i)){
+        dateVal.setMonth(dateVal.getMonth() + amount);
+      }else if(period.match(/YEAR/i)){
+        dateVal.setYear(dateVal.getYear() + amount);
+      }
       var newDate = monthNames[dateVal.getMonth()] + " " + dateVal.getDate() + ", " + dateVal.getFullYear()
     } else {
       var question = getQuestion(qTitle);
