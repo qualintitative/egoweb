@@ -336,6 +336,9 @@
 
                 <div class="multiRow ">
                     <select class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="timeBits(question.TIMEUNITS, 'MONTH')" ng-model="dates[question.array_id].MONTH" ng-change="dateValue(question.array_id)">
+                        <option value="">
+                            Select month
+                        </option>
                         <option value="January">
                             January
                         </option>

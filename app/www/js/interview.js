@@ -633,23 +633,28 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
   $scope.timeValue = function (array_id) {
     var date = [];
-    if (!isNaN($scope.time_spans[array_id].YEARS))
+    $scope.answers[array_id].VALUE = "";
+    //alert($scope.time_spans[array_id].YEARS)
+    if (!isNaN($scope.time_spans[array_id].YEARS) && $scope.time_spans[array_id].YEARS)
       date.push($scope.time_spans[array_id].YEARS + ' YEARS');
-    if (!isNaN($scope.time_spans[array_id].MONTHS))
+    if (!isNaN($scope.time_spans[array_id].MONTHS) && $scope.time_spans[array_id].MONTHS)
       date.push($scope.time_spans[array_id].MONTHS + ' MONTHS');
-    if (!isNaN($scope.time_spans[array_id].WEEKS))
+    if (!isNaN($scope.time_spans[array_id].WEEKS) && $scope.time_spans[array_id].WEEKS)
       date.push($scope.time_spans[array_id].WEEKS + ' WEEKS');
-    if (!isNaN($scope.time_spans[array_id].DAYS))
+    if (!isNaN($scope.time_spans[array_id].DAYS) && $scope.time_spans[array_id].DAYS)
       date.push($scope.time_spans[array_id].DAYS + ' DAYS');
-    if (!isNaN($scope.time_spans[array_id].HOURS))
+    if (!isNaN($scope.time_spans[array_id].HOURS) && $scope.time_spans[array_id].HOURS)
       date.push($scope.time_spans[array_id].HOURS + ' HOURS');
-    if (!isNaN($scope.time_spans[array_id].MINUTES))
+    if (!isNaN($scope.time_spans[array_id].MINUTES) && $scope.time_spans[array_id].MINUTES)
       date.push($scope.time_spans[array_id].MINUTES + ' MINUTES');
-    $scope.answers[array_id].VALUE = date.join("; ");
-    $scope.answers[array_id].SKIPREASON = "NONE";
-    for (k in $scope.options[array_id]) {
-      if ($scope.options[array_id][k].ID == "DONT_KNOW" || $scope.options[array_id][k].ID == "REFUSE")
-        $scope.options[array_id][k].checked = false;
+    if(date.length > 0){
+      $scope.answers[array_id].VALUE = date.join("; ");
+      //alert($scope.answers[array_id].VALUE)
+      $scope.answers[array_id].SKIPREASON = "NONE";
+      for (k in $scope.options[array_id]) {
+        if ($scope.options[array_id][k].ID == "DONT_KNOW" || $scope.options[array_id][k].ID == "REFUSE")
+          $scope.options[array_id][k].checked = false;
+      }
     }
   }
 
@@ -824,6 +829,16 @@ app.directive('checkAnswer', [function () {
             }
             if (valid == true)
               delete scope.errors[array_id];
+          } else {
+            delete scope.errors[array_id];
+          }
+        }
+
+        if (attr.answerType == "TIME_SPAN") {
+          if (scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW") {
+            if(value.trim() == ""){
+              scope.errors[array_id] = 'Please fill in one of the fields';
+              valid = false;            }
           } else {
             delete scope.errors[array_id];
           }
@@ -1027,6 +1042,16 @@ app.directive('checkAnswer', [function () {
           }
         }
 
+        if (attr.answerType == "TIME_SPAN") {
+          if (scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW") {
+            if(value.trim() == ""){
+              scope.errors[array_id] = 'Please fill in one of the fields';
+              valid = false;            }
+          } else {
+            delete scope.errors[array_id];
+          }
+        }
+  
         if (attr.answerType == "MULTIPLE_SELECTION") {
           var showError = false;
           min = question.MINCHECKABLEBOXES;
@@ -1762,6 +1787,24 @@ function interpretTags(string, alterId1, alterId2) {
     var period = parts[2];
     if (qTitle.toLowerCase() == "now") {
       var dateVal = new Date
+  
+    } else {
+      var question = getQuestion(qTitle);
+      if (!question)
+        continue;
+console.log(question)
+      var array_id = question.ID;
+      if (typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
+        array_id += "-" + alterId1;
+      else if (typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
+        array_id += 'and' + alterId2;
+      console.log(array_id)
+      console.log(answers[array_id].VALUE)
+      lastAnswer = answers[array_id].VALUE;
+      var dateVal = new Date(lastAnswer);
+          console.log(dateVal)
+
+    }
       if(period.match(/DAY/i)){
         dateVal.setDate(dateVal.getDate() + amount);
       }else if(period.match(/MONTH/i)){
@@ -1770,18 +1813,8 @@ function interpretTags(string, alterId1, alterId2) {
         dateVal.setYear(dateVal.getYear() + amount);
       }
       var newDate = monthNames[dateVal.getMonth()] + " " + dateVal.getDate() + ", " + dateVal.getFullYear()
-    } else {
-      var question = getQuestion(qTitle);
-      if (!question)
-        continue;
 
-      var array_id = question.ID;
-      if (typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
-        array_id += "-" + alterId1;
-      else if (typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
-        array_id += 'and' + alterId2;
-      lastAnswer = answers[array_id].VALUE;
-
+/*
       var timeArray = [];
       var bitVals = {
         'BIT_YEAR': 1,
@@ -1796,7 +1829,8 @@ function interpretTags(string, alterId1, alterId2) {
           timeArray.push(k);
         }
       }
-      var dateval = new Date(lastAnswer + " " + amount + " " + period);
+
+      
       var newDate = ""
       if (in_array("BIT_MONTH", $timeArray))
           newDate  = monthNames[dateVal.getMonth()]
@@ -1811,6 +1845,7 @@ function interpretTags(string, alterId1, alterId2) {
           hours = 12 - hours
           ampm = "PM"
         }
+        + " " + amount + " " + period
         if(hours == 0)
           hours = 12
         var minutes = dateval.getMinutes()
@@ -1819,6 +1854,7 @@ function interpretTags(string, alterId1, alterId2) {
       }
       newDate += " " + hours + ":" + minutes + " " + ampm
     }
+    */
     string = string.replace('<DATE ' + date + ' />', newDate)
   }
 
