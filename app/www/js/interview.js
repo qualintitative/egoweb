@@ -1792,25 +1792,20 @@ function interpretTags(string, alterId1, alterId2) {
       var question = getQuestion(qTitle);
       if (!question)
         continue;
-console.log(question)
       var array_id = question.ID;
       if (typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
         array_id += "-" + alterId1;
       else if (typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
         array_id += 'and' + alterId2;
-      console.log(array_id)
-      console.log(answers[array_id].VALUE)
       lastAnswer = answers[array_id].VALUE;
       var dateVal = new Date(lastAnswer);
-          console.log(dateVal)
-
     }
       if(period.match(/DAY/i)){
         dateVal.setDate(dateVal.getDate() + amount);
       }else if(period.match(/MONTH/i)){
         dateVal.setMonth(dateVal.getMonth() + amount);
       }else if(period.match(/YEAR/i)){
-        dateVal.setYear(dateVal.getYear() + amount);
+        dateVal.setYear(dateVal.getFullYear() + amount);
       }
       var newDate = monthNames[dateVal.getMonth()] + " " + dateVal.getDate() + ", " + dateVal.getFullYear()
 
