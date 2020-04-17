@@ -837,7 +837,7 @@ app.directive('checkAnswer', [function () {
         if (attr.answerType == "TIME_SPAN") {
           if (scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW") {
             if(value.trim() == ""){
-              scope.errors[array_id] = 'Please fill in one of the fields';
+              scope.errors[array_id] = 'Please fill in at least one of the fields';
               valid = false;            }
           } else {
             delete scope.errors[array_id];
