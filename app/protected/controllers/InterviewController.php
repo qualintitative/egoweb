@@ -103,36 +103,43 @@ class InterviewController extends Controller
     public function actionView($studyId)
     {
         if($studyId == 0 && isset($_GET["study"])){
-            //if(in_array($_SERVER['REMOTE_ADDR'], Yii::app()->params['allowedRemoteAccess'])){
                 $study = Study::model()->findByAttributes(array("name"=>$_GET["study"]));
-                Yii::app()->session['redirect'] = $_GET['redirect_url'];
-                $interview = new Interview;
-                $interview->studyId = $study->id;
-                if($interview->save()){
-                    $interviewId = $interview->id;
-                    $egoQs = Question::model()->findAllByAttributes(array("subjectType"=>"EGO_ID", "studyId"=>$study->id));
-                    foreach($egoQs as $q){
-                        if(!isset($_GET[$q->title]))
-                            continue;
-                        $a = $q->id;
-                        $answers[$a] = new Answer;
-                        $answers[$a]->interviewId = $interview->id;
-                        $answers[$a]->studyId = $study->id;
-                        $answers[$a]->questionType = "EGO_ID";
-                        $answers[$a]->answerType = $q->subjectType;
-                        $answers[$a]->questionId = $q->id;
-                        $answers[$a]->skipReason = "NONE";
-                        $answers[$a]->value = $_GET[$q->title];
-                        //print_r($_GET);
-                        //echo $q->title . ":" . $answers[$a]->value;
-                        $answers[$a]->save();
+                $egoQs = Question::model()->findAllByAttributes(array("subjectType"=>"EGO_ID", "studyId"=>$study->id));
+                foreach($egoQs as $q){
+                    if(isset($_GET[$q->title])){
+                        $answers =  Answer::model()->findAllByAttributes(array("studyId"=>$study->id, "questionType"=>"EGO_ID"));
+                        foreach($answers as $a){
+                            if($a->value == $_GET[$q->title])
+                                $interview =  Interview::model()->findByPk($a->interviewId);
+                        }
                     }
-                    $this->redirect("/interview/".$study->id."/". $interview->id . "/#/page/1/");
                 }
-            //}else{
-             //   echo "error";
-             //   die();
-            //}
+                Yii::app()->session['redirect'] = $_GET['redirect_url'];
+                if(!isset($interview)){
+                    $interview = new Interview;
+                    $interview->studyId = $study->id;
+                    if($interview->save()){
+                        $interviewId = $interview->id;
+                        $egoQs = Question::model()->findAllByAttributes(array("subjectType"=>"EGO_ID", "studyId"=>$study->id));
+                        foreach($egoQs as $q){
+                            if(!isset($_GET[$q->title]))
+                                continue;
+                            $a = $q->id;
+                            $answers[$a] = new Answer;
+                            $answers[$a]->interviewId = $interview->id;
+                            $answers[$a]->studyId = $study->id;
+                            $answers[$a]->questionType = "EGO_ID";
+                            $answers[$a]->answerType = $q->subjectType;
+                            $answers[$a]->questionId = $q->id;
+                            $answers[$a]->skipReason = "NONE";
+                            $answers[$a]->value = $_GET[$q->title];
+                            //print_r($_GET);
+                            //echo $q->title . ":" . $answers[$a]->value;
+                            $answers[$a]->save();
+                        }
+                    }
+                }
+                $this->redirect("/interview/".$study->id."/". $interview->id . "/#/page/1/");
         }else{
             $study = Study::model()->findByPk($studyId);
         }

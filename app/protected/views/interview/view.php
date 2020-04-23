@@ -25,8 +25,11 @@ participantList = <?php echo $participantList ?>;
 audio = <?php echo $audio; ?>;
 otherGraphs = <?php echo $otherGraphs; ?>;
 csrf = '<?php echo Yii::app()->request->csrfToken; ?>';
-redirect = '<?php echo Yii::app()->session['redirect']; ?>';
+if('<?php echo Yii::app()->session['redirect']; ?>' != '')
+    window.localStorage.setItem('redirect', '<?php echo Yii::app()->session['redirect']; ?>');
+redirect = window.localStorage.getItem('redirect');
 isGuest = <?php echo (Yii::app()->user->isGuest ? 1 : 0); ?>;
+
 </script>
 <?php
 Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/angular.min.js');
