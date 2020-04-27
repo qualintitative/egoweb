@@ -111,6 +111,7 @@ class InterviewController extends Controller
                         foreach($answers as $a){
                             if($a->value == $_GET[$q->title])
                                 $interview =  Interview::model()->findByPk($a->interviewId);
+                                $page = $interview->completed;
                         }
                     }
                 }
@@ -118,6 +119,7 @@ class InterviewController extends Controller
                 if(!isset($interview)){
                     $interview = new Interview;
                     $interview->studyId = $study->id;
+                    $page = 1;
                     if($interview->save()){
                         $interviewId = $interview->id;
                         $egoQs = Question::model()->findAllByAttributes(array("subjectType"=>"EGO_ID", "studyId"=>$study->id));
@@ -139,7 +141,7 @@ class InterviewController extends Controller
                         }
                     }
                 }
-                $this->redirect("/interview/".$study->id."/". $interview->id . "/#/page/1/");
+                $this->redirect("/interview/".$study->id."/". $interview->id . "/#/page/" . $page . "/");
         }else{
             $study = Study::model()->findByPk($studyId);
         }
