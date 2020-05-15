@@ -125,7 +125,6 @@ if($study->multiSessionEgoId){
     }
 	$criteria=array(
 		'condition'=>"studyId in (" . implode(",", $multiIds) . ")",
-        'order'=>'ordering',
 	);
 } else {
 	$criteria=array(
