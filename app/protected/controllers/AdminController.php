@@ -27,7 +27,7 @@ class AdminController extends Controller
                 'users'=>array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and 'update' actions
-                'actions'=>array('index', 'download', 'user', 'useredit', 'userdelete', 'getlink', 'migrate', 'update'),
+                'actions'=>array('index', 'download', 'user', 'useredit', 'userdelete', 'getlink', 'migrate', 'update', 'error'),
                 'users'=>array('@'),
             ),
       array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -493,6 +493,14 @@ class AdminController extends Controller
         } else {
             $this->redirect($this->createUrl('forgot'));
         }
+    }
+    public function actionError()
+    {
+        $myfile = fopen(getcwd() . "/protected/runtime/application.log", "r") or die("Unable to open file!");
+        while(!feof($myfile)) {
+            echo fgets($myfile) . "<br>";
+        }
+        fclose($myfile);
     }
 
     public function actionMigrate()
