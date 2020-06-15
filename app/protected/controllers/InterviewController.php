@@ -229,7 +229,7 @@ class InterviewController extends Controller
             }
         }
         $options = array();
-        $results = QuestionOption::model()->findAllByAttributes(array("studyId"=>$study->id));
+        $results = QuestionOption::model()->findAllByAttributes(array("studyId"=>$multiIds));
         foreach($results as $result){
             if(file_exists(Yii::app()->basePath."/../audio/". $study->id . "/OPTION/" . $result->id . ".mp3"))
                 $audio['OPTION' . $result->id] = "/audio/".$study->id . "/OPTION/" . $result->id . ".mp3";
