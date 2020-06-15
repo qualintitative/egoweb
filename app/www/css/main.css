@@ -508,6 +508,7 @@ td{
   -webkit-transform: scale(1.2,1.2);
   margin-top:10px;
   vertical-align:top;
+  outline:0;
 }
 
 #topbar h3{

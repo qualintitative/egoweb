@@ -413,9 +413,11 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   }
 
   setTimeout(function () {
+    window.scrollTo(0, 0);
+    eval(study.JAVASCRIPT);
     if ($scope.askingStyleList != false && $(window).width() >= 480) {
       console.log("fixing header")
-      $("table.qTable").floatThead({ top: $("#topbar").height() })
+      $("table.qTable").floatThead({ top:  $("#content").css("margin-top") })
       window.scrollTo(0, 0);
       $(window).resize();
     } else {
@@ -427,8 +429,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       //      $("#realHeader").height(1);
     }
     //$(window).scrollTop(0);
-    window.scrollTo(0, 0);
-    eval(study.JAVASCRIPT);
+
   }, 100);
 
   $scope.errors = new Object;
