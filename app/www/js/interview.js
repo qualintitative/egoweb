@@ -2319,8 +2319,10 @@ function initStats(question) {
           value = eigenvectors[nodeId];
         }
         range = max - min;
-        if (range == 0)
-          range = 1;
+        if (range == 0){
+          range = max;
+          min = 0;
+        }
         value = Math.round(((value - min) / (range)) * 9);
         var gc_color = "red";
         for (p in this.params['nodeColor']['options']) {
@@ -2368,8 +2370,10 @@ function initStats(question) {
         min = minDegree;
         value = connections[nodeId].length;
         range = max - min;
-        if (range == 0)
-          range = 1;
+        if (range == 0){
+          range = max;
+          min = 0;
+        }
         value = Math.round(((value - min) / (range)) * 9) + 1;
         return value * 2;
       }
@@ -2378,8 +2382,10 @@ function initStats(question) {
         min = minBetweenness;
         value = betweennesses[nodeId];
         range = max - min;
-        if (range == 0)
-          range = 1;
+        if (range == 0){
+          range = max;
+          min = 0;
+        }
         value = Math.round(((value - min) / (range)) * 9) + 1;
         return value * 2;
       }
@@ -2388,8 +2394,10 @@ function initStats(question) {
         min = minEigenvector;
         value = eigenvectors[nodeId];
         range = max - min;
-        if (range == 0)
-          range = 1;
+        if (range == 0){
+          range = max;
+          min = 0;
+        }
         value = Math.round(((value - min) / (range)) * 9) + 1;
         return value * 2;
       }
