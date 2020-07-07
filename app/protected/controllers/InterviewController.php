@@ -421,7 +421,7 @@ class InterviewController extends Controller
             if($Answer['questionType'] == "EGO_ID" && $Answer['value'] != "" && !$interviewId){
                 foreach($_POST['Answer'] as $ego_id){
                     $ego_id_q = Question::model()->findByPk($ego_id['questionId']);
-                    if(($key || $ego_id_q->restrictList == true) && in_array($ego_id_q->useAlterListField, array("name", "email"))){
+                    if(in_array($ego_id_q->useAlterListField, array("name", "email"))){
                         $keystr = $ego_id['value'];
                         break;
                     }
@@ -429,14 +429,15 @@ class InterviewController extends Controller
                 if(!isset($keystr))
                     $ego_id_q = false;
                 if($ego_id_q && !$key){
-                    $participantList = AlterList::model()->findAllByAttributes(array("studyId"=>$study->id, "interviewerId"=>array(0, Yii::app()->user->id)));
+                    if(!Yii::app()->user->isGuest)
+                        $participantList = AlterList::model()->findAllByAttributes(array("studyId"=>$study->id, "interviewerId"=>array(0, Yii::app()->user->id)));
                     $ego_id_a = Answer::model()->findAllByAttributes(array("studyId"=>$study->id, "questionType"=>"EGO_ID"));
                     $ego_id_answers = array();
                     foreach($ego_id_a as $a){
                         if($a->questionId == $ego_id_q->id)
                             $ego_id_answers[] = $a->value;
                     }
-                    if(count($participantList) == 0){
+                    if(count($participantList) == 0 && !Yii::app()->user->isGuest){
                         $errors++;
                         $errorMsg = "$keystr is either not in the participant list or has been assigned to another interviewer";
                     }else{
@@ -449,6 +450,8 @@ class InterviewController extends Controller
                                 $check = true;
                             }
                         }
+                        if(Yii::app()->user->isGuest && ($prop == "name" || $prop == "email"))
+                            $check = true;
                         if($check == false){
                             $errors++;
                             if(!$errorMsg)
@@ -465,7 +468,7 @@ class InterviewController extends Controller
                     }
                     $loadGuest = true;
                   }else{
-                    if(!$key || ($key && User::hashPassword($keystr) != $key)){
+                    if($ego_id_q->restrictList == true || !$ego_id_q->useAlterListField){
                         $errors++;
                         $errorMsg = "Participant not found";
                     }
