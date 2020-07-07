@@ -103,9 +103,9 @@ function save(questions, page, url, scope){
                     console.log(answers);
                     console.log(interview);
                     evalQuestions();
-                    if(typeof hashKey != "undefined"){
+                    //if(typeof hashKey != "undefined"){
                         page = parseInt(interview.COMPLETED);
-                    }
+                    //}
                     var nextUrl = rootUrl + "/interview/" + study.ID + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
                     if(typeof hashKey != "undefined")
                         nextUrl = nextUrl + "/" + hashKey;

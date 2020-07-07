@@ -486,6 +486,8 @@ class InterviewController extends Controller
                             if(!Yii::app()->user->isGuest){
                               $errors++;
                               $errorMsg = "Participant already in existing interview";
+                            }else{
+                                $loadGuest = true;
                             }
                         }
                     }else{
