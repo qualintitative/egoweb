@@ -1,13 +1,14 @@
 var IwPage = require('../pageobjects/interview.page');
-var LoginPage = require('../pageobjects/login.page');
+var assert = require('assert');
+const env = require("../../.env");
 
 describe('Alters', function () {
-    beforeAll(function () {
+    before(function () {
         // login
-        LoginPage.loginAs(browser.options.egoweb.loginInterviewer.username, browser.options.egoweb.loginInterviewer.password);
+        IwPage.login(egoOpts.loginInterviewer.username, egoOpts.loginInterviewer.password);
 
         // start test1 interview
-        IwPage.openInterview("TEST_WDIO", "ALTER_PROMPT");
+        IwPage.openInterview("TEST_STUDY", "ALTER_PROMPT");
 
         // set valid field values for moving forward through survey
         IwPage.fieldValues = {
@@ -46,10 +47,10 @@ describe('Alters', function () {
         expect(IwPage.getAlterCount()).toBe(0);
 
         alters = IwPage.fieldValues['ALTER_PROMPT']['values'];
-        browser.element("div=Please enter a name, then click the Add button").waitForVisible(browser.options.egoweb.waitTime);
+        $("div=Please enter a name, then click the Add button").waitForExist(egoOpts.waitTime);
 
         IwPage.addAlter(alters[0]);
-        browser.element("div=Please enter another name, then click the Add button").waitForVisible(browser.options.egoweb.waitTime);
+        $("div=Please enter another name, then click the Add button").waitForExist(egoOpts.waitTime);
         expect(IwPage.getAlterCount()).toBe(1);
 
         IwPage.addAlter(alters[1]);
@@ -66,14 +67,14 @@ describe('Alters', function () {
         IwPage.addAlter(alters[11]);
         IwPage.addAlter(alters[12]);
         IwPage.addAlter(alters[13]);
-        browser.element("div=Please enter another name, then click the Add button").waitForVisible(browser.options.egoweb.waitTime);
+        $("div=Please enter another name, then click the Add button").waitForExist(egoOpts.waitTime);
         expect(IwPage.getAlterCount()).toBe(14);
 
         // add final alter, make sure display updates correctly
         IwPage.addAlter(alters[14]);
-        browser.element("div=Please click the Next button").waitForVisible(browser.options.egoweb.waitTime);
+        $("div=Please click the Next button").waitForExist(egoOpts.waitTime);
         expect(IwPage.getAlterCount()).toBe(15);
-        expect(IwPage.alterAddButton.isVisible()).toBe(false);
+        expect(IwPage.alterAddButton.isDisplayed()).toBe(false);
         IwPage.updateNavLinks();
     });
 
@@ -93,10 +94,10 @@ describe('Alters', function () {
         // remove 3rd alter
         IwPage.removeNthAlter(3);
         expect(IwPage.getAlterCount()).toBe(3);
-        expect(browser.isExisting("td="+alters[0])).toBe(true);
-        expect(browser.isExisting("td="+alters[1])).toBe(true);
-        expect(browser.isExisting("td="+alters[2])).toBe(false);
-        expect(browser.isExisting("td="+alters[3])).toBe(true);
+        expect($("td="+alters[0]).isExisting()).toBe(true);
+        expect($("td="+alters[1]).isExisting()).toBe(true);
+        expect($("td="+alters[2]).isExisting()).toBe(false);
+        expect($("td="+alters[3]).isExisting()).toBe(true);
         IwPage.removeNthAlter(3);
         for (i=2;i<alters.length;i++) {
             IwPage.addAlter(alters[i]);
@@ -106,7 +107,7 @@ describe('Alters', function () {
 
     it("should show table for alter questions with 1 row per alter", function() {
         IwPage.goToQuestion('alter1');
-        browser.element("span=alter1").waitForVisible(browser.options.egoweb.waitTime);
+        $("span=alter1").waitForExist(egoOpts.waitTime);
 
         alters = IwPage.fieldValues['ALTER_PROMPT']['values'];
 
@@ -129,7 +130,7 @@ describe('Alters', function () {
         // check that table has 15 rows, one per alter. Skip header/SetAll rows
         for (i=0; i<15; i++) {
             // check that 1st col has alter name
-            expect(browser.element(IwPage.getTableCellSelector(i+1,1)).getText()).toBe(alters[i]);
+            expect($(IwPage.getTableCellSelector(i+1,1)).getText()).toBe(alters[i]);
         }
 
         // check the table headers
@@ -144,7 +145,7 @@ describe('Alters', function () {
 
         // should stay on same page with error message
         expect(IwPage.questionTitle.getText()).toBe("alter1");
-        browser.element("div.alert=Select 1 response for each row please.").waitForVisible(browser.options.egoweb.waitTime);
+        $("div.alert=Select 1 response for each row please.").waitForExist(egoOpts.waitTime);
         // check that all rows are highlighted
         for (i=0; i<15; i++) {
             expect(IwPage.getTableRowHighlight(i+1)).toBe(true);
@@ -152,11 +153,12 @@ describe('Alters', function () {
 
         // select answers in some rows
 
-        browser.scroll(0, 0);
+     //   browser.scroll(0, 0);
 
         for (i=2; i<6; i++) {
-            browser.scroll(0, (i-2)*56);
+            //browser.scroll(0, (i-2)*56);
             IwPage.pause();
+            IwPage.getTableCellInputElement((i-1)*2,i).scrollIntoView(false)
             IwPage.getTableCellInputElement((i-1)*2,i).click();
             expect(IwPage.getTableRowHighlight((i-1)*2)).toBe(false);
         }
@@ -166,10 +168,10 @@ describe('Alters', function () {
 
         // should stay on same page with error message
         expect(IwPage.questionTitle.getText()).toBe("alter1");
-        browser.element("div.alert=Select 1 response for each row please.").waitForVisible(browser.options.egoweb.waitTime);
+        $("div.alert=Select 1 response for each row please.").waitForExist(egoOpts.waitTime);
 
         // click a "Set All" button
-        IwPage.getTableCellInputElement(17,2).click();
+        IwPage.getTableCellInputElement(16,2).click();
 
         // check that no rows are highlighted
         for (i=0; i<15; i++) {
@@ -178,17 +180,19 @@ describe('Alters', function () {
 
         // click next and test skip logic
         IwPage.next();
+        browser.pause(5000)
         expect(IwPage.questionTitle.getText()).toBe("alter2");
-        expect(browser.element(IwPage.getTableCellSelector(2,1)).getText()).toBe("charlie");
+        expect($(IwPage.getTableCellSelector(1,1)).getText()).toBe("delta");
 
         // change option for charlie, test skip logic
         IwPage.back();
         expect(IwPage.questionTitle.getText()).toBe("alter1");
-        browser.scroll(0, 0);
+        //browser.scroll(0, 0);
+        IwPage.getTableCellInputElement(4,2).scrollIntoView(false)
         IwPage.getTableCellInputElement(4,2).click();
-        browser.scroll(0, 9999);
+        //browser.scroll(0, 9999);
         IwPage.next();
-        browser.pause(40000);
+        browser.pause(5000);
         expect(IwPage.questionTitle.getText()).toBe("alterpair1 - alpha");
 
         // go back to alter1
@@ -202,7 +206,7 @@ describe('Alters', function () {
 
     it("should be able to cycle through alter pair pages and create network graph", function() {
         IwPage.goToQuestion('alterpair1 - alpha');
-        browser.element("span=alterpair1 - alpha").waitForVisible(browser.options.egoweb.waitTime);
+        $("span=alterpair1 - alpha").waitForExist(egoOpts.waitTime);
         var alter_pair_pages = 0;
         for(k in IwPage.navLinks){
             if(k.match("alterpair1")){
@@ -216,11 +220,12 @@ describe('Alters', function () {
         // iterates through alter pair questions and fills them out randomly
         for(i = 0; i < alter_pair_pages; i++){
             //browser.scroll(0,0);
-            browser.element("div=Please select 1 response for each row").waitForVisible(browser.options.egoweb.waitTime);
+            $("div=Please select 1 response for each row").waitForExist(egoOpts.waitTime);
             for (j=1; j<15-i; j++) {
-                browser.scroll(0, (j-2)*41);
-                IwPage.pause();
+                //browser.scroll(0, (j-2)*41);
+                //IwPage.pause();
                 let x = Math.floor(Math.random()*(4-2+1)+2);
+                IwPage.getTableCellInputElement(j,x).scrollIntoView(false);
                 if(x == 2)
                     edges++;
                 IwPage.getTableCellInputElement(j,x).click();
@@ -229,17 +234,17 @@ describe('Alters', function () {
         }
 
         //see if graph has right number of nodes
-        browser.pause(5000);
+        browser.pause(30000);
         let result = browser.execute(function() {
             return s.graph.nodes().length;
         })
-        expect(result.value).toBe(15);
+        expect(result).toBe(15);
 
         //see if graph has right number of edges
         let result2 = browser.execute(function() {
             return s.graph.edges().length;
         })
-        expect(result2.value).toBe(edges);
+        expect(result2).toBe(edges);
     });
 
 });

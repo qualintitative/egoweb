@@ -40,7 +40,10 @@ $form=$this->beginWidget('CActiveForm', array(
 
 <?php echo $form->errorSummary($model); ?>
 <?php echo $form->hiddenField($model,'id',array('value'=>$model->id)); ?>
-<?php echo $form->hiddenField($model,'subjectType',array('value'=>$model->subjectType)); ?>
+<?php 
+if($model->subjectType == "EGO_ID")
+	echo $form->hiddenField($model,'subjectType',array('value'=>$model->subjectType));
+?>
 <?php echo $form->hiddenField($model,'studyId',array('value'=>$model->studyId)); ?>
 
 <?php
@@ -140,7 +143,7 @@ $criteria=array(
     CHtml::listData(
         Expression::model()->findAll($criteria),
         'id',
-        function($post) {return CHtml::encode(substr($post->name,0,40));}
+        function($post) {return CHtml::encode(substr($post->name,0,128));}
     ),
     array('empty' => 'Choose One', 'id'=>$model->id."_"."answerReasonExpressionId", "class"=>"form-control")
 ); ?>
@@ -310,18 +313,20 @@ $criteria=array(
 		<table>
 			<tr>
 				<td>Units:</td>
-				<td style="padding-left:0; padding-right:0;"><input type="checkbox" class="time-<?php echo $model->id ?>" id="<?php echo $model->id; ?>_yrs" value=1 <?php if(in_array("BIT_YEAR", $timeArray)): ?> checked <?php endif; ?> /></td>
-				<td style="padding-left:0; padding-right:0;" align="left"><label for="<?php echo $model->id; ?>_yrs">Years</label></td>
-				<td style="padding-left:4px; padding-right:0;" ><input type="checkbox" class="time-<?php echo $model->id ?>" id="<?php echo $model->id; ?>_mons" value=2 <?php if(in_array("BIT_MONTH", $timeArray)): ?> checked <?php endif; ?> /></td>
-				<td style="padding-left:0; padding-right:0;" align="left"><label for="<?php echo $model->id; ?>_mons">Months</label></td>
-				<td class="weeks" style="padding-left:4px; padding-right:0;" ><input type="checkbox" class="time-<?php echo $model->id ?>" id="<?php echo $model->id; ?>_wks" value=4 <?php if(in_array("BIT_WEEK", $timeArray)): ?> checked <?php endif; ?> /></td>
-				<td class="weeks" style="padding-left:0; padding-right:0;" align="left"><label for="<?php echo $model->id; ?>_wks">Weeks</label></td>
-				<td style="padding-left:4px; padding-right:0;" ><input type="checkbox" class="time-<?php echo $model->id ?>" id="<?php echo $model->id; ?>_days" value=8 <?php if(in_array("BIT_DAY", $timeArray)): ?> checked <?php endif; ?> /></td>
-				<td style="padding-left:0; padding-right:0;" align="left"><label for="<?php echo $model->id; ?>_days">Days</label></td>
-				<td style="padding-left:4px; padding-right:0;"><input type="checkbox" class="time-<?php echo $model->id ?>" id="<?php echo $model->id; ?>_hrs" value=16 <?php if(in_array("BIT_HOUR", $timeArray)): ?> checked <?php endif; ?> /></td>
-				<td style="padding-left:0; padding-right:0;" align="left"><label for="<?php echo $model->id; ?>_hrs">Hours</label></td>
-				<td style="padding-left:4px; padding-right:0;"><input type="checkbox" class="time-<?php echo $model->id ?>" id="<?php echo $model->id; ?>_mins" value=32 <?php if(in_array("BIT_MINUTE", $timeArray)): ?> checked <?php endif; ?> /></td>
-				<td style="padding-left:0; padding-right:0;"align="left"><label for="<?php echo $model->id; ?>_mins">Minutes</label></td>
+				<td style="padding-left:0; padding-right:0;">
+					<input type="checkbox" class="time-<?php echo $model->id ?>" id="<?php echo $model->id; ?>_yrs" value=1 <?php if(in_array("BIT_YEAR", $timeArray)): ?> checked <?php endif; ?> />
+					<label for="<?php echo $model->id; ?>_yrs">Years</label>
+				</td>
+				<td style="padding-left:4px; padding-right:0;" ><input type="checkbox" class="time-<?php echo $model->id ?>" id="<?php echo $model->id; ?>_mons" value=2 <?php if(in_array("BIT_MONTH", $timeArray)): ?> checked <?php endif; ?> />
+				<label for="<?php echo $model->id; ?>_mons">Months</label></td>
+				<td class="weeks" style="padding-left:4px; padding-right:0;" ><input type="checkbox" class="time-<?php echo $model->id ?>" id="<?php echo $model->id; ?>_wks" value=4 <?php if(in_array("BIT_WEEK", $timeArray)): ?> checked <?php endif; ?> />
+				<label for="<?php echo $model->id; ?>_wks">Weeks</label></td>
+				<td style="padding-left:4px; padding-right:0;" ><input type="checkbox" class="time-<?php echo $model->id ?>" id="<?php echo $model->id; ?>_days" value=8 <?php if(in_array("BIT_DAY", $timeArray)): ?> checked <?php endif; ?> />
+				<label for="<?php echo $model->id; ?>_days">Days</label></td>
+				<td style="padding-left:4px; padding-right:0;"><input type="checkbox" class="time-<?php echo $model->id ?>" id="<?php echo $model->id; ?>_hrs" value=16 <?php if(in_array("BIT_HOUR", $timeArray)): ?> checked <?php endif; ?> />
+				<label for="<?php echo $model->id; ?>_hrs">Hours</label></td>
+				<td style="padding-left:4px; padding-right:0;"><input type="checkbox" class="time-<?php echo $model->id ?>" id="<?php echo $model->id; ?>_mins" value=32 <?php if(in_array("BIT_MINUTE", $timeArray)): ?> checked <?php endif; ?> />
+				<label for="<?php echo $model->id; ?>_mins">Minutes</label></td>
 			</tr>
 		</table>
 		</div>
@@ -355,7 +360,11 @@ $criteria=array(
                 <div class="col-sm-12">
                   <?php echo $form->checkBox($model,'prefillList', array('id'=>$model->id . "_" . "prefillList")); ?>
                   <?php echo $form->labelEx($model,'prefillList', array('for'=>$model->id . "_" . "prefillList")); ?>
-                </div>
+				</div>
+				<div class="col-sm-12">
+					<?php echo $form->checkBox($model,'noneButton', array("id"=>$model->id . "_" . "noneButton")); ?>
+					<label for="<?php echo $model->id . "_" . "noneButton"; ?>">Allow previously listed alters</label>
+				</div>
             </div>
 <?php endif; ?>
 	<div id="ALTER" style="<?php if(!strstr($model->subjectType, "ALTER")){ ?>display:none<?php } ?>">
@@ -402,8 +411,6 @@ $criteria=array(
 					<?php echo $form->checkBox($model,'pageLevelDontKnowButton', array("id"=>$model->id . "_" . "pageLevelDontKnowButton")); ?><br style="clear:both">
 				<label for="<?php echo $model->id . "_" . "pageLevelRefuseButton"; ?>">REFUSE</label>
 					<?php echo $form->checkBox($model,'pageLevelRefuseButton', array("id"=>$model->id . "_" . "pageLevelRefuseButton")); ?><br style="clear:both">
-				<label for="<?php echo $model->id . "_" . "noneButton"; ?>">None</label>
-					<?php echo $form->checkBox($model,'noneButton', array("id"=>$model->id . "_" . "noneButton")); ?><br style="clear:both">
 				<label for="<?php echo $model->id . "_" . "allButton"; ?>">Set Alls</label>
 					<?php echo $form->checkBox($model,'allButton', array("id"=>$model->id . "_" . "allButton")); ?></td>
 				</tr>
@@ -455,7 +462,7 @@ if($all_expression_ids){
     );
     $alter_pair_expressions = Expression::model()->findAll($criteria);    $list = array();
     foreach($alter_pair_expressions as $expression){
-        $list[$expression['id']] = substr($expression['name'], 0 , 30);
+        $list[$expression['id']] = $expression['name']; //substr($expression['name'], 0 , 30);
     }
 }else{
     $list = array();

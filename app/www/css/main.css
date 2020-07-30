@@ -631,6 +631,7 @@ td{
   margin-right: -15px;
 	overflow-y:auto;/*scroll;*/
 	float:right;
+	z-index:999;
 }
 .alterPosition{
 	color:#DB6C3E;
@@ -976,4 +977,16 @@ label.prompt , .grid-view label {
 
 .table-cell {
 	display: table-cell;
+}
+
+#Expression {
+	background-color: #f8f8f8;
+}
+
+@media (min-width: 960px) {
+	#Expression {
+		height:80%;
+		overflow-y: scroll; 
+		position:fixed; 
+	}
 }

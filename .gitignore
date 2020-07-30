@@ -37,7 +37,6 @@ app/platforms/*
 app/node_modules/
 
 #test files
-test/wdio.conf.js
 test/node_modules/
 test/junitresults/
 test/errorShots/

@@ -474,6 +474,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     $scope.errors[0] = false;
     for (k in alters) {
       if ($("#Alters_name").val() == alters[k].NAME) {
+        if($scope.questions[0].NONEBUTTON != true)
+          $scope.errors[0] = 'That name has already been listed';
         if (alters[k].NAMEGENQIDS != null)
           var nameGenQIds = alters[k].NAMEGENQIDS.split(",");
         if (nameGenQIds.indexOf($("#Alters_nameGenQIds").val()) > -1)

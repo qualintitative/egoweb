@@ -50,7 +50,7 @@ $expressionTypes = array(
     ?>
 </div>
 
-<div class="col-md-6 pull-right">
-<div class="col-md-6" id="Expression" data-spy="affix"  style="background-color: #f8f8f8;height:80%; overflow-y: scroll; position:fixed; width:45%">
+<div class="col-md-6">
+<div id="Expression">
 </div>
 </div>

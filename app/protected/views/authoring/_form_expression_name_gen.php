@@ -32,8 +32,9 @@ echo CHtml::activeHiddenField($model, 'questionId', array('value'=>$question->id
         $selected,
         CHtml::listData(Question::model()->findAllByAttributes(array('subjectType'=>"NAME_GENERATOR", "studyId"=>$studyId)), 'id', 'title'),
         array(
-            'separator'=>'<br>',
+            'separator'=>'',
             'class'=>'valueList',
+            'template' => '<div>{input} {label}</div>',
         )
     );
 

@@ -1,59 +1,80 @@
-#EgoWeb Test Suite
+## Setup
 
-##About
-The EgoWeb Test Suite is a suite of automated tests designed to test the interviewing functionality of EgoWeb.
-It is implemented in Javascript, using Selenium, WebdriverIO, and Jasmine.
+Setting up a new test environment using Mochajs and seleminum-webdriver
 
-You do **not** need to install or run the test suite to use EgoWeb.
+Confirm `node` and `npm` are installed.
 
-##Installation
+Using some kind of terminal window;
+`npm install selenium-webdriver`
+`npm install -g mocha`
 
-The following instructions are for a Mac. For Windows/Linux, please adjust the commands to match your environment.
+Download the Mozilla Geckodriver for firefox, to drive tests on firefox.
 
-* Install NodeJS by following instructions at https://nodejs.org/en/
-* Download Selenium Standalone Server from http://www.seleniumhq.org/download/
-* Open a Terminal window or command prompt.
-* In this test/ directory, run the following command to install packages.
-```
-npm install
-```
-* Install Chomedriver and set it up on your path
-  * Download Chromedriver from https://sites.google.com/a/chromium.org/chromedriver/getting-started
-  * Add the location of Chromedriver to your path
-* Configure WebdriverIO
-  * In this test/ directory, copy wdio.conf.TEMPLATE.js to wdio.conf.js
-  * In wdio.conf.js, change the configuration options starting with "CONFIG_" to match your EgoWeb installation. In particular, configuration
-the EgoWeb URL, EgoWeb administrator and interviewer account username/passwords, and phantomjs path.
-* Import tests
-  * Import each of the studies in the suite/studies/ directory into your EgoWeb installation. Ensure that the name of the
- study in EgoWeb is the same as the file, without the ".study" extension.
-  * Set the permissions of the interviewer account (configured in your wdio.conf.js) to allow them to take each of the surveys
-in the test suite.
+Download the ChromeDriver - WebDriver for Chrome. The Chrome browser will also need to be installed.
+You will have to update your PATH environment variable to include the ChromeDriver.
 
+To test, on a new terminal window; `chromedriver`
+You should see something like this;
+```
+Starting ChromeDriver 2.41 on port 9515
+Only local connections are allowed.
+```
 
-## Executing Tests
-* Open a Terminal window, and in the directory where Selenium Standalone Server is installed, run the following command.
-If you have a different version of Selenium, substitute the version number.
-```
-java -jar selenium-server-standalone-2.53.1.jar
-```
-* Open a 2nd Terminal window, and run the test suite. The tests can be run using a Chrome browser when in debug mode,
-and in PhantomJS (headless, scriptable browser) when not in debug mode.
+In the root folder create the file .env
+Copy the lines below and update to meet your needs.
 
-For normal mode using PhantomJS, run the following command.
 ```
-./node_modules/.bin/wdio wdio.conf.js
+url='',
+headless='Y'
+email='' //superadmin user
+password=''  //superadmin password
+OS='Win' //required when testing on Win 10.
 ```
-For debug mode using Chrome, run the following command.
-```
-DEBUG=true ./node_modules/.bin/wdio wdio.conf.js
-```
-* The output will be shown on the command line, using the Dot reporter. This will show a green dot for every successful test spec,
-and a red F for every failed test.
-* The output will also be saved in JUnit format in the junitresults directory. These can be read by many software packages,
-such as Build/CI systems, or use a tool to generate a HTML report.
 
-## Executing API Tests
+The env variable `WORKSPACE` is required, and is the parent of the repo folder randlex-tests
+
+## Running tests
+
+Each file in the tests folder contains a suite of tests. To run a suite, see the example below.  
 ```
-php APITest/testAPI.php <EGOWEB_URL> <API_Password> <Survey_ID>
+npm i
+wdio wdio.conf.js
+
+```
+
+## Headless Firefox and Chrome
+
+Set the SELENIUM_BROWSER enviorment varilable as shown below, an example of running a suite of tests when .env flag headless = 'Y'
+
+```
+SELENIUM_BROWSER=firefox mocha tests/homepage_tests.js
+```
+
+## Reports
+
+The command above uses the default mocha report, spec. For something different, read the reporters section in mochajs.org.
+Mocha reporters display a test duration, given the default of 75ms as being slow:
+
+1. FAST: Tests that run within half of the “slow” threshold will show the duration in green (if at all).
+2. NORMAL: Tests that run exceeding half of the threshold (but still within it) will show the duration in yellow.
+3. SLOW: Tests that run exceeding the threshold will show the duration in red.
+
+## Screen Grab
+
+Code exists that can be copied to other test suites that will save a png to the $PATH environment variable.
+Place this function somewhere in the test suite file so it can be called from any test.
+```
+const fs = require("fs");
+
+function getScreenshot(data, name) {
+    name = name || 'ss.png';
+    var screenshotPath = '$PATH';
+    fs.writeFileSync(screenshotPath + name, data, 'base64');
+  };
+```
+Use something this in the test and rename the png file to match the test.
+```
+await driver.takeScreenshot().then(function(data){
+    getScreenshot(data, 'baselineTip.png');
+});
 ```

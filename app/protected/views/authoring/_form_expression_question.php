@@ -47,8 +47,9 @@ if($after != ""){
         $selected,
         CHtml::listData(QuestionOption::model()->findAllByAttributes(array('questionId'=>$question->id)), 'id', 'name'),
         array(
-            'separator'=>'<br>',
+            'separator'=>'',
             'class'=>'valueList',
+            'template' => '<div>{input} {label}</div>',
         )
     );
     echo CHtml::activeHiddenField($model, 'value');

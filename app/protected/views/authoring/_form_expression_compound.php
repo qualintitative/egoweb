@@ -64,7 +64,8 @@ of the selected expressions below are true:
 		$selected,
 		CHtml::listData(Expression::model()->findAll($criteria), 'id', 'name'),
 		array(
-			'separator'=>'<br>',
+			'template' => '<div>{input} {label}</div>',
+			'separator'=>'',
 			'class'=>'expressionList',
 		)
 	);

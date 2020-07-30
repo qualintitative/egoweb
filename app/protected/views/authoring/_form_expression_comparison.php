@@ -4,9 +4,10 @@ function setExpression(expressionId){
     console.log($('#Expression_value').val());
 }
 jQuery('#compare').change(function() {
-	if($(this).val() == '')
-		$(this).val(1);
-    $('#Expression_value').val($(this).val() + ':' + $("#expressionId").val());
+    compVal = $(this).val();
+	if(compVal === '')
+        compVal = 1;
+    $('#Expression_value').val(compVal + ':' + $("#expressionId").val());
     console.log($('#Expression_value').val());
 });
 </script>

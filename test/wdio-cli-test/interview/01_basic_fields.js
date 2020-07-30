@@ -1,13 +1,14 @@
 var IwPage = require('../pageobjects/interview.page');
-var LoginPage = require('../pageobjects/login.page');
+var assert = require('assert');
+const env = require("../../.env");
 
 describe('Basic Fields', function () {
-    beforeAll(function () {
+    before(function () {
         // login
-        LoginPage.loginAs(browser.options.egoweb.loginInterviewer.username, browser.options.egoweb.loginInterviewer.password);
+        IwPage.login(egoOpts.loginInterviewer.username, egoOpts.loginInterviewer.password);
 
         // start test1 interview
-        IwPage.openInterview("TEST_WDIO", "basic_start");
+        IwPage.openInterview("TEST_STUDY", "basic_start");
 
         // set valid field values for moving forward through survey
         IwPage.fieldValues = {
@@ -37,7 +38,7 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['num']['field'];
 
         // num
-        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
+        IwPage.inputField().waitForExist(egoOpts.waitTime);
         IwPage.inputField().setValue(55);
         IwPage.next();
 
@@ -46,7 +47,7 @@ describe('Basic Fields', function () {
         IwPage.back();
 
         // num
-        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
+        IwPage.inputField().waitForExist(egoOpts.waitTime);
         expect(IwPage.inputField().getValue()).toBe("55");
     });
 
@@ -55,7 +56,7 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['num']['field'];
 
         // num
-        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
+        IwPage.inputField().waitForExist(egoOpts.waitTime);
         IwPage.inputField().setValue(-7);
         IwPage.next();
 
@@ -64,7 +65,7 @@ describe('Basic Fields', function () {
         IwPage.back();
 
         // num
-        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
+        IwPage.inputField().waitForExist(egoOpts.waitTime);
         expect(IwPage.inputField().getValue()).toBe("-7");
 
     });
@@ -74,12 +75,12 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['num']['field'];
 
         // num
-        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
+        IwPage.inputField().waitForExist(egoOpts.waitTime);
         IwPage.inputField().setValue("abc");
         IwPage.next();
 
         // error message
-        browser.element("div.alert=Please enter a number").waitForVisible(browser.options.egoweb.waitTime);
+        $("div.alert=Please enter a number").waitForExist(egoOpts.waitTime);
 
         // fix error
         IwPage.inputField().setValue("5");
@@ -94,7 +95,7 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['numdkrf']['field'];
 
         // numdkrf
-        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
+        IwPage.inputField().waitForExist(egoOpts.waitTime);
 
         IwPage.inputField().setValue("99");
 
@@ -123,7 +124,7 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['num0to100']['field'];
 
         // num0to100
-        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
+        IwPage.inputField().waitForExist(egoOpts.waitTime);
 
         // try min value
         IwPage.inputField().setValue("0");
@@ -153,14 +154,14 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['num0to100']['field'];
 
         // num0to100
-        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
+        IwPage.inputField().waitForExist(egoOpts.waitTime);
 
         // try value below min
         IwPage.inputField().setValue("-1");
         IwPage.next();
 
         // error message
-        browser.element("div.alert=The range of valid answers is 0 to 100.").waitForVisible(browser.options.egoweb.waitTime);
+        $("div.alert=The range of valid answers is 0 to 100.").waitForExist(egoOpts.waitTime);
 
         // fix value
         IwPage.inputField().setValue("0");
@@ -171,14 +172,14 @@ describe('Basic Fields', function () {
         IwPage.back();
 
         // num0to100
-        IwPage.inputField().waitForExist(browser.options.egoweb.waitTime);
+        IwPage.inputField().waitForExist(egoOpts.waitTime);
 
         // try value below min
         IwPage.inputField().setValue("101");
         IwPage.next();
 
         // error message
-        browser.element("div.alert=The range of valid answers is 0 to 100.").waitForVisible(browser.options.egoweb.waitTime);
+        $("div.alert=The range of valid answers is 0 to 100.").waitForExist(egoOpts.waitTime);
 
         // fix value
         IwPage.inputField().setValue("100");
@@ -192,24 +193,24 @@ describe('Basic Fields', function () {
         IwPage.goToQuestion("textual");
         IwPage.inputField().setValue("");
         IwPage.next();
-        browser.element("div.alert=Value cannot be blank").waitForVisible(browser.options.egoweb.waitTime);
+        $("div.alert=Value cannot be blank").waitForExist(egoOpts.waitTime);
         expect(IwPage.questionTitle.getText()).toBe("textual");
         IwPage.inputField().setValue("test");
         IwPage.next();
-        browser.element("span=date").waitForVisible(browser.options.egoweb.waitTime);
+        $("span=date").waitForExist(egoOpts.waitTime);
         expect(IwPage.questionTitle.getText()).not.toBe("textual");
     });
 
     it("should show error when date fields are missing", function() {
         IwPage.goToQuestion("date");
         IwPage.next();
-        browser.element("div.alert=Please enter a month").waitForVisible(browser.options.egoweb.waitTime);
-        IwPage.monthField().selectByValue('December');
+        $("div.alert=Please enter a month").waitForExist(egoOpts.waitTime);
+        IwPage.monthField().selectByVisibleText('December');
         IwPage.next();
-        browser.element("div.alert=Please enter a valid year").waitForVisible(browser.options.egoweb.waitTime);
+        $("div.alert=Please enter a valid year").waitForExist(egoOpts.waitTime);
         IwPage.yearField().setValue("1999");
         IwPage.next();
-        browser.element("div.alert=Please enter a day of the month").waitForVisible(browser.options.egoweb.waitTime);
+        $("div.alert=Please enter a day of the month").waitForExist(egoOpts.waitTime);
         IwPage.dayField().setValue("31");
         IwPage.next();
         expect(IwPage.questionTitle.getText()).not.toBe("date");
@@ -218,17 +219,17 @@ describe('Basic Fields', function () {
     it("should show error when hour and minute fields are missing", function() {
         IwPage.goToQuestion("hour_min");
         IwPage.next();
-        browser.element("div.alert=Please enter the time of day").waitForVisible(browser.options.egoweb.waitTime);
+        $("div.alert=Please enter the time of day").waitForExist(egoOpts.waitTime);
         IwPage.hourField().setValue('23');
         IwPage.minuteField().setValue('60');
         IwPage.next();
-        browser.element("div.alert=Please enter the time of day").waitForVisible(browser.options.egoweb.waitTime);
+        $("div.alert=Please enter the time of day").waitForExist(egoOpts.waitTime);
         IwPage.pmField().click();
         IwPage.next();
-        browser.element("div.alert=Please enter 0 to 59 for MM").waitForVisible(browser.options.egoweb.waitTime);
+        $("div.alert=Please enter 0 to 59 for MM").waitForExist(egoOpts.waitTime);
         IwPage.minuteField().setValue("59");
         IwPage.next();
-        browser.element("div.alert=Please enter 1 to 12 for HH").waitForVisible(browser.options.egoweb.waitTime);
+        $("div.alert=Please enter 1 to 12 for HH").waitForExist(egoOpts.waitTime);
         IwPage.hourField().setValue('11');
         IwPage.next();
         expect(IwPage.questionTitle.getText()).not.toBe("hour_min");
@@ -236,12 +237,12 @@ describe('Basic Fields', function () {
 
     it("only weeks and days are displayed", function() {
         IwPage.goToQuestion("weeks_days");
-        browser.element("label=Weeks").waitForVisible(browser.options.egoweb.waitTime);
-        browser.element("label=Days").waitForVisible(browser.options.egoweb.waitTime);
-        expect(browser.isExisting('label=Years')).toBe(false);
-        expect(browser.isExisting('label=Months')).toBe(false);
-        expect(browser.isExisting('label=Hours')).toBe(false);
-        expect(browser.isExisting('label=Minutes')).toBe(false);
+        $("label=Weeks").waitForExist(egoOpts.waitTime);
+        $("label=Days").waitForExist(egoOpts.waitTime);
+        expect($('label=Years').isExisting()).toBe(false);
+        expect($('label=Months').isExisting()).toBe(false);
+        expect($('label=Hours').isExisting()).toBe(false);
+        expect($('label=Minutes').isExisting()).toBe(false);
     });
 
 });

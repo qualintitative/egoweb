@@ -421,8 +421,8 @@ class AdminController extends Controller
                       $link = Yii::app()->getBaseUrl(true);
                         if($_SERVER['SERVER_PORT'] == 443)
                             $link =str_replace("http:", "https:", $link);
-                        echo "Password Reset Link for ". $user->name . "<br>" .$link . $this->createUrl('admin/resetpass').'/'.$user->id.':'.
-                        User::model()->hashPassword($user->password, 'miranda');
+                        echo $link . $this->createUrl('admin/resetpass').'/'.$user->id.':'.
+                        User::model()->hashPassword($user->password, 'miranda') ;
                     }
                 }
             }

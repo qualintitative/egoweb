@@ -44,13 +44,14 @@ jQuery('.questionList').change(function() {
 
 jQuery('#times').change(function() {
     expressionValue = $('#Expression_value').val().split(/:/);
-    if(!$(this).val())
-        $(this).val(1);
+
     if(typeof expressionValue[1] == 'undefined')
         expressionValue[1] = '';
     if(typeof expressionValue[2] == 'undefined')
         expressionValue[2] = '';
     expressionValue[0] = $(this).val();
+    if(!expressionValue[0])
+        expressionValue[0] = 1;
     buildValue(expressionValue[0], expressionValue[1], expressionValue[2]);
     console.log($('#Expression_value').val());
 });
@@ -138,7 +139,8 @@ if($study->multiSessionEgoId){
         $selected,
         CHtml::listData(Expression::model()->findAll($criteria), 'id', 'name'),
         array(
-            'separator'=>'<br>',
+            'separator'=>'',
+            'template' => '<div>{input} {label}</div>',
             'class'=>'expressionList',
         )
     );
@@ -155,7 +157,8 @@ if($study->multiSessionEgoId){
         $selected,
         CHtml::listData(Question::model()->findAll($criteria), 'id', 'title'),
         array(
-            'separator'=>'<br>',
+            'template' => '<div>{input} {label}</div>',
+            'separator'=>'',
             'class'=>'questionList',
         )
     );

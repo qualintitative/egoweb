@@ -31,7 +31,7 @@
         <div class="col-sm-12 no-padding" ng-if="header != '' && subjectType != 'NETWORK'" ng-bind-html="header">
             {{ header }}
         </div>
-        <span ng-if="(answerForm.$submitted || errors[0] == 'That name is already on this list' || errors[0] == 'Name cannot be blank' || errors[0] == 'Name not found in list') && errors">
+        <span ng-if="(answerForm.$submitted || errors[0] == 'That name is already on this list' || errors[0] == 'Name cannot be blank' || errors[0] == 'Name not found in list' || errors[0] == 'That name has already been listed') && errors">
             <div class="alert alert-danger" role="alert" ng-if="$index == 0" ng-repeat="error in errors">
                 {{ error }}
             </div>
