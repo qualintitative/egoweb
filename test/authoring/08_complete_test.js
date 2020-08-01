@@ -1,6 +1,6 @@
 const AuthoringPage = require('../pageobjects/authoring.page');
 var assert = require('assert');
-const env = require("../../.env");
+const env = require("../.env");
 const { alertIsPresent } = require('selenium-webdriver/lib/until');
 
 function timeBits(timeUnits, span) {

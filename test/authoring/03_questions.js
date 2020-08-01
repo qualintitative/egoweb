@@ -1,6 +1,6 @@
 const AuthoringPage = require('../pageobjects/authoring.page');
 var assert = require('assert');
-const env = require("../../.env");
+const env = require("../.env");
 
 describe('Create Regular Questions', function () {
   before(function () {

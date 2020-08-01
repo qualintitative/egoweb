@@ -1,6 +1,6 @@
 var IwPage = require('../pageobjects/interview.page');
 var assert = require('assert');
-const env = require("../../.env");
+const env = require("../.env");
 
 describe('Alters', function () {
     before(function () {

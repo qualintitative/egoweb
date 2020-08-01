@@ -1,6 +1,6 @@
 var IwPage = require('../pageobjects/interview.page');
 var assert = require('assert');
-const env = require("../../.env");
+const env = require("../.env");
 const { Browser } = require('selenium-webdriver');
 
 describe('Skip Logic 2', function () {
@@ -89,7 +89,7 @@ describe('Skip Logic 2', function () {
 		IwPage.inputField().waitForExist(egoOpts.waitTime);
 		IwPage.inputField().setValue(6);
 		IwPage.next();
-		browser.pause(1000)
+		IwPage.pause();
 
 		IwPage.goForwardToQuestion('reference number');
 		IwPage.inputField().waitForExist(egoOpts.waitTime);
@@ -97,7 +97,7 @@ describe('Skip Logic 2', function () {
 		IwPage.next();
 		IwPage.goForwardToQuestion('landing');
 		IwPage.next();
-
+		IwPage.pause();
 		expect(IwPage.questionTitle.getText()).toBe("landing 2");
 	});
 
@@ -195,6 +195,7 @@ describe('Skip Logic 2', function () {
 
 		IwPage.goForwardToQuestion('landing 3');
 		IwPage.next();
+		IwPage.pause();
 
 		expect(IwPage.questionTitle.getText()).toBe("compound 3");
 	});

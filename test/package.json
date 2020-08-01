@@ -1,0 +1,25 @@
+{
+  "name": "wdio-cli-test",
+  "version": "1.0.0",
+  "description": "Setting up a new test environment using Mochajs and seleminum-webdriver",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@wdio/cli": "^6.3.6",
+    "geckodriver": "^1.19.1",
+    "selenium-webdriver": "^4.0.0-alpha.7",
+    "wdio-geckodriver-service": "^1.1.0"
+  },
+  "devDependencies": {
+    "@wdio/local-runner": "^6.3.6",
+    "@wdio/mocha-framework": "^6.3.6",
+    "@wdio/spec-reporter": "^6.3.6",
+    "@wdio/sync": "^6.3.6",
+    "chromedriver": "^84.0.1",
+    "wdio-chromedriver-service": "^6.0.3"
+  }
+}
