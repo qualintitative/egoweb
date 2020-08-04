@@ -473,7 +473,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   $scope.addAlter = function (isValid) {
     $scope.errors[0] = false;
     for (k in alters) {
-      if ($("#Alters_name").val() == alters[k].NAME) {
+      if ($("#Alters_name").val().toLowerCase() == alters[k].NAME.toLowerCase()) {
         if($scope.questions[0].NONEBUTTON != true)
           $scope.errors[0] = 'That name has already been listed';
         if (alters[k].NAMEGENQIDS != null)
