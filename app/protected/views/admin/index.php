@@ -88,3 +88,4 @@ $this->pageTitle =  "Admin";
 		</p>
   </div>
 </div>
+<?php echo Yii::app()->params['version']; ?>

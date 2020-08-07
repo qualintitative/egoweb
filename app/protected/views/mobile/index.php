@@ -1,5 +1,6 @@
 <h1>Installing the iOS App</h1>
-Latest Build: <b><?= $date ?></b>
+Latest Build: <b><?= $date ?></b><br>
+Version: <b><?php echo Yii::app()->params['version']; ?></b>
 <br>
 <b>Your device need to be on our list of registered devices to run this app.</b>
 <br><br>

@@ -1,0 +1,17 @@
+# Changelog
+
+## [Unreleased]
+
+## [2.0.2] - 2017-08-07
+### Added
+- New authoring Selenium / mocha test suite
+- option to allow already listed alter names to be entered in subsequent name generator questions
+- version parameter in config
+
+### Changed
+- fixed alter name entry to compare with lowercase names
+- interview test suite converted from jasmine to mocha
+- changed default behavior for name gnerator question to not allow previously listed alters
+
+### Removed
+- node_modules folder
