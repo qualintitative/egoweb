@@ -111,7 +111,7 @@
     </div>
     <div class="form-group">
       <div class="col-lg-4 ">
-        <button class="btn btn-info" onclick="exportEgo(); return false;">Export</button>
+        <button  id="sendExport" class="btn btn-info" onclick="exportEgo(); return false;">Export</button>
       </div>
     </div>
     <?php $this->endWidget(); ?>
@@ -349,8 +349,8 @@
       $(".progress-bar").width(0);
       $("#sendError").hide();
       $("#sendNotice").show();
-      $("#sendNotice").html("Preparing data to send..");
-      $("#sendSync").prop("disabled", true);
+      $("#exportNotice").html("Preparing data to export..");
+      $("#sendExport").prop("disabled", true);
       var total = $("#export-interviews .export:checked").length;
       var batchSize = 1;
       var interviews = $("#export-interviews .export:checked");
@@ -366,26 +366,26 @@
         }
         var thisInt = interviews.splice(0, batchSize);
         console.log("exporting", $(thisInt).val());
+        if(total != 0){
+              msg = "Processing " + (finished + 1) + " / " + total + " interviews: ";
+        }else{
+          msg = "Exporting study without interviews: ";
+          total = 1;
+        }
+        $("#exportNotice").html($("#exportNotice").html() + "<br>" + msg);
         return $.ajax({
           type: "POST",
           url: rootUrl + '/importExport/ajaxexport/',
           data: {
             "interviewId": $(thisInt).val(),
             "YII_CSRF_TOKEN": $("input[name='YII_CSRF_TOKEN']").val()
-          }}).done( function(msg) {
+          }}).success( function(msg) {
             finished++;
-            if(total != 0){
-              msg = "Processed " + finished + " / " + total + " interviews: " + msg;
-            }else{
-              msg = "Exporting study without interviews: " + msg;
-              total = 1;
-            }
             $("#export-panel .progress-bar").width((finished / total * 100) + "%");
             $("#exportError").hide();
             $("#exportNotice").show();
-            $("#exportNotice").html($("#exportNotice").html() + "<br>" + msg);
-          }).fail(
-          function(XMLHttpRequest, textStatus, errorThrown) {
+            $("#exportNotice").html($("#exportNotice").html() + msg);
+          }).fail(function(XMLHttpRequest, textStatus, errorThrown) {
             $("#exportNotice").hide();
             $("#exportError").show();
             $("#exportError").html(errorThrown);
@@ -395,7 +395,7 @@
       }
       batchPromiseRecursive().then(function() {
         console.log(studies);
-        $("#sendSync").prop("disabled", false);
+        $("#sendExport").prop("disabled", false);
         $("#export").submit();
       });
     }

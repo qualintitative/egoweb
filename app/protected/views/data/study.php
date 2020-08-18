@@ -2,35 +2,45 @@
     function exportEgoStudy() {
         var total = $("input[type='checkbox'][name*='export']:checked").length;
         var finished = 0;
+        var batchSize = 1;
+        var interviews = $("input[type='checkbox'][name*='export']:checked");
         $(".progress-bar").width(0);
-        $("input[type='checkbox']:checked").each(function(index) {
-            if (!$(this).attr("id"))
-                return true;
-            var interviewId = $(this).attr("id").match(/\d+/g)[0];
+        var batchPromiseRecursive = function() {
+            if (interviews.length == 0) {
+                return;
+            }
+            var thisInt = interviews.splice(0, batchSize);
+            var interviewId = $(thisInt).attr("id").match(/\d+/g)[0];
             var d = new Date();
             start = d.getTime();
-            $.post(
-                rootUrl + "/data/exportegostudy", {
+            return $.ajax({
+                type: "POST",
+                url: rootUrl + "/data/exportegostudy",
+                data: {
                     studyId: $("#studyId").val(),
                     interviewId: interviewId,
                     expressionId: $("#expressionId").val(),
                     YII_CSRF_TOKEN: $("input[name='YII_CSRF_TOKEN']").val()
-                },
-                function(data) {
-                    if (data == "success") {
-                        finished++;
-                        $("#status").html(
-                            "Processed " + finished + " / " + total + " interviews"
-                        );
-                        $(".progress-bar").width((finished / total * 100) + "%");
-                        if (finished == total) {
-                            $("#status").html("Done!");
-                            $('#analysis').attr('action', rootUrl + '/data/exportegostudyall');
-                            $('#analysis').submit();
-                        }
-                    }
                 }
-            );
+            }).success(function(data) {
+                finished++;
+                $("#status").html(
+                    "Processed " + finished + " / " + total + " interviews"
+                );
+                $(".progress-bar").width((finished / total * 100) + "%");
+            }).then(function(){
+                return batchPromiseRecursive();
+            });
+        }
+        batchPromiseRecursive().then(function() {
+            $("#status").html("Done!");
+            $('#analysis').attr('action', rootUrl + '/data/exportegostudyall');
+            let interviewIds = [];
+            $("input[type='checkbox'][name*='export']:checked").each(function(){
+                interviewIds.push($(this).attr("id").match(/\d+/g)[0]);
+            });
+            $('#analysis #interviewIds').val(interviewIds.join(","));
+            $('#analysis').submit();
         });
     }
 
@@ -38,84 +48,110 @@
         var total = $("input[type='checkbox'][name*='export']:checked").length;
         var finished = 0;
         withAlters = 0;
+        var batchSize = 1;
+        var interviews = $("input[type='checkbox'][name*='export']:checked");
         if ($("#withAlters1").prop("checked") == true)
             withAlters = 1;
         $("#withAlters").val(withAlters);
         $(".progress-bar").width(0);
-        $("input[type='checkbox']:checked").each(function(index) {
-            if (!$(this).attr("id"))
-                return true;
-            var interviewId = $(this).attr("id").match(/\d+/g)[0];
+        var batchPromiseRecursive = function() {
+            if (interviews.length == 0) {
+                return;
+            }
+            var thisInt = interviews.splice(0, batchSize);
+            var interviewId = $(thisInt).attr("id").match(/\d+/g)[0];
             var d = new Date();
             start = d.getTime();
-            $.post(
-                rootUrl + "/data/exportegoalter", {
+            return $.ajax({
+                type: "POST",
+                url: rootUrl + "/data/exportegoalter",
+                data: {
                     studyId: $("#studyId").val(),
                     interviewId: interviewId,
                     withAlters: withAlters,
                     expressionId: $("#expressionId").val(),
                     YII_CSRF_TOKEN: $("input[name='YII_CSRF_TOKEN']").val()
-                },
-                function(data) {
-                    if (data == "success") {
-                        finished++;
-                        $("#status").html(
-                            "Processed " + finished + " / " + total + " interviews"
-                        );
-                        $(".progress-bar").width((finished / total * 100) + "%");
-                        if (finished == total) {
-                            $("#status").html("Done!");
-                            $('#analysis').attr('action', rootUrl + '/data/exportegoalterall');
-                            $('#analysis').submit();
-                        }
-                    }
                 }
-            );
+            }).success(function(data) {
+                finished++;
+                $("#status").html(
+                    "Processed " + finished + " / " + total + " interviews"
+                );
+                $(".progress-bar").width((finished / total * 100) + "%");
+            }).then(function(){
+                return batchPromiseRecursive();
+            });
+        }
+        batchPromiseRecursive().then(function() {
+            $("#status").html("Done!");
+            $('#analysis').attr('action', rootUrl + '/data/exportegoalterall');
+            let interviewIds = [];
+            $("input[type='checkbox'][name*='export']:checked").each(function(){
+                interviewIds.push($(this).attr("id").match(/\d+/g)[0]);
+            });
+            $('#analysis #interviewIds').val(interviewIds.join(","));
+            $('#analysis').submit();
         });
     }
 
     function exportAlterPair() {
         var total = $("input[type='checkbox'][name*='export']:checked").length;
         var finished = 0;
+        var batchSize = 1;
+        var interviews = $("input[type='checkbox'][name*='export']:checked");
         withAlters = 0;
         if ($("#withAlters1").prop("checked") == true)
             withAlters = 1;
         $("#withAlters").val(withAlters);
         $(".progress-bar").width(0);
-        $("input[type='checkbox']:checked").each(function(index) {
-            if (!$(this).attr("id"))
-                return true;
-            var interviewId = $(this).attr("id").match(/\d+/g)[0];
+        var batchPromiseRecursive = function() {
+            if (interviews.length == 0) {
+                return;
+            }
+            var thisInt = interviews.splice(0, batchSize);
+            var interviewId = $(thisInt).attr("id").match(/\d+/g)[0];
             var d = new Date();
             start = d.getTime();
-            $.post(
-                rootUrl + "/data/exportalterpair", {
+            return $.ajax({
+                type: "POST",
+                url: rootUrl + "/data/exportalterpair",
+                data: {
                     studyId: $("#studyId").val(),
                     interviewId: interviewId,
                     withAlters: withAlters,
                     expressionId: $("#expressionId").val(),
                     YII_CSRF_TOKEN: $("input[name='YII_CSRF_TOKEN']").val()
-                },
-                function(data) {
-                    if (data == "success") {
-                        finished++;
-                        $("#status").html(
-                            "Processed " + finished + " / " + total + " interviews"
-                        );
-                        $(".progress-bar").width((finished / total * 100) + "%");
-                        if (finished == total) {
-                            $("#status").html("Done!");
-                            $('#analysis').attr('action', rootUrl + '/data/exportalterpairall');
-                            $('#analysis').submit();
-                        }
-                    }
                 }
-            );
+            }).success(function(data) {
+                finished++;
+                $("#status").html(
+                    "Processed " + finished + " / " + total + " interviews"
+                );
+                $(".progress-bar").width((finished / total * 100) + "%"); 
+            }).then(function(){
+                return batchPromiseRecursive();
+            });
+            
+        }
+        batchPromiseRecursive().then(function() {
+            $("#status").html("Done!");
+            $('#analysis').attr('action', rootUrl + '/data/exportalterpairall');
+            let interviewIds = [];
+            $("input[type='checkbox'][name*='export']:checked").each(function(){
+                interviewIds.push($(this).attr("id").match(/\d+/g)[0]);
+            });
+            $('#analysis #interviewIds').val(interviewIds.join(","));
+            $('#analysis').submit();
         });
     }
 
     function exportOther() {
         $('#analysis').attr('action', rootUrl + '/data/exportother');
+        let interviewIds = [];
+        $("input[type='checkbox'][name*='export']:checked").each(function(){
+            interviewIds.push($(this).attr("id").match(/\d+/g)[0]);
+        });
+        $('#analysis #interviewIds').val(interviewIds.join(","));
         $('#analysis').submit();
     }
 
@@ -136,6 +172,11 @@
 
     function deleteInterviews() {
         if (confirm("Are you sure you want to DELETE these interviews?  The data will not be retrievable.")) {
+            let interviewIds = [];
+            $("input[type='checkbox'][name*='export']:checked").each(function(){
+                interviewIds.push($(this).attr("id").match(/\d+/g)[0]);
+            });
+            $('#analysis #interviewIds').val(interviewIds.join(","));
             $('#analysis').attr('action', rootUrl + '/data/deleteinterviews');
             $('#analysis').submit();
         }
@@ -176,17 +217,11 @@
         <button onclick='exportAlterPair()' class='authorButton'>Export Alter Pair Data</button>
         <button onclick='exportOther()' class='authorButton'>Export Other Specify Data</button>
         <button onclick='exportOtherLegacy()' class='authorButton'>Export Legacy Other Specify Data</button>
-        <button onclick='deleteInterviews()' class='authorButton btn-danger'>Delete Interviews</button>
+        <button onclick='deleteInterviews()' class='authorButton btn-danger pull-right'>Delete Interviews</button>
     </div>
 </div>
 
-<?php
-echo CHtml::form('', 'post', array('id' => 'analysis'));
-echo CHtml::form('', 'post', array('id' => 'analysis'));
-echo CHtml::hiddenField('studyId', $study->id);
-echo CHtml::hiddenField('expressionId', "");
-echo CHtml::hiddenField('withAlters', "", array('id' => 'withAlters'));
-?>
+
 <table class="table table-striped table-bordered table-list">
     <thead>
         <tr>
@@ -230,14 +265,23 @@ echo CHtml::hiddenField('withAlters', "", array('id' => 'withAlters'));
             echo "<td class='hidden-xs'>" . $matchId . "</td>";
             echo "<td class='hidden-xs'>" . $matchUser . "</td>";
             echo "<td>";
-            if ($interview->completed == -1)
-                echo CHtml::button('Edit', array('submit' => $this->createUrl('/data/edit/' . $interview->id)));
-
-            echo CHtml::button('Review', array('submit' => $this->createUrl('/interview/' . $study->id . '/' . $interview->id . '/#/page/0')));
-            echo CHtml::button('Visualize', array('submit' => $this->createUrl('/data/visualize?expressionId=&interviewId=' . $interview->id))) . "</td>";
+            if ($interview->completed == -1) {
+                echo "<a class='btn btn-success btn-xs' href='" . $this->createUrl('/data/edit/' . $interview->id) ."'>Edit</a>";
+                echo "&nbsp;&nbsp;";
+            }
+            echo "<a class='btn btn-info btn-xs' href='" . $this->createUrl('/interview/' . $study->id . '/' . $interview->id . '/#/page/0') ."'>Review</a>";
+            echo "&nbsp;&nbsp;";
+            echo "<a class='btn btn-info btn-xs' href='" . $this->createUrl('/data/visualize?expressionId=&interviewId=' . $interview->id) ."'>Visualize</a>";
             echo "</tr>";
         }
         ?>
     </tbody>
 </table>
+<?php
+echo CHtml::form('', 'post', array('id' => 'analysis'));
+echo CHtml::hiddenField('studyId', $study->id);
+echo CHtml::hiddenField('interviewIds');
+echo CHtml::hiddenField('expressionId', "");
+echo CHtml::hiddenField('withAlters', "", array('id' => 'withAlters'));
+?>
 </form>

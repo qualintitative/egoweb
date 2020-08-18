@@ -489,9 +489,12 @@ class DataController extends Controller
         }
 
         $interviewIds = array();
+        $interviewIds = explode(",",$_POST['interviewIds']);
+        /*
         foreach ($_POST['export'] as $key=>$value) {
             $interviewIds[] = $key;
         }
+        */
         // start generating export file
         header("Content-Type: application/octet-stream");
         header("Content-Disposition: attachment; filename=".seoString($study->name)."-ego-alter-data".".csv");
@@ -646,9 +649,11 @@ class DataController extends Controller
         }
 */
         $interviewIds = array();
+        $interviewIds = explode(",",$_POST['interviewIds']);
+        /*
         foreach ($_POST['export'] as $key=>$value) {
             $interviewIds[] = $key;
-        }
+        }*/
         // start generating export file
         header("Content-Type: application/octet-stream");
         header("Content-Disposition: attachment; filename=".seoString($study->name)."-ego-level-data".".csv");
@@ -735,10 +740,12 @@ class DataController extends Controller
         }
 
         $interviewIds = array();
+        $interviewIds = explode(",",$_POST['interviewIds']);
+        /*
         foreach ($_POST['export'] as $key=>$value) {
             $interviewIds[] = $key;
         }
-
+        */
         // start generating export file
         header("Content-Type: application/octet-stream");
         header("Content-Disposition: attachment; filename=".seoString($study->name)."-alter-pair-data".".csv");
@@ -819,7 +826,7 @@ class DataController extends Controller
             }
         }
         if (!$options) {
-            die();
+            die("no other specified data to export");
         }
         foreach ($options as $option) {
             $other_options[$option->id] = $option;
@@ -827,11 +834,15 @@ class DataController extends Controller
                 $other_qs[$option->questionId] = Question::model()->findByPk($option->questionId);
             }
         }
+        $interviewIds = explode(",",$_POST['interviewIds']);
         $interviews = Interview::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
         foreach ($interviews as $interview) {
+            if(!in_array($interview->id, $interviewIds))
+                continue;
+            /*
             if (!isset($_POST['export'][$interview->id])) {
                 continue;
-            }
+            }*/
             $answers = array();
             $answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interview->id));
             foreach ($answerList as $a) {
@@ -1199,23 +1210,23 @@ class DataController extends Controller
 
     public function actionDeleteinterviews()
     {
-        if (!isset($_POST['export'])) {
+        if (!isset($_POST['interviewIds'])) {
             return false;
         }
-        foreach ($_POST['export'] as $interviewId=>$selected) {
-            if ($selected) {
-                $model = Interview::model()->findByPk((int)$interviewId);
-                if ($model) {
-                    $answers = Answer::model()->findAllByAttributes(array("interviewId"=>$interviewId));
-                    foreach ($answers as $answer) {
-                        $answer->delete();
-                    }
-                    $alters = Alters::model()->findAllByAttributes(array("interviewId"=>$interviewId));
-                    foreach ($alters as $alter) {
-                        $alter->delete();
-                    }
-                    $model->delete();
+        $interviewIds = array();
+        $interviewIds = explode(",", $_POST['interviewIds']);
+        foreach ($interviewIds as $interviewId) {
+            $model = Interview::model()->findByPk((int)$interviewId);
+            if ($model) {
+                $answers = Answer::model()->findAllByAttributes(array("interviewId"=>$interviewId));
+                foreach ($answers as $answer) {
+                    $answer->delete();
                 }
+                $alters = Alters::model()->findAllByAttributes(array("interviewId"=>$interviewId));
+                foreach ($alters as $alter) {
+                    $alter->delete();
+                }
+                $model->delete();
             }
         }
         Yii::app()->request->redirect(Yii::app()->request->urlReferrer);

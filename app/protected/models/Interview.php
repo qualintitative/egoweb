@@ -739,7 +739,7 @@ class Interview extends CActiveRecord
                         }
                         $answers[] = $answer->value;
                     } else {
-                        $answer->value = preg_replace('/amp;/g', "", $answer->value);
+                        $answer->value = preg_replace('/amp;/', "", $answer->value);
                         $answers[] = htmlspecialchars_decode($answer->value);
                     }
                 } else if ($answer->skipReason == "DONT_KNOW") {
@@ -774,7 +774,7 @@ class Interview extends CActiveRecord
                         }
                         $answers[] = implode('; ', $list);
                     } else {
-                        $answer->value = preg_replace('/amp;/g', "", $answer->value);
+                        $answer->value = preg_replace('/amp;/', "", $answer->value);
                         $answers[] = htmlspecialchars_decode($answer->value);
                     }
                 } else if ($answer->skipReason == "DONT_KNOW") {
@@ -1217,6 +1217,8 @@ class Interview extends CActiveRecord
         $graphs[$interview->id] = $graph;
         $note = Note::model()->findAllByAttributes(array("interviewId" => $interview->id));
         $notes[$interview->id] = $note;
+        $match = MatchedAlters::model()->findAllByAttributes(array("interviewId1" => $interview->id));
+        $matches[$interview->id] = $match;
         $other = array();
         //$other = OtherSpecify::model()->findAllByAttributes(array("interviewId"=>$result->id));
         $others[$interview->id] = $other;
@@ -1271,6 +1273,18 @@ class Interview extends CActiveRecord
                 foreach ($columns['notes'] as $attr) {
                     if (!in_array($attr, $exclude))
                         $x->writeAttribute($attr, $note->$attr);
+                }
+                $x->endElement();
+            }
+            $x->endElement();
+        }
+        if (isset($matches[$interview->id])) {
+            $x->startElement('matchedAlters');
+            foreach ($matches[$interview->id] as $match) {
+                $x->startElement('matchedAlter');
+                foreach ($columns['matchedAlters'] as $attr) {
+                    if (!in_array($attr, $exclude))
+                        $x->writeAttribute($attr, $match->$attr);
                 }
                 $x->endElement();
             }
