@@ -1217,7 +1217,12 @@ class Interview extends CActiveRecord
         $graphs[$interview->id] = $graph;
         $note = Note::model()->findAllByAttributes(array("interviewId" => $interview->id));
         $notes[$interview->id] = $note;
+        $user = array();
         $match = MatchedAlters::model()->findAllByAttributes(array("interviewId1" => $interview->id));
+        foreach($match as $m){
+            if(!isset($user[$m->userId]))
+                $user[$m->userId] = User::model()->findByPk($m->userId);
+        }
         $matches[$interview->id] = $match;
         $other = array();
         //$other = OtherSpecify::model()->findAllByAttributes(array("interviewId"=>$result->id));
@@ -1289,6 +1294,18 @@ class Interview extends CActiveRecord
                 $x->endElement();
             }
             $x->endElement();
+            if(count($user) > 0){
+                $x->startElement('users');
+                foreach ($user as $u) {
+                    $x->startElement('user');
+                    foreach ($columns['user'] as $attr) {
+                        if (!in_array($attr, $exclude))
+                            $x->writeAttribute($attr, $u->$attr);
+                    }
+                    $x->endElement();
+                }
+                $x->endElement();        
+            }
         }
         $x->endElement();
         $output = $x->outputMemory();

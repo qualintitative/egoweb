@@ -60,7 +60,12 @@ class ImportExportController extends Controller
             die("Error importing study: " . $message);
 		}
 
-		$newInterviewIds = array();
+        $newInterviewIds = array();
+        $result = User::model()->findAll();
+        $users = array();
+        foreach($result as $u){
+            $users[$u->email] = intval($u->id);
+        }
         foreach ($_FILES['files']['tmp_name'] as $tmp_name) {
             $study = simplexml_load_file($tmp_name);
             if (!$study) {
@@ -73,6 +78,7 @@ class ImportExportController extends Controller
             $newExpressionIds = array();
             $newAnswerIds = array();
             $newAlterIds = array();
+            $newUserIds = array();
             $merge = false;
 
             foreach ($study->attributes() as $key=>$value) {
@@ -464,12 +470,47 @@ class ImportExportController extends Controller
 							}
 							$newMatch->studyId = $newStudy->id;
 							if (!$newMatch->save()) {
-								echo "Matched Alter: $newMatch->interviewId1 :" . print_r($newMatch->errors);
+								echo "Matched Alter Error: $newMatch->interviewId1 :" . $newMatch->interviewId2 .":" .print_r($newMatch->errors) . "end";
 								die();
 							}
 						}
 					}
-	
+                    if (count($interview->users->user) > 0) {
+                        foreach ($interview->users->user as $u) {
+                            $userExists = false;
+                            foreach ($u->attributes() as $key=>$value) {
+                                if($key == "email" && in_array(strval($value), array_keys($users)))
+                                    $userExists = strval($value);
+                                if ($key == "id")
+                                    $oldUserId = intval($value);
+                            }
+                            if ($userExists != false) {
+                                $newUserIds[$oldUserId] = $users[$userExists];
+                                echo $users[$userExists];
+                                continue;
+                            }
+							$newUser = new User;
+							foreach ($u->attributes() as $key=>$value) {
+								if (in_array($key, array("ordering", "studyId", "interviewId1", "interviewId2", "alterId1", "alterId2", "userId"))) {
+									$value = intval($value);
+								}
+								if ($key != "id") {
+									$newUser->$key = $value;
+                                }
+                                if($key == "email")
+                                    $email = strval($value);
+                            }
+                            $newUser->confirm = $newUser->password;
+							if (!$newUser->save()) {
+								echo "User Error: $newUser->id :" . print_r($newUser->errors);
+								die();
+							}else{
+                                $newUserId = Yii::app()->db->getLastInsertID();
+                                $newUserIds[$oldUserId] = $newUserId;
+                                $users[$email] = $newUserId;
+                            }
+						}
+                    }
                     if (count($interview->alters->alter) != 0) {
                         foreach ($interview->alters->alter as $alter) {
                             $newAlter = new Alters;
@@ -737,10 +778,36 @@ class ImportExportController extends Controller
 					}
 					if (isset($newAlterIds[intval($match->alterId2)])) {
 						$match->alterId2 = $newAlterIds[intval($match->alterId2)];
+                    }
+					if (isset($newUserIds[intval($match->userId)])) {
+						$match->userId = $newUserIds[intval($match->userId)];
 					}
 					$match->save();
 				}
-			}
+            }
+            
+            $matches = MatchedAlters::model()->findAllByAttributes(array("interviewId2"=>$oldId));
+            if (count($matches) > 0) {
+				foreach ($matches as $match) {
+					if (isset($newInterviewIds[intval($match->interviewId1)])) {
+						$match->interviewId1 = $newInterviewIds[intval($match->interviewId1)];
+					}
+					if (isset($newInterviewIds[intval($match->interviewId2)])) {
+						$match->interviewId2 = $newInterviewIds[intval($match->interviewId2)];
+					}
+					if (isset($newAlterIds[intval($match->alterId1)])) {
+						$match->alterId1 = $newAlterIds[intval($match->alterId1)];
+					}
+					if (isset($newAlterIds[intval($match->alterId2)])) {
+						$match->alterId2 = $newAlterIds[intval($match->alterId2)];
+                    }
+					if (isset($newUserIds[intval($match->userId)])) {
+						$match->userId = $newUserIds[intval($match->userId)];
+					}
+					$match->save();
+				}
+            }
+            
 		}
         $this->redirect(array('/authoring/edit','id'=>$newStudy->id));
     }
@@ -845,7 +912,8 @@ class ImportExportController extends Controller
             $columns['alterList'] = Yii::app()->db->schema->getTable("alterList")->getColumnNames();
             $columns['graphs'] = Yii::app()->db->schema->getTable("graphs")->getColumnNames();
 			$columns['notes'] = Yii::app()->db->schema->getTable("notes")->getColumnNames();
-			$columns['matchedAlters'] = Yii::app()->db->schema->getTable("matchedAlters")->getColumnNames();
+            $columns['matchedAlters'] = Yii::app()->db->schema->getTable("matchedAlters")->getColumnNames();
+            $columns['user'] = Yii::app()->db->schema->getTable("user")->getColumnNames();
             $file = fopen($filePath . "/" .  $interview->id . ".xml", "w") or die("Unable to open file!");
             fclose($file);
             $interview->exportStudyInterview($filePath . "/" .  $interview->id . ".xml", $columns);
