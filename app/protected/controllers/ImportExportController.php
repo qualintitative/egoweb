@@ -61,6 +61,7 @@ class ImportExportController extends Controller
 		}
 
         $newInterviewIds = array();
+        $newAlterIds = array();
         $result = User::model()->findAll();
         $users = array();
         foreach($result as $u){
@@ -77,7 +78,6 @@ class ImportExportController extends Controller
             $newOptionIds = array();
             $newExpressionIds = array();
             $newAnswerIds = array();
-            $newAlterIds = array();
             $newUserIds = array();
             $merge = false;
 
@@ -497,11 +497,19 @@ class ImportExportController extends Controller
 								if ($key != "id") {
 									$newUser->$key = $value;
                                 }
-                                if($key == "email")
-                                    $email = strval($value);
+                                if ($key == "email") {
+                                    if(strval($value) == "")
+                                        $email = false;
+                                    else 
+                                        $email = strval($value);
+                                }
                             }
                             $newUser->confirm = $newUser->password;
+                            if($email == false)
+                                continue;
 							if (!$newUser->save()) {
+                                print_r($users);
+                                echo $newUser->email;
 								echo "User Error: $newUser->id :" . print_r($newUser->errors);
 								die();
 							}else{
