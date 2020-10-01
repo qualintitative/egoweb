@@ -114,17 +114,18 @@ return array(
 
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']
-	'params' => array(
+    'params'=>array(
 		// this is used in contact page
-		'adminEmail' => 'admin@example.com',
+		'adminEmail'=>'admin@example.com',
 		// The max login attempt before showing captcha
-		'maxLoginAttempts' => 3,
-		'maxUploadFileSize' => 1024 * 1024 * 3, // 3MB
+		'maxLoginAttempts'=>3,
+		'maxUploadFileSize'=>1024*1024*3, // 3MB
 		'apiKey' => 'API_KEY',
 		// file path for study export
 		'exportFilePath' => '',
-		// Enabling audio upload may make your server less secure
-		'enableAudioUpload' => false,
-		'allowedRemoteAccess' => array('127.0.0.1', '23.213.107.218', '130.154.0.250'),
+        // Enabling audio upload may make your server less secure
+        'surveyURL' => 'http://'.$_SERVER['HTTP_HOST'].'/survey',
+        'APIPassword' => 'yourpasswordhere',
+        'enableAudioUpload' => false,
 	)
 );

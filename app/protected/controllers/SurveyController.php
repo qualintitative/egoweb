@@ -21,6 +21,11 @@ class SurveyController extends Controller {
 		else{
 			$input = trim( file_get_contents( 'php://input' ) );
 		}
+		if( empty( $input ) && !empty($_SERVER['QUERY_STRING']) ) {
+			$queries = array();
+			parse_str($_SERVER['QUERY_STRING'], $queries);
+			if (!empty($queries['payload']))$input = $queries['payload'];
+		}
 
 		if( empty( $input ) ) {
 			$msg = 'Missing input data';
@@ -29,7 +34,7 @@ class SurveyController extends Controller {
 
 		$decoded = json_decode( $input, true );
 		if( empty( $decoded ) ){
-			return ApiController::sendResponse( 422, 'Unable to decode input' );
+			return ApiController::sendResponse( 422, 'Unable to decode input:'.$input );
 		}
 
 		if( !is_array( $decoded ) ){
@@ -99,6 +104,34 @@ class SurveyController extends Controller {
 	        ), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
 	}
+
+	public function actionGetData(){
+		$input = file_get_contents('php://input');
+		if(empty( $input ) ){
+			return ApiController::sendResponse( 419, 'Missing payload' );
+		}
+		$decoded = json_decode( trim( $input ), true );
+		if( !isset( $decoded ) ){
+			return ApiController::sendResponse( 422, 'Unable to decode payload' );
+		}
+
+		if(empty( $decoded['password']) || $decoded['password'] != Yii::app()->params['APIPassword'] || Yii::app()->params['APIPassword'] == 'yourpasswordhere'){
+			return ApiController::sendResponse( 401, 'Please provide a valid password to access this feature.' );
+		}
+
+		if (empty($decoded['user_id']) || empty($decoded['survey_id'])){
+			return ApiController::sendResponse( 422, 'Missing user_id and/or survey_id');
+		}
+
+		$interview = Interview::getInterviewFromPrimekey($decoded['survey_id'], $decoded['user_id'],array());
+		if (empty($interview)){
+			return ApiController::sendResponse( 422, 'Invalid survey_id');
+		}
+		$data = $interview->exportEgoAlterDataJSON();
+		echo json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+	}
+
 
 	/**
 	 * handles the request payload
@@ -226,7 +259,7 @@ class SurveyController extends Controller {
                 Yii::app()->session['redirect'] = $redirect;
 
             $url = Yii::app()->getBaseUrl(true);
-            if(Yii::app()->request->getIsSecureConnection() || $url == "http://egoweb.rand.org" || $url == "http://alpegoweb.rand.org")
+            if(Yii::app()->request->getIsSecureConnection() || $url == "http://egoweb.rand.org" || $url == "http://alpegoweb.rand.org" || $url == "http://ssl2.rand.org")
                 $url = str_replace("http", "https", $url);
 
             Yii::app()->request->redirect($url  .  "/interview/".$study->id."/".
