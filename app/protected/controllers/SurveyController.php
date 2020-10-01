@@ -260,7 +260,7 @@ class SurveyController extends Controller {
 
             $url = Yii::app()->getBaseUrl(true);
             if(strpos($url, "https") == false && (Yii::app()->request->getIsSecureConnection() || $url == "http://egoweb.rand.org" || $url == "http://alpegoweb.rand.org" || $url == "http://ssl2.rand.org"))
-                $url = str_replace("http", "https", $url);
+                $url = str_replace("http:", "https:", $url);
 
             Yii::app()->request->redirect($url  .  "/interview/".$study->id."/".
                             $interview->id."/".
