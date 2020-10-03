@@ -484,14 +484,30 @@ class MobileController extends Controller
 		}
 		if(isset($data['alters'])){
 		foreach($data['alters'] as $alter){
-			if(!isset($newInterviewIds[$alter['INTERVIEWID']]))
-				continue;
+
+
+			//if(!isset($newInterviewIds[$alter['INTERVIEWID']]))
+			//	continue;
 			$newAlter = new Alters;
-			$newAlter->name = $alter['NAME'];
-			$newAlter->interviewId = $newInterviewIds[$alter['INTERVIEWID']];
+			$newAlter->name = html_entity_decode($alter['NAME']);
+			if(stristr($alter['INTERVIEWID'], ",")){
+				$interviewIds = explode(",",$alter['INTERVIEWID']);
+				foreach($interviewIds as &$i){
+					$i = $newInterviewIds[$i];
+				}
+				$interviewIds = implode(",", $interviewIds);
+				if($interviewIds != $alter['INTERVIEWID'])
+					$newAlter->interviewId = $interviewIds;
+				else 
+					continue;
+			}else{
+				if(isset($newInterviewIds[$alter['INTERVIEWID']]))
+					$newAlter->interviewId = $newInterviewIds[$alter['INTERVIEWID']];
+				else
+					continue;
+			}
             $newAlter->nameGenQIds = $alter['NAMEGENQIDS'];
 			$newAlter->ordering = 1;
-
 			if(!$newAlter->save()){
 				$errors++;
         echo $alter['NAMEGENQIDS'];
@@ -517,7 +533,7 @@ class MobileController extends Controller
   				}
   				$answer['VALUE'] = implode(',', $values);
   			}
-  			$newAnswer->value = $answer['VALUE'];
+  			$newAnswer->value = html_entity_decode($answer['VALUE']);
   			if($answer['OTHERSPECIFYTEXT']){
   				foreach(preg_split('/;;/', $answer['OTHERSPECIFYTEXT']) as $other){
   				if($other && strstr($other, ':')){
@@ -603,11 +619,26 @@ class MobileController extends Controller
     }
 		if(isset($data['alters'])){
 		foreach($data['alters'] as $alter){
-			if(!isset($newInterviewIds[$alter['INTERVIEWID']]))
-				continue;
+			//if(!isset($newInterviewIds[$alter['INTERVIEWID']]))
+			//	continue;
 			$newAlter = new Alters;
-			$newAlter->name = $alter['NAME'];
-			$newAlter->interviewId = $newInterviewIds[$alter['INTERVIEWID']];
+			$newAlter->name = html_entity_decode($alter['NAME']);
+			if(stristr($alter['INTERVIEWID'], ",")){
+				$interviewIds = explode(",",$alter['INTERVIEWID']);
+				foreach($interviewIds as &$i){
+					$i = $newInterviewIds[$i];
+				}
+				$interviewIds = implode(",", $interviewIds);
+				if($interviewIds != $alter['INTERVIEWID'])
+					$newAlter->interviewId = $interviewIds;
+				else 
+					continue;
+			}else{
+				if(isset($newInterviewIds[$alter['INTERVIEWID']]))
+					$newAlter->interviewId = $newInterviewIds[$alter['INTERVIEWID']];
+				else
+					continue;
+			}
       if(!isset($alter['NAMEGENQIDS'])){
         $newAlter->nameGenQIds = $newData["nameGenQId"];
       }else{
@@ -663,7 +694,7 @@ class MobileController extends Controller
   				}
   				$answer['VALUE'] = implode(',', $values);
   			}
-  			$newAnswer->value = $answer['VALUE'];
+  			$newAnswer->value = html_entity_decode($answer['VALUE']);
   			if($answer['OTHERSPECIFYTEXT']){
   				foreach(preg_split('/;;/', $answer['OTHERSPECIFYTEXT']) as $other){
   				if($other && strstr($other, ':')){
