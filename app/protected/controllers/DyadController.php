@@ -76,6 +76,7 @@ class DyadController extends Controller
           arsort($interviewIds);
           $interview1 = Interview::model()->findByPK($interviewIds[0]);
           $interview2 = Interview::model()->findByPK($interviewIds[1]);
+
           if($interview1->studyId != $interview2->studyId){
             $questions1 = Question::model()->findAllByAttributes(array("studyId"=>$interview1->studyId));
             foreach($questions1 as $question){
@@ -171,6 +172,22 @@ class DyadController extends Controller
               $prompts[$question->id] = $question->prompt;
             }
           }
+          
+        foreach($alters1 as $aid1=>$a1){
+            $match1 = MatchedAlters::model()->findByAttributes(array("alterId1"=>$aid1));
+            $match2 = MatchedAlters::model()->findByAttributes(array("alterId2"=>$aid1));
+            if(!$match1 && $match2){
+                //flip the arrays
+                $interviewNew = $interview2;
+                $interview2 = $interview1;
+                $interview1 = $interviewNew;
+                $altersNew = $alters2;
+                $alters2 = $alters1;
+                $alters1 = $altersNew;
+                break;
+            }
+        }
+        
   		$this->render('matching', array(
   			'interview1'=>$interview1,
   			'alters1'=>$alters1,

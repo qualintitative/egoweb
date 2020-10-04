@@ -256,7 +256,6 @@ $marked = MatchedAlters::model()->find($criteria);
                 $alterIds2[] = $aid;
 
             $match = MatchedAlters::model()->findByAttributes(array("alterId1"=>$alterId),
-
             array("condition"=>"alterId2 IN (" . implode(",", $alterIds2). ")"));
             if($match){
                 $selected = $match->alterId2;
