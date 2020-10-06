@@ -302,7 +302,7 @@
             if (!servers[$("#serverAddress option:selected").val()].ADDRESS.match("http"))
               servers[$("#serverAddress option:selected").val()].ADDRESS = 'http://' + servers[$("#serverAddress option:selected").val()].ADDRESS;
             $("#sendJson").val(res);
-            $.ajax({
+            return $.ajax({
               type: "POST",
               url: servers[$("#serverAddress option:selected").val()].ADDRESS + '/mobile/syncData/',
               data: {
@@ -323,7 +323,9 @@
                 $("#sendError").show();
                 $("#sendError").html("Failed");
               }
-            });
+            }).then(function() {
+            return batchPromiseRecursive();
+          });
             // Do something after each batch finishes.
             // Update a progress bar is probably a good idea.
           })
@@ -332,7 +334,7 @@
             // do something here.
           })
           .then(function() {
-            return batchPromiseRecursive();
+           // return batchPromiseRecursive();
           });
       }
 
