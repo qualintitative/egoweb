@@ -528,7 +528,7 @@ function refresh(container){
             nodeColor = params['nodeColor'];
         else
             nodeColor['options'] = [];
-        nodeColor["options"].push({"id":0, "color" :$("#defaultNodeColor option:selected", container).val()});
+        nodeColor["options"].push({"id":"default", "color" :$("#defaultNodeColor option:selected", container).val()});
         params['nodeColor'] = nodeColor;
     }
     if($('#starNodeColor option:selected', container).val()){
@@ -556,7 +556,7 @@ function refresh(container){
             nodeShape = params['nodeShape'];
         else
             nodeShape['options'] = [];
-        nodeShape["options"].push({"id":0, "shape" :$("#defaultNodeShape option:selected", container).val()});
+        nodeShape["options"].push({"id":"default", "shape" :$("#defaultNodeShape option:selected", container).val()});
         params['nodeShape'] = nodeShape;
     }
     if($("#starNodeShape option:selected", container).val()){
@@ -584,7 +584,7 @@ function refresh(container){
             nodeSize = params['nodeSize'];
         else
             nodeSize['options'] = [];
-        nodeSize["options"].push({"id":0, "size" :$("#defaultNodeSize option:selected", container).val()});
+        nodeSize["options"].push({"id":"default", "size" :$("#defaultNodeSize option:selected", container).val()});
         params['nodeSize'] = nodeSize;
     }
     if($('#starNodeSize option:selected', container).val()){
@@ -612,7 +612,7 @@ function refresh(container){
             edgeColor = params['edgeColor'];
         else
             edgeColor['options'] = [];
-        edgeColor["options"].push({"id":0, "color" :$("#defaultEdgeColor option:selected", container).val()});
+        edgeColor["options"].push({"id":"default", "color" :$("#defaultEdgeColor option:selected", container).val()});
         params['edgeColor'] = edgeColor;
     }
     if($("#egoEdgeColorSelect option:selected", container).val()){
@@ -652,7 +652,7 @@ function refresh(container){
             edgeSize = params['edgeSize'];
         else
             edgeSize['options'] = [];
-        edgeSize["options"].push({"id":0, "size" :$("#defaultEdgeSize option:selected", container).val()});
+        edgeSize["options"].push({"id":"default", "size" :$("#defaultEdgeSize option:selected", container).val()});
         params['edgeSize'] = edgeSize;
     }
 	console.log(JSON.stringify(params));

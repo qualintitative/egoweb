@@ -182,10 +182,10 @@ class visualize extends Plugin
                         $answerV = "";
                 }
 				foreach($this->params['nodeColor']['options'] as $option){
-          if($option['id'] == -1 && $nodeId == -1)
-            $default = $option['color'];
-          else if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE" || $answer->value < 0))
-            $default = $option['color'];
+					if($option['id'] == -1 && $nodeId == -1)
+						$default = $option['color'];
+					else if($option['id'] == 0 && ($answerV == "" || $answer->skipReason != "NONE" || $answer->value < 0))
+						$default = $option['color'];
 					else if(($option['id'] == $answerV) || (is_array($answerV) && in_array($option['id'], $answerV)))
 						$default = $option['color'];
 				}
@@ -541,8 +541,8 @@ class visualize extends Plugin
 		echo "<label class='control-label col-sm-6'>Node Color</label>";
         echo "<div class='col-sm-6'>";
         echo CHtml::dropDownList(
-                "0",
-                (isset($nodeColors[0]) ? $nodeColors[0] : ''),
+                "default",
+                (isset($nodeColors["default"]) ? $nodeColors["default"] : ''),
                 $this->nodeColors,
                 array("class"=>"form-control", "id"=>"defaultNodeColor")
             );
@@ -676,8 +676,8 @@ class visualize extends Plugin
 		echo "<label class='control-label col-sm-6'>Node Shape</label>";
         echo "<div class='col-sm-6'>";
         echo CHtml::dropDownList(
-                0,
-                (isset($nodeShapes[0]) ? $nodeShapes[0] : ''),
+                "default",
+                (isset($nodeShapes["default"]) ? $nodeShapes["default"] : ''),
                 $this->nodeShapes,
                 array("class"=>"form-control", "id"=>"defaultNodeShape")
             ). "</div>";
@@ -726,8 +726,8 @@ class visualize extends Plugin
 		echo "<label class='control-label col-sm-6'>Node Size</label>";
         echo "<div class='col-sm-6'>";
         echo CHtml::dropDownList(
-                0,
-                (isset($nodeSizes[0]) ? $nodeSizes[0] : ''),
+                "default",
+                (isset($nodeSizes["default"]) ? $nodeSizes["default"] : ''),
                 $this->nodeSizes,
                 array("class"=>"form-control", "id"=>"defaultNodeSize")
             ). "</div>";
@@ -786,8 +786,8 @@ class visualize extends Plugin
 		echo "<label class='control-label col-sm-6'>Edge Color</label>";
         echo "<div class='col-sm-6'>";
         echo CHtml::dropDownList(
-                0,
-                (isset($edgeColors[0]) ? $edgeColors[0] : ''),
+                "default",
+                (isset($edgeColors["default"]) ? $edgeColors["default"] : ''),
                 $this->edgeColors,
                 array("class"=>"form-control", "id"=>"defaultEdgeColor")
             ). "</div>";
@@ -834,8 +834,8 @@ class visualize extends Plugin
 		echo "<label class='control-label col-sm-6'>Edge Size</label>";
         echo "<div class='col-sm-6'>";
         echo CHtml::dropDownList(
-                0,
-                (isset($edgeSizes[0]) ? $edgeSizes[0] : ''),
+                "default",
+                (isset($edgeSizes["default"]) ? $edgeSizes["default"] : ''),
                 $this->edgeSizes,
                 array("class"=>"form-control", "id"=>"defaultEdgeSize")
             ). "</div>";
@@ -1147,7 +1147,7 @@ class visualize extends Plugin
                         nodeColor = params['nodeColor'];
                     else
                         nodeColor['options'] = [];
-                    nodeColor["options"].push({"id":0, "color" :$("#defaultNodeColor option:selected", container).val()});
+                    nodeColor["options"].push({"id":"default", "color" :$("#defaultNodeColor option:selected", container).val()});
                     params['nodeColor'] = nodeColor;
                 }
             	if($('#nodeShapeSelect option:selected', container).val()){
@@ -1166,7 +1166,7 @@ class visualize extends Plugin
                         nodeShape = params['nodeShape'];
                     else
                         nodeShape['options'] = [];
-                    nodeShape["options"].push({"id":0, "shape" :$("#defaultNodeShape option:selected", container).val()});
+                    nodeShape["options"].push({"id":"default", "shape" :$("#defaultNodeShape option:selected", container).val()});
                     params['nodeShape'] = nodeShape;
                 }
             	if($('#nodeSizeSelect option:selected', container).val()){
@@ -1185,7 +1185,7 @@ class visualize extends Plugin
                         nodeSize = params['nodeSize'];
                     else
                         nodeSize['options'] = [];
-                    nodeSize["options"].push({"id":0, "size" :$("#defaultNodeSize option:selected", container).val()});
+                    nodeSize["options"].push({"id":"default", "size" :$("#defaultNodeSize option:selected", container).val()});
                     params['nodeSize'] = nodeSize;
                 }
             	if($('#edgeColorSelect option:selected', container).val()){
@@ -1204,7 +1204,7 @@ class visualize extends Plugin
                         edgeColor = params['edgeColor'];
                     else
                         edgeColor['options'] = [];
-                    edgeColor["options"].push({"id":0, "color" :$("#defaultEdgeColor option:selected", container).val()});
+                    edgeColor["options"].push({"id":"default", "color" :$("#defaultEdgeColor option:selected", container).val()});
                     params['edgeColor'] = edgeColor;
                 }
             	if($('#edgeSizeSelect option:selected', container).val()){
@@ -1223,7 +1223,7 @@ class visualize extends Plugin
                         edgeSize = params['edgeSize'];
                     else
                         edgeSize['options'] = [];
-                    edgeSize["options"].push({"id":0, "size" :$("#defaultEdgeSize option:selected", container).val()});
+                    edgeSize["options"].push({"id":"default", "size" :$("#defaultEdgeSize option:selected", container).val()});
                     params['edgeSize'] = edgeSize;
                 }
             	console.log(JSON.stringify(params));

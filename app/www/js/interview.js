@@ -2353,7 +2353,7 @@ function initStats(question) {
         for (p in this.params['nodeColor']['options']) {
           if (this.params['nodeColor']['options'][p]['id'] == -1 && nodeId == -1)
             return this.params['nodeColor']['options'][p]['color'];
-          if (this.params['nodeColor']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+          if (this.params['nodeColor']['options'][p]['id'] == "default" && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
             defaultNodeColor = this.params['nodeColor']['options'][p]['color'];
           if (nodeId != -1 && (this.params['nodeColor']['options'][p]['id'] == answer || $.inArray(this.params['nodeColor']['options'][p]['id'], answer) != -1))
             return this.params['nodeColor']['options'][p]['color'];
@@ -2410,7 +2410,7 @@ function initStats(question) {
       for (p in this.params['nodeSize']['options']) {
         if (this.params['nodeSize']['options'][p]['id'] == -1 && nodeId == -1)
           defaultNodeSize = this.params['nodeSize']['options'][p]['size'];
-        if (this.params['nodeSize']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+        if (this.params['nodeSize']['options'][p]['id'] == "default" && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
           defaultNodeSize = this.params['nodeSize']['options'][p]['size'];
         if (nodeId != -1 && (this.params['nodeSize']['options'][p]['id'] == answer || $.inArray(this.params['nodeSize']['options'][p]['id'], answer) != -1))
           defaultNodeSize = this.params['nodeSize']['options'][p]['size'];
@@ -2463,7 +2463,7 @@ function initStats(question) {
       else
         var answer = "";
       for (p in this.params['egoEdgeColor']['options']) {
-        if (this.params['egoEdgeColor']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+        if (this.params['egoEdgeColor']['options'][p]['id'] == "default" && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
           defaultEdgeColor = this.params['egoEdgeColor']['options'][p]['color'];
         if (this.params['egoEdgeColor']['options'][p]['id'] == answer || $.inArray(this.params['egoEdgeColor']['options'][p]['id'], answer) != -1)
           return this.params['egoEdgeColor']['options'][p]['color'];
@@ -2480,7 +2480,7 @@ function initStats(question) {
       else
         var answer = "";
       for (p in this.params['edgeSize']['options']) {
-        if (this.params['edgeSize']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+        if (this.params['edgeSize']['options'][p]['id'] == "default" && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
           defaultEdgeSize = this.params['edgeSize']['options'][p]['size'];
         if (this.params['edgeSize']['options'][p]['id'] == answer || $.inArray(this.params['edgeSize']['options'][p]['id'], answer) != -1)
           return this.params['edgeSize']['options'][p]['size'];

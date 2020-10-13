@@ -869,16 +869,43 @@ class Study extends CActiveRecord
 				}
 				$newExpression->value = implode(',',$expressionIds);
 			} else if ($newExpression->type == "Name Generator"){
-        $questionIds = explode(',', $newExpression->value);
-        foreach($questionIds as &$questionId){
-          if(isset($newQuestionIds[$questionId]))
-             $questionId = $newQuestionIds[$questionId];
-        }
-        $newExpression->value = implode(',', $questionIds);
-      }
+				$questionIds = explode(',', $newExpression->value);
+				foreach($questionIds as &$questionId){
+				if(isset($newQuestionIds[$questionId]))
+					$questionId = $newQuestionIds[$questionId];
+				}
+				$newExpression->value = implode(',', $questionIds);
+			}
 			$newExpression->save();
 		}
-
+		$questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id, "subjectType"=>"NETWORK"));
+		foreach($questions as $question){
+			$params = json_decode(htmlspecialchars_decode($question->networkParams), true);
+			if ($params) {
+				foreach ($params as $k => &$param) {
+					if (isset($param['questionId']) && stristr($param['questionId'], "expression")) {
+						list($label, $expressionId) = explode("_", $param['questionId']);
+						if (isset($newExpressionIds[intval($expressionId)])) {
+							$expressionId = $newExpressionIds[intval($expressionId)];
+						}
+						$param['questionId'] = "expression_" . $expressionId;
+					} else {
+						if (isset($param['questionId']) && is_numeric($param['questionId']) && isset($newQuestionIds[intval($param['questionId'])])) {
+							$param['questionId'] = $newQuestionIds[intval($param['questionId'])];
+						}
+						if (isset($param['options']) && count($param['options']) > 0) {
+							foreach ($param['options'] as &$option) {
+								if (isset($newOptionIds[intval($option['id'])])) {
+									$option['id'] = $newOptionIds[intval($option['id'])];
+								}
+							}
+						}
+					}
+				}
+			}
+			$question->networkParams = json_encode($params);
+			$question->save();
+		}
 		foreach($alterPrompts as $alterPrompt){
 			$newAlterPrompt = new AlterPrompt;
 			$newAlterPrompt->attributes = $alterPrompt->attributes;
