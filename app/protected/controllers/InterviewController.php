@@ -111,7 +111,9 @@ class InterviewController extends Controller
                         foreach($answers as $a){
                             if($a->value == $_GET[$q->title])
                                 $interview =  Interview::model()->findByPk($a->interviewId);
-                                $page = $interview->completed;
+                                $page = 0;
+                                if($interview->completed != -1)
+                                    $page = $interview->completed;
                         }
                     }
                 }
