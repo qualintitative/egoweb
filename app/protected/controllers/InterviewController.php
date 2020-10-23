@@ -104,7 +104,8 @@ class InterviewController extends Controller
     {
         if($studyId == 0 && isset($_GET["study"])){
                 $study = Study::model()->findByAttributes(array("name"=>$_GET["study"]));
-                $egoQs = Question::model()->findAllByAttributes(array("subjectType"=>"EGO_ID", "studyId"=>$study->id));
+                $criteria = new CDbCriteria(array('order'=>'ordering','limit'=>1));
+                $egoQs = Question::model()->findAllByAttributes(array("subjectType"=>"EGO_ID", "studyId"=>$study->id), $criteria);
                 foreach($egoQs as $q){
                     if(isset($_GET[$q->title])){
                         $answers =  Answer::model()->findAllByAttributes(array("studyId"=>$study->id, "questionType"=>"EGO_ID"));
@@ -126,19 +127,21 @@ class InterviewController extends Controller
                         $interviewId = $interview->id;
                         $egoQs = Question::model()->findAllByAttributes(array("subjectType"=>"EGO_ID", "studyId"=>$study->id));
                         foreach($egoQs as $q){
-                            if(!isset($_GET[$q->title]))
+                            if($q->answerType != "RANDOM_NUMBER" && !isset($_GET[$q->title]))
                                 continue;
                             $a = $q->id;
                             $answers[$a] = new Answer;
                             $answers[$a]->interviewId = $interview->id;
                             $answers[$a]->studyId = $study->id;
                             $answers[$a]->questionType = "EGO_ID";
-                            $answers[$a]->answerType = $q->subjectType;
+                            $answers[$a]->answerType = $q->answerType;
                             $answers[$a]->questionId = $q->id;
                             $answers[$a]->skipReason = "NONE";
-                            $answers[$a]->value = $_GET[$q->title];
+                            if($q->answerType == "RANDOM_NUMBER")
+                                $answers[$a]->value = mt_rand($q->minLiteral , $q->maxLiteral);
+                            else
+                                $answers[$a]->value = $_GET[$q->title];
                             //print_r($_GET);
-                            //echo $q->title . ":" . $answers[$a]->value;
                             $answers[$a]->save();
                         }
                     }
