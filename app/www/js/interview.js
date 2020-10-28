@@ -43,6 +43,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   $scope.answers = $.extend(true, {}, answers);
   $scope.options = new Object;
   $scope.alters = $.extend(true, {}, alters);
+  $scope.nGalters = []
   $scope.alterPrompt = "";
   $scope.askingStyleList = false;
   $scope.hideQ = false;
@@ -72,27 +73,37 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   $scope.redirect = false;
   $scope.participants = [];
   $scope.listedAlters = {};
+  $scope.prevAlters = {};
   $scope.starExpressionId = false;
   $scope.colspan = false;
   if (typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR") {
     alterPromptPage = true;
+    for (k in $scope.alters) {
+      if ($scope.alters[k].INTERVIEWID.match(",")) {
+        deletedPrevAlters[k] = $scope.alters[k];
+      }
+      if ($scope.alters[k].NAMEGENQIDS != null) {
+        var nGs = $scope.alters[k].NAMEGENQIDS.split(",");
+        var nGorder = JSON.parse($scope.alters[k].ORDERING);
+        // we put alters in lists according to the name generator question id
+        if(nGs.indexOf($scope.questions[0].ID.toString()) != -1) {
+          if(typeof nGorder[$scope.questions[0].ID] != "undefined")
+            $scope.nGalters[parseInt(nGorder[$scope.questions[0].ID])] = $scope.alters[k];
+          else
+            $scope.nGalters.push($scope.alters[k]);
+        }else{
+          if (typeof $scope.listedAlters[k] == "undefined")
+            $scope.listedAlters[k] = alters[k];
+        }
+      }
+    }
+    $scope.prevAlters = prevAlters;
+    console.log($scope.nGalters);
   } else {
     alterPromptPage = false;
   }
-  for (k in $scope.alters) {
-    if ($scope.alters[k].INTERVIEWID.match(",")) {
-      deletedPrevAlters[k] = $scope.alters[k];
-    }
-    if ($scope.alters[k].NAMEGENQIDS != null && !Array.isArray($scope.alters[k].NAMEGENQIDS)) {
-      $scope.alters[k].NAMEGENQIDS = $scope.alters[k].NAMEGENQIDS.split(",");
-      if (typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR" && $scope.alters[k].NAMEGENQIDS.indexOf($scope.questions[0].ID.toString()) == -1) {
-        if (typeof $scope.listedAlters[k] == "undefined")
-          $scope.listedAlters[k] = alters[k];
-        delete $scope.alters[k];
-      }
-    }
-  }
-  $scope.prevAlters = prevAlters;
+    
+  
   if (typeof hashKey != "undefined") {
     $scope.hashKey = hashKey;
   } else {
@@ -1465,7 +1476,7 @@ function qFromList(pageNumber) {
       questions = masterList[k];
     }
     if (pageNumber == i && proceed == true) {
-      console.log(questions);
+      //console.log(questions);
       currentPage = i;
       return questions;
     }

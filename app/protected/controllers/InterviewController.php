@@ -325,7 +325,6 @@ class InterviewController extends Controller
             foreach($prevIds as $i_id){
                 $criteria = array(
                     'condition'=>"FIND_IN_SET(" . $i_id .", interviewId)",
-                    'order'=>'ordering',
                 );
                 $results = Alters::model()->findAll($criteria);
                 foreach($results as $result){
@@ -335,7 +334,6 @@ class InterviewController extends Controller
             $alters = array();
             $criteria = array(
                 'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId)",
-                'order'=>'ordering',
             );
             $results = Alters::model()->findAll($criteria);
             foreach($results as $result){
@@ -573,7 +571,6 @@ class InterviewController extends Controller
             $studyId = $interview->studyId;
             $criteria=array(
                 'condition'=>"FIND_IN_SET(" . $_POST['Alters']['interviewId'] .", interviewId)",
-                'order'=>'ordering',
             );
             $alters = Alters::model()->findAll($criteria);
             $alterNames = array();
@@ -584,11 +581,16 @@ class InterviewController extends Controller
             }
             $model = new Alters;
             $model->attributes = $_POST['Alters'];
+            $ordering = array($_POST['Alters']['nameGenQIds'] => $_POST['Alters']['ordering']);
             if(in_array($_POST['Alters']['name'], $alterNames)){
                 if(!in_array($_POST['Alters']['nameGenQIds'], $alterGroups[$_POST['Alters']['name']])){
                     $model = Alters::model()->findByPk(array_search($_POST['Alters']['name'], $alterNames));
                     $alterGroups[$_POST['Alters']['name']][] = $_POST['Alters']['nameGenQIds'];
                     $model->nameGenQIds = implode(",", $alterGroups[$_POST['Alters']['name']]);
+                    if (!is_numeric($model->ordering)) {
+                        $ordering = json_decode($model->ordering, true);
+                        $ordering[$_POST['Alters']['nameGenQIds']] = $_POST['Alters']['ordering'];
+                    }
                 }else{
                     $model->addError('name', $_POST['Alters']['name']. ' has already been added!');
                 }
@@ -640,26 +642,29 @@ class InterviewController extends Controller
                     }
                 }
             }
-            $criteria=new CDbCriteria;
-            $criteria->condition = ('interviewId = '.$_POST['Alters']['interviewId']);
-            $criteria->select='count(ordering) AS ordering';
-            $row = Alters::model()->find($criteria);
-            $model->ordering = $row['ordering'];
-            if(!$model->getError('name') && $foundAlter == false)
-                $model->save();
+            //$criteria=new CDbCriteria;
+            //$criteria->condition = ('interviewId = '.$_POST['Alters']['interviewId']);
+            //$criteria->select='count(ordering) AS ordering';
+            //$row = Alters::model()->find($criteria);
+            $model->ordering = json_encode($ordering);
+            if (!$model->getError('name') && $foundAlter == false) {
+                if(!$model->save()){
+                    print_r($model->errors);
+                    die();
+                }
+            }
             $interviewId = $_POST['Alters']['interviewId'];
-
+/*
             $criteria=new CDbCriteria;
             $criteria=array(
                 'condition'=>"afterAltersEntered <= " . Interview::countAlters($interviewId),
                 'order'=>'afterAltersEntered DESC',
             );
             $alterPrompt = AlterPrompt::getPrompt($studyId, Interview::countAlters($interviewId));
-
+*/
             $alters = array();
             $criteria = array(
                 'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId)",
-                'order'=>'ordering',
             );
             $results = Alters::model()->findAll($criteria);
             foreach($results as $result){
@@ -684,7 +689,8 @@ class InterviewController extends Controller
                 $nameQIds[] = $question->id;
             }
             if($model){
-                $ordering = $model->ordering;
+                //$nGorder = json_decode($model->ordering, true);
+                //$model->ordering = json_encode($nGorder);
                 if(strstr($model->interviewId, ",")){
                     $nameGenQIds = explode(",", $model->nameGenQIds);
                     $checkRemain = false;
@@ -698,26 +704,46 @@ class InterviewController extends Controller
                         $interviewIds = explode(",", $model->interviewId);
                         $interviewIds = array_diff($interviewIds,array($interviewId));
                         $model->interviewId = implode(",", $interviewIds);
+                        $nGorder = json_decode($model->ordering, true);
+                        if (isset($nGorder[$nameQId])) {
+                            $ordering = $nGorder[$nameQId];
+                            unset($nGorder[$nameQId]);
+                            $model->ordering = json_encode($nGorder);
+                        }else{
+                            $ordering = $model->ordering;
+                        }
+                        $model->save();
                     }
-                    $model->save();
                 }else{
                     if(strstr($model->nameGenQIds, ",")){
                         $nameGenQIds = explode(",", $model->nameGenQIds);
                         $nameGenQIds = array_diff($nameGenQIds,array($nameQId));
                         $model->nameGenQIds = implode(",", $nameGenQIds);
+                        $nGorder = json_decode($model->ordering, true);
+                        if (isset($nGorder[$nameQId])) {
+                            $ordering = $nGorder[$nameQId];
+                            unset($nGorder[$nameQId]);
+                            $model->ordering = json_encode($nGorder);
+                        }else{
+                            $ordering = $model->ordering;
+                        }
                         $model->save();
                     }else{
+                        $nGorder = json_decode($model->ordering, true);
+                        if (isset($nGorder[$nameQId]))
+                            $ordering = $nGorder[$nameQId];
+                        else
+                            $ordering = $model->ordering;
                         $model->delete();
                     }
                 }
 
-                Alters::sortOrder($ordering, $interviewId);
+                Alters::sortOrder($ordering, $interviewId, $nameQId);
             }
 
             $alters = array();
             $criteria = array(
                 'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId)",
-                'order'=>'ordering',
             );
             $results = Alters::model()->findAll($criteria);
             foreach($results as $result){

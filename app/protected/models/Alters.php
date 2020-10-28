@@ -41,10 +41,9 @@ class Alters extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('ordering, name, interviewId, nameGenQIds', 'required'),
-			array('ordering', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, active, ordering, name, interviewId, nameGenQIds', 'length', 'max'=>1024),
+			array('id, active, ordering, name, interviewId, nameGenQIds, ordering', 'length', 'max'=>1024),
 			array('id, active, ordering, name, interviewId', 'safe', 'on'=>'search'),
 		);
 	}
@@ -60,29 +59,46 @@ class Alters extends CActiveRecord
 		);
 	}
 
-	public static function sortOrder($ordering, $interviewId)
+	public static function sortOrder($ordering, $interviewId, $nameGenQId)
 	{
 		$criteria = new CDbCriteria();
 		$criteria=array(
-			'condition'=>"interviewId in (" . $interviewId . ") AND ordering > ".$ordering ,
-			'order'=>'ordering',
+			'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId) AND FIND_IN_SET($nameGenQId, nameGenQIds)",
 		);
 		$models = Alters::model()->findAll($criteria);
-		foreach($models as $model){
-			Alters::moveUp($model->id);
+		foreach($models as $index=>$model){
+			if(is_numeric($model->ordering)){
+				$nGorder = array($nameGenQId=>$index);
+				$model->ordering = json_encode($nGorder);
+				$model->save();
+			}
 		}
+		$criteria=array(
+			'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId) AND JSON_EXTRACT(ordering, '$.$nameGenQId') > $ordering",
+		);
+		$models = Alters::model()->findAll($criteria);
+        foreach ($models as $index=>$model) {
+            Alters::moveUp($model->id, $nameGenQId);
+        }
 	}
 
-	public static function moveUp($id)
+	public static function moveUp($id, $nameGenQId)
 	{
 		$model = Alters::model()->findByPk($id);
-		if($model && $model->ordering > 0){
-			$old_model = Alters::model()->findByAttributes(array('interviewId'=>$model->interviewId,'ordering'=>$model->ordering-1));
+		$nGorder = json_decode($model->ordering, true);
+		if($model && $nGorder[$nameGenQId] > 0){
+			$criteria=array(
+				'condition'=>"JSON_EXTRACT(ordering, '$.$nameGenQId') = " . $nGorder[$nameGenQId]-1,
+			);
+			$old_model = Alters::model()->find($criteria);
 			if($old_model){
-				$old_model->ordering = $model->ordering;
+				$oldnGorder = json_decode($old_model->ordering, true);
+				$oldnGorder[$nameGenQId] = $nGorder[$nameGenQId];
+				$old_model->ordering = json_encode($oldnGorder);
 				$old_model->save();
 			}
-			$model->ordering--;
+			$nGorder[$nameGenQId]--;
+			$model->ordering = json_encode($nGorder);
 			$model->save();
 		}
 	}
