@@ -483,12 +483,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
   $scope.addAlter = function (isValid) {
     $scope.errors[0] = false;
-    for (k in alters) {
-      if ($("#Alters_name").val().toLowerCase() == alters[k].NAME.toLowerCase()) {
+    for (k in $scope.nGalters) {
+      if ($("#Alters_name").val().toLowerCase() == $scope.nGalters[k].NAME.toLowerCase()) {
         if($scope.questions[0].NONEBUTTON != true)
           $scope.errors[0] = 'That name has already been listed';
-        if (alters[k].NAMEGENQIDS != null)
-          var nameGenQIds = alters[k].NAMEGENQIDS.split(",");
+        if ($scope.nGalters[k].NAMEGENQIDS != null)
+          var nameGenQIds = $scope.nGalters[k].NAMEGENQIDS.split(",");
         if (nameGenQIds.indexOf($("#Alters_nameGenQIds").val()) > -1)
           $scope.errors[0] = 'That name is already on this list';
       }

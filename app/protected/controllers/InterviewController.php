@@ -579,9 +579,17 @@ class InterviewController extends Controller
                 $alterNames[$alter->id] = $alter->name;
                 $alterGroups[$alter->name] = explode(",", $alter->nameGenQIds);
             }
+            $acount = 0;
+            foreach ($alters as $alter) {
+                if (in_array($_POST['Alters']['nameGenQIds'], $alterGroups[$alter->name])) {
+                    $alter->ordering = json_encode(array($_POST['Alters']['nameGenQIds'] => $acount));
+                    $alter->save();
+                    $acount++;
+                }
+            }
             $model = new Alters;
             $model->attributes = $_POST['Alters'];
-            $ordering = array($_POST['Alters']['nameGenQIds'] => $_POST['Alters']['ordering']);
+            $ordering = array($_POST['Alters']['nameGenQIds'] => intval($_POST['Alters']['ordering']));
             if(in_array($_POST['Alters']['name'], $alterNames)){
                 if(!in_array($_POST['Alters']['nameGenQIds'], $alterGroups[$_POST['Alters']['name']])){
                     $model = Alters::model()->findByPk(array_search($_POST['Alters']['name'], $alterNames));
@@ -589,7 +597,7 @@ class InterviewController extends Controller
                     $model->nameGenQIds = implode(",", $alterGroups[$_POST['Alters']['name']]);
                     if (!is_numeric($model->ordering)) {
                         $ordering = json_decode($model->ordering, true);
-                        $ordering[$_POST['Alters']['nameGenQIds']] = $_POST['Alters']['ordering'];
+                        $ordering[$_POST['Alters']['nameGenQIds']] = intval($_POST['Alters']['ordering']);
                     }
                 }else{
                     $model->addError('name', $_POST['Alters']['name']. ' has already been added!');
@@ -705,9 +713,11 @@ class InterviewController extends Controller
                         $interviewIds = array_diff($interviewIds,array($interviewId));
                         $model->interviewId = implode(",", $interviewIds);
                         $nGorder = json_decode($model->ordering, true);
-                        if (isset($nGorder[$nameQId])) {
-                            $ordering = $nGorder[$nameQId];
-                            unset($nGorder[$nameQId]);
+                        if (!is_numeric($model->ordering)) {
+                            if (isset($nGorder[$nameQId])) {
+                                $ordering = $nGorder[$nameQId];
+                                unset($nGorder[$nameQId]);
+                            }
                             $model->ordering = json_encode($nGorder);
                         }else{
                             $ordering = $model->ordering;
@@ -720,9 +730,11 @@ class InterviewController extends Controller
                         $nameGenQIds = array_diff($nameGenQIds,array($nameQId));
                         $model->nameGenQIds = implode(",", $nameGenQIds);
                         $nGorder = json_decode($model->ordering, true);
-                        if (isset($nGorder[$nameQId])) {
-                            $ordering = $nGorder[$nameQId];
-                            unset($nGorder[$nameQId]);
+                        if (!is_numeric($model->ordering)) {
+                            if (isset($nGorder[$nameQId])) {
+                                $ordering = $nGorder[$nameQId];
+                                unset($nGorder[$nameQId]);
+                            }
                             $model->ordering = json_encode($nGorder);
                         }else{
                             $ordering = $model->ordering;
@@ -730,15 +742,19 @@ class InterviewController extends Controller
                         $model->save();
                     }else{
                         $nGorder = json_decode($model->ordering, true);
-                        if (isset($nGorder[$nameQId]))
-                            $ordering = $nGorder[$nameQId];
-                        else
+                        if (!is_numeric($model->ordering)) {
+                            if (isset($nGorder[$nameQId])) {
+                                $ordering = $nGorder[$nameQId];
+                                unset($nGorder[$nameQId]);
+                            }
+                        }else{
                             $ordering = $model->ordering;
+                        }
                         $model->delete();
                     }
                 }
-
-                Alters::sortOrder($ordering, $interviewId, $nameQId);
+                if(is_numeric($ordering))
+                    Alters::sortOrder($ordering, $interviewId, $nameQId);
             }
 
             $alters = array();
