@@ -1210,6 +1210,7 @@ class DataController extends Controller
 
     public function actionDeleteinterviews()
     {
+        // TODO:: implement for alters in multiple interviews
         if (!isset($_POST['interviewIds'])) {
             return false;
         }

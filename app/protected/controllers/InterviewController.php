@@ -639,10 +639,16 @@ class InterviewController extends Controller
                         if($alter->name == $_POST['Alters']['name']){
                             $intIds = explode(",", $alter->interviewId);
                             $nameQIds = explode(",", $alter->nameGenQIds);
+                            $ordering = array($_POST['Alters']['nameGenQIds'] => intval($_POST['Alters']['ordering']));
                             if(!in_array($_POST['Alters']['interviewId'], $intIds))
                                 $alter->interviewId = $alter->interviewId . ",". $_POST['Alters']['interviewId'];
                             if(!in_array($_POST['Alters']['nameGenQIds'], $nameQIds))
                                 $alter->nameGenQIds = $alter->nameGenQIds . ",". $_POST['Alters']['nameGenQIds'];
+                            if (!is_numeric($alter->ordering)) {
+                                $ordering = json_decode($alter->ordering, true);
+                                $ordering[$_POST['Alters']['nameGenQIds']] = intval($_POST['Alters']['ordering']);
+                            }
+                            $alter->ordering = json_encode($ordering);
                             $alter->save();
                             $foundAlter = true;
                         }
@@ -703,7 +709,7 @@ class InterviewController extends Controller
                     $nameGenQIds = explode(",", $model->nameGenQIds);
                     $checkRemain = false;
                     foreach($nameGenQIds as $nameGenQId){
-                        if($nameQId != $nameGenQId && in_array($nameGenQId, $nameQIds))
+                        if($nameGenQId != $nameQId && in_array($nameGenQId, $nameQIds))
                             $checkRemain = true;
                     }
                     $nameGenQIds = array_diff($nameGenQIds,array($nameQId));
@@ -712,18 +718,19 @@ class InterviewController extends Controller
                         $interviewIds = explode(",", $model->interviewId);
                         $interviewIds = array_diff($interviewIds,array($interviewId));
                         $model->interviewId = implode(",", $interviewIds);
-                        $nGorder = json_decode($model->ordering, true);
-                        if (!is_numeric($model->ordering)) {
-                            if (isset($nGorder[$nameQId])) {
-                                $ordering = $nGorder[$nameQId];
-                                unset($nGorder[$nameQId]);
-                            }
-                            $model->ordering = json_encode($nGorder);
-                        }else{
-                            $ordering = $model->ordering;
-                        }
-                        $model->save();
+            
                     }
+                    $nGorder = json_decode($model->ordering, true);
+                    if (!is_numeric($model->ordering)) {
+                        if (isset($nGorder[$nameQId])) {
+                            $ordering = $nGorder[$nameQId];
+                            unset($nGorder[$nameQId]);
+                        }
+                        $model->ordering = json_encode($nGorder);
+                    }else{
+                        $ordering = $model->ordering;
+                    }
+                    $model->save();
                 }else{
                     if(strstr($model->nameGenQIds, ",")){
                         $nameGenQIds = explode(",", $model->nameGenQIds);

@@ -524,11 +524,19 @@ class MobileController extends Controller
 				else
 					$nameGenQIds = array($alter['NAMEGENQIDS']);
 				foreach($nameGenQIds as &$nQid){
-					if(isset($newData['newQuestionIds'][$alter['NAMEGENQIDS']]))
-						$nQid = $newData['newQuestionIds'][$alter['NAMEGENQIDS']];
+					if(isset($newData['newQuestionIds'][$nQid]))
+						$nQid = $newData['newQuestionIds'][$nQid];
 				}
                 $newAlter->nameGenQIds = implode(",", $nameGenQIds);
-                $newAlter->ordering = $alter['ORDERING'];
+                $nGorder = json_decode($alter['ORDERING'], true);
+                $newOrder = array();
+				foreach($nGorder as $nQid=>$norder){
+					if(isset($newData['newQuestionIds'][$nQid]))
+                        $newOrder[$newData['newQuestionIds'][$nQid]] = $norder;
+                    else
+                        $newOrder[$nQid] = $norder;
+				}
+                $newAlter->ordering = json_encode($newOrder);
                 if (!$newAlter->save()) {
                     $errors++;
                     echo $alter['NAMEGENQIDS'];
@@ -692,7 +700,15 @@ class MobileController extends Controller
                         }
                     }
                 }
-                $newAlter->ordering = $alter['ORDERING'];
+                $nGorder = json_decode($alter['ORDERING'], true);
+                $newOrder = array();
+				foreach($nGorder as $nQid=>$norder){
+					if(isset($newData['newQuestionIds'][$nQid]))
+                        $newOrder[$newData['newQuestionIds'][$nQid]] = $norder;
+                    else
+                        $newOrder[$nQid] = $norder;
+				}
+                $newAlter->ordering = json_encode($newOrder);
                 if (!$newAlter->save()) {
                     $errors++;
                     echo $questionTitles[$alter['NAMEGENQIDS']];

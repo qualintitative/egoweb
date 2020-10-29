@@ -530,10 +530,33 @@ class ImportExportController extends Controller
                                     $newAlter->$key = $value;
                                 }
                                 if ($key == "nameGenQIds") {
-                                    $value = intval($value);
-                                    if (isset($newQuestionIds[$value])) {
-                                        $newAlter->$key = $newQuestionIds[$value];
+                                    if (stristr($value, ",")){
+                                        $nQIds = explode(",", $value);
+                                        foreach($nQIds as &$nQId){
+                                            $nQId = intval($nQId);
+                                            if (isset($newQuestionIds[$nQId])) {
+                                                $nQId = $newQuestionIds[$nQId];
+                                            }
+                                        }
+                                        $newAlter->$key = implode(",", $nQIds);
+                                    }else{
+                                        $value = intval($value);
+                                        if (isset($newQuestionIds[$value])) {
+                                            $newAlter->$key = $newQuestionIds[$value];
+                                        }
                                     }
+
+                                }
+                                if($key == "ordering"){
+                                    $nGorder = json_decode($value, true);
+                                    $newOrder = array();
+                                    foreach($nGorder as $nQid=>$norder){
+                                        if(isset($newQuestionIds[$nQid]))
+                                            $newOrder[$newQuestionIds[$nQid]] = $norder;
+                                        else
+                                            $newOrder[$nQid] = $norder;
+                                    }
+                                    $newAlter->$key = json_encode($newOrder);
                                 }
                             }
                             if (!$newAlter->nameGenQIds) {
