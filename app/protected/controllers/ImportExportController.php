@@ -574,8 +574,6 @@ class ImportExportController extends Controller
                                 $newAlter->interviewId = implode(",", $interviewIds);
                             }
 
-                            $newAlter->ordering=1;
-
                             if (!$newAlter->save()) {
                                 echo "Alter: ";
                                 print_r($newAlter->getErrors());
@@ -699,6 +697,8 @@ class ImportExportController extends Controller
 
                             foreach ($answer->attributes() as $key=>$value) {
                                 if ($key!="key" && $key != "id") {
+                                    if($key == "value")
+                                        $value = htmlspecialchars_decode($value);
                                     $newAnswer->$key = $value;
                                 }
                                 if ($key == "alterId1" && isset($newAlterIds[intval($value)])) {
