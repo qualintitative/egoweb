@@ -1227,6 +1227,18 @@ class DataController extends Controller
                 foreach ($alters as $alter) {
                     $alter->delete();
                 }
+                $criteria = array(
+                    'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId)",
+                );
+                $alters = Alters::model()->findAll($criteria);
+                foreach ($alters as $alter) {
+                    if (strstr($alter->interviewId, ",")) {
+                        $interviewIds = explode(",", $alter->interviewId);
+                        $interviewIds = array_diff($interviewIds, array($interviewId));
+                        $alter->interviewId = implode(",", $interviewIds);
+                        $alter->save();
+                    }
+                }
                 $model->delete();
             }
         }

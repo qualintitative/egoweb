@@ -62,6 +62,7 @@ class ImportExportController extends Controller
 
         $newInterviewIds = array();
         $newAlterIds = array();
+        $newQuestionIds = array();
         $result = User::model()->findAll();
         $users = array();
         foreach($result as $u){
@@ -74,7 +75,6 @@ class ImportExportController extends Controller
                 die();
             }
             $newStudy = new Study;
-            $newQuestionIds = array();
             $newOptionIds = array();
             $newExpressionIds = array();
             $newAnswerIds = array();
@@ -529,49 +529,15 @@ class ImportExportController extends Controller
                                 if ($key!="key" && $key != "id") {
                                     $newAlter->$key = $value;
                                 }
-                                if ($key == "nameGenQIds") {
-                                    if (stristr($value, ",")){
-                                        $nQIds = explode(",", $value);
-                                        foreach($nQIds as &$nQId){
-                                            $nQId = intval($nQId);
-                                            if (isset($newQuestionIds[$nQId])) {
-                                                $nQId = $newQuestionIds[$nQId];
-                                            }
-                                        }
-                                        $newAlter->$key = implode(",", $nQIds);
-                                    }else{
-                                        $value = intval($value);
-                                        if (isset($newQuestionIds[$value])) {
-                                            $newAlter->$key = $newQuestionIds[$value];
-                                        }
-                                    }
-
-                                }
-                                if($key == "ordering"){
-                                    $nGorder = json_decode($value, true);
-                                    $newOrder = array();
-                                    foreach($nGorder as $nQid=>$norder){
-                                        if(isset($newQuestionIds[$nQid]))
-                                            $newOrder[$newQuestionIds[$nQid]] = $norder;
-                                        else
-                                            $newOrder[$nQid] = $norder;
-                                    }
-                                    $newAlter->$key = json_encode($newOrder);
-                                }
                             }
+                            //skip alter if it's already exists in array
+                            if(in_array(intval($thisAlterId), array_keys($newAlterIds)))
+                                continue;
                             if (!$newAlter->nameGenQIds) {
                                 $newAlter->nameGenQIds = 0;
                             }
                             if (!preg_match("/,/", $newAlter->interviewId)) {
                                 $newAlter->interviewId = $newInterviewId;
-                            } else {
-                                $interviewIds = explode(",", $newAlter->interviewId);
-                                foreach ($interviewIds as &$interviewId) {
-                                    if ($interviewId == $oldInterviewId) {
-                                        $interviewId = $newInterviewId;
-                                    }
-                                }
-                                $newAlter->interviewId = implode(",", $interviewIds);
                             }
 
                             if (!$newAlter->save()) {
@@ -719,6 +685,7 @@ class ImportExportController extends Controller
                                 }
                             }
 
+                            $newAnswer->value = html_entity_decode($newAnswer->value, ENT_QUOTES);
 
                             if ($answerType == "MULTIPLE_SELECTION" && !in_array($newAnswer->value, array($newStudy->valueRefusal,$newStudy->valueDontKnow,$newStudy->valueLogicalSkip,$newStudy->valueNotYetAnswered))) {
                                 $values = explode(',', $newAnswer->value);
@@ -753,6 +720,7 @@ class ImportExportController extends Controller
                                 continue;
                             }
 
+                        
                             if (!$newAnswer->save()) {
                                 echo "new answer:";
                                 echo $oldQId . "<br>";
@@ -791,8 +759,33 @@ class ImportExportController extends Controller
 					}
 				}
 				$alter->interviewId = implode(',', $values);
-				$alter->save();
-			}
+            }
+
+            if (stristr($alter->nameGenQIds, ",")){
+                $nQIds = explode(",", $alter->nameGenQIds);
+                foreach($nQIds as &$nQId){
+                    $nQId = intval($nQId);
+                    if (isset($newQuestionIds[$nQId])) {
+                        $nQId = $newQuestionIds[$nQId];
+                    }
+                }
+                $alter->nameGenQIds = implode(",", $nQIds);
+            }else{
+                if (isset($newQuestionIds[$alter->nameGenQIds])) {
+                    $alter->nameGenQIds = $newQuestionIds[$alter->nameGenQIds];
+                }
+            }
+
+            $nGorder = json_decode($alter->ordering, true);
+            $newOrder = array();
+            foreach($nGorder as $nQid=>$norder){
+                if(isset($newQuestionIds[$nQid]))
+                    $newOrder[$newQuestionIds[$nQid]] = $norder;
+                else
+                    $newOrder[$nQid] = $norder;
+            }
+            $alter->ordering = json_encode($newOrder);
+            $alter->save();
 		}
 		foreach ($newInterviewIds as $oldId=>$newId) {
 			$matches = MatchedAlters::model()->findAllByAttributes(array("interviewId1"=>$oldId));
