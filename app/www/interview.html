@@ -56,7 +56,7 @@
 
                     <input class="btn orangebutton alterSubmit" type="submit" name="yt0" value="+ Add">
                 </div>
-                <div ng-class="{'col-sm-12 table-cell': questions[0].ANSWERTYPE == 'NAME_GENERATOR'}" ng-repeat="option in options[questions[0].array_id]" ng-class="{'bg-danger':answerForm.$submitted && errors[questions[0].array_id]}" ng-if="(questions[0].ANSWERTYPE == 'NAME_GENERATOR' && keys(alters).length < questions[0].MAXLITERAL)">
+                <div ng-class="{'col-sm-12 table-cell': questions[0].ANSWERTYPE == 'NAME_GENERATOR'}" ng-repeat="option in options[questions[0].array_id]" ng-class="{'bg-danger':answerForm.$submitted && errors[questions[0].array_id]}" ng-if="(questions[0].ANSWERTYPE == 'NAME_GENERATOR' && keys(nGalters).length < questions[0].MAXLITERAL)">
                     <input id="multiselect-{{ questions[0].array_id }}_{{ $index }}" class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-model="option.checked" type="checkbox" ng-change="multiSelect('{{ option.ID }}', '{{$index}}', '{{questions[0].array_id}}')">
                     <label ng-show="question.ASKINGSTYLELIST == false || !question.ASKINGSTYLELIST" for="multiselect-{{ questions[0].array_id }}_{{ $index }}">{{ option.NAME }}</label>
                     <br>
@@ -85,7 +85,7 @@
             </tr>
         </tbody>
     </table>
-    <div ng-if='keys(alters).length == 0'>
+    <div ng-if='keys(nGalters).length == 0'>
         <br>
     </div>
     <div ng-if='keys(listedAlters).length > 0' class="prev-alters">
