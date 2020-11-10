@@ -523,6 +523,10 @@ class InterviewController extends Controller
             $answers[$array_id]->attributes = $Answer;
             if($interviewId){
                 $answers[$array_id]->interviewId = $interviewId;
+                if (!isset($Answer['questionType'])) {
+                    $_POST['page'] = intval($_POST['page']) + 1;
+                    continue;
+                }
                 if($answers[$array_id]->save()){
                     if(strlen($answers[$array_id]->value) >= 8)
                         $answers[$array_id]->value = decrypt( $answers[$array_id]->value);

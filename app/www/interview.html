@@ -462,8 +462,9 @@
             </div>
         </div>
     </div>
-    <div class="hidden">
-        <input id="Answer_{{ questions[0].array_id }}_VALUE" name="Answer[{{ questions[0].array_id }}][value]" ng-if="questions[0].ANSWERTYPE == 'NAME_GENERATOR'" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ questions[0].ID }}' array-id='{{ questions[0].array_id }}' answer-type='{{ questions[0].ANSWERTYPE }}'>
+    <div class="hidden" ng-if="questions[0].ANSWERTYPE == 'NAME_GENERATOR'">
+        <input name="Answer[{{ questions[0].array_id }}][interviewId]" value="{{ answers[questions[0].array_id].INTERVIEWID }}" type="hidden">
+        <input id="Answer_{{ questions[0].array_id }}_VALUE" name="Answer[{{ questions[0].array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ questions[0].ID }}' array-id='{{ questions[0].array_id }}' answer-type='{{ questions[0].ANSWERTYPE }}'>
     </div>
     <input name="page" value='{{ page }}' type="hidden">
     <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
