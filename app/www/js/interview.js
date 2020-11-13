@@ -942,7 +942,6 @@ app.directive('checkAnswer', [function () {
         var valid = true;
         var array_id = attr.arrayId;
         var question = questions[attr.questionId];
-        console.log("check formatters")
         if (attr.answerType == "NAME_GENERATOR") {
           if ((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.nGalters).length < scope.questions[0].MINLITERAL) {
             scope.errors[array_id] = 'Please list at least ' + scope.questions[0].MINLITERAL + ' people';

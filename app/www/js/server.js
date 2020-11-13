@@ -134,7 +134,7 @@ function save(questions, page, url, scope){
     }else{
         if(questions[0].ANSWERTYPE == "NAME_GENERATOR"){
             $.post(saveUrl, $('#answerForm').serialize(), function (data) {
-                console.log(data);
+                //console.log(data);
             });
             buildList();
         }

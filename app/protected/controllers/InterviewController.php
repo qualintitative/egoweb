@@ -580,7 +580,7 @@ class InterviewController extends Controller
             $alterNames = array();
             $alterGroups = array();
             foreach($alters as $alter){
-                $alterNames[$alter->id] = $alter->name;
+                $alterNames[$alter->id] = strtolower($alter->name);
                 $alterGroups[$alter->name] = explode(",", $alter->nameGenQIds);
             }
             $acount = 0;
@@ -594,9 +594,9 @@ class InterviewController extends Controller
             $model = new Alters;
             $model->attributes = $_POST['Alters'];
             $ordering = array($_POST['Alters']['nameGenQIds'] => intval($_POST['Alters']['ordering']));
-            if(in_array($_POST['Alters']['name'], $alterNames)){
+            if(in_array(strtolower($_POST['Alters']['name']), $alterNames)){
                 if(!in_array($_POST['Alters']['nameGenQIds'], $alterGroups[$_POST['Alters']['name']])){
-                    $model = Alters::model()->findByPk(array_search($_POST['Alters']['name'], $alterNames));
+                    $model = Alters::model()->findByPk(array_search(strtolower($_POST['Alters']['name']), $alterNames));
                     $alterGroups[$_POST['Alters']['name']][] = $_POST['Alters']['nameGenQIds'];
                     $model->nameGenQIds = implode(",", $alterGroups[$_POST['Alters']['name']]);
                     if (!is_numeric($model->ordering)) {
