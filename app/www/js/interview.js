@@ -735,7 +735,10 @@ app.directive('checkAnswer', [function () {
 
         if (attr.answerType == "NAME_GENERATOR") {
           if ((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.nGalters).length < scope.questions[0].MINLITERAL) {
-            scope.errors[array_id] = 'Please list at keast ' + scope.questions[0].MINLITERAL + ' people';
+            var noun = " people";
+            if(scope.questions[0].MINLITERAL == 1)
+              noun = " person";
+            scope.errors[array_id] = 'Please list at keast ' + scope.questions[0].MINLITERAL + noun;
             valid = false;
           } else {
             delete scope.errors[0];
@@ -944,7 +947,10 @@ app.directive('checkAnswer', [function () {
         var question = questions[attr.questionId];
         if (attr.answerType == "NAME_GENERATOR") {
           if ((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.nGalters).length < scope.questions[0].MINLITERAL) {
-            scope.errors[array_id] = 'Please list at least ' + scope.questions[0].MINLITERAL + ' people';
+            var noun = " people";
+            if(scope.questions[0].MINLITERAL == 1)
+              noun = " person";
+            scope.errors[array_id] = 'Please list at keast ' + scope.questions[0].MINLITERAL + noun;
             valid = false;
           } else {
             delete scope.errors[0];
