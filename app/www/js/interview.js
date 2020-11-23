@@ -738,7 +738,7 @@ app.directive('checkAnswer', [function () {
             var noun = " people";
             if(scope.questions[0].MINLITERAL == 1)
               noun = " person";
-            scope.errors[array_id] = 'Please list at keast ' + scope.questions[0].MINLITERAL + noun;
+            scope.errors[array_id] = 'Please list at least ' + scope.questions[0].MINLITERAL + noun;
             valid = false;
           } else {
             delete scope.errors[0];
@@ -950,7 +950,7 @@ app.directive('checkAnswer', [function () {
             var noun = " people";
             if(scope.questions[0].MINLITERAL == 1)
               noun = " person";
-            scope.errors[array_id] = 'Please list at keast ' + scope.questions[0].MINLITERAL + noun;
+            scope.errors[array_id] = 'Please list at least ' + scope.questions[0].MINLITERAL + noun;
             valid = false;
           } else {
             delete scope.errors[0];
