@@ -609,7 +609,6 @@ INSERT INTO `tbl_migration` (`version`, `apply_time`) VALUES
 ('m150227_070331_hide_ego_id', 1453112258),
 ('m150303_014601_change_completed_type', 1453112258),
 ('m150314_043742_otherSpecUpdate', 1453112258),
-('m150319_063109_add_alter_to_os', 1453112258),
 ('m150506_232010_matchTable', 1453112258),
 ('m160118_100231_image_longtext', 1453112259),
 ('m160201_074143_style_css', 1454312829),

@@ -41,7 +41,7 @@ class QuestionOption extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('studyId, questionId, name, value, otherSpecify', 'length', 'max'=>255),
+			array('studyId, questionId, name, value, otherSpecify, single', 'length', 'max'=>255),
 			array('id, studyId, questionId, ordering', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.

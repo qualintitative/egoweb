@@ -875,10 +875,13 @@ class AuthoringController extends Controller
 				'pagination'=>false,
 			));
 			$this->renderPartial('_form_option', array('dataProvider'=>$dataProvider, 'questionId'=>$questionId, 'ajax'=>true), false, true);
-		} else if (isset($_POST['otherSpecify']) && isset($_POST['optionId'])) {
+		} else if ((isset($_POST['otherSpecify']) || isset($_POST['single'])) && isset($_POST['optionId'])) {
             if (is_numeric($_POST['optionId'])) {
-                $option = QuestionOption::model()->findByPk($_POST['optionId']);
-                $option->otherSpecify = $_POST['otherSpecify'];
+				$option = QuestionOption::model()->findByPk($_POST['optionId']);
+				if(isset($_POST['otherSpecify']))
+					$option->otherSpecify = $_POST['otherSpecify'];
+				if(isset($_POST['single']))
+	                $option->single = $_POST['single'];
                 if(!$option->save())
                     throw new CHttpException(500,"Other Specify update error!");
     			$criteria=new CDbCriteria;

@@ -6,6 +6,11 @@ function ajaxCheck(optionId, checked){
         $('#data-<?php echo $questionId ?>').html(data);
     });
 }
+function singleCheck(optionId, checked){
+    $.post("/authoring/ajaxupdate",{optionId:optionId, single:(checked == true ? 1:0),YII_CSRF_TOKEN:$("input[name='YII_CSRF_TOKEN']").val()}, function(data){
+        $('#data-<?php echo $questionId ?>').html(data);
+    });
+}
 </script>
 <?php
 $question = Question::model()->findByPK($questionId);
@@ -70,6 +75,13 @@ $this->widget('zii.widgets.grid.CGridView', array(
             array(
 				'name'=>'Specify',
 				'value'=>'CHtml::checkBox("otherSpecify", $data->otherSpecify, array("onchange"=>"ajaxCheck($data->id, $(this).prop(\'checked\'))"));',
+				'type'=>'raw',
+				'htmlOptions'=>array(
+                ),
+			),
+			array(
+				'name'=>'Single',
+				'value'=>'CHtml::checkBox("single", $data->single, array("onchange"=>"singleCheck($data->id, $(this).prop(\'checked\'))"));',
 				'type'=>'raw',
 				'htmlOptions'=>array(
                 ),

@@ -309,6 +309,7 @@ class AdminController extends Controller
                 $count++;
             }
         }
+
         $dbCount = Yii::app()->db->createCommand()
     ->select('count(version)')
     ->from('tbl_migration')

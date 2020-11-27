@@ -22,6 +22,8 @@ class Controller extends CController
 	public $breadcrumbs=array();
 
 	public function init() {
+		$myfile = fopen(getcwd() . "/../version", "r") or die("Unable to open file!");
+		Yii::app()->params['version'] = fgets($myfile);
 		parent::init();
 	}
 

@@ -603,9 +603,20 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       if ($scope.options[array_id][index].checked) {
         $scope.answers[array_id].SKIPREASON = "NONE";
         for (k in $scope.options[array_id]) {
-          if ($scope.options[array_id][k].ID == "DONT_KNOW" || $scope.options[array_id][k].ID == "REFUSE")
+          if ($scope.options[array_id][k].ID == "DONT_KNOW" || $scope.options[array_id][k].ID == "REFUSE" )
             $scope.options[array_id][k].checked = false;
+          if($scope.options[array_id][index].SINGLE == true && k != index)
+            $scope.options[array_id][k].checked = false;
+          if ($scope.options[array_id][k].SINGLE == true && k != index){
+            $scope.options[array_id][k].checked = false;
+            if (values.indexOf($scope.options[array_id][k].ID) != -1) {
+              values.splice(values.indexOf($scope.options[array_id][k].ID), 1);
+            }
+          }
+    
         }
+        if ($scope.options[array_id][index].SINGLE == true)
+          values = [v.toString()];
         if (values.indexOf(v.toString()) == -1)
           values.push(v.toString());
       } else {
