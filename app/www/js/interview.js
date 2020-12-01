@@ -76,6 +76,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   $scope.prevAlters = {};
   $scope.starExpressionId = false;
   $scope.colspan = false;
+  $scope.refuseCount = 0;
+  current_array_ids = []
   if (typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR") {
     alterPromptPage = true;
     for (k in $scope.alters) {
@@ -141,6 +143,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
   for (var k in $scope.questions) {
     var array_id = $scope.questions[k].array_id;
+    current_array_ids.push(array_id);
     if ($scope.questions[k].USEALTERLISTFIELD == "name" || $scope.questions[k].USEALTERLISTFIELD == "email") {
       for (p in participantList) {
         var qIds = [];
@@ -473,9 +476,17 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   $scope.submitForm = function (isValid) {
     // check to make sure the form is completely valid
     console.log(isValid)
-    if (isValid) {
+    if (isValid || $scope.refuseCount > 0) {
+      for(r in current_array_ids){
+        if($scope.answers[current_array_ids[r]].SKIPREASON == "NONE" && $('#Answer_' + current_array_ids[r] + '_VALUE').val() == ""){
+          $scope.answers[current_array_ids[r]].SKIPREASON = "REFUSE";
+          $('input[name="Answer[' + current_array_ids[r] + '][skipReason]').val("REFUSE");
+          $scope.answerForm.$setDirty();
+        }
+      }
       save($scope.questions, $routeParams.page, $location.absUrl().replace($location.url(), ''), $scope);
     } else {
+      $scope.refuseCount++;
       window.scrollTo(0, 0);
       $("table.qTable").floatThead('reflow');
     }
@@ -947,6 +958,11 @@ app.directive('checkAnswer', [function () {
             }
           }
         }
+        if(typeof scope.errors[0] == "undefined" && Object.keys(scope.errors).length > 0){
+          for(k in scope.errors){
+            scope.errors[k] += " Click next again to skip."
+          }
+        }
         $("table.qTable").floatThead('reflow');
         ngModel.$setValidity('checkAnswer', valid);
         return valid ? value : undefined;
@@ -1166,6 +1182,11 @@ app.directive('checkAnswer', [function () {
                 }
               }
             }
+          }
+        }
+        if(typeof scope.errors[0] == "undefined" && Object.keys(scope.errors).length > 0){
+          for(k in scope.errors){
+            scope.errors[k] += " Click next again to skip."
           }
         }
         $("table.qTable").floatThead('reflow');
