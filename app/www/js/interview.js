@@ -77,6 +77,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   $scope.starExpressionId = false;
   $scope.colspan = false;
   $scope.refuseCount = 0;
+  $scope.hasRefuse = false;
   current_array_ids = []
   if (typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR") {
     alterPromptPage = true;
@@ -348,6 +349,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       var button = new Object;
       button.NAME = "Refuse";
       button.ID = "REFUSE";
+      $scope.hasRefuse = true;
       button.checked = false;
       if ($scope.answers[array_id].SKIPREASON == "REFUSE")
         button.checked = true;
@@ -478,7 +480,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     console.log(isValid)
     if (isValid || $scope.refuseCount > 0) {
       for(r in current_array_ids){
-        if($scope.answers[current_array_ids[r]].SKIPREASON == "NONE" && $('#Answer_' + current_array_ids[r] + '_VALUE').val() == ""){
+        if($scope.refuseCount > 0 && $scope.answers[current_array_ids[r]].SKIPREASON == "NONE" && $('#Answer_' + current_array_ids[r] + '_VALUE').val() == ""){
           $scope.answers[current_array_ids[r]].SKIPREASON = "REFUSE";
           $('input[name="Answer[' + current_array_ids[r] + '][skipReason]').val("REFUSE");
           $scope.answerForm.$setDirty();
@@ -486,7 +488,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       }
       save($scope.questions, $routeParams.page, $location.absUrl().replace($location.url(), ''), $scope);
     } else {
-      $scope.refuseCount++;
+      if($scope.hasRefuse)
+        $scope.refuseCount++;
       window.scrollTo(0, 0);
       $("table.qTable").floatThead('reflow');
     }
@@ -760,7 +763,7 @@ app.directive('checkAnswer', [function () {
             var noun = " people";
             if(scope.questions[0].MINLITERAL == 1)
               noun = " person";
-            scope.errors[array_id] = 'Please list at least ' + scope.questions[0].MINLITERAL + noun;
+            scope.errors[array_id] = 'Please list at least ' + scope.questions[0].MINLITERAL + noun + ".";
             valid = false;
           } else {
             delete scope.errors[0];
@@ -772,7 +775,7 @@ app.directive('checkAnswer', [function () {
         if (attr.answerType == "TEXTUAL") {
           if (scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW") {
             if (value == "") {
-              scope.errors[array_id] = "Value cannot be blank";
+              scope.errors[array_id] = "Value cannot be blank.";
               valid = false;
             } else {
               delete scope.errors[array_id];
@@ -788,7 +791,7 @@ app.directive('checkAnswer', [function () {
           var numberErrors = 0;
           var showError = false;
           if ((value == "" && scope.answers[array_id].SKIPREASON == "NONE") || (value != "" && isNaN(parseInt(value)))) {
-            errorMsg = 'Please enter a number';
+            errorMsg = 'Please enter a number.';
             showError = true;
           }
           if (question.MINLIMITTYPE == "NLT_LITERAL") {
@@ -831,38 +834,38 @@ app.directive('checkAnswer', [function () {
             var time = value.match(/(\d+):(\d+) (AM|PM)/);
             if (time && time.length > 2) {
               if (parseInt(time[1]) < 1 || parseInt(time[1]) > 12) {
-                scope.errors[array_id] = 'Please enter 1 to 12 for HH';
+                scope.errors[array_id] = 'Please enter 1 to 12 for HH.';
                 valid = false;
               }
               if (parseInt(time[2]) < 0 || parseInt(time[2]) > 59) {
-                scope.errors[array_id] = 'Please enter 0 to 59 for MM';
+                scope.errors[array_id] = 'Please enter 0 to 59 for MM.';
                 valid = false;
               }
             } else {
               if (scope.timeBits(question.TIMEUNITS, 'MINUTE')) {
-                scope.errors[array_id] = 'Please enter the minutes';
+                scope.errors[array_id] = 'Please enter the minutes.';
                 valid = false;
               }
               if (scope.timeBits(question.TIMEUNITS, 'HOUR')) {
-                scope.errors[array_id] = 'Please enter the time of day';
+                scope.errors[array_id] = 'Please enter the time of day.';
                 valid = false;
               }
             }
             if (scope.timeBits(question.TIMEUNITS, 'YEAR') && !year) {
-              scope.errors[array_id] = 'Please enter a valid year';
+              scope.errors[array_id] = 'Please enter a valid year.';
               valid = false;
             }
             if (scope.timeBits(question.TIMEUNITS, 'MONTH') && !month) {
-              scope.errors[array_id] = 'Please enter a month';
+              scope.errors[array_id] = 'Please enter a month.';
               valid = false;
             }
             if (scope.timeBits(question.TIMEUNITS, 'MONTH') && scope.timeBits(question.TIMEUNITS, 'YEAR') && scope.timeBits(question.TIMEUNITS, 'DAY') && year && !date) {
-              scope.errors[array_id] = 'Please enter a day of the month';
+              scope.errors[array_id] = 'Please enter a day of the month.';
               valid = false;
             }
             if (date) {
               if (parseInt(date[2]) < 1 || parseInt(date[2]) > 31) {
-                scope.errors[array_id] = 'Please enter a different number for the day of month';
+                scope.errors[array_id] = 'Please enter a different number for the day of month.';
                 valid = false;
               }
             }
@@ -876,7 +879,7 @@ app.directive('checkAnswer', [function () {
         if (attr.answerType == "TIME_SPAN") {
           if (scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW") {
             if(value.trim() == ""){
-              scope.errors[array_id] = 'Please fill in at least one of the fields';
+              scope.errors[array_id] = 'Please fill in at least one of the fields.';
               valid = false;            }
           } else {
             delete scope.errors[array_id];
@@ -948,7 +951,7 @@ app.directive('checkAnswer', [function () {
               }
 
               valid = false;
-              scope.errors[array_id] = "Please select " + errorMsg + " response(s).  You selected " + checks;
+              scope.errors[array_id] = "Please select " + errorMsg + " response(s).  You selected " + checks + ".";
 
             } else {
               for (k in scope.errors) {
@@ -959,8 +962,10 @@ app.directive('checkAnswer', [function () {
           }
         }
         if(typeof scope.errors[0] == "undefined" && Object.keys(scope.errors).length > 0){
+
           for(k in scope.errors){
-            scope.errors[k] += " Click next again to skip."
+            if(scope.hasRefuse)
+              scope.errors[k] += " Click next again to skip to the next question.";
           }
         }
         $("table.qTable").floatThead('reflow');
@@ -977,7 +982,7 @@ app.directive('checkAnswer', [function () {
             var noun = " people";
             if(scope.questions[0].MINLITERAL == 1)
               noun = " person";
-            scope.errors[array_id] = 'Please list at least ' + scope.questions[0].MINLITERAL + noun;
+            scope.errors[array_id] = 'Please list at least ' + scope.questions[0].MINLITERAL + noun + ".";
             valid = false;
           } else {
             delete scope.errors[0];
@@ -989,7 +994,7 @@ app.directive('checkAnswer', [function () {
         if (attr.answerType == "TEXTUAL") {
           if (scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW") {
             if (value == "") {
-              scope.errors[array_id] = "Value cannot be blank";
+              scope.errors[array_id] = "Value cannot be blank.";
               valid = false;
             } else {
               delete scope.errors[array_id];
@@ -1004,7 +1009,7 @@ app.directive('checkAnswer', [function () {
           var numberErrors = 0;
           var showError = false;
           if ((value == "" && scope.answers[array_id].SKIPREASON == "NONE") || (value != "" && isNaN(parseInt(value)))) {
-            scope.errors[array_id] = 'Please enter a number';
+            scope.errors[array_id] = 'Please enter a number.';
             valid = false;
           }
           if (question.MINLIMITTYPE == "NLT_LITERAL") {
@@ -1046,38 +1051,38 @@ app.directive('checkAnswer', [function () {
             var time = value.match(/(\d+):(\d+) (AM|PM)/);
             if (time && time.length > 2) {
               if (parseInt(time[1]) < 1 || parseInt(time[1]) > 12) {
-                scope.errors[array_id] = 'Please enter 1 to 12 for HH';
+                scope.errors[array_id] = 'Please enter 1 to 12 for HH.';
                 valid = false;
               }
               if (parseInt(time[2]) < 0 || parseInt(time[2]) > 59) {
-                scope.errors[array_id] = 'Please enter 0 to 59 for MM';
+                scope.errors[array_id] = 'Please enter 0 to 59 for MM.';
                 valid = false;
               }
             } else {
               if (scope.timeBits(question.TIMEUNITS, 'MINUTE')) {
-                scope.errors[array_id] = 'Please enter the minutes';
+                scope.errors[array_id] = 'Please enter the minutes.';
                 valid = false;
               }
               if (scope.timeBits(question.TIMEUNITS, 'HOUR')) {
-                scope.errors[array_id] = 'Please enter the time of day';
+                scope.errors[array_id] = 'Please enter the time of day.';
                 valid = false;
               }
             }
             if (scope.timeBits(question.TIMEUNITS, 'YEAR') && !year) {
-              scope.errors[array_id] = 'Please enter a valid year';
+              scope.errors[array_id] = 'Please enter a valid year.';
               valid = false;
             }
             if (scope.timeBits(question.TIMEUNITS, 'MONTH') && !month) {
-              scope.errors[array_id] = 'Please enter a month';
+              scope.errors[array_id] = 'Please enter a month.';
               valid = false;
             }
             if (scope.timeBits(question.TIMEUNITS, 'MONTH') && scope.timeBits(question.TIMEUNITS, 'YEAR') && scope.timeBits(question.TIMEUNITS, 'DAY') && year && !date) {
-              scope.errors[array_id] = 'Please enter a day of the month';
+              scope.errors[array_id] = 'Please enter a day of the month.';
               valid = false;
             }
             if (date) {
               if (parseInt(date[2]) < 1 || parseInt(date[2]) > 31) {
-                scope.errors[array_id] = 'Please enter a different number for the day of month';
+                scope.errors[array_id] = 'Please enter a different number for the day of month.';
                 valid = false;
               }
             }
@@ -1091,7 +1096,7 @@ app.directive('checkAnswer', [function () {
         if (attr.answerType == "TIME_SPAN") {
           if (scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW") {
             if(value.trim() == ""){
-              scope.errors[array_id] = 'Please fill in one of the fields';
+              scope.errors[array_id] = 'Please fill in one of the fields.';
               valid = false;            }
           } else {
             delete scope.errors[array_id];
@@ -1169,7 +1174,7 @@ app.directive('checkAnswer', [function () {
               }
 
               valid = false;
-              scope.errors[array_id] = "Please select " + errorMsg + " response(s).  You selected " + checks;
+              scope.errors[array_id] = "Please select " + errorMsg + " response(s).  You selected " + checks + ".";
 
             } else {
               for (k in scope.errors) {
@@ -1186,7 +1191,8 @@ app.directive('checkAnswer', [function () {
         }
         if(typeof scope.errors[0] == "undefined" && Object.keys(scope.errors).length > 0){
           for(k in scope.errors){
-            scope.errors[k] += " Click next again to skip."
+            if(scope.hasRefuse)
+              scope.errors[k] += " Click next again to skip to the next question."
           }
         }
         $("table.qTable").floatThead('reflow');
