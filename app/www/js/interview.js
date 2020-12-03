@@ -964,8 +964,10 @@ app.directive('checkAnswer', [function () {
         if(typeof scope.errors[0] == "undefined" && Object.keys(scope.errors).length > 0){
 
           for(k in scope.errors){
-            if(scope.hasRefuse)
-              scope.errors[k] += " Click next again to skip to the next question.";
+            if(scope.hasRefuse && !scope.errors[k].match("again to skip to the next question")){
+              scope.errors[k] += " Click \"Next\" again to skip to the next question.";
+              break;
+            }
           }
         }
         $("table.qTable").floatThead('reflow');
@@ -1191,8 +1193,10 @@ app.directive('checkAnswer', [function () {
         }
         if(typeof scope.errors[0] == "undefined" && Object.keys(scope.errors).length > 0){
           for(k in scope.errors){
-            if(scope.hasRefuse)
-              scope.errors[k] += " Click next again to skip to the next question."
+            if(scope.hasRefuse && !scope.errors[k].match("again to skip to the next question")){
+              scope.errors[k] += " Click \"Next\" again to skip to the next question.";
+              break;
+            }
           }
         }
         $("table.qTable").floatThead('reflow');
