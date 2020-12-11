@@ -22,10 +22,13 @@ class Controller extends CController
 	public $breadcrumbs=array();
 
 	public function init() {
-        if (file_exists(getcwd() . "/../version")) {
-            $myfile = fopen(getcwd() . "/../version", "r") or die("Unable to open file!");
+        if (file_exists(getcwd() . "/version")) {
+            $myfile = fopen(getcwd() . "/version", "r") or die("Unable to open file!");
             Yii::app()->params['version'] = fgets($myfile);
-        }else{
+        }elseif (file_exists(getcwd() . "/../version")) {
+			$myfile = fopen(getcwd() . "/../version", "r") or die("Unable to open file!");
+			Yii::app()->params['version'] = fgets($myfile);
+		}else{
 			Yii::app()->params['version'] = "";
 		}
 		parent::init();

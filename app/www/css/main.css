@@ -990,3 +990,10 @@ label.prompt , .grid-view label {
 		position:fixed; 
 	}
 }
+
+table.qTable td:first-child{
+	text-align:left;
+}
+table.qTable td.alter-name{
+	text-align:center!important;
+}

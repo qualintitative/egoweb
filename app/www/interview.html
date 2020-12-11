@@ -124,7 +124,7 @@
             <td ng-if="question.SUBJECTTYPE == 'EGO_ID' && (question.ANSWERTYPE == 'RANDOM_NUMBER' || question.ANSWERTYPE == 'STORED_VALUE')">
                 {{ question.TITLE }}
             </td>
-            <td ng-class="{'bg-danger':answerForm.$submitted && errors[question.array_id]}" ng-if="question.ANSWERTYPE == 'MULTIPLE_SELECTION' || options[question.array_id]" ng-show="question.ASKINGSTYLELIST == true">
+            <td ng-class="{'bg-danger':answerForm.$submitted && errors[question.array_id],'alter-name':question.SUBJECTTYPE == 'ALTER' || question.SUBJECTTYPE == 'ALTER_PAIR'}" ng-if="question.ANSWERTYPE == 'MULTIPLE_SELECTION' || options[question.array_id]" ng-show="question.ASKINGSTYLELIST == true">
                 <label ng-show="question.SUBJECTTYPE == 'EGO' || question.SUBJECTTYPE == 'NETWORK'" ng-bind-html="question.CITATION">{{ question.CITATION }}</label>
                 <label ng-show="question.SUBJECTTYPE == 'ALTER'">{{ alters[question.ALTERID1].NAME }}</label>
                 <label ng-show="question.SUBJECTTYPE == 'ALTER_PAIR'">{{ alters[question.ALTERID2].NAME }}</label>
