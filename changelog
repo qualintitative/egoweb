@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## [2.0.5] - 2020-12-10
+### Added
+- Modified process for refusing to answer a question and updated error message for trying to click "Next" without answer question.  If the question has refuse, users can proceed by clicking "Next" again without having to check "refuse" (although it will be saved as "refuse" in the data).
+
+
 ## [2.0.2] - 2017-08-07
 ### Added
 - New authoring Selenium / mocha test suite
