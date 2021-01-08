@@ -275,8 +275,13 @@
             echo "</tr>";
         }
         ?>
+
     </tbody>
 </table>
+<?php 
+$this->widget('CLinkPager', array(
+    'pages' => $pages,
+)) ?>
 <?php
 echo CHtml::form('', 'post', array('id' => 'analysis'));
 echo CHtml::hiddenField('studyId', $study->id);

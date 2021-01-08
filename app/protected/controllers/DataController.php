@@ -87,9 +87,21 @@ class DataController extends Controller
             'condition'=>'studyId = '.$id . $restrictions,
             'order'=>'id DESC',
         );
+        $count=Interview::model()->count($criteria);
+        $pages = new CPagination($count);
+        $pages->pageSize=500;
+        $pages->applyLimit($criteria);
+        $criteria=array(
+            'condition'=>'studyId = '.$id . $restrictions,
+            'order'=>'id DESC',
+            'offset'=>            $pages->getOffset(),
+            'limit'=>$pages->getLimit(),
 
+        );
         $interviews = Interview::model()->findAll($criteria);
+
         $study = Study::model()->findByPk((int)$id);
+
         $questionIds = array();
         $questions = Question::model()->findAllByAttributes(array("subjectType"=>"ALTER_PAIR", "studyId"=>$id));
         foreach ($questions as $question) {
@@ -113,6 +125,7 @@ class DataController extends Controller
             'study'=>$study,
             'interviews'=>$interviews,
             'expressions'=>$expressions,
+            'pages'=>$pages,
         ));
     }
 
