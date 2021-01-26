@@ -94,7 +94,7 @@
             <label>{{ pAlter.NAME }}</label><br>
         </div>
     </div>
-    <div ng-if='keys(prevAlters).length > 0' class="prev-alters">
+    <div ng-if='keys(prevAlters).length > 0 && showPrevAlters' class="prev-alters">
         <span class="name-title">Previous Names</span>
         <div ng-repeat="pAlter in prevAlters">
             <label>{{ pAlter.NAME }}</label><br>

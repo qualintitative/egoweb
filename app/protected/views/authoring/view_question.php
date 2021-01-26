@@ -38,7 +38,11 @@ function changeAType(answerSelect) {
     if(value == 'NAME_GENERATOR'){
         $(".askingStyle").hide();
         $('#a-' + model_id).val("TEXTUAL");
-        $('#a-' + model_id).prop('disabled', true);
+		$('#a-' + model_id).prop('disabled', true);
+	}else if(value == 'MERGE_ALTER'){
+		$(".askingStyle").hide();
+        $('#a-' + model_id).val("NO_RESPONSE");
+		$('#a-' + model_id).prop('disabled', true);
     }else{
         $(".askingStyle").show();
         $('#a-' + model_id).prop('disabled', false);

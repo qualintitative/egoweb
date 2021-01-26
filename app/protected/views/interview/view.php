@@ -45,4 +45,6 @@ Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/1
 Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.notes.js');
 Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl.'/www/css/autocomplete.css');
 ?>
+<script src="/js/levenshtein.js" type="text/javascript"></script>
+<script src="/js/doublemetaphone.js" type="text/javascript"></script>
 <div id="ngView" ng-view></div>

@@ -527,14 +527,51 @@ class InterviewController extends Controller
                     $_POST['page'] = intval($_POST['page']) + 1;
                     continue;
                 }
-                if($answers[$array_id]->save()){
-                    if(strlen($answers[$array_id]->value) >= 8)
-                        $answers[$array_id]->value = decrypt( $answers[$array_id]->value);
-                    if(strlen($answers[$array_id]->otherSpecifyText) >= 8)
-                        $answers[$array_id]->otherSpecifyText = decrypt( $answers[$array_id]->otherSpecifyText);
+                if ($Answer['questionType'] == "MERGE_ALTER") {
+                    $alter = Alters::model()->findByPk($Answer['alterId2']);
+                    $unalter = Alters::model()->findByPk($Answer['alterId1']);
+                    if($Answer['value'] == "MATCH"){
+
+                        $intIds = explode(",", $alter->interviewId);
+                        $nameQIds = explode(",", $alter->nameGenQIds);
+                        $unnameQIds = explode(",", $unalter->nameGenQIds);
+                        $ordering = json_decode($alter->ordering, true);
+                        $unordering = json_decode($unalter->ordering, true);
+
+
+                        //$ordering = array($_POST['Alters']['nameGenQIds'] => intval($_POST['Alters']['ordering']));
+                        if(!in_array($unalter->interviewId, $intIds))
+                            $alter->interviewId = $alter->interviewId . ",". $unalter->interviewId;
+                        foreach ($unnameQIds as $unQId) {
+                            if (!in_array($unQId, $nameQIds)) {
+                                $alter->nameGenQIds = $alter->nameGenQIds . ",". $unQId;
+                                $ordering[$unQId] = $unordering[$unQId];
+                            }
+                        }
+                        $alter->ordering = json_encode($ordering);
+                        $alter->save();
+                        $unalter->delete();
+                    }else{
+
+                        $unalter->name = substr($Answer['otherSpecifyText'],8);
+                        if($unalter->name != $alter->name){
+                            $unalter->save();
+                        }else{
+                            echo "{\"error\":\"Please modify the name so it's not identical  to the previous name entered\"}";
+                            die();
+                        }
+                    }
+                    continue;
                 }else{
-                  print_r($answers[$array_id]->errors);
-                  die();
+                    if($answers[$array_id]->save()){
+                        if(strlen($answers[$array_id]->value) >= 8)
+                            $answers[$array_id]->value = decrypt( $answers[$array_id]->value);
+                        if(strlen($answers[$array_id]->otherSpecifyText) >= 8)
+                            $answers[$array_id]->otherSpecifyText = decrypt( $answers[$array_id]->otherSpecifyText);
+                    }else{
+                      print_r($answers[$array_id]->errors);
+                      die();
+                    }
                 }
 
             }
@@ -631,6 +668,9 @@ class InterviewController extends Controller
             }
 
             $foundAlter = false;
+
+            // move to merge alter
+            /*
             if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
                 $interviewIds = Interview::multiInterviewIds($_POST['Alters']['interviewId'], $study);
                 //$interviewIds = array_diff(array_unique($interviewIds), array($_POST['Alters']['interviewId']));
@@ -660,10 +700,7 @@ class InterviewController extends Controller
                     }
                 }
             }
-            //$criteria=new CDbCriteria;
-            //$criteria->condition = ('interviewId = '.$_POST['Alters']['interviewId']);
-            //$criteria->select='count(ordering) AS ordering';
-            //$row = Alters::model()->find($criteria);
+            */
             $model->ordering = json_encode($ordering);
             if (!$model->getError('name') && $foundAlter == false) {
                 if(!$model->save()){
