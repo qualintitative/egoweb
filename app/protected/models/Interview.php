@@ -802,6 +802,19 @@ class Interview extends CActiveRecord
                 $answers[] = count($stats->isolates);
             }
 
+            if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
+                $multiQs = $study->multiIdQs();
+                $aInts = explode(",",$alter->interviewId);
+                $aStudies = array();
+                foreach($aInts as $aInt){
+                    $int = Interview::model()->findByPk($aInt);
+                    $aStudies[] = $int->studyId;
+                }
+                foreach($multiQs as $q){
+                    $answers[] = intval(in_array($q->studyId, $aStudies));
+                }
+            }
+
             if (isset($alter->id)) {
                 if ($matchAtAll) {
                     $matchId = "";

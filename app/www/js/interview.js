@@ -1335,102 +1335,92 @@ function buildList() {
       i++;
       masterList[i] = new Object;
     }
-    if (questionList[j].SUBJECTTYPE == "MERGE_ALTER") {
+    if (questionList[j].SUBJECTTYPE == "MERGE_ALTER" && Object.keys(prevAlters).length > 0) {
       if (Object.keys(alters).length == 0)
-      continue;
-    var alters2 = $.extend(true, {}, prevAlters);
-    var preface = new Object;
-    preface.ID = questionList[j].ID;
-    preface.ANSWERTYPE = "PREFACE";
-    preface.SUBJECTTYPE = "PREFACE";
-    preface.TITLE = questionList[j].TITLE + " - PREFACE";
-    preface.PROMPT = questionList[j].PREFACE;
+        continue;
+      var alters2 = $.extend(true, {}, prevAlters);
+      var preface = new Object;
+      preface.ID = questionList[j].ID;
+      preface.ANSWERTYPE = "PREFACE";
+      preface.SUBJECTTYPE = "PREFACE";
+      preface.TITLE = questionList[j].TITLE + " - PREFACE";
+      preface.PROMPT = questionList[j].PREFACE;
 
+      altersD = new Object;
+      altersL = new Object;
+      altersLId = new Object;
+      altersDId = new Object;
 
-altersD = new Object;
-altersL = new Object;
-altersLId = new Object;
-altersDId = new Object;
+      dm = new DoubleMetaphone;
+      discardNames = ["i", "ii", "iii", "iv", "v", "jr", "sr"]
+      dm.maxCodeLen = 64;
+      maxdTol = 2;
+      maxlTol = 2;
+      for(k in alters){
+          altersL[k] = 999;
+          altersD[k] = 999;
+          for(l in alters2){
+            name1 = alters[k].NAME.toLowerCase().replace(/\./g,' ').trim().split(" ");
+            name2 = alters2[l].NAME.toLowerCase().replace(/\./g,' ').trim().split(" ");
 
-dm = new DoubleMetaphone;
-discardNames = ["i", "ii", "iii", "iv", "v", "jr", "sr"]
-dm.maxCodeLen = 64;
-maxdTol = 2;
-maxlTol = 2;
-for(k in alters){
-    altersL[k] = 999;
-    altersD[k] = 999;
-    for(l in alters2){
-        name1 = alters[k].NAME.toLowerCase().replace(/\./g,' ').trim().split(" ");
-        name2 = alters2[l].NAME.toLowerCase().replace(/\./g,' ').trim().split(" ");
+            last1 = false;
+            last2 = false;
+            first1 = name1[0].charAt(0).toLowerCase();
+            first2 = name2[0].charAt(0).toLowerCase();
 
-        last1 = false;
-        last2 = false;
-        first1 = name1[0].charAt(0).toLowerCase();
-        first2 = name2[0].charAt(0).toLowerCase();
+            if(discardNames.includes(name1[name1.length-1]))
+              name1.pop();
+            if(discardNames.includes(name2[name2.length-1]))
+              name2.pop();
 
-        if(discardNames.includes(name1[name1.length-1]))
-          name1.pop();
-        if(discardNames.includes(name2[name2.length-1]))
-          name2.pop();
-
-        if(name1.length > 1){
-            last1 = name1[name1.length-1].charAt(0).toLowerCase();
-        }
-        if(name2.length > 1){
-            last2 = name2[name2.length-1].charAt(0).toLowerCase();
-        }
-
-
-        d1 = dm.doubleMetaphone(name1[0]).primary;
-        d2 = dm.doubleMetaphone(name2[0]).primary;
-        ds = new Levenshtein(d1, d2);
-        if(ds.distance < altersD[k]){
-
-            if(!last1 || !last2 || last1 == last2){
-              console.log("first match", ds.distance, name1[0],d1,name2[0],d2, " list dist ", altersL[k]);
-
-                altersD[k] = ds.distance;
-                altersDId[k] = l;
+            if(name1.length > 1){
+                last1 = name1[name1.length-1].charAt(0).toLowerCase();
             }
-        }
-        if(last1 && last2){
-          l1 = dm.doubleMetaphone(name1[name1.length-1]).primary;
-          l2 = dm.doubleMetaphone(name2[name2.length-1]).primary;
-          ls = new Levenshtein(l1, l2);
+            if(name2.length > 1){
+                last2 = name2[name2.length-1].charAt(0).toLowerCase();
+            }
+            d1 = dm.doubleMetaphone(name1[0]).primary;
+            d2 = dm.doubleMetaphone(name2[0]).primary;
+            ds = new Levenshtein(d1, d2);
+            if(ds.distance < altersD[k]){
+                if(!last1 || !last2 || last1 == last2){
+                    //console.log("first match", ds.distance, name1[0],d1,name2[0],d2, " list dist ", altersL[k]);
+                    altersD[k] = ds.distance;
+                    altersDId[k] = l;
+                }
+            }
+            if(last1 && last2){
+              l1 = dm.doubleMetaphone(name1[name1.length-1]).primary;
+              l2 = dm.doubleMetaphone(name2[name2.length-1]).primary;
+              ls = new Levenshtein(l1, l2);
 
-          if(ls.distance < altersL[k]){
-              console.log("last dist", ls.distance, l1,l2);
-              if(first1 == first2){
-                  altersL[k] = ls.distance;
-                  if(altersDId[k] != l){
-                    if(altersD[k] <= altersL[k]){
-                      altersLId[k] = altersDId[k];
-                    } else{
-                      altersLId[k] = l;
-                      altersDId[k] = l;
-                    }
-                  }else{
-                    altersLId[k] = l;
+              if(ls.distance < altersL[k]){
+                  console.log("last dist", ls.distance, l1,l2);
+                  if(first1 == first2){
+                      altersL[k] = ls.distance;
+                      if(altersDId[k] != l){
+                        if(altersD[k] <= altersL[k]){
+                          altersLId[k] = altersDId[k];
+                        } else{
+                          altersLId[k] = l;
+                          altersDId[k] = l;
+                        }
+                      }else{
+                        altersLId[k] = l;
+                      }
                   }
-              }
+                }
+            } else if(name1.length > 1 && name2.length  == 1 && altersD[k] == 0 && altersL[k] != 0){
+              // console.log("replaced last with first " + alters2[k])
+              altersLId[k] = altersDId[k];
+              altersL[k] = altersD[k];
             }
         }
-
-        else if(name1.length > 1 && name2.length  == 1 && altersD[k] == 0 && altersL[k] != 0){
-         // console.log("replaced last with first " + alters2[k])
+        if(altersD[k] <= 1 && altersL[k] == 999){
+          altersL[k] = 0;
           altersLId[k] = altersDId[k];
-          altersL[k] = altersD[k];
         }
-
-
     }
-    if(altersD[k] <= 1 && altersL[k] == 999){
-      altersL[k] = 0;
-      altersLId[k] = altersDId[k];
-    }
-
-}
 
 
     for (k in alters) {
@@ -1441,7 +1431,7 @@ for(k in alters){
       var dId = altersDId[id];
       merge_alter_question_list = new Object;
       l = dId;
-      console.log("k", k, alters2[l].NAME)
+      //console.log("k", k, alters2[l].NAME)
 
         if(lTol > maxlTol || dTol > maxdTol)
           continue;

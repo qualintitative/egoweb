@@ -475,6 +475,13 @@ class DataController extends Controller
         $matchAtAll = MatchedAlters::model()->find(array(
             'condition'=>"studyId = " . $study->id,
         ));
+        if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
+            $multiQs = $study->multiIdQs();
+            foreach($multiQs as $q){
+                $s = Study::model()->findByPk($q->studyId);
+                $headers[] = $s->name;
+            }
+        }
         if ($matchAtAll) {
             $headers[] = "Dyad Match ID";
             $headers[] = "Match User";
