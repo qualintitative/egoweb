@@ -166,7 +166,7 @@ $criteria=array(
 			<?php endif;?>
 		<?php else: ?>
 		<div class="panel-<?php echo $model->id; ?>" id="TEXTUAL" style="display:none">
-        <?php echo $form->labelEx($model,'useAlterListField', array("class"=>"control-label col-sm-8")); ?>
+        <?php echo $form->labelEx($model,'useAlterListField', array("class"=>"control-label col-sm-6")); ?>
     		<div class="col-sm-4">
         		<?php echo $form->dropDownList(
     $model,
@@ -334,11 +334,14 @@ $criteria=array(
 
 <?php if($model->subjectType != "EGO_ID"): ?>
         <div class="panel-<?php echo $model->id; ?>" id="NAME_GENERATOR" style="<?php if(!strstr($model->subjectType, "ALTER_PAIR")){ ?>display:none<?php } ?>">
+		<div class="form-group">
+
             Minimum Alters: <input style='width:60px; margin:0' id="minAltrNum" onchange="$('#<?php echo $model->id; ?>-minLiteral').val($(this).val())" value="<?php echo $model->minLiteral; ?>">
             Maximum Alters: <input style='width:60px; margin:0' id="maxAltrNum" onchange="$('#<?php echo $model->id; ?>-maxLiteral').val($(this).val())" value="<?php echo $model->maxLiteral; ?>">
+			</div>
 
-            <?php echo $form->labelEx($model,'useAlterListField', array("class"=>"control-label col-sm-8")); ?>
-            <div class="col-sm-4">
+            <?php echo $form->labelEx($model,'useAlterListField', array("class"=>"control-label col-sm-6")); ?>
+		    <div class="col-sm-4">
                 <?php echo $form->dropDownList(
     $model,
     'useAlterListField',
@@ -358,7 +361,7 @@ $criteria=array(
                   <?php echo $form->checkBox($model,'autocompleteList', array('id'=>$model->id . "_" . "autocompleteList")); ?>
                   <?php echo $form->labelEx($model,'autocompleteList', array('for'=>$model->id . "_" . "autocompleteList")); ?>
                 </div>
-                <div class="col-sm-12">
+                <div class="col-sm-12 hidden">
                   <?php echo $form->checkBox($model,'prefillList', array('id'=>$model->id . "_" . "prefillList")); ?>
                   <?php echo $form->labelEx($model,'prefillList', array('for'=>$model->id . "_" . "prefillList")); ?>
 				</div>

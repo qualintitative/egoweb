@@ -126,6 +126,7 @@ class Question extends CActiveRecord
 			'otherSpecify' => 'Other Specify',
 			'noneButton' => 'None Button',
 			'allButton' => 'All Button',
+			'prefillList' => 'Show previous alters',
 			'pageLevelDontKnowButton' => 'Page Level Dont Know Button',
 			'pageLevelRefuseButton' => 'Page Level Refuse Button',
 			'dontKnowButton' => 'Dont Know Button',
@@ -157,7 +158,7 @@ class Question extends CActiveRecord
 			'networkESizeQId' => 'Network Edge Size Q',
 			'useAlterListField' => 'Use Participant List Field',
 			'restrictList' => 'Restrict Response to Participant List',
-    	'autocompleteList' => 'Fill Autocomplete with Participant List',
+    		'autocompleteList' => 'Fill Autocomplete with Participant List',
 		);
 	}
 

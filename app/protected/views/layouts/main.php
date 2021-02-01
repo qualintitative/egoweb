@@ -143,8 +143,8 @@
             				array('label'=>'Ego ID Questions', 'url'=>array('ego_id','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'ego_id'),
                             array('label'=>'Questions', 'url'=>array('questions','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'questions'),
             				array('label'=>'Expressions', 'url'=>array('expression','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'expression'),
-							array('label'=>'Option Lists', 'url'=>array('optionlist','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'optionlist'),
-							array('label'=>'Code Book', 'url'=>array('codebook','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'codebook'),
+						//	array('label'=>'Option Lists', 'url'=>array('optionlist','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'optionlist'),
+						//	array('label'=>'Code Book', 'url'=>array('codebook','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'codebook'),
             			);
 
             		}

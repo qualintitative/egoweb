@@ -78,7 +78,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   $scope.colspan = false;
   $scope.refuseCount = 0;
   $scope.hasRefuse = false;
-  $scope.showPrevAlters = true;
+  $scope.showPrevAlters = false;
   $scope.alterMatchName = "";
   current_array_ids = []
   if (typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR") {
@@ -240,6 +240,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     }
 
     if ($scope.questions[k].ANSWERTYPE == "NAME_GENERATOR") {
+      $scope.showPrevAlters = $scope.questions[k].PREFILLLIST == 1 ? true : false;
       if (typeof alterPrompts[$scope.questions[k].ID] != "undefined" && typeof alterPrompts[$scope.questions[k].ID][Object.keys($scope.alters).length] != "undefined")
         $scope.alterPrompt = alterPrompts[$scope.questions[k].ID][Object.keys($scope.alters).length];
     }
@@ -1902,8 +1903,10 @@ function interpretTags(string, alterId1, alterId2) {
       continue;
 
     var array_id = question.ID;
-    if (typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
+    if (typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER' && question.STUDYID == study.ID )
       array_id += "-" + alterId1;
+    else if (typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER' && question.STUDYID != study.ID)
+      array_id += "-" + alterId2;
     else if (typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
       array_id += 'and' + alterId2;
 
