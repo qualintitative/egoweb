@@ -365,7 +365,7 @@ $criteria=array(
                   <?php echo $form->checkBox($model,'prefillList', array('id'=>$model->id . "_" . "prefillList")); ?>
                   <?php echo $form->labelEx($model,'prefillList', array('for'=>$model->id . "_" . "prefillList")); ?>
 				</div>
-				<div class="col-sm-12 hidden">
+				<div class="col-sm-12">
 					<?php echo $form->checkBox($model,'noneButton', array("id"=>$model->id . "_" . "noneButton")); ?>
 					<label for="<?php echo $model->id . "_" . "noneButton"; ?>">Allow previously listed alters</label>
 				</div>
