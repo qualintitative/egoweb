@@ -186,7 +186,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         }
       }
     }
-    if ($scope.questions[k].ALTERID1) {
+    if ($scope.questions[k].ALTERID1 && typeof alters[parseInt($scope.questions[k].ALTERID1)] != "undefined") {
       $scope.alterName = alters[parseInt($scope.questions[k].ALTERID1)].NAME;
       console.log("alter name", $scope.alterName )
     }
@@ -1241,6 +1241,7 @@ function buildList() {
   i = 0;
   masterList[i] = new Object;
   var alter_non_list_qs = [];
+  var prev_alter_non_list_qs = [];
   if (study.INTRODUCTION != "") {
     introduction = new Object;
     introduction.TITLE = "INTRODUCTION";
@@ -1267,6 +1268,39 @@ function buildList() {
   ego_question_list = new Object;
   prompt = "";
   for (j in questionList) {
+    if ((prev_alter_non_list_qs.length > 0 && (questionList[j].SUBJECTTYPE != "PREVIOUS_ALTER" || parseInt(questionList[j].ASKINGSTYLELIST) == 1)) || (j == questionList.length - 1 && questionList[j].SUBJECTTYPE == "PREVIOUS_ALTER" && parseInt(questionList[j].ASKINGSTYLELIST) != 1)) {
+      if (j == questionList.length - 1 && questionList[j].SUBJECTTYPE == "PREVIOUS_ALTER" && parseInt(questionList[j].ASKINGSTYLELIST) != 1)
+        prev_alter_non_list_qs.push(questionList[j]);
+      var preface = new Object;
+      preface.ID = prev_alter_non_list_qs[0].ID;
+      preface.ANSWERTYPE = "PREFACE";
+      preface.SUBJECTTYPE = "PREFACE";
+      preface.TITLE = prev_alter_non_list_qs[0].TITLE + " - PREFACE";
+      preface.PROMPT = prev_alter_non_list_qs[0].PREFACE;
+      for (k in prevAlters) {
+        for (l in prev_alter_non_list_qs) {
+          var question = $.extend(true, {}, prev_alter_non_list_qs[l]);
+          question.PROMPT = question.PROMPT.replace(/\$\$/g, prevAlters[k].NAME);
+          question.TITLE = question.TITLE + " - " + prevAlters[k].NAME;
+          question.ALTERID1 = prevAlters[k].ID;
+          question.array_id = question.ID + '-' + question.ALTERID1;
+          if (prev_alter_non_list_qs[0].PREFACE != "") {
+            if (prev_alter_non_list_qs[l].ANSWERREASONEXPRESSIONID > 0)
+              evalQIndex.push(i);
+            masterList[i][0] = preface;
+            prev_alter_non_list_qs[0].PREFACE = "";
+            i++;
+            masterList[i] = new Object;
+          }
+          if (prev_alter_non_list_qs[l].ANSWERREASONEXPRESSIONID > 0)
+            evalQIndex.push(i);
+          masterList[i][question.array_id] = question;
+          i++;
+          masterList[i] = new Object;
+        }
+      }
+      prev_alter_non_list_qs = [];
+    }
     if ((alter_non_list_qs.length > 0 && (questionList[j].SUBJECTTYPE != "ALTER" || parseInt(questionList[j].ASKINGSTYLELIST) == 1)) || (j == questionList.length - 1 && questionList[j].SUBJECTTYPE == "ALTER" && parseInt(questionList[j].ASKINGSTYLELIST) != 1)) {
       if (j == questionList.length - 1 && questionList[j].SUBJECTTYPE == "ALTER" && parseInt(questionList[j].ASKINGSTYLELIST) != 1)
         alter_non_list_qs.push(questionList[j]);
@@ -1421,47 +1455,84 @@ function buildList() {
           altersL[k] = 0;
           altersLId[k] = altersDId[k];
         }
-    }
+      }
+      for (k in alters) {
+        var id = k;
+        var lTol = altersL[id];
+        var dTol = altersD[id];
+        var lId = altersLId[id];
+        var dId = altersDId[id];
+        merge_alter_question_list = new Object;
+        l = dId;
+        //console.log("k", k, alters2[l].NAME)
 
-
-    for (k in alters) {
-      var id = k;
-      var lTol = altersL[id];
-      var dTol = altersD[id];
-      var lId = altersLId[id];
-      var dId = altersDId[id];
-      merge_alter_question_list = new Object;
-      l = dId;
-      //console.log("k", k, alters2[l].NAME)
-
-        if(lTol > maxlTol || dTol > maxdTol)
-          continue;
-        var question = $.extend(true, {}, questionList[j]);
-        question.PROMPT = question.PROMPT.replace(/\$\$1/g, alters[k].NAME);
-        question.PROMPT = question.PROMPT.replace(/\$\$2/g, alters2[l].NAME);
-        question.TITLE = question.TITLE + " - " + alters[k].NAME + " and " + alters2[l].NAME;
-        question.ALTERID1 = alters[k].ID;
-        question.ALTERID2 = alters2[l].ID;
-        question.array_id = question.ID + '-' + question.ALTERID1 + 'and' + question.ALTERID2;
-        if (parseInt(questionList[j].ASKINGSTYLELIST) == 1) {
-          merge_alter_question_list[question.array_id] = question;
-        } else {
-          if (preface.PROMPT != "") {
+          if(lTol > maxlTol || dTol > maxdTol)
+            continue;
+          var question = $.extend(true, {}, questionList[j]);
+          question.PROMPT = question.PROMPT.replace(/\$\$1/g, alters[k].NAME);
+          question.PROMPT = question.PROMPT.replace(/\$\$2/g, alters2[l].NAME);
+          question.TITLE = question.TITLE + " - " + alters[k].NAME + " and " + alters2[l].NAME;
+          question.ALTERID1 = alters[k].ID;
+          question.ALTERID2 = alters2[l].ID;
+          question.array_id = question.ID + '-' + question.ALTERID1 + 'and' + question.ALTERID2;
+          if (parseInt(questionList[j].ASKINGSTYLELIST) == 1) {
+            merge_alter_question_list[question.array_id] = question;
+          } else {
+            if (preface.PROMPT != "") {
+              if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                evalQIndex.push(i);
+              masterList[i][question.array_id] = $.extend(true, {}, preface);
+              preface.PROMPT = "";
+              i++;
+              masterList[i] = new Object;
+            }
             if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
               evalQIndex.push(i);
-            masterList[i][question.array_id] = $.extend(true, {}, preface);
-            preface.PROMPT = "";
+            masterList[i][question.array_id] = question;
             i++;
             masterList[i] = new Object;
           }
-          if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
-            evalQIndex.push(i);
-          masterList[i][question.array_id] = question;
-          i++;
-          masterList[i] = new Object;
+        if (questionList[j].ASKINGSTYLELIST == 1) {
+          if (Object.keys(merge_alter_question_list).length > 0) {
+            if (preface.PROMPT != "") {
+              if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                evalQIndex.push(i);
+              masterList[i][0] = $.extend(true, {}, preface);
+              preface.PROMPT = "";
+              i++;
+              masterList[i] = new Object;
+            }
+            if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
+              evalQIndex.push(i);
+            masterList[i] = alter_pair_question_list;
+            i++;
+            masterList[i] = new Object;
+          }
         }
-      if (questionList[j].ASKINGSTYLELIST == 1) {
-        if (Object.keys(merge_alter_question_list).length > 0) {
+      }
+    }
+    if (questionList[j].SUBJECTTYPE == "PREVIOUS_ALTER") {
+      if (Object.keys(prevAlters).length == 0)
+        continue;
+      alter_question_list = new Object;
+      if (parseInt(questionList[j].ASKINGSTYLELIST) != 1) {
+        //console.log("non list alter qs")
+        prev_alter_non_list_qs.push(questionList[j]);
+      } else {
+        for (k in prevAlters) {
+          var question = $.extend(true, {}, questionList[j]);
+          question.PROMPT = question.PROMPT.replace(/\$\$/g, prevAlters[k].NAME);
+          question.ALTERID1 = prevAlters[k].ID;
+          question.array_id = question.ID + '-' + question.ALTERID1;
+          alter_question_list[question.array_id] = question;
+        }
+        if (Object.keys(alter_question_list).length > 0) {
+          var preface = new Object;
+          preface.ID = questionList[j].ID;
+          preface.ANSWERTYPE = "PREFACE";
+          preface.SUBJECTTYPE = "PREFACE";
+          preface.TITLE = questionList[j].TITLE + " - PREFACE";
+          preface.PROMPT = questionList[j].PREFACE;
           if (preface.PROMPT != "") {
             if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
               evalQIndex.push(i);
@@ -1472,19 +1543,18 @@ function buildList() {
           }
           if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
             evalQIndex.push(i);
-          masterList[i] = alter_pair_question_list;
+          masterList[i] = alter_question_list;
           i++;
           masterList[i] = new Object;
         }
       }
-    }
     }
     if (questionList[j].SUBJECTTYPE == "ALTER") {
       if (Object.keys(alters).length == 0)
         continue;
       alter_question_list = new Object;
       if (parseInt(questionList[j].ASKINGSTYLELIST) != 1) {
-        console.log("non list alter qs")
+        //console.log("non list alter qs")
         alter_non_list_qs.push(questionList[j]);
       } else {
         for (k in alters) {
@@ -1516,7 +1586,6 @@ function buildList() {
           masterList[i] = new Object;
         }
       }
-
     }
 
     if (questionList[j].SUBJECTTYPE == "ALTER_PAIR") {

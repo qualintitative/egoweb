@@ -1,4 +1,5 @@
 <?php
+$study = Study::model()->findByPk($studyId);
 $form=$this->beginWidget('CActiveForm', array(
     'id'=>'expression-form',
     'enableAjaxValidation'=>false,
@@ -22,15 +23,39 @@ echo $form->hiddenField($model, 'type', array('value'=>'Name Generator'));
 Expression is true for an answer that contains any of the selected options below:
 <br>
 <?php
-
+if($study->multiSessionEgoId){
+    $criteria = array(
+        "condition"=>"title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")",
+    );
+    $questions = Question::model()->findAll($criteria);
+    $multiIds = array();
+    foreach($questions as $q){
+        $multiIds[] = $q->studyId;
+    }
+	$criteria=array(
+		'condition'=>"studyId in (" . implode(",", $multiIds) . ")  AND subjectType = 'NAME_GENERATOR'",
+        'order'=>'ordering',
+	);
+} else {
+	$criteria=array(
+		'condition'=>"studyId = " . $studyId . " AND subjectType = 'NAME_GENERATOR'",
+		'order'=>'ordering',
+	);
+}
 echo CHtml::activeHiddenField($model, 'questionId', array('value'=>$question->id));
+$qList = array();
+$questions = Question::model()->findAll($criteria);
+foreach($questions as $q){
+    $m_study = Study::model()->findByPK($q->studyId);
+	$qList[$q->id] = $m_study->name . ":" . $q->title;
+}
 
 
     $selected = explode(',', $model->value);
     echo CHtml::CheckboxList(
         'valueList',
         $selected,
-        CHtml::listData(Question::model()->findAllByAttributes(array('subjectType'=>"NAME_GENERATOR", "studyId"=>$studyId)), 'id', 'title'),
+        $qList,
         array(
             'separator'=>'',
             'class'=>'valueList',
