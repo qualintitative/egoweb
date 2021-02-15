@@ -367,8 +367,12 @@ $criteria=array(
                   <?php echo $form->labelEx($model,'prefillList', array('for'=>$model->id . "_" . "prefillList")); ?>
 				</div>
 				<div class="col-sm-12">
+				<?php echo $form->checkBox($model,'keepOnSamePage', array("id"=>$model->id . "_" . "keepOnSamePage")); ?>
+					<?php echo $form->labelEx($model,'keepOnSamePage'); ?>
+				</div>
+				<div class="col-sm-12">
 					<?php echo $form->checkBox($model,'noneButton', array("id"=>$model->id . "_" . "noneButton")); ?>
-					<label for="<?php echo $model->id . "_" . "noneButton"; ?>">Allow previously listed alters</label>
+					<?php echo $form->labelEx($model,'noneButton'); ?>
 				</div>
             </div>
 <?php endif; ?>
@@ -714,11 +718,7 @@ function refresh(container){
 		<?php echo $form->error($model,'allOptionString'); ?>
 	</div>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'keepOnSamePage'); ?>
-		<?php echo $form->textField($model,'keepOnSamePage'); ?>
-		<?php echo $form->error($model,'keepOnSamePage'); ?>
-	</div>
+
 
 */
 ?>
