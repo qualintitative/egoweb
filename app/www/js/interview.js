@@ -1599,7 +1599,7 @@ function buildList() {
       preface.TITLE = questionList[j].TITLE + " - PREFACE";
       preface.PROMPT = questionList[j].PREFACE;
       for (k in alters) {
-        console.log("alter piar q...");
+        console.log("alter pair q...");
         if (questionList[j].SYMMETRIC) {
           var keys = Object.keys(alters2);
           delete alters2[keys[0]];
@@ -1704,7 +1704,7 @@ function buildList() {
       }
       if (parseInt(questionList[j].ASKINGSTYLELIST) == 1) {
         if (prompt == "" || prompt == questionList[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm, "")) {
-          console.log("adding question")
+         // console.log("adding question")
           prompt = questionList[j].PROMPT.replace(/<\/*[^>]*>/gm, '').replace(/(\r\n|\n|\r)/gm, "");
           ego_question_list[parseInt(questionList[j].ORDERING) + 1] = questionList[j];
         }

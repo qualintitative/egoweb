@@ -103,13 +103,26 @@ function save(questions, page, url, scope){
                     console.log(answers);
                     console.log(interview);
                     evalQuestions();
-                    //if(typeof hashKey != "undefined"){
-                        page = parseInt(interview.COMPLETED);
-                    //}
-                    var nextUrl = rootUrl + "/interview/" + study.ID + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
-                    if(typeof hashKey != "undefined")
-                        nextUrl = nextUrl + "/" + hashKey;
-                    document.location = nextUrl;
+                    var reloading = false;
+                    page = parseInt(interview.COMPLETED);
+                    for(k in questions){
+                        if(questions[k].SUBJECTTYPE == "MERGE_ALTER"){
+                            if(scope.answers[questions[k].array_id].VALUE == "MATCH"){
+                                alters[questions[k].ALTERID2] = prevAlters[questions[k].ALTERID2];
+                                delete prevAlters[questions[k].ALTERID2];
+                                delete alters[questions[k].ALTERID1];
+                                masterList = [];
+                                reloading = true;
+                                document.location.reload();
+                            }
+                        }
+                    }
+                    if(reloading == false){
+                        var nextUrl = rootUrl + "/interview/" + study.ID + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
+                        if(typeof hashKey != "undefined")
+                            nextUrl = nextUrl + "/" + hashKey;
+                        document.location = nextUrl;
+                    }
                 }else{
                     errorMsg = JSON.parse(data);
                     scope.errors[0] = errorMsg.error;

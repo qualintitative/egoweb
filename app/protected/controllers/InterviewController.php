@@ -550,7 +550,8 @@ class InterviewController extends Controller
                         }
                         $alter->ordering = json_encode($ordering);
                         $alter->save();
-                        $unalter->delete();
+                        if($unalter)
+                            $unalter->delete();
                     }else{
 
                         $unalter->name = substr($Answer['otherSpecifyText'],8);
