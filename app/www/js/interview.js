@@ -73,7 +73,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   $scope.redirect = false;
   $scope.participants = [];
   $scope.listedAlters = {};
-  $scope.prevAlters = {};
+  $scope.prevAlters = prevAlters;
   $scope.starExpressionId = false;
   $scope.colspan = false;
   $scope.refuseCount = 0;
