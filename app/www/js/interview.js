@@ -1394,7 +1394,10 @@ function buildList() {
       for(k in alters){
           altersL[k] = 999;
           altersD[k] = 999;
+
           for(l in alters2){
+            if(alters[k].ALTERLISTID == alters2[l].INTERVIEWID)
+              continue;
             name1 = alters[k].NAME.toLowerCase().replace(/\./g,' ').trim().split(" ");
             name2 = alters2[l].NAME.toLowerCase().replace(/\./g,' ').trim().split(" ");
 

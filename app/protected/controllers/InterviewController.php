@@ -553,13 +553,18 @@ class InterviewController extends Controller
                         if($unalter)
                             $unalter->delete();
                     }else{
-
-                        $unalter->name = substr($Answer['otherSpecifyText'],8);
-                        if($unalter->name != $alter->name){
-                            $unalter->save();
+                        if ($unalter->name == $alter->name) {
+                            $unalter->name = substr($Answer['otherSpecifyText'], 8);
+                            if ($unalter->name != $alter->name) {
+                                $unalter->alterListId = $alter->interviewId;
+                                $unalter->save();
+                            } else {
+                                echo "{\"error\":\"Please modify the name so it's not identical  to the previous name entered\"}";
+                                die();
+                            }
                         }else{
-                            echo "{\"error\":\"Please modify the name so it's not identical  to the previous name entered\"}";
-                            die();
+                            $unalter->alterListId = $alter->interviewId;
+                            $unalter->save();
                         }
                     }
                     continue;
