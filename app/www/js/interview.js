@@ -604,7 +604,16 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   }
 
   $scope.multiSelect = function (v, index, array_id) {
-
+  //  if(1 == 1){
+   //   alert('g')
+     if(v  == "UNMATCH"){
+       if($scope.options[array_id][index].checked){
+      $scope.errors[array_id]= "Please modify the name so it's not identical to the previous name entered.";
+   //   $scope.reload();
+       }else{
+         delete $scope.errors[array_id];
+       }
+    }
     if (typeof $scope.questions[array_id] != "undefined")
       var question = $scope.questions[array_id];
     else
@@ -919,8 +928,8 @@ app.directive('checkAnswer', [function () {
           min = question.MINCHECKABLEBOXES;
           max = question.MAXCHECKABLEBOXES;
           var numberErrors = 0;
-          var showError = false;
           var errorMsg = "";
+
           if (min !== null && min != null)
             numberErrors++;
           if (max !== null && max != null)
@@ -929,7 +938,6 @@ app.directive('checkAnswer', [function () {
           checkedBoxes = value.split(',').length;
           if (!value)
             checkedBoxes = 0;
-
           if (numberErrors != 0 && (checkedBoxes < min || checkedBoxes > parseInt(max)) && scope.answers[array_id].SKIPREASON == "NONE")
             showError = true;
           //console.log('min:' + min + ':max:' + max + ':checked:' + checkedBoxes+ ":answer:" + value + ":showerror:" + showError);
@@ -1134,12 +1142,12 @@ app.directive('checkAnswer', [function () {
         }
   
         if (attr.answerType == "MULTIPLE_SELECTION") {
-          var showError = false;
           min = question.MINCHECKABLEBOXES;
           max = question.MAXCHECKABLEBOXES;
           var numberErrors = 0;
           var showError = false;
           var errorMsg = "";
+
           if (min !== "" && min != null)
             numberErrors++;
           if (max !== "" && max != null)

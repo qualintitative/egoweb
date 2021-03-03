@@ -559,7 +559,7 @@ class InterviewController extends Controller
                                 $unalter->alterListId = $alter->interviewId;
                                 $unalter->save();
                             } else {
-                                echo "{\"error\":\"Please modify the name so it's not identical  to the previous name entered\"}";
+                                echo "{\"error\":\"Please modify the name so it's not identical to the previous name entered.\"}";
                                 die();
                             }
                         }else{
