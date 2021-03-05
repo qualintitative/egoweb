@@ -447,6 +447,11 @@ class DataController extends Controller
         $criteria->order = "ordering";
         $name_gen_questions = Question::model()->findAll($criteria);
 
+        $criteria=new CDbCriteria;
+        $criteria->condition = ("studyId = $study->id and subjectType = 'PREVIOUS_ALTER'");
+        $criteria->order = "ordering";
+        $previous_questions = Question::model()->findAll($criteria);
+
         $headers = array();
         $headers[] = 'Interview ID';
         $headers[] = "EgoID";
@@ -497,6 +502,9 @@ class DataController extends Controller
                 $headers[] = "Alter Name";
         }
         foreach ($name_gen_questions as $question) {
+            $headers[] = $question->title;
+        }
+        foreach ($previous_questions as $question) {
             $headers[] = $question->title;
         }
         foreach ($alter_questions as $question) {

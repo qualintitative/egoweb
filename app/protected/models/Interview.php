@@ -592,6 +592,11 @@ class Interview extends CActiveRecord
     public function exportEgoAlterData($file = null, $withAlters = false)
     {
         $criteria = new CDbCriteria;
+        $criteria->condition = ("studyId = $this->studyId");
+        $criteria->order = "ordering";
+        $all_questions = Question::model()->findAll($criteria);
+
+        $criteria = new CDbCriteria;
         $criteria->condition = ("studyId = $this->studyId and subjectType = 'EGO_ID'");
         $criteria->order = "ordering";
         $ego_id_questions = Question::model()->findAll($criteria);
@@ -616,14 +621,42 @@ class Interview extends CActiveRecord
         $criteria->order = "ordering";
         $name_gen_questions = Question::model()->findAll($criteria);
 
-        $alters = Alters::model()->findAll(array('order' => 'id', 'condition' => 'FIND_IN_SET(:x, interviewId)', 'params' => array(':x' => $this->id)));
+        $criteria = new CDbCriteria;
+        $criteria->condition = ("studyId = $this->studyId and subjectType = 'PREVIOUS_ALTER'");
+        $criteria->order = "ordering";
+        $previous_questions = Question::model()->findAll($criteria);
 
+
+        $alters = Alters::model()->findAll(array('order' => 'id', 'condition' => 'FIND_IN_SET(:x, interviewId)', 'params' => array(':x' => $this->id)));
+    
+        
         if (!$alters) {
             $alters = array('0' => array('id' => null));
         } else {
             if (isset($_POST['expressionId']) && $_POST['expressionId']) {
                 $stats = new Statistics;
                 $stats->initComponents($this->id, $_POST['expressionId']);
+            }
+        }
+
+        $study = Study::model()->findByPk($this->studyId);
+        $multiQs = false;
+        if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId)
+            $multiQs = $study->multiIdQs();
+
+        if($multiQs){
+            $interviewIds = Interview::multiInterviewIds($this->id, $study);
+            $prevIds = array();
+            if(is_array($interviewIds))
+                $prevIds = array_diff($interviewIds, array($interviewId));
+            foreach($prevIds as $i_id){
+                $criteria = array('order' => 'id', 'condition' => 'FIND_IN_SET(:x, interviewId)', 'params' => array(':x' => $i_id));
+                $results = Alters::model()->findAll($criteria);
+                foreach($results as $result){
+                    $aInts = explode(",",$result->interviewId);
+                    if(!in_array($this->id, $aInts))
+                        $alters[] = $result;
+                }
             }
         }
 
@@ -650,6 +683,8 @@ class Interview extends CActiveRecord
                 $matchUser = User::getName($match->userId);
             }
         }
+
+
         foreach ($alters as $alter) {
             $answers = array();
             $answers[] = $this->id;
@@ -790,6 +825,7 @@ class Interview extends CActiveRecord
                 }
             }
 
+
             if (isset($stats)) {
                 $answers[] = $stats->getDensity();
                 $answers[] = $stats->maxDegree();
@@ -802,8 +838,7 @@ class Interview extends CActiveRecord
                 $answers[] = count($stats->isolates);
             }
 
-            if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
-                $multiQs = $study->multiIdQs();
+            if($multiQs){
                 $aInts = explode(",",$alter->interviewId);
                 $aStudies = array();
                 foreach($aInts as $aInt){
@@ -814,6 +849,7 @@ class Interview extends CActiveRecord
                     $answers[] = intval(in_array($q->studyId, $aStudies));
                 }
             }
+
 
             if (isset($alter->id)) {
                 if ($matchAtAll) {
@@ -850,6 +886,39 @@ class Interview extends CActiveRecord
                         $answers[]  = 1;
                     } else {
                         $answers[]  = 0;
+                    }
+                }
+                foreach ($previous_questions as $question) {
+                    $answer = Answer::model()->findByAttributes(array("interviewId" => $this->id, "questionId" => $question->id, "alterId1" => $alter->id));
+                    if (!$answer) {
+                        $answers[] = $study->valueNotYetAnswered;
+                        continue;
+                    }
+                    if ($answer->value != "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip) {
+                        if ($question->answerType == "SELECTION") {
+                            $answers[] = $options[$answer->value];
+                        } else if ($question->answerType == "MULTIPLE_SELECTION") {
+                            $optionIds = explode(',', $answer->value);
+                            $list = array();
+                            foreach ($optionIds as $optionId) {
+                                if (isset($options[$optionId]))
+                                    $list[] = $options[$optionId];
+                            }
+                            if (count($list) == 0)
+                                $answers[] = $study->valueNotYetAnswered;
+                            else
+                                $answers[] = implode('; ', $list);
+                        } else {
+                            $answers[] =  htmlspecialchars_decode($answer->value);
+                        }
+                    } else if ($answer->skipReason == "DONT_KNOW") {
+                        $answers[] = $study->valueDontKnow;
+                    } else if ($answer->skipReason == "REFUSE") {
+                        $answers[] = $study->valueRefusal;
+                    } else if ($answer->value == $study->valueLogicalSkip) {
+                        $answers[] = $study->valueLogicalSkip;
+                    } else {
+                        $answers[] = "";
                     }
                 }
                 foreach ($alter_questions as $question) {
