@@ -74,7 +74,7 @@ class Alters extends CActiveRecord
 			}
 		}
 		$criteria=array(
-			'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId) AND JSON_EXTRACT(ordering, '$.$nameGenQId') > $ordering",
+			'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId) AND JSON_EXTRACT(ordering, '$.\"$nameGenQId\"') > $ordering",
 		);
 		$models = Alters::model()->findAll($criteria);
         foreach ($models as $index=>$model) {
