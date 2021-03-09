@@ -608,8 +608,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
    //   alert('g')
      if(v  == "UNMATCH"){
        if($scope.options[array_id][index].checked){
-      $scope.errors[array_id]= "Please modify the name so it's not identical to the previous name entered.";
-   //   $scope.reload();
+        $scope.errors[array_id]= "Please modify the name so it's not identical to the previous name entered.";
        }else{
          delete $scope.errors[array_id];
        }
