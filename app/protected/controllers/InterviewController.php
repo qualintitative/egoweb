@@ -554,7 +554,7 @@ class InterviewController extends Controller
                             $unalter->delete();
                     }else{
                         if ($unalter->name == $alter->name) {
-                            $unalter->name = substr($Answer['otherSpecifyText'], 8);
+                            $unalter->name = $Answer['otherSpecifyText'];
                             if ($unalter->name != $alter->name) {
                                 $unalter->alterListId = $alter->interviewId;
                                 $unalter->save();

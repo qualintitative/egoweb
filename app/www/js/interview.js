@@ -608,7 +608,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
    //   alert('g')
      if(v  == "UNMATCH"){
        if($scope.options[array_id][index].checked){
-        $scope.errors[array_id]= "Please modify the name so it's not identical to the previous name entered.";
+         if($scope.alterName == $scope.alterMatchName)
+            $scope.errors[array_id]= "Please modify the name so it's not identical to the previous name entered.";
        }else{
          delete $scope.errors[array_id];
        }
@@ -1396,8 +1397,9 @@ function buildList() {
       dm = new DoubleMetaphone;
       discardNames = ["i", "ii", "iii", "iv", "v", "jr", "sr"]
       dm.maxCodeLen = 64;
-      maxdTol = 2;
-      maxlTol = 2;
+      maxdTol = questionList[j].MINLITERAL == null ? 1 : parseInt(questionList[j].MINLITERAL);
+      maxlTol = questionList[j].MAXLITERAL == null ? 1 : parseInt(questionList[j].MAXLITERAL);
+      console.log("tol", maxdTol, maxlTol)
       for(k in alters){
           altersL[k] = 999;
           altersD[k] = 999;
@@ -1407,7 +1409,7 @@ function buildList() {
               continue;
             name1 = alters[k].NAME.toLowerCase().replace(/\./g,' ').trim().split(" ");
             name2 = alters2[l].NAME.toLowerCase().replace(/\./g,' ').trim().split(" ");
-
+            console.log(name1, name2, name1[0], name2[0])
             last1 = false;
             last2 = false;
             first1 = name1[0].charAt(0).toLowerCase();
@@ -1424,6 +1426,8 @@ function buildList() {
             if(name2.length > 1){
                 last2 = name2[name2.length-1].charAt(0).toLowerCase();
             }
+            if(typeof name1[0] == "undefined")
+               continue;
             d1 = dm.doubleMetaphone(name1[0]).primary;
             d2 = dm.doubleMetaphone(name2[0]).primary;
             ds = new Levenshtein(d1, d2);
@@ -1473,9 +1477,10 @@ function buildList() {
         var lId = altersLId[id];
         var dId = altersDId[id];
         merge_alter_question_list = new Object;
+        if(typeof dId == "undefined")
+          continue;
         l = dId;
-        //console.log("k", k, alters2[l].NAME)
-
+        //console.log(alters[parseInt(k)].NAME, k, alters2[l].NAME, lTol, maxlTol, dTol, maxdTol)
           if(lTol > maxlTol || dTol > maxdTol)
             continue;
           var question = $.extend(true, {}, questionList[j]);
