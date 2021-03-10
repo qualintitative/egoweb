@@ -216,7 +216,7 @@ $criteria=array(
 
             Double Metaphone Tolerance: <input style='width:60px; margin:0' id="minAltrNum"
                 onchange="$('#<?php echo $model->id; ?>-minLiteral').val($(this).val())"
-                value="<?php echo $model->minLiteral; ?>">
+                value="<?php echo $model->minLiteral; ?>"><br>
 			Levenstein Tolerance: <input style='width:60px; margin:0' id="maxAltrNum"
                 onchange="$('#<?php echo $model->id; ?>-maxLiteral').val($(this).val())"
                 value="<?php echo $model->maxLiteral; ?>">
