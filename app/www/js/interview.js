@@ -1407,6 +1407,8 @@ function buildList() {
           for(l in alters2){
             if(alters[k].ALTERLISTID == alters2[l].INTERVIEWID)
               continue;
+            if(alters[k].NAME.toLowerCase() == alters2[l].NAME.toLowerCase())
+              continue;
             name1 = alters[k].NAME.toLowerCase().replace(/\./g,' ').trim().split(" ");
             name2 = alters2[l].NAME.toLowerCase().replace(/\./g,' ').trim().split(" ");
             console.log(name1, name2, name1[0], name2[0])

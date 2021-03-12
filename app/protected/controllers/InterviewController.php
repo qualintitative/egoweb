@@ -555,7 +555,7 @@ class InterviewController extends Controller
                     }else{
                         if ($unalter->name == $alter->name) {
                             $unalter->name = $Answer['otherSpecifyText'];
-                            if ($unalter->name != $alter->name) {
+                            if (strtolower($unalter->name) != strtolower($alter->name)) {
                                 $unalter->alterListId = $alter->interviewId;
                                 $unalter->save();
                             } else {
@@ -563,8 +563,8 @@ class InterviewController extends Controller
                                 die();
                             }
                         }else{
-                            $unalter->alterListId = $alter->interviewId;
-                            $unalter->save();
+                          //  $unalter->alterListId = $alter->interviewId;
+                          //  $unalter->save();
                         }
                     }
                     continue;
