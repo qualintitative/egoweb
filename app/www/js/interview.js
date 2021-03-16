@@ -1389,22 +1389,18 @@ function buildList() {
       preface.TITLE = questionList[j].TITLE + " - PREFACE";
       preface.PROMPT = questionList[j].PREFACE;
 
-      altersD = new Object;
-      altersL = new Object;
-      altersLId = new Object;
-      altersDId = new Object;
+      matchedIds = new Object;
 
       dm = new DoubleMetaphone;
       discardNames = ["i", "ii", "iii", "iv", "v", "jr", "sr"]
       dm.maxCodeLen = 64;
       maxdTol = questionList[j].MINLITERAL == null ? 1 : parseInt(questionList[j].MINLITERAL);
       maxlTol = questionList[j].MAXLITERAL == null ? 1 : parseInt(questionList[j].MAXLITERAL);
-      console.log("tol", maxdTol, maxlTol)
-      for(k in alters){
-          altersL[k] = 999;
-          altersD[k] = 999;
 
+      for(k in alters){
           for(l in alters2){
+            if(typeof matchedIds[k] == "undefined")
+              matchedIds[k] = []
             if(alters[k].ALTERLISTID == alters2[l].INTERVIEWID)
               continue;
             if(alters[k].NAME.toLowerCase() == alters2[l].NAME.toLowerCase())
@@ -1433,58 +1429,34 @@ function buildList() {
             d1 = dm.doubleMetaphone(name1[0]).primary;
             d2 = dm.doubleMetaphone(name2[0]).primary;
             ds = new Levenshtein(d1, d2);
-            if(ds.distance < altersD[k]){
+            if(ds.distance <= maxdTol){
                 if(!last1 || !last2 || last1 == last2){
-                    //console.log("first match", ds.distance, name1[0],d1,name2[0],d2, " list dist ", altersL[k]);
-                    altersD[k] = ds.distance;
-                    altersDId[k] = l;
+                    // full name match
+                    matchedIds[k].push(l);
                 }
             }
             if(last1 && last2){
               l1 = dm.doubleMetaphone(name1[name1.length-1]).primary;
               l2 = dm.doubleMetaphone(name2[name2.length-1]).primary;
               ls = new Levenshtein(l1, l2);
-
-              if(ls.distance < altersL[k]){
-                  console.log("last dist", ls.distance, l1,l2);
-                  if(first1 == first2){
-                      altersL[k] = ls.distance;
-                      if(altersDId[k] != l){
-                        if(altersD[k] <= altersL[k]){
-                          altersLId[k] = altersDId[k];
-                        } else{
-                          altersLId[k] = l;
-                          altersDId[k] = l;
-                        }
-                      }else{
-                        altersLId[k] = l;
-                      }
-                  }
+              // last name distance
+              if(ls.distance < maxlTol){
+                // first letter of first name matches
+                if(first1 == first2){
+                  // l is alter2 id
+                  matchedIds[k].push(l);
                 }
-            } else if(name1.length > 1 && name2.length  == 1 && altersD[k] == 0 && altersL[k] != 0){
-              // console.log("replaced last with first " + alters2[k])
-              altersLId[k] = altersDId[k];
-              altersL[k] = altersD[k];
+              }
             }
-        }
-        if(altersD[k] <= 1 && altersL[k] == 999){
-          altersL[k] = 0;
-          altersLId[k] = altersDId[k];
         }
       }
       for (k in alters) {
         var id = k;
-        var lTol = altersL[id];
-        var dTol = altersD[id];
-        var lId = altersLId[id];
-        var dId = altersDId[id];
         merge_alter_question_list = new Object;
-        if(typeof dId == "undefined")
+        if(matchedIds[id].length == 0)
           continue;
-        l = dId;
-        //console.log(alters[parseInt(k)].NAME, k, alters2[l].NAME, lTol, maxlTol, dTol, maxdTol)
-          if(lTol > maxlTol || dTol > maxdTol)
-            continue;
+        for (dId in matchedIds[id]) {
+          var l = matchedIds[id][dId];
           var question = $.extend(true, {}, questionList[j]);
           question.PROMPT = question.PROMPT.replace(/\$\$1/g, alters[k].NAME);
           question.PROMPT = question.PROMPT.replace(/\$\$2/g, alters2[l].NAME);
@@ -1509,21 +1481,22 @@ function buildList() {
             i++;
             masterList[i] = new Object;
           }
-        if (questionList[j].ASKINGSTYLELIST == 1) {
-          if (Object.keys(merge_alter_question_list).length > 0) {
-            if (preface.PROMPT != "") {
+          if (questionList[j].ASKINGSTYLELIST == 1) {
+            if (Object.keys(merge_alter_question_list).length > 0) {
+              if (preface.PROMPT != "") {
+                if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                  evalQIndex.push(i);
+                masterList[i][0] = $.extend(true, {}, preface);
+                preface.PROMPT = "";
+                i++;
+                masterList[i] = new Object;
+              }
               if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
                 evalQIndex.push(i);
-              masterList[i][0] = $.extend(true, {}, preface);
-              preface.PROMPT = "";
+              masterList[i] = merge_alter_question_list;
               i++;
               masterList[i] = new Object;
             }
-            if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
-              evalQIndex.push(i);
-            masterList[i] = alter_pair_question_list;
-            i++;
-            masterList[i] = new Object;
           }
         }
       }

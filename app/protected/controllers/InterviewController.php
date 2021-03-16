@@ -539,7 +539,7 @@ class InterviewController extends Controller
                         $unordering = json_decode($unalter->ordering, true);
 
 
-                        //$ordering = array($_POST['Alters']['nameGenQIds'] => intval($_POST['Alters']['ordering']));
+                        $alter->alterListId = $interviewId;
                         if(!in_array($unalter->interviewId, $intIds))
                             $alter->interviewId = $alter->interviewId . ",". $unalter->interviewId;
                         foreach ($unnameQIds as $unQId) {
