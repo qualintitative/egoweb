@@ -379,7 +379,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       button.NAME = "No";
       button.ID = "UNMATCH";
       button.checked = false;
-      if($scope.alterName == $scope.alterMatchName)
+      if($scope.alterName.toLowerCase() == $scope.alterMatchName.toLowerCase())
         button.OTHERSPECIFY = true
       $scope.options[array_id][Object.keys($scope.options[array_id]).length] = button;
     }
@@ -608,11 +608,13 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
    //   alert('g')
      if(v  == "UNMATCH"){
        if($scope.options[array_id][index].checked){
-         if($scope.alterName == $scope.alterMatchName)
+         if($scope.alterName.toLowerCase() == $scope.alterMatchName.toLowerCase())
             $scope.errors[array_id]= "Please modify the name so it's not identical to the previous name entered.";
        }else{
          delete $scope.errors[array_id];
        }
+    }else if (v  == "MATCH"){
+      delete $scope.errors[array_id];
     }
     if (typeof $scope.questions[array_id] != "undefined")
       var question = $scope.questions[array_id];

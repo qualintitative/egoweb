@@ -553,9 +553,9 @@ class InterviewController extends Controller
                         if($alter)
                             $alter->delete();
                     }else{
-                        if ($alter->name == $prevAlter->name) {
+                        if (strtolower($alter->name) == strtolower($prevAlter->name)) {
                             $alter->name = $Answer['otherSpecifyText'];
-                            if (strtolower($alter->name) != strtolower($prevAlter->name)) {
+                            if ($alter->name != "" && strtolower($alter->name) != strtolower($prevAlter->name)) {
                                 $alterListIds = explode(",",$alter->alterListId);
                                 if(!$alterListIds)
                                     $alterListIds = array();
