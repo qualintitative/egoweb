@@ -1398,10 +1398,15 @@ function buildList() {
       maxlTol = questionList[j].MAXLITERAL == null ? 1 : parseInt(questionList[j].MAXLITERAL);
 
       for(k in alters){
+        if(typeof matchedIds[k] == "undefined")
+          matchedIds[k] = []
+        if(alters[k].ALTERLISTID == interviewId.toString() || (alters[k].ALTERLISTID && alters[k].ALTERLISTID.split(",").indexOf(interviewId.toString()) != -1))
+          continue;
+
           for(l in alters2){
-            if(typeof matchedIds[k] == "undefined")
-              matchedIds[k] = []
-            if(alters[k].ALTERLISTID == alters2[l].INTERVIEWID)
+
+
+            if(alters2[l].ALTERLISTID == alters[k].ID.toString() || (alters2[l].ALTERLISTID && alters2[l].ALTERLISTID.split(",").indexOf(alters[k].ID.toString()) != -1))
               continue;
             if(alters[k].NAME.toLowerCase() == alters2[l].NAME.toLowerCase())
               continue;

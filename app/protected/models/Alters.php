@@ -43,7 +43,7 @@ class Alters extends CActiveRecord
 			array('ordering, name, interviewId, nameGenQIds', 'required'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, active, ordering, name, interviewId, nameGenQIds, ordering', 'length', 'max'=>1024),
+			array('id, active, ordering, name, interviewId, nameGenQIds, ordering, alterListId', 'length', 'max'=>1024),
 			array('id, active, ordering, name, interviewId', 'safe', 'on'=>'search'),
 		);
 	}

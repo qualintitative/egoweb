@@ -115,6 +115,7 @@ function save(questions, page, url, scope){
                                 reloading = true;
                                 document.location.reload();
                             }else{
+                                reloading = true;
                                 alters[questions[k].ALTERID1].ALTERLISTID =  prevAlters[questions[k].ALTERID2].INTERVIEWID;
                                 document.location.reload();
                             }

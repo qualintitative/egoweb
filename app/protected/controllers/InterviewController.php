@@ -528,43 +528,51 @@ class InterviewController extends Controller
                     continue;
                 }
                 if ($Answer['questionType'] == "MERGE_ALTER") {
-                    $alter = Alters::model()->findByPk($Answer['alterId2']);
-                    $unalter = Alters::model()->findByPk($Answer['alterId1']);
+                    $prevAlter = Alters::model()->findByPk($Answer['alterId2']);
+                    $alter = Alters::model()->findByPk($Answer['alterId1']);
                     if($Answer['value'] == "MATCH"){
 
-                        $intIds = explode(",", $alter->interviewId);
-                        $nameQIds = explode(",", $alter->nameGenQIds);
-                        $unnameQIds = explode(",", $unalter->nameGenQIds);
-                        $ordering = json_decode($alter->ordering, true);
-                        $unordering = json_decode($unalter->ordering, true);
+                        $intIds = explode(",", $prevAlter->interviewId);
+                        $nameQIds = explode(",", $prevAlter->nameGenQIds);
+                        $unnameQIds = explode(",", $alter->nameGenQIds);
+                        $ordering = json_decode($prevAlter->ordering, true);
+                        $unordering = json_decode($alter->ordering, true);
 
 
-                        $alter->alterListId = $interviewId;
-                        if(!in_array($unalter->interviewId, $intIds))
-                            $alter->interviewId = $alter->interviewId . ",". $unalter->interviewId;
+                        $prevAlter->alterListId = $interviewId;
+                        if(!in_array($alter->interviewId, $intIds))
+                            $prevAlter->interviewId = $prevAlter->interviewId . ",". $alter->interviewId;
                         foreach ($unnameQIds as $unQId) {
                             if (!in_array($unQId, $nameQIds)) {
-                                $alter->nameGenQIds = $alter->nameGenQIds . ",". $unQId;
+                                $prevAlter->nameGenQIds = $prevAlter->nameGenQIds . ",". $unQId;
                                 $ordering[$unQId] = $unordering[$unQId];
                             }
                         }
-                        $alter->ordering = json_encode($ordering);
-                        $alter->save();
-                        if($unalter)
-                            $unalter->delete();
+                        $prevAlter->ordering = json_encode($ordering);
+                        $prevAlter->save();
+                        if($alter)
+                            $alter->delete();
                     }else{
-                        if ($unalter->name == $alter->name) {
-                            $unalter->name = $Answer['otherSpecifyText'];
-                            if (strtolower($unalter->name) != strtolower($alter->name)) {
-                                $unalter->alterListId = $alter->interviewId;
-                                $unalter->save();
+                        if ($alter->name == $prevAlter->name) {
+                            $alter->name = $Answer['otherSpecifyText'];
+                            if (strtolower($alter->name) != strtolower($prevAlter->name)) {
+                                $alterListIds = explode(",",$alter->alterListId);
+                                if(!$alterListIds)
+                                    $alterListIds = array();
+                                $alterListIds[] = $interviewId;
+                                $alter->alterListId =  implode(",",$alter->alterListId);
+                                $alter->save();
                             } else {
                                 echo "{\"error\":\"Please modify the name so it's not identical to the previous name entered.\"}";
                                 die();
                             }
                         }else{
-                          //  $unalter->alterListId = $alter->interviewId;
-                          //  $unalter->save();
+                            $alterListIds = explode(",",$prevAlter->alterListId);
+                            if(!$alterListIds)
+                                $alterListIds = array();
+                            $alterListIds[] = $alter->id;
+                            $prevAlter->alterListId =  implode(",",$alterListIds);
+                            $prevAlter->save();
                         }
                     }
                     continue;
@@ -777,6 +785,7 @@ class InterviewController extends Controller
                     }else{
                         $ordering = $model->ordering;
                     }
+                    $model->alterListId = '';
                     $model->save();
                 }else{
                     if(strstr($model->nameGenQIds, ",")){
