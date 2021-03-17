@@ -1408,8 +1408,8 @@ function buildList() {
 
             if(alters2[l].ALTERLISTID == alters[k].ID.toString() || (alters2[l].ALTERLISTID && alters2[l].ALTERLISTID.split(",").indexOf(alters[k].ID.toString()) != -1))
               continue;
-            if(alters[k].NAME.toLowerCase() == alters2[l].NAME.toLowerCase())
-              continue;
+          //  if(alters[k].NAME.toLowerCase() == alters2[l].NAME.toLowerCase())
+           //   continue;
             name1 = alters[k].NAME.toLowerCase().replace(/\./g,' ').trim().split(" ");
             name2 = alters2[l].NAME.toLowerCase().replace(/\./g,' ').trim().split(" ");
             console.log(name1, name2, name1[0], name2[0])
