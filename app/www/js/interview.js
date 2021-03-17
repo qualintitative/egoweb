@@ -379,7 +379,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       button.NAME = "No";
       button.ID = "UNMATCH";
       button.checked = false;
-      if($scope.alterName.toLowerCase() == $scope.alterMatchName.toLowerCase())
+      if($scope.alterName.trim().toLowerCase() == $scope.alterMatchName.trim().toLowerCase())
         button.OTHERSPECIFY = true
       $scope.options[array_id][Object.keys($scope.options[array_id]).length] = button;
     }
@@ -609,7 +609,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
    //   alert('g')
      if(v  == "UNMATCH"){
        if($scope.options[array_id][index].checked){
-         if($scope.alterName.toLowerCase() == $scope.alterMatchName.toLowerCase())
+         if($scope.alterName.trim().toLowerCase() == $scope.alterMatchName.trim().toLowerCase())
             $scope.errors[array_id]= "Please modify the name so it's not identical to the previous name entered.";
        }else{
          delete $scope.errors[array_id];
@@ -1413,8 +1413,8 @@ function buildList() {
               continue;
           //  if(alters[k].NAME.toLowerCase() == alters2[l].NAME.toLowerCase())
            //   continue;
-            name1 = alters[k].NAME.toLowerCase().replace(/\./g,' ').trim().split(" ");
-            name2 = alters2[l].NAME.toLowerCase().replace(/\./g,' ').trim().split(" ");
+            name1 = alters[k].NAME.trim().toLowerCase().replace(/\./g,' ').trim().split(" ");
+            name2 = alters2[l].NAME.trim().toLowerCase().replace(/\./g,' ').trim().split(" ");
             console.log(name1, name2, name1[0], name2[0])
             last1 = false;
             last2 = false;
