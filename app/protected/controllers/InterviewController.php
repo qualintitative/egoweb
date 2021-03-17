@@ -560,7 +560,7 @@ class InterviewController extends Controller
                                 if(!$alterListIds)
                                     $alterListIds = array();
                                 $alterListIds[] = $interviewId;
-                                $alter->alterListId =  implode(",",$alter->alterListId);
+                                $alter->alterListId =  implode(",",$alterListIds);
                                 $alter->save();
                             } else {
                                 echo "{\"error\":\"Please modify the name so it's not identical to the previous name entered.\"}";

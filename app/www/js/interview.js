@@ -525,6 +525,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
   $scope.addAlter = function (isValid) {
     $scope.errors[0] = false;
+    $("#Alters_name").val($("#Alters_name").val().trim());
     for (k in $scope.alters) {
       if ($("#Alters_name").val().toLowerCase() == $scope.alters[k].NAME.toLowerCase()) {
         if($scope.questions[0].NONEBUTTON != true)
