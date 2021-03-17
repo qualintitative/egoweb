@@ -554,7 +554,7 @@ class InterviewController extends Controller
                             $alter->delete();
                     }else{
                         if (strtolower($alter->name) == strtolower($prevAlter->name)) {
-                            $alter->name = $Answer['otherSpecifyText'];
+                            $alter->name = str_replace("UNMATCH:", "",  $Answer['otherSpecifyText']);
                             if ($alter->name != "" && strtolower($alter->name) != strtolower($prevAlter->name)) {
                                 $alterListIds = explode(",",$alter->alterListId);
                                 if(!$alterListIds)
