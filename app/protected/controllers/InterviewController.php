@@ -533,22 +533,24 @@ class InterviewController extends Controller
                     if($Answer['value'] == "MATCH"){
 
                         $intIds = explode(",", $prevAlter->interviewId);
-                        $nameQIds = explode(",", $prevAlter->nameGenQIds);
-                        $unnameQIds = explode(",", $alter->nameGenQIds);
-                        $ordering = json_decode($prevAlter->ordering, true);
-                        $unordering = json_decode($alter->ordering, true);
+                        $prevNameQIds = explode(",", $prevAlter->nameGenQIds);
+                        $nameQIds = explode(",", $alter->nameGenQIds);
+                        $prevOrdering = json_decode($prevAlter->ordering, true);
+                        $ordering = json_decode($alter->ordering, true);
 
 
                         $prevAlter->alterListId = $interviewId;
                         if(!in_array($alter->interviewId, $intIds))
                             $prevAlter->interviewId = $prevAlter->interviewId . ",". $alter->interviewId;
-                        foreach ($unnameQIds as $unQId) {
-                            if (!in_array($unQId, $nameQIds)) {
-                                $prevAlter->nameGenQIds = $prevAlter->nameGenQIds . ",". $unQId;
-                                $ordering[$unQId] = $unordering[$unQId];
+                        foreach ($nameQIds as $unQId) {
+                            if (!in_array($unQId, $prevNameQIds)) {
+                                $prevNameQIds[] = $unQId;
+                                $prevOrdering[$unQId] = $ordering[$unQId];
                             }
                         }
-                        $prevAlter->ordering = json_encode($ordering);
+                        $prevAlter->name = $alter->name;
+                        $prevAlter->ordering = json_encode($prevOrdering);
+                        $prevAlter->nameGenQIds = implode(",", $prevNameQIds);
                         $prevAlter->save();
                         if($alter)
                             $alter->delete();
