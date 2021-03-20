@@ -548,7 +548,7 @@ class InterviewController extends Controller
                                 $prevOrdering[$unQId] = $ordering[$unQId];
                             }
                         }
-                        $prevAlter->name = $alter->name;
+                        //$prevAlter->name = $alter->name;
                         $prevAlter->ordering = json_encode($prevOrdering);
                         $prevAlter->nameGenQIds = implode(",", $prevNameQIds);
                         $prevAlter->save();
