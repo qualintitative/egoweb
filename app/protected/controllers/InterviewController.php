@@ -414,7 +414,7 @@ class InterviewController extends Controller
                         $answers[$answer->questionId] = $answer;
                 }
             }
-            if($Answer['questionType'] == "ALTER")
+            if($Answer['questionType'] == "ALTER" || $Answer['questionType'] == "PREVIOUS_ALTER")
                 $array_id = $Answer['questionId'] . "-" . $Answer['alterId1'];
             else if($Answer['questionType'] == "ALTER_PAIR")
                 $array_id = $Answer['questionId'] . "-" . $Answer['alterId1'] . "and" . $Answer['alterId2'];

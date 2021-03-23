@@ -862,7 +862,10 @@ class ImportExportController extends Controller
             $server->save();
             Yii::app()->request->redirect("/importExport");
         }
-        $result = Server::model()->findAllByAttributes(array("userId"=>Yii::app()->user->id));
+        if (!Yii::app()->user->isSuperAdmin)
+            $result = Server::model()->findAll();
+        else
+            $result = Server::model()->findAllByAttributes(array("userId"=>Yii::app()->user->id));
         $servers = array();
         foreach ($result as $server) {
             $servers[$server->id] = mToA($server);
