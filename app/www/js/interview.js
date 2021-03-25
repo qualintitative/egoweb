@@ -1461,12 +1461,9 @@ function buildList() {
                 if(!last1 || !last2 || last1 == last2){
                     // full name match
                     if(ds.distance < dDist[k]){
-                      alert(alters[k].NAME)
                       dDist[k] = Number(ds.distance);
                       matchedIds[k].unshift(l);
                     }else{
-                      alert("NP" +alters[k].NAME + alters2[l].NAME + ds.distance + dDist[k])
-
                       matchedIds[k].push(l);
                     }
                 }
