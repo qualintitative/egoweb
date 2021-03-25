@@ -89,7 +89,20 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       }
       if ($scope.alters[k].NAMEGENQIDS != null) {
         var nGs = $scope.alters[k].NAMEGENQIDS.split(",");
-        var nGorder = JSON.parse($scope.alters[k].ORDERING);
+        if($scope.alters[k].ORDERING.match("{")){
+          var nGorder = JSON.parse($scope.alters[k].ORDERING);
+
+        }else{
+          for(var q in questions){
+            if(questions[q].ANSWERTYPE == "NAME_GENERATOR")
+              if($scope.alters[k].ORDERING == "")
+                $scope.alters[k].ORDERING = 0;
+              var nGorder = {};
+              nGorder [ questions[q].ID ]  = $scope.alters[k].ORDERING;
+
+          }
+
+        }
         // we put alters in lists according to the name generator question id
         if(nGs.indexOf($scope.questions[0].ID.toString()) != -1) {
           if(typeof nGorder[$scope.questions[0].ID] != "undefined")
@@ -1399,15 +1412,22 @@ function buildList() {
       dm.maxCodeLen = 64;
       maxdTol = questionList[j].MINLITERAL == null ? 1 : parseInt(questionList[j].MINLITERAL);
       maxlTol = questionList[j].MAXLITERAL == null ? 1 : parseInt(questionList[j].MAXLITERAL);
-
+      var lDist = {};
+      var dDist = {};
       for(k in alters){
         if(typeof matchedIds[k] == "undefined")
           matchedIds[k] = []
         if(alters[k].ALTERLISTID == interviewId.toString() || (alters[k].ALTERLISTID && alters[k].ALTERLISTID.split(",").indexOf(interviewId.toString()) != -1))
           continue;
-
+      
           for(l in alters2){
+            if(typeof dDist[k]  == "undefined"){
+              dDist[k] = 100;
+            }
+            if(typeof lDist[k]  == "undefined"){
 
+            lDist[k] = 100;
+            }
 
             if(alters2[l].ALTERLISTID == alters[k].ID.toString() || (alters2[l].ALTERLISTID && alters2[l].ALTERLISTID.split(",").indexOf(alters[k].ID.toString()) != -1))
               continue;
@@ -1440,7 +1460,15 @@ function buildList() {
             if(ds.distance <= maxdTol){
                 if(!last1 || !last2 || last1 == last2){
                     // full name match
-                    matchedIds[k].push(l);
+                    if(ds.distance < dDist[k]){
+                      alert(alters[k].NAME)
+                      dDist[k] = Number(ds.distance);
+                      matchedIds[k].unshift(l);
+                    }else{
+                      alert("NP" +alters[k].NAME + alters2[l].NAME + ds.distance + dDist[k])
+
+                      matchedIds[k].push(l);
+                    }
                 }
             }
             if(last1 && last2){
@@ -1452,7 +1480,12 @@ function buildList() {
                 // first letter of first name matches
                 if(first1 == first2){
                   // l is alter2 id
-                  matchedIds[k].push(l);
+                  if(ls.distance < lDist[k]){
+                    lDist[k] = ls.distance;
+                    matchedIds[k].unshift(l);
+                  }else{
+                    matchedIds[k].push(l);
+                  }
                 }
               }
             }
@@ -1463,6 +1496,8 @@ function buildList() {
         merge_alter_question_list = new Object;
         if(matchedIds[id].length == 0)
           continue;
+          console.log(matchedIds[k])
+
         for (dId in matchedIds[id]) {
           var l = matchedIds[id][dId];
           var question = $.extend(true, {}, questionList[j]);
