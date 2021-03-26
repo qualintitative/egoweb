@@ -533,22 +533,42 @@ class InterviewController extends Controller
                     if($Answer['value'] == "MATCH"){
 
                         $intIds = explode(",", $prevAlter->interviewId);
+                        $intIds = array_unique($intIds);
+                        $intIds = array_filter($intIds, function($value) { return !is_null($value) && $value !== ''; });
                         $prevNameQIds = explode(",", $prevAlter->nameGenQIds);
+                        $prevNameQIds = array_unique($prevNameQIds);
                         $nameQIds = explode(",", $alter->nameGenQIds);
-                        $prevOrdering = json_decode($prevAlter->ordering, true);
+                        if (stristr($prevAlter->ordering, "{")) {
+                            $prevOrdering = json_decode($prevAlter->ordering, true);
+                        }else{
+                            $prevOrdering = array();
+                            foreach ($intIds as $intId) {
+                                $criteria = array(
+                                    'condition'=>"FIND_IN_SET(" . $intId .", interviewId)",
+                                );
+                                $results = Alters::model()->findAll($criteria);
+                                foreach ($results as $index=>$result) {
+                                    if ($result->name == $prevAlter->name) {
+                                        $rNameQIds = explode(",", $result->nameGenQIds);
+                                        $rNameQIds = array_unique($rNameQIds);
+                                        $prevOrdering[implode(",",$rNameQIds)] = $index;
+                                    }
+                                }
+                            
+                            }
+                        }
                         $ordering = json_decode($alter->ordering, true);
-
-
                         $prevAlter->alterListId = $interviewId;
-                        if(!in_array($alter->interviewId, $intIds))
-                            $prevAlter->interviewId = $prevAlter->interviewId . ",". $alter->interviewId;
+                        if (!in_array($alter->interviewId, $intIds)) {
+                            $intIds[] = $alter->interviewId;
+                        }
+                        $prevAlter->interviewId = implode(",",$intIds);
                         foreach ($nameQIds as $unQId) {
-                            if (!in_array($unQId, $prevNameQIds)) {
+                            if (!in_array($unQId, $prevNameQIds) && isset($ordering[$unQId])) {
                                 $prevNameQIds[] = $unQId;
                                 $prevOrdering[$unQId] = $ordering[$unQId];
                             }
                         }
-                        //$prevAlter->name = $alter->name;
                         $prevAlter->ordering = json_encode($prevOrdering);
                         $prevAlter->nameGenQIds = implode(",", $prevNameQIds);
                         $prevAlter->save();
@@ -636,6 +656,7 @@ class InterviewController extends Controller
                 $alterNames[$alter->id] = strtolower($alter->name);
                 $alterGroups[$alter->name] = explode(",", $alter->nameGenQIds);
             }
+            /*
             $acount = 0;
             foreach ($alters as $alter) {
                 if (in_array($_POST['Alters']['nameGenQIds'], $alterGroups[$alter->name])) {
@@ -643,7 +664,7 @@ class InterviewController extends Controller
                     $alter->save();
                     $acount++;
                 }
-            }
+            }*/
             $model = new Alters;
             $model->attributes = $_POST['Alters'];
             $ordering = array($_POST['Alters']['nameGenQIds'] => intval($_POST['Alters']['ordering']));
@@ -654,6 +675,9 @@ class InterviewController extends Controller
                     $model->nameGenQIds = implode(",", $alterGroups[$_POST['Alters']['name']]);
                     if (!is_numeric($model->ordering)) {
                         $ordering = json_decode($model->ordering, true);
+                        $ordering[$_POST['Alters']['nameGenQIds']] = intval($_POST['Alters']['ordering']);
+                    }else{
+                        $ordering = array();
                         $ordering[$_POST['Alters']['nameGenQIds']] = intval($_POST['Alters']['ordering']);
                     }
                 }else{
@@ -685,38 +709,6 @@ class InterviewController extends Controller
 
             $foundAlter = false;
 
-            // move to merge alter
-            /*
-            if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
-                $interviewIds = Interview::multiInterviewIds($_POST['Alters']['interviewId'], $study);
-                //$interviewIds = array_diff(array_unique($interviewIds), array($_POST['Alters']['interviewId']));
-                foreach($interviewIds as $iId){
-                    $criteria=array(
-                        'condition'=>"FIND_IN_SET (" . $iId . ", interviewId) ",
-                    );
-                    $alters = Alters::model()->findAll($criteria);
-                    foreach($alters as $alter){
-                        if($alter->name == $_POST['Alters']['name']){
-                            $intIds = explode(",", $alter->interviewId);
-                            $nameQIds = explode(",", $alter->nameGenQIds);
-                            $ordering = array($_POST['Alters']['nameGenQIds'] => intval($_POST['Alters']['ordering']));
-                            if(!in_array($_POST['Alters']['interviewId'], $intIds))
-                                $alter->interviewId = $alter->interviewId . ",". $_POST['Alters']['interviewId'];
-                            if(!in_array($_POST['Alters']['nameGenQIds'], $nameQIds))
-                                $alter->nameGenQIds = $alter->nameGenQIds . ",". $_POST['Alters']['nameGenQIds'];
-                            if (!is_numeric($alter->ordering)) {
-                                $ordering = json_decode($alter->ordering, true);
-                                $ordering[$_POST['Alters']['nameGenQIds']] = intval($_POST['Alters']['ordering']);
-                            }
-                            $alter->ordering = json_encode($ordering);
-                            $alter->save();
-                            $foundAlter = true;
-                        }
-
-                    }
-                }
-            }
-            */
             $model->ordering = json_encode($ordering);
             if (!$model->getError('name') && $foundAlter == false) {
                 if(!$model->save()){
