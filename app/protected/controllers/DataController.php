@@ -825,52 +825,41 @@ class DataController extends Controller
 
     public function actionExportother()
     {
-        if (!isset($_POST['studyId']) || $_POST['studyId'] == "") {
-            die("nothing to export");
+        $filePath = getcwd()."/assets/".$_POST['studyId'];
+        if (file_exists($filePath . "/" . $_POST['interviewId'] . "-other-specify.csv")) {
+            echo "success";
+            Yii::app()->end();
         }
 
+        if (!is_dir($filePath)) {
+            mkdir($filePath, 0777, true);
+        }
+        
         $study = Study::model()->findByPk((int)$_POST['studyId']);
-
-        $file = fopen(getcwd() . "/assets/" . $study->id . "-other-specify.csv", "w") or die("Unable to open file!");
-
-        $headers = array();
-        $headers[] = 'INTERVIEW ID';
-        $headers[] = "EGO ID";
-        $headers[] = "QUESTION";
-        $headers[] = "ALTER ID";
-        $headers[] = "RESPONSE OPTION";
-        $headers[] = "TEXT";
-
-        fputcsv($file, $headers);
-
-        #OK FOR SQL INJECTION
-        $options = QuestionOption::model()->findAllByAttributes(array("otherSpecify"=>true, "studyId"=>$study->id));
-        if (!$options) {
-            $allOptions = QuestionOption::model()->findAllByAttributes(array("studyId"=>$study->id));
-            foreach ($allOptions as $option) {
-                if (preg_match("/OTHER \(*SPECIFY\)*/i", $option->name)) {
-                    $options[] = $option;
+        $interview = Interview::model()->findByPk($_POST['interviewId']);
+        if ($interview) {
+              #OK FOR SQL INJECTION
+            $options = QuestionOption::model()->findAllByAttributes(array("otherSpecify"=>true, "studyId"=>$study->id));
+            if (!$options) {
+                $allOptions = QuestionOption::model()->findAllByAttributes(array("studyId"=>$study->id));
+                foreach ($allOptions as $option) {
+                    if (preg_match("/OTHER \(*SPECIFY\)*/i", $option->name)) {
+                        $options[] = $option;
+                    }
                 }
             }
-        }
-        if (!$options) {
-            die("no other specified data to export");
-        }
-        foreach ($options as $option) {
-            $other_options[$option->id] = $option;
-            if (!isset($other_qs[$option->questionId])) {
-                $other_qs[$option->questionId] = Question::model()->findByPk($option->questionId);
+            if (!$options) {
+                die("no other specified data to export");
             }
-        }
-        $interviewIds = explode(",",$_POST['interviewIds']);
-        $interviews = Interview::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
-        foreach ($interviews as $interview) {
-            if(!in_array($interview->id, $interviewIds))
-                continue;
-            /*
-            if (!isset($_POST['export'][$interview->id])) {
-                continue;
-            }*/
+            foreach ($options as $option) {
+                $other_options[$option->id] = $option;
+                if (!isset($other_qs[$option->questionId])) {
+                    $other_qs[$option->questionId] = Question::model()->findByPk($option->questionId);
+                }
+            }
+
+            $file = fopen($filePath . "/" . $_POST['interviewId'] . "-other-specify.csv", "w") or die("Unable to open file!");
+     
             $answers = array();
             $answerList = Answer::model()->findAllByAttributes(array('interviewId'=>$interview->id));
             foreach ($answerList as $a) {
@@ -956,26 +945,55 @@ class DataController extends Controller
                         $answer[] = Interview::getEgoId($interview->id);
                         $answer[] = $question->title;
                         $answer[] = "";
-                        $answer[] = $i;
-                        $answer[] = $a;
+                        $answer[] = htmlspecialchars_decode($i);
+                        $answer[] = htmlspecialchars_decode($a);
                         fputcsv($file, $answer);
                     }
                 }
             }
+            echo "success";
+            Yii::app()->end();
         }
+
+        echo "fail";
+
+    }
+
+    public function actionExportotherall()
+    {
+        if (!isset($_POST['studyId']) || $_POST['studyId'] == "") {
+            die("nothing to export");
+        }
+
+        $study = Study::model()->findByPk((int)$_POST['studyId']);
+
+      //  $file = fopen(getcwd() . "/assets/" . $study->id . "-other-specify.csv", "w") or die("Unable to open file!");
+
+        $headers = array();
+        $headers[] = 'INTERVIEW ID';
+        $headers[] = "EGO ID";
+        $headers[] = "QUESTION";
+        $headers[] = "ALTER ID";
+        $headers[] = "RESPONSE OPTION";
+        $headers[] = "TEXT";
 
         // start generating export file
         header("Content-Type: application/octet-stream");
         header("Content-Disposition: attachment; filename=".seoString($study->name)."-other-specify-data".".csv");
         header("Content-Type: application/force-download");
 
-        $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "-other-specify.csv";
-        if (file_exists($filePath)) {
-            echo file_get_contents($filePath);
-            unlink($filePath);
+        echo implode(',', $headers) . "\n";
+        $interviewIds = explode(",",$_POST['interviewIds']);
+        foreach ($interviewIds as $interviewId) {
+            $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . "-other-specify.csv";
+            if (file_exists($filePath)) {
+                echo file_get_contents($filePath);
+                unlink($filePath);
+            }
         }
         Yii::app()->end();
     }
+
 
     public function actionLegacyexportother()
     {
@@ -988,14 +1006,7 @@ class DataController extends Controller
 
         $file = fopen(getcwd() . "/assets/" . $study->id . "-other-specify.csv", "w") or die("Unable to open file!");
 
-        $headers = array();
-        $headers[] = 'INTERVIEW ID';
-        $headers[] = "EGO ID";
-        $headers[] = "QUESTION";
-        $headers[] = "ALTER ID";
-        $headers[] = "RESPONSE OPTION";
-        $headers[] = "TEXT";
-        fputcsv($file, $headers);
+
 
         #OK FOR SQL INJECTION
         $options = QuestionOption::model()->findAllByAttributes(array("otherSpecify"=>true, "studyId"=>$study->id));

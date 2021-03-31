@@ -146,6 +146,55 @@
     }
 
     function exportOther() {
+        var total = $("input[type='checkbox'][name*='export']:checked").length;
+        var finished = 0;
+        var batchSize = 1;
+        var interviews = $("input[type='checkbox'][name*='export']:checked");
+        withAlters = 0;
+        if ($("#withAlters1").prop("checked") == true)
+            withAlters = 1;
+        $("#withAlters").val(withAlters);
+        $(".progress-bar").width(0);
+        var batchPromiseRecursive = function() {
+            if (interviews.length == 0) {
+                return;
+            }
+            var thisInt = interviews.splice(0, batchSize);
+            var interviewId = $(thisInt).attr("id").match(/\d+/g)[0];
+            var d = new Date();
+            start = d.getTime();
+            return $.ajax({
+                type: "POST",
+                url: rootUrl + "/data/exportother",
+                data: {
+                    studyId: $("#studyId").val(),
+                    interviewId: interviewId,
+                    YII_CSRF_TOKEN: $("input[name='YII_CSRF_TOKEN']").val()
+                }
+            }).success(function(data) {
+                finished++;
+                $("#status").html(
+                    "Processed " + finished + " / " + total + " interviews"
+                );
+                $(".progress-bar").width((finished / total * 100) + "%"); 
+            }).then(function(){
+                return batchPromiseRecursive();
+            });
+            
+        }
+        batchPromiseRecursive().then(function() {
+            $("#status").html("Done!");
+            $('#analysis').attr('action', rootUrl + '/data/exportotherall');
+            let interviewIds = [];
+            $("input[type='checkbox'][name*='export']:checked").each(function(){
+                interviewIds.push($(this).attr("id").match(/\d+/g)[0]);
+            });
+            $('#analysis #interviewIds').val(interviewIds.join(","));
+            $('#analysis').submit();
+        });
+    }
+/*
+    function exportOther() {
         $('#analysis').attr('action', rootUrl + '/data/exportother');
         let interviewIds = [];
         $("input[type='checkbox'][name*='export']:checked").each(function(){
@@ -154,7 +203,7 @@
         $('#analysis #interviewIds').val(interviewIds.join(","));
         $('#analysis').submit();
     }
-
+*/
     function exportOtherLegacy() {
         $('#analysis').attr('action', rootUrl + '/data/legacyexportother');
         $('#analysis').submit();

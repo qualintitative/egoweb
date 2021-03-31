@@ -11,7 +11,7 @@
     <?php echo CHtml::form($this->createUrl("/importExport/importstudy"), 'post', array('id' => 'importForm', 'enctype' => 'multipart/form-data')); ?>
     <div class="form-group">
       <div class="col-lg-3">
-        <input id="userfile" name="files[]" class="form-control" type="file" multiple />
+        <input id="userfile" name="files[]" class="form-control" type="file" multiple accept=".study, .xml" />
       </div>
     </div>
     <div class="form-group">
