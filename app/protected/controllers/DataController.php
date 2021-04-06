@@ -906,8 +906,8 @@ class DataController extends Controller
                             $answer[] = Interview::getEgoId($interview->id);
                             $answer[] = $question->title;
                             $answer[] = $alter->name;
-                            $answer[] = $i;
-                            $answer[] = $a;
+                            $answer[] = htmlspecialchars_decode($i);
+                            $answer[] = htmlspecialchars_decode($a);
                             fputcsv($file, $answer);
                         }
                     }
