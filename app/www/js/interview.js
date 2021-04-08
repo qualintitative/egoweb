@@ -843,7 +843,7 @@ app.directive('checkAnswer', [function () {
           var max = "";
           var numberErrors = 0;
           var showError = false;
-          if ((value == "" && scope.answers[array_id].SKIPREASON == "NONE") || (value != "" && isNaN(parseInt(value)))) {
+          if ((value == "" && scope.answers[array_id].SKIPREASON == "NONE") || (value != "" && value.match(/[^$,.\d]/) != null)) {
             errorMsg = 'Please enter a number.';
             showError = true;
           }
@@ -1062,7 +1062,7 @@ app.directive('checkAnswer', [function () {
           var max = "";
           var numberErrors = 0;
           var showError = false;
-          if ((value == "" && scope.answers[array_id].SKIPREASON == "NONE") || (value != "" && isNaN(parseInt(value)))) {
+          if ((value == "" && scope.answers[array_id].SKIPREASON == "NONE") || (value != "" && value.match(/[^$,.\d]/) != null)) {
             scope.errors[array_id] = 'Please enter a number.';
             valid = false;
           }
