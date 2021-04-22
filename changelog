@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+## [2.0.9.4] - 2021-04-22
+- other specify export fix (decodes quote marks)
+
 ## [2.0.9.3] - 2021-04-08
 - numeric validation fix (was allow alphetical characters)
 

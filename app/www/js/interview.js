@@ -408,7 +408,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       var specify = $scope.answers[array_id].OTHERSPECIFYTEXT.split(";;");
       for (s in specify) {
         var pair = specify[s].split(":");
-        $scope.otherSpecify[array_id][pair[0]] = pair[1];
+//        $scope.otherSpecify[array_id][pair[0]] = pair[1];
+        $scope.otherSpecify[array_id][pair[0]] = htmldecode(pair[1]);
       }
     }
     for (a in $scope.options[array_id]) {
@@ -614,7 +615,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       }
     }
     $scope.answers[array_id].OTHERSPECIFYTEXT = specify.join(";;");
-    //console.log($scope.answers[array_id].OTHERSPECIFYTEXT);
   }
 
   $scope.multiSelect = function (v, index, array_id) {
@@ -971,8 +971,6 @@ app.directive('checkAnswer', [function () {
             errorMsg = "You may select up to " + max + " response" + adds + " please.";
           else if (numberErrors == 1 && showError)
             errorMsg = "You must select at least " + min + " response" + adds + " please.";
-          //if(answer.OTHERSPECIFYTEXT && showError)
-          //	showError = false;
 
           if (showError) {
             scope.errors[array_id] = errorMsg;
@@ -1191,8 +1189,6 @@ app.directive('checkAnswer', [function () {
             errorMsg = "You may select up to " + max + " response" + adds + " please.";
           else if (numberErrors == 1 && showError)
             errorMsg = "You must select at least " + min + " response" + adds + " please.";
-          //if(answer.OTHERSPECIFYTEXT && showError)
-          //	showError = false;
 
           if (showError) {
             scope.errors[array_id] = errorMsg;
@@ -2890,7 +2886,6 @@ function initStats(question) {
   g = {
     nodes: nodes,
     edges: edges,
-    //legends:  <?= json_encode($legends); ?>
   };
 
   sizes = [];

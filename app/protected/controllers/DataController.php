@@ -884,7 +884,7 @@ class DataController extends Controller
                         foreach (preg_split('/;;/', $response) as $otherSpecify) {
                             if (strstr($otherSpecify, ':')) {
                                 list($optionId, $val) = preg_split('/:/', $otherSpecify);
-                                $otherSpecifies[$optionId] = $val;
+                                $otherSpecifies[$optionId] = html_entity_decode($val, ENT_QUOTES);
                             }
                         }
                         $optionIds = explode(",", $answers[$question->id . "-" . $alter->id]->value);
@@ -906,8 +906,8 @@ class DataController extends Controller
                             $answer[] = Interview::getEgoId($interview->id);
                             $answer[] = $question->title;
                             $answer[] = $alter->name;
-                            $answer[] = htmlspecialchars_decode($i);
-                            $answer[] = htmlspecialchars_decode($a);
+                            $answer[] = $i;
+                            $answer[] = $a;
                             fputcsv($file, $answer);
                         }
                     }
@@ -921,7 +921,7 @@ class DataController extends Controller
                     foreach (preg_split('/;;/', $response) as $otherSpecify) {
                         if (strstr($otherSpecify, ':')) {
                             list($optionId, $val) = preg_split('/:/', $otherSpecify);
-                            $otherSpecifies[$optionId] = $val;
+                            $otherSpecifies[$optionId] = html_entity_decode($val, ENT_QUOTES);
                         }
                     }
                     $optionIds = explode(",", $answers[$question->id]->value);
@@ -945,8 +945,8 @@ class DataController extends Controller
                         $answer[] = Interview::getEgoId($interview->id);
                         $answer[] = $question->title;
                         $answer[] = "";
-                        $answer[] = htmlspecialchars_decode($i);
-                        $answer[] = htmlspecialchars_decode($a);
+                        $answer[] = $i;
+                        $answer[] = $a;
                         fputcsv($file, $answer);
                     }
                 }
