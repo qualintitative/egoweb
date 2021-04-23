@@ -777,7 +777,7 @@ class Interview extends CActiveRecord
                         $answers[] = $answer->value;
                     } else {
                         $answer->value = preg_replace('/amp;/', "", $answer->value);
-                        $answers[] = htmlspecialchars_decode($answer->value);
+                        $answers[] = htmlspecialchars_decode($answer->value, ENT_QUOTES);
                     }
                 } else if ($answer->skipReason == "DONT_KNOW") {
                     $answers[] = $study->valueDontKnow;

@@ -884,7 +884,8 @@ class DataController extends Controller
                         foreach (preg_split('/;;/', $response) as $otherSpecify) {
                             if (strstr($otherSpecify, ':')) {
                                 list($optionId, $val) = preg_split('/:/', $otherSpecify);
-                                $otherSpecifies[$optionId] = html_entity_decode($val, ENT_QUOTES);
+                                $val = preg_replace("/amp;/", "", $val);
+                                $otherSpecifies[$optionId] = htmlspecialchars_decode($val, ENT_QUOTES);
                             }
                         }
                         $optionIds = explode(",", $answers[$question->id . "-" . $alter->id]->value);
@@ -921,7 +922,8 @@ class DataController extends Controller
                     foreach (preg_split('/;;/', $response) as $otherSpecify) {
                         if (strstr($otherSpecify, ':')) {
                             list($optionId, $val) = preg_split('/:/', $otherSpecify);
-                            $otherSpecifies[$optionId] = html_entity_decode($val, ENT_QUOTES);
+                            $val = preg_replace("/amp;/", "", $val);
+                            $otherSpecifies[$optionId] = htmlspecialchars_decode($val, ENT_QUOTES);
                         }
                     }
                     $optionIds = explode(",", $answers[$question->id]->value);

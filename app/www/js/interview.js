@@ -424,7 +424,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
       else
         $scope.otherSpecify[array_id][$scope.options[array_id][a].ID] = false;
     }
-
+    console.log("other spec", $scope.otherSpecify);
     if ($scope.questions[k].SUBJECTTYPE != "EGO_ID") {
       $scope.prompt = $sce.trustAsHtml(interpretTags($scope.questions[k].PROMPT, $scope.questions[k].ALTERID1, $scope.questions[k].ALTERID2) + '<br><div class="orangeText">' + $scope.phrase + "</div>");
     } else {
@@ -3158,9 +3158,10 @@ function unfixHeader() {
 }
 
 function htmldecode(str) {
+  str = str.replace(/amp;/g,"");
   var txt = document.createElement('textarea');
   txt.innerHTML = str.trim();
-  return $(txt).val();
+  return $(txt).text();
 }
 
 
