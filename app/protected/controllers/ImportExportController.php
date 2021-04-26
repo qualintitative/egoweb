@@ -687,6 +687,7 @@ class ImportExportController extends Controller
 
                             $newAnswer->value = html_entity_decode($newAnswer->value, ENT_QUOTES);
 
+
                             if ($answerType == "MULTIPLE_SELECTION" && !in_array($newAnswer->value, array($newStudy->valueRefusal,$newStudy->valueDontKnow,$newStudy->valueLogicalSkip,$newStudy->valueNotYetAnswered))) {
                                 $values = explode(',', $newAnswer->value);
                                 foreach ($values as &$value) {
@@ -705,7 +706,7 @@ class ImportExportController extends Controller
                                         if (isset($newOptionIds[intval($optionId)])) {
                                             $optionId = $newOptionIds[intval($optionId)];
                                         }
-                                        $otherSpecifies[] = $optionId.":".$val;
+                                        $otherSpecifies[] = $optionId.":".html_entity_decode($val, ENT_QUOTES);
                                     }
                                 }
                                 if (count($otherSpecifies) > 0) {
@@ -831,7 +832,13 @@ class ImportExportController extends Controller
 					$match->save();
 				}
             }
-            
+            $prevAnswers = Answer::model()->findAllByAttributes(array("interviewId"=>$newId, "questionType"=>"PREVIOUS_ALTER"));
+            if (count($prevAnswers) > 0) {
+                foreach ($prevAnswers as $prevAnswer) {
+                    $prevAnswer->alterId1 = $newAlterIds[intval($prevAnswer->alterId1)];
+                    $prevAnswer->save();
+                }
+            }
 		}
         $this->redirect(array('/authoring/edit','id'=>$newStudy->id));
     }
