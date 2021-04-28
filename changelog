@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [2.0.9.6] - 2021-04-28
+- merge alter question fix
+- expression import fix
+
 ## [2.0.9.5] - 2021-04-26
 - previous alter import fix (links responses to appropriate alters)
 

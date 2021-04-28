@@ -63,7 +63,10 @@ class ImportExportController extends Controller
         $newInterviewIds = array();
         $newAlterIds = array();
         $newQuestionIds = array();
+        $newExpressionIds = array();
         $result = User::model()->findAll();
+        $newOptionIds = array();
+        $newUserIds = array();
         $users = array();
         foreach($result as $u){
             $users[$u->email] = intval($u->id);
@@ -75,10 +78,7 @@ class ImportExportController extends Controller
                 die();
             }
             $newStudy = new Study;
-            $newOptionIds = array();
-            $newExpressionIds = array();
             $newAnswerIds = array();
-            $newUserIds = array();
             $merge = false;
 
             foreach ($study->attributes() as $key=>$value) {
@@ -264,9 +264,9 @@ class ImportExportController extends Controller
                         }
                         // reference the correct question, since we're not using old ids
 
-                        if ($newExpression->questionId != "" && isset($newQuestionIds[intval($newExpression->questionId)])) {
-                            $newExpression->questionId = $newQuestionIds[intval($newExpression->questionId)];
-                        }
+                        //if ($newExpression->questionId != "" && isset($newQuestionIds[intval($newExpression->questionId)])) {
+                        //    $newExpression->questionId = $newQuestionIds[intval($newExpression->questionId)];
+                        //}
 
                         //$newExpression->value = $expression->value;
                         if (!$newExpression->save()) {
@@ -276,79 +276,6 @@ class ImportExportController extends Controller
                         }
                     }
 
-                    // second loop to replace old ids in Expression->value
-                    foreach ($study->expressions->expression as $expression) {
-                        if (!isset($newExpressionIds[$oldExpressionId])) {
-                            continue;
-                        }
-                        foreach ($expression->attributes() as $key=>$value) {
-                            if ($key == "id") {
-                                $oldExpressionId = intval($value);
-                                $newExpression = Expression::model()->findByPk($newExpressionIds[$oldExpressionId]);
-                            }
-                        }
-
-                        // reference the correct question, since we're not using old ids
-                        if ($newExpression->type == "Selection") {
-                            $optionIds = explode(',', $newExpression->value);
-
-                            foreach ($optionIds as &$optionId) {
-                                if (is_numeric($optionId) && isset($newOptionIds[$optionId])) {
-                                    //  echo $newOptionIds[$optionId];
-                                    $optionId = $newOptionIds[$optionId];
-                                }
-                            }
-                            $newExpression->value = implode(',', $optionIds);
-                        } elseif ($newExpression->type == "Counting") {
-                            if (!strstr($newExpression->value, ':')) {
-                                continue;
-                            }
-                            list($times, $expressionIds, $questionIds) = explode(':', $newExpression->value);
-                            if ($expressionIds != "") {
-                                $expressionIds = explode(',', $expressionIds);
-                                foreach ($expressionIds as &$expressionId) {
-                                    $expressionId = $newExpressionIds[$expressionId];
-                                }
-                                $expressionIds = implode(',', $expressionIds);
-                            }
-                            if ($questionIds != "") {
-                                $questionIds = explode(',', $questionIds);
-                                foreach ($questionIds as &$questionId) {
-                                    if (isset($newQuestionIds[$questionId])) {
-                                        $questionId = $newQuestionIds[$questionId];
-                                    } else {
-                                        $questionId = '';
-                                    }
-                                }
-                                $questionIds = implode(',', $questionIds);
-                            }
-                            $newExpression->value = $times . ":" .  $expressionIds . ":" . $questionIds;
-                        } elseif ($newExpression->type == "Comparison") {
-                            list($value, $expressionId) = explode(':', $newExpression->value);
-                            $newExpression->value = $value . ":" . $newExpressionIds[$expressionId];
-                        } elseif ($newExpression->type == "Compound") {
-                            $expressionIds = explode(',', $newExpression->value);
-                            foreach ($expressionIds as &$expressionId) {
-                                if (is_numeric($expressionId)) {
-                                    $expressionId = $newExpressionIds[$expressionId];
-                                }
-                            }
-                            $newExpression->value = implode(',', $expressionIds);
-                        } elseif ($newExpression->type == "Name Generator") {
-                            if ($newExpression->value != "") {
-                                $questionIds = explode(',', $newExpression->value);
-                                foreach ($questionIds as &$questionId) {
-                                    if (isset($newQuestionIds[$questionId])) {
-                                        $questionId = $newQuestionIds[$questionId];
-                                    } else {
-                                        $questionId = '';
-                                    }
-                                }
-                                $newExpression->value = implode(',', $questionIds);
-                            }
-                        }
-                        $newExpression->save();
-                    }
                 }
 
                 // loop through questions and relink network params
@@ -750,6 +677,73 @@ class ImportExportController extends Controller
                 }
             }
 		}
+        // second loop to replace old ids in Expression->value
+        foreach ($newExpressionIds as $oldExpId=>$newExpId) {
+            $newExpression = Expression::model()->findByPk($newExpId);
+            if ($newExpression->questionId != "" && isset($newQuestionIds[intval($newExpression->questionId)])) {
+                $newExpression->questionId = $newQuestionIds[intval($newExpression->questionId)];
+            }
+            // reference the correct question, since we're not using old ids
+            if ($newExpression->type == "Selection") {
+                $optionIds = explode(',', $newExpression->value);
+
+                foreach ($optionIds as &$optionId) {
+                    if (is_numeric($optionId) && isset($newOptionIds[$optionId])) {
+                        //  echo $newOptionIds[$optionId];
+                        $optionId = $newOptionIds[$optionId];
+                    }
+                }
+                $newExpression->value = implode(',', $optionIds);
+            } elseif ($newExpression->type == "Counting") {
+                if (!strstr($newExpression->value, ':')) {
+                    continue;
+                }
+                list($times, $expressionIds, $questionIds) = explode(':', $newExpression->value);
+                if ($expressionIds != "") {
+                    $expressionIds = explode(',', $expressionIds);
+                    foreach ($expressionIds as &$expressionId) {
+                        $expressionId = $newExpressionIds[$expressionId];
+                    }
+                    $expressionIds = implode(',', $expressionIds);
+                }
+                if ($questionIds != "") {
+                    $questionIds = explode(',', $questionIds);
+                    foreach ($questionIds as &$questionId) {
+                        if (isset($newQuestionIds[$questionId])) {
+                            $questionId = $newQuestionIds[$questionId];
+                        } else {
+                            $questionId = '';
+                        }
+                    }
+                    $questionIds = implode(',', $questionIds);
+                }
+                $newExpression->value = $times . ":" .  $expressionIds . ":" . $questionIds;
+            } elseif ($newExpression->type == "Comparison") {
+                list($value, $expressionId) = explode(':', $newExpression->value);
+                $newExpression->value = $value . ":" . $newExpressionIds[$expressionId];
+            } elseif ($newExpression->type == "Compound") {
+                $expressionIds = explode(',', $newExpression->value);
+                foreach ($expressionIds as &$expressionId) {
+                    if (is_numeric($expressionId)) {
+                        $expressionId = $newExpressionIds[$expressionId];
+                    }
+                }
+                $newExpression->value = implode(',', $expressionIds);
+            } elseif ($newExpression->type == "Name Generator") {
+                if ($newExpression->value != "") {
+                    $questionIds = explode(',', $newExpression->value);
+                    foreach ($questionIds as &$questionId) {
+                        if (isset($newQuestionIds[$questionId])) {
+                            $questionId = $newQuestionIds[$questionId];
+                        } else {
+                            $questionId = '';
+                        }
+                    }
+                    $newExpression->value = implode(',', $questionIds);
+                }
+            }
+            $newExpression->save();
+        }
 		foreach ($newAlterIds as $oldId=>$newId) {
 			$alter = Alters::model()->findByPk($newId);
 			if (preg_match("/,/", $alter->interviewId)) {
