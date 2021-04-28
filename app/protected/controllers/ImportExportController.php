@@ -761,6 +761,23 @@ class ImportExportController extends Controller
 				}
 				$alter->interviewId = implode(',', $values);
             }
+            if (preg_match("/,/", $alter->alterListId)) {
+				$values = explode(',', $alter->alterListId);
+                $vs = array();
+				foreach ($values as $value) {
+					if (isset($newInterviewIds[intval($value)])) {
+						$vs[] = $newInterviewIds[intval($value)];
+					}
+                    if (isset($newAlterIds[intval($value)])) {
+						$vs[] = $newAlterIds[intval($value)];
+					}
+				}
+				$alter->alterListId = implode(',', $vs);
+            } elseif (isset($newInterviewIds[intval($alter->alterListId)])) {
+                $alter->alterListId = $newInterviewIds[intval($alter->alterListId)];
+            } elseif (isset($newAlterIds[intval($alter->alterListId)])) {
+                $alter->alterListId = $newAlterIds[intval($alter->alterListId)];
+            }
 
             if (stristr($alter->nameGenQIds, ",")){
                 $nQIds = explode(",", $alter->nameGenQIds);

@@ -558,7 +558,13 @@ class InterviewController extends Controller
                             }
                         }
                         $ordering = json_decode($alter->ordering, true);
-                        $prevAlter->alterListId = $interviewId;
+                        $alterListIds = explode(",", $prevAlter->alterListId);
+                        $alterListIds = array_filter($alterListIds, function($value) { return !is_null($value) && $value !== ''; });
+                        $alterListIds[] = $interviewId;
+                        $alterListIds = array_unique($alterListIds);
+                        $prevAlter->alterListId =  implode(",",$alterListIds);
+                        $alterListIds[] = $interviewId;
+
                         if (!in_array($alter->interviewId, $intIds)) {
                             $intIds[] = $alter->interviewId;
                         }
@@ -579,9 +585,11 @@ class InterviewController extends Controller
                             $alter->name = str_replace("UNMATCH:", "",  $Answer['otherSpecifyText']);
                             if ($alter->name != "" && strtolower($alter->name) != strtolower($prevAlter->name)) {
                                 $alterListIds = explode(",",$alter->alterListId);
+                                $alterListIds = array_filter($alterListIds, function($value) { return !is_null($value) && $value !== ''; });
                                 if(!$alterListIds)
                                     $alterListIds = array();
                                 $alterListIds[] = $interviewId;
+                                $alterListIds = array_unique($alterListIds);
                                 $alter->alterListId =  implode(",",$alterListIds);
                                 $alter->save();
                             } else {
@@ -590,9 +598,11 @@ class InterviewController extends Controller
                             }
                         }else{
                             $alterListIds = explode(",",$prevAlter->alterListId);
+                            $alterListIds = array_filter($alterListIds, function($value) { return !is_null($value) && $value !== ''; });
                             if(!$alterListIds)
                                 $alterListIds = array();
                             $alterListIds[] = $alter->id;
+                            $alterListIds = array_unique($alterListIds);
                             $prevAlter->alterListId =  implode(",",$alterListIds);
                             $prevAlter->save();
                         }
