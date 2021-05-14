@@ -1757,6 +1757,7 @@ function evalQuestions() {
     if (evalQIndex[i] < currentPage)
       continue;
     for (j in masterList[evalQIndex[i]]) {
+      console.log(masterList[evalQIndex[i]][j].ALTERID2)
       evalQList[masterList[evalQIndex[i]][j].array_id] = evalExpression(masterList[evalQIndex[i]][j].ANSWERREASONEXPRESSIONID, masterList[evalQIndex[i]][j].ALTERID1, masterList[evalQIndex[i]][j].ALTERID2);
     }
   }
@@ -1933,7 +1934,8 @@ function evalExpression(id, alterId1, alterId2) {
     }
   }
   if (expressions[id].TYPE == "Name Generator") {
-    console.log("Name Generator Experssion");
+    var oneTrue = false;
+    var twoTrue = true;
     if (expressions[id].VALUE.match(","))
       var genList = expressions[id].VALUE.split(",");
     else
@@ -1947,10 +1949,23 @@ function evalExpression(id, alterId1, alterId2) {
     }
     for (n in aList) {
       if (genList.indexOf(aList[n]) > -1)
-        return true;
+        oneTrue = true;
     }
-    console.log("name gen exp: false");
-    return false;
+    if (typeof alterId2 != 'undefined' && alters[alterId2] != undefined){
+      aList = [];
+      twoTrue = false;
+      if (alters[alterId2].NAMEGENQIDS.match(","))
+        aList = alters[alterId2].NAMEGENQIDS.split(",");
+      else
+        aList = [alters[alterId2].NAMEGENQIDS];
+      aList2 = aList;
+      for (n in aList) {
+        if (genList.indexOf(aList[n]) > -1)
+          twoTrue = true;
+      }
+    }
+    console.log("name gen exp: ", oneTrue, twoTrue);
+    return (oneTrue && twoTrue);
   }
   console.log(expressions[id].NAME + ":false");
   return false;
