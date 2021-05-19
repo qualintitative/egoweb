@@ -278,6 +278,7 @@
             <th>Ego ID</th>
             <th class="hidden-xs">Started</th>
             <th class="hidden-xs">Completed</th>
+            <th class="hidden-xs"># of Alters</th>
             <th class="hidden-xs">Dyad Match ID</th>
             <th class="hidden-xs">Match User</th>
             <th><em class="fa fa-cog"></em></th>
@@ -294,6 +295,12 @@
             $mark = "";
             $matchId = "";
             $matchUser = "";
+            /*
+            $criteria = array(
+                'condition'=>"FIND_IN_SET(" . $interview->id . ", interviewId)",
+            );
+            $alters = Alters::model()->findAll($criteria); 
+            */
             if ($interview->hasMatches) {
                 $mark = "class='success'";
                 $criteria = array(
@@ -307,10 +314,13 @@
                 $matchId = $match->getMatchId();
                 $matchUser = User::getName($match->userId);
             }
+         //   if(count($alters) != 0)
+         //       continue;
             echo "<tr $mark>";
             echo "<td>" . CHtml::checkbox('export[' . $interview['id'] . ']') . "</td><td>" . Interview::getEgoId($interview->id) . "</td>";
             echo "<td class='hidden-xs'>" . date("Y-m-d H:i:s", $interview->start_date) . "</td>";
             echo "<td class='hidden-xs'>" . $completed . "</td>";
+           // echo "<td class='hidden-xs'>" . count($alters) . "</td>";
             echo "<td class='hidden-xs'>" . $matchId . "</td>";
             echo "<td class='hidden-xs'>" . $matchUser . "</td>";
             echo "<td>";

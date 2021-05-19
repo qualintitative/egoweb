@@ -564,6 +564,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
     // check to make sure the form is completely valid
     if ($scope.errors[0] == false) {
+      $('.alterSubmit').prop("disabled", true);
       saveAlter.getAlters().then(function (data) {
         alters = JSON.parse(data);
         for (k in alters) {
@@ -585,6 +586,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   $scope.removeAlter = function (alterId, nameGenQId) {
     $("#deleteAlterId").val(alterId);
     $("#deleteNameGenQId").val(nameGenQId);
+    $('.alterSubmit').prop("disabled", true);
     // check to make sure the form is completely valid
     deleteAlter.getAlters().then(function (data) {
       alters = JSON.parse(data);

@@ -454,6 +454,7 @@ class DataController extends Controller
 
         $headers = array();
         $headers[] = 'Interview ID';
+        $headers[] = 'Alter ID';
         $headers[] = "EgoID";
         $headers[] = 'Start Time';
         $headers[] = 'End Time';

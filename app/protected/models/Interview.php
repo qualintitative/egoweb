@@ -688,6 +688,7 @@ class Interview extends CActiveRecord
         foreach ($alters as $alter) {
             $answers = array();
             $answers[] = $this->id;
+            $answers[] = $alter->id;
             $ego_ids = array();
             $ego_id_string = array();
             $study = Study::model()->findByPk($this->studyId);

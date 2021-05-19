@@ -43,6 +43,7 @@
             <div id="variablePrompt" ng-if='alterPrompt != ""'>{{ alterPrompt }}</div>
             <a ng-if='audio["ALTERPROMPT"]' class="play-sound" ng-click='playSound("ALTERPROMPT")' href="javascript:void(0)"><span class="fui-volume"></span></a>
             <form ng-if="!questions[0].MAXLITERAL || keys(nGalters).length < questions[0].MAXLITERAL" id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
+                <input name="currentAlters" value='{{ alters }}' type="hidden">
                 <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
                 <div class="form-group">
                     <input class="answerInput" name="Alters[name]" id="Alters_name" type="text" value="{{ alterName }}" style="float:left" ng-if="questions[0].AUTOCOMPLETELIST != true">

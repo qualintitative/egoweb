@@ -656,16 +656,25 @@ class InterviewController extends Controller
         if(isset($_POST['Alters'])){
             $interview = Interview::model()->findByPk($_POST['Alters']['interviewId']);
             $studyId = $interview->studyId;
+
+
+            $alters = json_decode($_POST['currentAlters'], true);
+            /*
             $criteria=array(
                 'condition'=>"FIND_IN_SET(" . $_POST['Alters']['interviewId'] .", interviewId)",
             );
-            $alters = Alters::model()->findAll($criteria);
+            $result = Alters::model()->findAll($criteria);
+            foreach($result as $a){
+                $alters[$a->id] = $a;
+            }
+            */
             $alterNames = array();
             $alterGroups = array();
             foreach($alters as $alter){
-                $alterNames[$alter->id] = strtolower($alter->name);
-                $alterGroups[$alter->name] = explode(",", $alter->nameGenQIds);
+                $alterNames[$alter['ID']] = strtolower($alter['NAME']);
+                $alterGroups[$alter['NAME']] = explode(",", $alter['NAMEGENQIDS']);
             }
+          //  print_r($alterGroups);
             /*
             $acount = 0;
             foreach ($alters as $alter) {
@@ -724,17 +733,27 @@ class InterviewController extends Controller
                 if(!$model->save()){
                     print_r($model->errors);
                     die();
+                }else{
+                    $newAlterId = Yii::app()->db->getLastInsertID();
+                    $result = Alters::model()->findByPk($newAlterId );
+                    $model->id = $newAlterId;
+                    $model->name = decrypt($model->name);
+                  //  foreach($alters as &$a){
+                  //      $a = mToA($a);
+                  //  }
+                    $alters[$newAlterId] = mToA($model);
+                    echo json_encode($alters);
                 }
             }
+            /*
             $interviewId = $_POST['Alters']['interviewId'];
-/*
             $criteria=new CDbCriteria;
             $criteria=array(
                 'condition'=>"afterAltersEntered <= " . Interview::countAlters($interviewId),
                 'order'=>'afterAltersEntered DESC',
             );
             $alterPrompt = AlterPrompt::getPrompt($studyId, Interview::countAlters($interviewId));
-*/
+
             $alters = array();
             $criteria = array(
                 'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId)",
@@ -745,7 +764,7 @@ class InterviewController extends Controller
             }
 
             echo json_encode($alters);
-
+*/
         }
     }
 
