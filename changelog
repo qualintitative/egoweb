@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+## [2.0.9.9] - 2021-06-01
+- merge alter fix - prioritizes exact matches
+
 ## [2.0.9.8] - 2021-05-19
 - duplicate alter fix.  optimized data retrieval during alter saving and disables "add" button until alter saves.
 
