@@ -1413,8 +1413,19 @@ function buildList() {
       var lDist = {};
       var dDist = {};
       for(k in alters){
+        for(l in alters2){
+          if(alters[k].NAME.toLowerCase().trim() == alters2[l].NAME.toLowerCase().trim()){
+            if(typeof matchedIds[k] == "undefined")
+              matchedIds[k] = [];
+            dDist[k] = 0;
+            matchedIds[k].unshift(l);
+          }
+        }
+      }
+      for(k in alters){
         if(typeof matchedIds[k] == "undefined")
-          matchedIds[k] = []
+          matchedIds[k] = [];
+
         if(alters[k].ALTERLISTID == interviewId.toString() || (alters[k].ALTERLISTID && alters[k].ALTERLISTID.split(",").indexOf(interviewId.toString()) != -1))
           continue;
       
@@ -1428,6 +1439,10 @@ function buildList() {
             }
 
             if(alters2[l].ALTERLISTID == alters[k].ID.toString() || (alters2[l].ALTERLISTID && alters2[l].ALTERLISTID.split(",").indexOf(alters[k].ID.toString()) != -1))
+              continue;
+            
+            //match first letter of first name
+            if(alters[k].NAME.toLowerCase().charAt(0) != alters2[l].NAME.toLowerCase().charAt(0))
               continue;
           //  if(alters[k].NAME.toLowerCase() == alters2[l].NAME.toLowerCase())
            //   continue;
@@ -1455,7 +1470,7 @@ function buildList() {
             d1 = dm.doubleMetaphone(name1[0]).primary;
             d2 = dm.doubleMetaphone(name2[0]).primary;
             ds = new Levenshtein(d1, d2);
-            if(ds.distance <= maxdTol){
+            if(ds.distance <= maxdTol && matchedIds[k].indexOf(l) == -1){
                 if(!last1 || !last2 || last1 == last2){
                     // full name match
                     if(ds.distance < dDist[k]){
@@ -1473,7 +1488,7 @@ function buildList() {
               // last name distance
               if(ls.distance < maxlTol){
                 // first letter of first name matches
-                if(first1 == first2){
+                if(first1 == first2 && matchedIds[k].indexOf(l) == -1){
                   // l is alter2 id
                   if(ls.distance < lDist[k]){
                     lDist[k] = ls.distance;
