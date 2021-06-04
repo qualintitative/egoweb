@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+## [2.0.9.10] - 2021-06-04
+- merge alter label customization
+
 ## [2.0.9.9] - 2021-06-01
 - merge alter fix - prioritizes exact matches
 

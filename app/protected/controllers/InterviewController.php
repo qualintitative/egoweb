@@ -585,7 +585,10 @@ class InterviewController extends Controller
                         }
                     }else{
                         if (strtolower($alter->name) == strtolower($prevAlter->name)) {
-                            $alter->name = str_replace("UNMATCH:", "",  $Answer['otherSpecifyText']);
+                            if ($Answer['value'] == "NEW_NAME")
+                                $alter->name = str_replace("NEW_NAME:", "",  $Answer['otherSpecifyText']);
+                            else
+                                $alter->name = str_replace("UNMATCH:", "",  $Answer['otherSpecifyText']);
                             if ($alter->name != "" && strtolower($alter->name) != strtolower($prevAlter->name)) {
                                 $alterListIds = explode(",",$alter->alterListId);
                                 $alterListIds = array_filter($alterListIds, function($value) { return !is_null($value) && $value !== ''; });

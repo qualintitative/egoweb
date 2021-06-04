@@ -115,7 +115,7 @@ return array(
 	// application-level parameters that can be accessed
 	// using Yii::app()->params['paramName']
     'params'=>array(
-		'version'=>'2.0.9.9',
+		'version'=>'2.0.9.10',
 		// this is used in contact page
 		'adminEmail'=>'admin@example.com',
 		// The max login attempt before showing captcha
