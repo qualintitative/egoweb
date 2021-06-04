@@ -28,7 +28,13 @@ $subjectTypes = array(
     'ALTER_PAIR'=>'ALTER_PAIR',
     'NETWORK'=>'NETWORK',
 );
-
+$allOptions = json_decode($model->allOptionString,true);
+if(!isset($allOptions["YES_LABEL"]) || $allOptions["YES_LABEL"] == "")
+    $allOptions["YES_LABEL"] = "Yes";
+if(!isset($allOptions["NO_LABEL"]) || $allOptions["NO_LABEL"] == "")
+    $allOptions["NO_LABEL"] = "No";
+if(!isset($allOptions["NEW_NAME_LABEL"]) || $allOptions["NEW_NAME_LABEL"] == "")
+    $allOptions["NEW_NAME_LABEL"] = "New name";
 ?>
 
 <?php
@@ -214,12 +220,22 @@ $criteria=array(
         <?php endif; ?>
         <div class="panel-<?php echo $model->id; ?>" id="MERGE_ALTER" style="display:none">
 
-            Double Metaphone Tolerance: <input style='width:60px; margin:0' id="minAltrNum"
+            First Name Tolerance: <input style='width:60px; margin:0' id="minAltrNum"
                 onchange="$('#<?php echo $model->id; ?>-minLiteral').val($(this).val())"
                 value="<?php echo $model->minLiteral; ?>"><br>
-			Levenstein Tolerance: <input style='width:60px; margin:0' id="maxAltrNum"
+			Last Name Tolerance: <input style='width:60px; margin:0' id="maxAltrNum"
                 onchange="$('#<?php echo $model->id; ?>-maxLiteral').val($(this).val())"
                 value="<?php echo $model->maxLiteral; ?>">
+            <br>
+            Yes Label: <input style='width:60px; margin:0' id="yesLabel"
+                class="options"
+                value="<?php echo $allOptions["YES_LABEL"]; ?>">
+            No Label: <input style='width:60px; margin:0' id="noLabel"
+                class="options"
+                value="<?php echo $allOptions["NO_LABEL"]; ?>"><br>
+            New Name Label: <input style='width:120px; margin:0' id="newNameLabel"
+                class="options"
+                value="<?php echo $allOptions["NEW_NAME_LABEL"]; ?>">
         </div>
         <div class="panel-<?php echo $model->id; ?>" id="MULTIPLE_SELECTION" style="display:none">
             <?php echo $form->checkBox($model,'otherSpecify',array('id'=>$model->id . "_" . "otherSpecify")); ?>
@@ -822,12 +838,12 @@ $this->widget('plugins.visualize', array('method'=>'edgesize', 'id'=>$model->stu
         <?php echo $form->textArea($model,'javascript',array('rows'=>6, 'cols'=>50, 'id'=>'javascript'.$model->id)); ?>
         <?php echo $form->error($model,'javascript'); ?>
     </div>
+    <?php echo $form->hiddenField($model,'allOptionString'); ?>
 
     <?php /*
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'allOptionString'); ?>
-    <?php echo $form->textField($model,'allOptionString'); ?>
     <?php echo $form->error($model,'allOptionString'); ?>
 </div>
 
@@ -890,7 +906,19 @@ if($model->subjectType == "NETWORK"){
 <?php $this->endWidget(); ?>
 
 <script>
+    function updateOptions(container) {
+            var allOptions = new Object;
+            allOptions["YES_LABEL"] = $('#yesLabel', container).val();
+            allOptions["NO_LABEL"] = $('#noLabel', container).val();
+            allOptions["NEW_NAME_LABEL"] = $('#newNameLabel', container).val();
+            return JSON.stringify(allOptions);
+        }
 $(function() {
+
+        $('#<?php echo $model->id; ?> #MERGE_ALTER input.options').change(function() {
+            $('#<?php echo $model->id; ?> #Question_allOptionString').val(updateOptions($(
+                '#<?php echo $model->id; ?> #MERGE_ALTER')));
+        });
     $('#prompt<?php echo $model->id;?>').summernote({
         toolbar: noteBar,
         height: 200,
@@ -950,4 +978,6 @@ $(function() {
     changeStyle($("#<?php echo $model->id;?>_askingStyleList"), <?php echo $model->id;?>,
         "<?php echo $model->subjectType;?>")
 });
+$('#<?php echo $model->id; ?> #Question_allOptionString').val(updateOptions($(
+                '#<?php echo $model->id; ?> #MERGE_ALTER')));
 </script>

@@ -530,17 +530,18 @@ class InterviewController extends Controller
                 if ($Answer['questionType'] == "MERGE_ALTER") {
                     $prevAlter = Alters::model()->findByPk($Answer['alterId2']);
                     $alter = Alters::model()->findByPk($Answer['alterId1']);
-                    if($Answer['value'] == "MATCH"){
-
+                    if ($Answer['value'] == "MATCH") {
                         $intIds = explode(",", $prevAlter->interviewId);
                         $intIds = array_unique($intIds);
-                        $intIds = array_filter($intIds, function($value) { return !is_null($value) && $value !== ''; });
+                        $intIds = array_filter($intIds, function ($value) {
+                            return !is_null($value) && $value !== '';
+                        });
                         $prevNameQIds = explode(",", $prevAlter->nameGenQIds);
                         $prevNameQIds = array_unique($prevNameQIds);
                         $nameQIds = explode(",", $alter->nameGenQIds);
                         if (stristr($prevAlter->ordering, "{")) {
                             $prevOrdering = json_decode($prevAlter->ordering, true);
-                        }else{
+                        } else {
                             $prevOrdering = array();
                             foreach ($intIds as $intId) {
                                 $criteria = array(
@@ -551,24 +552,25 @@ class InterviewController extends Controller
                                     if ($result->name == $prevAlter->name) {
                                         $rNameQIds = explode(",", $result->nameGenQIds);
                                         $rNameQIds = array_unique($rNameQIds);
-                                        $prevOrdering[implode(",",$rNameQIds)] = $index;
+                                        $prevOrdering[implode(",", $rNameQIds)] = $index;
                                     }
                                 }
-                            
                             }
                         }
                         $ordering = json_decode($alter->ordering, true);
                         $alterListIds = explode(",", $prevAlter->alterListId);
-                        $alterListIds = array_filter($alterListIds, function($value) { return !is_null($value) && $value !== ''; });
+                        $alterListIds = array_filter($alterListIds, function ($value) {
+                            return !is_null($value) && $value !== '';
+                        });
                         $alterListIds[] = $interviewId;
                         $alterListIds = array_unique($alterListIds);
-                        $prevAlter->alterListId =  implode(",",$alterListIds);
+                        $prevAlter->alterListId =  implode(",", $alterListIds);
                         $alterListIds[] = $interviewId;
 
                         if (!in_array($alter->interviewId, $intIds)) {
                             $intIds[] = $alter->interviewId;
                         }
-                        $prevAlter->interviewId = implode(",",$intIds);
+                        $prevAlter->interviewId = implode(",", $intIds);
                         foreach ($nameQIds as $unQId) {
                             if (!in_array($unQId, $prevNameQIds) && isset($ordering[$unQId])) {
                                 $prevNameQIds[] = $unQId;
@@ -578,8 +580,9 @@ class InterviewController extends Controller
                         $prevAlter->ordering = json_encode($prevOrdering);
                         $prevAlter->nameGenQIds = implode(",", $prevNameQIds);
                         $prevAlter->save();
-                        if($alter)
+                        if ($alter) {
                             $alter->delete();
+                        }
                     }else{
                         if (strtolower($alter->name) == strtolower($prevAlter->name)) {
                             $alter->name = str_replace("UNMATCH:", "",  $Answer['otherSpecifyText']);
@@ -597,14 +600,23 @@ class InterviewController extends Controller
                                 die();
                             }
                         }else{
-                            $alterListIds = explode(",",$prevAlter->alterListId);
-                            $alterListIds = array_filter($alterListIds, function($value) { return !is_null($value) && $value !== ''; });
-                            if(!$alterListIds)
+                           if(!$alterListIds)
                                 $alterListIds = array();
-                            $alterListIds[] = $alter->id;
-                            $alterListIds = array_unique($alterListIds);
-                            $prevAlter->alterListId =  implode(",",$alterListIds);
-                            $prevAlter->save();
+                            if ($Answer['value'] == "NEW_NAME") {
+                                $alterListIds = explode(",",$alter->alterListId);
+                                $alterListIds = array_filter($alterListIds, function($value) { return !is_null($value) && $value !== ''; });    
+                                $alterListIds[] = $interviewId;
+                                $alterListIds = array_unique($alterListIds);
+                                $alter->alterListId =  implode(",", $alterListIds);
+                                $alter->save();
+                            }else{
+                                $alterListIds = explode(",",$prevAlter->alterListId);
+                                $alterListIds = array_filter($alterListIds, function($value) { return !is_null($value) && $value !== ''; });    
+                                $alterListIds[] = $alter->id;
+                                $alterListIds = array_unique($alterListIds);
+                                $prevAlter->alterListId =  implode(",", $alterListIds);
+                                $prevAlter->save();
+                            }
                         }
                     }
                     continue;

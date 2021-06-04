@@ -384,16 +384,22 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
     if ($scope.questions[k].SUBJECTTYPE == "MERGE_ALTER") {
       var button = new Object;
-      button.NAME = "Yes";
+      var allOptions = JSON.parse($scope.questions[k].ALLOPTIONSTRING);
+      button.NAME = allOptions["YES_LABEL"];
       button.ID = "MATCH";
       button.checked = false;
       $scope.options[array_id][Object.keys($scope.options[array_id]).length] = button;
       var button = new Object;
-      button.NAME = "No";
+      button.NAME = allOptions["NO_LABEL"];
       button.ID = "UNMATCH";
       button.checked = false;
       if($scope.alterName.trim().toLowerCase() == $scope.alterMatchName.trim().toLowerCase())
         button.OTHERSPECIFY = true
+      $scope.options[array_id][Object.keys($scope.options[array_id]).length] = button;
+      var button = new Object;
+      button.NAME = allOptions["NEW_NAME_LABEL"];
+      button.ID = "NEW_NAME";
+      button.checked = false;
       $scope.options[array_id][Object.keys($scope.options[array_id]).length] = button;
     }
     if ($scope.colspan == false) {
@@ -622,7 +628,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
   $scope.multiSelect = function (v, index, array_id) {
   //  if(1 == 1){
    //   alert('g')
-     if(v  == "UNMATCH"){
+     if(v  == "UNMATCH" || v  == "NEW_NAME" ){
        if($scope.options[array_id][index].checked){
          if($scope.alterName.trim().toLowerCase() == $scope.alterMatchName.trim().toLowerCase())
             $scope.errors[array_id]= "Please modify the name so it's not identical to the previous name entered.";
