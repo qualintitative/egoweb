@@ -1462,9 +1462,9 @@ function buildList() {
             first1 = name1[0].charAt(0).toLowerCase();
             first2 = name2[0].charAt(0).toLowerCase();
 
-            if(discardNames.includes(name1[name1.length-1]))
+            if(name1.length > 1 && discardNames.includes(name1[name1.length-1]))
               name1.pop();
-            if(discardNames.includes(name2[name2.length-1]))
+            if(name2.length > 1 && discardNames.includes(name2[name2.length-1]))
               name2.pop();
 
             if(name1.length > 1){
