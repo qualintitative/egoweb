@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+## [2.0.9.11] - 2021-06-14
+- merge alter suffix
+
 ## [2.0.9.10] - 2021-06-04
 - merge alter label customization
 
