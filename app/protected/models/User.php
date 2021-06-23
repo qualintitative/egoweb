@@ -55,9 +55,9 @@ class User extends CActiveRecord
             array('email, password, confirm, name, permissions', 'required','on'=>'insert'),
             array('email, name', 'unique'),
             array('email, password, confirm, permissions', 'length', 'max'=>128),
-			array('lastActivity','default',
-				'value'=>new CDbExpression('NOW()'),
-				'setOnEmpty'=>false,'on'=>'insert'),
+		//	array('lastActivity','default',
+		//		'value'=>new CDbExpression('NOW()'),
+		//		'setOnEmpty'=>false,'on'=>'insert'),
         );
     }
 
@@ -81,7 +81,7 @@ class User extends CActiveRecord
             'email' => 'Email',
             'password' => 'Password',
             'name' => 'Name',
-            'lastActivity' => 'Last Activity',
+       //     'lastActivity' => 'Last Activity',
         );
     }
 
@@ -147,7 +147,7 @@ class User extends CActiveRecord
 
         $criteria->compare('id',$this->id);
         $criteria->compare('name',$this->name);
-        $criteria->compare('lastActivity',$this->last_activity);
+        //$criteria->compare('lastActivity',$this->last_activity);
 
         return new CActiveDataProvider($this, array(
             'criteria'=>$criteria,

@@ -369,7 +369,6 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
     `email` text NOT NULL,
     `password` text NOT NULL,
     `name` text NOT NULL,
-    `lastActivity` datetime NOT NULL,
     `permissions` int(11) NOT NULL DEFAULT '1'
   ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

@@ -33,8 +33,8 @@ if(!isset($allOptions["YES_LABEL"]) || $allOptions["YES_LABEL"] == "")
     $allOptions["YES_LABEL"] = "Yes";
 if(!isset($allOptions["NO_LABEL"]) || $allOptions["NO_LABEL"] == "")
     $allOptions["NO_LABEL"] = "No";
-if(!isset($allOptions["NEW_NAME_LABEL"]) || $allOptions["NEW_NAME_LABEL"] == "")
-    $allOptions["NEW_NAME_LABEL"] = "New name";
+if(!isset($allOptions["NEW_NAME_LABEL"]))
+    $allOptions["NEW_NAME_LABEL"] = "";
 ?>
 
 <?php
