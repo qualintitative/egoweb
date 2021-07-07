@@ -1,94 +1,48 @@
 <?php
 
+namespace app\models;
+
+use Yii;
+
 /**
  * This is the model class for table "expression".
  *
- * The followings are the available columns in table 'expression':
- * @property integer $id
- * @property integer $random_key
- * @property integer $active
- * @property integer $name
- * @property integer $type
- * @property integer $operator
- * @property integer $valueText
- * @property integer $value
- * @property integer $resultForUnanswered
- * @property integer $studyId
- * @property integer $questionId
+ * @property int $id
+ * @property int|null $active
+ * @property string|null $name
+ * @property string|null $type
+ * @property string|null $operator
+ * @property string|null $value
+ * @property int|null $resultForUnanswered
+ * @property int|null $studyId
+ * @property int|null $questionId
  */
-class Expression extends CActiveRecord
+class Expression extends \yii\db\ActiveRecord
 {
-
-	public $answers = array();
+    public $answers = array();
 	public $study = null;
 	public $question = null;
 
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @param string $className active record class name.
-	 * @return Expression the static model class
-	 */
-	public static function model($className=__CLASS__)
-	{
-		return parent::model($className);
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return 'expression';
+    }
 
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'expression';
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['active', 'resultForUnanswered', 'studyId', 'questionId'], 'integer'],
+            [['name', 'type', 'operator', 'value'], 'string'],
+        ];
+    }
 
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
-		return array(
-			array('id, active, name, type, operator, value, resultForUnanswered, studyId, questionId', 'length', 'max'=>255),
-			array('id, active, studyId', 'numerical', 'integerOnly'=>true),
-                        array('name', 'required','on'=>'insert'),
-			array('name', 'filter', 'filter'=>function($param) {return CHtml::encode(strip_tags($param));}),
-			// The following rule is used by search().
-			// Please remove those attributes that should not be searched.
-			array('id, active, name, type, operator, value, resultForUnanswered, studyId, questionId', 'safe', 'on'=>'search'),
-		);
-	}
-
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'id' => 'ID',
-			'active' => 'Active',
-			'name' => 'Name',
-			'type' => 'Expression Type',
-			'operator' => 'Operator',
-			'value' => 'Value',
-			'resultForUnanswered' => 'Result For Unanswered',
-			'studyId' => 'Study',
-			'questionId' => 'Question ID',
-		);
-	}
-
-	/**
+    /**
 	 * CORE FUNCTION
 	 * Show logic for the expressions. determines whether or not to display a question
 	 * returns either true/false $interviewIdor a number for the Counting expressions
@@ -105,11 +59,11 @@ class Expression extends CActiveRecord
 		if(isset($this->study))
 			$study = $this->study;
 		else
-			$study = Study::model()->findByPk($this->studyId);
+			$study = Study::findOne($this->studyId);
 
 		if(is_numeric($this->questionId)){
     		if(!$this->question)
-    		    $this->question = Question::model()->findByPk($this->questionId);
+    		    $this->question = Question::findOne($this->questionId);
 		}
 
 		$comparers = array(
@@ -189,7 +143,7 @@ class Expression extends CActiveRecord
 			return ($times * $count);
 		} else if($this->type == "Comparison"){
 			list($value, $expressionId) =  preg_split('/:/', $this->value);
-			$newE = Expression::model()->findByPk($expressionId);
+			$newE = Expression::findOne($expressionId);
 			$result = $newE->evalExpression($interviewId, $alterId1, $alterId2, $answers);
 			$logic = "return " . $result . " " . $comparers[$this->operator] . " " . $value . ";";
 			return eval($logic);
@@ -201,7 +155,7 @@ class Expression extends CActiveRecord
 				$isTrue[$subId] = false;
 				if(!$subId || $subId == $this->id)
 					continue;
-				$subE[$subId] = Expression::model()->findByPk($subId);
+				$subE[$subId] = Expression::findOne($subId);
 				if(!$subE[$subId])
 				    return false;
 				$isTrue[$subId] = $subE[$subId]->evalExpression($interviewId, $alterId1, $alterId2, $answers);
@@ -221,13 +175,13 @@ class Expression extends CActiveRecord
 
 	public static function countExpression($id, $interviewId, $alterId1, $alterId2, $answers)
 	{
-		$countE = Expression::model()->findByPk($id);
+		$countE = Expression::findOne($id);
 		return $countE->evalExpression($interviewId, $alterId1, $alterId2, $answers);
 	}
 
 	public static function countQuestion($questionId, $interviewId, $operator, $alterId1 = null, $alterId2 = null, $answers)
 	{
-        $question = Question::model()->findByPk($questionId);
+        $question = Question::findOne($questionId);
 		if($question->subjectType == 'ALTER_PAIR'){
 			$array_id = $question->id . '-' .  $alterId1 . "and" . $alterId2;
 
@@ -251,87 +205,21 @@ class Expression extends CActiveRecord
 		}
 	}
 
-	public function beforeDelete(){
-        #OK FOR SQL INJECTION
-        $criteria = array(
-            "condition"=>"studyId = " . $this->studyId . " AND (type = 'Counting' OR type = 'Comparison' OR type = 'Compound')",
-        );
-        $others = Expression::model()->findAll($criteria);
-		foreach($others as $expression){
-			$expressionIds = "";
-			if($expression->type == "Counting"){
-				list($times, $expressionIds, $questionIds) = preg_split('/:/', $expression->value);
-				$expressionIds = explode(',', $expressionIds);
-				$index = array_search($this->id,$expressionIds);
-				if($index){
-					array_splice($expressionIds,$index,1);
-					$expressionIds = implode(",", $expressionIds);
-					$data = array(
-						"value"=>$times . ":" . $expressionIds . ":" . $questionIds
-					);
-					u('expression', $data, "id = " . $expression->id);
-				}
-			}else if($expression->type == "Comparison"){
-				list($value, $expressionId) =  preg_split('/:/', $expression->value);
-				$expressionIds = explode(',', $expressionIds);
-				$index = array_search($this->id,$expressionIds);
-				if($index){
-					array_splice($expressionIds,$index,1);
-					$expressionIds = implode(",", $expressionIds);
-					$data = array(
-						"value"=>$value . ":" . $expressionIds
-					);
-					u('expression', $data, "id = " . $expression->id);
-				}
-			}else if($expression->type == "Compound"){
-				$expressionIds = explode(',', $expression->value);
-				$index = array_search($this->id,$expressionIds);
-				if($index){
-					array_splice($expressionIds,$index,1);
-					$expressionIds = implode(",", $expressionIds);
-					$data = array(
-						"value"=>$expressionIds
-					);
-					u('expression', $data, "id = " . $expression->id);
-				}
-			}
-		}
-		$questions = Question::model()->findAllByAttributes(array("answerReasonExpressionId"=>$this->id));
-		foreach($questions as $question){
-			$question->answerReasonExpressionId = "";
-			$question->save();
-		}
-		$questions = Question::model()->findAllByAttributes(array("networkRelationshipExprId"=>$this->id));
-		foreach($questions as $question){
-			$question->networkRelationshipExprId = "";
-			$question->save();
-		}
-		return true;
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// Warning: Please modify the following code to remove attributes that
-		// should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('id',$this->id);
-		$criteria->compare('active',$this->active);
-		$criteria->compare('name',$this->name);
-		$criteria->compare('type',$this->type);
-		$criteria->compare('operator',$this->operator);
-		$criteria->compare('value',$this->value);
-		$criteria->compare('resultForUnanswered',$this->resultForUnanswered);
-		$criteria->compare('studyId',$this->studyId);
-		$criteria->compare('questionId',$this->questionId);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'active' => 'Active',
+            'name' => 'Name',
+            'type' => 'Type',
+            'operator' => 'Operator',
+            'value' => 'Value',
+            'resultForUnanswered' => 'Result For Unanswered',
+            'studyId' => 'Study ID',
+            'questionId' => 'Question ID',
+        ];
+    }
 }

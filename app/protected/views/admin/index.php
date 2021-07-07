@@ -1,91 +1,127 @@
 <?php
-
-/* @var $this AdminController */
-$this->pageTitle =  "Admin";
-
+use yii\helpers\Html;
+use app\models\User;
+use app\models\Interview;
 ?>
-<?php if($alert): ?>
-<div class="alert alert-success">
-  <strong>System Update</strong><br>
-  <?php echo $alert; ?>
-</div>
-<?php endif; ?>
-<?php if(Yii::app()->user->user->permissions >= 3): ?>
-<div class="panel panel-default col-sm-6">
-  <div class="panel-body">
-		<h3><?=CHtml::link('Interviewing', $this->createUrl("/interview"))?></h3>
-		<p>
-			Start a new interview or continue a partially completed interview.
-		</p>
-	</div>
-</div>
-<?php endif; ?>
 
-	<?php if(Yii::app()->user->isAdmin): ?>
 
-    <div class="panel panel-default col-sm-6">
-      <div class="panel-body">
+       
 
-		<h3><?=CHtml::link('Authoring', $this->createUrl("/authoring"))?></h3>
-		<p>
-			Create a new study, add or change questions for an existing study.
-		</p>
-  </div>
-</div>
-<div class="panel panel-default col-sm-6">
-  <div class="panel-body">
+<div id="accordion" class="fill-page">
+    <?php foreach(Yii::$app->user->identity->studies as $study):?>
+    <div class="card">
+        <div class="card-header" id="heading-<?php echo $study->id; ?>">
+            <h5 class="mb-0">
+                <h3 class="btn btn-link btn-lg" data-toggle="collapse"
+                    data-target="#collapse-<?php echo $study->id; ?>" aria-expanded="true"
+                    aria-controls="collapse-<?php echo $study->id; ?>">
+                    <?php echo $study->name; ?>
+                </h3>
+                <div class="btn-group float-right" role="group" aria-label="Basic example">
+                        <?php echo Html::a("Authoring", ["/authoring/" . $study->id], ["class"=>"btn btn-link btn-secondary text-light"]); ?>
+                        <?php echo Html::a("Data Processing", ["/data/" . $study->id], ["class"=>"btn btn-link btn-secondary text-light"]); ?>
 
-		<h3><?=CHtml::link('Data Processing', $this->createUrl("/data"))?></h3>
-		<p>
-			Analyze the data from completed interviews.<br><br>
-		</p>
-  </div>
-</div>
-<div class="panel panel-default col-sm-6">
-  <div class="panel-body">
-		<h3><?=CHtml::link('Import &amp; Export Studies', $this->createUrl("/importExport"))?></h3>
-		<p>
-			Save study and respondent data as files or
-			transfer to another server.
-		</p>
-  </div>
-</div>
-<?php endif; ?>
+                    </div>
+            </h5>
+        </div>
 
-<div class="panel panel-default col-sm-6">
-  <div class="panel-body">
-		<h3><a href="/dyad">Alter Matching</a></h3>
-		<p>
-      Match alters from related interviews<br><br>
-		</p>
-  </div>
-</div>
+        <div id="collapse-<?php echo $study->id; ?>" class="collapse"
+            aria-labelledby="heading-<?php echo $study->id; ?>" data-parent="#accordion">
+            <div class="card-body">
+                <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
 
-		<?php if(Yii::app()->user->isSuperAdmin): ?>
-      <div class="panel panel-default col-sm-6">
-        <div class="panel-body">
-			<h3><?=CHtml::link('User Admin', $this->createUrl("/admin/user"))?></h3>
-			<p>
-				Add new users.<br><br>
-			</p>
+                    <?php echo Html::a("Start new interview", ["/interview/" . $study->id . "#page/0"], ["class"=>"btn btn-link btn-primary text-light"]); ?>
+
+                    
+                </div>
+                <?php
+$interviews = Interview::findAll([
+    "studyId"=>$study->id
+]);
+?>
+                <?php if(count($interviews) > 0): ?>
+                <div class="list-group">
+                    <?php foreach($interviews as $interview): ?>
+                    <?php if($interview->completed > -1): ?>
+                    <?php echo Html::a($interview->egoId, ["/interview/" . $study->id . "/" . $interview->id . "#page/" . $interview->completed ], ["class"=>"list-group-item list-group-item-action"]); ?>
+                    <?php endif; ?>
+                    <?php endforeach; ?>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="panel panel-default col-sm-6">
-    <div class="panel-body">
-		<h3><?=CHtml::link('Mobile', $this->createUrl("/mobile"))?></h3>
-		<p>
-    Apps for iOS and Android.<br><br>
-		</p>
-</div>
-</div>
-		<?php endif; ?>
+    <?php endforeach; ?>
 
-<div class="panel panel-default col-sm-6">
-  <div class="panel-body">
-		<h3><?=CHtml::link('Logout', $this->createUrl("/site/logout"))?></h3>
-		<p>
-			Logout of Admin Mode.<br><br>
-		</p>
-  </div>
 </div>
-version: <?php echo Yii::app()->params['version']; ?>
+<div class="card fill-page">
+    <div class="card-header">
+    <?= Html::beginForm(['/authoring/create'], 'post', [ 'id'=>'create', "class"=>"form-inline col-lg-6"]) ?>
+
+  <div class="form-group col-sm-4 mb-3">
+    <label><b>Create New Study</b></label>
+  </div>
+  <div class="form-group col-md-6 mb-2">
+    <input type="text" name="Study[name]" class="row form-control col-md-12 mb-2" placeholder="Study Name">
+  </div>
+  <button type="submit" class="btn btn-primary mb-3">Create</button>
+  <?= Html::endForm() ?>
+    </div>
+</div>
+<div class="site-index">
+    <div class="body-content">
+       
+
+        <div class="row">
+        <?php if(Yii::$app->user->identity->isAdmin()): ?>
+
+            <div class="card col-sm-6">
+                <div class="card-body">
+
+                    <h3><?=Html::a('Import &amp; Export Studies', ["/importexport"])?></h3>
+                    <p>
+                        Save study and respondent data as files or
+                        transfer to another server.<br>
+                    </p>
+
+                </div>
+            </div>
+            <?php endif; ?>
+
+            <?php if(Yii::$app->user->identity->permissions >= 3): ?>
+
+            <div class="card col-sm-6">
+                <div class="card-body">
+
+                    <h3><?=Html::a('Alter Matching', ["/dyad"])?></h3>
+                    <p>
+                        Match alters from related interviews<br><br>
+                    </p>
+                </div>
+            </div>
+            <?php endif;?>
+
+            <?php if(Yii::$app->user->identity->isSuperAdmin()): ?>
+            <div class="card col-sm-6">
+                <div class="card-body">
+                    <h3><?=Html::a('User Admin', ["/admin/user"])?></h3>
+                    <p>
+                        Add new users.<br><br>
+                    </p>
+                </div>
+            </div>
+            <?php endif; ?>
+
+
+
+            <div class="card col-sm-6">
+                <div class="card-body">
+                    <h3><?=Html::a('Logout', ["/site/logout"])?></h3>
+                    <p>
+                        Logout of Admin Mode.<br><br>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

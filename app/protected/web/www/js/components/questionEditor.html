@@ -1,0 +1,143 @@
+<b-card no-body :class="'mb-1'">
+    <b-card-header header-tag="header" class="p-1" role="tab">
+        <b-button block v-b-toggle="'accordion-' + question.id" variant="secondary">{{question.id ? (parseInt(question.ordering) + 1) + ". " + question.title: "Create New Question" }}</b-button>
+    </b-card-header>
+    <b-collapse v-bind:id="'accordion-' + question.id" accordion="my-accordion" role="tabpanel">
+        <form :id="'form-' + question.id" method="post">
+            <input type="hidden" name="_csrf-protected" :value="csrf">
+            <input type="hidden" name="Question[id]" v-model="question.id">
+            <input type="hidden" name="Question[studyId]" v-model="question.studyId">
+
+            <div class="row card-body">
+                <div class="col-md-6">
+                    <div class="form-group row">
+                        <label for="Question_title" class="col-sm-4 col-form-label">Title</label>
+                        <div class="col-sm-8">
+                            <input type="text" v-model="question.title" class="form-control" name="Question[title]" id="Question_title">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Question_subjectType" class="col-sm-4 col-form-label">Subject Type</label>
+                        <div class="col-sm-8">
+                            <b-form-select v-model="question.subjectType" :options="subjectTypes" name="Question[subjectType]" id="Question_subjectType"></b-form-select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Question_answerType" class="col-sm-4 col-form-label">Answer Type</label>
+                        <div class="col-sm-8">
+                            <b-form-select v-model="question.answerType" :options="answerTypes" name="Question[answerType]" id="Question_answerType"></b-form-select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Question_answerReasonExpressionId" class="col-sm-4 col-form-label">Skip Expression</label>
+                        <div class="col-sm-8">
+                            <b-form-select v-model="question.answerReasonExpressionId" :options="expressions" name="Question[answerReasonExpressionId]" id="Question_answerReasonExpressionId">
+                                <template #first>
+                    <b-form-select-option value=""></b-form-select-option>
+                </template>
+                            </b-form-select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <b-form-checkbox class="col" :id="question.id + '-Question_askingStyleList'" v-model="question.askingStyleList" name="Question[askingStyleList]" value="1" unchecked-value="0">
+                            List Style
+                        </b-form-checkbox>
+                        <b-form-checkbox class="col" :id="question.id + '-Question_dontKnowButton'" v-model="question.dontKnowButton" name="Question[dontKnowButton]" value="1" unchecked-value="0">
+                            Don't know
+                        </b-form-checkbox>
+                        <b-form-checkbox class="col" :id="question.id + '-Question_refuseButton'" v-model="question.refuseButton" name="Question[refuseButton]" value="1" unchecked-value="0">
+                            Refuse
+                        </b-form-checkbox>
+                    </div>
+
+                    <div v-if="question.answerType == 'MULTIPLE_SELECTION'">
+                        <div class="form-group row">
+                            <label :for="question.id + '_minCheckableBoxes'" class="col-sm-4 col-form-label">Min Checkboxes</label>
+                            <div class="col-sm-2">
+                                <input :id="question.id + '_minCheckableBoxes'" class="form-control" name="Question[minCheckableBoxes]" v-model="question.minCheckableBoxes">
+                            </div>
+                            <label :for="question.id + '_maxCheckableBoxes'" class="col-sm-4 col-form-label">Max Checkboxes</label>
+                            <div class="col-sm-2">
+                                <input :id="question.id + '_maxCheckableBoxes'" class="form-control" name="Question[maxCheckableBoxes]" v-model="question.maxCheckableBoxes">
+                            </div>
+                        </div>
+                        <b-table :id="question.id+'-options'" :tbody-tr-attr="setAttribute" v-sortable.tr="{ onUpdate: reorderOption, chosenClass: 'is-selected'}" :items="question.options" :fields="option_fields" striped responsive="sm">
+                            <template #cell(name)="row">
+                        <input class="form-control" @blur="editOption(row.item.id, this)" v-on:keyup.13="editOption(row.item.id, this)" v-model="row.item.name" />
+                    </template>
+                            <template #cell(value)="row">
+                            <input class="form-control" @change="editOption(row.item.id, this)" v-model="row.item.value" />
+                    </template>
+                            <template #cell(specify)="row">
+                        <!-- As `row.showDetails` is one-way, we call the toggleDetails function on @change -->
+                        <b-form-checkbox v-model="row.item.otherSpecify" @change="editOption(row.item.id, this)" value="1" unchecked-value="0">
+                        </b-form-checkbox>
+                    </template>
+                            <template #cell(single)="row">
+                        <!-- As `row.showDetails` is one-way, we call the toggleDetails function on @change -->
+                        <b-form-checkbox v-model="row.item.single" @change="editOption(row.item.id, this)"
+                        value="1"
+                        unchecked-value="0"
+                        >
+                        </b-form-checkbox>
+                    </template>
+                            <template #cell(details)="row">
+                        <b-button size="sm" @click="deleteOption(row.item.id)" class="mr-2 btn-danger">
+                        delete
+                        </b-button>
+                    </template>
+                        </b-table>
+                        <div>
+                            <input v-model="newOptionName" />
+                            <input v-model="newOptionValue" />
+                            <b-button @click="newOption">Save</b-button>
+                        </div>
+                    </div>
+
+                    <div v-if="question.answerType == 'DATE' || question.answerType == 'TIME_SPAN'">
+                        <div class="row">
+                            <input type="hidden" v-model="question.timeBits" />
+                            <b-form-checkbox class="col" :id="question.id + '-time-YEAR'" value="1" unchecked-value="0" @change="timeBits">
+                                Years
+                            </b-form-checkbox>
+                            <b-form-checkbox class="col" :id="question.id + '-time-MONTH'" value="1" unchecked-value="0" @change="timeBits">
+                                Months
+                            </b-form-checkbox>
+                            <b-form-checkbox class="col" :id="question.id + '-time-WEEK'" value="1" unchecked-value="0" @change="timeBits">
+                                Weeks
+                            </b-form-checkbox>
+                        </div>
+                        <div class="row">
+                            <input type="hidden" v-model="question.timeBits" />
+                            <b-form-checkbox class="col" :id="question.id + '-time-DAY'" value="1" unchecked-value="0" @change="timeBits">
+                                Days
+                            </b-form-checkbox>
+                            <b-form-checkbox class="col" :id="question.id + '-time-HOUR'" value="1" unchecked-value="0" @change="timeBits">
+                                Hours
+                            </b-form-checkbox>
+                            <b-form-checkbox class="col" :id="question.id + '-time-MINUTE'" value="1" unchecked-value="0" @change="timeBits">
+                                Minutes
+                            </b-form-checkbox>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label for="Question_prompt" class="col-sm-4 col-form-label">Prompt</label>
+                    <summer-note :model.sync="question.prompt" ref="Question_prompt" name="Question[prompt]" vid="Question_prompt"></summer-note>
+
+                    <label for="Question_preface" class="col-sm-4 col-form-label">Preface</label>
+                    <summer-note :model.sync="question.preface" ref="Question_preface" name="Question[preface]" vid="Question_preface"></summer-note>
+
+                    <label for="Question_citation" class="col-sm-4 col-form-label">Leaf and Stem</label>
+                    <summer-note :model.sync="question.citation" ref="Question_citation" name="Question[citation]" vid="Question_citation"></summer-note>
+                </div>
+            </div>
+            <div class="col-md-6 btn-group">
+                <button class="btn btn-success">Save</button>
+                <button class="btn btn-warning">Duplicate</button>
+                <button class="btn btn-danger">Delete</button>
+            </div>
+        </form>
+    </b-collapse>
+</b-card>

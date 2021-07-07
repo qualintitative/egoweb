@@ -1,0 +1,5 @@
+# nginx logs
+backend-access.log
+backend-error.log
+protected-access.log
+protected-error.log

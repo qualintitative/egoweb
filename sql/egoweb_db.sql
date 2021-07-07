@@ -50,10 +50,10 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
   CREATE TABLE IF NOT EXISTS `alters` (
     `id` int(11) NOT NULL,
     `active` int(11) DEFAULT NULL,
-    `ordering` int(11) NOT NULL,
+    `ordering` varchar(500) DEFAULT NULL,
     `name` text NOT NULL,
     `interviewId` text NOT NULL,
-    `alterListId` int(11) DEFAULT NULL,
+    `alterListId` varchar(500) DEFAULT NULL,
     `nameGenQIds` text
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -182,7 +182,8 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
     `matchedName` varchar(255) NOT NULL,
     `interviewId1` int(11) DEFAULT NULL,
     `interviewId2` int(11) DEFAULT NULL,
-    `userId` int(11) DEFAULT NULL
+    `userId` int(11) DEFAULT NULL,
+    `notes` varchar(255) DEFAULT NULL
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
   -- --------------------------------------------------------
@@ -265,7 +266,8 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
     `useAlterListField` text,
     `javascript` longtext,
     `restrictList` tinyint(1) DEFAULT NULL,
-    `autocompleteList` tinyint(1) DEFAULT NULL
+    `autocompleteList` tinyint(1) DEFAULT NULL,
+    `prefillList` tinyint(1) DEFAULT NULL
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
   -- --------------------------------------------------------
@@ -282,7 +284,8 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
     `name` text,
     `value` text,
     `ordering` int(11) DEFAULT NULL,
-    `otherSpecify` tinyint(1) DEFAULT NULL
+    `otherSpecify` tinyint(1) DEFAULT NULL,
+    `single` tinyint(1) DEFAULT NULL
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
   -- --------------------------------------------------------
@@ -364,13 +367,18 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
   -- Table structure for table `user`
   --
 
-  CREATE TABLE IF NOT EXISTS `user` (
-    `id` int(11) NOT NULL,
-    `email` text NOT NULL,
-    `password` text NOT NULL,
-    `name` text NOT NULL,
-    `permissions` int(11) NOT NULL DEFAULT '1'
-  ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  CREATE TABLE `user` (
+  `id` int(11) NOT NULL,
+  `email` text NOT NULL,
+  `password` text NOT NULL,
+  `name` text NOT NULL,
+  `permissions` int(11) NOT NULL DEFAULT 1,
+  `password_reset_token` varchar(255) DEFAULT NULL,
+  `created_at` int(11) DEFAULT NULL,
+  `updated_at` int(11) DEFAULT NULL,
+  `status` tinyint(4) DEFAULT NULL,
+  `auth_key` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
   --
   -- Indexes for dumped tables
@@ -392,15 +400,19 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
   -- Indexes for table `alters`
   --
   ALTER TABLE `alters`
-    ADD PRIMARY KEY (`id`);
+    ADD PRIMARY KEY (`id`),
+    ADD KEY `interviewId` (`interviewId`);
 
   --
   -- Indexes for table `answer`
   --
   ALTER TABLE `answer`
     ADD PRIMARY KEY (`id`),
-    ADD KEY `answerIndex` (`questionId`,`interviewId`,`alterId1`,`alterId2`);
-
+    ADD KEY `answerIndex` (`questionId`,`interviewId`,`alterId1`,`alterId2`),
+    ADD KEY `questionType` (`questionType`(1024)),
+    ADD KEY `studyId` (`studyId`),
+    ADD KEY `interviewId` (`interviewId`);
+  
   --
   -- Indexes for table `answerList`
   --
@@ -620,4 +632,9 @@ INSERT INTO `tbl_migration` (`version`, `apply_time`) VALUES
 ('m171010_091427_add_var_prompt_q_id', 1507650908),
 ('m180320_124446_add_alterlist_namegen', 1521550344),
 ('m180413_082300_server_table', 1523728116),
-('m181210_202059_question_autofill_restrict', 1544474812);
+('m181210_202059_question_autofill_restrict', 1550777561),
+('m181214_010547_prefill_list', 1550777561),
+('m190130_075827_matchnotes', 1550777561),
+('m201027_223018_alter_order', 1613374253),
+('m201126_180202_refuse_option', 1613374253),
+('m210317_002638_modify_alter_match', 1623877304);

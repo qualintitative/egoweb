@@ -1,168 +1,155 @@
+<?php
+
+/* @var $this \yii\web\View */
+/* @var $content string */
+
+use yii\helpers\Html;
+use yii\bootstrap4\Nav;
+use yii\bootstrap4\NavBar;
+use yii\widgets\Breadcrumbs;
+use app\assets\AppAsset;
+use app\models\Study;
+use common\widgets\Alert;
+AppAsset::register($this);
+?>
+<?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="en" ng-app="egowebApp">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title><?php echo CHtml::encode($this->pageTitle); ?></title>
-		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/www/css/bootstrap.css" />
-		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/www/css/flat-ui.css" />
-		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/www/css/main.css" />
-		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/summernote.css" />
-		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/summernote-bs3.css" />
-		<link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->request->baseUrl; ?>/css/font-awesome.min.css" />
-		<?php /* Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/jquery-1.12.4.min.js'); */ ?>
-		<?php /* Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/jquery-ui.min.js'); */ ?>
-		<?php Yii::app()->clientScript->registerCssFile(Yii::app()->clientScript->getCoreScriptUrl().'/jui/css/base/jquery-ui.css'); ?>
-		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/bootstrap.min.js'); ?>
-		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/summernote.js'); ?>
-		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/js/plugins/summernote-ext-fontstyle.js'); ?>
-		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/jquery.floatThead.js'); ?>
-		<?php Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/egoweb.js'); ?>
-		<?php Yii::app()->clientScript->registerCoreScript('jquery'); ?>
-		<?php Yii::app()->clientScript->registerCoreScript('jquery.ui'); ?>
-	</head>
-	<body>
-        <nav class="navbar navbar-fixed-top" id="topbar">
-				<?php if(!Yii::app()->user->isGuest): ?>
-				<?php
-				$condition = "id != 0";
-				if(!Yii::app()->user->isSuperAdmin){
-                    $criteria = array(
-            			'condition'=>"interviewerId = " . Yii::app()->user->id,
-                    );
-                    $interviewers = Interviewer::model()->findAll($criteria);
-                    $studies = array();
-                    foreach($interviewers as $i){
-                        $studies[] = $i->studyId;
-                    }
-					if($studies)
-						$condition = "id IN (" . implode(",", $studies) . ")";
-					else
-						$condition = "id = -1";
-				}
 
-				$criteria = array(
-					'condition'=>$condition . " AND active = 1",
-					'order'=>'id DESC',
-				);
-				$studies = Study::model()->findAll($criteria);
-				?>
-				<ul class="nav navbar-nav navbar-left">
-					<li class="dropdown">
-						<a id="menu-button" href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">
-							<span class="fui-list"></span>
-						</a>
-						<ul class="dropdown-menu">
-							<li><?=CHtml::link('Interviewing', $this->createUrl("/interview"))?>
-								<ul>
-									<?php foreach($studies as $data): ?>
-									<li>
-									<?php echo CHtml::link(CHtml::encode($data->name), array('/interview?studyId='.$data->id)); ?>
-									</li>
-									<?php endforeach; ?>
-								</ul>
-							</li>
-							<?php if(Yii::app()->user->isAdmin): ?>
-							<li><?=CHtml::link('Authoring', $this->createUrl("/authoring"))?>
-								<ul>
-									<?php foreach($studies as $data): ?>
-									<li>
-									<?php echo CHtml::link(CHtml::encode($data->name), array('/authoring/edit', 'id'=>$data->id)); ?>
-									</li>
-									<?php endforeach; ?>
-								</ul>
-							</li>
-							<li><?=CHtml::link('Data Processing', $this->createUrl("/data"))?>
-								<ul>
-									<?php foreach($studies as $data): ?>
-									<li>
-									<?php echo CHtml::link(CHtml::encode($data->name), array('/data/', 'study'=>$data->id)); ?>
-									</li>
-									<?php endforeach; ?>
-								</ul>
-							</li>
-							<li><?=CHtml::link('Alter Matching', $this->createUrl("/dyad"))?></li>
-							<li><?=CHtml::link('Import & Export Studies', $this->createUrl("/importExport"))?></li>
-							<?php endif; ?>
-							<?php if(Yii::app()->user->isSuperAdmin): ?>
-							<li><?=CHtml::link('User Admin', $this->createUrl("/admin/user"))?>
-							<?php endif; ?>
-							<li><?=CHtml::link('Mobile', $this->createUrl("/mobile"))?>
-							<li><?=CHtml::link('Log Out', $this->createUrl("/site/logout"))?>
-						</ul>
-					</li>
-				</ul>
-				<?php else: ?>
-				<ul class="nav navbar-nav navbar-left">
-					<li class="dropdown">
-						<a id="menu-button" href="#" class="dropdown-toggle" data-toggle="dropdown">
-							<span class="fui-lock"></span>
-						</a>
-					</li>
-				</ul>
-				<?php endif; ?>
-				<a class="titlelink" href="<?=$this->createUrl("/admin/")?>">EgoWeb 2.0</a><span class="title hidden-xs" id="pageTitle"><?php echo CHtml::encode($this->pageTitle); ?></span><?php if(!Yii::app()->user->isGuest): ?><span class="title hidden-xs" id="questionTitle"></span><?php endif; ?>
+<head>
+    <meta charset="<?= Yii::$app->charset ?>">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <?php $this->registerCsrfMetaTags() ?>
+    <title><?= Html::encode($this->title) ?></title>
+    <?php $this->head() ?>
+</head>
 
-				<ul id="navbox" class="nav navbar-nav navbar-right">
-					<li id="questionMenu" class="dropdown hidden">
-						<a id="menu-button" href="#" class="dropdown-toggle" data-toggle="dropdown" target="#second">
-							<span class="fui-gear"></span>
-						</a>
-                        <ul class="dropdown-menu" id="second"></ul>
-					</li>
+<body>
+    <?php $this->beginBody() ?>
+    <?php
+                if (!Yii::$app->user->isGuest) {
+                    $logout = Html::beginForm(['/site/logout'], 'post')
+            . Html::submitButton(
+                'Logout (' . Yii::$app->user->identity->name .')',
+                ['class' => 'btn btn-link logout']
+            )
+            . Html::endForm();
+                }
+    
+?>
+ <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+                <img src="/favicon.ico" width="32" height="32" alt="">
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01"
+                    aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+                    <?php echo $this->title; ?>
+                </button>
+                <button class="navbar-toggler nav-right ml-auto" type="button" data-toggle="collapse"
+                    data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <?php if (Yii::$app->controller->id == 'interview' && Yii::$app->controller->action->id == 'view'): ?>
 
-				</ul>
-				<span class="interviewee"><?php if(Yii::app()->getController()->getId() == "interview" && isset($_GET['interviewId']) && !Yii::app()->user->isGuest): ?><?php echo (isset($_GET['interviewId']) && $_GET['interviewId']) ?  Interview::getEgoId($_GET['interviewId']) : ""; ?><?php endif; ?></span>
-        </nav>
-        <!--
-			<div id="menubar">
+                <a class="ml-2 navbar-brand d-none d-md-block" href="/admin"><?php echo $this->title; ?></a>
+                <?php else: ?>
+                <a class="ml-2 navbar-brand d-none d-md-block" href="/admin">Egoweb 2.0</a>
+                <?php endif; ?>
+                <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+                    <ul class="navbar-nav">
+                        <li id="navbox" class="nav-item dropdown">
+                            <?php if (Yii::$app->controller->id == 'interview' && Yii::$app->controller->action->id == 'view'): ?>
+                            <a class="nav-link dropdown-toggle" href="http://example.com" id="questionTitle"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink"
+                                class="dropdown-menu" id="second"></ul>
+                            <?php else: ?>
+                            <a class="navbar-brand" href="#"><?php echo $this->title; ?></a>
+                            <?php endif; ?>
 
-				<div id="nav">
-					<?php if(Yii::app()->getController()->getId() == "interviewing" && !Yii::app()->user->isGuest && !isset($_GET['studyId']) && preg_match('/\d+/', Yii::app()->getRequest()->getRequestUri())): ?>
-					<a href="javascript:void(0)" onclick="$('#navigation').toggle()"><img src="/images/nav.png"></a>
-					<?php endif; ?>
-                    <div id="navigation">
-                    	<div id="navbox">
-                    		<ul>
-                    		</ul>
-                    	</div>
-                    </div>
-				</div>
-				<?php if(Yii::app()->getController()->getId() == "interviewing" && isset($_GET['interviewId']) && !Yii::app()->user->isGuest): ?>
-				<span class="interviewee"><?php echo (isset($_GET['interviewId']) && $_GET['interviewId']) ?  Interview::getEgoId($_GET['interviewId']) : ""; ?></span>
-				<span class="intleft">Interviewing:</span>
-				<?php endif; ?>
-			</div>-->
-			<div id="content" class="container">
-            	<?php
-            	if(Yii::app()->getController()->getId() == "authoring" && preg_match('/\d+/', Yii::app()->getRequest()->getRequestUri())){
-            		if(isset($this->studyId)){
-            			$this->menu=array(
-            				array('label'=>'Study Settings', 'url'=>array('edit','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'edit'),
-            				array('label'=>'Ego ID Questions', 'url'=>array('ego_id','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'ego_id'),
-                            array('label'=>'Questions', 'url'=>array('questions','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'questions'),
-            				array('label'=>'Expressions', 'url'=>array('expression','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'expression'),
-						//	array('label'=>'Option Lists', 'url'=>array('optionlist','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'optionlist'),
-						//	array('label'=>'Code Book', 'url'=>array('codebook','id'=>$this->studyId), "active"=>Yii::app()->controller->action->id == 'codebook'),
-            			);
+                        </li>
+                    </ul>
+                </div>
 
-            		}
-            	}
-            	?>
-				<?php $this->widget('zii.widgets.CMenu',array(
-					'id'=>'mainNav',
-					'items'=>$this->menu,
-					'activeCssClass'=>'active',
-					'htmlOptions'=>array('class'=>'nav nav-pills small')
-				)); echo "\n";?>
-				<?php echo $content; ?>
-			</div>
-			<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-				<div class="modal-dialog">
-					<div class="modal-content">
-					</div>
-				</div>
-			</div>
-	</body>
+                <?php if (!Yii::$app->user->isGuest): ?>
+
+                <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                <?php echo Yii::$app->controller->id; ?>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                                <li class="dropdown-submenu"><a class="dropdown-item" href="/admin">Admin</a></li>
+                                <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">New
+                                        Interview</a>
+                                    <ul class="dropdown-menu">
+                                        <?php foreach(Yii::$app->user->identity->studies as $study):?>
+                                        <li><?php echo Html::a(substr($study->name,0,24), ["/interview/" . $study->id . "#/page/0"], ['class'=>'dropdown-item']); ?>
+                                        </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle"
+                                        href="#">Authoring</a>
+                                    <ul class="dropdown-menu">
+                                        <?php foreach(Yii::$app->user->identity->studies as $study):?>
+                                        <li><?php echo Html::a(substr($study->name,0,24), ["/authoring/" . $study->id], ['class'=>'dropdown-item']); ?>
+                                        </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </li>
+                                <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">Data
+                                        Processing</a>
+
+                                    <ul class="dropdown-menu">
+                                        <?php foreach(Yii::$app->user->identity->studies as $study):?>
+                                        <li><?php echo Html::a(substr($study->name,0,24), ["/data/" . $study->id], ['class'=>'dropdown-item']); ?>
+                                        </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </li>
+                                <li class="dropdown-submenu"><a class="dropdown-item" href="/importexport">Import /
+                                        Export</a></li>
+                                <li class="dropdown-submenu"><a class="dropdown-item" href="/importexport">User
+                                        Admin</a></li>
+                                <li class="dropdown-submenu"><a class="dropdown-item" href="/importexport">Mobile</a>
+                                </li>
+
+                                <li class="dropdown-submenu"><?php echo $logout; ?></li>
+                            </ul>
+                        </li>
+                    </ul>
+
+
+                </div>
+                <?php endif; ?>
+            </nav>
+    <div class="container-lg">
+
+        <?= Breadcrumbs::widget([
+            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+        ]) ?>
+        <main role="main">
+
+        <?= Alert::widget() ?>
+
+            <?= $content ?>
+
+        </main>
+
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+
+        </div>
+    </footer>
+
+    <?php $this->endBody() ?>
+</body>
+
 </html>
+<?php $this->endPage() ?>

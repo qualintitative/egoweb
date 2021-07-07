@@ -1,5 +1,0 @@
-<?php
-
-?>
-
-debug index

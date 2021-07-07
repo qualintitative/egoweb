@@ -29,43 +29,16 @@ class DyadController extends Controller
 		);
 	}
 
-  public function actionIndex()
-  {
-    $condition = "id != 0";
-    if(!Yii::app()->user->isSuperAdmin){
-            #OK FOR SQL INJECTION
-            if(Yii::app()->user->id){
-                $criteria = array(
-              'condition'=>"interviewerId = " . Yii::app()->user->id,
-                );
-                $interviewers = Interviewer::model()->findAll($criteria);
-                $studies = array();
-                foreach($interviewers as $i){
-                    $studies[] = $i->studyId;
-                }
-            }else{
-                $studies = false;
-            }
-      if($studies)
-        $condition = "id IN (" . implode(",", $studies) . ")";
-      else
-        $condition = "id = -1";
+    public function actionIndex()
+    {
+        $studies = Yii::$app->user->identity->studies;
+        $this->render('index', array(
+            'studies'=>$studies,
+        ));
     }
 
-    $criteria = array(
-      'condition'=>$condition,
-      'order'=>'id DESC',
-    );
 
-    $studies = Study::model()->findAll($condition);
-
-    $this->render('index', array(
-      'studies'=>$studies,
-    ));
-  }
-
-
-      public function actionMatching()
+    public function actionMatching()
       {
           if(count($_POST['export']) < 2)
               die("You must select at least 2 interviews");
@@ -138,23 +111,7 @@ class DyadController extends Controller
                               $answerArray[] = $option->name;
                           }
                       }
-                      /*
-                      foreach  ($optionIds as $optionId)
-                      {
-                          $option = QuestionOption::model()->findbyPk($optionId);
-                          if ($option)
-                          {
-                              $criteria=new CDbCriteria;
-                              $criteria=array(
-                                  'condition'=>"optionId = " . $option->id . " AND interviewId in (".$answer->interviewId.")",
-                              );
-                              $otherSpecify = OtherSpecify::model()->find($criteria);
-                              if ($otherSpecify)
-                                  $answerArray[] = $option->name . " (\"" . $otherSpecify->value . "\")";
-                              else
-                                  $answerArray[] = $option->name;
-                          }
-                      }*/
+                    
                       $answer->value = implode("; ", $answerArray);
 
       		}
@@ -323,30 +280,4 @@ class DyadController extends Controller
               }
             }
 
-	// Uncomment the following methods and override them if needed
-	/*
-	public function filters()
-	{
-		// return the filter configuration for this controller, e.g.:
-		return array(
-			'inlineFilterName',
-			array(
-				'class'=>'path.to.FilterClass',
-				'propertyName'=>'propertyValue',
-			),
-		);
-	}
-
-	public function actions()
-	{
-		// return external action classes, e.g.:
-		return array(
-			'action1'=>'path.to.ActionClass',
-			'action2'=>array(
-				'class'=>'path.to.AnotherActionClass',
-				'propertyName'=>'propertyValue',
-			),
-		);
-	}
-	*/
 }

@@ -1,119 +1,59 @@
 <?php
 
+namespace app\models;
+
+use Yii;
+
 /**
  * This is the model class for table "matchedAlters".
  *
- * The followings are the available columns in table 'matchedAlters':
- * @property integer $id
- * @property integer $studyId
- * @property integer $alterId1
- * @property integer $alterId2
+ * @property int $id
+ * @property int|null $studyId
+ * @property int|null $alterId1
+ * @property int|null $alterId2
  * @property string $matchedName
- * @property string $notes
-
+ * @property int|null $interviewId1
+ * @property int|null $interviewId2
+ * @property int|null $userId
+ * @property string|null $notes
  */
-class MatchedAlters extends CActiveRecord
+class MatchedAlters extends \yii\db\ActiveRecord
 {
-	/**
-	 * @return string the associated database table name
-	 */
-	public function tableName()
-	{
-		return 'matchedAlters';
-	}
-
-	/**
-	 * @return array validation rules for model attributes.
-	 */
-	public function rules()
-	{
-		// NOTE: you should only define rules for those attributes that
-		// will receive user inputs.
-		return array(
-			array('matchedName', 'required'),
-			array('studyId, alterId1, alterId2, interviewId1, interviewId2, userId', 'numerical', 'integerOnly'=>true),
-			array('matchedName, notes', 'length', 'max'=>255),
-			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('id, studyId, alterId1, alterId2, matchedName, notes', 'safe', 'on'=>'search'),
-		);
-	}
-
-	/**
-	 * @return array relational rules.
-	 */
-	public function relations()
-	{
-		// NOTE: you may need to adjust the relation name and the related
-		// class name for the relations automatically generated below.
-		return array(
-		);
-	}
-
-	/**
-	 * @return array customized attribute labels (name=>label)
-	 */
-	public function attributeLabels()
-	{
-		return array(
-			'id' => 'ID',
-			'studyId' => 'Study',
-			'alterId1' => 'Alter Id1',
-			'alterId2' => 'Alter Id2',
-			'matchedName' => 'Matched Name',
-      'notes' => 'Notes',
-		);
-	}
-
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	public function search()
-	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
-		$criteria=new CDbCriteria;
-
-		$criteria->compare('id',$this->id);
-		$criteria->compare('studyId',$this->studyId);
-		$criteria->compare('alterId1',$this->alterId1);
-		$criteria->compare('alterId2',$this->alterId2);
-		$criteria->compare('matchedName',$this->matchedName,true);
-    $criteria->compare('notes',$this->notes,true);
-
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
-	}
-
-    public function getMatchId()
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
     {
-        $interview1 = Interview::getEgoId($this->interviewId1);
-        $interview2 = Interview::getEgoId($this->interviewId2);
-
-        if($this->interviewId1 > $this->interviewId2)
-            return $interview2  . "_" . $interview1;
-        else
-            return $interview1  . "_" . $interview2;
+        return 'matchedAlters';
     }
 
-	/**
-	 * Returns the static model of the specified AR class.
-	 * Please note that you should have this exact method in all your CActiveRecord descendants!
-	 * @param string $className active record class name.
-	 * @return MatchedAlters the static model class
-	 */
-	public static function model($className=__CLASS__)
-	{
-		return parent::model($className);
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['studyId', 'alterId1', 'alterId2', 'interviewId1', 'interviewId2', 'userId'], 'integer'],
+            [['matchedName'], 'required'],
+            [['matchedName', 'notes'], 'string', 'max' => 255],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'studyId' => 'Study ID',
+            'alterId1' => 'Alter Id1',
+            'alterId2' => 'Alter Id2',
+            'matchedName' => 'Matched Name',
+            'interviewId1' => 'Interview Id1',
+            'interviewId2' => 'Interview Id2',
+            'userId' => 'User ID',
+            'notes' => 'Notes',
+        ];
+    }
 }

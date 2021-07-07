@@ -1,64 +1,41 @@
 <?php
-/* @var $this SiteController */
-/* @var $model LoginForm */
-/* @var $form CActiveForm  */
 
-$this->pageTitle = 'Login';
+/* @var $this yii\web\View */
+/* @var $form yii\bootstrap\ActiveForm */
+/* @var $model \app\models\LoginForm */
 
+use yii\helpers\Html;
+use yii\bootstrap4\ActiveForm;
+
+$this->title = 'Login';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
+<div class="site-login">
+    <h1><?= Html::encode($this->title) ?></h1>
 
-<h1>Login</h1>
+    <p>Please fill out the following fields to login:</p>
 
-<p>Please fill out the following form with your login credentials:</p>
+    <div class="row">
+        <div class="col-lg-5">
+            <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
 
-<div class="form">
-<?php $form=$this->beginWidget('CActiveForm', array(
-        'id'=>'login-form',
-        'enableClientValidation'=>false,
-        'clientOptions'=>array(
-            'validateOnSubmit'=>true,
-        ),
-        'htmlOptions' => array(
-            'class'=>'form-horizontal',
-        ),
-    )); ?>
+                <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
 
-	<div class="form-group">
-		<?php echo $form->label($model,'username', array("class" => "col-md-1 control-label")); ?>
-		<div class="col-md-3"><?php echo $form->textField($model,'username', array("class"=>"form-control")); ?></div>
-		<div class="col-md-8"><?php echo $form->error($model,'username', array("class"=>"help-block")); ?></div>
-	</div>
+                <?= $form->field($model, 'password')->passwordInput() ?>
 
-	<div class="form-group">
-		<?php echo $form->label($model,'password', array("class"=>"col-md-1 control-label")); ?>
-		<div class="col-md-3"><?php echo $form->passwordField($model,'password', array("class"=>"form-control")); ?></div>
-		<div class="col-md-8"><?php echo $form->error($model,'password'); ?></div>
-	</div>
+                <?= $form->field($model, 'rememberMe')->checkbox() ?>
 
-        <?php if($model->scenario == 'captchaRequired'): ?>
-            <div class="form-group">
-                <?php echo CHtml::activeLabel($model,'verifyCode', array("class" => "col-md-1 control-label")); ?><?php $this->widget('CCaptcha'); ?>
-                <div class="col-md-3"><?php echo CHtml::activeTextField($model,'verifyCode', array("class"=>"form-control")); ?></div>
-                <div class="col-md-offset-4 col-md-8">
-                    Please enter the letters as they are shown in the image above.<br/>
-                Letters are not case-sensitive.
+                <div style="color:#999;margin:1em 0">
+                    If you forgot your password you can <?= Html::a('reset it', ['site/request-password-reset']) ?>.
+                    <br>
+                    Need new verification email? <?= Html::a('Resend', ['site/resend-verification-email']) ?>
                 </div>
-            </div>
-        <?php endif; ?>
 
-	<div class="form-group rememberMe">
-		<div class="col-md-offset-1 col-md-3">
-    		<?php echo $form->checkBox($model,'rememberMe'); ?>
-            <?php echo $form->label($model,'rememberMe'); ?>
-		</div>
-		<div class="col-md-8"><?php echo $form->error($model,'rememberMe'); ?></div>
-	</div>
+                <div class="form-group">
+                    <?= Html::submitButton('Login', ['class' => 'btn btn-primary', 'name' => 'login-button']) ?>
+                </div>
 
-	<div class="form-group">
-    	<div class="col-md-offset-1 col-md-11">
-		    <?php echo CHtml::submitButton('Login', array("class"=>"btn btn-primary")); ?>
-    	</div>
-	</div>
-
-<?php $this->endWidget(); ?>
-</div><!-- form -->
+            <?php ActiveForm::end(); ?>
+        </div>
+    </div>
+</div>

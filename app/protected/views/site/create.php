@@ -1,46 +1,33 @@
 <?php
-/* @var $this ProfileController */
-/* @var $model User */
-/* @var $form CActiveForm */
+
+/* @var $this yii\web\View */
+/* @var $form yii\bootstrap\ActiveForm */
+/* @var $model \app\models\SignupForm */
+
+use yii\helpers\Html;
+use yii\bootstrap4\ActiveForm;
+
+$this->title = 'Create Admin User';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
-<h1>Create Admin User</h1>
+<div class="site-signup">
+    <h1><?= Html::encode($this->title) ?></h1>
 
-<?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'user-form',
-	'enableAjaxValidation'=>false,
-	'htmlOptions' => array('enctype' => 'multipart/form-data', 'class'=>'form-horizontal'),
-)); ?>
+    <div class="row">
+        <div class="col-lg-5">
+            <?php $form = ActiveForm::begin(['id' => 'form-signup']); ?>
 
-<?php echo $form->errorSummary($model); ?>
+                <?= $form->field($model, 'name')->textInput(['autofocus' => true]) ?>
 
-<div class="form-group">
-	<?php echo $form->label($model,'name',array('class'=>'control-label col-lg-1')); ?>
-	<div class="col-lg-3">
-		<?php echo $form->textField($model,'name',array('class'=>'form-control')); ?>
-	</div>
+                <?= $form->field($model, 'email') ?>
+
+                <?= $form->field($model, 'password')->passwordInput() ?>
+
+                <div class="form-group">
+                    <?= Html::submitButton('Create', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
+                </div>
+
+            <?php ActiveForm::end(); ?>
+        </div>
+    </div>
 </div>
-
-<div class="form-group">
-	<?php echo $form->label($model,'email',array('class'=>'control-label col-lg-1')); ?>
-	<div class="col-lg-3">
-		<?php echo $form->textField($model,'email',array('class'=>'form-control')); ?>
-	</div>
-</div>
-
-<div class="form-group">
-	<?php echo $form->label($model,'password',array('class'=>'control-label col-lg-1')); ?>
-	<div class="col-lg-3">
-		<?php echo $form->passwordField($model,'password',array('class'=>'form-control')); ?>
-	</div>
-</div>
-
-<div class="form-group">
-	<?php echo $form->label($model,'confirm',array('class'=>'control-label col-lg-1')); ?>
-	<div class="col-lg-3">
-		<?php echo $form->passwordField($model,'confirm',array('class'=>'form-control')); ?>
-	</div>
-</div>
-
-
-<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save',array('class'=>'btn btn-primary col-lg-offset-1')); ?>
-<?php $this->endWidget(); ?>

@@ -1,34 +1,65 @@
 <?php
-class ImportExportController extends Controller
-{
+namespace app\controllers;
 
-  /**
-   * @return array action filters
-   */
-    public function filters()
+use app\models\ResendVerificationEmailForm;
+use app\models\VerifyEmailForm;
+use Yii;
+use yii\base\InvalidArgumentException;
+use yii\web\BadRequestHttpException;
+use yii\web\Controller;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use app\helpers\Tools;
+use app\models\User;
+use app\models\Study;
+use yii\helpers\Url;
+use yii\helpers\ArrayHelper;
+use app\models\Question;
+use app\models\QuestionOption;
+use app\models\Expression;
+use app\models\AlterPrompt;
+use app\models\Interview;
+use app\models\Server;
+
+/**
+ * Site controller
+ */
+class ImportexportController extends Controller
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
     {
-        return array(
-      'accessControl', // perform access control for CRUD operations
-      //'postOnly + delete', // we only allow deletion via POST request
-    );
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
-     * Specifies the access control rules.
-     * This method is used by the 'accessControl' filter.
-     * @return array access control rules
+     * {@inheritdoc}
      */
-    public function accessRules()
+    public function actions()
     {
-        return array(
-      array('allow', // allow authenticated user to perform 'create' and 'update' actions
-        'users'=>array('@'),
-      ),
-      array('deny',  // deny all users
-        'users'=>array('*'),
-      ),
-    );
+        return [
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
+            ],
+            'captcha' => [
+                'class' => 'yii\captcha\CaptchaAction',
+                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+            ],
+        ];
     }
+
 
     public function actionImportstudy()
     {
@@ -859,16 +890,19 @@ class ImportExportController extends Controller
         if ($_POST['name'] == "" || $_POST['studyId'] == "") {
             die("nothing to replicate");
         }
-        $study = Study::model()->findByPk((int)$_POST['studyId']);
-        $study->name = $_POST['name'];
-        $questions = Question::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
-        $options = QuestionOption::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
-        $expressions = Expression::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
-        $alterPrompts = AlterPrompt::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
-        $alterLists = AlterList::model()->findAllByAttributes(array('studyId'=>$_POST['studyId']));
+        $study = Study::findOne($_POST['studyId']);
+        if(!$_POST['name'] || $study->name == $_POST['name'])
+            $study->name = $study->name . "_copy";
+        else
+            $study->name = $_POST['name'];
+        $questions = Question::findAll(array('studyId'=>$_POST['studyId']));
+        $options = QuestionOption::findAll(array('studyId'=>$_POST['studyId']));
+        $expressions = Expression::findAll(array('studyId'=>$_POST['studyId']));
+        $alterPrompts = AlterPrompt::findAll(array('studyId'=>$_POST['studyId']));
+        $alterLists = AlterList::findAll(array('studyId'=>$_POST['studyId']));
 
         $data = Study::replicate($study, $questions, $options, $expressions, $alterPrompts, $alterLists);
-        $this->redirect(array('/authoring/edit','id'=>$data['studyId']));
+        return $this->response->redirect(Url::toRoute('/authoring/ ', ['id'=>$data['studyId']]));
     }
 
     public function actionIndex()
@@ -876,55 +910,28 @@ class ImportExportController extends Controller
         if (isset($_POST['Server'])) {
             $server = new Server;
             $server->attributes = $_POST['Server'];
-            $server->userId = Yii::app()->user->id;
+            $server->userId = Yii::$app->user->identity->id;
             $server->save();
-            Yii::app()->request->redirect("/importExport");
+            return $this->response->redirect(Url::toRoute('/importexport'));
         }
-        if (!Yii::app()->user->isSuperAdmin)
-            $result = Server::model()->findAll();
+        if (!Yii::$app->user->identity->isSuperAdmin())
+            $result = Server::findAll();
         else
-            $result = Server::model()->findAllByAttributes(array("userId"=>Yii::app()->user->id));
+            $result = Server::findAll(array("userId"=>Yii::$app->user->identity->id));
         $servers = array();
         foreach ($result as $server) {
-            $servers[$server->id] = mToA($server);
-        }
-        $condition = "id != 0";
-        if (!Yii::app()->user->isSuperAdmin) {
-            if (Yii::app()->user->id) {
-                $criteria = array(
-          'condition'=>"interviewerId = " . Yii::app()->user->id,
-            );
-                $interviewers = Interviewer::model()->findAll($criteria);
-                $studies = array();
-                foreach ($interviewers as $i) {
-                    $studies[] = $i->studyId;
-                }
-            } else {
-                $studies = false;
-            }
-            if ($studies) {
-                $condition = "id IN (" . implode(",", $studies) . ")";
-            } else {
-                $condition = "id = -1";
-            }
+            $servers[$server->id] = Tools::mToA($server);
         }
 
-        $criteria = array(
-      'condition'=>$condition,
-      'order'=>'id DESC',
-    );
+        $studies = Yii::$app->user->identity->studies;
+        return $this->render('index',["servers"=>$servers, "studies"=>$studies]);
 
-        $studies = Study::model()->findAll($condition);
-        $this->render('index', array(
-      "servers"=>$servers,
-      "studies"=>$studies,
-    ));
     }
 
     public function actionAjaxInterviews($id)
     {
-        $study = Study::model()->findByPk($id);
-        $interviews = Interview::model()->findAllByAttributes(array('studyId'=>$id));
+        $study = Study::findOne($id);
+        $interviews = Interview::findAll(array('studyId'=>$id));
         $this->renderPartial(
             '_interviews',
             array(
@@ -938,7 +945,7 @@ class ImportExportController extends Controller
 
     public function actionAjaxexport()
     {
-        $interview = Interview::model()->findByPk($_POST['interviewId']);
+        $interview = Interview::findOne($_POST['interviewId']);
         if ($interview) {
             $filePath = getcwd() . "/assets/" .  $interview->studyId . "/";
             if (!is_dir($filePath)) {
@@ -974,7 +981,7 @@ class ImportExportController extends Controller
             die("nothing to export");
         }
 
-        $study = Study::model()->findByPk((int)$_POST['studyId']);
+        $study = Study::findOne($_POST['studyId']);
 
         header("Content-type: text/xml; charset=utf-8");
         header("Content-Disposition: attachment; filename=".$study->name.".study");
@@ -982,11 +989,10 @@ class ImportExportController extends Controller
 
         $interviewIds = $_POST['export'];
 
-        $questions = Question::model()->findAllByAttributes(array('studyId'=>$study->id), array('order'=>'subjectType, ordering'));
-        $expressions = Expression::model()->findAllByAttributes(array('studyId'=>$study->id));
-        //$answerLists = AnswerList::model()->findAllByAttributes(array('studyId'=>$this->id));
-        $alterLists = AlterList::model()->findAllByAttributes(array("studyId"=>$study->id));
-        $alterPrompts = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$study->id));
+        $questions = Question::find()->where(array('studyId'=>$study->id))->orderBy(array('subjectType'=>'ASC', 'ordering'=>'ASC'))->all();
+        $expressions = Expression::findAll(array('studyId'=>$study->id));
+        $alterLists = AlterList::findAll(array("studyId"=>$study->id));
+        $alterPrompts = AlterPrompt::findAll(array("studyId"=>$study->id));
 
         $study->introduction = sanitizeXml($study->introduction);
         $study->egoIdPrompt = sanitizeXml($study->egoIdPrompt);
@@ -994,10 +1000,10 @@ class ImportExportController extends Controller
         $study->conclusion = sanitizeXml($study->conclusion);
 
         if (count($interviewIds) > 0) {
-            $interviews = Interview::model()->findAllByAttributes(array("id"=>$interviewIds));
+            $interviews = Interview::findAll(array("id"=>$interviewIds));
             foreach ($interviews as $result) {
                 $interview[$result->id] = $result;
-                $answer = Answer::model()->findAllByAttributes(array("interviewId"=>$result->id));
+                $answer = Answer::findAll(array("interviewId"=>$result->id));
                 $answers[$result->id] = $answer;
                 $criteria = array(
             'condition'=>"FIND_IN_SET(" . $result->id . ", interviewId)",
@@ -1187,15 +1193,15 @@ class ImportExportController extends Controller
                       'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId)",
                       'order'=>'ordering',
                   );
-                $results = Alters::model()->findAll($criteria);
+                $results = Alters::findAll($criteria);
                 foreach ($results as $result) {
                     $alters[] = mToA($result);
                 }
-                $results = Graph::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+                $results = Graph::findAll(array('interviewId'=>$interviewId));
                 foreach ($results as $result) {
                     $graphs[] = mToA($result);
                 }
-                $results = Note::model()->findAllByAttributes(array("interviewId"=>$interviewId));
+                $results = Note::findAll(array("interviewId"=>$interviewId));
                 foreach ($results as $result) {
                     $notes[] = $result->notes;
                 }
@@ -1228,7 +1234,7 @@ class ImportExportController extends Controller
     public function actionDeleteserver()
     {
         if (isset($_POST['serverId'])) {
-            $server = Server::model()->findByPK($_POST['serverId']);
+            $server = Server::findOne($_POST['serverId']);
             if ($server) {
                 $server->delete();
                 echo "success";

@@ -1,129 +1,295 @@
 <?php
+namespace app\controllers;
 
+use app\models\ResendVerificationEmailForm;
+use app\models\VerifyEmailForm;
+use Yii;
+use yii\base\InvalidArgumentException;
+use yii\web\BadRequestHttpException;
+use yii\web\Controller;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use app\models\LoginForm;
+use app\models\PasswordResetRequestForm;
+use app\models\ResetPasswordForm;
+use app\models\SignupForm;
+use app\models\ContactForm;
+use app\helpers\Tools;
+use app\models\User;
+use yii\helpers\Url;
+
+/**
+ * Site controller
+ */
 class SiteController extends Controller
 {
-		public $counter;
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['index', 'login', 'create', 'request-password-reset', 'reset-password'],
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            /*
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ],*/
+        ];
+    }
 
-	/**
-	 * Declares class-based actions.
-	 */
-	public function actions()
-	{
-		return array(
-			// captcha action renders the CAPTCHA image displayed on the contact page
-			'captcha'=>array(
-				'class'=>'CCaptchaAction',
-				'backColor'=>0xFFFFFF,
-			),
-			// page action renders "static" pages stored under 'protected/views/site/pages'
-			// They can be accessed via: index.php?r=site/page&view=FileName
-			'page'=>array(
-				'class'=>'CViewAction',
-			),
-		);
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function actions()
+    {
+        return [
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
+            ],
+            'captcha' => [
+                'class' => 'yii\captcha\CaptchaAction',
+                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+            ],
+        ];
+    }
 
-	/**
-	 * This is the default 'index' action that is invoked
-	 * when an action is not explicitly requested by users.
-	 */
-	public function actionIndex()
-	{
-		// renders the view file 'protected/views/site/index.php'
-		// using the default layout 'protected/views/layouts/main.php'
-		if(count(User::model()->findAll()) == 0){
-			$model = new User;
-			if(isset($_POST['User'])){
-				$model->attributes = $_POST['User'];
-				$model->permissions = 11;
-				$salt = User::generateSalt();
-				$password = $model->password;
-				$model->password = User::hashPassword($model->password,$salt).':'.$salt;
-				$model->confirm = $model->password;
-				if($model->save()){
-    				$model = User::model()->findByPk($model->id);
-                    $login = new LoginForm;
-                    $login->username = $model->email;
-                    $login->password = $password;
-                    // validate user input and redirect to the previous page if valid
-        			if($login->validate() && $login->login()){
-                        $this->redirect(array('/admin'));
-        			}
-				}
-			}
-			$this->render('create', array(
-				'model'=>$model,
-			));
-		}else{
-			$this->render('index');
-		}
-	}
+    /**
+     * Displays homepage.
+     *
+     * @return mixed
+     */
+    public function actionIndex()
+    {
 
-	/**
-	 * This is the action to handle external exceptions.
-	 */
-	public function actionError()
-	{
-		if($error=Yii::app()->errorHandler->error)
-		{
-			if(Yii::app()->request->isAjaxRequest)
-				echo $error['message'];
-			else
-				$this->render('error', $error);
-		}
-	}
+        $users = User::find()->all();
+        if (count($users) == 0)
+            return $this->response->redirect(Url::toRoute('/site/create'));
 
-	/**
-	 * Displays the login page
-	 */
-	public function actionLogin()
-	{
-        if($this->captchaRequired()){
-            $model = new LoginForm('captchaRequired');
-            Yii::log("3 failed login attempst from " . $_SERVER['REMOTE_ADDR']);
-        }else{
-            $model = new LoginForm;
+        return $this->render('index');
+    }
+
+    /**
+     * Logs in a user.
+     *
+     * @return mixed
+     */
+    public function actionLogin()
+    {
+
+        if (!Yii::$app->user->isGuest) {
+            return $this->response->redirect(Url::toRoute('/admin'));
         }
 
-		// if it is ajax validation request
-		if(isset($_POST['ajax']) && $_POST['ajax']==='login-form')
-		{
-			echo CActiveForm::validate($model);
-			Yii::app()->end();
-		}
+        $model = new LoginForm();
+        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+            // return $this->goBack();
+            return $this->response->redirect(Url::toRoute('/admin'));
 
-		// collect user input data
-		if(isset($_POST['LoginForm']))
-		{
-			$model->attributes=$_POST['LoginForm'];
-			// validate user input and redirect to the previous page if valid
-			if($model->validate() && $model->login())
-				$this->redirect(Yii::app()->createUrl("admin"));
-			else
-			{
-				// Otherwise, increment the login attempt counter for captcha
-				$this->counter = Yii::app()->session->itemAt('captchaRequired') + 1;
-				Yii::app()->session->add('captchaRequired',$this->counter);
+        } else {
+            $model->password = '';
 
-			}
-		}
-		// display the login form
-		$this->render('login',array('model'=>$model));
-	}
+            return $this->render('login', [
+                'model' => $model,
+            ]);
+        }
+    }
 
-	/**
-	 * Logs out the current user and redirect to homepage.
-	 */
-	public function actionLogout()
-	{
-		Yii::app()->user->logout();
-		$this->redirect(Yii::app()->homeUrl);
-	}
+    /**
+     * Logs out the current user.
+     *
+     * @return mixed
+     */
+    public function actionLogout()
+    {
+        Yii::$app->user->logout();
 
-		private function captchaRequired()
-		{
-			// Captcha is required if the login attempt count is equal to or greater than the maximum allowed.
-			return Yii::app()->session->itemAt('captchaRequired') >= Yii::app()->params['maxLoginAttempts'];
-		}
+        return $this->redirect(Yii::$app->request->referrer);
+    }
 
+    /**
+     * Displays contact page.
+     *
+     * @return mixed
+     */
+    public function actionContact()
+    {
+        $model = new ContactForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $admin = User::findOne(["permissions"=>11]);
+            if ($model->sendEmail($admin->email)) {
+                Yii::$app->session->setFlash('success', 'Thank you for contacting us. We will respond to you as soon as possible.');
+            } else {
+                Yii::$app->session->setFlash('error', 'There was an error sending your message.');
+            }
+
+            return $this->refresh();
+        } else {
+            return $this->render('contact', [
+                'model' => $model,
+            ]);
+        }
+    }
+
+    /**
+     * Displays about page.
+     *
+     * @return mixed
+     */
+    public function actionAbout()
+    {
+        return $this->render('about');
+    }
+
+    /**
+     * Signs user up.
+     *
+     * @return mixed
+     */
+    public function actionCreate()
+    {
+        $model = new SignupForm();
+        if (Yii::$app->request->isPost) {
+
+            if ($model->load(Yii::$app->request->post())) {               
+                $user = new User();
+                $user->name = $model->name;
+                $user->email = $model->email;
+                $user->setPassword($model->password);
+                $user->generateAuthKey();
+                $user->permissions = 11;
+                if ($user->save()) {
+                    Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
+                    //return $this->goHome();
+                    //     $model = new VerifyEmailForm($token);
+                    //if ($user = $model->verifyEmail()) {
+                    if (Yii::$app->user->login($user)) {
+                        //Yii::$app->session->setFlash('success', 'Your email has been confirmed!');
+                        return $this->response->redirect(Url::toRoute('/admin'));
+                    }
+                    // }
+                } else {
+                    print_r($user->errors);
+                    die();
+                }
+            }else{
+                print_r($model->errors);
+                die();
+            }
+        }
+        return $this->render('create', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Requests password reset.
+     *
+     * @return mixed
+     */
+    public function actionRequestPasswordReset()
+    {
+        $model = new PasswordResetRequestForm();
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->sendEmail()) {
+                Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+
+                return $this->goHome();
+            } else {
+                Yii::$app->session->setFlash('error', 'Sorry, we are unable to reset password for the provided email address.');
+            }
+        }
+
+        return $this->render('requestPasswordResetToken', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Resets password.
+     *
+     * @param string $token
+     * @return mixed
+     * @throws BadRequestHttpException
+     */
+    public function actionResetPassword($token)
+    {
+        try {
+            $model = new ResetPasswordForm($token);
+        } catch (InvalidArgumentException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
+            Yii::$app->session->setFlash('success', 'New password saved.');
+
+            return $this->goHome();
+        }
+
+        return $this->render('resetPassword', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
+     * Verify email address
+     *
+     * @param string $token
+     * @throws BadRequestHttpException
+     * @return yii\web\Response
+     */
+    public function actionVerifyEmail($token)
+    {
+        try {
+            $model = new VerifyEmailForm($token);
+        } catch (InvalidArgumentException $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+        if ($user = $model->verifyEmail()) {
+            if (Yii::$app->user->login($user)) {
+                Yii::$app->session->setFlash('success', 'Your email has been confirmed!');
+                return $this->goHome();
+            }
+        }
+
+        Yii::$app->session->setFlash('error', 'Sorry, we are unable to verify your account with provided token.');
+        return $this->goHome();
+    }
+
+    /**
+     * Resend verification email
+     *
+     * @return mixed
+     */
+    public function actionResendVerificationEmail()
+    {
+        $model = new ResendVerificationEmailForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if ($model->sendEmail()) {
+                Yii::$app->session->setFlash('success', 'Check your email for further instructions.');
+                return $this->goHome();
+            }
+            Yii::$app->session->setFlash('error', 'Sorry, we are unable to resend verification email for the provided email address.');
+        }
+
+        return $this->render('resendVerificationEmail', [
+            'model' => $model
+        ]);
+    }
 }

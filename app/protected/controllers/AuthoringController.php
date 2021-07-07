@@ -1,113 +1,133 @@
 <?php
+namespace app\controllers;
 
+use app\models\ResendVerificationEmailForm;
+use app\models\VerifyEmailForm;
+use Yii;
+use yii\base\InvalidArgumentException;
+use yii\web\BadRequestHttpException;
+use yii\web\Controller;
+use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use app\helpers\Tools;
+use app\models\User;
+use app\models\Study;
+use yii\helpers\Url;
+use yii\helpers\ArrayHelper;
+use app\models\Question;
+use app\models\QuestionOption;
+use app\models\Expression;
+use app\models\AlterPrompt;
+use app\models\Interview;
+use app\models\Interviewer;
+use app\models\AlterList;
+
+/**
+ * Site controller
+ */
 class AuthoringController extends Controller
 {
-	/**
-	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
-	 * using two-column layout. See 'protected/views/layouts/column2.php'.
-	 */
-	public $studyId;
+    /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+                'actions' => [
+                    'logout' => ['post'],
+                ],
+            ],
+        ];
+    }
 
-	/**
-	 * @return array action filters
-	 */
-	public function filters()
-	{
-		return array(
-			'accessControl', // perform access control for CRUD operations
-			//'postOnly + delete', // we only allow deletion via POST request
-		);
-	}
+    /**
+     * {@inheritdoc}
+     */
+    public function actions()
+    {
+        return [
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
+            ],
+            'captcha' => [
+                'class' => 'yii\captcha\CaptchaAction',
+                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+            ],
+        ];
+    }
 
-	/**
-	 * Specifies the access control rules.
-	 * This method is used by the 'accessControl' filter.
-	 * @return array access control rules
-	 */
-	public function accessRules()
-	{
-		return array(
-			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'users'=>array('@'),
-			),
-			array('deny',  // deny all users
-				'users'=>array('*'),
-			),
-		);
-	}
 
-	// Generate codebook from study
-	public function actionCodebook()
-	{
-		
-	}
-
-	public function actionImportlist()
+    public function actionImportparticipantlist()
 	{
 		if(!is_uploaded_file($_FILES['userfile']['tmp_name'])) //checks that file is uploaded
 			die("Error importing Participant list");
-    $nameGenQs = Question::model()->findAllByAttributes(array("studyId"=>$_POST['studyId'], "subjectType"=>"NAME_GENERATOR"));
-    $nameGenQIds = array();
-    foreach($nameGenQs as $nameGenQ){
-      $nameGenQIds[$nameGenQ->title] = $nameGenQ->id;
-    }
+        $nameGenQs = Question::findAll(["studyId"=>$_POST['studyId'], "subjectType"=>"NAME_GENERATOR"]);
+        $nameGenQIds = array();
+        foreach($nameGenQs as $nameGenQ){
+            $nameGenQIds[$nameGenQ->title] = $nameGenQ->id;
+        }
 		$file = fopen($_FILES['userfile']['tmp_name'],"r");
-    $results = Interviewer::model()->findAllByAttributes(array("studyId"=>$_POST['studyId']));
-    $interviewers = array();
-    foreach($results as $result){
-      $user = User::model()->findByPk($result->interviewerId);
-      $interviewers[$result->interviewerId] = $user->name;
-    }
+        $results = Interviewer::findAll(["studyId"=>$_POST['studyId']]);
+        $interviewers = array();
+        foreach($results as $result){
+            $user = User::findOne($result->interviewerId);
+            $interviewers[$result->interviewerId] = $user->name;
+        }
 		while(! feof($file)){
 			$data = fgetcsv($file);
 			if(isset($data[0]) && $data[0]){
+                $alterlist = AlterList::findAll(['studyId = '.$_POST['studyId']]);
 				$model = new AlterList;
-				$criteria=new CDbCriteria;
-				$criteria->condition = ('studyId = '.$_POST['studyId']);
-				$criteria->select='count(ordering) AS ordering';
-				$row = AlterList::model()->find($criteria);
-				$model->ordering = $row['ordering'];
+				$model->ordering = count($alterlist);
 				$model->name = trim($data[0]);
 				$model->email = isset($data[1]) ? $data[1] : "";
-        $interviewerColumn = false;
-        $nameGenColumn = false;
-        if(count($data) == 3){
-          $nameGenColumn = 2;
-        }else if(count($data) == 4){
-          $interviewerColumn = 2;
-          $nameGenColumn = 3;
-        }
-        if($nameGenColumn && stristr($data[$nameGenColumn], ";")){
-          $Qs = explode(";", $data[$nameGenColumn]);
-          $qIds = array();
-          foreach($Qs as $title){
-            if(isset($nameGenQIds[$title]))
-              $qIds[] = $nameGenQIds[$title];
-          }
-          $model->nameGenQIds = implode(",", $qIds);
-        }elseif(isset($nameGenQIds[$data[$nameGenColumn]])){
-          $model->nameGenQIds = $nameGenQIds[$data[$nameGenColumn]];
-        }
-        if($interviewerColumn && isset($data[$interviewerColumn])){
-              $model->interviewerId =  array_search($data[$interviewerColumn], $interviewers);
-        }
+                $interviewerColumn = false;
+                $nameGenColumn = false;
+                if(count($data) == 3){
+                    $nameGenColumn = 2;
+                }else if(count($data) == 4){
+                    $interviewerColumn = 2;
+                    $nameGenColumn = 3;
+                }
+                if($nameGenColumn && stristr($data[$nameGenColumn], ";")){
+                    $Qs = explode(";", $data[$nameGenColumn]);
+                    $qIds = array();
+                    foreach($Qs as $title){
+                        if(isset($nameGenQIds[$title]))
+                        $qIds[] = $nameGenQIds[$title];
+                    }
+                    $model->nameGenQIds = implode(",", $qIds);
+                }elseif(isset($nameGenQIds[$data[$nameGenColumn]])){
+                    $model->nameGenQIds = $nameGenQIds[$data[$nameGenColumn]];
+                }
+                if($interviewerColumn && isset($data[$interviewerColumn])){
+                    $model->interviewerId =  array_search($data[$interviewerColumn], $interviewers);
+                }
 				$model->studyId = $_POST['studyId'];
-			  $model->save();
-
+			    $model->save();
 			}
-
 		}
 		fclose($file);
-		$this->redirect(Yii::app()->request->getUrlReferrer());
+        $participants = AlterList::findAll(['studyId = '.$_POST['studyId']])->asArray();
+        return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($participants)]);
 	}
 
 	public function actionImportprompts()
 	{
 		if(!is_uploaded_file($_FILES['userfile']['tmp_name'])) //checks that file is uploaded
 			die("Error importing Variable Alter Prompts");
-
 		$file = fopen($_FILES['userfile']['tmp_name'],"r");
-
 		while(! feof($file)){
 			$data = fgetcsv($file);
 			if(isset($data[0]) && $data[0]){
@@ -119,282 +139,114 @@ class AuthoringController extends Controller
 				$model->save();
 			}
 		}
-
 		fclose($file);
-		$this->redirect(Yii::app()->request->getUrlReferrer());
+        $prompts = AlterPrompt::findAll(['studyId = '.$_POST['studyId']])->asArray();
+        return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($prompts)]);
 	}
 
-	public function actionUploadaudio()
+
+    public function actionCreate()
 	{
-        if(!isset(Yii::app()->params['enableAudioUpload']) || !Yii::app()->params['enableAudioUpload'])
-            die();
-		if(isset($_POST['studyId']) && isset($_POST['type']) && isset($_POST['id'])){
-			if(!is_uploaded_file($_FILES['userfile']['tmp_name'])) //checks that file is uploaded
-				die("Error importing Audio");
+		$study = new Study;
+		if(isset($_POST['Study']))
+		{
+			$study->attributes = $_POST['Study'];
+            if ($study->save()) {
+                return $this->response->redirect(Url::toRoute('/authoring/' . Yii::$app->db->getLastInsertID()));
+            }
+		}
+	}
 
-			if(!is_dir(Yii::app()->basePath."/../audio/".$_POST['studyId']))
-				mkdir(Yii::app()->basePath."/../audio/".$_POST['studyId'], 0777, true);
-
-			if(!is_dir(Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type']))
-				mkdir(Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type'], 0777, true);
-
-            if(!check_file_is_audio($_FILES['userfile']['tmp_name'])){
-                echo "error";
+    /**
+     * Displays homepage.
+     *
+     * @return mixed
+     */
+    public function actionIndex($id)
+    {
+        $study = Study::findOne($id);
+        $this->view->title = $study->name;
+        if ($study->load(Yii::$app->request->post()) && $study->validate()) {
+            $study->attributes = $_POST['Study'];
+            $study->hideEgoIdPage = isset($_POST['Study']['hideEgoIdPage']);
+            $study->fillAlterList = isset($_POST['Study']['fillAlterList']);
+            $study->restrictAlters = isset($_POST['Study']['restrictAlters']);
+            $study->useAsAlters = isset($_POST['Study']['useAsAlters']);
+            if($study->save()){
+                return $this->response->redirect(Url::toRoute('/authoring/' . $study->id));
+			}else{
+                print_r($study->errors);
                 die();
             }
-
-			if(move_uploaded_file($_FILES['userfile']['tmp_name'], Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type'] . "/". $_POST['id'] . ".mp3"))
-				echo "<a class=\"playSound\" onclick=\"playSound($(this).attr('file'))\" href=\"#\" file=\"/audio/".$_POST['studyId'] . "/" . $_POST['type'] . "/". $_POST['id'] . ".mp3\"><span class=\"fui-volume play-sound\"></span></a>";
-
-		}else if(isset($_GET['studyId']) && isset($_GET['type']) && isset($_GET['id'])){
-			$this->renderPartial('_form_audio',array(
-				'studyId'=>$_GET['studyId'],
-				'type'=>$_GET['type'],
-				'id'=>$_GET['id'],
-			));
-		}
-	}
-
-	public function actionDeleteaudio()
-	{
-		if(isset($_POST['studyId']) && isset($_POST['type']) && isset($_POST['id'])){
-			if(file_exists(Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type'] . "/". $_POST['id'] . ".mp3"))
-				unlink(Yii::app()->basePath."/../audio/".$_POST['studyId'] . "/" . $_POST['type'] . "/". $_POST['id'] . ".mp3");
-		}
-	}
-
-	/**
-	 * Displays a particular model.
-	 * @param integer $id the ID of the model to be displayed
-	 */
-	public function actionView($id)
-	{
-		// sets global studyId for authoring
- 		$this->studyId = $id;
-
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
-	}
-
-	/**
-	 * Creates a new model.
-	 * If creation is successful, the browser will be redirected to the 'view' page.
-	 */
-	public function actionCreate()
-	{
-		$model=new Study;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['Study']))
-		{
-			$model->attributes=$_POST['Study'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
-		}
-
-		$this->render('create',array(
-			'model'=>$model,
-		));
-	}
+        }
+        $qs = ArrayHelper::map(
+            Question::findAll(["studyId"=>$study->id, "subjectType"=>"EGO_ID"])
+        , 'id','title');
+        $egoIdOptions = [];
+        $egoIdOptions[] = ["value"=>"", "text"=>""];
+        foreach($qs as $i=>$q){
+            $egoIdOptions[] = ["value"=>$i, "text"=>$q];
+        }
+        $interviews = Interview::find()->where(['studyId'=>$id])->count();
+        $study = Study::find()->where(["id"=>$id])->asArray()->one();
+        return $this->render('index',["study"=>$study, "egoIdOptions"=>$egoIdOptions, "interviews"=>$interviews]);
+    }
 
 
-	/**
-	 * Edits a particular model.
-	 * If update is successful, the browser will be redirected to the 'view' page.
-	 * @param integer $id the ID of the model to be updated
-	 */
-	public function actionEdit($id)
-	{
- 		$this->studyId = $id;
-		$model=$this->loadModel($id);
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['Study']))
-		{
-			$model->attributes=$_POST['Study'];
-      $model->valueDontKnow = $_POST['Study']['valueDontKnow'];
-      $model->valueRefusal = $_POST['Study']['valueRefusal'];
-      $model->valueLogicalSkip = $_POST['Study']['valueLogicalSkip'];
-      $model->valueNotYetAnswered = $_POST['Study']['valueNotYetAnswered'];
-			if($model->save()){
-				Study::updated($this->studyId);
-				$this->redirect(array('edit','id'=>$model->id));
-			}
-		}
-
-		$this->render('edit',array(
-			'model'=>$model,
-		));
-	}
-
-	/**
-	 * Lists all models.
-	 */
-	public function actionIndex()
-	{
-		$model=new Study;
-		if(isset($_POST['Study']))
-		{
-			$model->attributes=$_POST['Study'];
-			if($model->save())
-				$this->redirect(array('edit','id'=>$model->id));
-		}
-
-		$condition = "id != 0";
-		if(!Yii::app()->user->isSuperAdmin){
-			$studies = array();
-            $criteria = new CDbCriteria;
-            $criteria->condition = "interviewerId = " . Yii::app()->user->id;
-            $interviewers = Interviewer::model()->findAll($criteria);
-            foreach($interviewers as $interviewer){
-                $studies[] = $interviewer->studyId;
+    public function actionEgo_id($id)
+    {
+        $study = Study::findOne($id);
+        $this->view->title = $study->name;
+        $questions = Question::find()->where(["studyId"=>$id, "subjectType"=>"EGO_ID"])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+        if (Yii::$app->request->post()){
+            if ($_POST['Question']['id']) {
+                $question = Question::findOne($_POST['Question']['id']);
+            }else{
+                $question = new Question;
+                $question->ordering = count($questions);
             }
-			if(Yii::app()->user->isAdmin){
-                $criteria = new CDbCriteria;
-                $criteria->condition = "userId = " . Yii::app()->user->id;
-                $allStudies = Study::model()->findAll($criteria);
-                foreach($allStudies as $study){
-                    $addedStudies[] = $study->id;
+            if ($question->load(Yii::$app->request->post()) && $question->validate()) {
+                $question->attributes = $_POST['Question'];
+                $question->askingStyleList = isset($_POST['Question']['askingStyleList']);
+                $question->dontKnowButton = isset($_POST['Question']['dontKnowButton']);
+                $question->refuseButton = isset($_POST['Question']['refuseButton']);
+                $question->useAlterListField = isset($_POST['Question']['useAlterListField']);
+                $question->restrictList = isset($_POST['Question']['restrictList']);
+                $question->autocompleteList = isset($_POST['Question']['autocompleteList']);
+                $question->prefillList = isset($_POST['Question']['prefillList']);
+
+                if($question->save()){
+                    return $this->response->redirect(Url::toRoute('/authoring/ego_id/' . $study->id));
+                }else{
+                    print_r($question->errors);
+                    die();
                 }
-			    if(count($addedStudies) > 0)
-					$studies = array_merge($studies, $addedStudies);
-			}
-			if($studies)
-				$condition = "id IN (" . implode(",", $studies) . ")";
-			else
-				$condition = "id = -1";
-		}
+            }
+        }
+        foreach(Question::EGOID_ANSWERTYPES as $a){
+            $answerTypes[] = ["value"=>$a, "text"=>$a];
+        }
+        $subjectTypes = false;
 
+        $new_question = new Question;
+        $new_question->studyId = $study->id;
+        $new_question->subjectType = "EGO_ID";
 
-		$criteria = array(
-			'condition'=>$condition . " AND multiSessionEgoId = 0 AND active = 1",
-			'order'=>'id DESC',
-		);
-
-		$single = Study::model()->findAll($criteria);
-
-		$criteria = array(
-			'condition'=>$condition . " AND multiSessionEgoId <> 0 AND active = 1",
-			'order'=>'multiSessionEgoId DESC',
-		);
-
-		$multi = Study::model()->findAll($criteria);
-
-/*
-		$single = Study::model()->findAllByAttributes(array('multiSessionEgoId'=>0));
-		$multi = Study::model()->findAll('multiSessionEgoId <> 0', $params = array('order'=>'multiSessionEgoId'));
-*/
- 		$this->render('index',array(
-			'model'=>$model,
-			'single'=>$single,
-			'multi'=>$multi,
-
-		));
-	}
-
-	/**
-	 * Lists all models.
-	 */
-	public function actionEgo_id($id)
-	{
-		$this->studyId=$id;
-		$study = Study::model()->findByPk($id);
-		if(isset($_POST['Question'])){
-			$model = new Question;
-			$model->attributes = $_POST['Question'];
-			$criteria=new CDbCriteria;
-			$criteria->condition = ('studyId = '.$_POST['Question']['studyId'] . ' AND subjectType = "EGO_ID"');
-			$criteria->select='count(ordering) AS ordering';
-			$row = Question::model()->find($criteria);
-			$model->ordering = $row['ordering'];
-			$model->save();
-			$this->redirect(array('ego_id','id'=>$id));
-
-		}
-			$model = new Question;
-			$model->subjectType = "EGO_ID";
-			$model->studyId = $id;
-
-		// Uncomment the following line if AJAX validation is needed
-
-		$criteria=new CDbCriteria;
-		$criteria=array(
-			'condition'=>"studyId = " . $id . " AND subjectType = '" . $model->subjectType . "'",
-			'order'=>'ordering',
-		);
-		$dataProvider=new CActiveDataProvider('Question',array(
-			'criteria'=>$criteria,
-			'pagination'=>false,
-		));
-
-		$this->render('view_question',array(
-			'model'=>$model,
-			'dataProvider'=>$dataProvider,
-			'study'=>$study,
-		));
-	}
-
-	/**
-	 * Lists all models.
-	 */
-	public function actionEgo($id)
-	{
-		$this->studyId=$id;
-		$study = Study::model()->findByPk($id);
-		if(isset($_POST['Question'])){
-			$model = new Question;
-			$model->attributes=$_POST['Question'];
-			$criteria=new CDbCriteria;
-			$criteria->condition = ('studyId = '.$_POST['Question']['studyId'] . ' AND subjectType = "EGO"');
-			$criteria->select='count(ordering) AS ordering';
-			$row = Question::model()->find($criteria);
-			$model->ordering = $row['ordering'];
-			$model->save();
-			$this->redirect(array('ego','id'=>$id));
-		}
-
-			$model = new Question;
-			$model->subjectType = "EGO";
-			$model->studyId = $id;
-
-		// Uncomment the following line if AJAX validation is needed
-
-		$criteria=new CDbCriteria;
-		$criteria=array(
-			'condition'=>"studyId = " . $id . " AND subjectType = '" . $model->subjectType . "'",
-			'order'=>'ordering',
-		);
-		$dataProvider=new CActiveDataProvider('Question',array(
-			'criteria'=>$criteria,
-			'pagination'=>false,
-		));
-
-		$this->render('view_question',array(
-			'model'=>$model,
-			'dataProvider'=>$dataProvider,
-			'study'=>$study,
-		));
-	}
+        $new_question = $new_question->toArray();
+        $expressions = Expression::find()->where(["studyId"=>$study->id])->asArray()->all();
+        return $this->render('questions',["study"=>$study, "questions"=>$questions, "new_question"=>$new_question, "answerTypes"=>$answerTypes, "subjectTypes"=>$subjectTypes, "expressions"=>$expressions]);
+    }
 
     // convertss to new master list format from older format
     public function actionConvert($id)
 	{
-        $study = Study::model()->findByPk($id);
-        $criteria=new CDbCriteria;
-    		$criteria=array(
-    			'condition'=>"studyId = " . $id . ' AND subjectType != "EGO_ID"',
-    			'order'=>'ordering',
-    		);
+        $study = Study::findOne($id);
         $ego_questions = array();
         $alter_questions = array();
         $alter_pair_questions = array();
         $network_questions = array();
-        $questions = Question::model()->findAll($criteria);
+        $questions = Question::find()->where(["studyId"=>$id])->andWhere(["<>", "subjectType", "EGO_ID"])->orderBy(["ordering"=>"ASC"])->all();
         foreach($questions as $question){
             if($question->subjectType == "EGO")
                 $ego_questions[] = $question;
@@ -417,13 +269,12 @@ class AuthoringController extends Controller
         );
         $model->save();
         $nameGenQId = $model->id;
-        $interviews = Interview::model()->findAllByAttributes(array("studyId"=>$study->id));
+        $interviews = Interview::findAll(array("studyId"=>$study->id));
         foreach($interviews as $interview){
-          $criteria=array(
-            'condition'=>"FIND_IN_SET(" . $interview->id .", interviewId)",
-            'order'=>'ordering',
-          );
-          $alters = Alters::model()->findAll($criteria);
+          $alters = Alters::find()
+          ->where(new \yii\db\Expression("FIND_IN_SET(" . $interview->id .", interviewId)"))
+          ->orderBy(['ordering'=>'ASC'])
+          ->all();          
           foreach($alters as $alter){
             $alter->nameGenQIds = $nameGenQId;
             $alter->save();
@@ -444,1028 +295,370 @@ class AuthoringController extends Controller
             $question->ordering = $i + $question->ordering;
             $question->save();
         }
-        Yii::app()->request->redirect("/authoring/questions/" . $id);
+        return $this->response->redirect(Url::toRoute('/authoring/questions/' . $id));
     }
 
-    /**
-	 * Lists all models.
-	 */
-	public function actionQuestions($id)
-	{
-		$this->studyId=$id;
-		$study = Study::model()->findByPk($id);
-		if(isset($_POST['Question'])){
-			$model = new Question;
-			$model->attributes=$_POST['Question'];
-			$criteria=new CDbCriteria;
-			$criteria->condition = ('studyId = '.$_POST['Question']['studyId'] . ' AND subjectType != "EGO_ID"');
-			$criteria->select='count(ordering) AS ordering';
-			$row = Question::model()->find($criteria);
-			$model->ordering = $row['ordering'];
-			$model->save();
-			$this->redirect(array('questions','id'=>$id));
-		}
+    public function actionQuestions($id)
+    {
+        $study = Study::findOne($id);
+        $this->view->title = $study->name;
+        $questions = Question::find()->where(["studyId"=>$id])->andWhere(['!=', 'subjectType', 'EGO_ID'])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+        if (Yii::$app->request->post()){
+            if ($_POST['Question']['id']) {
+                $question = Question::findOne($_POST['Question']['id']);
+            }else{
+                $question = new Question;
+                $question->ordering = count($questions);
+            }
+            if ($question->load(Yii::$app->request->post()) && $question->validate()) {
+                
+                $question->askingStyleList = isset($_POST['Question']['askingStyleList']);
+                $question->dontKnowButton = isset($_POST['Question']['dontKnowButton']);
+                $question->refuseButton = isset($_POST['Question']['refuseButton']);
+                $question->restrictList = isset($_POST['Question']['restrictList']);
+                $question->autocompleteList = isset($_POST['Question']['autocompleteList']);
+                $question->prefillList = isset($_POST['Question']['prefillList']);
+                if($question->save()){
+                    return $this->response->redirect(Url::toRoute('/authoring/questions/' . $study->id));
+                }else{
+                    print_r($question->errors);
+                    die();
+                }
+            }
+        }
+        foreach($questions as &$question){
+            $question['options'] = QuestionOption::find()->where(['questionId'=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+            if ($question['subjectType'] == "NAME_GENERATOR") {
+                $question['alterPrompts'] = AlterPrompt::find()->where(array('questionId'=>$question['id']))->orderBy(["afterAltersEntered"=>"ASC"])->asArray()->all();
+            }
+        }
+        $new_question = new Question;
+        $new_question->studyId = $study->id;
+        $new_question = $new_question->toArray();
+       // array_unshift($questions, $new_question);
+        foreach(Question::ANSWERTYPES as $a){
+            $answerTypes[] = ["value"=>$a, "text"=>$a];
+        }
+        foreach(Question::SUBJECTTYPES as $s){
+            $subjectTypes[] = ["value"=>$s, "text"=>$s];
+        }
+        $expressions = Expression::find()->where(["studyId"=>$study->id])->asArray()->all();
 
-			$model = new Question;
-			$model->studyId = $id;
-
-		// Uncomment the following line if AJAX validation is needed
-
-		$criteria=new CDbCriteria;
-		$criteria=array(
-			'condition'=>"studyId = " . $id . ' AND subjectType != "EGO_ID"',
-			'order'=>'ordering',
-		);
-		$dataProvider=new CActiveDataProvider('Question',array(
-			'criteria'=>$criteria,
-			'pagination'=>false,
-		));
-
-		$this->render('view_question',array(
-			'model'=>$model,
-			'dataProvider'=>$dataProvider,
-			'study'=>$study,
-		));
-	}
-
-	/**
-	 * Lists all models.
-	 */
-	public function actionAlter($id)
-	{
-		$this->studyId=$id;
-		$study = Study::model()->findByPk($id);
-		if(isset($_POST['Question'])){
-			$model = new Question;
-			$model->attributes=$_POST['Question'];
-			$criteria=new CDbCriteria;
-			$criteria->condition = ('studyId = '.$_POST['Question']['studyId'] . ' AND subjectType = "ALTER"');
-			$criteria->select='count(ordering) AS ordering';
-			$row = Question::model()->find($criteria);
-			$model->ordering = $row['ordering'];
-			$model->save();
-			$this->redirect(array('alter','id'=>$id));
-		}else{
-			$model = new Question;
-			$model->subjectType = "ALTER";
-			$model->studyId = $id;
-		}
-		// Uncomment the following line if AJAX validation is needed
-
-		$criteria=new CDbCriteria;
-		$criteria=array(
-			'condition'=>"studyId = " . $id . " AND subjectType = '" . $model->subjectType . "'",
-			'order'=>'ordering',
-		);
-		$dataProvider=new CActiveDataProvider('Question',array(
-			'criteria'=>$criteria,
-			'pagination'=>false,
-		));
-
-		$this->render('view_question',array(
-			'model'=>$model,
-			'dataProvider'=>$dataProvider,
-			'study'=>$study,
-		));
-	}
-
-	/**
-	 * Lists all models.
-	 */
-	public function actionAlterpair($id)
-	{
-		$this->studyId=$id;
-		$study = Study::model()->findByPk($id);
-		if(isset($_POST['Question'])){
-			$model = new Question;
-			$model->attributes=$_POST['Question'];
-			$criteria=new CDbCriteria;
-			$criteria->condition = ('studyId = '.$_POST['Question']['studyId'] . ' AND subjectType = "ALTER_PAIR"');
-			$criteria->select='count(ordering) AS ordering';
-			$row = Question::model()->find($criteria);
-			$model->ordering = $row['ordering'];
-			$model->save();
-			$this->redirect(array('alterpair','id'=>$id));
-		}else{
-			$model = new Question;
-			$model->subjectType = "ALTER_PAIR";
-			$model->studyId = $id;
-		}
-		// Uncomment the following line if AJAX validation is needed
-
-		$criteria=new CDbCriteria;
-		$criteria=array(
-			'condition'=>"studyId = " . $id . " AND subjectType = '" . $model->subjectType . "'",
-			'order'=>'ordering',
-		);
-		$dataProvider=new CActiveDataProvider('Question',array(
-			'criteria'=>$criteria,
-			'pagination'=>false,
-		));
-
-		$this->render('view_question',array(
-			'model'=>$model,
-			'dataProvider'=>$dataProvider,
-			'study'=>$study,
-		));
-	}
-
-	/**
-	 * Lists all models.
-	 */
-	public function actionNetwork($id)
-	{
-		$this->studyId=$id;
-		$study = Study::model()->findByPk($id);
-		if(isset($_POST['Question'])){
-			$model = new Question;
-			$model->attributes=$_POST['Question'];
-			$criteria=new CDbCriteria;
-			$criteria->condition = ('studyId = '.$id . ' AND subjectType = "NETWORK"');
-			$criteria->select='count(ordering) AS ordering';
-			$row = Question::model()->find($criteria);
-			$model->ordering = $row['ordering'];
-			$model->save();
-			$this->redirect(array('network','id'=>$id));
-		}else{
-			$model = new Question;
-			$model->subjectType = "NETWORK";
-			$model->studyId = $id;
-		}
-		// Uncomment the following line if AJAX validation is needed
-
-		$criteria=new CDbCriteria;
-		$criteria=array(
-			'condition'=>"studyId = " . $id . " AND subjectType = '" . $model->subjectType . "'",
-			'order'=>'ordering',
-		);
-		$dataProvider=new CActiveDataProvider('Question',array(
-			'criteria'=>$criteria,
-			'pagination'=>false,
-		));
-
-		$this->render('view_question',array(
-			'model'=>$model,
-			'dataProvider'=>$dataProvider,
-			'study'=>$study,
-		));
-	}
-
-    public function actionAlterprompt(){
-        Yii::app()->clientScript->scriptMap['jquery.js'] = false;
-		    Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
-        $study = Study::model()->findByPk($_GET['studyId']);
-        $question = Question::model()->findByPk($_GET['questionId']);
-        $this->renderPartial('_form_alter_prompt', array('question'=>$question, 'study'=>$study, 'ajax'=>true), false, true);
-
+        return $this->render('questions',["study"=>$study, "questions"=>$questions, "new_question"=>$new_question, "answerTypes"=>$answerTypes, "subjectTypes"=>$subjectTypes, "expressions"=>$expressions]);
     }
 
-	public function actionPreview(){
-		if(isset($_GET['questionId'])){
-			$question = Question::model()->findByPk((int)$_GET['questionId']);
-			$array_id = 0;
-			$model[$array_id] = new Answer;
-			echo "<div style='height:320px; overflow-y:auto;'>";
-			$form=$this->beginWidget('CActiveForm', array(
-				'id'=>'answer-form',
-				'enableAjaxValidation'=>true,
-			));
-			$this->renderPartial('preview', array('rowColor'=>'', 'question'=>$question, 'interviewId'=>'', 'form'=>$form, 'array_id'=>$array_id, 'model'=>$model, 'ajax'=>true), false, false);
+    public function actionParticipants($id)
+    {
+        $study = Study::findOne($id)->toArray();
+        $result = Interviewer::find()->where(["studyId"=>$id])->all();
+        
+        $interviewers = [];
+        $alterList = [];
+        $interviewerList = [];
+        $users = [];
+        $userIds = [];
+        foreach($result as $interviewer){
+            $user = User::findOne($interviewer->interviewerId);
+            if ($user) {
+                $userIds[] = $user->id;
+                $interviewerList[$user->id] = $user->name;
+                $interviewers[] = ["id"=>$user->id,"interviewer"=>$user->name, "role"=>User::roles()[$user->permissions]];
+            }
+        }
 
-			$this->renderPartial('/interviewing/_form_'.strtolower($question->answerType), array('rowColor'=>'', 'question'=>$question, 'interviewId'=>'', 'form'=>$form, 'array_id'=>$array_id, 'model'=>$model, 'ajax'=>true), false, false);
+        $result = AlterList::find()->where(["studyId"=>$id])->all();
+        foreach ($result as $item) {
+            if(isset($interviewerList[$item->interviewerId]))
+                $alterList[] = ["name"=>$item->name, "email"=>$item->email, "name generators"=>$item->nameGenQIds, "interviewer"=>$interviewerList[$item->interviewerId]];
+        }
+        $result = User::find()->where(['<=', 'permissions', 5])->andWhere(['not', ['id'=>$userIds]])->all();
+        foreach ($result as $item) {
+            $users[] = $item->toArray();
+        }
+        $questions = Question::find()->where(["subjectType"=>"NAME_GENERATOR", "studyId"=>$id])->asArray()->all();
+        return $this->render('participants',["study"=>$study, "interviewers"=>$interviewers, "alterList"=>$alterList, "users"=>$users, "questions"=>$questions]);
+    }
 
-			$skipList = array();
-			if($question->dontKnowButton)
-				$skipList['DONT_KNOW'] = "Don't Know";
-			if($question->refuseButton)
-				$skipList['REFUSE'] =  "Refuse";
-			if(count($skipList) != 0){
-					echo "<div clear=all>".
-					CHtml::checkBoxList($array_id."_skip", array($model[$array_id]->skipReason), $skipList, array('class'=>$array_id.'-skipReason'))
-					."</div>";
+    public function actionExpressions($id)
+    {
+        $study = Study::findOne($id);
+        $this->view->title = $study->name;
+        if(isset($_POST['Expression'])){
+            if($_POST['Expression']['id'])
+                $expression = Expression::findOne($_POST['Expression']['id']);
+            else
+                $expression = new Expression;
+            $expression->attributes = $_POST['Expression'];
+            if($expression->save()){
+                if($_POST['Expression']['id'])
+                    $expId = $expression->id;
+                else
+                    $expId = Yii::$app->db->getLastInsertID();
+                Yii::$app->session->setFlash('success', 'Expression saved.');
+                return $this->response->redirect(Url::toRoute('/authoring/expressions/' . $study->id . "#/" . $expId));
+			}else{
+				print_r($expression->errors);
+				die();
 			}
-			$this->endWidget();
-			echo "</div></div><button onclick='loadData(".$question->id.  ", \"_form_question\"); return false'>Back</button>";
 		}
-	}
+        $result = Expression::find()->where(["studyId"=>$id])->all();
+        $new_expression = new Expression;
+        $new_expression->name = "";
+        $new_expression->id = 0;
+        $new_expression->studyId = $id;
+        $new_expression->operator = "Some";
 
-	public function actionExpression($id)
+        $new_expression->questionId = null;
+        $new_expression->resultForUnanswered = 0;
+        $expressions[0] = $new_expression->toArray();
+        $countQuestions = [];
+        $countExpressions = [];
+        foreach($result as $expression){
+            $expressions[$expression->id] = $expression->toArray();
+            if($expression->type == "Counting"){
+                $countExpressions[] = $expression->toArray();
+            }
+        }
+        $result = Question::find()->where(["studyId"=>$id])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+        $questions = [];
+        $nameGenQuestions = [];
+        foreach($result as $question){
+            if($question['subjectType'] == "NAME_GENERATOR")
+                $nameGenQuestions[] = $question;
+            if($question['answerType'] == "NO_RESPONSE" ||
+                $question['subjectType'] == "NAME_GENERATOR" ||
+                $question['subjectType'] == "MERGE_ALTER" ||
+                $question['subjectType'] == "NETWORK")
+                continue;
+            if($question['answerType'] == "NUMERICAL" || $question['answerType'] == "RANDOM_NUMBER" || $question['answerType'] == "STORED_VALUE")
+                $countQuestions[] = $question;
+            $questions[$question['id']] = $question;
+            $questions[$question['id']]['optionsList'] = QuestionOption::find()->where(["questionId"=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+        }
+        return $this->render('expressions',["study"=>$study->toArray(), "expressions"=>$expressions, "questions"=>$questions, "nameGenQuestions"=>$nameGenQuestions, "countExpressions"=>$countExpressions, "countQuestions"=>$countQuestions]);
+    }
+
+    
+
+    public function actionAddinterviewer($id)
 	{
-		$this->studyId=$id;
-		$study = Study::model()->findByPk($id);
-		if(isset($_POST['Expression'])){
-			$model = Expression::model()->findByPk((int)$_POST['Expression']['id']);
-			if(!$model)
-				$model = new Expression;
-			$model->attributes = $_POST['Expression'];
-			if(!$model->save())
-				print_r($model->errors);
+        $interviewer = new Interviewer;
+		if ($interviewer->load(Yii::$app->request->post())){
+            if($interviewer->save())
+                return $this->response->redirect(Url::toRoute('/authoring/participants/' . $id));
 			else
-				$this->redirect(array('expression','id'=>$model->studyId));
-		}
-
-		$model = new Expression;
-		$criteria=new CDbCriteria;
-		$multi = $study->multiSessionEgoId;
-
-			$criteria=array(
-				'condition'=>"studyId = " . $id,
-			);
-
-		$dataProvider=new CActiveDataProvider('Expression',array(
-			'criteria'=>$criteria,
-			'pagination'=>false,
-		));
-
-		$this->render('view_expression',array(
-			'multi'=>$multi,
-			'studyId'=>$id,
-			'model'=>$model,
-			'study'=>$study,
-			'dataProvider'=>$dataProvider,
-		));
-	}
-
-	public function actionOptionlist($id)
-	{
-		$this->studyId=$id;
-		$model = AnswerList::model()->findAllByAttributes(array('studyId'=>$id));
-		$this->render('view_option_list',array(
-			'studyId'=>$id,
-			'model'=>$model,
-		));
-	}
-
-	public function actionAddUser()
-	{
-		if(isset($_POST['Interviewer'])){
-			$model = new Interviewer;
-			$model->attributes = $_POST['Interviewer'];
-			if($model->save())
-				Yii::app()->request->redirect($this->createUrl("/authoring/edit/" . $model->studyId));
-			else
-				print_r($model->getErrors());
+				print_r($interviewer->errors);
 		}
 	}
-	public function actionDeleteInterviewer(){
-		if(isset($_GET['interviewerId']))
-			$model = Interviewer::model()->findByAttributes(array("studyId"=>$_GET['studyId'], 'interviewerId'=>$_GET['interviewerId']));
-		if($model){
-			$model->delete();
-		}
-		Yii::app()->request->redirect($this->createUrl("/authoring/edit/" . $model->studyId));
+
+    public function actionDeleteInterviewer($id){
+        if (isset($_POST['Interviewer']['id'])) {
+            $interviewer = Interviewer::findOne(array("studyId"=>$id, 'interviewerId'=>$_POST['Interviewer']['id']));
+            if ($interviewer) {
+                $interviewer->delete();
+            }
+        }
+        return $this->redirect(Yii::$app->request->referrer);
 	}
 
-	public function actionDelete($id){
-		$interviews = Interview::model()->findAllByAttributes(array("studyId"=>$id));
+    public function actionDelete($id){
+		$interviews = Interview::findAll(array("studyId"=>$id));
 		if(count($interviews) > 0){
 			echo "Please delete all interviews before deleting this study";
 		}else{
-			$study = Study::model()->findByPk($id);
+			$study = Study::findOne($id);
 			$study->delete();
-			Yii::app()->request->redirect($this->createUrl('/authoring'));
+            return $this->response->redirect(Url::toRoute('/'));
 		}
 	}
 
-	public function actionArchive($id){
-		$interviews = Interview::model()->findAllByAttributes(array("studyId"=>$id));
-		if(count($interviews) > 0){
-			echo "Please delete all interviews before archiving this study";
-		}else{
-			$study = Study::model()->findByPk($id);
-			$study->active = 0;
-			$study->save();
-			Yii::app()->request->redirect($this->createUrl("/archive"));
-		}
-	}
-
-	public function actionDuplicate(){
-		if(isset($_GET['questionId'])){
-			$copy = Question::model()->findByPk((int)$_GET['questionId']);
+    public function actionDuplicatequestion($id){
+		if(isset($_POST['questionId'])){
+            $copy = false;
+            $questions = Question::find()->where(['studyId'=>$id])->orderBy(["ordering"=>"ASC"])->all();
+            foreach($questions as $question){
+                if($copy){
+                    $question->ordering++;
+                    $question->save();
+                }
+                if($question->id == $_POST['questionId'])
+                    $copy = $question;
+            }
 			$model = new Question;
 			$model->attributes = $copy->attributes;
 			$model->title = $model->title . "_COPY";
 			$model->id = null;
 			$model->ordering++;
-			$criteria = new CDbCriteria();
-			$criteria=array(
-				'condition'=>"studyId = " . $copy->studyId . " AND ordering > ".$copy->ordering ,
-				'order'=>'ordering',
-			);
-			$models = Question::model()->findAll($criteria);
-			foreach($models as $other){
-				$other->ordering++;
-				$other->save();
-			}
 			if(!$model->save())
 				print_r($model->getErrors());
 			else
-				$this->redirect(Yii::app()->request->getUrlReferrer());
+                return $this->redirect(Yii::$app->request->referrer);
 		}
 	}
 
-	public function actionAjaxupdate()
-	{
-		Yii::app()->clientScript->scriptMap['jquery.js'] = false;
-		Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
-		if(isset($_POST['Question'])){
+    public function actionAjaxupdate($id)
+    {
+        $study = Study::findOne($id);
+        if(isset($_POST['Question'])){
 			if(is_numeric($_POST['Question']['id']))
-				$model = Question::model()->findByPk((int)$_POST['Question']['id']);
+				$question = Question::findOne($_POST['Question']['id']);
 			else
-				$model = new Question;
-			$this->performAjaxValidation($model);
-			$oldTitle = $model->title;
-			if($model->answerType == "MULTIPLE_SELECTION")
-				$oldTitle .= ' <div class="optionLink" style="height:20px; width:60px;float:right">Options</div>';
-			$model->attributes=$_POST['Question'];
-			if($model->save()){
-				Study::updated($model->studyId);
-
-			if($model->answerType == "MULTIPLE_SELECTION")
-				$model->title .= ' <div class="optionLink" style="height:20px; width:60px;float:right">Options</div>';
-				echo $oldTitle . ";;;" . $model->title;
+				$question = new Question;
+			$question->attributes = $_POST['Question'];
+			if($question->save()){
 			}else{
-				print_r($model->getErrors());
+				print_r($question->errors);
 				die();
 			}
-		}elseif(isset($_POST['Legend'])){
-			$model = Legend::model()->findByPk((int)$_POST['Legend']['id']);
-			if(!$model){
-				$model = new Legend;
-				$criteria=new CDbCriteria;
-				$criteria->select='count(ordering) AS ordering';
-				$row = Legend::model()->find($criteria);
-				$model->ordering = $row['ordering'];
+		}elseif(isset($_POST['Study'])){
+            $study = Study::findOne($_POST['Study']['id']);
+            $study->attributes = $_POST['Study'];
+            if($study->save()){
+			}else{
+				print_r($study->errors);
+				die();
 			}
-			$model->attributes = $_POST['Legend'];
-			if(!$model->save())
-				throw new CHttpException(500, print_r($model->errors));
-			$criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"questionId = " . $model->questionId,
-				'order'=>'ordering',
-			);
-			$dataProvider=new CActiveDataProvider('Legend',array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
-			));
-			$this->renderPartial('_form_legend', array('dataProvider'=>$dataProvider, 'studyId'=> $model->studyId, 'questionId'=>$model->questionId, 'ajax'=>true), false, true);
-
 		}elseif(isset($_POST['QuestionOption'])){
-			// edit existing option
-			if(is_numeric($_POST['QuestionOption']['id'])){
-				$model = QuestionOption::model()->findByPk((int)$_POST['QuestionOption']['id']);
-			// replace options with predefined AnswerList
-			}else if($_POST['QuestionOption']['id'] == "replacePreset"){
-				$studyId = $this->deleteAllOptions($_POST['questionId']);
-				$list = AnswerList::model()->findByPk((int)$_POST['answerListId']);
-				$optionPairs = explode(',', $list->listOptionNames);
-				$ordering = 0;
-				foreach($optionPairs as $option){
-					$newOption = new QuestionOption;
-					$newOption->studyId = $studyId;
-					$newOption->questionId = $_POST['questionId'];
-					list($name,$value) = preg_split('/=/', $option);
-					$newOption->name = $name;
-					$newOption->value = $value;
-					$newOption->ordering = $ordering;
-					$newOption->save();
-					$ordering++;
-				}
-				$questionId = $_POST['questionId'];
-			}else if($_POST['QuestionOption']['id'] == "replaceOther"){
-				$this->deleteAllOptions($_POST['questionId']);
-				$models = QuestionOption::model()->findAllByAttributes(array('questionId'=>$_POST['otherQuestionId']));
-				foreach($models as $model){
-					$newOption = new QuestionOption;
-					$newOption->attributes = $model->attributes;
-					$newOption->id = '';
-					$newOption->questionId = $_POST['questionId'];
-					$newOption->save();
-				}
-				$questionId = $_POST['questionId'];
-			// create new
-			}else{
-				$model = new QuestionOption;
-				$criteria=new CDbCriteria;
-				$criteria->condition = ('questionId = '.$_POST['QuestionOption']['questionId']);
-				$criteria->select='count(ordering) AS ordering';
-				$row = QuestionOption::model()->find($criteria);
-				$model->ordering = $row['ordering'];
-			}
-			if(!in_array($_POST['QuestionOption']['id'], array("replacePreset", "replaceOther"))){
-				$this->performAjaxValidation($model);
-				$model->attributes=$_POST['QuestionOption'];
-				if(!$model->save())
-					throw new CHttpException(500, print_r($model->errors));
-				$questionId = $model->questionId;
-			}
-			if(isset($model->studyId))
-			    $studyId = $model->studyId;
-            else
-			    $studyId = $newOption->studyId;
-			Study::updated($studyId);
-			$criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"questionId = " . $questionId,
-				'order'=>'ordering',
-			);
-			$dataProvider=new CActiveDataProvider('QuestionOption',array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
-			));
-			$this->renderPartial('_form_option', array('dataProvider'=>$dataProvider, 'questionId'=>$questionId, 'ajax'=>true), false, true);
-		} else if ((isset($_POST['otherSpecify']) || isset($_POST['single'])) && isset($_POST['optionId'])) {
-            if (is_numeric($_POST['optionId'])) {
-				$option = QuestionOption::model()->findByPk($_POST['optionId']);
-				if(isset($_POST['otherSpecify']))
-					$option->otherSpecify = $_POST['otherSpecify'];
-				if(isset($_POST['single']))
-	                $option->single = $_POST['single'];
-                if(!$option->save())
-                    throw new CHttpException(500,"Other Specify update error!");
-    			$criteria=new CDbCriteria;
-    			$criteria=array(
-    				'condition'=>"questionId = " . $option->questionId,
-    				'order'=>'ordering',
-    			);
-    			$dataProvider=new CActiveDataProvider('QuestionOption',array(
-    				'criteria'=>$criteria,
-    				'pagination'=>false,
-    			));
-    			$this->renderPartial('_form_option', array('dataProvider'=>$dataProvider, 'questionId'=>$option->questionId, 'ajax'=>true), false, true);
+            $options = json_decode($_POST['options']);
+            if($_POST['QuestionOption']['id']){
+                $option = QuestionOption::findOne($_POST['QuestionOption']['id']);
+             }else{
+                if($_POST['QuestionOption']['id'] == "replaceOther"){
+                    $options = QuestionOption::findAll(array('questionId'=>$_POST['questionId']));
+                    foreach($options as $option){
+                        $option->delete();
+                    }
+                    $models = QuestionOption::findAll(array('questionId'=>$_POST['otherQuestionId']));
+                    foreach($models as $model){
+                        $newOption = new QuestionOption;
+                        $newOption->attributes = $model->attributes;
+                        $newOption->id = '';
+                        $newOption->questionId = $_POST['questionId'];
+                        $newOption->save();
+                    }
+                    $questionId = $_POST['questionId'];
+                }else{
+                    $option = new QuestionOption;
+                    $option->ordering = count($options);
+                    $option->studyId = $id;
+                }
+             }
+             $option->attributes = $_POST['QuestionOption'];
+             if($option->save()){
+                 $option = $option->toArray();
+                 $options[] = $option;
+                return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($options)]);
+            }else{
+                print_r($option->errors);
+                die();
             }
-		}else if(isset($_POST['AlterList'])){
-			// edit existing alterList entry
-			if(is_numeric($_POST['AlterList']['id'])){
-				$model = AlterList::model()->findByPk((int)$_POST['AlterList']['id']);
+        }else if(isset($_POST['AlterList'])){
+			if(isset($_POST['AlterList']['id'])){
+				$alterList = AlterList::findOne($_POST['AlterList']['id']);
 			}else{
-				$model = new AlterList;
-				$criteria=new CDbCriteria;
-				$criteria->condition = ('studyId = '.$_POST['AlterList']['studyId']);
-				$criteria->select='count(ordering) AS ordering';
-				$row = AlterList::model()->find($criteria);
-				$model->ordering = $row['ordering'];
+				$alterList = new AlterList;
+				$aList = AlterList::findAll(["studyId"=>$id]);
+				$alterList->ordering = count($aList);
 			}
-			$model->attributes=$_POST['AlterList'];
-      if($_POST['AlterList']["nameGenQIds"])
-        $model->nameGenQIds = implode(",", $_POST['AlterList']["nameGenQIds"]);
-			$model->name = trim($model->name);
-			$model->save();
-			Study::updated($_POST['AlterList']['studyId']);
-			$studyId = $model->studyId;
-			$criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"studyId = " . $studyId,
-				'order'=>'ordering',
-			);
-			$dataProvider=new CActiveDataProvider('AlterList',array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
-			));
-   			$this->renderPartial('_view_alter_list', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$studyId, 'ajax'=>true), false, true);
-		}else if(isset($_POST['AlterPrompt'])){
-			// edit existing alterList entry
-			if(is_numeric($_POST['AlterPrompt']['id'])){
-				$model = AlterPrompt::model()->findByPk((int)$_POST['AlterPrompt']['id']);
-			}else{
-				$model = new AlterPrompt;
-				$criteria=new CDbCriteria;
-				$criteria->condition = ('studyId = '.$_POST['AlterPrompt']['studyId']);
-			}
-			$model->attributes=$_POST['AlterPrompt'];
-			$model->save();
-			Study::updated($model->studyId);
-
-      $study = Study::model()->findByPk($model->studyId);
-      $question = Question::model()->findByPk($model->questionId);
-      $this->renderPartial('_form_alter_prompt', array('question'=>$question, 'study'=>$study, 'ajax'=>true), false, true);
-
-   		//	$this->renderPartial('_view_alter_prompt', array('dataProvider'=>$dataProvider, 'model'=>$model, 'studyId'=>$studyId, 'ajax'=>true), false, true);
-		}else if(isset($_POST['AnswerList'])){
-			$model = new AnswerList;
-			$model->attributes = $_POST['AnswerList'];
-			if($model->save())
-				$this->redirect(Yii::app()->request->urlReferrer);
-			else
-				print_r($model->getErrors());
-		}else if(isset($_GET['answerListId'])){
-			$answerList = AnswerList::model()->findByPk((int)$_GET['answerListId']);
-			if($answerList->listOptionNames){
-				if(strstr($answerList->listOptionNames, ','))
-					$listOptions = preg_split('/,/', $answerList->listOptionNames);
-				else
-					$listOptions[] = $answerList->listOptionNames;
-			}else{
-				$listOptions = array();
-			}
-			$options = array();
-			foreach($listOptions as &$listOption){
-				if($listOption){
-					list($key, $value) = preg_split('/=/', $listOption);
-					if(isset($_GET['oldKey']) && isset($_GET['oldValue']) && $_GET['oldKey'] == $key && isset($_GET['key']) && isset($_GET['value'])){
-						$options[$_GET['key']] = $_GET['value'];
-						$listOption = $_GET['key'] ."=".  $_GET['value'];
-					}else{
-						$options[$key] = $value;
-					}
-				}
-			}
-			if(isset($_GET['key']) && isset($_GET['value']) && !(isset($_GET['oldKey']) && isset($_GET['oldValue']))){
-				$listOptions[] = $_GET['key'] ."=". $_GET['value'];
-				$options[$_GET['key']] = $_GET['value'];
-			}
-			$answerList->listOptionNames = implode(',', $listOptions);
-			$answerList->save();
-				$this->renderPartial('_form_option_list', array('options'=>$options, 'answerList'=>$answerList, 'ajax'=>true), false, false);
-
-		}
-		Yii::app()->end();
-	}
-	/**
-	 * Deletes a particular model.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
-	public function actionAjaxdelete()
-	{
-		Yii::app()->clientScript->scriptMap['jquery.js'] = false;
-		Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
-		if(isset($_GET['Question'])){
-			$model = Question::model()->findByPk((int)$_GET['Question']['id']);
-			if($model){
-				$studyId = $model->studyId;
-				$ordering = $model->ordering;
-				$subjectType = $model->subjectType;
-				$questionId = $model->id;
-				if(file_exists(Yii::app()->basePath."/../audio/".$model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3"))
-					unlink(Yii::app()->basePath."/../audio/".$model->studyId . "/" . $model->subjectType . "/" . $model->id . ".mp3");
-        $sType = $model->subjectType;
-      	$model->delete();
-				Question::sortOrder($ordering, $studyId);
-				$expressions = Expression::model()->findAllByAttributes(array('questionId'=>$questionId));
-				foreach($expressions as $expression){
-					$expression->delete();
-				}
-				Study::updated($model->studyId);
-			}
-			$criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"studyId = " . $studyId  .  ($sType == "EGO_ID" ? ' AND subjectType = "EGO_ID"' : ' AND subjectType != "EGO_ID"'),
-				'order'=>'ordering',
-			);
-			$dataProvider=new CActiveDataProvider('Question',array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
-			));
-
-			$this->renderPartial('_view_question_list', array('dataProvider'=>$dataProvider, 'studyId'=>$studyId, 'ajax'=>true), false, true);
-		}else if(isset($_GET['QuestionOption'])){
-			if($_GET['QuestionOption']['id'] != 'all'){
-				$model = QuestionOption::model()->findByPk((int)$_GET['QuestionOption']['id']);
-				if($model){
-					$questionId = $model->questionId;
-					$ordering = $model->ordering;
-					if(file_exists(Yii::app()->basePath."/../audio/".$model->studyId . "/OPTION/". $model->id . ".mp3"))
-						unlink(Yii::app()->basePath."/../audio/".$model->studyId . "/OPTION/". $model->id . ".mp3");
-					$model->delete();
-					Study::updated($model->studyId);
-					QuestionOption::sortOrder($ordering, $questionId);
-				}
-			}else{
-
-				$this->deleteAllOptions($_GET['questionId']);
-				$questionId = $_GET['questionId'];
-                $question = Question::model()->findByPk((int)$_GET['questionId']);
-				#OK FOR SQL INJECTION
-				$params = new stdClass();
-				$params->name = ':questionId';
-				$params->value = $_GET['questionId'];
-				$params->dataType = PDO::PARAM_INT;
-				Study::updated($question->studyId);
-			}
-
-			$criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"questionId = " . $questionId,
-				'order'=>'ordering',
-			);
-			$dataProvider=new CActiveDataProvider('QuestionOption',array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
-			));
-
-			$this->renderPartial('_form_option', array('dataProvider'=>$dataProvider, 'questionId'=>$questionId, 'ajax'=>true), false, true);
-
-		}else if(isset($_GET['Legend'])){
-			if($_GET['Legend']['id'] != 'all'){
-				$model = Legend::model()->findByPk((int)$_GET['Legend']['id']);
-				if($model){
-					$questionId = $model->questionId;
-					$ordering = $model->ordering;
-					$studyId = $model->studyId;
-					$model->delete();
-					Legend::sortOrder($ordering, $questionId);
-				}
-			}else{
-				$this->deleteAllLegend($_GET['questionId']);
-			}
-
-			$criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"questionId = " . $_GET['questionId'],
-				'order'=>'ordering',
-			);
-			$dataProvider=new CActiveDataProvider('Legend',array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
-			));
-
-			$this->renderPartial('_form_legend', array('dataProvider'=>$dataProvider, 'questionId'=>$_GET['questionId'],  'studyId'=>$studyId, 'ajax'=>true), false, true);
-
-		}else if(isset($_GET['AlterList'])){
-			if($_GET['AlterList']['id'] != 'all'){
-				$model = AlterList::model()->findByPk((int)$_GET['AlterList']['id']);
-				if($model){
-					$studyId = $model->studyId;
-					$ordering = $model->ordering;
-					$model->delete();
-					AlterList::sortOrder($ordering, $studyId);
-				}
-			}else{
-				$this->deleteAllAlters($_GET['studyId']);
-				$studyId = $_GET['studyId'];
-			}
-			Study::updated($studyId);
-			$criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"studyId = " . $studyId,
-				'order'=>'ordering',
-			);
-			$dataProvider=new CActiveDataProvider('AlterList',array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
-			));
-			$this->renderPartial('_view_alter_list', array('dataProvider'=>$dataProvider, 'studyId'=>$studyId, 'ajax'=>true), false, true);
-		}else if(isset($_GET['AlterPrompt'])){
-			$model = AlterPrompt::model()->findByPk((int)$_GET['AlterPrompt']['id']);
-			if($model){
-				$studyId = $model->studyId;
-				$model->delete();
-				Study::updated($model->studyId);
-			}
-
-      $study = Study::model()->findByPk($model->studyId);
-      $question = Question::model()->findByPk($model->questionId);
-      $this->renderPartial('_form_alter_prompt', array('question'=>$question, 'study'=>$study, 'ajax'=>true), false, true);
-
-		}else if(isset($_GET['AnswerList'])){
-			$model = AnswerList::model()->findByPk((int)$_GET['AnswerList']['id']);
-			if($model)
-				$model->delete();
-			$this->redirect(Yii::app()->request->urlReferrer);
-		}else if(isset($_GET['answerListId'])){
-			$answerList = AnswerList::model()->findByPk((int)$_GET['answerListId']);
-			$listOptions = preg_split('/,/', $answerList->listOptionNames);
-			$options = array();
-			$newList = array();
-			foreach($listOptions as $listOption){
-				list($key, $value) = preg_split('/=/', $listOption);
-				if(!($key == $_GET['key'] && $value == $_GET['value']) && $listOption){
-					$newList[] = $listOption;
-					$options[$key] = $value;
-				}
-			}
-			$answerList->listOptionNames = implode(',', $newList);
-			$answerList->save();
-				$this->renderPartial('_form_option_list', array('options'=>$options, 'answerList'=>$answerList, 'ajax'=>true), false, false);
-		}else if(isset($_GET['expressionId'])){
-			$model = Expression::model()->findByPk((int)$_GET['expressionId']);
-			if($model)
-				$model->delete();
-		}
-	}
-	/**
-	* Loads form by ajax
-	*/
-	public function actionAjaxload()
-	{
-		Yii::app()->clientScript->scriptMap['jquery.js'] = false;
-		Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
-		if(isset($_GET['form'])){
-			if($_GET['form'] == "_form_question"){
-				if( !is_numeric($_GET['questionId']) ){
-					throw new CHttpException(500,"Invalid questionId specified ".$_GET['questionId']." !");
-				}
-				$model = Question::model()->findByPk((int)$_GET['questionId']);
-
-				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true), false, true);
-			}else if($_GET['form'] == "_form_alter_list_edit"){
-				if( !is_numeric($_GET['alterListId']) ){
-					throw new CHttpException(500,"Invalid alterListId specified ".$_GET['alterListId']." !");
-				}
-				$model = AlterList::model()->findByPk((int)$_GET['alterListId']);
-				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'studyId'=>$model->studyId), false, true);
-			}else if($_GET['form'] == "_form_alter_prompt_edit"){
-				if( !is_numeric($_GET['alterPromptId']) ){
-					throw new CHttpException(500,"Invalid alterPromptId specified ".$_GET['alterPromptId']." !");
-				}
-				$model = AlterPrompt::model()->findByPk((int)$_GET['alterPromptId']);
-				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'studyId'=>$model->studyId), false, true);
-			}else if($_GET['form'] == "_form_option_edit"){
-				if( !is_numeric($_GET['optionId']) ){
-					throw new CHttpException(500,"Invalid optionId specified ".$_GET['optionId']." !");
-				}
-				$model = QuestionOption::model()->findByPk((int)$_GET['optionId']);
-
-				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'questionId'=>$model->questionId), false, true);
-			}else if($_GET['form'] == "_form_legend_edit"){
-				if(isset($_GET['legendId']))
-					$model = Legend::model()->findByPk((int)$_GET['legendId']);
-				if(!$model)
-					$model = new Legend;
-				$this->renderPartial($_GET['form'], array('model'=>$model, 'ajax'=>true, 'questionId'=>$_GET['questionId'], 'studyId'=>$_GET['studyId']), false, true);
-			}else if($_GET['form'] == "_form_expression_text" || $_GET['form'] == "_form_expression_counting" || $_GET['form'] == "_form_expression_comparison" || $_GET['form'] == "_form_expression_compound"){
-
-				if(isset($_GET['id']))
-					$model = Expression::model()->findbyPk((int)$_GET['id']);
-				else
-					$model = new Expression;
-
-				if(isset($_GET['expressionId']))
-					$expression = Expression::model()->findbyPk((int)$_GET['expressionId']);
-				else
-					$expression = new Expression;
-				$this->renderPartial($_GET['form'], array('model'=>$model, 'expression'=>$expression, 'ajax'=>true, 'question'=>$question, 'studyId'=>(int)$_GET['studyId']), false, false);
-			}else if($_GET['form'] == "_form_expression_question"){
-                if(isset($_GET['expressionId']) && $_GET['expressionId'])
-					$model = Expression::model()->findbyPk((int)$_GET['expressionId']);
-				else
-					$model = new Expression;
-				if($model->id){
-    				$model->value = "";
-				}
-				$question = Question::model()->findByPk($_GET['questionId']);
-				$this->renderPartial("_form_expression_question", array('model'=>$model, 'question'=>$question), false, true);
-            }else if($_GET['form'] == "_form_expression_name_gen"){
-                if(isset($_GET['id']) && $_GET['id'])
-                    $model = Expression::model()->findbyPk((int)$_GET['id']);
-                else
-                    $model = new Expression;
-                $this->renderPartial("_form_expression_name_gen", array('model'=>$model, 'studyId'=>$_GET['studyId']), false, true);
-            }else if($_GET['form'] == "_form_option"){
-
-				$criteria=new CDbCriteria;
-				$criteria=array(
-					'condition'=>"questionId = " . $_GET['questionId'],
-					'order'=>'ordering',
-				);
-
-				$dataProvider=new CActiveDataProvider('QuestionOption',array(
-					'criteria'=>$criteria,
-					'pagination'=>false,
-				));
-
-				$this->renderPartial("_form_option", array('dataProvider'=>$dataProvider, 'questionId'=>$_GET['questionId'], 'ajax'=>true), false, true);
-			}else if($_GET['form'] == "_form_legend"){
-
-				$criteria=new CDbCriteria;
-				$criteria=array(
-					'condition'=>"questionId = " . $_GET['questionId'],
-					'order'=>'ordering',
-				);
-                $question = Question::model()->findByPK( $_GET['questionId']);
-                $studyId = $question->studyId;
-
-				$dataProvider=new CActiveDataProvider('Legend',array(
-					'criteria'=>$criteria,
-					'pagination'=>false,
-				));
-				$this->renderPartial("_form_legend", array('dataProvider'=>$dataProvider, 'studyId'=>$studyId, 'questionId'=> $_GET['questionId'], 'ajax'=>true), false, true);
-			}else if($_GET['form'] == "_form_option_list"){
-				$answerList = AnswerList::model()->findByPk((int)$_GET['answerListId']);
-				$listOptions = preg_split('/,/', $answerList->listOptionNames);
-				$options = array();
-				foreach($listOptions as $listOption){
-					if($listOption){
-						list($key, $value) = preg_split('/=/', $listOption);
-						$options[$key] = $value;
-					}
-				}
-				$this->renderPartial($_GET['form'], array('options'=>$options, 'answerList'=>$answerList, 'ajax'=>true), false, true);
-			}else if($_GET['form'] == "_form_option_list_edit"){
-				$this->renderPartial($_GET['form'], array('answerListId'=>$_GET['answerListId'], 'key'=>$_GET['key'], 'value'=>$_GET['value'], 'ajax'=>true), false, true);
-			}
-		}
-		Yii::app()->end();
-	}
-
-	public function actionAjaxreorder(){
-		if(isset($_GET['reorder'])){
-			foreach($_GET['reorder'] as $order=>$questionId){
-				$data = array(
-					'ordering'=>$order
-				);
-				u('question', $data, "id = " . $questionId);
-			}
-		}
-	}
-
-  public function actionExportalterlist()
-	{
-		if(!isset($_POST['studyId']) || $_POST['studyId'] == "")
-			die("nothing to export");
-
-		$study = Study::model()->findByPk((int)$_POST['studyId']);
-        #OK FOR SQL INJECTION
-		$alters = AlterList::model()->findAllByAttributes(array("studyId"=>$study->id));
-
-		// start generating export file
-		header("Content-Type: application/octet-stream");
-		header("Content-Disposition: attachment; filename=".seoString($study->name)."-predefined-alters".".csv");
-		header("Content-Type: application/force-download");
-
-		$headers = array();
-		$headers[] = 'Study ID';
-		$headers[] = "Alter ID";
-		$headers[] = "Alter Name";
-		$headers[] = "Alter Email";
-		$headers[] = "Link With Key";
-		echo implode(',', $headers) . "\n";
-
-        $ego_id = Question::model()->findByAttributes(array("studyId"=>$study->id, "subjectType"=>"EGO_ID", "useAlterListField"=>array("name", "email", "id")));
-
-		foreach($alters as $alter){
-			$row = array();
-			if($ego_id->useAlterListField == "name")
-    			$key = User::hashPassword($alter->name);
-			else if($ego_id->useAlterListField == "email")
-    			$key = User::hashPassword($alter->email);
-			else if($ego_id->useAlterListField == "id")
-    			$key = User::hashPassword($alter->id);
+			$alterList->attributes=$_POST['AlterList'];
+     		$alterList->name = trim($alterList->name);
+            $alterList->studyId = $id;
+            $study->save();
+            if($alterList->save())
+                return $this->redirect(Yii::$app->request->referrer);
             else
-                $key = "";
-			$row[] = $study->id;
-			$row[] = $alter->id;
-			$row[] = $alter->name;
-			$row[] = $alter->email;
-			$row[] =  Yii::app()->getBaseUrl(true) . "/interview/".$study->id."#/page/0/".$key;
-			echo implode(',', $row) . "\n";
+                print_r($alterList->errors);
+        }elseif(isset($_POST['AlterPrompt'])){
+            $prompts = json_decode($_POST['prompts']);
+            if($_POST['AlterPrompt']['id']){
+                $prompt = AlterPrompt::findOne($_POST['AlterPrompt']['id']);
+             }else{
+                 $prompt = new AlterPrompt; 
+                 $prompt->studyId = $id;
+             }
+             $prompt->attributes = $_POST['AlterPrompt'];
+             if($prompt->save()){
+                 $prompt = $prompt->toArray();
+                 $prompts[] = $prompt;
+                return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($prompts)]);
+            }else{
+                print_r($prompt->errors);
+                die();
+            }
+        }
+    }
+
+    public function actionAjaxdelete($id)
+    {
+        if(isset($_POST['Question'])){
+			$question = Question::findOne($_POST['Question']['id']);
+            if ($question) {           
+                $expressions = Expression::findAll(array('questionId'=>$question->id));
+                foreach ($expressions as $expression) {
+                    $expression->delete();
+                }
+                $options = QuestionOption::findAll(array('questionId'=>$question->id));
+                foreach ($options as $option) {
+                    $option->delete();
+                }
+                $questions = Question::find()->where(["studyId"=>$id])->andWhere(['>', 'ordering', $question->ordering])->all();
+                foreach($questions as $q){
+                    $q->ordering--;
+                    $q->save();
+                }
+                $question->delete();
+                //Study::updated($model->studyId);
+                return $this->redirect(Yii::$app->request->referrer);
+            }
+        }elseif (isset($_POST['QuestionOption']) && isset($_POST['QuestionOption']['id'])) {
+            $option = QuestionOption::findOne($_POST['QuestionOption']['id']);
+            if($option){
+                $ordering = $option->ordering;
+                $option->delete();
+                $options = QuestionOption::find()->where(["questionId"=>$_POST['QuestionOption']['questionId']])->andWhere(['>', 'ordering', $ordering])->all();
+                foreach($options as $o){
+                    $o->ordering--;
+                    $o->save();
+                }
+                $options = QuestionOption::find()->where(["questionId"=>$_POST['QuestionOption']['questionId']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+                return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($options)]);
+            }
+
+        }elseif (isset($_POST['AlterPrompt']) && isset($_POST['AlterPrompt']['id'])) {
+            $prompt = AlterPrompt::findOne($_POST['AlterPrompt']['id']);
+            if($prompt){
+                $prompt->delete();
+                $prompts = AlterPrompt::find()->where(["questionId"=>$_POST['AlterPrompt']['questionId']])->orderBy(["afterAltersEntered"=>"ASC"])->asArray()->all();
+                return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($prompts)]);
+            }
+        }else if(isset($_POST['expressionId'])){
+			$expression = Expression::findOne($_POST['expressionId']);
+			if($expression)
+				$expression->delete();
+            return $this->redirect(Yii::$app->request->referrer);
 		}
-		Yii::app()->end();
-	}
+    }
 
-	public function actionAjaxshowlink()
-	{
-		if(isset($_GET['alterListId'])){
 
-			$alter = AlterList::model()->findByPk((int)$_GET['alterListId']);
-            $ego_id = Question::model()->findByAttributes(array("studyId"=>$alter->studyId, "subjectType"=>"EGO_ID", "useAlterListField"=>array("name", "email", "id")));
-        if($ego_id->useAlterListField == "name")
-    		  $key = User::hashPassword($alter->name);
-			  else if($ego_id->useAlterListField == "email")
-    			$key = User::hashPassword($alter->email);
-          //$key = User::hashPassword("test_a@test.com");
+    public function actionAjaxreorder($id)
+    {
+        if (isset($_POST['QuestionOption']) && isset($_POST['options'])) {
+            $options = json_decode($_POST['options'], true);
+            $newOptions = [];
+            foreach($options as $o){
+                $option = QuestionOption::findOne($o['id']);
+                $option->ordering = $o['ordering'];
+                $option->save();
+            }
+            $newOptions = QuestionOption::find()->where(['questionId'=>$_POST['QuestionOption']['questionId']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+            return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($newOptions)]);
 
-			//else if($ego_id->useAlterListField == "id")
-    		//	$key = User::hashPassword($alter->id);
-            //else
-            //    $key = "";
-			$link = Yii::app()->getBaseUrl(true) . "/interview/".$alter->studyId."#/page/0/".$key;
-		  if($_SERVER['SERVER_PORT'] == 443)
-				$link =str_replace("http:", "https:", $link);
-			echo "<div style='clear:both'><label>Authorized Link for $alter->email</label><br>$link</div>";
-		}
-	}
-	public function actionAjaxmoveup()
-	{
-		Yii::app()->clientScript->scriptMap['jquery.js'] = false;
-		Yii::app()->clientScript->scriptMap['jquery.min.js'] = false;
-		if(isset($_GET['optionId'])){
-			QuestionOption::moveUp($_GET['optionId']);
-			$model = QuestionOption::model()->findByPk((int)$_GET['optionId']);
-			$criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"questionId = " . $model->questionId,
-				'order'=>'ordering',
-			);
-			$dataProvider=new CActiveDataProvider('QuestionOption',array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
-			));
-			$this->renderPartial('_form_option', array('dataProvider'=>$dataProvider, 'questionId'=>$model->questionId, 'ajax'=>true), false, true);
-		}else if(isset($_GET['legendId'])){
-			Legend::moveUp($_GET['legendId']);
-			$model = Legend::model()->findByPk((int)$_GET['legendId']);
-			$criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"questionId = " . $model->questionId,
-				'order'=>'ordering',
-			);
-			$dataProvider=new CActiveDataProvider('Legend',array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
-			));
-			$this->renderPartial('_form_legend', array('dataProvider'=>$dataProvider, 'questionId'=>$model->questionId,  'studyId'=>$model->studyId, 'ajax'=>true), false, true);
-		}else if(isset($_GET['alterListId'])){
-			AlterList::moveUp($_GET['alterListId']);
-			$model = AlterList::model()->findByPk((int)$_GET['alterListId']);
-			$criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"studyId = " . $model->studyId,
-				'order'=>'ordering',
-			);
-			$dataProvider=new CActiveDataProvider('AlterList',array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
-			));
-			$this->renderPartial('_view_alter_list', array('dataProvider'=>$dataProvider, 'studyId'=>$model->studyId, 'ajax'=>true), false, true);
-		}else if(isset($_GET['questionId'])){
-			Question::moveUp($_GET['questionId']);
-			$model = Question::model()->findByPk((int)$_GET['questionId']);
-			$criteria=new CDbCriteria;
-			$criteria=array(
-				'condition'=>"studyId = " . $model->studyId ." AND subjectType = '" . $model->subjectType ."'",
-				'order'=>'ordering',
-			);
-			$dataProvider=new CActiveDataProvider('Question',array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
-			));
-			$this->renderPartial('_view_question_list', array('dataProvider'=>$dataProvider, 'studyId'=>$model->studyId, 'ajax'=>true), false, true);
-		}else if(isset($_GET['answerListId'])){
-			$answerList = AnswerList::model()->findByPk((int)$_GET['answerListId']);
-			$listOptions = preg_split('/,/', $answerList->listOptionNames);
-			$options = array();
-			$newList = array();
-			foreach($listOptions as $listOption){
-				if(!$listOption)
-					break;
-				list($key, $value) = preg_split('/=/', $listOption);
-				if(!($key == $_GET['key'] && $value == $_GET['value'])){
-					$newList[] = $listOption;
-					$options[$key] = $value;
-				}else{
-					$newPop = array_pop($newList);
-					list($oldKey, $oldValue) = preg_split('/=/', $newPop);
-					unset($options[$oldKey]);
-					$newList[] = $listOption;
-					$options[$key] = $value;
-					$newList[] = $newPop;
-					$options[$oldKey] = $oldValue;
-
-				}
+        }elseif (isset($_POST['questions'])) {
+			foreach($_POST['questions'] as $order=>$q){
+                $question = Question::findOne($q['id']);
+                $question->ordering = $order;
+                $question->save();
 			}
-			$answerList->listOptionNames = implode(',', $newList);
-			$answerList->save();
-				$this->renderPartial('_form_option_list', array('options'=>$options, 'answerList'=>$answerList, 'ajax'=>true), false, false);
-		}
-	}
-	/**
-	 * Performs the AJAX validation.
-	 * @param Study $model the model to be validated
-	 */
-	protected function performAjaxValidation($model)
-	{
-		if(isset($_POST['ajax']))
-		{
-			echo CActiveForm::validate($model);
-			Yii::app()->end();
-		}
-	}
-
-	protected function deleteAllOptions($questionId){
-		$models = QuestionOption::model()->findAllByAttributes(array('questionId'=>$questionId));
-		foreach($models as $model){
-			$studyId = $model->studyId;
-			if(file_exists(Yii::app()->basePath."/../audio/".$studyId . "/OPTION/". $model->id . ".mp3"))
-				unlink(Yii::app()->basePath."/../audio/".$studyId . "/OPTION/". $model->id . ".mp3");
-			$model->delete();
-		}
-		if(isset($studyId))
-			return $studyId;
-	}
-
-	protected function deleteAllAlters($studyId){
-		$models = AlterList::model()->findAllByAttributes(array('studyId'=>$studyId));
-		foreach($models as $model){
-			$model->delete();
-		}
-	}
-
-	/**
-	 * Returns the data model based on the primary key given in the GET variable.
-	 * If the data model is not found, an HTTP exception will be raised.
-	 * @param integer $id the ID of the model to be loaded
-	 * @return Study the loaded model
-	 * @throws CHttpException
-	 */
-	public function loadModel($id)
-	{
-		$model=Study::model()->findByPk($id);
-		if($model===null)
-			throw new CHttpException(404,'The requested page does not exist.');
-		return $model;
-	}
-
+        }
+    }
 }

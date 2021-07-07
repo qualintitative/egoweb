@@ -1,132 +1,83 @@
 <?php
-
-// uncomment the following to define a path alias
-// Yii::setPathOfAlias('local','path/to/local-folder');
-
-// This is the main Web application configuration. Any writable
-// CWebApplication properties can be configured here.
-return array(
-	'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
-	'name' => 'EgoWeb 2.0',
-
-	// preloading 'log' component
-	'preload' => array('log'),
-
-	// autoloading model and component classes
-	'import' => array(
-		'application.models.*',
-		'application.components.*',
-		'application.controllers.*'
-	),
-
-	'modules' => array(
-		// uncomment the following to enable the Gii tool
-
-		'gii' => array(
-			'class' => 'system.gii.GiiModule',
-			'password' => '12345',
-			// If removed, Gii defaults to localhost only. Edit carefully to taste.
-			'ipFilters' => array('127.0.0.1', '::1'),
-		),
-
-	),
-
-	// application components
-	'components' => array(
-		'user' => array(
-			// enable cookie-based authentication
-			'allowAutoLogin' => true,
-			'class' => 'WebUser'
-		),
-		// uncomment the following to enable URLs in path-format
-
-		'urlManager' => array(
-			'urlFormat' => 'path',
-			'rules' => array(
-				//'gii/default/login' => 'gii/default/login',
-				'interview/<studyId:\d+>/<interviewId:\d+>' => 'interview/view',
-				'interview/<studyId:\d+>' => 'interview/view',
-				'<controller:\w+>/<action:\w+>/<id:(.*)+>' => '<controller>/<action>',
-				'<controller:\w+>/<action:\w+>' => '<controller>/<action>',
-				'<controller:\w+>/<id:\d+>' => '<controller>/view',
-			),
-			'showScriptName' => false,
-		),
-		/*
-		'db'=>array(
-			'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
-		),
-		// uncomment the following to use a MySQL database
-		*/
-		'db' => array(
-			'connectionString' => 'mysql:host=localhost;dbname=egoweb',
-			'username' => 'egowebuser',
-			'password' => "egowebpass",
-			//'enableProfiling'=>true,
-			'emulatePrepare' => true,
-			'charset' => 'utf8',
-		),
-
-		'session' => array(
-			'class' => 'system.web.CDbHttpSession',
-			'connectionID' => 'db',
-			'sessionTableName' => 'session',
-		),
-
-		'errorHandler' => array(
-			// use 'site/error' action to display errors
-			'errorAction' => 'site/error',
-		),
-
-		'log' => array(
-			'class' => 'CLogRouter',
-			'routes' => array(
-				array(
-					'class' => 'CFileLogRoute',
-					'levels' => 'error, warning, trace, info',
-				),
-			),
-
-		),
-
-		'request' => array(
-			'enableCsrfValidation' => true,
-			'class' => 'HttpRequest',
-			'noCsrfValidationRoutes' => array(
-				'mobile/*',
-				'survey/*',
-				'survey',
-				'api/*',
-				'api'
-			)
-		),
-		/*
-		'securityManager'=>array(
-			'cryptAlgorithm' => 'blowfish',
-			'encryptionKey' => 'One morning I shot an elephant in my pajamas.',
-		)
-*/
-		'securityManager' => array(
-			'cryptAlgorithm' => 'rijndael-128',
-			'encryptionKey' => 'old_key1old_key1',
-		)
-	),
-
-	// application-level parameters that can be accessed
-	// using Yii::app()->params['paramName']
-    'params'=>array(
-		'version'=>'2.0.9.12',
+return [
+    'id' => 'egoweb-server',
+    'name'=>'EgoWeb 2.0',
+    'basePath' => dirname(__DIR__),
+    'bootstrap' => ['log'],
+    /*'bootstrap' => ['log', 'gii', 'debug'],
+    'modules' => [
+        'gii' => 'yii\gii\Module',
+        'debug' => 'yii\debug\Module',
+    ],*/
+    'controllerNamespace' => 'app\controllers',
+    'defaultRoute' => 'site/index',
+    'components' => [
+        'request' => [
+            'csrfParam' => '_csrf-protected',
+        ],
+        'user' => [
+            'identityClass' => 'app\models\User',
+            'enableAutoLogin' => false,
+            'identityCookie' => ['name' => '_identity-protected', 'httpOnly' => true],
+        ],
+        'session' => [
+            // this is the name of the session cookie used for login on the protected
+            'name' => 'advanced-protected',
+        ],
+        'db' => [
+            'class' => 'yii\db\Connection',
+            'dsn' => 'mysql:host=localhost;dbname=egoweb',
+            'username' => 'egowebuser',
+            'password' => 'egowebpass',
+            'charset' => 'utf8',
+        ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+            // uncomment if you want to cache RBAC items hierarchy
+            // 'cache' => 'cache',
+        ],
+        'log' => [
+            'traceLevel' => YII_DEBUG ? 3 : 0,
+            'targets' => [
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['error', 'warning'],
+                ],
+            ],
+        ],
+        'errorHandler' => [
+            'errorAction' => 'site/error',
+        ],
+        
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+                'debug/<controller>/<action>' => 'debug/<controller>/<action>',
+                'interview/<studyId:\d+>/<interviewId:\d+>' => 'interview/view',
+                'interview/<studyId:\d+>' => 'interview/view',
+                '<controller>/<id:\d+>' => '<controller>/index',
+                '<controller>/<action>' => '<controller>/<action>',
+                '<controller>/<action>/<id:\d+>' => '<controller>/<action>',
+                'site/reset-password/<token:\w+>' => 'site/reset-password',
+            ],
+        ],
+        
+    ],
+    'params' => [
+        'version'=>'2.0.9.9',
 		// this is used in contact page
-		'adminEmail'=>'admin@example.com',
+		'adminEmail' => 'admin@example.com',
 		// The max login attempt before showing captcha
-		'maxLoginAttempts'=>3,
-		'maxUploadFileSize'=>1024*1024*3, // 3MB
-		'apiKey' => 'API_KEY',
-		// file path for study export
+		'maxLoginAttempts' => 3,
+		'maxUploadFileSize' => 1024 * 1024 * 3, // 3MB		// file path for study export
 		'exportFilePath' => '',
-        // Enabling audio upload may make your server less secure
+		// Enabling audio upload may make your server less secure
+		'enableAudioUpload' => false,
         'surveyURL' => 'http://'.$_SERVER['HTTP_HOST'].'/survey',
         'APIPassword' => 'yourpasswordhere',
-        'enableAudioUpload' => false,
-	)
-);
+        'encryptionKey' => 'old_key1old_key1',
+        'user.passwordResetTokenExpire' => 3600,
+        'user.passwordMinLength' => 8,
+    ],
+];

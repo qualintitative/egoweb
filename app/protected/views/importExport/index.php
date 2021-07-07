@@ -1,14 +1,17 @@
 <?php
-/* @var $this ImportExportController */
+use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 ?>
 
-<div class="panel panel-success">
-  <div class="panel-heading">
+<div class="card">
+  <div class="card-header bg-success text-white">
     Import Study
   </div>
 
-  <div class="panel-body">
-    <?php echo CHtml::form($this->createUrl("/importExport/importstudy"), 'post', array('id' => 'importForm', 'enctype' => 'multipart/form-data')); ?>
+  <div class="card-body">
+  <?= Html::beginForm(['/importexport/importstudy'], 'post', array('id' => 'importForm', 'enctype' => 'multipart/form-data')) ?>
+
     <div class="form-group">
       <div class="col-lg-3">
         <input id="userfile" name="files[]" class="form-control" type="file" multiple accept=".study, .xml" />
@@ -24,44 +27,31 @@
         <button class="btn btn-success">Import</button>
       </div>
     </div>
-    </form>
+    <?= Html::endForm() ?>
   </div>
 </div>
 
-<br clear=all>
-<br clear=all>
-
-<div class="panel panel-warning">
-  <div class="panel-heading">
+<div class="card">
+  <div class="card-header bg-warning">
     Replicate Study
   </div>
 
-  <div class="panel-body">
-    <?php
-    // replicate study
-    $form = $this->beginWidget('CActiveForm', array(
-      'id' => 'replicate',
-      'enableAjaxValidation' => false,
-      'action' => $this->createUrl("/importExport/replicate")
-    ));
-    ?>
+  <div class="card-body">
+  <?= Html::beginForm(['/importexport/replicate'], 'post', array('id' => 'replicate')) ?>
+
     <div class="form-group">
       <div class="col-lg-3">
-        <?php
-        $criteria = new CDbCriteria;
-        $criteria->order = 'name';
-        echo CHtml::dropdownlist(
-          'studyId',
-          '',
-          CHtml::listData($studies, 'id', 'name'),
-          array("class" => "form-control")
-        );
-        ?>
+      <?= Html::dropDownList(
+        'studyId',
+        '',
+        ArrayHelper::map($studies, 'id', 'name'),
+        ['class' => 'form-control',]
+        ) ?>
       </div>
     </div>
     <div class="form-group">
       <div class="col-lg-3">
-        <?php echo CHtml::textField('name', '', array('class' => "form-control", "placeholder" => "new name")); ?>
+        <?php echo Html::input('text','name', '', array('class' => "form-control", "placeholder" => "new name")); ?>
       </div>
     </div>
     <div class="form-group">
@@ -69,39 +59,27 @@
         <button class="btn btn-warning">Replicate</button>
       </div>
     </div>
-    <?php $this->endWidget(); ?>
+    <?= Html::endForm() ?>
   </div>
 </div>
 
-<br clear=all>
-<br clear=all>
 
-<div id="export-panel" class="panel panel-info">
-  <div class="panel-heading">
+<div id="export-panel" class="card">
+  <div class="card-header bg-info text-white">
     Export Study
   </div>
-  <div class="panel-body">
-    <?php
-    // export study
-    $form = $this->beginWidget('CActiveForm', array(
-      'id' => 'export',
-      'enableAjaxValidation' => false,
-      'action' => $this->createUrl("/importExport/exportstudy")
-    ));
-    $criteria = new CDbCriteria;
-    $criteria->order = 'name';
-    echo CHtml::dropdownlist(
-      'studyId',
-      '',
-      CHtml::listData($studies, 'id', 'name'),
-      array(
+  <div class="card-body">
+  <?= Html::beginForm(['/importexport/exportstudy'], 'post', array('id' => 'export')) ?>
+  <?= Html::dropDownList(
+        'studyId',
+        '',
+        ArrayHelper::map($studies, 'id', 'name'),
+        ['class' => 'form-control',
         'empty' => 'Select',
         'onchange' => "js:getInterviews(\$(this), '#export-interviews')",
-        'class' => 'form-control'
-      )
-
-    );
-    ?>
+        ]
+        ) ?>
+    
     <div id="export-interviews"></div>
     <div id="exportNotice" class="col-sm-12 alert alert-success" style="display:none"></div>
     <div id="exportError" class="col-sm-12 alert alert-danger" style="display:none"></div>
@@ -114,22 +92,17 @@
         <button  id="sendExport" class="btn btn-info" onclick="exportEgo(); return false;">Export</button>
       </div>
     </div>
-    <?php $this->endWidget(); ?>
+    <?= Html::endForm() ?>
   </div>
 </div>
 
-<div class="panel panel-info">
-  <div class="panel-heading">
+<div class="card">
+  <div class="card-header bg-info text-white">
     Save External Server Credentials
   </div>
-  <div class="panel-body">
-    <?php
-    // export study
-    $form = $this->beginWidget('CActiveForm', array(
-      'id' => 'sendForm',
-      'enableAjaxValidation' => false,
-    ));
-    ?>
+  <div class="card-body">
+  <?= Html::beginForm([''], 'post', array('id' => 'sendForm')) ?>
+
     <div class="form-group">
       <label class="col-sm-2">User Name</label>
       <div class='col-sm-4'>
@@ -150,13 +123,10 @@
         <button class="btn btn-success" onclick="authenticate(); return false;">Save</button>
       </div>
     </div>
-    <?php $this->endWidget(); ?>
-    <?php
-    $s = Server::model()->findAll();
-    ?>
+    <?= Html::endForm() ?>
     <br><br>
     <ul class="list-group">
-      <?php foreach ($s as $server) : ?>
+      <?php foreach ($servers as $server) : ?>
         <li class="list-group-item"><?php echo $server->address; ?>
           <a class="btn btn-xs pull-right btn-danger" href="javascript:void(0);" onclick="deleteServer(<?php echo $server->id; ?>)">Delete</a>
         </li>
@@ -165,52 +135,38 @@
   </div>
 </div>
 
-<div class="panel panel-info">
-  <div class="panel-heading">
+<div class="card">
+  <div class="card-header bg-info text-white">
     Send Study to Server
   </div>
-  <div class="panel-body">
-    <?php
-    // export study
-    $form = $this->beginWidget('CActiveForm', array(
-      'id' => 'syncForm',
-      'enableAjaxValidation' => false,
-    ));
-    $criteria = new CDbCriteria;
-    $criteria->order = 'name';
-    ?>
+  <div class="card-body">
+  <?= Html::beginForm([''], 'post', array('id' => 'syncForm')) ?>
     <div class="form-group">
       <label class="col-sm-2">Server Address</label>
       <div class='col-sm-10'>
-        <?php echo CHtml::dropdownlist(
-          'serverId',
-          '',
-          CHtml::listData(Server::model()->findAll(), 'id', 'address'),
-          array(
-            'id' => 'serverAddress',
-            'empty' => 'Select',
-            'class' => 'form-control'
-          )
-        );
-        ?>
+      <?= Html::dropDownList(
+        'serverId',
+        '',
+        ArrayHelper::map($servers, 'id', 'address'),
+        ['class' => 'form-control',
+        'id' => 'serverAddress',
+        ]
+        ) ?>
       </div>
     </div>
     <br>
     <div class="form-group">
       <label class="col-sm-2">Study</label>
       <div class='col-sm-10'>
-        <?php echo CHtml::dropdownlist(
-          'studyId',
-          '',
-          CHtml::listData($studies, 'id', 'name'),
-          array(
-            'id' => 'sendStudy',
-            'empty' => 'Select',
-            'onchange' => "js:getInterviews(\$(this),'#send-interviews')",
-            'class' => 'form-control'
-          )
-        );
-        ?>
+      <?= Html::dropDownList(
+        'studyId',
+        '',
+        ArrayHelper::map($studies, 'id', 'name'),
+        ['class' => 'form-control',
+        'onchange' => "js:getInterviews(\$(this),'#send-interviews')",
+        'id' => 'sendStudy',
+        ]
+        ) ?>
       </div>
       <br>
 
@@ -227,7 +183,7 @@
       <div class="col-sm-2" style="clear:both">
         <button id="sendSync" class="btn btn-info" onclick="getData();return false;">Send</button>
       </div>
-      <?php $this->endWidget(); ?>
+      <?= Html::endForm() ?>
       <textarea id="sendJson" class="hidden"></textarea>
     </div>
   </div>
@@ -236,7 +192,7 @@
     servers = <?php echo json_encode($servers); ?>;
 
     function getInterviews(dropdown, container) {
-      $.get('<?= $this->createUrl("/importExport/ajaxinterviews") ?>' + "/" + dropdown.val(), function(data) {
+      $.get('<?= Url::to(['/importexport/ajaxinterviews']); ?>' + "/" + dropdown.val(), function(data) {
         $("#sendError").hide();
         $("#sendNotice").hide();
         $(container).html(data);
@@ -291,8 +247,8 @@
         var thisInt = interviews.splice(0, batchSize);
         console.log($("exporting", thisInt).val());
 
-
-        return $.post('<?= $this->createUrl("/importExport/send/") ?>' + "/" + $("#sendStudy option:selected").val(), {
+        
+        return $.post('<?= Url::to(['/importexport/send']); ?>' + "/" + $("#sendStudy option:selected").val(), {
             "YII_CSRF_TOKEN": $("input[name='YII_CSRF_TOKEN']").val(),
             "serverId": $("#serverAddress option:selected").val(),
             "export[]": $(thisInt).val()
@@ -377,7 +333,7 @@
         $("#exportNotice").html($("#exportNotice").html() + "<br>" + msg);
         return $.ajax({
           type: "POST",
-          url: rootUrl + '/importExport/ajaxexport/',
+          url: rootUrl + '/importexport/ajaxexport/',
           data: {
             "interviewId": $(thisInt).val(),
             "YII_CSRF_TOKEN": $("input[name='YII_CSRF_TOKEN']").val()
@@ -404,7 +360,7 @@
 
     function deleteServer(id) {
       if (confirm("Do you want to delete this server?")) {
-        $.post("<?= $this->createUrl('importExport/deleteserver') ?>", {
+        $.post("<?= Url::to(['importexport/deleteserver']) ?>", {
           "serverId": id,
           "YII_CSRF_TOKEN": $("[name*='YII_CSRF_TOKEN']").val()
         }, function(data) {

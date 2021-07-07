@@ -1,6 +1,5 @@
 <script>
-
-baseUrl = rootUrl + "/www/";
+baseUrl = document.location.protocol + "//" + document.location.hostname + "/www/";
 study = <?php echo $study ?>;
 questions = <?php echo $questions ?>;
 ego_id_questions = <?php echo $ego_id_questions ?>;
@@ -24,27 +23,15 @@ questionList = <?php echo $questionList ?>;
 participantList = <?php echo $participantList ?>;
 audio = <?php echo $audio; ?>;
 otherGraphs = <?php echo $otherGraphs; ?>;
-csrf = '<?php echo Yii::app()->request->csrfToken; ?>';
-if('<?php echo Yii::app()->session['redirect']; ?>' != '')
-    window.localStorage.setItem('redirect', '<?php echo Yii::app()->session['redirect']; ?>');
+csrf = '<?php echo Yii::$app->request->getCsrfToken(); ?>';
+if('<?php echo Yii::$app->session->get('redirect'); ?>' != '')
+    window.localStorage.setItem('redirect', '<?php echo Yii::$app->session->get('redirect'); ?>');
 redirect = window.localStorage.getItem('redirect');
-isGuest = <?php echo (Yii::app()->user->isGuest ? 1 : 0); ?>;
-
+isGuest = <?php echo (Yii::$app->user->isGuest ? 1 : 0); ?>;
 </script>
-<?php
-Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/angular.min.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/angular-route.min.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/autocomplete.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/interview.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->baseUrl.'/www/js/server.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/1.0.3/sigma.min.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/1.0.3/plugins/sigma.plugins.dragNodes.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/1.0.3/plugins/shape-library.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/1.0.3/plugins/sigma.renderers.customShapes.min.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/1.0.3/plugins/sigma.layout.forceAtlas2.min.js');
-Yii::app()->clientScript->registerScriptFile(Yii::app()->getBaseUrl().'/www/js/plugins/sigma.notes.js');
-Yii::app()->clientScript->registerCssFile(Yii::app()->baseUrl.'/www/css/autocomplete.css');
+<?php 
+$this->registerAssetBundle(\yii\web\JqueryAsset::className(), \yii\web\View::POS_HEAD); 
+use app\assets\InterviewAsset;
+InterviewAsset::register($this);
 ?>
-<script src="/js/levenshtein.js" type="text/javascript"></script>
-<script src="/js/doublemetaphone.js" type="text/javascript"></script>
-<div id="ngView" ng-view></div>
+<div id="ngView" ng-view class="row"></div>
