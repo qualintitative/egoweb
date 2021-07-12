@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\models\Alters;
 
 /**
  * This is the model class for table "notes".
@@ -34,6 +35,11 @@ class Note extends \yii\db\ActiveRecord
             [['notes'], 'string'],
             [['alterId'], 'string', 'max' => 64],
         ];
+    }
+
+    public function getAlter()
+    {
+        return $this->hasOne(Alters::class, ['id' => 'alterId']);
     }
 
     /**

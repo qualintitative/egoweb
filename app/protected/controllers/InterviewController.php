@@ -409,24 +409,27 @@ class InterviewController extends Controller
 
             if($Answer['questionType'] == "EGO_ID" && $Answer['value'] != "" && !$interviewId){
                 foreach($_POST['Answer'] as $ego_id){
+
                     $ego_id_q = Question::findOne($ego_id['questionId']);
                     if(in_array($ego_id_q->useAlterListField, array("name", "email"))){
                         $keystr = $ego_id['value'];
                         break;
                     }
                 }
+
                 if(!isset($keystr))
                     $ego_id_q = false;
+    
                 if($ego_id_q && !$key){
-                    if(!Yii::app()->user->isGuest)
-                        $participantList = AlterList::findAll(array("studyId"=>$study->id, "interviewerId"=>array(0, Yii::app()->user->id)));
+                    if(!Yii::$app->user->isGuest)
+                        $participantList = AlterList::findAll(array("studyId"=>$study->id, "interviewerId"=>array(0, Yii::$app->user->identity->id)));
                     $ego_id_a = Answer::findAll(array("studyId"=>$study->id, "questionType"=>"EGO_ID"));
                     $ego_id_answers = array();
                     foreach($ego_id_a as $a){
                         if($a->questionId == $ego_id_q->id)
                             $ego_id_answers[] = $a->value;
                     }
-                    if(count($participantList) == 0 && !Yii::app()->user->isGuest){
+                    if(count($participantList) == 0 && !Yii::$app->user->isGuest){
                         $errors++;
                         $errorMsg = "$keystr is either not in the participant list or has been assigned to another interviewer";
                     }else{
@@ -449,9 +452,9 @@ class InterviewController extends Controller
                     }
                 }
 
-                if(Yii::$app->user->isGuest){
+               // if(Yii::$app->user->isGuest){
                   if($key != ""){
-                    if(!$key || ($key && Yii::$app->security->generatePasswordHash($keystr) != $key)){
+                    if(!$key || ($key && md5($keystr) != $key)){
                         $errors++;
                         $errorMsg = "Participant not found";
                     }
@@ -462,7 +465,7 @@ class InterviewController extends Controller
                         $errorMsg = "Participant not found";
                     }
                   }
-                }
+              //  }
 
                 if($errors == 0){
                     if(isset($keystr)){

@@ -6,12 +6,19 @@ use yii\helpers\Html;
 
 <div id="authoring-app">
 <?= Html::beginForm(['/authoring/'.$study['id']], 'post', [ 'id'=>'analysis']) ?>
-<div class="col-md-6">
-    <div class="row form-group">
-        <label for="Question_title" class="col-sm-4 col-form-label">Title</label>
-        <div class="col-sm-8">
-            <input type="text" v-model="study.name" class="form-control" name="Study[name]" id="Study_name">
+<div class="row form-group">
+    <div class="col-md-6">
+        <div class="row form-group">
+            <label for="Question_title" class="col-sm-4 col-form-label">Title</label>
+            <div class="col-sm-8">
+                <input type="text" v-model="study.name" class="form-control" name="Study[name]" id="Study_name">
+            </div>
         </div>
+    </div>
+    <div class="col-md-6">
+        <?php if($interviews > 0): ?>
+        <a class="btn btn-sm btn-info float-right" href="/data/<?php echo $study['id']; ?>">Data Processing (<?php echo $interviews; ?>)</a>
+        <?php endif; ?>
     </div>
 </div>
 <div class="form-group row">
@@ -113,8 +120,8 @@ use yii\helpers\Html;
 </div>
         <div class="btn-group col mt-3 row">
                 <button class="btn btn-success">Save</button>
-                <button class="btn btn-warning">Duplicate</button>
-                <b-button class="btn btn-danger" :disabled="interviews != 0" title="You can only delete studies without interview data">Delete</b-button>
+                <b-button class="btn btn-warning" @click="replicateStudy">Replicate</b-button>
+                <b-button class="btn btn-danger"  @click="deleteStudy" :disabled="interviews != 0" title="You can only delete studies without interview data">Delete</b-button>
             </div>
     </div>
 
@@ -177,6 +184,13 @@ v = new Vue({
         var self = this;
     },
     methods: {
+        replicateStudy(){
+            document.location = "/authoring/replicate/" + this.study.id;
+        },
+        deleteStudy(){
+            if(confirm("Are you sure you want to delete this study?"))
+                document.location = "/authoring/delete/" + this.study.id;
+        },
         getValue() {
             var overview = this.$refs.editor.getVal()
             console.log(overview);

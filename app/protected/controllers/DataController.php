@@ -19,6 +19,8 @@ use yii\helpers\ArrayHelper;
 use app\models\Interview;
 use app\models\Answer;
 use app\models\Alters;
+use app\models\Note;
+use app\models\Graph;
 use app\models\MatchedAlters;
 /**
  * Site controller
@@ -435,6 +437,85 @@ class DataController extends Controller
             }
         }
         return $this->response->sendContentAsFile($text, $study->name . '-other-specify.csv')->send();
+    }
+
+    public function actionSavegraph()
+    {
+        if ($_POST['Graph']) {
+            $graph = Graph::findOne(array("interviewId"=>$_POST['Graph']['interviewId'],"expressionId"=>$_POST['Graph']['expressionId']));
+            if (!$graph) {
+                $graph = new Graph;
+            }
+            $graph->attributes = $_POST['Graph'];
+            if ($graph->save()) {
+                //echo "success";
+                $graphs = array();
+                $results = Graph::findAll(array('interviewId'=>$_POST['Graph']['interviewId']));
+                foreach ($results as $result) {
+                    $graphs[$result->expressionId] = Tools::mToA($result);
+                }
+                return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($graphs)]);
+            }
+        }
+    }
+
+    public function actionDeletegraph()
+    {
+        if (isset($_GET['id'])) {
+            $graph = Graph::findOne($_GET['id']);
+            if ($graph) {
+                $graph->delete();
+            }
+        }
+    }
+
+    public function actionGetnote()
+    {
+        if (isset($_GET['interviewId']) && isset($_GET['expressionId']) && isset($_GET['alterId'])) {
+            $model = Note::findOne(array(
+                'interviewId' => (int)$_GET['interviewId'],
+                'expressionId' => (int)$_GET['expressionId'],
+                'alterId' => $_GET['alterId']
+            ));
+            if (!$model) {
+                $model = new Note;
+                $model->interviewId = $_GET['interviewId'];
+                $model->expressionId = $_GET['expressionId'];
+                $model->alterId = $_GET['alterId'];
+            }
+            return $this->renderAjax('_form_note', array('model'=>$model));
+        }
+    }
+
+    public function actionSavenote()
+    {
+        if (isset($_POST['Note'])) {
+            $new = false;
+            if ($_POST['Note']['id']) {
+                $note = Note::findOne($_POST['Note']['id']);
+            } else {
+                $note = new Note;
+                $new = true;
+            }
+            $note->attributes = $_POST['Note'];
+            if (!$note->save()) {
+                print_r($note->errors);
+            }
+
+            echo $note->alterId;
+        }
+    }
+
+    public function actionDeletenote()
+    {
+        if (isset($_POST['Note'])) {
+            $note = Note::findOne($_POST['Note']['id']);
+            $alterId = $note->alterId;
+            if ($note) {
+                $note->delete();
+                echo $alterId;
+            }
+        }
     }
 
     public function actionDeleteinterviews()

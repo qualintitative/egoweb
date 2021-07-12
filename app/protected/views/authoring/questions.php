@@ -5,7 +5,7 @@ use yii\helpers\Html;
 <div id="authoring-app">
     <?php if(Yii::$app->controller->action->id == "ego_id"): ?>
     <div class="col-md-12 mb-3">
-        <label for="Study_egoIdPrompt" class="col-sm-4 col-form-label">Ego ID Prompt</label><b-button class="float-right btn btn-success btn-sm col-1" :disabled="origPrompt == study.egoIdPrompt" @click="saveStudy">save</b-button>
+        <label for="Study_egoIdPrompt" class="col-sm-12 col-form-label">Ego ID Prompt<b-button class="float-right btn btn-success btn-sm col-1" :disabled="origPrompt == study.egoIdPrompt" @click="saveStudy">save</b-button></label>
         <summer-note :model.sync="study.egoIdPrompt" ref="Study_egoIdPrompt" name="Study[egoIdPrompt]" vid="Study_egoIdPrompt"></summer-note>
     </div>
     <?php endif; ?>
@@ -75,6 +75,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                     </div>
                     <div class="form-group row">
 
+
                         <div class="offset-md-4 col-6 col-sm-4">
                             <b-form-checkbox class="col mb-1" :id="question.id + '_dontKnowButton'" v-model="question.dontKnowButton" name="Question[dontKnowButton]" value="1" unchecked-value="0">
                                 Don't know
@@ -101,6 +102,50 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                     
                 </div>
                 <div class="col-md-6">
+
+                    <div class="form-group row" v-if="question.subjectType == 'EGO_ID' || question.subjectType == 'NAME_GENERATOR'">
+                        <label for="question.id + '_useAlterListField'" class="col-sm-4 col-form-label">Use Alter List Field</label>
+                        <div class="col-sm-8">
+                            <b-form-select v-model="question.useAlterListField"  name="Question[useAlterListField]" :id="question.id + '_useAlterListField'">
+                                <b-select-option value="" selected="selected">None</b-select-option>
+                                <b-select-option value="email">Email</b-select-option>
+                                <b-select-option value="name">Name</b-select-option>
+                            </b-form-select>
+                        </div>
+                    </div>
+
+                    <div v-if="question.subjectType == 'MERGE_ALTER'">
+                        <input type="hidden" v-model="question.allOptionString" :id="question.id + '_allOptionString'" name="Question[allOptionString]">
+
+                        <div class="form-group row">
+                            <label :for="question.id + '_minLiteral'" class="col-sm-4 col-form-label">First Name Tolerance</label>
+                            <div class="col-sm-2">
+                                <input :id="question.id + '_minLiteral'" class="form-control" name="Question[minLiteral]" v-model="question.minLiteral">
+                            </div>
+                            <label :for="question.id + '_maxLiteral'" class="col-sm-4 col-form-label">Last Name Tolerance</label>
+                            <div class="col-sm-2">
+                                <input :id="question.id + '_maxLiteral'" class="form-control" name="Question[maxLiteral]" v-model="question.maxLiteral">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Yes Label</label>
+                            <div class="col-sm-2">
+                                <input class="form-control" v-model="question.allOptionJson.YES_LABEL" @change="changeLabel">
+                            </div>
+                            <label class="col-sm-4 col-form-label">No Label</label>
+                            <div class="col-sm-2">
+                                <input class="form-control" v-model="question.allOptionJson.NO_LABEL" @change="changeLabel">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">New Name Label</label>
+                            <div class="col-sm-2">
+                                <input class="form-control" v-model="question.allOptionJson.NEW_NAME_LABEL" @change="changeLabel">
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-group" v-if="question.askingStyleList == true && question.subjectType == 'EGO'">
                         <label for="Question_citation" class="col-sm-4 col-form-label">Leaf and Stem</label>
                         <summer-note :model.sync="question.citation" ref="Question_citation" name="Question[citation]" vid="Question_citation"></summer-note>
@@ -261,7 +306,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                                 </b-form-checkbox>
                             </template>
                             <template #cell(details)="row">
-                                <b-link href="#" @click="deleteOption(row.item.id)"><b-icon icon="x"></b-icon></b-link>
+                                <b-link href="#" @click="deleteOption(row.item.id)"><i class="fas fa-times"></i></b-link>
                             </template>
                             <template v-slot:custom-foot>
                                 <tr class="text-white" >
@@ -277,6 +322,25 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                                     </td>
                                     <td>
                                         <b-button @click="newOption" variant="primary" size="xs">Create</b-button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                    Replace list with options from
+                                    </td>
+                                    <td colspan=3>
+                                    <b-form-select
+                                        v-model="otherQuestionId"
+                                        name="multi[questionId]"
+                                        :options="question.multiQuestions"
+                                        >
+                                        <template #first>
+                                            <b-form-select-option value="null">-- Select a question --</b-form-select-option>
+                                        </template>
+                                    </b-form-select>
+                                    </td>
+                                    <td>
+                                    <b-button @click="replaceOption" size="xs">Go</b-button>
                                     </td>
                                 </tr>
                             </template>            
@@ -297,47 +361,34 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                             </div>
                         </div>
 
-                        <div class="form-group row">
-                            <label for="question.id + '_useAlterListField'" class="col-sm-4 col-form-label">Subject Type</label>
-                            <div class="col-sm-8">
-                                <b-form-select v-model="question.useAlterListField"  name="Question[useAlterListField]" :id="question.id + '_useAlterListField'">
-                                    <b-select-option value="" selected="selected">None</b-select-option>
-                                    <b-select-option value="email">Email</b-select-option>
-                                    <b-select-option value="name">Name</b-select-option>
-                                </b-form-select>
+                        <div class="mb-3">
+                            <div class="col-sm-12">
+                                <b-form-checkbox :id="question.id + '_restrictList'" name="Question[restrictList]" unchecked-value="0" value="1" type="checkbox" v-model="question.restrictList">
+                                    Restrict Response to Participant List
+                                </b-form-checkbox>                
+                            </div>
+                            <div class="col-sm-12">
+                                <b-form-checkbox :id="question.id + '_autocompleteList'" name="Question[autocompleteList]" unchecked-value="0" value="1" type="checkbox" v-model="question.autocompleteList">
+                                    Fill Autocomplete with Participant List 
+                                </b-form-checkbox>                
+                            </div>
+                            <div class="col-sm-12">
+                                <b-form-checkbox :id="question.id + '_prefillList'" name="Question[prefillList]" unchecked-value="0" value="1" type="checkbox" v-model="question.prefillList">
+                                Pre-fill Alters from List
+                                </b-form-checkbox>                
+                            </div>
+                            <div class="col-sm-12">
+                                <b-form-checkbox :id="question.id + '_keepOnSamePage'" name="Question[keepOnSamePage]" unchecked-value="0" value="1" type="checkbox" v-model="question.keepOnSamePage">
+                                Show Previous Session Alters
+                                </b-form-checkbox>                
+                            </div>
+                            <div class="col-sm-12">
+                                <b-form-checkbox :id="question.id + '_noneButton'" name="Question[noneButton]" unchecked-value="0" value="1" type="checkbox" v-model="question.noneButton">
+                                Allow alters already listed in other name generators
+                                </b-form-checkbox>                
                             </div>
                         </div>
-
-
-            
-<div class="mb-3">
-            <div class="col-sm-12">
-            <b-form-checkbox :id="question.id + '_restrictList'" name="Question[restrictList]" unchecked-value="0" value="1" type="checkbox" v-model="question.restrictList">
- Restrict Response to Participant List
-            </b-form-checkbox>                
-                   </div>
-                <div class="col-sm-12">
-                    <b-form-checkbox :id="question.id + '_autocompleteList'" name="Question[autocompleteList]" unchecked-value="0" value="1" type="checkbox" v-model="question.autocompleteList">
-                        Fill Autocomplete with Participant List 
-                    </b-form-checkbox>                
-                </div>
-                <div class="col-sm-12">
-                    <b-form-checkbox :id="question.id + '_prefillList'" name="Question[prefillList]" unchecked-value="0" value="1" type="checkbox" v-model="question.prefillList">
-                    Pre-fill Alters from List
-                    </b-form-checkbox>                
-                </div>
-                <div class="col-sm-12">
-                    <b-form-checkbox :id="question.id + '_keepOnSamePage'" name="Question[keepOnSamePage]" unchecked-value="0" value="1" type="checkbox" v-model="question.keepOnSamePage">
-                    Show Previous Session Alters
-                    </b-form-checkbox>                
-                </div>
-                <div class="col-sm-12">
-                    <b-form-checkbox :id="question.id + '_noneButton'" name="Question[noneButton]" unchecked-value="0" value="1" type="checkbox" v-model="question.noneButton">
-                    Allow alters already listed in other name generators
-                    </b-form-checkbox>                
-                </div>
-</div>
-                    <b-table head-variant="dark" class="prompts" :id="question.id+'-alterPrompts'"  :items="question.alterPrompts" :fields="prompt_fields" striped responsive="sm">
+                        <b-table head-variant="dark" class="prompts" :id="question.id+'-alterPrompts'"  :items="question.alterPrompts" :fields="prompt_fields" striped responsive="sm">
                             <template #cell(afterAltersEntered)="row">
                                 <input class="form-control input-xs" @change="editPrompt(row.item.id)" v-model="row.item.afterAltersEntered" />
                             </template>
@@ -926,6 +977,7 @@ QestionEditor = Vue.component('question-editor', {
             newOptionValue: 0,
             newPromptDisplay: "",
             newPromptAfter: 0,
+            otherQuestionId:"",
             csrf: csrf,
             colors: [
                 {value: '#000', text: 'black'},
@@ -981,6 +1033,10 @@ QestionEditor = Vue.component('question-editor', {
             for(k in this.question.timeBits){
                 this.question.timeUnits = this.question.timeUnits | this.question.timeBits[k];
             }
+            this.$forceUpdate();
+        },
+        changeLabel(){
+            this.question.allOptionString = JSON.stringify(this.question.allOptionJson);
             this.$forceUpdate();
         },
         forceUpdate() {
@@ -1060,6 +1116,25 @@ QestionEditor = Vue.component('question-editor', {
             (function(self) {
                 $.post('/authoring/ajaxupdate/' + self.question.studyId, $("#questionOption").serialize(),
                     function(data) {
+                        self.newOptionName = "";
+                        self.newOptionValue = "";
+                        self.question.options = JSON.parse(data);
+                    });
+            })(self);
+        },
+        replaceOption(e) {
+            if(!this.otherQuestionId)
+                return false;
+            $("#QuestionOption_questionId").val(this.question.id);
+            $("#QuestionOption_value").val(this.otherQuestionId);
+            $("#QuestionOption_id").val("replaceOther");
+            $("#optionsJson").val(JSON.stringify(this.question.options))
+            self = this;
+            (function(self) {
+                $.post('/authoring/ajaxupdate/' + self.question.studyId, $("#questionOption").serialize(),
+                    function(data) {
+                        self.newOptionName = "";
+                        self.newOptionValue = "";
                         self.question.options = JSON.parse(data);
                     });
             })(self);
@@ -1181,19 +1256,6 @@ QestionEditor = Vue.component('question-editor', {
         deleteQuestion() {
             $("#deleteQuestionId").val(this.question.id);
             $("#deleteQuestion").submit();
-            /*
-            var data = {
-                questoinId: this.question.id,
-                '_csrf-protected': csrf,
-            }
-            self = this;
-            (function(self) {
-                $.post('/authoring/ajaxdelete/' + self.question.studyId, data,
-                    function(data) {
-                        self.questions = JSON.parse(data);
-                    });
-            })(self);
-            */
         },
     }
 });
@@ -1215,6 +1277,7 @@ new Vue({
     },
     created() {
         var numQuestions = [];
+        var multiQuestions = [];
         var alterQs = [];
         var alterShapeQs = [];
         var alterQIds = [];
@@ -1237,6 +1300,9 @@ new Vue({
             if(this.questions[k].answerType == "NUMERICAL"){
                 console.log(this.questions[k])
                 numQuestions.push({text:this.questions[k].title,value:this.questions[k].id});
+            }
+            if (this.questions[k].answerType == "MULTIPLE_SELECTION") {
+                multiQuestions.push({text:this.questions[k].title,value:this.questions[k].id});
             }
 
             if (this.questions[k].subjectType == "ALTER"){
@@ -1289,8 +1355,16 @@ new Vue({
             this.questions[k].alterPairExps = alterPairExps;
             this.questions[k].alterQOptions = alterQOptions;
             this.questions[k].alterPairQOptions = alterPairQOptions;
-
             this.questions[k].alterShapeQOptions = alterShapeQOptions;
+            this.questions[k].multiQuestions = [];
+            for(m in multiQuestions){
+                if(multiQuestions[m].value != this.questions[k].id)
+                    this.questions[k].multiQuestions.push(multiQuestions[m])
+            }
+            if(this.questions[k].allOptionString)
+                this.questions[k].allOptionJson = JSON.parse(this.questions[k].allOptionString);
+            else
+                this.questions[k].allOptionJson = {"YES_LABEL":"Yes", "NO_LABEL":"No", "NEW_NAME_LABEL":""};
         }
         var defaultParams = {
             nodeColor:{questionId:'', options:[{id:-1, color:"#000"}, {id:'default', color:"#000"}]},
@@ -1306,8 +1380,26 @@ new Vue({
         }else{
             this.questions[k].nParams = JSON.parse(this.questions[k].networkParams);
             for(p in defaultParams){
-                if(typeof this.questions[k].nParams[p] == "undefined")
+                var egoOption = efaultParams[p].options[0];
+                var defaultOption = defaultParams[p].options[1];
+                var newOptions = [];
+                if(typeof this.questions[k].nParams[p] == "undefined"){
                     this.questions[k].nParams[p] = defaultParams[p];
+                }else{
+                    if(p == "nodeColor" || p == "nodeSize" || p == "nodeShape"){
+                        for(var i = 0; i < this.questions[k].nParams[p].options.length; i++){
+                            if(this.questions[k].nParams[p].options[i].id == "default")
+                                defaultOption = this.questions[k].nParams[p].options[i];
+                            else if(this.questions[k].nParams[p].options[i].id == -1)
+                                egoOption = this.questions[k].nParams[p].options[i];
+                            else
+                                newOptions.push(this.questions[k].nParams[p].options[i]);
+                        }
+                        newOptions.unshift(defaultOption);
+                        newOptions.unshift(egoOption);
+                        this.questions[k].nParams[p].options = newOptions;
+                    }
+                }
             }
         }
     },

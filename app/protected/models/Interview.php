@@ -651,6 +651,114 @@ class Interview extends \yii\db\ActiveRecord
         }
     }
 
+    public function exportStudyInterview($filePath, $columns)
+    {
+        $exclude = array("studyId", "active");
+        $interview = $this;
+        $answer = Answer::findAll(array("interviewId" => $interview->id));
+        $answers[$interview->id] = $answer;
+        $alter = Alters::find()
+        ->where(new \yii\db\Expression("FIND_IN_SET(" . $interview->id .", interviewId)"))
+        ->orderBy(['ordering'=>'ASC'])
+        ->all();
+        $alters[$interview->id] = $alter;
+        $graph = Graph::findAll(array("interviewId" => $interview->id));
+        $graphs[$interview->id] = $graph;
+        $note = Note::findAll(array("interviewId" => $interview->id));
+        $notes[$interview->id] = $note;
+        $user = array();
+        $match = MatchedAlters::findAll(array("interviewId1" => $interview->id));
+        foreach($match as $m){
+            if(!isset($user[$m->userId]))
+                $user[$m->userId] = User::findOne($m->userId);
+        }
+        $matches[$interview->id] = $match;
+        $other = array();
+        $others[$interview->id] = $other;
+        $x = new \XMLWriter();
+        $x->openMemory();
+        $x->setIndent(true);
+        $x->startElement('interview');
+        foreach ($columns['interview'] as $attr) {
+            if (!in_array($attr, $exclude))
+                $x->writeAttribute($attr, $interview->$attr);
+        }
+        if (isset($answers[$interview->id])) {
+            $x->startElement('answers');
+            foreach ($answers[$interview->id] as $answer) {
+                $x->startElement('answer');
+                foreach ($columns['answer'] as $attr) {
+                    if (!in_array($attr, $exclude))
+                        $x->writeAttribute($attr, $answer->$attr);
+                }
+                $x->endElement();
+            }
+            $x->endElement();
+        }
+        if (isset($alters[$interview->id])) {
+            $x->startElement('alters');
+            foreach ($alters[$interview->id] as $alter) {
+                $x->startElement('alter');
+                foreach ($columns['alters'] as $attr) {
+                    if (!in_array($attr, $exclude))
+                        $x->writeAttribute($attr, $alter->$attr);
+                }
+                $x->endElement();
+            }
+            $x->endElement();
+        }
+        if (isset($graphs[$interview->id])) {
+            $x->startElement('graphs');
+            foreach ($graphs[$interview->id] as $graph) {
+                $x->startElement('graph');
+                foreach ($columns['graphs'] as $attr) {
+                    if (!in_array($attr, $exclude))
+                        $x->writeAttribute($attr, $graph->$attr);
+                }
+                $x->endElement();
+            }
+            $x->endElement();
+        }
+        if (isset($notes[$interview->id])) {
+            $x->startElement('notes');
+            foreach ($notes[$interview->id] as $note) {
+                $x->startElement('note');
+                foreach ($columns['notes'] as $attr) {
+                    if (!in_array($attr, $exclude))
+                        $x->writeAttribute($attr, $note->$attr);
+                }
+                $x->endElement();
+            }
+            $x->endElement();
+        }
+        if (isset($matches[$interview->id])) {
+            $x->startElement('matchedAlters');
+            foreach ($matches[$interview->id] as $match) {
+                $x->startElement('matchedAlter');
+                foreach ($columns['matchedAlters'] as $attr) {
+                    if (!in_array($attr, $exclude))
+                        $x->writeAttribute($attr, $match->$attr);
+                }
+                $x->endElement();
+            }
+            $x->endElement();
+            if(count($user) > 0){
+                $x->startElement('users');
+                foreach ($user as $u) {
+                    $x->startElement('user');
+                    foreach ($columns['user'] as $attr) {
+                        if (!in_array($attr, $exclude))
+                            $x->writeAttribute($attr, $u->$attr);
+                    }
+                    $x->endElement();
+                }
+                $x->endElement();        
+            }
+        }
+        $x->endElement();
+        $output = $x->outputMemory();
+        file_put_contents($filePath, $output);
+    }
 
     /**
      * {@inheritdoc}

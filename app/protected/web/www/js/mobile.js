@@ -69,6 +69,7 @@ egoAnswers = [];
 egoOptions = [];
 interviews = [];
 multiIds = {};
+isMobile = true;
 
 var checkPlugin = setInterval(function(){ loadPlugin() }, 100);
 

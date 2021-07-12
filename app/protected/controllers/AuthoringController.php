@@ -68,17 +68,17 @@ class AuthoringController extends Controller
     }
 
 
-    public function actionImportparticipantlist()
+    public function actionImportlist($id)
 	{
 		if(!is_uploaded_file($_FILES['userfile']['tmp_name'])) //checks that file is uploaded
 			die("Error importing Participant list");
-        $nameGenQs = Question::findAll(["studyId"=>$_POST['studyId'], "subjectType"=>"NAME_GENERATOR"]);
+        $nameGenQs = Question::findAll(["studyId"=>$id, "subjectType"=>"NAME_GENERATOR"]);
         $nameGenQIds = array();
         foreach($nameGenQs as $nameGenQ){
             $nameGenQIds[$nameGenQ->title] = $nameGenQ->id;
         }
 		$file = fopen($_FILES['userfile']['tmp_name'],"r");
-        $results = Interviewer::findAll(["studyId"=>$_POST['studyId']]);
+        $results = Interviewer::findAll(["studyId"=>$id]);
         $interviewers = array();
         foreach($results as $result){
             $user = User::findOne($result->interviewerId);
@@ -87,7 +87,7 @@ class AuthoringController extends Controller
 		while(! feof($file)){
 			$data = fgetcsv($file);
 			if(isset($data[0]) && $data[0]){
-                $alterlist = AlterList::findAll(['studyId = '.$_POST['studyId']]);
+                $alterlist = AlterList::findAll(['studyId = '.$id]);
 				$model = new AlterList;
 				$model->ordering = count($alterlist);
 				$model->name = trim($data[0]);
@@ -100,6 +100,7 @@ class AuthoringController extends Controller
                     $interviewerColumn = 2;
                     $nameGenColumn = 3;
                 }
+                $model->nameGenQIds = '';
                 if($nameGenColumn && stristr($data[$nameGenColumn], ";")){
                     $Qs = explode(";", $data[$nameGenColumn]);
                     $qIds = array();
@@ -114,13 +115,16 @@ class AuthoringController extends Controller
                 if($interviewerColumn && isset($data[$interviewerColumn])){
                     $model->interviewerId =  array_search($data[$interviewerColumn], $interviewers);
                 }
-				$model->studyId = $_POST['studyId'];
-			    $model->save();
+				$model->studyId = $id;
+			    if(!$model->save()){
+                    echo $model->nameGenQIds;
+                    print_r($model->errors);
+                    die();
+                }
 			}
 		}
 		fclose($file);
-        $participants = AlterList::findAll(['studyId = '.$_POST['studyId']])->asArray();
-        return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($participants)]);
+        return $this->redirect(Yii::$app->request->referrer);
 	}
 
 	public function actionImportprompts()
@@ -144,7 +148,6 @@ class AuthoringController extends Controller
         return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($prompts)]);
 	}
 
-
     public function actionCreate()
 	{
 		$study = new Study;
@@ -157,11 +160,19 @@ class AuthoringController extends Controller
 		}
 	}
 
-    /**
-     * Displays homepage.
-     *
-     * @return mixed
-     */
+    public function actionReplicate($id)
+    {
+        $study = Study::findOne($id);
+        $study->name = $study->name . "_copy";
+        $questions = Question::findAll(array('studyId'=>$id));
+        $options = QuestionOption::findAll(array('studyId'=>$id));
+        $expressions = Expression::findAll(array('studyId'=>$id));
+        $alterPrompts = AlterPrompt::findAll(array('studyId'=>$id));
+        $alterLists = AlterList::findAll(array('studyId'=>$id));
+        $data = Study::replicate($study, $questions, $options, $expressions, $alterPrompts, $alterLists);
+        return $this->response->redirect(Url::toRoute('/authoring/' . $data['studyId']));
+    }
+
     public function actionIndex($id)
     {
         $study = Study::findOne($id);
@@ -211,7 +222,6 @@ class AuthoringController extends Controller
                 $question->askingStyleList = isset($_POST['Question']['askingStyleList']);
                 $question->dontKnowButton = isset($_POST['Question']['dontKnowButton']);
                 $question->refuseButton = isset($_POST['Question']['refuseButton']);
-                $question->useAlterListField = isset($_POST['Question']['useAlterListField']);
                 $question->restrictList = isset($_POST['Question']['restrictList']);
                 $question->autocompleteList = isset($_POST['Question']['autocompleteList']);
                 $question->prefillList = isset($_POST['Question']['prefillList']);
@@ -274,7 +284,7 @@ class AuthoringController extends Controller
           $alters = Alters::find()
           ->where(new \yii\db\Expression("FIND_IN_SET(" . $interview->id .", interviewId)"))
           ->orderBy(['ordering'=>'ASC'])
-          ->all();          
+          ->all();
           foreach($alters as $alter){
             $alter->nameGenQIds = $nameGenQId;
             $alter->save();
@@ -350,6 +360,7 @@ class AuthoringController extends Controller
     public function actionParticipants($id)
     {
         $study = Study::findOne($id)->toArray();
+        $this->view->title = $study['name'];
         $result = Interviewer::find()->where(["studyId"=>$id])->all();
         
         $interviewers = [];
@@ -368,8 +379,10 @@ class AuthoringController extends Controller
 
         $result = AlterList::find()->where(["studyId"=>$id])->all();
         foreach ($result as $item) {
+            $interviewer = "";
             if(isset($interviewerList[$item->interviewerId]))
-                $alterList[] = ["name"=>$item->name, "email"=>$item->email, "name generators"=>$item->nameGenQIds, "interviewer"=>$interviewerList[$item->interviewerId]];
+                $interviewer = $interviewerList[$item->interviewerId];
+            $alterList[] = ["id"=>$item->id, "name"=>$item->name, "email"=>$item->email, "nameGenQIds"=>$item->nameGenQIds, "nameGenQIdsArray"=>explode(",",$item->nameGenQIds), "interviewerId"=>$item->interviewerId];
         }
         $result = User::find()->where(['<=', 'permissions', 5])->andWhere(['not', ['id'=>$userIds]])->all();
         foreach ($result as $item) {
@@ -383,6 +396,17 @@ class AuthoringController extends Controller
     {
         $study = Study::findOne($id);
         $this->view->title = $study->name;
+        $studyNames = [];
+        if($study->multiSessionEgoId){
+            $multiQs = $study->multiIdQs();
+            foreach($multiQs as $q){
+                $studyIds[] = $q->studyId;
+                $s = Study::findOne($q->studyId);
+                $studyNames[$q->studyId] = $s->name;
+            }
+        }else{
+            $studyIds = $id;
+        }
         if(isset($_POST['Expression'])){
             if($_POST['Expression']['id'])
                 $expression = Expression::findOne($_POST['Expression']['id']);
@@ -419,7 +443,7 @@ class AuthoringController extends Controller
                 $countExpressions[] = $expression->toArray();
             }
         }
-        $result = Question::find()->where(["studyId"=>$id])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+        $result = Question::find()->where(["studyId"=>$studyIds])->orderBy(["ordering"=>"ASC"])->asArray()->all();
         $questions = [];
         $nameGenQuestions = [];
         foreach($result as $question){
@@ -432,6 +456,8 @@ class AuthoringController extends Controller
                 continue;
             if($question['answerType'] == "NUMERICAL" || $question['answerType'] == "RANDOM_NUMBER" || $question['answerType'] == "STORED_VALUE")
                 $countQuestions[] = $question;
+            if($study->multiSessionEgoId)
+                $question['title'] = $studyNames[$question['studyId']] .":".$question['title'];
             $questions[$question['id']] = $question;
             $questions[$question['id']]['optionsList'] = QuestionOption::find()->where(["questionId"=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
         }
@@ -468,7 +494,7 @@ class AuthoringController extends Controller
 		}else{
 			$study = Study::findOne($id);
 			$study->delete();
-            return $this->response->redirect(Url::toRoute('/'));
+            return $this->response->redirect(Url::toRoute('/admin'));
 		}
 	}
 
@@ -520,23 +546,24 @@ class AuthoringController extends Controller
 			}
 		}elseif(isset($_POST['QuestionOption'])){
             $options = json_decode($_POST['options']);
-            if($_POST['QuestionOption']['id']){
+            if(is_numeric($_POST['QuestionOption']['id']) && $_POST['QuestionOption']['id'] != 0){
                 $option = QuestionOption::findOne($_POST['QuestionOption']['id']);
-             }else{
+            }else{
                 if($_POST['QuestionOption']['id'] == "replaceOther"){
-                    $options = QuestionOption::findAll(array('questionId'=>$_POST['questionId']));
-                    foreach($options as $option){
+                    $oldOptions = QuestionOption::findAll(array('questionId'=>$_POST['QuestionOption']['questionId']));
+                    foreach($oldOptions as $option){
                         $option->delete();
                     }
-                    $models = QuestionOption::findAll(array('questionId'=>$_POST['otherQuestionId']));
+                    $models = QuestionOption::findAll(array('questionId'=>$_POST['QuestionOption']['value']));
                     foreach($models as $model){
                         $newOption = new QuestionOption;
                         $newOption->attributes = $model->attributes;
                         $newOption->id = '';
-                        $newOption->questionId = $_POST['questionId'];
+                        $newOption->questionId = $_POST['QuestionOption']['questionId'];
                         $newOption->save();
                     }
-                    $questionId = $_POST['questionId'];
+                    $options = QuestionOption::find()->where(array('questionId'=>$_POST['QuestionOption']['questionId']))->asArray()->all();
+                    return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($options)]);
                 }else{
                     $option = new QuestionOption;
                     $option->ordering = count($options);
@@ -623,7 +650,19 @@ class AuthoringController extends Controller
                 $options = QuestionOption::find()->where(["questionId"=>$_POST['QuestionOption']['questionId']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
                 return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($options)]);
             }
-
+		}else if(isset($_POST['AlterList'])){
+			if($_POST['AlterList']['id'] != 'all'){
+				$model = AlterList::findOne($_POST['AlterList']['id']);
+				if($model){
+					$studyId = $model->studyId;
+					$ordering = $model->ordering;
+					$model->delete();
+					//AlterList::sortOrder($ordering, $studyId);
+				}
+			}else{
+				$this->deleteAllAlters($id);
+			}
+            return $this->redirect(Yii::$app->request->referrer);
         }elseif (isset($_POST['AlterPrompt']) && isset($_POST['AlterPrompt']['id'])) {
             $prompt = AlterPrompt::findOne($_POST['AlterPrompt']['id']);
             if($prompt){
@@ -661,4 +700,52 @@ class AuthoringController extends Controller
 			}
         }
     }
+
+    public function actionExportalterlist($id)
+	{
+		$study = Study::findOne($id);
+		$alters = AlterList::findAll(array("studyId"=>$id));
+
+		header("Content-Type: application/octet-stream");
+		header("Content-Disposition: attachment; filename=".$study->name."-predefined-alters".".csv");
+		header("Content-Type: application/force-download");
+
+		$headers = array();
+		$headers[] = 'Study ID';
+		$headers[] = "Alter ID";
+		$headers[] = "Alter Name";
+		$headers[] = "Alter Email";
+		$headers[] = "Link With Key";
+		echo implode(',', $headers) . "\n";
+
+        $ego_id = Question::findOne(array("studyId"=>$study->id, "subjectType"=>"EGO_ID", "useAlterListField"=>array("name", "email", "id")));
+        if ($ego_id) {
+            foreach ($alters as $alter) {
+                $row = array();
+                if ($ego_id->useAlterListField == "name") {
+                    $key = md5($alter->name);
+                } elseif ($ego_id->useAlterListField == "email") {
+                    $key = md5($alter->email);
+                } elseif ($ego_id->useAlterListField == "id") {
+                    $key = md5($alter->id);
+                } else {
+                    $key = "";
+                }
+                $row[] = $study->id;
+                $row[] = $alter->id;
+                $row[] = $alter->name;
+                $row[] = $alter->email;
+                $row[] =  Url::base(true) . Url::toRoute("/interview/".$study->id."#/page/0/".$key);
+                echo implode(',', $row) . "\n";
+            }
+        }
+	}
+
+    protected function deleteAllAlters($id){
+		$models = AlterList::findAll(array('studyId'=>$id));
+		foreach($models as $model){
+			$model->delete();
+		}
+	}
+
 }

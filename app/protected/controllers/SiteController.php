@@ -77,6 +77,10 @@ class SiteController extends Controller
     public function actionIndex()
     {
 
+        if (!Yii::$app->user->isGuest) {
+            return $this->response->redirect(Url::toRoute('/admin'));
+        }
+
         $users = User::find()->all();
         if (count($users) == 0)
             return $this->response->redirect(Url::toRoute('/site/create'));
@@ -91,7 +95,7 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
-
+        $this->view->title = "EgoWeb 2.0";
         if (!Yii::$app->user->isGuest) {
             return $this->response->redirect(Url::toRoute('/admin'));
         }

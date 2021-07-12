@@ -18,13 +18,19 @@ use app\models\Question;
 use app\models\QuestionOption;
 use app\models\Expression;
 use app\models\AlterPrompt;
+use app\models\AlterList;
+use app\models\MatchedAlters;
 use app\models\Interview;
+use app\models\Answer;
 use app\models\Server;
+use app\models\Alters;
+use app\models\Graph;
+use app\models\Note;
 
 /**
  * Site controller
  */
-class ImportexportController extends Controller
+class ImportExportController extends Controller
 {
     /**
      * {@inheritdoc}
@@ -85,7 +91,7 @@ class ImportexportController extends Controller
                 break;
         }
         if ($message) {
-            Yii::log($message);
+            Yii::error($message);
         }
         if (!is_uploaded_file($_FILES['files']['tmp_name'][0])) { //checks that file is uploaded
             die("Error importing study: " . $message);
@@ -95,7 +101,7 @@ class ImportexportController extends Controller
         $newAlterIds = array();
         $newQuestionIds = array();
         $newExpressionIds = array();
-        $result = User::model()->findAll();
+        $result = User::find()->all();
         $newOptionIds = array();
         $newUserIds = array();
         $users = array();
@@ -113,7 +119,6 @@ class ImportexportController extends Controller
             $merge = false;
 
             foreach ($study->attributes() as $key=>$value) {
-                //		if($newStudy->hasAttribute($key)){
                 if ($key == "active") {
                     $value = intval($value);
                 }
@@ -125,13 +130,12 @@ class ImportexportController extends Controller
                 }
 
                 if ($key == "name") {
-                    $oldStudy = Study::model()->findByAttributes(array("name"=>$value));
+                    $oldStudy = Study::findOne(array("name"=>$value));
                     if ($oldStudy && !$_POST['newName']) {
                         $merge = true;
                         $newStudy = $oldStudy;
                     }
                 }
-                //  }
             }
             if (!$merge) {
                 foreach ($study as $key=>$value) {
@@ -143,10 +147,10 @@ class ImportexportController extends Controller
                     $newStudy->name = $_POST['newName'];
                 }
 
-                $newStudy->userId = Yii::app()->user->id;
+                $newStudy->userId = Yii::$app->user->identity->id;
 
                 if ($newStudy->save()) {
-                    $newStudyId = Yii::app()->db->getLastInsertID();
+                    $newStudyId = Yii::$app->db->getLastInsertID();
                     $newStudy->id = $newStudyId;
                 } else {
                     echo "study: " . print_r($newStudy->attributes);
@@ -161,12 +165,13 @@ class ImportexportController extends Controller
                                 $value = intval($value);
                             }
                             if ($key != "id") {
-                                $newAlterList->$key = $value;
+                                $newAlterList->$key = html_entity_decode($value);
                             }
                         }
                         $newAlterList->studyId = $newStudy->id;
                         if (!$newAlterList->save()) {
-                            echo "Alter list: $newAlterList->name :" . print_r($newAlterList->errors);
+                            echo "Alter list: $newAlterList->name [". gettype($newAlterList->name) . "]: $newAlterList->email";
+                            print_r($newAlterList->errors);
                             die();
                         }
                     }
@@ -183,7 +188,7 @@ class ImportexportController extends Controller
                             $value = intval($value);
                         }
                         if ($key!="key" && $key != "id" && $key != "networkNShapeQId") {
-                            $newQuestion->$key = $value;
+                            $newQuestion->$key = html_entity_decode($value);
                         }
                     }
                     if ($newQuestion->answerType == "SELECTION") {
@@ -213,11 +218,11 @@ class ImportexportController extends Controller
                                 if ($optionkey == "id") {
                                     $oldOptionId = intval($val);
                                 }
-                                if ($optionkey == "ordering") {
+                                if ($optionkey == "ordering" || $optionkey == "single" || $optionkey == "otherSpecify") {
                                     $val = intval($val);
                                 }
                                 if ($optionkey!="key" && $optionkey != "id") {
-                                    $newOption->$optionkey = $val;
+                                    $newOption->$optionkey = html_entity_decode($val);
                                 }
                             }
                             $newOption->questionId = $newQuestion->id;
@@ -231,7 +236,7 @@ class ImportexportController extends Controller
                 }
 
                 // loop through the questions and correct linked ids
-                $newQuestions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
+                $newQuestions = Question::findAll(array('studyId'=>$newStudy->id));
                 foreach ($newQuestions as $newQuestion) {
                     if (is_numeric($newQuestion->listRangeString) && isset($newOptionIds[intval($newQuestion->listRangeString)])) {
                         $newQuestion->listRangeString = $newOptionIds[intval($newQuestion->listRangeString)];
@@ -240,7 +245,7 @@ class ImportexportController extends Controller
                 }
 
 
-                $newStudy = Study::model()->findbyPk($newStudy->id);
+                $newStudy = Study::findOne($newStudy->id);
                 if ($newStudy->multiSessionEgoId != 0 && isset($newQuestionIds[intval($newStudy->multiSessionEgoId)])) {
                     $newStudy->multiSessionEgoId = $newQuestionIds[intval($newStudy->multiSessionEgoId)];
                     if ($newStudy->save()) {
@@ -290,7 +295,7 @@ class ImportexportController extends Controller
                                 $value = intval($value);
                             }
                             if ($key!="key" && $key != "id") {
-                                $newExpression->$key = $value;
+                                $newExpression->$key = strval($value);
                             }
                         }
                         // reference the correct question, since we're not using old ids
@@ -310,7 +315,7 @@ class ImportexportController extends Controller
                 }
 
                 // loop through questions and relink network params
-                $questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
+                $questions = Question::findAll(array('studyId'=>$newStudy->id));
                 if (count($questions) > 0) {
                     foreach ($questions as $question) {
                         if ($question->subjectType == "NETWORK") {
@@ -362,15 +367,15 @@ class ImportexportController extends Controller
                     }
                 }
             } else {
-                $questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
+                $questions = Question::findAll(array('studyId'=>$newStudy->id));
                 foreach ($questions as $question) {
                     $qIds[$question->title] = $question->id;
                 }
-                $options = QuestionOption::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
+                $options = QuestionOption::findAll(array('studyId'=>$newStudy->id));
                 foreach ($options as $option) {
                     $oIds[$option->questionId . "-" . $option->name] = $option->id;
                 }
-                $expressions = Expression::model()->findAllByAttributes(array('studyId'=>$newStudy->id));
+                $expressions = Expression::findAll(array('studyId'=>$newStudy->id));
                 foreach ($expressions as $expression) {
                     $eIds[$expression->name] = $expression->id;
                 }
@@ -401,17 +406,18 @@ class ImportexportController extends Controller
                     $newInterview = new Interview;
                     foreach ($interview->attributes() as $key=>$value) {
                         if ($key == "id") {
-                            $oldInterviewId = $value;
+                            $oldInterviewId = intval($value);
                         }
                         if ($key!="key" && $key != "id") {
-                            $newInterview->$key = $value;
+                            $newInterview->$key = strval($value);
                         }
                     }
                     $newInterview->studyId = $newStudy->id;
                     if (!$newInterview->save()) {
                         echo "New interview error: " .  print_r($newInterview->errors);
+                        die();
                     } else {
-                        $newInterviewId = Yii::app()->db->getLastInsertID();
+                        $newInterviewId = Yii::$app->db->getLastInsertID();
                         $newInterviewIds[intval($oldInterviewId)] =  $newInterviewId;
                     }
 
@@ -433,7 +439,7 @@ class ImportexportController extends Controller
 							}
 						}
 					}
-                    if (count($interview->users->user) > 0) {
+                    if ($interview->users && count($interview->users->user) > 0) {
                         foreach ($interview->users->user as $u) {
                             $userExists = false;
                             foreach ($u->attributes() as $key=>$value) {
@@ -471,7 +477,7 @@ class ImportexportController extends Controller
 								echo "User Error: $newUser->id :" . print_r($newUser->errors);
 								die();
 							}else{
-                                $newUserId = Yii::app()->db->getLastInsertID();
+                                $newUserId = Yii::$app->db->getLastInsertID();
                                 $newUserIds[$oldUserId] = $newUserId;
                                 $users[$email] = $newUserId;
                             }
@@ -485,7 +491,7 @@ class ImportexportController extends Controller
                                     $thisAlterId = $value;
                                 }
                                 if ($key!="key" && $key != "id") {
-                                    $newAlter->$key = $value;
+                                    $newAlter->$key = strval($value);
                                 }
                             }
                             //skip alter if it's already exists in array
@@ -513,7 +519,7 @@ class ImportexportController extends Controller
                             $newNote = new Note;
                             foreach ($note->attributes() as $key=>$value) {
                                 if ($key!="key" && $key != "id") {
-                                    $newNote->$key = $value;
+                                    $newNote->$key = strval($value);
                                 }
                             }
                             if (!preg_match("/,/", $newNote->interviewId)) {
@@ -530,35 +536,6 @@ class ImportexportController extends Controller
                             if (!$newNote->save()) {
                                 echo "Note: ";
                                 print_r($newNote->errors);
-                                die();
-                            }
-                        }
-                    }
-
-                    if (count($interview->otherSpecifies->otherSpecify) != 0) {
-                        foreach ($interview->otherSpecifies->otherSpecify as $other) {
-                            $newOther = new OtherSpecify;
-                            foreach ($other->attributes() as $key=>$value) {
-                                if ($key != "id") {
-                                    $newOther->$key = $value;
-                                }
-                            }
-                            if (!preg_match("/,/", $newOther->interviewId)) {
-                                $newOther->interviewId = $newInterview->id;
-                            }
-
-                            if (!isset($newOptionIds[intval($newOther->optionId)]) || !$newOptionIds[intval($newOther->optionId)]) {
-                                continue;
-                            }
-
-                            $newOther->optionId = $newOptionIds[intval($newOther->optionId)];
-
-                            $newOther->alterId = $newAlterIds[intval($newOther->alterId)];
-
-                            if (!$newOther->save()) {
-                                echo "OtherSpecify: " . print_r($newOther->errors);
-                                print_r($newOptionIds);
-                                echo "<br>this id:" . $newOther->optionId;
                                 die();
                             }
                         }
@@ -621,8 +598,7 @@ class ImportexportController extends Controller
 
                             foreach ($answer->attributes() as $key=>$value) {
                                 if ($key!="key" && $key != "id") {
-                                    if($key == "value")
-                                        $value = htmlspecialchars_decode($value);
+                                    $value = htmlspecialchars_decode($value);
                                     $newAnswer->$key = $value;
                                 }
                                 if ($key == "alterId1" && isset($newAlterIds[intval($value)])) {
@@ -634,8 +610,11 @@ class ImportexportController extends Controller
 
 
                                 if ($key == "questionId") {
-                                    $newAnswer->questionId = $newQuestionIds[intval($value)];
-                                    $oldQId = intval($value);
+                                    if(isset($newQuestionIds[intval($value)])){
+                                        $newAnswer->questionId = $newQuestionIds[intval($value)];
+                                        $oldQId = intval($value);
+                                    }
+
                                 }
 
                                 if ($key == "answerType") {
@@ -710,7 +689,7 @@ class ImportexportController extends Controller
 		}
         // second loop to replace old ids in Expression->value
         foreach ($newExpressionIds as $oldExpId=>$newExpId) {
-            $newExpression = Expression::model()->findByPk($newExpId);
+            $newExpression = Expression::findOne($newExpId);
             if ($newExpression->questionId != "" && isset($newQuestionIds[intval($newExpression->questionId)])) {
                 $newExpression->questionId = $newQuestionIds[intval($newExpression->questionId)];
             }
@@ -755,7 +734,7 @@ class ImportexportController extends Controller
             } elseif ($newExpression->type == "Compound") {
                 $expressionIds = explode(',', $newExpression->value);
                 foreach ($expressionIds as &$expressionId) {
-                    if (is_numeric($expressionId)) {
+                    if (is_numeric($expressionId) && isset($newExpressionIds[$expressionId])) {
                         $expressionId = $newExpressionIds[$expressionId];
                     }
                 }
@@ -776,7 +755,7 @@ class ImportexportController extends Controller
             $newExpression->save();
         }
 		foreach ($newAlterIds as $oldId=>$newId) {
-			$alter = Alters::model()->findByPk($newId);
+			$alter = Alters::findOne($newId);
 			if (preg_match("/,/", $alter->interviewId)) {
 				$values = explode(',', $alter->interviewId);
 				foreach ($values as &$value) {
@@ -831,7 +810,7 @@ class ImportexportController extends Controller
             $alter->save();
 		}
 		foreach ($newInterviewIds as $oldId=>$newId) {
-			$matches = MatchedAlters::model()->findAllByAttributes(array("interviewId1"=>$oldId));
+			$matches = MatchedAlters::findAll(array("interviewId1"=>$oldId));
 			if (count($matches) > 0) {
 				foreach ($matches as $match) {
 					if (isset($newInterviewIds[intval($match->interviewId1)])) {
@@ -853,7 +832,7 @@ class ImportexportController extends Controller
 				}
             }
             
-            $matches = MatchedAlters::model()->findAllByAttributes(array("interviewId2"=>$oldId));
+            $matches = MatchedAlters::findAll(array("interviewId2"=>$oldId));
             if (count($matches) > 0) {
 				foreach ($matches as $match) {
 					if (isset($newInterviewIds[intval($match->interviewId1)])) {
@@ -874,7 +853,7 @@ class ImportexportController extends Controller
 					$match->save();
 				}
             }
-            $prevAnswers = Answer::model()->findAllByAttributes(array("interviewId"=>$newId, "questionType"=>"PREVIOUS_ALTER"));
+            $prevAnswers = Answer::findAll(array("interviewId"=>$newId, "questionType"=>"PREVIOUS_ALTER"));
             if (count($prevAnswers) > 0) {
                 foreach ($prevAnswers as $prevAnswer) {
                     $prevAnswer->alterId1 = $newAlterIds[intval($prevAnswer->alterId1)];
@@ -882,37 +861,18 @@ class ImportexportController extends Controller
                 }
             }
 		}
-        $this->redirect(array('/authoring/edit','id'=>$newStudy->id));
-    }
-
-    public function actionReplicate()
-    {
-        if ($_POST['name'] == "" || $_POST['studyId'] == "") {
-            die("nothing to replicate");
-        }
-        $study = Study::findOne($_POST['studyId']);
-        if(!$_POST['name'] || $study->name == $_POST['name'])
-            $study->name = $study->name . "_copy";
-        else
-            $study->name = $_POST['name'];
-        $questions = Question::findAll(array('studyId'=>$_POST['studyId']));
-        $options = QuestionOption::findAll(array('studyId'=>$_POST['studyId']));
-        $expressions = Expression::findAll(array('studyId'=>$_POST['studyId']));
-        $alterPrompts = AlterPrompt::findAll(array('studyId'=>$_POST['studyId']));
-        $alterLists = AlterList::findAll(array('studyId'=>$_POST['studyId']));
-
-        $data = Study::replicate($study, $questions, $options, $expressions, $alterPrompts, $alterLists);
-        return $this->response->redirect(Url::toRoute('/authoring/ ', ['id'=>$data['studyId']]));
+        return $this->response->redirect(Url::toRoute('/authoring/' . $newStudy->id));
     }
 
     public function actionIndex()
     {
+        $this->view->title = "EgoWeb 2.0";
         if (isset($_POST['Server'])) {
             $server = new Server;
             $server->attributes = $_POST['Server'];
             $server->userId = Yii::$app->user->identity->id;
             $server->save();
-            return $this->response->redirect(Url::toRoute('/importexport'));
+            return $this->response->redirect(Url::toRoute('/import-export'));
         }
         if (!Yii::$app->user->identity->isSuperAdmin())
             $result = Server::findAll();
@@ -920,19 +880,18 @@ class ImportexportController extends Controller
             $result = Server::findAll(array("userId"=>Yii::$app->user->identity->id));
         $servers = array();
         foreach ($result as $server) {
-            $servers[$server->id] = Tools::mToA($server);
+            $servers[$server->id] = Tools::mtoA($server);
         }
 
         $studies = Yii::$app->user->identity->studies;
         return $this->render('index',["servers"=>$servers, "studies"=>$studies]);
-
     }
 
-    public function actionAjaxInterviews($id)
+    public function actionAjaxinterviews($id)
     {
         $study = Study::findOne($id);
         $interviews = Interview::findAll(array('studyId'=>$id));
-        $this->renderPartial(
+        return $this->renderAjax(
             '_interviews',
             array(
                 'study'=>$study,
@@ -952,27 +911,27 @@ class ImportexportController extends Controller
                 mkdir($filePath, 0777, true);
             }
             $columns = array();
-            $columns['study'] = Yii::app()->db->schema->getTable("study")->getColumnNames();
-            $columns['question'] = Yii::app()->db->schema->getTable("question")->getColumnNames();
-            $columns['questionOption'] = Yii::app()->db->schema->getTable("questionOption")->getColumnNames();
-            $columns['expression'] = Yii::app()->db->schema->getTable("expression")->getColumnNames();
-            $columns['answer'] = Yii::app()->db->schema->getTable("answer")->getColumnNames();
-            $columns['alters'] = Yii::app()->db->schema->getTable("alters")->getColumnNames();
-            $columns['interview'] = Yii::app()->db->schema->getTable("interview")->getColumnNames();
-            $columns['alterList'] = Yii::app()->db->schema->getTable("alterList")->getColumnNames();
-            $columns['alterPrompt'] = Yii::app()->db->schema->getTable("alterPrompt")->getColumnNames();
-            $columns['alterList'] = Yii::app()->db->schema->getTable("alterList")->getColumnNames();
-            $columns['graphs'] = Yii::app()->db->schema->getTable("graphs")->getColumnNames();
-			$columns['notes'] = Yii::app()->db->schema->getTable("notes")->getColumnNames();
-            $columns['matchedAlters'] = Yii::app()->db->schema->getTable("matchedAlters")->getColumnNames();
-            $columns['user'] = Yii::app()->db->schema->getTable("user")->getColumnNames();
+            $columns['study'] = Yii::$app->db->getTableSchema("study")->getColumnNames();
+            $columns['question'] = Yii::$app->db->getTableSchema("question")->getColumnNames();
+            $columns['questionOption'] = Yii::$app->db->getTableSchema("questionOption")->getColumnNames();
+            $columns['expression'] = Yii::$app->db->getTableSchema("expression")->getColumnNames();
+            $columns['answer'] = Yii::$app->db->getTableSchema("answer")->getColumnNames();
+            $columns['alters'] = Yii::$app->db->getTableSchema("alters")->getColumnNames();
+            $columns['interview'] = Yii::$app->db->getTableSchema("interview")->getColumnNames();
+            $columns['alterList'] = Yii::$app->db->getTableSchema("alterList")->getColumnNames();
+            $columns['alterPrompt'] = Yii::$app->db->getTableSchema("alterPrompt")->getColumnNames();
+            $columns['alterList'] = Yii::$app->db->getTableSchema("alterList")->getColumnNames();
+            $columns['graphs'] = Yii::$app->db->getTableSchema("graphs")->getColumnNames();
+			$columns['notes'] = Yii::$app->db->getTableSchema("notes")->getColumnNames();
+            $columns['matchedAlters'] = Yii::$app->db->getTableSchema("matchedAlters")->getColumnNames();
+            $columns['user'] = Yii::$app->db->getTableSchema("user")->getColumnNames();
             $file = fopen($filePath . "/" .  $interview->id . ".xml", "w") or die("Unable to open file!");
             fclose($file);
             $interview->exportStudyInterview($filePath . "/" .  $interview->id . ".xml", $columns);
             echo "success";
-            Yii::app()->end();
+        }else{
+            echo "fail";
         }
-        echo "success";
     }
 
     public function actionExportstudy()
@@ -983,9 +942,14 @@ class ImportexportController extends Controller
 
         $study = Study::findOne($_POST['studyId']);
 
-        header("Content-type: text/xml; charset=utf-8");
-        header("Content-Disposition: attachment; filename=".$study->name.".study");
-        header("Content-Type: application/octet-stream");
+        $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/$study->name.study";
+        $fp = fopen($filePath, 'w');
+
+    
+
+        //header("Content-type: text/xml; charset=utf-8");
+        //header("Content-Disposition: attachment; filename=".$study->name.".study");
+        //header("Content-Type: application/octet-stream");
 
         $interviewIds = $_POST['export'];
 
@@ -994,10 +958,10 @@ class ImportexportController extends Controller
         $alterLists = AlterList::findAll(array("studyId"=>$study->id));
         $alterPrompts = AlterPrompt::findAll(array("studyId"=>$study->id));
 
-        $study->introduction = sanitizeXml($study->introduction);
-        $study->egoIdPrompt = sanitizeXml($study->egoIdPrompt);
-        $study->alterPrompt = sanitizeXml($study->alterPrompt);
-        $study->conclusion = sanitizeXml($study->conclusion);
+        $study->introduction = Tools::sanitizeXml($study->introduction);
+        $study->egoIdPrompt = Tools::sanitizeXml($study->egoIdPrompt);
+        $study->alterPrompt = Tools::sanitizeXml($study->alterPrompt);
+        $study->conclusion = Tools::sanitizeXml($study->conclusion);
 
         if (count($interviewIds) > 0) {
             $interviews = Interview::findAll(array("id"=>$interviewIds));
@@ -1005,35 +969,35 @@ class ImportexportController extends Controller
                 $interview[$result->id] = $result;
                 $answer = Answer::findAll(array("interviewId"=>$result->id));
                 $answers[$result->id] = $answer;
-                $criteria = array(
-            'condition'=>"FIND_IN_SET(" . $result->id . ", interviewId)",
-          );
-                $alter = Alters::model()->findAll($criteria);
+                $alter = Alters::find()
+                ->where(new \yii\db\Expression("FIND_IN_SET(" . $result->id .", interviewId)"))
+                ->orderBy(['ordering'=>'ASC'])
+                ->all();         
                 $alters[$result->id] = $alter;
-                $graph = Graph::model()->findAllByAttributes(array("interviewId"=>$result->id));
+                $graph = Graph::findAll(array("interviewId"=>$result->id));
                 $graphs[$result->id] = $graph;
-                $note = Note::model()->findAllByAttributes(array("interviewId"=>$result->id));
+                $note = Note::findAll(array("interviewId"=>$result->id));
                 $notes[$result->id] = $note;
                 $other = array();
-                //$other = OtherSpecify::model()->findAllByAttributes(array("interviewId"=>$result->id));
                 $others[$result->id] = $other;
             }
         }
         $columns = array();
-        $columns['study'] = Yii::app()->db->schema->getTable("study")->getColumnNames();
-        $columns['question'] = Yii::app()->db->schema->getTable("question")->getColumnNames();
-        $columns['questionOption'] = Yii::app()->db->schema->getTable("questionOption")->getColumnNames();
-        $columns['expression'] = Yii::app()->db->schema->getTable("expression")->getColumnNames();
-        $columns['answer'] = Yii::app()->db->schema->getTable("answer")->getColumnNames();
-        $columns['alters'] = Yii::app()->db->schema->getTable("alters")->getColumnNames();
-        $columns['interview'] = Yii::app()->db->schema->getTable("interview")->getColumnNames();
-        $columns['alterList'] = Yii::app()->db->schema->getTable("alterList")->getColumnNames();
-        $columns['alterPrompt'] = Yii::app()->db->schema->getTable("alterPrompt")->getColumnNames();
-        $columns['alterList'] = Yii::app()->db->schema->getTable("alterList")->getColumnNames();
-        $columns['graphs'] = Yii::app()->db->schema->getTable("graphs")->getColumnNames();
-        $columns['notes'] = Yii::app()->db->schema->getTable("notes")->getColumnNames();
+
+        $columns['study'] = Yii::$app->db->getTableSchema("study")->getColumnNames();
+        $columns['question'] = Yii::$app->db->getTableSchema("question")->getColumnNames();
+        $columns['questionOption'] = Yii::$app->db->getTableSchema("questionOption")->getColumnNames();
+        $columns['expression'] = Yii::$app->db->getTableSchema("expression")->getColumnNames();
+        $columns['answer'] = Yii::$app->db->getTableSchema("answer")->getColumnNames();
+        $columns['alters'] = Yii::$app->db->getTableSchema("alters")->getColumnNames();
+        $columns['interview'] = Yii::$app->db->getTableSchema("interview")->getColumnNames();
+        $columns['alterList'] = Yii::$app->db->getTableSchema("alterList")->getColumnNames();
+        $columns['alterPrompt'] = Yii::$app->db->getTableSchema("alterPrompt")->getColumnNames();
+        $columns['alterList'] = Yii::$app->db->getTableSchema("alterList")->getColumnNames();
+        $columns['graphs'] = Yii::$app->db->getTableSchema("graphs")->getColumnNames();
+        $columns['notes'] = Yii::$app->db->getTableSchema("notes")->getColumnNames();
         $exclude = array("studyId", "active");
-        $x=new XMLWriter();
+        $x=new \XMLWriter();
         $x->openMemory();
         $x->setIndent(true);
         $x->startDocument('1.0', 'UTF-8');
@@ -1081,7 +1045,7 @@ class ImportexportController extends Controller
                     }
                 }
                 if ($question->answerType == "SELECTION" || $question->answerType == "MULTIPLE_SELECTION") {
-                    $options = QuestionOption::model()->findAllByAttributes(
+                    $options = QuestionOption::findAll(
                         array("studyId"=>$_POST['studyId'], "questionId"=>$question->id)
                     );
                     foreach ($options as $option) {
@@ -1111,44 +1075,50 @@ class ImportexportController extends Controller
             }
             $x->endElement();
         }
-        //$x->startElement('interviews');
-        //$x->text("");
         $text = $x->outputMemory();
-        echo $text."\r\n";
+        fputs($fp, $text);
+
         if (count($interviewIds) > 0) {
-            echo "<interviews>\r\n";
+            fputs($fp, "<interviews>\r\n");
             foreach ($interviewIds as $interviewId) {
                 $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . ".xml";
                 if (file_exists($filePath)) {
-                    echo file_get_contents($filePath);
+                    fputs($fp, file_get_contents($filePath));
                     unlink($filePath);
                 }
             }
-            echo "</interviews>\r\n";
+            fputs($fp, "</interviews>\r\n");
         }
-        echo "</study>\r\n";
-        exit;
+        fputs($fp, "</study>\r\n");
+        fclose($fp);
+
+        $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/$study->name.study";
+
+        return Yii::$app->response->sendFile($filePath, "$study->name.study")
+        ->on(\yii\web\Response::EVENT_AFTER_SEND, function($event) {
+            unlink($event->data);
+        }, $filePath);
     }
 
     public function actionSend($id)
     {
-        $study = Study::model()->findByPk($id);
+        $study = Study::findOne($id);
         $expressions = array();
-        $results = Expression::model()->findAllByAttributes(array("studyId"=>$id));
+        $results = Expression::findAll(array("studyId"=>$id));
         foreach ($results as $result) {
-            $expressions[] = mToA($result);
+            $expressions[] = Tools::mToA($result);
         }
         $questions = array();
-        $results = Question::model()->findAllByAttributes(array("studyId"=>$id), array('order'=>'ordering'));
+        $results = Question::findAll(array("studyId"=>$id), array('order'=>'ordering'));
         foreach ($results as $result) {
-            $questions[] = mToA($result);
+            $questions[] = Tools::mToA($result);
         }
-        $results = QuestionOption::model()->findAllByAttributes(array("studyId"=>$id));
+        $results = QuestionOption::findAll(array("studyId"=>$id));
         foreach ($results as $result) {
-            $options[] = mToA($result);
+            $options[] = Tools::mToA($result);
         }
         $participantList = array();
-        $results = AlterList::model()->findAllByAttributes(array("studyId"=>$id));
+        $results = AlterList::findAll(array("studyId"=>$id));
         foreach ($results as $result) {
             if ($result->name) {
                 $participantList['name'][] = $result->name;
@@ -1158,12 +1128,12 @@ class ImportexportController extends Controller
             }
         }
         $alterPrompts = array();
-        $results = AlterPrompt::model()->findAllByAttributes(array("studyId"=>$id));
+        $results = AlterPrompt::findAll(array("studyId"=>$id));
         foreach ($results as $result) {
             if (!$result->questionId) {
                 $result->questionId = 0;
             }
-            $alterPrompts[] = mToA($result);
+            $alterPrompts[] = Tools::mToA($result);
         }
         if (is_array($_POST['export'])) {
             $interviewIds = $_POST['export'];
@@ -1171,7 +1141,7 @@ class ImportexportController extends Controller
             $interviewIds = array(0);
         }
         if (count($options) == 0) {
-            $options = new stdClass();
+            $options = (object)[];
         }
         $studies = array();
         $interviews = array();
@@ -1181,25 +1151,25 @@ class ImportexportController extends Controller
         $notes = array();
         foreach ($interviewIds as $interviewId) {
             if ($interviewId != 0) {
-                $interviewData = mToA(Interview::model()->findByPK($interviewId));
-                $interviewData['EGOID'] = Interview::getEgoId($interviewId);
+                $interview = Interview::findOne($interviewId);
+                $interviewData = Tools::mToA($interview);
+                $interviewData['EGOID'] = $interview->egoId;
                 $interviews[] = $interviewData;
 
-                $results = Answer::model()->findAllByAttributes(array('interviewId'=>$interviewId));
+                $results = Answer::findAll(array('interviewId'=>$interviewId));
                 foreach ($results as $result) {
-                    $answers[] = mToA($result);
+                    $answers[] = Tools::mToA($result);
                 }
-                $criteria = array(
-                      'condition'=>"FIND_IN_SET(" . $interviewId .", interviewId)",
-                      'order'=>'ordering',
-                  );
-                $results = Alters::findAll($criteria);
+                $results = Alters::find()
+                ->where(new \yii\db\Expression("FIND_IN_SET(" . $interviewId .", interviewId)"))
+                ->orderBy(['ordering'=>'ASC'])
+                ->all();  
                 foreach ($results as $result) {
-                    $alters[] = mToA($result);
+                    $alters[] = Tools::mToA($result);
                 }
                 $results = Graph::findAll(array('interviewId'=>$interviewId));
                 foreach ($results as $result) {
-                    $graphs[] = mToA($result);
+                    $graphs[] = Tools::mToA($result);
                 }
                 $results = Note::findAll(array("interviewId"=>$interviewId));
                 foreach ($results as $result) {
@@ -1207,7 +1177,7 @@ class ImportexportController extends Controller
                 }
             }
             $studies[] = array(
-             "study"=>mToA($study),
+             "study"=>Tools::mToA($study),
              "questions"=>$questions,
              "expressions"=>$expressions,
              "questionOptions"=>$options,
@@ -1221,14 +1191,14 @@ class ImportexportController extends Controller
          );
         }
         if (count($alters) == 0) {
-            $alters = new stdClass();
+            $alters = (object)[];
         }
         if (count($studies) > 1) {
             $data = $studies;
         } else {
             $data = $studies[0];
         }
-        echo json_encode($data);
+        return $this->renderAjax('/layouts/ajax',['json'=>json_encode($data)]);
     }
 
     public function actionDeleteserver()

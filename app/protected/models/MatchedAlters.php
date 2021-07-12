@@ -39,6 +39,17 @@ class MatchedAlters extends \yii\db\ActiveRecord
         ];
     }
 
+    public function getMatchId()
+    {
+        $interview1 = Interview::findOne($this->interviewId1)->egoId;
+        $interview2 = Interview::findOne($this->interviewId2)->egoId;
+
+        if($this->interviewId1 > $this->interviewId2)
+            return $interview2  . "_" . $interview1;
+        else
+            return $interview1  . "_" . $interview2;
+    }
+
     /**
      * {@inheritdoc}
      */

@@ -66,11 +66,13 @@ class AdminController extends Controller
      */
     public function actionIndex()
     {
+        $this->view->title = "EgoWeb 2.0";
         return $this->render('index');
     }
 
     public function actionUser()
     {
+        $this->view->title = "EgoWeb 2.0";
         $result = User::find()->all();
         $users = [];
         foreach($result as $user){
@@ -98,6 +100,36 @@ class AdminController extends Controller
             "users"=>$users,
             "roles"=>$roles,
         ]);
+    }
+
+    public function actionUserEdit()
+    {
+        if (isset($_POST['User']['id'])) {
+            if (!is_numeric($_POST['User']['id'])) {
+                throw new CHttpException(500, "Invalid userId specified ".$_GET['userId']." !");
+            }
+            $user = User::findOne($_POST['User']['id']);
+            $user->name = $_POST['User']['name'];
+            $user->email = $_POST['User']['email'];
+            $user->permissions = $_POST['User']['permissions'];
+            if ($user->save()) {
+                Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
+                return $this->response->redirect(Url::toRoute('/admin/user'));
+            }else{
+                Yii::$app->session->setFlash('error', 'Error creating user');
+            }
+        } else {
+            $model = new User;
+        }
+    }
+
+    public function actionUserdelete()
+    {
+        if (isset($_POST['User']['id'])) {
+            $model = User::findOne($_POST['User']['id']);
+            $model->delete();
+            return $this->response->redirect(Url::toRoute('/admin/user'));
+        }
     }
 
     public function actionMigrate()

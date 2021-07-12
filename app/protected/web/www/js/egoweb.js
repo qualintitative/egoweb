@@ -1,4 +1,4 @@
-controllers = ["/interview", "/data", "/importExport", "/admin", "/dyad", "/authoring"];
+controllers = ["/interview", "/data", "/import-export", "/admin", "/dyad", "/authoring"];
 for (let c = 0; c < controllers.length; c++) {
     if (document.location.href.match(controllers[c]))
         rootUrl = document.location.href.split(controllers[c])[0];
@@ -331,4 +331,731 @@ function rebuildEgowebTags(withCode, id) {
         .replace(/&gt;/g, '>');
     delete eTags[id];
     return withCode;
+}
+
+
+function initStats(question) {
+    shortPaths = new Object;
+    connections = [];
+    nodes = [];
+    edges = [];
+    var n = [];
+    var expressionId = question.NETWORKRELATIONSHIPEXPRID;
+    var starExpressionId = parseInt(question.USELFEXPRESSION);
+
+    if (!question.NETWORKPARAMS)
+        question.NETWORKPARAMS = "[]";
+    this.params = JSON.parse(question.NETWORKPARAMS);
+    if (this.params == null)
+        this.params = [];
+    alterNames = new Object;
+    betweennesses = [];
+    if (alters.length == 0)
+        return false;
+
+    var alters2 = $.extend(true, {}, alters);
+
+    if (typeof expressions[expressionId] != "undefined")
+        var expression = expressions[expressionId];
+    if (typeof expressions[starExpressionId] != "undefined")
+        var starExpression = expressions[starExpressionId];
+    console.log(expressions, starExpression)
+    if (expression == undefined && starExpression == undefined)
+        return
+
+    //if(expression == undefined && expression.QUESTIONID)
+    //var question = questions[expression.QUESTIONID];
+
+    for (a in alters) {
+        betweennesses[alters[a].ID] = 0;
+        var keys = Object.keys(alters2);
+        delete alters2[keys[0]];
+        alterNames[alters[a].ID] = alters[a].NAME;
+        for (b in alters2) {
+            if (alters[a].ID == alters2[b].ID)
+                continue;
+            if (evalExpression(expressionId, alters[a].ID, alters2[b].ID) == true) {
+                if ($.inArray(alters[a].ID, n) == -1)
+                    n.push(alters[a].ID);
+                if ($.inArray(alters2[b].ID, n) == -1)
+                    n.push(alters2[b].ID);
+                if (typeof connections[alters[a].ID] == "undefined")
+                    connections[alters[a].ID] = [];
+                if (typeof connections[alters2[b].ID] == "undefined")
+                    connections[alters2[b].ID] = [];
+                connections[alters[a].ID].push(alters2[b].ID);
+                connections[alters2[b].ID].push(alters[a].ID);
+            }
+        }
+    }
+
+    this.getDistance = function(visited, node2) {
+        var node1 = visited[visited.length - 1];
+
+        if ($.inArray(node2, connections[node1]) != -1) {
+            var trail = visited.slice(0);
+            trail.push(node2);
+            if (typeof shortPaths[visited[0] + "-" + node2] == "undefined") {
+
+                shortPaths[visited[0] + "-" + node2] = [];
+                shortPaths[visited[0] + "-" + node2].push(trail);
+                if (typeof shortPaths[node2 + "-" + visited[0]] == "undefined")
+                    shortPaths[node2 + "-" + visited[0]] = [];
+                shortPaths[node2 + "-" + visited[0]].push(trail);
+            } else {
+                if (trail.length < shortPaths[visited[0] + "-" + node2][0].length) {
+                    shortPaths[visited[0] + "-" + node2] = [];
+                    shortPaths[node2 + "-" + visited[0]] = [];
+                }
+                if (shortPaths[visited[0] + "-" + node2].length == 0 || trail.length == shortPaths[visited[0] + "-" + node2][0].length) {
+                    shortPaths[visited[0] + "-" + node2].push(trail);
+                    shortPaths[node2 + "-" + visited[0]].push(trail);
+                }
+            }
+        } else {
+            for (k in connections[node1]) {
+
+                var endNode = connections[node1][k];
+
+                if ($.inArray(endNode, visited) == -1) {
+
+                    var trail = visited.slice(0);
+                    trail.push(endNode);
+                    if (typeof shortPaths[visited[0] + "-" + endNode] != "undefined") {
+
+                        if (trail.length < shortPaths[visited[0] + "-" + endNode][0].length) {
+
+                            shortPaths[visited[0] + "-" + endNode] = [];
+                            shortPaths[endNode + "-" + visited[0]] = [];
+                        }
+                        if (shortPaths[visited[0] + "-" + endNode].length == 0 || trail.length == shortPaths[visited[0] + "-" + endNode][0].length) {
+
+                            shortPaths[visited[0] + "-" + endNode].push(trail);
+                            shortPaths[endNode + "-" + visited[0]].push(trail);
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        shortPaths[visited[0] + "-" + endNode] = [];
+                        shortPaths[visited[0] + "-" + endNode].push(trail);
+                        if (typeof shortPaths[endNode + "-" + visited[0]] == "undefined")
+                            shortPaths[endNode + "-" + visited[0]] = [];
+                        shortPaths[endNode + "-" + visited[0]].push(trail);
+                    }
+                    this.getDistance(trail, node2);
+                }
+            }
+        }
+    }
+
+
+
+    for (k in alters) {
+        if (typeof connections[alters[k].ID] == "undefined") {
+            //this.isolates[] = $alter.id;
+            //this.nodes[] = $alter.id;
+            n.push(alters[k].ID);
+            connections[alters[k].ID] = [];
+        }
+    }
+
+    var n2 = n.slice(0);
+    for (a in n) {
+        n2.shift();
+        for (b in n2) {
+            this.getDistance([n[a]], n2[b]);
+        }
+    }
+
+
+    for (k in shortPaths) {
+        var between = [];
+
+        for (p in shortPaths[k]) {
+
+            var path = shortPaths[k][p].slice(0);
+            path.pop();
+            path.shift();
+
+            for (n in path) {
+                if (typeof between[path[n]] == "undefined")
+                    between[path[n]] = 1;
+                else
+                    between[path[n]] = between[path[n]] + 1;
+            }
+        }
+        for (b in between) {
+            betweennesses[b] = betweennesses[b] + (between[b] / shortPaths[k].length);
+        }
+    }
+
+
+    closenesses = [];
+    var alters2 = $.extend(true, {}, alters);
+    for (a in alters) {
+        var total = 0;
+        var reachable = 0;
+        for (b in alters2) {
+            if (typeof shortPaths[alters[a].ID + "-" + alters2[b].ID] != "undefined") {
+                distance = shortPaths[alters[a].ID + "-" + alters2[b].ID][0].length - 1;
+                total = total + distance;
+                reachable++;
+            }
+        }
+        if (reachable < 1) {
+            closenesses[alters[a].ID] = 0.0;
+        } else {
+            average = total / reachable;
+            closenesses[alters[a].ID] = reachable / (average * (Object.keys(alters2).length - 1));
+        }
+    }
+
+    this.nextEigenvectorGuess = function(guess) {
+        var results = [];
+        for (g in guess) {
+            var result = 0.0;
+            if (typeof connections[g] != "undefined") {
+                for (c in connections[g]) {
+                    result = result + guess[connections[g][c]];
+                }
+            }
+            results[g] = result;
+        }
+        return this.normalize(results);
+    }
+
+    this.tinyNum = 0.0000001;
+
+    this.normalize = function(vec) {
+        var magnitudeSquared = 0.0;
+        for (g in vec) {
+            magnitudeSquared = magnitudeSquared + Math.pow(vec[g], 2);
+        }
+        var magnitude = Math.sqrt(magnitudeSquared);
+        var factor = 1 / (magnitude < this.tinyNum ? this.tinyNum : magnitude);
+        var normalized = [];
+        for (g in vec) {
+            normalized[g] = vec[g] * factor;
+        }
+        return normalized;
+    }
+
+    this.change = function(vec1, vec2) {
+        var total = 0.0;
+        for (g in vec1) {
+            total = total + Math.abs(vec1[g] - vec2[g]);
+        }
+        return total;
+    }
+
+    var tries = (n.length + 5) * (n.length + 5);
+    var guess = closenesses;
+    while (tries >= 0) {
+        var nextGuess = this.nextEigenvectorGuess(guess);
+        if (this.change(guess, nextGuess) < this.tinyNum || tries == 0) {
+            eigenvectors = nextGuess;
+        }
+        guess = nextGuess;
+        tries--;
+    }
+
+    var all = [];
+    for (k in betweennesses) {
+        all.push(betweennesses[k]);
+    }
+    maxBetweenness = Math.max.apply(Math, all);
+    minBetweenness = Math.min.apply(Math, all);
+
+    var all = [];
+    for (k in eigenvectors) {
+        all.push(eigenvectors[k]);
+    }
+    maxEigenvector = Math.max.apply(Math, all);
+    minEigenvector = Math.min.apply(Math, all);
+
+    var all = [];
+    for (k in connections) {
+        all.push(connections[k].length);
+    }
+    maxDegree = Math.max.apply(Math, all);
+    minDegree = Math.min.apply(Math, all);
+
+    this.edgeColors = {
+        '#000': 'black',
+        '#ccc': 'gray',
+        '#07f': 'blue',
+        '#0c0': 'green',
+        '#f80': 'orange',
+        '#fd0': 'yellow',
+        '#f00': 'red',
+        '#c0f': 'purple',
+    };
+    this.edgeSizes = {
+        "0.5": '0.5',
+        "2": '2',
+        "4": '4',
+        "8": '8',
+    };
+    this.nodeColors = {
+        '#000': 'black',
+        '#ccc': 'gray',
+        '#07f': 'blue',
+        '#0c0': 'green',
+        '#f80': 'orange',
+        '#fd0': 'yellow',
+        '#f00': 'red',
+        '#c0f': 'purple',
+    };
+    this.nodeShapes = {
+        'circle': 'circle',
+        'star': 'star',
+        'diamond': 'diamond',
+        'cross': 'cross',
+        'equilateral': 'triangle',
+        'square': 'square',
+    };
+    this.nodeSizes = {
+        2: '1',
+        4: '2',
+        6: '3',
+        8: '4',
+        10: '5',
+        12: '6',
+        14: '7',
+        16: '8',
+        18: '9',
+        20: '10',
+    };
+    this.gradient = {
+        "red": {
+            0: "#F5D6D6",
+            1: "#ECBEBE",
+            2: "#E2A6A6",
+            3: "#D98E8E",
+            4: "#CF7777",
+            5: "#C65F5F",
+            6: "#BC4747",
+            7: "#B32F2F",
+            8: "#A91717",
+            9: "#A00000"
+        },
+        "blue": {
+            0: "#E3E5FF",
+            1: "#C9D2FF",
+            2: "#B0BFFF",
+            3: "#97ACFF",
+            4: "#7E99FF",
+            5: "#6487FF",
+            6: "#4B74FF",
+            7: "#3261FF",
+            8: "#194EFF",
+            9: "#003CFF"
+        },
+        "green": {
+            0: "#C7FFDD",
+            1: "#B2F4C7",
+            2: "#9EEAB2",
+            3: "#8AE09D",
+            4: "#76D688",
+            5: "#62CB72",
+            6: "#4EC15D",
+            7: "#3AB748",
+            8: "#26AD33",
+            9: "#12A31E"
+        },
+        "black": {
+            0: "#EEEEEE",
+            1: "#D3D3D3",
+            2: "#B9B9B9",
+            3: "#9E9E9E",
+            4: "#848484",
+            5: "#696969",
+            6: "#4F4F4F",
+            7: "#343434",
+            8: "#1A1A1A",
+            9: "#000000"
+        }
+    };
+
+    this.getNodeColor = function(nodeId) {
+        var defaultNodeColor = "#07f";
+        console.log(this.params['nodeColor'])
+        if (typeof this.params['nodeColor'] != "undefined") {
+            if (typeof this.params['nodeColor']['questionId'] != "undefined" && $.inArray(this.params['nodeColor']['questionId'], ["degree", "betweenness", "eigenvector"]) != -1) {
+                if (this.params['nodeColor']['questionId'] == "degree") {
+                    max = maxDegree;
+                    min = minDegree;
+                    value = connections[nodeId].length;
+                }
+                if (this.params['nodeColor']['questionId'] == "betweenness") {
+                    max = maxBetweenness;
+                    min = minBetweenness;
+                    value = betweennesses[nodeId];
+                }
+                if (this.params['nodeColor']['questionId'] == "eigenvector") {
+                    max = maxEigenvector;
+                    min = minEigenvector;
+                    value = eigenvectors[nodeId];
+                }
+                range = max - min;
+                if (range == 0) {
+                    range = max;
+                    min = 0;
+                }
+                value = Math.round(((value - min) / (range)) * 9);
+                var gc_color = "red";
+                for (p in this.params['nodeColor']['options']) {
+                    if (this.params['nodeColor']['options'][p]['id'] == this.params['nodeColor']['questionId'])
+                        gc_color = this.params['nodeColor']['options'][p]['color'];
+                }
+                return this.gradient[gc_color][value];
+            } else if (typeof this.params['nodeColor']['questionId'] != "undefined" && this.params['nodeColor']['questionId'].search("expression") != -1) {
+                var qId = this.params['nodeColor']['questionId'].split("_");
+                if (evalExpression(qId[1], nodeId) == true) {
+                    for (p in this.params['nodeColor']['options']) {
+                        if (this.params['nodeColor']['options'][p]['id'] == 1)
+                            return this.params['nodeColor']['options'][p]['color'];
+                    }
+                } else {
+                    for (p in this.params['nodeColor']['options']) {
+                        if (this.params['nodeColor']['options'][p]['id'] == 0)
+                            return this.params['nodeColor']['options'][p]['color'];
+                    }
+                }
+            } else {
+                if (typeof this.params['nodeColor']['questionId'] != "undefined" && typeof answers[this.params['nodeColor']['questionId'] + "-" + nodeId] != "undefined")
+                    var answer = answers[this.params['nodeColor']['questionId'] + "-" + nodeId].VALUE.split(",");
+                else
+                    var answer = "";
+                for (p in this.params['nodeColor']['options']) {
+                    if (this.params['nodeColor']['options'][p]['id'] == -1 && nodeId == -1)
+                        return this.params['nodeColor']['options'][p]['color'];
+                    if (this.params['nodeColor']['options'][p]['id'] == "default" && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+                        defaultNodeColor = this.params['nodeColor']['options'][p]['color'];
+                    if (nodeId != -1 && (this.params['nodeColor']['options'][p]['id'] == answer || $.inArray(this.params['nodeColor']['options'][p]['id'], answer) != -1))
+                        return this.params['nodeColor']['options'][p]['color'];
+                }
+            }
+        }
+        return defaultNodeColor;
+    }
+
+    this, getNodeSize = function(nodeId) {
+        var defaultNodeSize = 4;
+        console.log(this.params)
+        if (nodeId != -1 && typeof this.params['nodeSize'] != "undefined") {
+            if (typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "degree") {
+                max = maxDegree;
+                min = minDegree;
+                value = connections[nodeId].length;
+                range = max - min;
+                if (range == 0) {
+                    range = max;
+                    min = 0;
+                }
+                value = Math.round(((value - min) / (range)) * 9) + 1;
+                return value * 2;
+            }
+            if (nodeId != -1 && typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "betweenness") {
+                max = maxBetweenness;
+                min = minBetweenness;
+                value = betweennesses[nodeId];
+                range = max - min;
+                if (range == 0) {
+                    range = max;
+                    min = 0;
+                }
+                value = Math.round(((value - min) / (range)) * 9) + 1;
+                return value * 2;
+            }
+            if (nodeId != -1 && typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "eigenvector") {
+                max = maxEigenvector;
+                min = minEigenvector;
+                value = eigenvectors[nodeId];
+                range = max - min;
+                if (range == 0) {
+                    range = max;
+                    min = 0;
+                }
+                value = Math.round(((value - min) / (range)) * 9) + 1;
+                return value * 2;
+            }
+            if (typeof this.params['nodeSize']['questionId'] != "undefined" && typeof answers[this.params['nodeSize']['questionId'] + "-" + nodeId] != "undefined")
+                var answer = answers[this.params['nodeSize']['questionId'] + "-" + nodeId].VALUE.split(",");
+            else
+                var answer = "";
+            for (p in this.params['nodeSize']['options']) {
+                if (this.params['nodeSize']['options'][p]['id'] == -1 && nodeId == -1)
+                    defaultNodeSize = this.params['nodeSize']['options'][p]['size'];
+                if (this.params['nodeSize']['options'][p]['id'] == "default" && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+                    defaultNodeSize = this.params['nodeSize']['options'][p]['size'];
+                if (nodeId != -1 && (this.params['nodeSize']['options'][p]['id'] == answer || $.inArray(this.params['nodeSize']['options'][p]['id'], answer) != -1))
+                    defaultNodeSize = this.params['nodeSize']['options'][p]['size'];
+            }
+        }
+        return defaultNodeSize;
+    }
+
+    this.getNodeShape = function(nodeId) {
+        var defaultNodeShape = "chircle";
+        if (typeof this.params['nodeShape'] != "undefined") {
+            if (typeof this.params['nodeShape']['questionId'] != "undefined" && typeof answers[this.params['nodeShape']['questionId'] + "-" + nodeId] != "undefined")
+                var answer = answers[this.params['nodeShape']['questionId'] + "-" + nodeId].VALUE.split(",");
+            else
+                var answer = "";
+            for (p in this.params['nodeShape']['options']) {
+                if (this.params['nodeShape']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+                    defaultNodeShape = this.params['nodeShape']['options'][p]['shape'];
+                if (this.params['nodeShape']['options'][p]['id'] == -1 && nodeId == -1)
+                    defaultNodeShape = this.params['nodeShape']['options'][p]['shape'];
+                if (nodeId != -1 && (this.params['nodeShape']['options'][p]['id'] == answer || $.inArray(this.params['nodeShape']['options'][p]['id'], answer) != -1))
+                    return this.params['nodeShape']['options'][p]['shape'];
+            }
+        }
+        return defaultNodeShape;
+    }
+
+    this.getEdgeColor = function(nodeId1, nodeId2) {
+        var defaultEdgeColor = "#ccc";
+        if (typeof this.params['edgeColor'] != "undefined") {
+            if (typeof this.params['edgeColor']['questionId'] != "undefined" && typeof answers[this.params['edgeColor']['questionId'] + "-" + nodeId1 + "and" + nodeId2] != "undefined")
+                var answer = answers[this.params['edgeColor']['questionId'] + "-" + nodeId1 + "and" + nodeId2].VALUE.split(",");
+            else
+                var answer = "";
+            for (p in this.params['edgeColor']['options']) {
+                if (this.params['edgeColor']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+                    defaultEdgeColor = this.params['edgeColor']['options'][p]['color'];
+                if (this.params['edgeColor']['options'][p]['id'] == answer || $.inArray(this.params['edgeColor']['options'][p]['id'], answer) != -1)
+                    return this.params['edgeColor']['options'][p]['color'];
+            }
+        }
+        return defaultEdgeColor;
+    }
+
+    this.getEgoEdgeColor = function(nodeId1) {
+        var defaultEdgeColor = "#ccc";
+        if (typeof this.params['egoEdgeColor'] != "undefined") {
+            if (typeof this.params['egoEdgeColor']['questionId'] != "undefined" && typeof answers[this.params['egoEdgeColor']['questionId'] + "-" + nodeId1] != "undefined")
+                var answer = answers[this.params['egoEdgeColor']['questionId'] + "-" + nodeId1].VALUE.split(",");
+            else
+                var answer = "";
+            for (p in this.params['egoEdgeColor']['options']) {
+                if (this.params['egoEdgeColor']['options'][p]['id'] == "default" && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+                    defaultEdgeColor = this.params['egoEdgeColor']['options'][p]['color'];
+                if (this.params['egoEdgeColor']['options'][p]['id'] == answer || $.inArray(this.params['egoEdgeColor']['options'][p]['id'], answer) != -1)
+                    return this.params['egoEdgeColor']['options'][p]['color'];
+            }
+        }
+        return defaultEdgeColor;
+    }
+
+    this.getEdgeSize = function(nodeId1, nodeId2) {
+        var defaultEdgeSize = 1;
+        if (typeof this.params['edgeSize'] != "undefined") {
+            if (typeof this.params['edgeSize']['questionId'] != "undefined" && typeof answers[this.params['edgeSize']['questionId'] + "-" + nodeId1 + "and" + nodeId2] != "undefined")
+                var answer = answers[this.params['edgeSize']['questionId'] + "-" + nodeId1 + "and" + nodeId2].VALUE.split(",");
+            else
+                var answer = "";
+            for (p in this.params['edgeSize']['options']) {
+                if (this.params['edgeSize']['options'][p]['id'] == "default" && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+                    defaultEdgeSize = this.params['edgeSize']['options'][p]['size'];
+                if (this.params['edgeSize']['options'][p]['id'] == answer || $.inArray(this.params['edgeSize']['options'][p]['id'], answer) != -1)
+                    return this.params['edgeSize']['options'][p]['size'];
+            }
+        }
+        return defaultEdgeSize;
+    }
+
+    this.getEgoEdgeSize = function(nodeId1, nodeId2) {
+        var defaultEdgeSize = 1;
+        if (typeof this.params['egoEdgeSize'] != "undefined") {
+            if (typeof this.params['egoEdgeSize']['questionId'] != "undefined" && typeof answers[this.params['egoEdgeSize']['questionId'] + "-" + nodeId1] != "undefined")
+                var answer = answers[this.params['egoEdgeSize']['questionId'] + "-" + nodeId1].VALUE.split(",");
+            else
+                var answer = "";
+            for (p in this.params['egoEdgeSize']['options']) {
+                if (this.params['egoEdgeSize']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+                    defaultEdgeSize = this.params['egoEdgeSize']['options'][p]['size'];
+                if (this.params['egoEdgeSize']['options'][p]['id'] == answer || $.inArray(this.params['egoEdgeSize']['options'][p]['id'], answer) != -1)
+                    return this.params['egoEdgeSize']['options'][p]['size'];
+            }
+        }
+        return defaultEdgeSize;
+    }
+
+    var alters2 = $.extend(true, {}, alters);
+    if (starExpression != undefined) {
+        nodes.push({
+            'id': '-1',
+            'label': this.params['egoLabel'],
+            'x': Math.random(),
+            'y': Math.random(),
+            "type": this.getNodeShape(-1),
+            "color": this.getNodeColor(-1),
+            "size": this.getNodeSize(-1),
+        })
+    }
+    for (a in alters) {
+        nodes.push({
+            'id': alters[a].ID.toString(),
+            'label': alters[a].NAME + (typeof notes[alters[a].ID] != "undefined" ? " �" : ""),
+            'x': Math.random(),
+            'y': Math.random(),
+            "type": this.getNodeShape(alters[a].ID),
+            "color": this.getNodeColor(alters[a].ID),
+            "size": this.getNodeSize(alters[a].ID),
+        });
+        if (starExpression != undefined) {
+            if (evalExpression(starExpressionId, alters[a].ID, alters2[b].ID) == true) {
+                edges.push({
+                    "id": "-1_" + alters[a].ID,
+                    "source": alters[a].ID.toString(),
+                    "target": '-1',
+                    "color": this.getEgoEdgeColor(alters[a].ID),
+                    "size": this.getEgoEdgeSize(alters[a].ID),
+                });
+            }
+        }
+        var keys = Object.keys(alters2);
+        delete alters2[keys[0]];
+        if (expression != undefined) {
+            for (b in alters2) {
+                if (evalExpression(expressionId, alters[a].ID, alters2[b].ID) == true) {
+                    edges.push({
+                        "id": alters[a].ID + "_" + alters2[b].ID,
+                        "source": alters2[b].ID.toString(),
+                        "target": alters[a].ID.toString(),
+                        "color": this.getEdgeColor(alters[a].ID, alters2[b].ID),
+                        "size": this.getEdgeSize(alters[a].ID, alters2[b].ID),
+                    });
+                }
+            }
+        }
+    }
+
+
+    g = {
+        nodes: nodes,
+        edges: edges,
+    };
+
+    sizes = [];
+    for (y in g.nodes) {
+        sizes.push(g.nodes[y].size)
+    }
+    max_node_size = Math.max.apply(Math, sizes);
+
+    sizes = [];
+    for (y in g.edges) {
+        sizes.push(g.edges[y].size)
+    }
+    max_edge_size = Math.max.apply(Math, sizes);
+
+    setTimeout(function() {
+        sigma.renderers.def = sigma.renderers.canvas;
+        s = new sigma({
+            graph: g,
+            renderer: {
+                container: document.getElementById('infovis'),
+                type: 'canvas'
+            },
+            settings: {
+                doubleClickEnabled: false,
+                labelThreshold: 1,
+                minNodeSize: 2,
+                maxNodeSize: max_node_size,
+                minEdgeSize: 0.5,
+                maxEdgeSize: max_edge_size,
+                zoomingRatio: 1.0,
+                sideMargin: 2
+            }
+        });
+        if (typeof graphs[expressionId] != "undefined") {
+            savedNodes = JSON.parse(graphs[expressionId].NODES);
+            for (var k in savedNodes) {
+                var node = s.graph.nodes(k.toString());
+                if (node) {
+                    node.x = savedNodes[k].x;
+                    node.y = savedNodes[k].y;
+                }
+            }
+        } else {
+            s.startForceAtlas2({
+                "worker": false,
+                "outboundAttractionDistribution": true,
+                "speed": 2000,
+                "gravity": 0.2,
+                "jitterTolerance": 0,
+                "strongGravityMode": true,
+                "barnesHutOptimize": false,
+                "totalSwinging": 0,
+                "totalEffectiveTraction": 0,
+                "complexIntervals": 500,
+                "simpleIntervals": 1000
+            });
+            setTimeout("s.stopForceAtlas2(); saveNodes(); $('#fullscreenButton').prop('disabled', false);", 5000);
+        }
+        s.refresh();
+        initNotes(s);
+    }, 1);
+}
+
+function fullscreen() {
+    elem = document.getElementById("infovis");
+    if (typeof elem.requestFullscreen != "undefined") {
+        elem.requestFullscreen();
+    } else if (typeof elem.msRequestFullscreen != "undefined") {
+        elem.msRequestFullscreen();
+    } else if (typeof elem.mozRequestFullScreen != "undefined") {
+        elem.mozRequestFullScreen();
+    } else if (typeof elem.webkitRequestFullscreen != "undefined") {
+        elem.webkitRequestFullscreen();
+    }
+    graphWidth = $("#infovis").width()
+    $("#infovis").height(screen.height);
+    $("#infovis").width(screen.width);
+
+    setTimeout(function() {
+        document.addEventListener('webkitfullscreenchange', exitHandler, false);
+        document.addEventListener('mozfullscreenchange', exitHandler, false);
+        document.addEventListener('fullscreenchange', exitHandler, false);
+        document.addEventListener('MSFullscreenChange', exitHandler, false);
+
+    }, 500);
+
+}
+
+function toggleLabels() {
+    var labelT = s.renderers[0].settings("labelThreshold");
+    if (labelT == 1)
+        s.renderers[0].settings({
+            labelThreshold: 100
+        });
+    else
+        s.renderers[0].settings({
+            labelThreshold: 1
+        });
+    s.refresh();
+}
+
+function exitHandler() {
+    if (document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement !== null) {
+        $("#infovis").height(360);
+        $("#infovis").width(graphWidth)
+        $("#infovis canvas").height(360);
+        $("#infovis canvas").width(graphWidth);
+        $("#infovis canvas").attr("height", 360);
+        $("#infovis canvas").attr("width", graphWidth);
+        //window.dispatchEvent(new Event('resize'));
+        setTimeout(function() {
+            window.dispatchEvent(new Event('resize'));
+
+            //s.cameras[0].goTo({ x: 0, y: 0, angle: 0, ratio: 1 });
+            //s.refresh();
+        }, 100);
+        document.removeEventListener('webkitfullscreenchange', exitHandler, false);
+        document.removeEventListener('mozfullscreenchange', exitHandler, false);
+        document.removeEventListener('fullscreenchange', exitHandler, false);
+        document.removeEventListener('MSFullscreenChange', exitHandler, false);
+    }
 }

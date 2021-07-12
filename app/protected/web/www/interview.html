@@ -3,6 +3,7 @@
 
 <div id="visualizePlugin" ng-if="subjectType == 'NETWORK' && (graphExpressionId > 0 || starExpressionId > 0 )" class="col-sm-6 pull-right">
     <div id="infovis"></div>
+    <div class="row">
     <div class="col-sm-4 pull-left" id="legend">
         <canvas id="legend"></canvas>
     </div>
@@ -25,8 +26,9 @@
         </form>
     </div>
 </div>
+</div>
 
-<div ng-class="{'col-xs-12 col-sm-9': questions[0].SUBJECTTYPE == 'NAME_GENERATOR'}">
+<div ng-if="subjectType == 'NAME_GENERATOR'" ng-class="{'col-xs-12 col-sm-9': questions[0].SUBJECTTYPE == 'NAME_GENERATOR', 'col-md-12': questions[0].SUBJECTTYPE != 'NAME_GENERATOR'}">
     <div id="floatHeader">
         <div class="col-sm-12 no-padding" ng-if="header != '' && subjectType != 'NETWORK'" ng-bind-html="header">
             {{ header }}
@@ -102,7 +104,7 @@
         </div>
     </div>
 </div>
-<form id="answerForm" name="answerForm" ng-submit="submitForm(answerForm.$valid)" novalidate>
+<form id="answerForm" name="answerForm" ng-submit="submitForm(answerForm.$valid)" novalidate ng-class="{'col-sm-6': subjectType == 'NETWORK'}">
 
     <table id="qTable" ng-class="{qTable: askingStyleList != false}" ng-if="askingStyleList != false">
         <thead>

@@ -53,19 +53,21 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'mobile/syncData/<id:\w*>' => 'mobile/sync-data',
+                'mobile/uploadData' => 'mobile/upload-data',
                 'debug/<controller>/<action>' => 'debug/<controller>/<action>',
                 'interview/<studyId:\d+>/<interviewId:\d+>' => 'interview/view',
+                'site/reset-password/<token:\w+>' => 'site/reset-password',
                 'interview/<studyId:\d+>' => 'interview/view',
                 '<controller>/<id:\d+>' => '<controller>/index',
                 '<controller>/<action>' => '<controller>/<action>',
                 '<controller>/<action>/<id:\d+>' => '<controller>/<action>',
-                'site/reset-password/<token:\w+>' => 'site/reset-password',
             ],
         ],
         
     ],
     'params' => [
-        'version'=>'2.0.9.9',
+        'version'=>'2.0.10.0',
 		// this is used in contact page
 		'adminEmail' => 'admin@example.com',
 		// The max login attempt before showing captcha

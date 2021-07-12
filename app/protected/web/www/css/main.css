@@ -273,14 +273,14 @@ textarea {
     padding: 0;
 }
 
-.graybutton {
+.graybutton, .graybutton:hover {
     float: left;
     width: 120px;
     background-color: #555;
     color: #eee;
 }
 
-.orangebutton {
+.orangebutton, .orangebutton:hover {
     background-color: #db7522;
     float: left;
     margin: 0 0 10px 15px;
@@ -1051,7 +1051,7 @@ table.qTable td.alter-name {
 }
 
 [role="main"] {
-    padding-top: 50px;
+    padding-top: 70px;
 }
 
 
@@ -1060,11 +1060,29 @@ table.qTable td.alter-name {
    */
 
 .navbar-brand {
-    padding-top: .75rem;
-    padding-bottom: .75rem;
+    margin-top: .75rem;
+    margin-bottom: .75rem;
+    padding-top:0;
+    padding-bottom:0;
     font-size: 1rem;
-    background-color: rgba(0, 0, 0, .25);
-    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);
+    min-width:80px;
+    padding-right:5px;
+}
+
+.navbar-toggler {
+    height: 50px;
+    font-size: 1rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+#navbox .nav-link {
+
+    padding-top:5px;
+    padding-bottom:5px;
+    padding-left:20px!important;
+    border-left: 1px #aaa solid;
 }
 
 .navbar .form-control {
@@ -1101,13 +1119,10 @@ a:hover {
 
 .bg-dark a,
 a.bg-dark {
-    color: orange;
+    color:#fabd9a;
 }
 
-.bg-dark a:hover,
-a:hover.bg-dark {
-    color: cyan;
-}
+
 
 .nav-link.active {
     background-color: #fff!important;
@@ -1148,6 +1163,18 @@ a:hover.bg-dark {
     padding: 5px 10px;
 }
 
-.row.ng-scope{
-margin-top:20px;
-}
+html {
+    position: relative;
+    min-height: 100%;
+  }
+  body {
+    margin-bottom: 60px; /* Margin bottom by footer height */
+  }
+  .footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60px; /* Set the fixed height of the footer here */
+    line-height: 60px; /* Vertically center the text there */
+  }
+  

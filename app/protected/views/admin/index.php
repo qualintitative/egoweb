@@ -18,7 +18,7 @@ use app\models\Interview;
                     <?php echo $study->name; ?>
                 </h3>
                 <div class="btn-group float-right" role="group" aria-label="Basic example">
-                        <?php echo Html::a("Authoring", ["/authoring/" . $study->id], ["class"=>"btn btn-link btn-secondary text-light"]); ?>
+                        <?php echo Html::a("Authoring", ["/authoring/" . $study->id], ["class"=>"btn btn-link btn-info text-light"]); ?>
                         <?php echo Html::a("Data Processing", ["/data/" . $study->id], ["class"=>"btn btn-link btn-secondary text-light"]); ?>
 
                     </div>
@@ -78,7 +78,7 @@ $interviews = Interview::findAll([
             <div class="card col-sm-6">
                 <div class="card-body">
 
-                    <h3><?=Html::a('Import &amp; Export Studies', ["/importexport"])?></h3>
+                    <h3><?=Html::a('Import &amp; Export Studies', ["/import-export"])?></h3>
                     <p>
                         Save study and respondent data as files or
                         transfer to another server.<br>

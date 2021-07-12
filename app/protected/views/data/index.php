@@ -222,34 +222,34 @@ function deleteInterviews() {
 }
 </script>
 
-<h3><?php echo $study->name; ?></h3>
+<div class="card">
+    <div class="card-body">
+        <div>
+            <div class="col-sm-4 float-right">
+                <a class="btn btn-sm btn-info float-right" href="/authoring/<?php echo $study->id; ?>">Authoring</a>
+            </div>
+            <div class="col-sm-8 float-left mb-3">
+                <input type="checkbox" id="withAlters1"> Include Alter Names
+      
+                Network Statistics
+                <?php echo Html::dropDownList('adjacencyExpressionId', '', $expressions, ['empty' => '(none)',
+                'onchange' => '$("#expressionId").val($(this).val())']);
+                ?>
+            </div>
 
-<div class="panel panel-default">
-    <div class="panel-heading">
-    </div>
-
-    <div class="panel-body">
+        </div>
         <div id="status"></div>
-        <div class="progress">
+        <div class="progress row mb-3">
             <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40"
                 aria-valuemin="0" aria-valuemax="100">
             </div>
         </div>
-        <div class="form">
-            <div class="form-group">
-                <input type="checkbox" id="withAlters1"> Include Alter Names
-            </div>
-            <div class="form-group">
-                Network Statistics
-                <?php echo Html::dropDownList('adjacencyExpressionId', '', $expressions, ['empty' => '(none)',
-                'onchange' => '$("#expressionId").val($(this).val())']);
-?>
-            </div>
-        </div>
+
         <button onclick='exportEgo()' class='authorButton'>Export Ego Alter Data</button>
         <button onclick='exportAlterPair()' class='authorButton'>Export Alter Pair Data</button>
         <button onclick='exportOther()' class='authorButton'>Export Other Specify Data</button>
         <button onclick='deleteInterviews()' class='authorButton btn-danger pull-right'>Delete Interviews</button>
+
     </div>
 </div>
 
@@ -260,11 +260,10 @@ function deleteInterviews() {
             <th><input type="checkbox" onclick="$('input[type=checkbox]').prop('checked', $(this).prop('checked'))"
                     data-toggle="tooltip" data-placement="top" title="Select All"></th>
             <th>Ego ID</th>
-            <th class="hidden-xs">Started</th>
-            <th class="hidden-xs">Completed</th>
-            <th class="hidden-xs"># of Alters</th>
-            <th class="hidden-xs">Dyad Match ID</th>
-            <th class="hidden-xs">Match User</th>
+            <th class="d-none d-sm-table-cell">Started</th>
+            <th class="d-none d-sm-table-cell">Completed</th>
+            <th class="d-none d-sm-table-cell">Dyad Match ID</th>
+            <th class="d-none d-sm-table-cell">Match User</th>
             <th><em class="fa fa-cog"></em></th>
 
         </tr>
@@ -290,18 +289,17 @@ function deleteInterviews() {
             }
             echo "<tr $mark>";
             echo "<td>" . Html::checkbox('export[' . $interview->id . ']', false, ['id'=>'export_' . $interview->id  ]) . "</td><td>" . $interview->egoId . "</td>";
-            echo "<td class='hidden-xs'>" . \Yii::$app->formatter->asDate($interview->start_date, "php:Y-m-d H:i:s") . "</td>";
-            echo "<td class='hidden-xs'>" . $completed . "</td>";
-            echo "<td class='hidden-xs'>" . $matchId . "</td>";
-            echo "<td class='hidden-xs'>" . $matchUser . "</td>";
+            echo "<td class='d-none d-sm-table-cell'>" . \Yii::$app->formatter->asDate($interview->start_date, "php:Y-m-d H:i:s") . "</td>";
+            echo "<td class='d-none d-sm-table-cell'>" . $completed . "</td>";
+            echo "<td class='d-none d-sm-table-cell'>" . $matchId . "</td>";
+            echo "<td class='d-none d-sm-table-cell'>" . $matchUser . "</td>";
             echo "<td>";
             if ($interview->completed == -1) {
                 echo "<a class='btn btn-success btn-xs' href='" . Url::to(['/data/edit/' . $interview->id]) ."'>Edit</a>";
                 echo "&nbsp;&nbsp;";
             }
-            echo "<a class='btn btn-info btn-xs' href='" . Url::to(['/interview/' . $study->id . '/' . $interview->id . '/#/page/0']) ."'>Review</a>";
+            echo "<a class='btn btn-info btn-xs' href='" . Url::to(['/interview/' . $study->id . '/' . $interview->id . '#/page/0']) ."'>Review</a>";
             echo "&nbsp;&nbsp;";
-            echo "<a class='btn btn-info btn-xs' href='" . Url::to(['/data/visualize?expressionId=&interviewId=' . $interview->id]) ."'>Visualize</a>";
             echo "</tr>";
         }
         ?>

@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\base\InvalidArgumentException;
+use yii\web\BadRequestHttpException;
 
 /**
  * This is the model class for table "study".
@@ -131,15 +133,16 @@ class Study extends \yii\db\ActiveRecord
 		$newStudy->id = null;
 
 		if(!$newStudy->save())
-			throw new CHttpException(500,  "Study: " .  print_r($newStudy->errors)); //return false;
-
+			throw new BadRequestHttpException("Study: " . print_r($newStudy->errors));
+		
 		foreach($questions as $question){
 			$newQuestion = new Question;
 			$newQuestion->attributes = $question->attributes;
 			$newQuestion->id = null;
 			$newQuestion->studyId = $newStudy->id;
 			if(!$newQuestion->save())
-				throw new CHttpException(500,  "Question: " . print_r($newQuestion->errors)); //return false;
+				print_r($newQuestion->errors);
+				//throw new BadRequestHttpException("Question: " . print_r($newQuestion->errors));
 			if($newStudy->multiSessionEgoId == $question->id){
 				$newStudy->multiSessionEgoId = $newQuestion->id;
 				$newStudy->save();
@@ -147,7 +150,7 @@ class Study extends \yii\db\ActiveRecord
 			$newQuestionIds[$question->id] = $newQuestion->id;
 		}
 		foreach($questions as $question){
-		  $newQuestion = Question::model()->findByPk($newQuestionIds[$question->id]);
+		  $newQuestion = Question::findOne($newQuestionIds[$question->id]);
 		  if($newQuestion){
 			  if(is_numeric($newQuestion->minPrevQues) && $newQuestion->minPrevQues != 0)
 				  $newQuestion->minPrevQues = $newQuestionIds[$newQuestion->minPrevQues];
@@ -167,7 +170,7 @@ class Study extends \yii\db\ActiveRecord
 			if(isset($newQuestionIds[$option->questionId]))
 				 $newOption->questionId = $newQuestionIds[$option->questionId];
 			if(!$newOption->save())
-				throw new CHttpException(500,  "Option: " . print_r($newOption->errors)); //return false;
+				throw new BadRequestHttpException("Option: " . print_r($newOption->errors)); //return false;
 			else
 				$newOptionIds[$option->id] = $newOption->id;
 		}
@@ -182,35 +185,33 @@ class Study extends \yii\db\ActiveRecord
 			if($newExpression->questionId != "" &&  $newExpression->questionId  != 0 && isset($newQuestionIds[$expression->questionId]))
 				$newExpression->questionId = $newQuestionIds[$expression->questionId];
 			if(!$newExpression->save())
-				throw new CHttpException(500,  "Expression: " . print_r($newExpression->errors)); //return false;
+				throw new BadRequestHttpException("Expression: " . print_r($newExpression->errors)); //return false;
 			else
 				$newExpressionIds[$expression->id] = $newExpression->id;
 		}
 
-		// second loop to replace old ids in Expression->value
 		foreach($expressions as $expression){
 			$oldExpressionId = $expression->id;
-			$newExpression = Expression::model()->findByPk($newExpressionIds[$expression->id]);
+			$newExpression = Expression::findOne($newExpressionIds[$expression->id]);
 
 			if(!$newExpression)
 				continue;
 
-			// replace answerReasonExpressionId for newly uploaded questions with correct expression ids
-			$questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id,'answerReasonExpressionId'=>$oldExpressionId));
+			$questions = Question::findAll(array('studyId'=>$newStudy->id,'answerReasonExpressionId'=>$oldExpressionId));
 			if(count($questions) > 0){
 				foreach($questions as $question){
 					$question->answerReasonExpressionId = $newExpressionIds[$oldExpressionId];
 					$question->save();
 				}
 			}
-			$questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id,'networkRelationshipExprId'=>$oldExpressionId));
+			$questions = Question::findAll(array('studyId'=>$newStudy->id,'networkRelationshipExprId'=>$oldExpressionId));
 			if(count($questions) > 0){
 				foreach($questions as $question){
 					$question->networkRelationshipExprId = $newExpressionIds[$oldExpressionId];
 					$question->save();
 				}
 			}
-			// reference the correct question, since we're not using old ids
+
 			if($newExpression->type == "Selection"){
 				$optionIds = explode(',', $newExpression->value);
 				foreach($optionIds as &$optionId){
@@ -225,7 +226,8 @@ class Study extends \yii\db\ActiveRecord
 				if($expressionIds != ""){
 					$expressionIds = explode(',', $expressionIds);
 					foreach($expressionIds as &$expressionId){
-						$expressionId = $newExpressionIds[$expressionId];
+						if(isset($newExpressionIds[$expressionId]))
+							$expressionId = $newExpressionIds[$expressionId];
 					}
 					$expressionIds = implode(',',$expressionIds);
 				}
@@ -258,7 +260,7 @@ class Study extends \yii\db\ActiveRecord
 			}
 			$newExpression->save();
 		}
-		$questions = Question::model()->findAllByAttributes(array('studyId'=>$newStudy->id, "subjectType"=>"NETWORK"));
+		$questions = Question::findAll(array('studyId'=>$newStudy->id, "subjectType"=>"NETWORK"));
 		foreach($questions as $question){
 			$params = json_decode(htmlspecialchars_decode($question->networkParams), true);
 			if ($params) {
@@ -307,7 +309,7 @@ class Study extends \yii\db\ActiveRecord
 			$newAlterList->id = null;
 			$newAlterList->studyId = $newStudy->id;
 			if(!$newAlterList->save())
-				throw new CHttpException(500, "AlterPrompt: " . print_r($newAlterList->errors));
+				throw new BadRequestHttpException("AlterPrompt: " . print_r($newAlterList->errors));
 		}
 
 		$data = array(
@@ -318,6 +320,30 @@ class Study extends \yii\db\ActiveRecord
 		);
 
 		return $data;
+	}
+
+	public function beforeDelete(){
+		$expressions = Expression::findAll(array("studyId"=>$this->id));
+		foreach($expressions as $expression){
+			$expression->delete();
+		}
+		$questions = Question::findAll(array("studyId"=>$this->id));
+		foreach($questions as $question){
+			$question->delete();
+		}
+		$options = QuestionOption::findAll(array("studyId"=>$this->id));
+		foreach($options as $option){
+			$option->delete();
+		}
+		$interviewers = Interviewer::findAll(array("studyId"=>$this->id));
+		foreach($interviewers as $interviewer){
+			$interviewer->delete();
+		}
+		$alterLists = AlterList::findAll(array("studyId"=>$this->id));
+		foreach($alterLists as $alterList){
+			$alterList->delete();
+		}
+		return true;
 	}
 
     public function beforeSave($insert)

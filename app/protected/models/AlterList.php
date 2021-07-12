@@ -32,9 +32,10 @@ class AlterList extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['studyId', 'ordering', 'interviewerId'], 'required'],
-            [['studyId', 'ordering', 'interviewerId'], 'integer'],
-            [['name', 'email', 'nameGenQIds'], 'string'],
+            [['studyId', 'ordering'], 'required'],
+            [['studyId', 'ordering'], 'integer'],
+            [['name', 'email',"nameGenQIds"], 'string'],
+            [['interviewerId'],'default','value'=>0],
         ];
     }
 

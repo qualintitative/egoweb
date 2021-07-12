@@ -85,4 +85,8 @@ class Tools
 		}
 		return $result;
 	}
+
+	public static function sanitizeXml($string){
+		return htmlspecialchars(trim(preg_replace('/\s+|&nbsp;/', ' ', $string)), ENT_QUOTES, "UTF-8", false);
+	}
 }

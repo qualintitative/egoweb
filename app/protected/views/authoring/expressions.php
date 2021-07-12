@@ -183,20 +183,20 @@ use common\widgets\Alert;
     <div v-if="expressions[id].type == 'Counting'">
         <div class="row form-group">
             <label for="Expression_name" class="col-md-2 col-form-label">VALUE is</label>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <input v-model="expressions[id].multiplier" class="form-control" @change="buildVal($event, id)">
-                </div>
-
-                <label class="col-sm-2">times the</label>
-                <b-form-select v-model="expressions[id].operator"  name="Expression[operator]" class="col-sm-2">
-                <b-form-select-option value="Sum">Sum </b-form-select-option>
-                <b-form-select-option value="Count">Count</b-form-select-option>
-                </b-form-select>
-            <div class="offset-md-2 col-md-8"> 
-            of the selected <b>COUNTING</b> expressions and <b>NUMERIC</b> questions</div>
+            </div>
+            <label class="col-sm-2">times the</label>
+            <b-form-select v-model="expressions[id].operator"  name="Expression[operator]" class="col-sm-2">
+            <b-form-select-option value="Sum">Sum </b-form-select-option>
+            <b-form-select-option value="Count">Count</b-form-select-option>
+            </b-form-select>
+            <div class="col-md-3">of the selected </div>
         </div>
+ 
         <input type="hidden" v-model="expressions[id].value" class="form-control" name="Expression[value]" id="Expression_value">
 
+        <b>COUNTING</b> expressions
         <b-form-checkbox-group
         v-model="expressions[id].selectedExpressions"
         :options="expressions[id].countExpressions"
@@ -207,7 +207,7 @@ use common\widgets\Alert;
         stacked
         @change="buildVal($event,id)"
         ></b-form-checkbox-group>
-
+        <b>NUMERIC</b> questions
         <b-form-checkbox-group
         v-model="expressions[id].selectedQuestions"
         :options="countQuestions"
@@ -353,13 +353,21 @@ ExpressionEditor = Vue.component('expression-editor', {
                         this.expressions[k].multiplier = parts[0];
                         if(parts[1].match(","))
                             this.expressions[k].selectedExpressions = parts[1].split(",")
-                        else 
-                            this.expressions[k].selectedExpressions = [parts[1]];
+                        else {
+                            if(parts[1])
+                                this.expressions[k].selectedExpressions = [parts[1]];
+                            else 
+                                this.expressions[k].selectedExpressions = [];
+                        }
                         if(typeof parts[2] != "undefined"){
                             if(parts[2].match(","))
                                 this.expressions[k].selectedQuestions = parts[2].split(",")
-                            else 
-                                this.expressions[k].selectedQuestions = [parts[2]];
+                            else {
+                                if(parts[2])
+                                    this.expressions[k].selectedQuestions = [parts[2]];
+                                else
+                                    this.expressions[k].selectedQuestions = [];
+                            }
                         }
                     }else{
                         this.expressions[k].compare = parts[0];

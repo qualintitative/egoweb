@@ -80,7 +80,7 @@ $(document).keydown(function(e) {
 });
 
 function redraw(params){
-	url = rootUrl + "/data/deleteGraph?id=" + $("#Graph_id").val();
+	url = rootUrl + "/data/deletegraph?id=" + $("#Graph_id").val();
 	$.get(url, function(data){
 		document.location.reload();
 	});
@@ -225,7 +225,7 @@ function saveNote(){
         if(node && !node.id.match(/graphNote/) && !node.label.match("�"))
             node.label = node.label + " �";
         s.refresh();
-        var url = "/data/getnote?interviewId=" + interviewId + "&expressionId=" + expressionId + "&alterId=" + nodeId;
+        var url = "/data/getnote?interviewId=" + interviewId + "&expressionId=" + graphExpressionId + "&alterId=" + nodeId;
         $.get(url, function(data){
             notes[nodeId] = noteContent;
             $("#left-container").html(data);
@@ -282,3 +282,5 @@ app.factory("deleteAlter", function($http, $q) {
        getAlters : getAlters
    }
 });
+
+isMobile = false;
