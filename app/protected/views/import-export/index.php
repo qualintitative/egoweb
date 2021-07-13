@@ -49,12 +49,12 @@ use yii\helpers\Url;
         <div id="export-interviews"></div>
         <div id="exportNotice" class="col-sm-12 alert alert-success" style="display:none"></div>
         <div id="exportError" class="col-sm-12 alert alert-danger" style="display:none"></div>
-        <div class="progress" style="clear:both">
+        <div class="progress mb-3">
           <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
         </div>
         <div class="form-group">
-          <div class="col-lg-4 ">
-            <button  id="sendExport" class="btn btn-info" onclick="exportEgo(); return false;">Export</button>
+          <div class="col-lg-4">
+            <button  id="sendExport" class="btn btn-primary" onclick="exportEgo(); return false;">Export</button>
           </div>
         </div>
         <?= Html::endForm() ?>
@@ -144,7 +144,7 @@ use yii\helpers\Url;
         </div>
         <?= Html::endForm() ?>
         <div class="col-sm-2" style="clear:both">
-            <button id="sendSync" class="btn btn-info" onclick="getData();return false;">Send</button>
+            <button id="sendSync" class="btn btn-primary" onclick="getData();return false;">Send</button>
           </div>
       </div>
     </div>

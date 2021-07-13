@@ -72,9 +72,10 @@ class DyadController extends Controller
 
 
     public function actionMatching()
-      {
-          if(count($_POST['export']) < 2)
-              die("You must select at least 2 interviews");
+    {
+        $this->view->title = "EgoWeb 2.0";
+        if(count($_POST['export']) < 2)
+            die("You must select at least 2 interviews");
 
           foreach($_POST['export'] as $key=>$value){
               $interviewIds[] = $key;

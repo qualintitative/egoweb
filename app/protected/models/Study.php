@@ -348,7 +348,7 @@ class Study extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-        $this->modified = date('Y-d-m h:i:s');
+        $this->modified = date('Y-m-d h:i:s');
         return parent::beforeSave($insert);
     }
 

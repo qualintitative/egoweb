@@ -216,7 +216,7 @@ $marked = MatchedAlters::find()
 ])->one();
 ?>
 <div class="card">
-    <div class="card-header bg-success">
+    <div class="card-header bg-success text-white">
         Automatic Matching
     </div>
 
@@ -237,7 +237,8 @@ $marked = MatchedAlters::find()
     </div>
 </div>
 <div class="card">
-<div class="card-header bg-warning">
+    <div class="card-header bg-warning row">
+    <div id="prompt">Display Alter Question Response</div>
     <?php
     echo Html::dropdownlist(
         'question',
@@ -245,10 +246,9 @@ $marked = MatchedAlters::find()
         ArrayHelper::map(
             Question::find()->where(array('subjectType'=>"ALTER", "studyId"=>$study->id))->orderBy(array( 'ordering'=>"ASC"))->all()
         , 'id','title'),
-        array('empty' => 'Choose Question', "class"=>"pull-left","onChange"=>'loadR($(this).val());$("#prompt").html(prompts[$(this).val()])')
+        array('empty' => 'Choose Question', "class"=>"ml-3","onChange"=>'loadR($(this).val());$("#prompt").html(prompts[$(this).val()])')
     );
     ?>
-    <div id="prompt">Display Alter Question Response</div>
     </div>
 </div>
 

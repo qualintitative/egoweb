@@ -82,7 +82,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findIdentity($id)
     {
-        return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['id' => $id]);
     }
 
     /**
@@ -101,9 +101,7 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findByUsername($email)
     {
-        $users = User::findAll([
-            'status' => User::STATUS_ACTIVE,
-        ]);
+        $users = User::find()->all();
         foreach ($users as $u) {
             if ($u->email == $email) {
                 return $u;
@@ -126,7 +124,6 @@ class User extends ActiveRecord implements IdentityInterface
 
         return static::findOne([
             'password_reset_token' => $token,
-            'status' => self::STATUS_ACTIVE,
         ]);
     }
 

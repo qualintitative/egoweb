@@ -18,8 +18,8 @@ Thumbs.db
 
 # Yii Files #
 #############
-app/protected/assets/*
-!app/protected/assets/.gitignore
+app/protected/web/assets/*
+!app/protected/web/assets/.gitignore
 app/protected/runtime/*
 !app/protected/runtime/.gitignore
 app/protected/data/*.db

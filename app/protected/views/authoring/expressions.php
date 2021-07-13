@@ -9,20 +9,18 @@ use common\widgets\Alert;
 <div class="row py-3">
     <div class="col-8 order-2" id="sticky-sidebar">
         <div class="sticky-top">
-            <div class="nav flex-column">
+            <div class="nav flex-column ml-2 mr-2">
             <?= Alert::widget() ?>
-
             <router-view v-bind:expressions="expressions"></router-view>
-
             </div>
         </div>
     </div>
-    <div class="col" id="main">
+    <div class="col mb-3">
         <ul class="list-group">
-        <li :class="$route.params.id == k ? 'bg-dark list-group-item' : 'list-group-item'" v-for="(expression, k) in expressions" :key="expression.id">
-            <router-link :to="'/' + expression.id">{{expression.name ? expression.name : "New Expression"}}</router-link>
-        </li>
-</ul>
+            <li :class="$route.params.id == k ? 'bg-dark list-group-item' : 'list-group-item'" v-for="(expression, k) in expressions" :key="expression.id">
+                <router-link :to="'/' + expression.id">{{expression.name ? expression.name : "New Expression"}}</router-link>
+            </li>
+        </ul>
     </div>
 </div>
 </div>

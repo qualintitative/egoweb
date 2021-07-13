@@ -13,8 +13,7 @@ function getInterviews(dropdown, container){
   });
 }
 </script>
-<div class="card panel-default">
-<div class="card-header">Match Studies</div>
+<div class="card">
 <div class="card-body">
 <?php
     echo Html::beginForm('dyad/matching', 'post', array('id'=>'analysis'));
@@ -38,6 +37,10 @@ echo Html::dropdownlist(
 );
 ?>
 <div id="interview-1"></div>
+</div>
+</div>
+<div class="card">
+<div class="card-body">
 <?php
 
 echo Html::dropdownlist(
@@ -55,7 +58,13 @@ echo Html::dropdownlist(
 );
 ?>
 <div id="interview-2"></div>
-<button class='authorButton'>Dyad Match</button><br style='clear:both'>
+</div>
+</div>
+<div class="card">
+<div class="card-body">
+<button class='btn btn-primary'>Dyad Match</button><br style='clear:both'>
+</div>
+</div>
 </form>
 </div>
 </div>

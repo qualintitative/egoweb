@@ -312,7 +312,7 @@
                 <autocomplete attr-input-class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="question.AUTOCOMPLETELIST == true" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" data="participants" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'></autocomplete>
                 <input question="{{ question.TITLE }}" class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-if="question.AUTOCOMPLETELIST != true" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'>
             </div>
-            <div ng-if="question.ANSWERTYPE == 'TEXTUAL_PP'" class="row form-group col-sm-6">
+            <div ng-if="question.ANSWERTYPE == 'TEXTUAL_PP'" class="row form-group col-sm-12">
                 <textarea question="{{ question.TITLE }}" class="answerInput" ng-disabled="interview.COMPLETED == -1" ng-change="unSkip('{{question.array_id}}')" id="Answer_{{ question.array_id }}_VALUE" name="Answer[{{ question.array_id }}][value]" ng-model="answers[question.array_id].VALUE" check-answer question-id='{{ question.ID }}' array-id='{{ question.array_id }}' answer-type='{{ question.ANSWERTYPE }}'></textarea>
             </div>
             <div ng-if="question.ANSWERTYPE == 'DATE'" class="col-xs-12 no-padding">

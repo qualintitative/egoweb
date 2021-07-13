@@ -49,10 +49,8 @@ use app\models\Interview;
         echo "<td class='hidden-xs'>".$matchUser."</td>";
         if(Yii::$app->user->identity->permissions >= 3){
             echo "<td>";
-            if($interview->completed == -1)
-              echo Html::button('Edit',array('submit'=>Url::to('/data/edit/' . $interview->id)));
-            echo Html::button('Review',array('submit'=>Url::to('/interview/'.$study->id.'/'.$interview->id.'/#/page/0')));
-            echo Html::button('Visualize',array('submit'=>Url::to('/data/visualize?expressionId=&interviewId='.$interview->id)))."</td>";
+            echo Html::button('Review',array("class"=>"btn btn-xs btn-info", 'submit'=>Url::to('/interview/'.$study->id.'/'.$interview->id.'/#/page/0')));
+            echo "</td>";
         }
         echo "</tr>";
     }

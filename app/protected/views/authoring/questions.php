@@ -18,9 +18,9 @@ use yii\helpers\Html;
 csrf = '<?php echo Yii::$app->request->getCsrfToken(); ?>';
 answerTypes = <?php echo json_encode($answerTypes, ENT_QUOTES); ?>;
 subjectTypes = <?php echo json_encode($subjectTypes, ENT_QUOTES); ?>;
-expressions = <?php echo json_encode($expressions, ENT_QUOTES); ?>;
 new_question = <?php echo json_encode($new_question, ENT_QUOTES); ?>;
 questions = <?php echo json_encode($questions, ENT_QUOTES); ?>;
+expressions = <?php echo json_encode($expressions, ENT_QUOTES); ?>;
 study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
 </script>
 <script type="text/x-template" id="questionEditor">
@@ -443,383 +443,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                     </div>
 
                     <div v-if="question.subjectType == 'NETWORK'">
-
-                        <div class="form-group row">
-                            <label for="Question_networkRelationshipExprId" class="col-sm-4 col-form-label">Alters are adjacent when</label>
-                            <div class="col-sm-8">
-                                <b-form-select v-model="question.networkRelationshipExprId"
-                                    value-field="id"
-                                    id="Question_networkRelationshipExprId"
-                                    name="Question[networkRelationshipExprId]"
-                                    text-field="name"
-                                    :options="question.alterPairExps"
-                                    >
-                                    <template #first>
-                                        <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                    </template>
-                                </b-form-select>
-                            </div>
-                        </div>
-                    
-                        <input type="hidden" v-model="question.networkParams" name="Question[networkParams]">
-                    
-                        <div v-if="question.networkRelationshipExprId">
-                    
-                            <div class="form-group row">
-                                <label class="offset-sm-1 col-sm-3 col-form-label">Node Color</label>
-                                <div class="col-sm-5">
-                                    <b-form-select 
-                                    v-if="question.nParams.nodeColor" 
-                                    v-model="question.nParams.nodeColor.questionId"
-                                        @change="resetParams('nodeColor')"
-                                        :options="question.alterQs"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                                <div class="col-sm-3">
-                                    <b-form-select 
-                                    v-if="question.nParams.nodeColor" 
-                                    v-model="question.nParams.nodeColor.options[1].color"
-                                        :options="colors"
-                                        @change="forceUpdate"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Default --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-
-                            
-            
-                            <div class="form-group row" v-if="question.nParams.nodeColor" v-for="(item, index) in question.alterQOptions[question.nParams.nodeColor.questionId]">
-                                <label class="offset-sm-4 col-sm-5 col-form-label">{{item.name}}</label>
-                                <div class="col-sm-3">
-                                    <b-form-select 
-                                    v-if="question.nParams.nodeColor" 
-                                    v-model="question.nParams.nodeColor.options[index+2].color"
-                                        :options="colors"
-                                        size="xs"
-                                        @change="forceUpdate"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="offset-sm-1 col-sm-3 col-form-label">Node Size</label>
-                                <div class="col-sm-5">
-                                    <b-form-select 
-                                    v-if="question.nParams.nodeSize" 
-                                    v-model="question.nParams.nodeSize.questionId"
-                                        @change="resetParams('nodeSize')"
-                                        :options="question.alterQs"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                                <div class="col-sm-3">
-                                    <b-form-select 
-                                    v-if="question.nParams.nodeSize" 
-                                    v-model="question.nParams.nodeSize.options[1].size"
-                                        :options="nodeSizes"
-                                        @change="forceUpdate"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Default --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-
-                            <div class="form-group row" v-if="question.nParams.nodeSize" v-for="(item, index) in question.alterQOptions[question.nParams.nodeSize.questionId]">
-                                <label class="offset-sm-4 col-sm-5 col-form-label">{{item.name}}</label>
-                                <div class="col-sm-3">
-                                    <b-form-select 
-                                    v-if="question.nParams.nodeSize" 
-                                    v-model="question.nParams.nodeSize.options[index+2].size"
-                                        :options="nodeSizes"
-                                        @change="forceUpdate"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group row">
-                                <label class="offset-sm-1 col-sm-3 col-form-label">Node Shape</label>
-                                <div class="col-sm-5">
-                                    <b-form-select 
-                                    v-if="question.nParams.nodeShape" 
-                                    v-model="question.nParams.nodeShape.questionId"
-                                        @change="resetParams('nodeShape')"
-                                        :options="question.alterShapeQs"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                                <div class="col-sm-3">
-                                    <b-form-select 
-                                    v-if="question.nParams.nodeShape" 
-                                    v-model="question.nParams.nodeShape.options[0].shape"
-                                        :options="nodeShapes"
-                                        @change="forceUpdate"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Default --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-
-                            <div class="form-group row" v-if="question.nParams.nodeShape" v-for="(item, index) in question.alterQOptions[question.nParams.nodeShape.questionId]">
-                                <label class="offset-sm-4 col-sm-5 col-form-label">{{item.name}}</label>
-                                <div class="col-sm-3">
-                                    <b-form-select 
-                                    v-if="question.nParams.nodeShape" 
-                                    v-model="question.nParams.nodeShape.options[index+1].shape"
-                                        :options="nodeShapes"
-                                        @change="forceUpdate"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="offset-sm-1 col-sm-3 col-form-label">Edge Color</label>
-                                <div class="col-sm-5">
-                                    <b-form-select 
-                                    v-if="question.nParams.edgeColor" 
-                                    v-model="question.nParams.edgeColor.questionId"
-                                        @change="resetParams('edgeColor')"
-                                        :options="question.alterPairQs"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                                <div class="col-sm-3">
-                                    <b-form-select 
-                                    v-if="question.nParams.edgeColor" 
-                                    v-model="question.nParams.edgeColor.options[0].color"
-                                        :options="colors"
-                                        @change="forceUpdate"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Default --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-
-                            <div class="form-group row" v-if="question.nParams.edgeColor" v-for="(item, index) in question.alterPairQOptions[question.nParams.edgeColor.questionId]">
-                                <label class="offset-sm-4 col-sm-5 col-form-label">{{item.name}}</label>
-                                <div class="col-sm-3">
-                                    <b-form-select 
-                                    v-if="question.nParams.edgeColor" 
-                                    v-model="question.nParams.edgeColor.options[index+1].color"
-                                        :options="colors"
-                                        size="xs"
-                                        @change="forceUpdate"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="offset-sm-1 col-sm-3 col-form-label">Edge Size</label>
-                                <div class="col-sm-5">
-                                    <b-form-select 
-                                    v-if="question.nParams.edgeSize" 
-                                    v-model="question.nParams.edgeSize.questionId"
-                                        @change="resetParams('edgeSize')"
-                                        :options="question.alterPairQs"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                                <div class="col-sm-3">
-                                    <b-form-select 
-                                    v-if="question.nParams.edgeSize" 
-                                    v-model="question.nParams.edgeSize.options[0].size"
-                                        :options="edgeSizes"
-                                        @change="forceUpdate"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Default --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-            
-                            <div class="form-group row" v-if="question.nParams.edgeSize" v-for="(item, index) in question.alterPairQOptions[question.nParams.edgeSize.questionId]">
-                                <label class="offset-sm-4 col-sm-5 col-form-label">{{item.name}}</label>
-                                <div class="col-sm-3">
-                                    <b-form-select 
-                                    v-if="question.nParams.edgeSize" 
-                                    v-model="question.nParams.edgeSize.options[index+1].size"
-                                        :options="edgeSizes"
-                                        size="xs"
-                                        @change="forceUpdate"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-                        </div>
-                    
-
-                        <div class="form-group row">
-                            <label for="Question_uselfExpression" class="col-sm-4 col-form-label">Create star network with expression</label>
-                            <div class="col-sm-8">
-                                <b-form-select v-model="question.uselfExpression"
-                                    value-field="id"
-                                    id="Question_uselfExpression"
-                                    name="Question[uselfExpression]"
-                                    text-field="name"
-                                    :options="question.alterExps"
-                                    >
-                                    <template #first>
-                                        <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                    </template>
-                                </b-form-select>
-                            </div>
-                        </div>
-                        <div v-if="question.uselfExpression">
-
-                            <div class="form-group row">
-                                <label class="offset-sm-1 col-sm-3 col-form-label">Ego Node Color</label>
-                                <div class="col-sm-5">
-                                    <b-form-select 
-                                        v-model="question.nParams.nodeColor.options[0].color"
-                                        :options="colors"
-                                        size="xs"
-                                        @change="forceUpdate"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="offset-sm-1 col-sm-3 col-form-label">Ego Node Size</label>
-                                <div class="col-sm-5">
-                                    <b-form-select 
-                                        v-model="question.nParams.nodeSize.options[0].size"
-                                        :options="nodeSizes"
-                                        size="xs"
-                                        @change="forceUpdate"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="offset-sm-1 col-sm-3 col-form-label">Ego Node Shape</label>
-                                <div class="col-sm-5">
-                                    <b-form-select 
-                                        v-model="question.nParams.nodeShape.options[0].shape"
-                                        :options="nodeShapes"
-                                        size="xs"
-                                        @change="forceUpdate"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="offset-sm-1 col-sm-3 col-form-label">Ego Edge Color</label>
-                                <div class="col-sm-8">
-                                    <b-form-select 
-                                    v-if="question.nParams.egoEdgeColor" 
-                                    v-model="question.nParams.egoEdgeColor.questionId"
-                                        @change="resetParams('egoEdgeColor')"
-                                        :options="question.alterShapeQs"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-                            <div class="form-group row" v-if="question.nParams.egoEdgeColor.questionId" v-for="(item, index) in question.alterShapeQOptions[question.nParams.egoEdgeColor.questionId]">
-                                <label class="offset-sm-4 col-sm-4 col-form-label">{{item.name}}</label>
-                                <div class="col-sm-4">
-                                    <b-form-select 
-                                    v-if="question.nParams.egoEdgeColor" 
-                                    v-model="question.nParams.egoEdgeColor.options[index].size"
-                                        :options="colors"
-                                        @change="forceUpdate"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label class="offset-sm-1 col-sm-3 col-form-label">Ego Edge Size</label>
-                                <div class="col-sm-8">
-                                    <b-form-select 
-                                    v-if="question.nParams.egoEdgeSize" 
-                                    v-model="question.nParams.egoEdgeSize.questionId"
-                                        @change="resetParams('egoEdgeSize')"
-                                        :options="question.alterShapeQs"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-                            <div class="form-group row" v-if="question.nParams.egoEdgeSize.questionId" v-for="(item, index) in question.alterShapeQOptions[question.nParams.egoEdgeSize.questionId]">
-                                <label class="offset-sm-4 col-sm-4 col-form-label">{{item.name}}</label>
-                                <div class="col-sm-4">
-                                    <b-form-select 
-                                    v-if="question.nParams.egoEdgeSize" 
-                                    v-model="question.nParams.egoEdgeSize.options[index].size"
-                                        :options="edgeSizes"
-                                        @change="forceUpdate"
-                                        >
-                                        <template #first>
-                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
-                                        </template>
-                                    </b-form-select>
-                                </div>
-                            </div>
-                        </div>
+                    <?= $this->render('/authoring/network'); ?>
                     </div>
 
                     <div v-if="question.preface != null && question.preface != ''">
@@ -1014,7 +638,13 @@ QestionEditor = Vue.component('question-editor', {
                 {value:"2",text: '2'},
                 {value:"4",text: '4'},
                 {value:"8",text: '8'},
-            ]
+            ],
+            gradients: [
+                {value:"red",text: 'red'},
+                {value:"green",text: 'green'},
+                {value:"blue",text: 'blue'},
+                {value:"black",text: 'black'},
+            ],
         }
 
     },
@@ -1240,18 +870,6 @@ QestionEditor = Vue.component('question-editor', {
         duplicateQuestion() {
             $("#duplicateQuestionId").val(this.question.id);
             $("#duplicateQuestion").submit();
-            /*
-            var data = {
-                questoinId: this.question.id,
-                '_csrf-protected': csrf,
-            }
-            self = this;
-            (function(self) {
-                $.post('/authoring/duplicatequestion/' + self.question.studyId, data,
-                    function(data) {
-                        self.questions = JSON.parse(data);
-                    });
-            })(self);*/
         },
         deleteQuestion() {
             $("#deleteQuestionId").val(this.question.id);
@@ -1272,7 +890,6 @@ new Vue({
             questions: questions,
             study: study,
             origPrompt:study.egoIdPrompt,
-
         }
     },
     created() {
@@ -1317,24 +934,18 @@ new Vue({
                 alterPairQOptions[questions[k].id] =  questions[k].options;
                 alterPairQIds.push(parseInt(this.questions[k].id));
             }   
-            //if (this.questions[k].subjectType == "TIME_SPAN" || this.questions[k].subjectType == "DATE") {
-                var bitVals = {
-                    'BIT_YEAR': 1,
-                    'BIT_MONTH': 2,
-                    'BIT_WEEK': 4,
-                    'BIT_DAY': 8,
-                    'BIT_HOUR': 16,
-                    'BIT_MINUTE': 32,
-                };
-                this.questions[k].timeBits = {};
-                for (var t in bitVals) {
-                   // if (timeUnits & bitVals[k]) {
-                        this.questions[k].timeBits[t] = this.questions[k].timeUnits & bitVals[t];
-                        console.log(this.questions[k].timeBits[t])
-
-                    //}
-                }
-           // }
+            var bitVals = {
+                'BIT_YEAR': 1,
+                'BIT_MONTH': 2,
+                'BIT_WEEK': 4,
+                'BIT_DAY': 8,
+                'BIT_HOUR': 16,
+                'BIT_MINUTE': 32,
+            };
+            this.questions[k].timeBits = {};
+            for (var t in bitVals) {
+                this.questions[k].timeBits[t] = this.questions[k].timeUnits & bitVals[t];
+            }
         }
         for(k in expressions){
             if(alterQIds.indexOf(parseInt(expressions[k].questionId)) != -1){

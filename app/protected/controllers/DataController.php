@@ -14,6 +14,7 @@ use app\models\User;
 use yii\helpers\Url;
 use app\models\Study;
 use app\models\Question;
+use app\models\QuestionOption;
 use app\models\Expression;
 use yii\helpers\ArrayHelper;
 use app\models\Interview;
@@ -81,20 +82,15 @@ class DataController extends Controller
         return $this->render('index',['study'=>$study, 'expressions'=>$expressions]);
     }
 
-    public function actionVisualize()
+    public function actionVisualize($id)
     {
         $graphs = array();
-        if (isset($_GET['interviewId'])) {
-            $interview = Interview::model()->findByPK($_GET['interviewId']);
+        if (isset($id)) {
+            $interview = Interview::findOne($id);
             $studyId = $interview->studyId;
-            if (!$studyId) {
-                echo "No studyId found for interviewId = ".$_GET['interviewId'];
-                return;
-            }
-            $criteria = array(
-                'condition'=>"subjectType = 'ALTER_PAIR' AND studyId = $studyId",
-            );
-            $questions = Question::model()->findAll($criteria);
+            $study = Study::findOne($studyId);
+            $this->view->title = $study->name;
+            $questions = Question::findAll(["subjectType"=>"ALTER_PAIR", "studyId"=>$studyId]);
             $questionIds = array();
             foreach ($questions as $question) {
                 $questionIds[] = $question->id;
@@ -103,34 +99,49 @@ class DataController extends Controller
             if (!$questionIds) {
                 $questionIds = 0;
             }
-            $criteria = array(
-                'condition'=>"studyId = $studyId AND questionId in (" . $questionIds . ")",
-            );
-            $alter_pair_expression = Expression::model()->findAll($criteria);
-            $alter_pair_expression_ids = array();
-            foreach ($alter_pair_expression as $expression) {
-                $alter_pair_expression_ids[] = $expression->id;
+            $alter_pair_expressions = Expression::findAll(["questionId"=>$questionIds, "studyId"=>$studyId]);
+         
+            $result = Question::find()->where(["studyId"=>$studyId])->andWhere(['!=', 'subjectType', 'EGO_ID'])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+            $questions = [];
+            foreach($result as $question){
+                $question['options'] = QuestionOption::find()->where(['questionId'=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+                $questions[$question['id']] = $question;
             }
-            if (count($alter_pair_expression_ids) < 1) {
-                //echo "NO ALTER PAIR EXPRESSION IDS FOUND FOR QUESTION IDS ".(string)$questionIds;
-                $alter_pair_expressions = array();
-            } else {
-                $all_expression_ids = $alter_pair_expression_ids;
-                foreach ($alter_pair_expression_ids as $id) {
-                    $criteria = array(
-                        'condition'=>"FIND_IN_SET($id, value)",
-                    );
-                    $expressions = Expression::model()->findAll($criteria);
-                    foreach ($expressions as $e) {
-                        $all_expression_ids[] = $e->id;
-                    }
-                }
-                $criteria = array(
-                    'condition'=>"id in (" . implode(",", $all_expression_ids) . ")",
-                );
-                $alter_pair_expressions = Expression::model()->findAll($criteria);
+            $new_question = new Question;
+            $new_question->studyId = $study->id;
+            $new_question->subjectType = "NETWORK";
+            $new_question = $new_question->toArray();
+            $expressions = [];
+            $results = Expression::find()->where(["studyId"=>$study->id])->asArray()->all();
+            foreach($results as $expression){
+                $expressions[$expression['id']] = $expression;
             }
-
+            $answerList = Answer::findAll(array('interviewId'=>$id));
+            foreach($answerList as $answer){
+                if($answer->alterId1 && $answer->alterId2)
+                    $array_id = $answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2;
+                else if ($answer->alterId1 && ! $answer->alterId2)
+                        $array_id = $answer->questionId . "-" . $answer->alterId1;
+                    else
+                        $array_id = $answer->questionId;
+                    $answers[$array_id] = Tools::mToA($answer);
+            }
+            $alters = array();
+            $results = Alters::find()
+            ->where(new \yii\db\Expression("FIND_IN_SET(:interviewId, interviewId)"))
+            ->addParams([':interviewId' => $id])
+            ->all();
+            foreach($results as $result){
+                $alters[$result->id] = Tools::mToA($result);
+            }
+            $results = Graph::find(array('interviewId'=>$id))->all();
+            foreach($results as $result){
+                $graphs[$result->expressionId] = Tools::mToA($result);
+            }
+            $results = Note::find(array("interviewId"=>$id))->all();
+            foreach($results as $result){
+                $notes[$result->expressionId][$result->alterId] = $result->notes;
+            }
             if (isset($_GET['print'])) {
                 $this->renderPartial(
                     'print',
@@ -144,13 +155,21 @@ class DataController extends Controller
                     true
                 );
             } else {
-                $this->render(
-                    'visualize',
+                return $this->render('visualize',
                     array(
                         'graphs'=>$graphs,
+                        'study'=>$study,
+                        'interview'=>$interview,
                         'studyId'=>$studyId,
                         'alter_pair_expressions'=> $alter_pair_expressions,
-                        'interviewId'=>$_GET['interviewId'],
+                        'interviewId'=>$id,
+                        'questions'=>$questions,
+                        'expressions'=>$expressions,
+                        'new_question'=>$new_question,
+                        "answers"=>json_encode($answers),
+                        "alters"=>json_encode($alters),
+                        "graphs"=>json_encode($graphs),
+                        "allNotes"=>json_encode($notes),
                     )
                 );
             }

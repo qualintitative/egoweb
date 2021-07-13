@@ -43,7 +43,7 @@ use yii\helpers\Html;
 
                 </td>
                 <td>
-                    <button variant="primary" size="xs">Create</button>
+                    <button class="btn btn-primary btn-sm">Create User</button>
                 </td>
             </tr>
         </template>

@@ -412,7 +412,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
     ADD KEY `questionType` (`questionType`(1024)),
     ADD KEY `studyId` (`studyId`),
     ADD KEY `interviewId` (`interviewId`);
-  
+
   --
   -- Indexes for table `answerList`
   --

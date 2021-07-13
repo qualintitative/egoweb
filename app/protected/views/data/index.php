@@ -300,6 +300,7 @@ function deleteInterviews() {
             }
             echo "<a class='btn btn-info btn-xs' href='" . Url::to(['/interview/' . $study->id . '/' . $interview->id . '#/page/0']) ."'>Review</a>";
             echo "&nbsp;&nbsp;";
+            echo "<a class='btn btn-info btn-xs' href='" . Url::to(['/data/visualize/' . $interview->id]) ."'>Visualize</a>";
             echo "</tr>";
         }
         ?>

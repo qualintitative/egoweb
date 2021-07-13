@@ -75,21 +75,29 @@ class AdminController extends Controller
         $this->view->title = "EgoWeb 2.0";
         $result = User::find()->all();
         $users = [];
+        $userExists = false;
         foreach($result as $user){
             $users[] = $user->toArray();
+            if(isset($_POST['User']) && $_POST['User']['email'] == $user['email'])
+                $userExists = true;
         }
         $user = new User;
         if ($user->load(Yii::$app->request->post()) && $user->validate()) {
-            $user->generateAuthKey();
-            $user->generatePasswordResetToken();
-            $user->name = $_POST['User']['name'];
-            $user->email = $_POST['User']['email'];
-            $user->password = Yii::$app->security->generateRandomString();
-            if ($user->save()) {
-                Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
-                return $this->response->redirect(Url::toRoute('/admin/user'));
+            if ($userExists == false) {
+                $user->generateAuthKey();
+                $user->generatePasswordResetToken();
+                $user->name = $_POST['User']['name'];
+                $user->email = $_POST['User']['email'];
+                $user->password = Yii::$app->security->generateRandomString();
+                if ($user->save()) {
+                    Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
+                    return $this->response->redirect(Url::toRoute('/admin/user'));
+                } else {
+                    Yii::$app->session->setFlash('error', 'Error creating user');
+                }
             }else{
                 Yii::$app->session->setFlash('error', 'Error creating user');
+                return $this->response->redirect(Url::toRoute('/admin/user'));
             }
         }
         $roles = [];
@@ -125,11 +133,11 @@ class AdminController extends Controller
 
     public function actionUserdelete()
     {
-        if (isset($_POST['User']['id'])) {
+        if (isset($_POST['User']['id']) && Yii::$app->user->identity->id != $_POST['User']['id']) {
             $model = User::findOne($_POST['User']['id']);
             $model->delete();
-            return $this->response->redirect(Url::toRoute('/admin/user'));
         }
+        return $this->response->redirect(Url::toRoute('/admin/user'));
     }
 
     public function actionMigrate()

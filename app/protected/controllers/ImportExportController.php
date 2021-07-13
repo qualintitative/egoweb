@@ -950,8 +950,9 @@ class ImportExportController extends Controller
         //header("Content-type: text/xml; charset=utf-8");
         //header("Content-Disposition: attachment; filename=".$study->name.".study");
         //header("Content-Type: application/octet-stream");
-
-        $interviewIds = $_POST['export'];
+        $interviewIds = [];
+        if(isset($_POST['export']))
+           $interviewIds = $_POST['export'];
 
         $questions = Question::find()->where(array('studyId'=>$study->id))->orderBy(array('subjectType'=>'ASC', 'ordering'=>'ASC'))->all();
         $expressions = Expression::findAll(array('studyId'=>$study->id));

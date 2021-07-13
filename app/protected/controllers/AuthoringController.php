@@ -242,8 +242,8 @@ class AuthoringController extends Controller
         $new_question = new Question;
         $new_question->studyId = $study->id;
         $new_question->subjectType = "EGO_ID";
-
         $new_question = $new_question->toArray();
+
         $expressions = Expression::find()->where(["studyId"=>$study->id])->asArray()->all();
         return $this->render('questions',["study"=>$study, "questions"=>$questions, "new_question"=>$new_question, "answerTypes"=>$answerTypes, "subjectTypes"=>$subjectTypes, "expressions"=>$expressions]);
     }
@@ -312,7 +312,6 @@ class AuthoringController extends Controller
     {
         $study = Study::findOne($id);
         $this->view->title = $study->name;
-        $questions = Question::find()->where(["studyId"=>$id])->andWhere(['!=', 'subjectType', 'EGO_ID'])->orderBy(["ordering"=>"ASC"])->asArray()->all();
         if (Yii::$app->request->post()){
             if ($_POST['Question']['id']) {
                 $question = Question::findOne($_POST['Question']['id']);
@@ -329,6 +328,7 @@ class AuthoringController extends Controller
                 $question->autocompleteList = isset($_POST['Question']['autocompleteList']);
                 $question->prefillList = isset($_POST['Question']['prefillList']);
                 if($question->save()){
+                    $study->save();
                     return $this->response->redirect(Url::toRoute('/authoring/questions/' . $study->id));
                 }else{
                     print_r($question->errors);
@@ -336,6 +336,7 @@ class AuthoringController extends Controller
                 }
             }
         }
+        $questions = Question::find()->where(["studyId"=>$id])->andWhere(['!=', 'subjectType', 'EGO_ID'])->orderBy(["ordering"=>"ASC"])->asArray()->all();
         foreach($questions as &$question){
             $question['options'] = QuestionOption::find()->where(['questionId'=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
             if ($question['subjectType'] == "NAME_GENERATOR") {
@@ -345,7 +346,6 @@ class AuthoringController extends Controller
         $new_question = new Question;
         $new_question->studyId = $study->id;
         $new_question = $new_question->toArray();
-       // array_unshift($questions, $new_question);
         foreach(Question::ANSWERTYPES as $a){
             $answerTypes[] = ["value"=>$a, "text"=>$a];
         }
@@ -418,6 +418,7 @@ class AuthoringController extends Controller
                     $expId = $expression->id;
                 else
                     $expId = Yii::$app->db->getLastInsertID();
+                $study->save();
                 Yii::$app->session->setFlash('success', 'Expression saved.');
                 return $this->response->redirect(Url::toRoute('/authoring/expressions/' . $study->id . "#/" . $expId));
 			}else{
@@ -515,10 +516,12 @@ class AuthoringController extends Controller
 			$model->title = $model->title . "_COPY";
 			$model->id = null;
 			$model->ordering++;
-			if(!$model->save())
-				print_r($model->getErrors());
-			else
+            if (!$model->save()) {
+                print_r($model->getErrors());
+            } else {
+                $study->save();
                 return $this->redirect(Yii::$app->request->referrer);
+            }
 		}
 	}
 
@@ -532,6 +535,7 @@ class AuthoringController extends Controller
 				$question = new Question;
 			$question->attributes = $_POST['Question'];
 			if($question->save()){
+                $study->save();
 			}else{
 				print_r($question->errors);
 				die();
@@ -562,6 +566,7 @@ class AuthoringController extends Controller
                         $newOption->questionId = $_POST['QuestionOption']['questionId'];
                         $newOption->save();
                     }
+                    $study->save();
                     $options = QuestionOption::find()->where(array('questionId'=>$_POST['QuestionOption']['questionId']))->asArray()->all();
                     return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($options)]);
                 }else{
@@ -572,8 +577,9 @@ class AuthoringController extends Controller
              }
              $option->attributes = $_POST['QuestionOption'];
              if($option->save()){
-                 $option = $option->toArray();
-                 $options[] = $option;
+                $option = $option->toArray();
+                $options[] = $option;
+                $study->save();
                 return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($options)]);
             }else{
                 print_r($option->errors);
@@ -605,8 +611,9 @@ class AuthoringController extends Controller
              }
              $prompt->attributes = $_POST['AlterPrompt'];
              if($prompt->save()){
-                 $prompt = $prompt->toArray();
-                 $prompts[] = $prompt;
+                $study->save();
+                $prompt = $prompt->toArray();
+                $prompts[] = $prompt;
                 return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($prompts)]);
             }else{
                 print_r($prompt->errors);
@@ -617,6 +624,7 @@ class AuthoringController extends Controller
 
     public function actionAjaxdelete($id)
     {
+        $study = Study::findOne($id);
         if(isset($_POST['Question'])){
 			$question = Question::findOne($_POST['Question']['id']);
             if ($question) {           
@@ -634,7 +642,7 @@ class AuthoringController extends Controller
                     $q->save();
                 }
                 $question->delete();
-                //Study::updated($model->studyId);
+                $study->save();
                 return $this->redirect(Yii::$app->request->referrer);
             }
         }elseif (isset($_POST['QuestionOption']) && isset($_POST['QuestionOption']['id'])) {
@@ -647,6 +655,7 @@ class AuthoringController extends Controller
                     $o->ordering--;
                     $o->save();
                 }
+                $study->save();
                 $options = QuestionOption::find()->where(["questionId"=>$_POST['QuestionOption']['questionId']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
                 return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($options)]);
             }
@@ -657,6 +666,7 @@ class AuthoringController extends Controller
 					$studyId = $model->studyId;
 					$ordering = $model->ordering;
 					$model->delete();
+                    $study->save();
 					//AlterList::sortOrder($ordering, $studyId);
 				}
 			}else{
@@ -667,13 +677,16 @@ class AuthoringController extends Controller
             $prompt = AlterPrompt::findOne($_POST['AlterPrompt']['id']);
             if($prompt){
                 $prompt->delete();
+                $study->save();
                 $prompts = AlterPrompt::find()->where(["questionId"=>$_POST['AlterPrompt']['questionId']])->orderBy(["afterAltersEntered"=>"ASC"])->asArray()->all();
                 return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($prompts)]);
             }
         }else if(isset($_POST['expressionId'])){
 			$expression = Expression::findOne($_POST['expressionId']);
-			if($expression)
-				$expression->delete();
+            if ($expression) {
+                $expression->delete();
+                $study->save();
+            }
             return $this->redirect(Yii::$app->request->referrer);
 		}
     }
@@ -746,6 +759,8 @@ class AuthoringController extends Controller
 		foreach($models as $model){
 			$model->delete();
 		}
+        $study = Study::findOne($id);
+        $study->save();
 	}
 
 }
