@@ -225,6 +225,9 @@ class AuthoringController extends Controller
                 $question->restrictList = isset($_POST['Question']['restrictList']);
                 $question->autocompleteList = isset($_POST['Question']['autocompleteList']);
                 $question->prefillList = isset($_POST['Question']['prefillList']);
+                $question->withListRange = isset($_POST['Question']['withListRange']);
+                $question->allButton = isset($_POST['Question']['allButton']);
+                $question->noneButton = isset($_POST['Question']['noneButton']);
 
                 if($question->save()){
                     return $this->response->redirect(Url::toRoute('/authoring/ego_id/' . $study->id));
@@ -240,6 +243,7 @@ class AuthoringController extends Controller
         $subjectTypes = false;
 
         $new_question = new Question;
+        $new_question->id = 0;
         $new_question->studyId = $study->id;
         $new_question->subjectType = "EGO_ID";
         $new_question = $new_question->toArray();
@@ -312,6 +316,7 @@ class AuthoringController extends Controller
     {
         $study = Study::findOne($id);
         $this->view->title = $study->name;
+        $questions = Question::find()->where(["studyId"=>$id])->andWhere(['!=', 'subjectType', 'EGO_ID'])->orderBy(["ordering"=>"ASC"])->asArray()->all();
         if (Yii::$app->request->post()){
             if ($_POST['Question']['id']) {
                 $question = Question::findOne($_POST['Question']['id']);
@@ -327,6 +332,10 @@ class AuthoringController extends Controller
                 $question->restrictList = isset($_POST['Question']['restrictList']);
                 $question->autocompleteList = isset($_POST['Question']['autocompleteList']);
                 $question->prefillList = isset($_POST['Question']['prefillList']);
+                $question->withListRange = isset($_POST['Question']['withListRange']);
+                $question->allButton = isset($_POST['Question']['allButton']);
+                $question->noneButton = isset($_POST['Question']['noneButton']);
+
                 if($question->save()){
                     $study->save();
                     return $this->response->redirect(Url::toRoute('/authoring/questions/' . $study->id));
@@ -336,7 +345,6 @@ class AuthoringController extends Controller
                 }
             }
         }
-        $questions = Question::find()->where(["studyId"=>$id])->andWhere(['!=', 'subjectType', 'EGO_ID'])->orderBy(["ordering"=>"ASC"])->asArray()->all();
         foreach($questions as &$question){
             $question['options'] = QuestionOption::find()->where(['questionId'=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
             if ($question['subjectType'] == "NAME_GENERATOR") {
@@ -345,6 +353,7 @@ class AuthoringController extends Controller
         }
         $new_question = new Question;
         $new_question->studyId = $study->id;
+        $new_question->id = 0;
         $new_question = $new_question->toArray();
         foreach(Question::ANSWERTYPES as $a){
             $answerTypes[] = ["value"=>$a, "text"=>$a];
@@ -500,6 +509,7 @@ class AuthoringController extends Controller
 	}
 
     public function actionDuplicatequestion($id){
+        $study = Study::findOne($id);
 		if(isset($_POST['questionId'])){
             $copy = false;
             $questions = Question::find()->where(['studyId'=>$id])->orderBy(["ordering"=>"ASC"])->all();

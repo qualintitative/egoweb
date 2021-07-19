@@ -5,8 +5,8 @@ const env = require("../.env");
 describe('Basic Fields', function () {
     before(function () {
         // login
+        
         IwPage.login(egoOpts.loginInterviewer.username, egoOpts.loginInterviewer.password);
-
         // start test1 interview
         IwPage.openInterview("TEST_STUDY", "basic_start");
 
@@ -80,7 +80,8 @@ describe('Basic Fields', function () {
         IwPage.next();
 
         // error message
-        $("div.alert=Please enter a number").waitForExist(egoOpts.waitTime);
+        $("div.alert").waitForExist(egoOpts.waitTime);
+        expect($("div.alert").getText()).toBe("Please enter a number.");
 
         // fix error
         IwPage.inputField().setValue("5");
@@ -161,7 +162,8 @@ describe('Basic Fields', function () {
         IwPage.next();
 
         // error message
-        $("div.alert=The range of valid answers is 0 to 100.").waitForExist(egoOpts.waitTime);
+        $("div.alert").waitForExist(egoOpts.waitTime);
+        expect($("div.alert").getText()).toBe("The range of valid answers is 0 to 100." + IwPage.clickError);
 
         // fix value
         IwPage.inputField().setValue("0");
@@ -179,7 +181,8 @@ describe('Basic Fields', function () {
         IwPage.next();
 
         // error message
-        $("div.alert=The range of valid answers is 0 to 100.").waitForExist(egoOpts.waitTime);
+        $("div.alert").waitForExist(egoOpts.waitTime);
+        expect($("div.alert").getText()).toBe("The range of valid answers is 0 to 100." + IwPage.clickError);
 
         // fix value
         IwPage.inputField().setValue("100");
@@ -193,24 +196,37 @@ describe('Basic Fields', function () {
         IwPage.goToQuestion("textual");
         IwPage.inputField().setValue("");
         IwPage.next();
-        $("div.alert=Value cannot be blank").waitForExist(egoOpts.waitTime);
+
+        // error message
+        $("div.alert").waitForExist(egoOpts.waitTime);
+        expect($("div.alert").getText()).toBe("Value cannot be blank." + IwPage.clickError);
+
         expect(IwPage.questionTitle.getText()).toBe("textual");
         IwPage.inputField().setValue("test");
         IwPage.next();
-        $("span=date").waitForExist(egoOpts.waitTime);
+        browser.pause(5000)
+        console.log(IwPage.questionTitle.getText())
         expect(IwPage.questionTitle.getText()).not.toBe("textual");
     });
 
     it("should show error when date fields are missing", function() {
         IwPage.goToQuestion("date");
         IwPage.next();
-        $("div.alert=Please enter a month").waitForExist(egoOpts.waitTime);
+         // error message
+         $("div.alert").waitForExist(egoOpts.waitTime);
+         expect($("div.alert").getText()).toBe("Please enter a month." + IwPage.clickError);
+ 
         IwPage.monthField().selectByVisibleText('December');
-        IwPage.next();
-        $("div.alert=Please enter a valid year").waitForExist(egoOpts.waitTime);
+        browser.pause(500);
+        //IwPage.next();
+        $("div.alert").waitForExist(egoOpts.waitTime);
+        expect($("div.alert").getText()).toBe("Please enter a valid year." + IwPage.clickError);
+
         IwPage.yearField().setValue("1999");
-        IwPage.next();
-        $("div.alert=Please enter a day of the month").waitForExist(egoOpts.waitTime);
+        //IwPage.next();
+
+        $("div.alert").waitForExist(egoOpts.waitTime);
+        expect($("div.alert").getText()).toBe("Please enter a day of the month."  + IwPage.clickError);
         IwPage.dayField().setValue("31");
         IwPage.next();
         expect(IwPage.questionTitle.getText()).not.toBe("date");
@@ -219,17 +235,26 @@ describe('Basic Fields', function () {
     it("should show error when hour and minute fields are missing", function() {
         IwPage.goToQuestion("hour_min");
         IwPage.next();
-        $("div.alert=Please enter the time of day").waitForExist(egoOpts.waitTime);
+        $("div.alert").waitForExist(egoOpts.waitTime);
+        expect($("div.alert").getText()).toBe("Please enter the time of day."  + IwPage.clickError);
+
         IwPage.hourField().setValue('23');
         IwPage.minuteField().setValue('60');
-        IwPage.next();
-        $("div.alert=Please enter the time of day").waitForExist(egoOpts.waitTime);
+
+        $("div.alert").waitForExist(egoOpts.waitTime);
+        expect($("div.alert").getText()).toBe("Please enter the time of day."  + IwPage.clickError);
+
         IwPage.pmField().click();
-        IwPage.next();
-        $("div.alert=Please enter 0 to 59 for MM").waitForExist(egoOpts.waitTime);
+
+
+        $("div.alert").waitForExist(egoOpts.waitTime);
+        expect($("div.alert").getText()).toBe("Please enter 0 to 59 for MM."  + IwPage.clickError);
+
         IwPage.minuteField().setValue("59");
-        IwPage.next();
-        $("div.alert=Please enter 1 to 12 for HH").waitForExist(egoOpts.waitTime);
+
+        $("div.alert").waitForExist(egoOpts.waitTime);
+        expect($("div.alert").getText()).toBe("Please enter 1 to 12 for HH."  + IwPage.clickError);
+
         IwPage.hourField().setValue('11');
         IwPage.next();
         expect(IwPage.questionTitle.getText()).not.toBe("hour_min");

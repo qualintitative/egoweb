@@ -99,11 +99,11 @@ class Question extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['active', 'ordering', 'otherSpecify', 'minLiteral', 'maxLiteral', 'minCheckableBoxes', 'maxCheckableBoxes', 'withListRange', 'minListRange', 'maxListRange', 'timeUnits', 'symmetric', 'studyId', 'answerReasonExpressionId', 'networkRelationshipExprId', 'networkNColorQId', 'networkNSizeQId', 'networkEColorQId', 'networkESizeQId'], 'integer'],
+            [['active', 'ordering', 'otherSpecify', 'minLiteral', 'maxLiteral', 'minCheckableBoxes', 'maxCheckableBoxes', 'minListRange', 'maxListRange', 'timeUnits', 'symmetric', 'studyId', 'answerReasonExpressionId', 'networkRelationshipExprId', 'networkNColorQId', 'networkNSizeQId', 'networkEColorQId', 'networkESizeQId'], 'integer'],
             [['title', 'prompt', 'preface', 'citation', 'subjectType', 'answerType', 'pageLevelDontKnowButton', 'pageLevelRefuseButton', 'allOptionString', 'uselfExpression', 'minLimitType', 'minPrevQues', 'maxLimitType', 'maxPrevQues', 'listRangeString', 'networkParams', 'useAlterListField', 'javascript'], 'string'],
             [['askingStyleList', 'dontKnowButton', 'refuseButton', 'restrictList', 'autocompleteList', 'prefillList', 'keepOnSamePage'], 'boolean'],
             ['preface','default', 'value'=>""],
-            [['allButton', 'noneButton'], 'default', 'value' => 0],
+            [['allButton', 'noneButton','withListRange'], 'default', 'value' => 0],
         ];
     }
 

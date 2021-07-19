@@ -10,7 +10,7 @@ use yii\bootstrap4\ActiveForm;
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-login">
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1 id="form-header">Log In</h1>
 
     <p>Please fill out the following fields to login:</p>
 

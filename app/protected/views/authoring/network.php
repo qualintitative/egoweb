@@ -1,3 +1,4 @@
+                        <div v-if='question.nParams'>
                         <div class="form-group row">
                             <label for="Question_networkRelationshipExprId" class="col-sm-4 col-form-label">Alters are adjacent when</label>
                             <div class="col-sm-8">
@@ -385,3 +386,4 @@
                                 </div>
                             </div>
                         </div>
+                    </div>

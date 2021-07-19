@@ -1,4 +1,3 @@
-// login.page.js
 const Page = require('./page');
 
 /**
@@ -37,7 +36,7 @@ class IwPage extends Page {
     }
 
     get questionTitle() {
-        return $('span#questionTitle')
+        return $('#questionTitle')
     }
 
     get alterTextBox() {
@@ -47,6 +46,8 @@ class IwPage extends Page {
     get alterAddButton() {
         return $('input.alterSubmit');
     }
+
+    clickError = " Click \"Next\" again to skip to the next question.";
 
     // EGO ID of current case in survey
     ewid = {
@@ -221,7 +222,7 @@ class IwPage extends Page {
         this.pause(500);
         this.nextButton.waitForExist(egoOpts.waitTime);
         this.nextButton.click();
-        this.pause(500);
+        this.pause(1000);
     }
 
 
@@ -279,12 +280,12 @@ class IwPage extends Page {
 
 
     getTableCellSelector(row, col) {
-        return "form#answerForm>#qTable>tbody>tr.multi:nth-child(" + parseInt(row) + ")>td:nth-child(" + parseInt(col) + ")";
+        return "#answerForm>#qTable>tbody>tr.multi:nth-child(" + parseInt(row) + ")>td:nth-child(" + parseInt(col) + ")";
     }
 
 
     getTableRowSelector(row) {
-        return "form#answerForm>#qTable>tbody>tr.multi:nth-child(" + parseInt(row) + ")";
+        return "#answerForm>#qTable>tbody>tr.multi:nth-child(" + parseInt(row) + ")";
     }
 
 
@@ -323,30 +324,30 @@ class IwPage extends Page {
 
 
     openInterview(interview, startPage) {
-        this.open('interview');
-        $("=" + interview).click();
+        $("h3=" + interview).click();
         var ids = [];
         // search existing IDs to find max
-        $("table.items").waitForExist(egoOpts.waitTime);
-        ids = $("table.items").$$("td");
-
         var max = 0;
         var vals = []
-        var val = "";
-        ids.forEach(function (el) {
-            val = parseInt(el.getText());
-            vals.push(val);
-            if (val > max) {
-                max = val;
-            }
-        });
+        var val = 0;
+        let div = $("h3=" + interview).getAttribute("data-target");
+        if($(div).$(".list-group").isExisting()){
+            $(div).$(".list-group").waitForExist(egoOpts.waitTime);
+            ids = $(div).$(".list-group").$$("a");
+            ids.forEach(function (el) {
+                val = parseInt(el.getText());
+                vals.push(val);
+                if (val > max) {
+                    max = val;
+                }
+            });
+        }
         //console.log(egoOpts.reuseInterview, max)
         if (egoOpts.reuseInterview == true && max != 0) {
-
             // opens most recent interview
             this.ewid = max;
-            $('=' + this.ewid).scrollIntoView(false)
-            $('=' + this.ewid).click();
+            $('a=' + this.ewid).scrollIntoView(false)
+            $('a=' + this.ewid).click();
             this.updateNavLinks();
 
             if (startPage != null)
@@ -355,6 +356,7 @@ class IwPage extends Page {
                 this.open(this.navLinks["INTRODUCTION"]);
         } else {
             this.ewid = max + 1 + Math.floor(Math.random() * 100);
+            console.log("new interview")
             this.startInterviewLink.click();
             browser.pause(1000)
             this.goForwardToQuestion("EGO ID");

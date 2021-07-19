@@ -107,7 +107,7 @@ describe('Alters', function () {
 
     it("should show table for alter questions with 1 row per alter", function() {
         IwPage.goToQuestion('alter1');
-        $("span=alter1").waitForExist(egoOpts.waitTime);
+        expect(IwPage.questionTitle.getText()).toBe("alter1");
 
         alters = IwPage.fieldValues['ALTER_PROMPT']['values'];
 
@@ -142,10 +142,12 @@ describe('Alters', function () {
 
         // click next, even though no cell is selected
         IwPage.next();
-
         // should stay on same page with error message
         expect(IwPage.questionTitle.getText()).toBe("alter1");
-        $("div.alert=Select 1 response for each row please.").waitForExist(egoOpts.waitTime);
+
+        $("div.alert").waitForExist(egoOpts.waitTime);
+        expect($("div.alert").getText()).toBe("Select 1 response for each row please." + IwPage.clickError);
+
         // check that all rows are highlighted
         for (i=0; i<15; i++) {
             expect(IwPage.getTableRowHighlight(i+1)).toBe(true);
@@ -157,18 +159,20 @@ describe('Alters', function () {
 
         for (i=2; i<6; i++) {
             //browser.scroll(0, (i-2)*56);
-            IwPage.pause();
+            //IwPage.pause();
+            //console.log(IwPage.getTableCellInputElement((i-1)*2,i))
             IwPage.getTableCellInputElement((i-1)*2,i).scrollIntoView(false)
             IwPage.getTableCellInputElement((i-1)*2,i).click();
             expect(IwPage.getTableRowHighlight((i-1)*2)).toBe(false);
         }
 
         // click next, even though no cell is selected
-        IwPage.next();
+        //IwPage.next();
 
         // should stay on same page with error message
         expect(IwPage.questionTitle.getText()).toBe("alter1");
-        $("div.alert=Select 1 response for each row please.").waitForExist(egoOpts.waitTime);
+        $("div.alert").waitForExist(egoOpts.waitTime);
+        expect($("div.alert").getText()).toBe("Select 1 response for each row please." + IwPage.clickError);
 
         // click a "Set All" button
         IwPage.getTableCellInputElement(16,2).click();
@@ -198,15 +202,13 @@ describe('Alters', function () {
         // go back to alter1
         IwPage.back();
         expect(IwPage.questionTitle.getText()).toBe("alter1");
-        // check that no rows are highlighted
-        for (i=0; i<15; i++) {
-            expect(IwPage.getTableRowHighlight(i+2)).toBe(false);
-        }
+
     });
 
     it("should be able to cycle through alter pair pages and create network graph", function() {
         IwPage.goToQuestion('alterpair1 - alpha');
-        $("span=alterpair1 - alpha").waitForExist(egoOpts.waitTime);
+        expect(IwPage.questionTitle.getText()).toBe("alterpair1 - alpha");
+
         var alter_pair_pages = 0;
         for(k in IwPage.navLinks){
             if(k.match("alterpair1")){

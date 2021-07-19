@@ -314,7 +314,6 @@ class InterviewController extends Controller
                 }
             }
             $alters = array();
-
             $results = Alters::find()
             ->where(new \yii\db\Expression("FIND_IN_SET(:interviewId, interviewId)"))
             ->addParams([':interviewId' => $interviewId])
@@ -452,7 +451,7 @@ class InterviewController extends Controller
                     }
                 }
 
-               // if(Yii::$app->user->isGuest){
+                if(Yii::$app->user->isGuest){
                   if($key != ""){
                     if(!$key || ($key && md5($keystr) != $key)){
                         $errors++;
@@ -465,7 +464,7 @@ class InterviewController extends Controller
                         $errorMsg = "Participant not found";
                     }
                   }
-              //  }
+                }
 
                 if($errors == 0){
                     if(isset($keystr)){

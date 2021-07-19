@@ -17,22 +17,23 @@ exports.config = {
   // directory is where your package.json resides, so `wdio` will be called from there.
   //
   specs: [
-    //  'authoring/01_create_study.js',
-    //  'authoring/02_ego_id_questions.js',
-    //  'authoring/03_questions.js',
-    //    'authoring/04_duplicate.js',
-    //  'authoring/05_edit.js',
-
-    //   'authoring/08_complete_test.js',
-    //  'authoring/09_expressions.js',
-    //  'interview/09_basic_fields.js'
-    //     'interview/02_multiple_select.js'
-    //    'interview/07_skiplogic_simple.js'
-    //  'interview/04_skiplogic_compound.js',
-    //    'interview/05_alters.js'
+    //  'authoring/01_create_study.js'
+    //  'authoring/02_ego_id_questions.js'
+    //  'authoring/03_questions.js'
+      //  'authoring/04_duplicate.js'
+    //  'authoring/05_edit.js'
+   // 'authoring/06_rearrange.js'
+  //  'authoring/07_delete.js'
+  //     'authoring/08_complete_test.js'
+ //     'authoring/09_expressions.js'
+   //  'interview/01_basic_fields.js'
+     //    'interview/02_multiple_select.js'
+     //   'interview/03_skiplogic_simple.js'
+   //   'interview/04_skiplogic_compound.js',
+    //   'interview/05_alters.js'
     //   'interview/06_finish.js'
-    'authoring/*.js',
-    'interview/*.js'
+      'authoring/*.js',
+      'interview/*.js'
   ],
   // Patterns to exclude.
   exclude: [
@@ -68,13 +69,18 @@ exports.config = {
     // 5 instances get started at a time.
     maxInstances: 1,
     //
-    browserName: 'chrome',
+   browserName: 'chrome',
+   // browserName: 'firefox',
+    'moz:firefoxOptions': {
+      // flag to activate Firefox headless mode (see https://github.com/mozilla/geckodriver/blob/master/README.md#firefox-capabilities for more details about moz:firefoxOptions)
+   //   args: ['-headless']
+    },
     acceptInsecureCerts: true,
     'goog:chromeOptions': {
       // to run chrome headless the following flags are required
       // (see https://developers.google.com/web/updates/2017/04/headless-chrome)
       //   args: ['--headless', '--disable-gpu', '--window-size=1024,768'],
-      args: ['--headless', '--disable-gpu'],
+     // args: ['--headless', '--disable-gpu'],
     }
     // If outputDir is provided WebdriverIO can capture driver session logs
     // it is possible to configure which logTypes to include/exclude.
@@ -89,7 +95,7 @@ exports.config = {
     maxInstances: 1,
     browserName: 'firefox',
     specs:[
-    'interview/*.js'
+ //   'interview/*.js'
     ],
     'moz:firefoxOptions': {
       // flag to activate Firefox headless mode (see https://github.com/mozilla/geckodriver/blob/master/README.md#firefox-capabilities for more details about moz:firefoxOptions)
@@ -137,7 +143,7 @@ exports.config = {
   // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
   // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
   // gets prepended directly.
-  baseUrl: 'http://egoweb.local',
+  baseUrl: 'http://egoweb2.local',
   //
   // Default timeout for all waitFor* commands.
   waitforTimeout: 10000,

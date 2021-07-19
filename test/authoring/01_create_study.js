@@ -6,15 +6,19 @@ describe('Create Study', function () {
 
   describe('create super admin', function () {
     it('create super admin if need to', function () {
-      browser.url("/");
-      if($("h1=Create Admin User").isExisting()) {
-        $("#User_name").setValue(egoOpts.loginAdmin.username)
-        $("#User_email").setValue(egoOpts.loginAdmin.username)
-        $("#User_password").setValue(egoOpts.loginAdmin.password)
-        $("#User_confirm").setValue(egoOpts.loginAdmin.password)
-        $("//input[@value='Create']").click();
+      AuthoringPage.open();
+      header = $('//h1[@id="form-header"]');
+      if(header.getText() == "Create Admin User") {
+        $("#signupform-name").setValue(egoOpts.loginAdmin.username)
+        $("#signupform-email").setValue(egoOpts.loginAdmin.username)
+        $("#signupform-password").setValue(egoOpts.loginAdmin.password)
+        $("button=Create").click();
         expect(AuthoringPage.loggedIn).toBeExisting();
         browser.url("site/logout");
+      }else if(header.getText() == "Log In") {
+        $("#loginform-username").setValue(egoOpts.loginAdmin.username)
+        $("#loginform-password").setValue(egoOpts.loginAdmin.password)
+        $("//button[@name='login-button']").click();
       }
     });
   });
@@ -30,9 +34,10 @@ describe('Create Study', function () {
     it('Go to authoring page and create study', function () {
       AuthoringPage.open();
       expect(AuthoringPage.pageTitle).toHaveTextContaining(
-        'Authoring');
-      studyLink = $('//*[@id="content"]//a[text()="' + studyTest.settings.title + '"]')
-      if (typeof studyLink.error != "undefined") {
+        'EgoWeb 2.0');
+      studyLink = $('//div[@aria-label="' + studyTest.settings.title + '"]/a[text()="Authoring"]')
+
+      if (!studyLink.isExisting()) {
         expect(AuthoringPage.inputCreate).toBeExisting();
         expect(AuthoringPage.btnCreate).toBeExisting();
         AuthoringPage.createStudy(studyTest.settings.title);
@@ -43,19 +48,19 @@ describe('Create Study', function () {
       expect(AuthoringPage.pageTitle).toHaveTextContaining(
         studyTest.settings.title);
       AuthoringPage.updateNoteField("#Study_introduction", studyTest.settings.introduction);
-      AuthoringPage.updateNoteField("#Study_egoIdPrompt", studyTest.settings.egoIdPrompt);
+      //AuthoringPage.updateNoteField("#Study_egoIdPrompt", studyTest.settings.egoIdPrompt);
       AuthoringPage.btnSaveStudy.click();
     });
     it('changes should be saved', () => {
       AuthoringPage.open();
-      studyLink = $('//*[@id="content"]//a[text()="' + studyTest.settings.title + '"]')
+      studyLink = $('//div[@aria-label="' + studyTest.settings.title + '"]//a[text()="Authoring"]')
       expect(studyLink).toBeExisting();
       studyUrl = studyLink.getAttribute("href");
       browser.url(studyUrl)
       expect(AuthoringPage.studyIntro).toHaveTextContaining(
         studyTest.settings.introduction);
-      expect(AuthoringPage.studyEgoId).toHaveTextContaining(
-        studyTest.settings.egoIdPrompt);
+     // expect(AuthoringPage.studyEgoId).toHaveTextContaining(
+       // studyTest.settings.egoIdPrompt);
     });;
   })
 

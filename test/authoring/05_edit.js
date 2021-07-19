@@ -9,88 +9,88 @@ describe('Edit Questions', function () {
   });
   describe('Edit questions', function () {
     it('Go to question list page', function () {
-      AuthoringPage.open();
-      studyLink = $('//*[@id="content"]//a[text()="' + studyTest.settings.title + '"]')
+      //AuthoringPage.open();
+      studyLink = $('//div[@aria-label="' + studyTest.settings.title + '"]//a[text()="Authoring"]')
       studyUrl = studyLink.getAttribute("href");
       browser.url(studyUrl);
-      idQLink = $('//*[@id="content"]//a[text()="Questions"]')
+      idQLink = $('//main//a[text()="Questions"]')
       expect(idQLink).toBeExisting();
       browserUrl = idQLink.getAttribute("href");
       browser.url(browserUrl)
     });
     it('Edit 1', function () {
-      btnNewQ = $("//h3[contains(text(),'" + studyTest.questions[0].title + "_COPY')]")
+      btnNewQ = $("//button[contains(text(),'" + studyTest.questions[0].title + "_COPY')]")
       expect(btnNewQ).toBeExisting();
-      qId = btnNewQ.$('..').getAttribute("id");
+      qId = btnNewQ.getAttribute("aria-controls").replace("accordion-","");
       btnNewQ.click();
       browser.pause(1000);
       $("//*[@id='" + qId + "_title']").setValue(studyTest.questions[1].title);
-      AuthoringPage.updateNoteField("#prompt" + qId, studyTest.questions[1].prompt);
-      $('//*[@id="' + qId + '"]').$('[name="Question[answerType]"]').selectByVisibleText(studyTest.questions[1].answerType)
-      $('//*[@id="' + qId + '"]').$('input[value="Save"]').scrollIntoView(false);
-      $('//*[@id="' + qId + '"]').$('input[value="Save"]').click();
+      AuthoringPage.updateNoteField("#" + qId + "_prompt", studyTest.questions[1].prompt);
+      $('//*[@id="form-' + qId + '"]').$('[name="Question[answerType]"]').selectByVisibleText(studyTest.questions[1].answerType)
+      $('//*[@id="form-' + qId + '"]').$('button=Save').scrollIntoView(false);
+      $('//*[@id="form-' + qId + '"]').$('button=Save').click();
     });
     it('check to see if changes are saved', function () {
       browser.url(browserUrl);
-      btnNewQ = $("//h3[contains(text(),'" + studyTest.questions[1].title + "')]");
+      btnNewQ = $("//button[contains(text(),'" + studyTest.questions[1].title + "')]");
       expect(btnNewQ).toBeExisting();
     });
     it('Duplicate', function () {
-      btnNewQ = $("//h3[contains(text(),'" + studyTest.questions[1].title + "')]")
+      btnNewQ = $("//button[contains(text(),'" + studyTest.questions[1].title + "')]")
       expect(btnNewQ).toBeExisting();
-      qId = btnNewQ.$('..').getAttribute("id");
+      qId = btnNewQ.getAttribute("aria-controls").replace("accordion-","");
       btnNewQ.click();
       browser.pause(1000);
-      $('//*[@id="' + qId + '"]').$('input[value="Duplicate"]').scrollIntoView(false);
-      $('//*[@id="' + qId + '"]').$('input[value="Duplicate"]').click();
+      $('//*[@id="form-' + qId + '"]').$('button=Duplicate').scrollIntoView(false);
+      $('//*[@id="form-' + qId + '"]').$('button=Duplicate').click();
     });
     it('check to see if dupicate exists', function () {
       browser.url(browserUrl);
-      btnNewQ = $("//h3[contains(text(),'" + studyTest.questions[1].title + "_COPY')]")
+      btnNewQ = $("//button[contains(text(),'" + studyTest.questions[1].title + "_COPY')]")
       expect(btnNewQ).toBeExisting();
     });
     it('Edit 2', function () {
-      btnNewQ = $("//h3[contains(text(),'" + studyTest.questions[1].title + "_COPY')]")
+      btnNewQ = $("//button[contains(text(),'" + studyTest.questions[1].title + "_COPY')]")
       expect(btnNewQ).toBeExisting();
-      qId = btnNewQ.$('..').getAttribute("id");
+      qId = btnNewQ.getAttribute("aria-controls").replace("accordion-","");
       btnNewQ.click();
       browser.pause(1000);
       $("//*[@id='" + qId + "_title']").setValue(studyTest.questions[2].title);
-      AuthoringPage.updateNoteField("#prompt" + qId, studyTest.questions[2].prompt);
-      $('//*[@id="' + qId + '"]').$('[name="Question[answerType]"]').selectByVisibleText(studyTest.questions[2].answerType)
-      $('//*[@id="' + qId + '"]').$('input[value="Save"]').click();
+      AuthoringPage.updateNoteField("#" + qId + "_prompt", studyTest.questions[2].prompt);
+      $('//*[@id="form-' + qId + '"]').$('[name="Question[answerType]"]').selectByVisibleText(studyTest.questions[2].answerType)
+      $('//*[@id="form-' + qId + '"]').$('button=Save').click();
     });
     it('check to see if changes are saved', function () {
       browser.url(browserUrl);
-      btnNewQ = $("//h3[contains(text(),'" + studyTest.questions[2].title + "')]");
+      btnNewQ = $("//button[contains(text(),'" + studyTest.questions[2].title + "')]");
       expect(btnNewQ).toBeExisting();
     });
   });
   describe('Edit Ego ID question', function () {
     it('Go to question list page', function () {
       AuthoringPage.open();
-      studyLink = $('//*[@id="content"]//a[text()="' + studyTest.settings.title + '"]')
+      studyLink = $('//div[@aria-label="' + studyTest.settings.title + '"]//a[text()="Authoring"]')
       studyUrl = studyLink.getAttribute("href");
       browser.url(studyUrl);
-      idQLink = $('//*[@id="content"]//a[text()="Ego ID Questions"]')
+      idQLink = $('//main//a[text()="Ego ID"]')
       expect(idQLink).toBeExisting();
       browserUrl = idQLink.getAttribute("href");
       browser.url(browserUrl)
     });
     it('Edit Ego ID', function () {
-      btnNewQ = $("//h3[contains(text(),'" + studyTest.idQuestions[0].title + "')]")
+      btnNewQ = $("//button[contains(text(),'" + studyTest.idQuestions[0].title + "')]")
       expect(btnNewQ).toBeExisting();
-      qId = btnNewQ.$('..').getAttribute("id");
+      qId = btnNewQ.getAttribute("aria-controls").replace("accordion-","");
       btnNewQ.click();
       browser.pause(1000);
       $("//*[@id='" + qId + "_title']").setValue(studyTest.idQuestions[1].title);
-      AuthoringPage.updateNoteField("#prompt" + qId, studyTest.idQuestions[1].prompt);
-      $('//*[@id="' + qId + '"]').$('[name="Question[answerType]"]').selectByVisibleText(studyTest.idQuestions[1].answerType)
-      $('//*[@id="' + qId + '"]').$('input[value="Save"]').click();
+      AuthoringPage.updateNoteField("#" + qId + "_prompt", studyTest.idQuestions[1].prompt);
+      $('//*[@id="form-' + qId + '"]').$('[name="Question[answerType]"]').selectByVisibleText(studyTest.idQuestions[1].answerType)
+      $('//*[@id="form-' + qId + '"]').$('button=Save').click();
     });
     it('check to see if changes are saved', function () {
       browser.url(browserUrl);
-      btnNewQ = $("//h3[contains(text(),'" + studyTest.idQuestions[1].title + "')]")
+      btnNewQ = $("//button[contains(text(),'" + studyTest.idQuestions[1].title + "')]")
       expect(btnNewQ).toBeExisting();
     });
   });

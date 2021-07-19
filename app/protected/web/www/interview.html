@@ -28,6 +28,14 @@
 </div>
 </div>
 
+<div ng-if="subjectType != 'NAME_GENERATOR'" class="col-sm-12">
+<span ng-if="(answerForm.$submitted || errors[0] == 'That name is already on this list' || errors[0] == 'Name cannot be blank' || errors[0] == 'Name not found in list' || errors[keys(errors)[0]] == 'Please modify the name so it\'s not identical to the previous name entered.' || errors[0] == 'That name has already been listed') && errors">
+    <div class="alert alert-danger" role="alert" ng-if="$index == 0" ng-repeat="error in errors">
+        {{ error }}
+    </div>
+</span>
+</div>
+
 <div ng-if="subjectType == 'NAME_GENERATOR'" ng-class="{'col-xs-12 col-sm-9': questions[0].SUBJECTTYPE == 'NAME_GENERATOR', 'col-md-12': questions[0].SUBJECTTYPE != 'NAME_GENERATOR'}">
     <div id="floatHeader">
         <div class="col-sm-12 no-padding" ng-if="header != '' && subjectType != 'NETWORK'" ng-bind-html="header">
@@ -476,7 +484,7 @@
     <input name="hashKey" value='{{ hashKey }}' type="hidden">
     <input ng-if="conclusion == true" name="conclusion" value='1' type="hidden">
 
-    <div class="form-group clear-left btn-top">
+    <div class="form-group clear-left btn-top mt-3">
         <button ng-if="page > 0 && questions[0].ANSWERTYPE != 'CONCLUSION'" id="back" class='btn graybutton' ng-click="goBack();" onclick="return false;">Back</button>
         <button ng-if="(questions[0].ANSWERTYPE != 'CONCLUSION' && conclusion == false) || (questions[0].SUBJECTTYPE == 'NAME_GENERATOR' && conclusion == true)" id="next" class='btn orangebutton' type="submit">Next</button>
         <button ng-if="questions[0].ANSWERTYPE == 'CONCLUSION' && redirect != false" id="next" class='btn orangebutton' type="submit">Return</button>

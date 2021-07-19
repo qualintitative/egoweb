@@ -429,7 +429,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
             else
                 $scope.otherSpecify[array_id][$scope.options[array_id][a].ID] = false;
         }
-        console.log("other spec", $scope.otherSpecify);
+        //console.log("other spec", $scope.otherSpecify);
         if ($scope.questions[k].SUBJECTTYPE != "EGO_ID") {
             $scope.prompt = $sce.trustAsHtml(interpretTags($scope.questions[k].PROMPT, $scope.questions[k].ALTERID1, $scope.questions[k].ALTERID2) + '<br><div class="orangeText">' + $scope.phrase + "</div>");
         } else {
@@ -676,6 +676,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         } else {
             if ($scope.options[array_id][index].checked) {
                 $scope.answers[array_id].SKIPREASON = "NONE";
+                delete $scope.errors[array_id];
+                console.log($scope.answerForm.$submitted, index, $scope.errors[array_id])
                 for (k in $scope.options[array_id]) {
                     if ($scope.options[array_id][k].ID == "DONT_KNOW" || $scope.options[array_id][k].ID == "REFUSE")
                         $scope.options[array_id][k].checked = false;
@@ -816,7 +818,7 @@ app.directive('checkAnswer', [function() {
                 var array_id = attr.arrayId;
                 var question = questions[attr.questionId];
                 console.log(question);
-                console.log("check:" + value);
+                console.log("parsers check:" + value);
 
                 if (attr.answerType == "NAME_GENERATOR") {
                     if ((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.nGalters).length < scope.questions[0].MINLITERAL) {
@@ -850,7 +852,7 @@ app.directive('checkAnswer', [function() {
                     var max = "";
                     var numberErrors = 0;
                     var showError = false;
-                    if ((value == "" && scope.answers[array_id].SKIPREASON == "NONE") || (value != "" && value.match(/[^$,.\d]/) != null)) {
+                    if ((value == "" && scope.answers[array_id].SKIPREASON == "NONE") || (value != "" && isNaN(value))) {
                         errorMsg = 'Please enter a number.';
                         showError = true;
                     }
@@ -989,7 +991,7 @@ app.directive('checkAnswer', [function() {
                     var checks = 0;
                     if (typeof question != "undefined" && parseInt(question.WITHLISTRANGE) != 0) {
                         for (i in scope.answers) {
-                            if (scope.answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1) {
+                            if ((scope.answers[i].VALUE != undefined && scope.answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1) || scope.answers[i].VALUE == question.LISTRANGESTRING) {
                                 checks++;
                             }
                         }
@@ -1211,8 +1213,7 @@ app.directive('checkAnswer', [function() {
                     var checks = 0;
                     if (typeof question != "undefined" && parseInt(question.WITHLISTRANGE) != 0) {
                         for (i in scope.answers) {
-                            console.log(scope.answers[i].VALUE + ":" + question.LISTRANGESTRING);
-                            if (scope.answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1) {
+                            if ((scope.answers[i].VALUE != undefined && scope.answers[i].VALUE.split(',').indexOf(question.LISTRANGESTRING) != -1) || scope.answers[i].VALUE == question.LISTRANGESTRING) {
                                 checks++;
                             }
                         }
@@ -1785,7 +1786,6 @@ function evalQuestions() {
         if (evalQIndex[i] < currentPage)
             continue;
         for (j in masterList[evalQIndex[i]]) {
-            console.log(masterList[evalQIndex[i]][j].ALTERID2)
             evalQList[masterList[evalQIndex[i]][j].array_id] = evalExpression(masterList[evalQIndex[i]][j].ANSWERREASONEXPRESSIONID, masterList[evalQIndex[i]][j].ALTERID1, masterList[evalQIndex[i]][j].ALTERID2);
         }
     }

@@ -9,69 +9,69 @@ describe('Duplicate Questions', function () {
   });
   describe('Duplicate question', function () {
     it('Go to question list page', function () {
-      AuthoringPage.open();
-      studyLink = $('//*[@id="content"]//a[text()="' + studyTest.settings.title + '"]')
+      //AuthoringPage.open();
+      studyLink = $('//div[@aria-label="' + studyTest.settings.title + '"]//a[text()="Authoring"]')
       studyUrl = studyLink.getAttribute("href");
       browser.url(studyUrl);
-      idQLink = $('//*[@id="content"]//a[text()="Questions"]')
+      idQLink = $('//main//a[text()="Questions"]')
       expect(idQLink).toBeExisting();
       browserUrl = idQLink.getAttribute("href");
       browser.url(browserUrl)
     });
     it('Duplicate', function () {
-      btnNewQ = $("//h3[contains(text(),'" + studyTest.questions[0].title + "')]")
+      btnNewQ = $("//button[contains(text(),'" + studyTest.questions[0].title + "')]")
       expect(btnNewQ).toBeExisting();
-      qId = btnNewQ.$('..').getAttribute("id");
+      qId = btnNewQ.getAttribute("aria-controls").replace("accordion-","");
       btnNewQ.click();
       browser.pause(1000);
-      $('//*[@id="' + qId + '"]').$('input[value="Duplicate"]').click();
+      $('//*[@id="form-' + qId + '"]').$('button=Duplicate').click();
     });
     it('check to see if dupicate exists', function () {
       browser.url(browserUrl);
-      btnNewQ = $("//h3[contains(text(),'" + studyTest.questions[0].title + "_COPY')]")
+      btnNewQ = $("//button[contains(text(),'" + studyTest.questions[0].title + "_COPY')]")
       expect(btnNewQ).toBeExisting();
     });
   });
   
   describe('Duplicate question again', function () {
     it('Duplicate question', function () {
-      btnNewQ = $("//h3[contains(text(),'" + studyTest.questions[0].title + "_COPY')]")
+      btnNewQ = $("//button[contains(text(),'" + studyTest.questions[0].title + "_COPY')]")
       expect(btnNewQ).toBeExisting();
-      qId = btnNewQ.$('..').getAttribute("id");
+      qId = btnNewQ.getAttribute("aria-controls").replace("accordion-","");
       btnNewQ.click();
       browser.pause(1000);
-      $('//*[@id="' + qId + '"]').$('input[value="Duplicate"]').scrollIntoView(false);
-      $('//*[@id="' + qId + '"]').$('input[value="Duplicate"]').click();
+      $('//*[@id="form-' + qId + '"]').$('button=Duplicate').scrollIntoView(false);
+      $('//*[@id="form-' + qId + '"]').$('button=Duplicate').click();
     });
     it('check to see if dupicate exists', function () {
       browser.url(browserUrl);
-      btnNewQ = $("//h3[contains(text(),'" + studyTest.questions[0].title + "_COPY_COPY')]")
+      btnNewQ = $("//button[contains(text(),'" + studyTest.questions[0].title + "_COPY_COPY')]")
       expect(btnNewQ).toBeExisting();
     });
   });
   describe('Duplicate Ego ID question', function () {
     it('Go to question list page', function () {
       AuthoringPage.open();
-      studyLink = $('//*[@id="content"]//a[text()="' + studyTest.settings.title + '"]')
+      studyLink = $('//div[@aria-label="' + studyTest.settings.title + '"]//a[text()="Authoring"]')
       studyUrl = studyLink.getAttribute("href");
       browser.url(studyUrl);
-      idQLink = $('//*[@id="content"]//a[text()="Ego ID Questions"]')
+      idQLink = $('//main//a[text()="Ego ID"]')
       expect(idQLink).toBeExisting();
       browserUrl = idQLink.getAttribute("href");
       browser.url(browserUrl)
     });
     it('Duplicate', function () {
-      btnNewQ = $("//h3[contains(text(),'" + studyTest.idQuestions[0].title + "')]")
+      btnNewQ = $("//button[contains(text(),'" + studyTest.idQuestions[0].title + "')]")
       expect(btnNewQ).toBeExisting();
-      qId = btnNewQ.$('..').getAttribute("id");
+      qId = btnNewQ.getAttribute("aria-controls").replace("accordion-","");
       btnNewQ.click();
       browser.pause(1000);
-      $('//*[@id="' + qId + '"]').$('input[value="Duplicate"]').scrollIntoView(false);
-      $('//*[@id="' + qId + '"]').$('input[value="Duplicate"]').click();
+      $('//*[@id="form-' + qId + '"]').$('button=Duplicate').scrollIntoView(false);
+      $('//*[@id="form-' + qId + '"]').$('button=Duplicate').click();
     });
     it('check to see if dupicate exists', function () {
       browser.url(browserUrl);
-      btnNewQ = $("//h3[contains(text(),'" + studyTest.idQuestions[0].title + "_COPY')]")
+      btnNewQ = $("//button[contains(text(),'" + studyTest.idQuestions[0].title + "_COPY')]")
       expect(btnNewQ).toBeExisting();
     });
   });

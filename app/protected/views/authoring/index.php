@@ -120,7 +120,7 @@ use yii\helpers\Html;
         </b-form-checkbox>
 </div>
         <div class="btn-group col mt-3 row">
-                <button class="btn btn-success">Save</button>
+                <button id="saveStudy" class="btn btn-success">Save</button>
                 <b-button class="btn btn-warning" @click="replicateStudy">Replicate</b-button>
                 <b-button class="btn btn-danger"  @click="deleteStudy" :disabled="interviews != 0" title="You can only delete studies without interview data">Delete</b-button>
             </div>

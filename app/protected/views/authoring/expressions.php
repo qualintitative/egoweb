@@ -35,7 +35,7 @@ use common\widgets\Alert;
 <input type="hidden" v-model="expressions[id].id"  name="Expression[id]" id="Expression_id">
 
 
-    <b-form-select v-if="id == 0" v-model="selected" class="mb-3" @change="changeType">
+    <b-form-select v-if="id == 0" v-model="selected" class="mb-3" @change="changeType" id="form-type">
         <b-form-select-option value="Simple">Simple</b-form-select-option>
         <b-form-select-option value="Counting">Counting</b-form-select-option>
         <b-form-select-option value="Comparison">Comparison</b-form-select-option>
@@ -109,7 +109,7 @@ use common\widgets\Alert;
                 <b-form-select-option value="Greater">Greater Than</b-form-select-option>
                 <b-form-select-option value="GreaterOrEqual">Greater Or Equal To</b-form-select-option>
                 <b-form-select-option value="Equals">Equals</b-form-select-option>
-                <b-form-select-option value="LessOrEqual">Less OrEqual To</b-form-select-option>
+                <b-form-select-option value="LessOrEqual">Less Or Equal To</b-form-select-option>
                 <b-form-select-option value="Less">Less Than</b-form-select-option>
                 </b-form-select>
                
@@ -182,7 +182,7 @@ use common\widgets\Alert;
         <div class="row form-group">
             <label for="Expression_name" class="col-md-2 col-form-label">VALUE is</label>
             <div class="col-md-2">
-                <input v-model="expressions[id].multiplier" class="form-control" @change="buildVal($event, id)">
+                <input id="times" v-model="expressions[id].multiplier" class="form-control" @change="buildVal($event, id)">
             </div>
             <label class="col-sm-2">times the</label>
             <b-form-select v-model="expressions[id].operator"  name="Expression[operator]" class="col-sm-2">
@@ -224,7 +224,7 @@ use common\widgets\Alert;
         <div class="row form-group">
             <label class="col-md-2 col-form-label">TRUE if</label>
             <div class="col-md-3">
-                <input v-model="expressions[id].compare" class="form-control" @change="compVal($event, id)" placeholder="Number">
+                <input id="compare" v-model="expressions[id].compare" class="form-control" @change="compVal($event, id)" placeholder="Number">
                 </div>
 
                 <label class="col-sm-1">is</label>
@@ -232,7 +232,7 @@ use common\widgets\Alert;
                 <b-form-select-option value="Greater">Greater Than</b-form-select-option>
                 <b-form-select-option value="GreaterOrEqual">Greater Or Equal To</b-form-select-option>
                 <b-form-select-option value="Equals">Equals</b-form-select-option>
-                <b-form-select-option value="LessOrEqual">Less OrEqual To</b-form-select-option>
+                <b-form-select-option value="LessOrEqual">Less Or Equal To</b-form-select-option>
                 <b-form-select-option value="Less">Less Than</b-form-select-option>
                 </b-form-select>
         </div>
@@ -241,6 +241,7 @@ use common\widgets\Alert;
         :options="expressions[id].countExpressions"
         class="mb-3"
         value-field="id"
+        id="expressionId"
         text-field="name"
         @change="compVal($event,id)"
         >

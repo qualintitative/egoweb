@@ -26,7 +26,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
 <script type="text/x-template" id="questionEditor">
     <b-card no-body :class="'mb-1'">
     <b-card-header header-tag="header" class="p-1" role="tab">
-        <b-button block v-b-toggle="'accordion-' + question.id" variant="secondary">{{question.id ? (parseInt(question.ordering) + 1) + ". " + question.title: "Create New Question" }}</b-button>
+        <b-button block v-b-toggle="'accordion-' + question.id" variant="secondary">{{question.id ? question.title: "Create New Question" }}</b-button>
     </b-card-header>
     <b-collapse v-bind:id="'accordion-' + question.id" accordion="my-accordion" role="tabpanel">
         <form :id="'form-' + question.id" method="post">
@@ -157,7 +157,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                             <div class="col-8">
                                 <div class="row">
                                     <div class="col-4">
-                                        <label :for="question.id + '_minLimitType_0'">
+                                        <label :for="question.id + '_minLimitType_0'" title="NLT_LITERAL">
                                         <input v-model="question.minLimitType" class="form-check-input" :id="question.id + '_minLimitType_0'" value="NLT_LITERAL" type="radio" name="Question[minLimitType]">
                                             Literal
                                         </label>
@@ -168,7 +168,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                                 </div>
                                 <div class="row">
                                     <div class="col-4">
-                                        <label :for="question.id + '_minLimitType_1'">
+                                        <label :for="question.id + '_minLimitType_1'" title="NLT_PREVQUES">
                                         <input v-model="question.minLimitType" class="form-check-input" :id="question.id + '_minLimitType_1'" value="NLT_PREVQUES" type="radio" name="Question[minLimitType]">
                                             Previous
                                         </label>
@@ -188,7 +188,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                                 </div>
                                 <div class="row">
                                     <div class="col-4">
-                                        <label :for="question.id + '_minLimitType_2'">
+                                        <label :for="question.id + '_minLimitType_2'" title="NLT_NONE">
                                         <input v-model="question.minLimitType" class="form-check-input" :id="question.id + '_minLimitType_2'" value="NLT_NONE" type="radio" name="Question[minLimitType]">
                                             None 
                                         </label>
@@ -202,7 +202,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                             <div class="col-8">
                                 <div class="row">
                                     <div class="col-4">
-                                        <label :for="question.id + '_maxLimitType_0'">
+                                        <label :for="question.id + '_maxLimitType_0'" title="NLT_LITERAL">
                                         <input  v-model="question.maxLimitType" class="form-check-input" :id="question.id + '_maxLimitType_0'" value="NLT_LITERAL" type="radio" name="Question[maxLimitType]">
                                             Literal
                                         </label>
@@ -213,7 +213,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                                 </div>
                                 <div class="row">
                                     <div class="col-4">
-                                        <label :for="question.id + '_maxLimitType_1'">
+                                        <label :for="question.id + '_maxLimitType_1'" title="NLT_PREVQUES">
                                         <input v-model="question.maxLimitType" class="form-check-input" :id="question.id + '_maxLimitType_1'" value="NLT_PREVQUES" type="radio" name="Question[maxLimitType]">
                                             Previous
                                         </label>
@@ -233,7 +233,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                                 </div>
                                 <div class="row">
                                     <div class="col-4">
-                                        <label :for="question.id + '_maxLimitType_2'">
+                                        <label :for="question.id + '_maxLimitType_2'" title="NLT_NONE">
                                         <input v-model="question.maxLimitType" class="form-check-input" :id="question.id + '_maxLimitType_2'" value="NLT_NONE" type="radio" name="Question[maxLimitType]">
                                             None 
                                         </label>
@@ -295,14 +295,13 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                                     <input class="form-control input-xs" @change="editOption(row.item.id, this)" v-model="row.item.value" />
                             </template>
                             <template #cell(specify)="row">
-                                <b-form-checkbox v-model="row.item.otherSpecify" @change="editOption(row.item.id, this)" value="1" unchecked-value="0">
+                                <b-form-checkbox v-model="row.item.otherSpecify" :id="row.item.questionId + '-' + row.item.name + '-other'" @change="editOption(row.item.id, this)" value="1" unchecked-value="0">
+                                    &nbsp;
                                 </b-form-checkbox>
                             </template>
                             <template #cell(single)="row">
-                                <b-form-checkbox v-model="row.item.single" @change="editOption(row.item.id, this)"
-                                value="1"
-                                unchecked-value="0"
-                                >
+                                <b-form-checkbox v-model="row.item.single" :id="row.item.questionId + '-' + row.item.name + '-single'" @change="editOption(row.item.id, this)" value="1" unchecked-value="0">
+                                &nbsp;
                                 </b-form-checkbox>
                             </template>
                             <template #cell(details)="row">
@@ -311,17 +310,25 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                             <template v-slot:custom-foot>
                                 <tr class="text-white" >
                                     <td>
-                                        <input class="form-control input-xs" v-model="newOptionName" />
+                                        <input class="form-control input-xs" v-model="newOptionName" :name="question.id + '_QuestionOption_name'" />
                                     </td>
                                     <td>
-                                        <input class="form-control input-xs" v-model="newOptionValue" />
+                                        <input class="form-control input-xs" v-model="newOptionValue" :name="question.id + '_QuestionOption_value'" />
                                     </td>
                                     <td>
+                                        <b-form-checkbox v-model="newOptionOtherSpecify" :id="question.id + '_QuestionOption_otherSpecify'" :name="question.id + '_QuestionOption_otherSpecify'" value="1" unchecked-value="0">
+                                        &nbsp;
+    
+                                    </b-form-checkbox>
                                     </td>
                                     <td>
+                                        <b-form-checkbox v-model="newOptionSingle" :name="question.id + '_QuestionOption_single'" value="1" unchecked-value="0">
+                                        &nbsp;
+   
+                                    </b-form-checkbox>                                   
                                     </td>
                                     <td>
-                                        <b-button @click="newOption" variant="primary" size="xs">Create</b-button>
+                                        <b-button @click="newOption" variant="primary" size="xs">Add</b-button>
                                     </td>
                                 </tr>
                                 <tr>
@@ -351,13 +358,13 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                     <div v-if="question.subjectType == 'NAME_GENERATOR'">
 
                         <div class="form-group row">
-                            <label :for="question.id + '_minCheckableBoxes'" class="col-sm-4 col-form-label">Minimum Alters</label>
+                            <label :for="question.id + '_minLiteral'" class="col-sm-4 col-form-label">Minimum Alters</label>
                             <div class="col-sm-2">
-                                <input :id="question.id + '_minCheckableBoxes'" class="form-control" name="Question[minCheckableBoxes]" v-model="question.minCheckableBoxes">
+                                <input :id="question.id + '_minLiteral'" class="form-control" name="Question[minLiteral]" v-model="question.minLiteral">
                             </div>
-                            <label :for="question.id + '_maxCheckableBoxes'" class="col-sm-4 col-form-label">Maximum Alters</label>
+                            <label :for="question.id + '_maxLiteral'" class="col-sm-4 col-form-label">Maximum Alters</label>
                             <div class="col-sm-2">
-                                <input :id="question.id + '_maxCheckableBoxes'" class="form-control" name="Question[maxCheckableBoxes]" v-model="question.maxCheckableBoxes">
+                                <input :id="question.id + '_maxLiteral'" class="form-control" name="Question[maxLiteral]" v-model="question.maxLiteral">
                             </div>
                         </div>
 
@@ -403,13 +410,13 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                             <template v-slot:custom-foot>
                                 <tr class="text-white" >
                                     <td>
-                                        <input class="form-control input-xs" v-model="newPromptAfter" />
+                                        <input class="form-control input-xs" v-model="newPromptAfter" name="AlterPrompt[afterAltersEntered]" />
                                     </td>
                                     <td>
-                                        <input class="form-control input-xs" v-model="newPromptDisplay" />
+                                        <input class="form-control input-xs" v-model="newPromptDisplay" name="AlterPrompt[display]" />
                                     </td>
                                     <td>
-                                        <b-button @click="newPrompt" variant="primary" size="xs">Create</b-button>
+                                        <b-button @click="newPrompt" variant="primary" size="xs">Add</b-button>
                                     </td>
                                 </tr>
                             </template>   
@@ -599,6 +606,8 @@ QestionEditor = Vue.component('question-editor', {
             expressions: expressions,
             newOptionName: "",
             newOptionValue: 0,
+            newOptionOtherSpecify: 0,
+            newOptionSingle: 0,
             newPromptDisplay: "",
             newPromptAfter: 0,
             otherQuestionId:"",
@@ -674,7 +683,6 @@ QestionEditor = Vue.component('question-editor', {
             this.$forceUpdate();
         },
         resetParams(param) {
-            console.log(param)
             var newOptions = [];
             var defaultOption, egoOption;
             for(var i = 0; i < this.question.nParams[param].options.length; i++){
@@ -740,6 +748,8 @@ QestionEditor = Vue.component('question-editor', {
             $("#QuestionOption_questionId").val(this.question.id);
             $("#QuestionOption_name").val(this.newOptionName);
             $("#QuestionOption_value").val(this.newOptionValue);
+            $("#QuestionOption_otherSpecify").val(this.newOptionOtherSpecify);
+            $("#QuestionOption_single").val(this.newOptionSingle);
             $("#QuestionOption_id").val("");
             $("#optionsJson").val(JSON.stringify(this.question.options))
             self = this;
@@ -905,17 +915,27 @@ new Vue({
         var alterQOptions = {};
         var alterPairQOptions = {};
         var alterShapeQOptions = {};
+        var bitVals = {
+                'BIT_YEAR': 1,
+                'BIT_MONTH': 2,
+                'BIT_WEEK': 4,
+                'BIT_DAY': 8,
+                'BIT_HOUR': 16,
+                'BIT_MINUTE': 32,
+            };
         alterQs.push({text:"Degree Centrality", value:"degree"})
         alterQOptions["degree"] = [{id:"degree",name:"Color"}]
         alterQs.push({text:"Betweenness Centrality", value:"betweenness"})
         alterQOptions["betweenness"] = [{id:"betweenness",name:"Color"}]
         alterQs.push({text:"Eigenvector Centrality", value:"eigenvector"})
         alterQOptions["eigenvector"] = [{id:"eigenvector",name:"Color"}]
-
+        this.new_question.timeBits = {};
+        for (var t in bitVals) {
+            this.new_question.timeBits[t] = this.new_question.timeUnits & bitVals[t];
+        }
         for(k in this.questions){
             this.questions[k].numQuestions = numQuestions.slice();
             if(this.questions[k].answerType == "NUMERICAL"){
-                console.log(this.questions[k])
                 numQuestions.push({text:this.questions[k].title,value:this.questions[k].id});
             }
             if (this.questions[k].answerType == "MULTIPLE_SELECTION") {
@@ -934,14 +954,7 @@ new Vue({
                 alterPairQOptions[questions[k].id] =  questions[k].options;
                 alterPairQIds.push(parseInt(this.questions[k].id));
             }   
-            var bitVals = {
-                'BIT_YEAR': 1,
-                'BIT_MONTH': 2,
-                'BIT_WEEK': 4,
-                'BIT_DAY': 8,
-                'BIT_HOUR': 16,
-                'BIT_MINUTE': 32,
-            };
+   
             this.questions[k].timeBits = {};
             for (var t in bitVals) {
                 this.questions[k].timeBits[t] = this.questions[k].timeUnits & bitVals[t];
@@ -1013,6 +1026,7 @@ new Vue({
                 }
             }
         }
+        new_question.nParams = defaultParams;
     },
     mounted() {
         var self = this;

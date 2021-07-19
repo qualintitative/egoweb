@@ -1,7 +1,6 @@
 var IwPage = require('../pageobjects/interview.page');
 var assert = require('assert');
 const env = require("../.env");
-const { Browser } = require('selenium-webdriver');
 
 describe('Multiple Select', function () {
     before(function () {
@@ -254,7 +253,8 @@ describe('Multiple Select', function () {
 
         // should stay on same page with error message
         expect(IwPage.questionTitle.getText()).toBe("ms1of2");
-        $("div.alert=Select 1 response please.").waitForExist(egoOpts.waitTime);
+        $("div.alert").waitForExist(egoOpts.waitTime);
+        expect($("div.alert").getText()).toBe("Select 1 response please.");
 
         // fix error
         IwPage.selectOption(1);
@@ -350,18 +350,14 @@ describe('Multiple Select', function () {
 
         // should stay on same page with error message
         expect(IwPage.questionTitle.getText()).toBe("ms1of2dkrf");
-        $("div.alert=Select 1 response please.").waitForExist(egoOpts.waitTime);
+        $("div.alert").waitForExist(egoOpts.waitTime);
+        expect($("div.alert").getText()).toBe("Select 1 response please." + IwPage.clickError);
 
         // fix error
         IwPage.selectOption(3);
         IwPage.next();
-
-        //browser.pause(1000);
-        // next page
+        browser.pause(5000);
         expect(IwPage.questionTitle.getText()).not.toBe("ms1of2dkrf");
     });
-
-
-
 
 });

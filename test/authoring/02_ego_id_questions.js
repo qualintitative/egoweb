@@ -9,35 +9,36 @@ describe('Create Ego Id Questions', function () {
   });
   describe('create ego id', function () {
     it('Go to ego id page', function () {
-      AuthoringPage.open();
-      studyLink = $('//*[@id="content"]//a[text()="' + studyTest.settings.title + '"]')
+     // AuthoringPage.open();
+      studyLink = $('//div[@aria-label="' + studyTest.settings.title + '"]//a[text()="Authoring"]')
       studyUrl = studyLink.getAttribute("href");
       browser.url(studyUrl);
-      idQLink = $('//*[@id="content"]//a[text()="Ego ID Questions"]')
+      idQLink = $('//main//a[text()="Ego ID"]')
       expect(idQLink).toBeExisting();
       browserUrl = idQLink.getAttribute("href");
       browser.url(browserUrl)
     });
     it('Create Ego Id question', function () {
-      var qId = '99999999999';
-      btnNewQ = $("//h3[contains(text(),'" + studyTest.idQuestions[0].title + "')]")
+      var qId = '0';
+      btnNewQ = $("//button[contains(text(),'" + studyTest.idQuestions[0].title + "')]")
       if(typeof btnNewQ.error != "undefined")
-        btnNewQ = $('//*[@id="ui-id-1"]');
+        btnNewQ = $('button=Create New Question');
       else 
-        qId = btnNewQ.$('..').getAttribute("id");
+        qId = btnNewQ.getAttribute("aria-controls").replace("accordion-","");      
       expect(btnNewQ).toBeExisting();
       btnNewQ.click();
       browser.pause(1000);
-      $('//*[@id="new"]').$('input[value="Create"]').waitForExist(egoOpts.waitTime);
+      $('//*[@id="form-0"]').$('button=Create').waitForExist(egoOpts.waitTime);
       $("//*[@id='" + qId + "_title']").setValue(studyTest.idQuestions[0].title);
-      AuthoringPage.updateNoteField("#prompt" + qId, studyTest.idQuestions[0].prompt);
-      if(qId == '99999999999')
-        $('//*[@id="new"]').$('input[value="Create"]').click();
+      AuthoringPage.updateNoteField("#" + qId + "_prompt", studyTest.idQuestions[0].prompt);
+      if(qId == '0')
+        $('//*[@id="form-0"]').$('button=Create').click();
       else
-        $('//*[@id="' + qId + '"]').$('input[value="Save"]').click();    });
+        $('//*[@id="form-' + qId + '"]').$('button=Save').click();    
+    });
     it('changes should be saved', function () {
       browser.url(browserUrl);
-      btnNewQ = $("//h3[contains(text(),'" + studyTest.idQuestions[0].title + "')]")
+      btnNewQ = $("//button[contains(text(),'" + studyTest.idQuestions[0].title + "')]")
       expect(btnNewQ).toBeExisting();
     });;
   })

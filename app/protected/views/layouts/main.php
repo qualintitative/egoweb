@@ -35,12 +35,12 @@ AppAsset::register($this);
                     <?php echo $this->title; ?>
                 </button>
                 <button class="navbar-toggler nav-right ml-auto" type="button" data-toggle="collapse"
-                    data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false"
+                    data-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false"
                     aria-label="Toggle navigation" onclick='$("#mainNav").toggle()'>
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <a class="ml-3 navbar-brand d-none d-md-block"><?php echo $this->title; ?></a>
+                <a id="pageTitle" class="ml-3 navbar-brand d-none d-md-block"><?php echo $this->title; ?></a>
            
                 <?php if (!Yii::$app->user->isGuest): ?>
 
@@ -65,7 +65,7 @@ AppAsset::register($this);
 
                 <?php if (!Yii::$app->user->isGuest): ?>
 
-                <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+                <div class="collapse navbar-collapse" id="mainMenu">
 
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item dropdown">

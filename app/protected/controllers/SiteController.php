@@ -95,6 +95,10 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
+        $users = User::find()->all();
+        if (count($users) == 0)
+            return $this->response->redirect(Url::toRoute('/site/create'));
+
         $this->view->title = "EgoWeb 2.0";
         if (!Yii::$app->user->isGuest) {
             return $this->response->redirect(Url::toRoute('/admin'));

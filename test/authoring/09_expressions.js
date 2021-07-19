@@ -6,11 +6,10 @@ describe('Create Expressions', function () {
   before(function () {
     AuthoringPage.open();
     AuthoringPage.login(egoOpts.loginAdmin.username, egoOpts.loginAdmin.password);
-    AuthoringPage.open();
-    studyLink = $('//*[@id="content"]//a[text()="' + studyTest.settings.title + '"]')
+    studyLink = $('//div[@aria-label="' + studyTest.settings.title + '"]//a[text()="Authoring"]')
     studyUrl = studyLink.getAttribute("href");
     browser.url(studyUrl);
-    idQLink = $('//*[@id="content"]//a[text()="Expressions"]')
+    idQLink = $('//main//a[text()="Expressions"]')
     expect(idQLink).toBeExisting();
     browserUrl = idQLink.getAttribute("href");
     browser.url(browserUrl)
@@ -19,16 +18,23 @@ describe('Create Expressions', function () {
   describe('create', function () {
     var i = -1;
     for (index = 0; index < studyTest.expressions.length; index++) {
+
       it('expression ' + studyTest.expressions[index].name, function () {
+        browser.url(browserUrl + "#/0")
+
         i++;
         var expressionType = "Simple";
+
         if (studyTest.expressions[i].type != "Number" && studyTest.expressions[i].type != "Selection" && studyTest.expressions[i].type != "Text")
           expressionType = studyTest.expressions[i].type;
         AuthoringPage.expressionSelect.selectByVisibleText(expressionType);
-        AuthoringPage.expressionNew.click()
-        browser.pause(1000);
+        //AuthoringPage.expressionNew.click()
+        browser.pause(3000);
+        console.log(studyTest.expressions[i].question)
         if (expressionType == "Simple")
-          AuthoringPage.expressionQuestion.selectByVisibleText(studyTest.settings.title + ":" + studyTest.expressions[i].question);
+          AuthoringPage.expressionQuestion.selectByVisibleText(studyTest.expressions[i].question);
+
+       //   AuthoringPage.expressionQuestion.selectByVisibleText(studyTest.settings.title + ":" + studyTest.expressions[i].question);
         browser.pause(500);
         AuthoringPage.expressionName.scrollIntoView(false)
         AuthoringPage.expressionName.setValue(studyTest.expressions[i].name);
@@ -42,7 +48,7 @@ describe('Create Expressions', function () {
             var options = studyTest.expressions[i].value.split(",");
           if (options.length > 0) {
             for (let j = 0; j < options.length; j++) {
-              var optionInput = $('//*[@id="valueList"]//label[text()="' + options[j] + '"]/preceding-sibling::input');
+              var optionInput = $('//span[contains(text(),"' + options[j] + '")]');
               optionInput.click();
             }
           }
@@ -69,13 +75,13 @@ describe('Create Expressions', function () {
           }
           if (expressions.length > 0) {
             for (let j = 0; j < expressions.length; j++) {
-              let optionInput = $('//*[@id="expressionList"]//label[text()="' + expressions[j] + '"]/preceding-sibling::input');
+              let optionInput = $('span=' + expressions[j]);
               optionInput.click();
             }
           }
           if (questions.length > 0) {
             for (let j = 0; j < questions.length; j++) {
-              let optionInput = $('//*[@id="questionList"]//label[text()="' + questions[j] + '"]/preceding-sibling::input');
+              let optionInput = $('span=' + questions[j]);
               optionInput.click();
             }
           }
@@ -93,7 +99,7 @@ describe('Create Expressions', function () {
             expressions = [studyTest.expressions[i].value];
           }
           for (let j = 0; j < expressions.length; j++) {
-            let optionInput = $('//*[@id="expressionList"]//label[text()="' + expressions[j] + '"]/preceding-sibling::input');
+            let optionInput = $('//span[contains(text(),"' + expressions[j] + '")]');
             optionInput.click();
           }
         }
@@ -106,7 +112,7 @@ describe('Create Expressions', function () {
 
   describe('update', function () {
     it('go back to questions', function () {
-      idQLink = $('//*[@id="content"]//a[text()="Questions"]')
+      idQLink = $('//main//a[text()="Questions"]')
       expect(idQLink).toBeExisting();
       browserUrl = idQLink.getAttribute("href");
       browser.url(browserUrl)
@@ -116,22 +122,22 @@ describe('Create Expressions', function () {
       it('update expressions for ' + studyTest.questions[index].title, function () {
         i++;
         if (studyTest.questions[i].answerReasonExpressionId != "") {
-          btnNewQ = $("//h3[contains(text(),'" + studyTest.questions[i].title + "')]")
-          qId = btnNewQ.$('..').getAttribute("id");
+          btnNewQ = $("//button[contains(text(),'" + studyTest.questions[i].title + "')]")
+          qId = btnNewQ.getAttribute("aria-controls").replace("accordion-","");
           btnNewQ.click();
           browser.pause(500);
           $('//*[@id="' + qId + '_answerReasonExpressionId"]').waitForExist(egoOpts.waitTime);
           $('//*[@id="' + qId + '_answerReasonExpressionId"]').selectByVisibleText(studyTest.questions[i].answerReasonExpressionId);
-          $('//*[@id="' + qId + '"]').$('input[value="Save"]').click();
+          $('//*[@id="form-' + qId + '"]').$('button=Save').click();
           browser.pause(1000);
         }
         if (typeof studyTest.questions[i].params.networkRelationshipExprId != "undefined") {
-          btnNewQ = $("//h3[contains(text(),'" + studyTest.questions[i].title + "')]")
-          qId = btnNewQ.$('..').getAttribute("id");
+          btnNewQ = $("//button[contains(text(),'" + studyTest.questions[i].title + "')]")
+          qId = btnNewQ.getAttribute("aria-controls").replace("accordion-","");
           btnNewQ.click();
           browser.pause(500);
-          $('//*[@id="' + qId + '"]').$('//*[@id="Question_networkRelationshipExprId"]').selectByVisibleText(studyTest.questions[i].params.networkRelationshipExprId);
-          $('//*[@id="' + qId + '"]').$('input[value="Save"]').click();
+          $('//*[@id="form-' + qId + '"]').$('//*[@id="Question_networkRelationshipExprId"]').selectByVisibleText(studyTest.questions[i].params.networkRelationshipExprId);
+          $('//*[@id="form-' + qId + '"]').$('button=Save').click();
           browser.pause(1000);
         }
 

@@ -17,7 +17,7 @@ use app\models\Interview;
                     aria-controls="collapse-<?php echo $study->id; ?>">
                     <?php echo $study->name; ?>
                 </h3>
-                <div class="btn-group float-right" role="group" aria-label="Basic example">
+                <div class="btn-group float-right" role="group" aria-label="<?php echo $study->name; ?>">
                         <?php echo Html::a("Authoring", ["/authoring/" . $study->id], ["class"=>"btn btn-link btn-info text-light"]); ?>
                         <?php echo Html::a("Data Processing", ["/data/" . $study->id], ["class"=>"btn btn-link btn-secondary text-light"]); ?>
 
@@ -62,7 +62,7 @@ $interviews = Interview::findAll([
     <label><b>Create New Study</b></label>
   </div>
   <div class="form-group col-md-6 mb-2">
-    <input type="text" name="Study[name]" class="row form-control col-md-12 mb-2" placeholder="Study Name">
+    <input type="text" id="Study_name" name="Study[name]" class="row form-control col-md-12 mb-2" placeholder="Study Name">
   </div>
   <button type="submit" class="btn btn-primary mb-3">Create</button>
   <?= Html::endForm() ?>

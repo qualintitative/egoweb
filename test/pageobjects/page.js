@@ -9,16 +9,17 @@ module.exports = class Page {
     * @param path path of the sub page (e.g. /path/to/page.html)
     */
     get pageTitle () { return $('#pageTitle') }
-    get loggedIn () { return $('.fui-list') }
-    get inputUsername () { return $('#LoginForm_username') }
-    get inputPassword () { return $('#LoginForm_password') }
-    get btnLogin () { return $('input[type="submit"]') }
+    get loggedIn () { return $('#mainMenu') }
+    get inputUsername () { return $('#loginform-username') }
+    get inputPassword () { return $('#loginform-password') }
+    get btnLogin () { return $('button[type="submit"]') }
 
     login (username, password) {
         this.open()
         this.inputUsername.setValue(username);
         this.inputPassword.setValue(password);
         this.btnLogin.click(); 
+        browser.pause(2000);
     }
 
     open (path) {
@@ -30,6 +31,6 @@ module.exports = class Page {
 
     // update summernote fields
     updateNoteField (field, val) {
-        browser.execute("$('" + field + "').code('" + val.replace(/'/g, "\\'") + "')");
+        browser.execute("$('" + field + "').summernote('code', '" + val.replace(/'/g, "\\'") + "')");
     }
 }

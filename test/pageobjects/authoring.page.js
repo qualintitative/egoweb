@@ -8,20 +8,19 @@ class AuthoringPage extends Page {
      * define selectors using getter methods
      */
     get inputCreate () { return $('#Study_name') }
-    get btnCreate () { return $('input[type="submit"]') }
-    get btnSaveStudy () { return $('input[value="Save"]') }
-    get studyIntro () { return $('//*[@id="study-form"]/div[2]/div[1]/div/div[6]') }
+    get btnCreate () { return $('button[type="submit"]') }
+    get btnSaveStudy () { return $('//*[@id="saveStudy"]') }
+    get studyIntro () { return $('//main/div/form/div[2]/div[1]/div/div[3]/div[2]') }
     get studyEgoId () { return $('//*[@id="study-form"]/div[2]/div[2]/div/div[6]') }
-    get btnCreateQ () { return $('input[value="Create"]') }
+    get btnCreateQ () { return $('button=Create') }
     get expressionName () { return $('//*[@id="Expression_name"]') }
-    get expressionOperator () { return $('//*[@id="Expression_operator"]') }
+    get expressionOperator () { return $('//*[@name="Expression[operator]"]') }
     get expressionValue () { return $('//*[@id="Expression_value"]') }
-    get expressionQuestion () { return $('//*[@id="questionId"]') }
+    get expressionQuestion () { return $('//*[@id="Expression_questionId"]') }
     get expressionTimes () { return $('//*[@id="times"]') }
-    get expressionUnanswered () { return $('//*[@id="Expression_resultForUnanswered"]') }
-    get expressionSave () { return $('//*[@id="Expression"]/div/input') }
-    get expressionSelect () { return $('//select[@id="form"]') }
-    get expressionNew () { return $('//input[@value="New Expression"]') }
+    get expressionUnanswered () { return $('//*[@name="Expression[resultForUnanswered]"]') }
+    get expressionSave () { return $('button=Create') }
+    get expressionSelect () { return $('//select[@id="form-type"]') }
     get expressionId () { return $('//*[@id="expressionId"]') }
     get expressionCompare () { return $('//*[@id="compare"]') }
 
@@ -31,7 +30,7 @@ class AuthoringPage extends Page {
     }
 
     open () {
-        return super.open('authoring');
+        return super.open('/admin');
     }
 }
 
