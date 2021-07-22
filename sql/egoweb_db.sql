@@ -367,7 +367,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
   -- Table structure for table `user`
   --
 
-  CREATE TABLE `user` (
+  CREATE TABLE IF NOT EXISTS `user` (
   `id` int(11) NOT NULL,
   `email` text NOT NULL,
   `password` text NOT NULL,
