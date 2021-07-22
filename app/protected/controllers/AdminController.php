@@ -88,6 +88,7 @@ class AdminController extends Controller
                 $user->generatePasswordResetToken();
                 $user->name = $_POST['User']['name'];
                 $user->email = $_POST['User']['email'];
+                $user->permissions = $_POST['User']['permissions'];
                 $user->password = Yii::$app->security->generateRandomString();
                 if ($user->save()) {
                     Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
