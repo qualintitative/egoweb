@@ -401,7 +401,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
   --
   ALTER TABLE `alters`
     ADD PRIMARY KEY (`id`),
-    ADD KEY `interviewId` (`interviewId(32)`);
+    ADD KEY `interviewId` (`interviewId`(32));
 
   --
   -- Indexes for table `answer`
@@ -409,7 +409,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
   ALTER TABLE `answer`
     ADD PRIMARY KEY (`id`),
     ADD KEY `answerIndex` (`questionId`,`interviewId`,`alterId1`,`alterId2`),
-    ADD KEY `questionType` (`questionType`(1024)),
+    ADD KEY `questionType` (`questionType`(32)),
     ADD KEY `studyId` (`studyId`),
     ADD KEY `interviewId` (`interviewId`);
 
