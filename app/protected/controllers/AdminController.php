@@ -77,7 +77,11 @@ class AdminController extends Controller
         $users = [];
         $userExists = false;
         foreach($result as $user){
-            $users[] = $user->toArray();
+            $user->generatePasswordResetToken();
+            $userA = $user->toArray();
+            $user->save();
+            $userA['link'] = Yii::$app->urlManager->createAbsoluteUrl(['site/reset-password', 'token' => $user->password_reset_token]);
+            $users[] = $userA;
             if(isset($_POST['User']) && $_POST['User']['email'] == $user['email'])
                 $userExists = true;
         }

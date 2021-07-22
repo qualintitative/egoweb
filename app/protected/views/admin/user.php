@@ -19,9 +19,18 @@ use yii\helpers\Html;
         </b-form-select>
     </template>
 
-    <template #cell(details)="row">
+    <template #cell(info)="row">
         <b-link href="#" @click="deleteUser(row.item.id)"><i class="fas fa-times"></i></b-link>
+        <b-link @click="row.toggleDetails"><i class="fas fa-link"></i></b-link>
+
     </template>
+
+    <template #row-details="row">
+          <b-row class="mb-2">
+            <b-col><a :href='row.item.link' target="_blank">{{row.item.link}}</a></b-col>
+          </b-row>
+
+      </template>
 <template v-slot:custom-foot>
 
             <tr  >
@@ -70,7 +79,7 @@ new Vue({
                 label: "Name",
                 tdClass: 'col-md-6'
             }, 'email', 'permissions', {
-                key: "details",
+                key: "info",
                 label: ""
             }],
             users: users,
