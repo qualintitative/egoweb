@@ -1,6 +1,6 @@
 #!/bin/sh
-mkdir -p /protected/web/assets
-chmod 777 /protected/web/assets
+mkdir -p assets
+chmod 777 assets
 mkdir -p ${PWD}/protected/runtime
 chmod 777 ${PWD}/protected/runtime
 if [ ! -f ${PWD}/protected/config/main.php ]; then
