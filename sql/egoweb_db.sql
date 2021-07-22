@@ -401,7 +401,7 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
   --
   ALTER TABLE `alters`
     ADD PRIMARY KEY (`id`),
-    ADD KEY `interviewId` (`interviewId`);
+    ADD KEY `interviewId` (`interviewId(32)`);
 
   --
   -- Indexes for table `answer`
