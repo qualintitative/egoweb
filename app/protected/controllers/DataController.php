@@ -314,12 +314,6 @@ class DataController extends Controller
 
         $interviewIds = array();
         $interviewIds = explode(",",$_POST['interviewIds']);
-        /*
-        foreach ($_POST['export'] as $key=>$value) {
-            $interviewIds[] = $key;
-        }
-        */
-        // start generating export file
 
         $text = implode(',', $headers) . "\n";
         foreach ($interviewIds as $interviewId) {
@@ -330,6 +324,99 @@ class DataController extends Controller
             }
         }
         return $this->response->sendContentAsFile($text,'test.csv')->send();
+    }
+
+    public function actionExportegolevel()
+    {
+        if (!isset($_POST['studyId'])) {
+            die("no study selected");
+        }
+
+        $filePath = getcwd()."/assets/".$_POST['studyId'];
+        if (file_exists($filePath . "/" . $_POST['interviewId'] . "-ego-level-data.csv")) {
+            echo "success";
+        }
+
+        if (!is_dir($filePath)) {
+            mkdir($filePath, 0777, true);
+        }
+
+        $withAlters = false;
+        if (isset($_POST['withAlters'])) {
+            $withAlters = boolval($_POST['withAlters']);
+        }
+
+        $interview = Interview::findOne($_POST['interviewId']);
+        if ($interview) {
+            $file = fopen($filePath . "/" . $_POST['interviewId'] . "-ego-level-data.csv", "w") or die("Unable to open file!");
+            $interview->exportEgoLevel($file);
+            return $this->renderAjax("/layouts/ajax", ["json"=>"success"]);
+        }
+        return $this->renderAjax("/layouts/ajax", ["json"=>"fail"]);
+    }
+
+    public function actionExportegolevelall()
+    {
+        if (!isset($_POST['studyId']) || $_POST['studyId'] == "") {
+            die("nothing to export");
+        }
+
+        $study = Study::findOne($_POST['studyId']);
+        $optionsRaw = QuestionOption::findAll(["studyId"=>$study->id]);
+
+        // create an array with option ID as key
+        $options = array();
+        foreach ($optionsRaw as $option) {
+            $options[$option->id] = $option->value;
+        }
+
+        // fetch questions
+        $all_questions = Question::find()->where(["studyId"=>$_POST['studyId']])->orderBy(["ordering"=>"ASC"])->all();
+        $ego_id_questions = [];
+        $ego_questions = [];
+        $alter_questions = [];
+        $network_questions = [];
+        $name_gen_questions = [];
+        foreach($all_questions as $question){
+            if($question->subjectType == "EGO_ID")
+                $ego_id_questions[] = $question;
+            if($question->subjectType == "EGO")
+                $ego_questions[] = $question;
+            if($question->subjectType == "ALTER")
+                $alter_questions[] = $question;
+            if($question->subjectType == "NETWORK")
+                $network_questions[] = $question;
+            if($question->subjectType == "NAME_GENERATOR")
+                $name_gen_questions[] = $question;
+        }
+
+        $headers = array();
+        $headers[] = 'Interview ID';
+        $headers[] = "EgoID";
+        $headers[] = 'Start Time';
+        $headers[] = 'End Time';
+        foreach ($ego_id_questions as $question) {
+            $headers[] = $question->title;
+        }
+        foreach ($ego_questions as $question) {
+            $headers[] = $question->title;
+        }
+        foreach ($network_questions as $question) {
+            $headers[] = $question->title;
+        }
+
+        $interviewIds = array();
+        $interviewIds = explode(",",$_POST['interviewIds']);
+
+        $text = implode(',', $headers) . "\n";
+        foreach ($interviewIds as $interviewId) {
+            $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . "-ego-level-data.csv";
+            if (file_exists($filePath)) {
+                $text .= file_get_contents($filePath);
+                unlink($filePath);
+            }
+        }
+        return $this->response->sendContentAsFile($text, $study->name . '-alter-pair.csv.csv')->send();
     }
 
     public function actionExportalterpair()

@@ -70,8 +70,8 @@ class Interview extends \yii\db\ActiveRecord
 
     public function getEgoId()
     {   
-        $egoIdString = [];
-        $answers = Answer::findAll(array('questionType' => "EGO_ID", "interviewId" => $this->id));
+        $egoIdString = [];        
+        $answers = Answer::find()->where(array('questionType' => "EGO_ID", "interviewId" => $this->id))->andWhere(['!=', 'answerType', 'STORED_VALUE'])->andWhere(['!=', 'answerType', 'RANDOM_NUMBER'])->all();
         foreach($answers as $answer){
             $egoIdString[] = $answer->value;
         }
@@ -452,6 +452,540 @@ class Interview extends \yii\db\ActiveRecord
             fclose($file);
             die();
         }
+    }
+
+    public function exportEgoAlterDataJSON($file = null, $noAlters = false)
+    {
+        $all_questions = Question::find()->where(["studyId"=>$this->studyId])->orderBy(["ordering"=>"ASC"])->all();
+        $ego_id_questions = [];
+        $ego_questions = [];
+        $alter_questions = [];
+        $network_questions = [];
+        $name_gen_questions = [];
+        $previous_questions = [];
+        foreach($all_questions as $question){
+            if($question->subjectType == "EGO_ID")
+                $ego_id_questions[] = $question;
+            if($question->subjectType == "EGO")
+                $ego_questions[] = $question;
+            if($question->subjectType == "ALTER")
+                $alter_questions[] = $question;
+            if($question->subjectType == "NETWORK")
+                $network_questions[] = $question;
+            if($question->subjectType == "NAME_GENERATOR")
+                $name_gen_questions[] = $question;
+            if($question->subjectType == "PREVIOUS_ALTER")
+                $previous_questions[] = $question;
+        }
+
+        $alters = Alters::find()
+        ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id .", interviewId)"))
+        ->all();
+
+        if (!$alters || $noAlters === true)
+        {
+            $alters = array('0'=>array('id'=>null));
+        } else
+        {
+            if (isset($_POST['expressionId']) && $_POST['expressionId'])
+            {
+                $stats = new Statistics;
+                $stats->initComponents($this->id, $_POST['expressionId']);
+            }
+        }
+
+        $text = "";
+        $count = 1;
+
+        $matchIntId = "";
+        $matchUser = "";
+        $criteria = array(
+            'condition'=>"studyId = $this->studyId",
+        );
+        $matchAtAll = MatchedAlters::model()->find($criteria);
+        if($matchAtAll){
+    		$criteria = array(
+    			'condition'=>"interviewId1 = $this->id OR interviewId2 = $this->id",
+    		);
+    		$match = MatchedAlters::model()->find($criteria);
+    		if($match){
+                if($this->id == $match->interviewId1)
+                    $matchInt = Interview::model()->findByPk($match->interviewId2);
+                else
+                    $matchInt = Interview::model()->findByPk($match->interviewId1);
+                $matchIntId = $match->getMatchId();
+                $matchUser = User::getName($match->userId);
+            }
+        }
+        $all_answers = array();
+        foreach ($alters as $alter)
+        {
+            $answers = array();
+            $answers['Interview ID'] = $this->id;
+            $ego_ids = array();
+            $ego_id_string = array();
+            $study = Study::model()->findByPk($this->studyId);
+            $optionsRaw = QuestionOption::model()->findAllByAttributes(array("studyId"=>$study->id));
+
+            // create an array with option ID as key
+            $options = array();
+            $optionLabels = array();
+            foreach ($optionsRaw as $option)
+            {
+                $options[$option->id] = $option->value;
+                $optionLabels[$option->id] = $option->name;
+            }
+            foreach ($ego_id_questions as $question)
+            {
+                $result = Answer::model()->findByAttributes(array("interviewId" => $this->id, "questionId" => $question->id));
+                $answer = $result->value;
+
+                if ($question->answerType == "MULTIPLE_SELECTION")
+                {
+                    $optionIds = explode(',', $answer);
+                    foreach ($optionIds as $optionId)
+                    {
+                        if (isset($options[$optionId])){
+                            $ego_ids[$question->title] = $options[$optionId];
+                            if($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER")
+                                $ego_id_string[] = $optionLabels[$optionId];
+                        }else{
+                            $ego_ids[$question->title] = "MISSING_OPTION ($optionId)";
+                            if($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER")
+                                $ego_id_string[] = "MISSING_OPTION ($optionId)";
+                        }
+                    }
+                    if(!$optionIds){
+                        $ego_ids[$question->title] = "";
+                        if($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER")
+                            $ego_id_string[] = "";
+                    }
+                } else
+                {
+                    $ego_ids[$question->title] = str_replace(',', '', $answer);
+                    if($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER")
+                        $ego_id_string[] = str_replace(',', '', $answer);
+                }
+            }
+	        $answers["EgoID"] = implode("_", $ego_id_string);
+	        $answers['Start Time'] = date("Y-m-d h:i:s", $this->start_date);
+	        $answers['End Time'] = date("Y-m-d h:i:s", $this->complete_date);
+            foreach ($ego_ids as $title => $eid)
+            {
+                $answers[$title] = $eid;
+            }
+            foreach ($ego_questions as $question)
+            {
+				
+                $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question->id));
+                if(!$answer){
+                    $answers[$question->title] = $study->valueNotYetAnswered;
+                    continue;
+                }
+
+                if ($answer->value !== "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip)
+                {
+                    if ($question->answerType == "SELECTION")
+                    {
+                        if (isset($options[$answer->value]))
+                            $answers[$question->title] = $options[$answer->value];
+                        else
+                            $answers[$question->title] = "";
+                    } else if ($question->answerType == "MULTIPLE_SELECTION")
+                    {
+                        $optionIds = explode(',', $answer->value);
+                        $list = array();
+                        foreach ($optionIds as $optionId)
+                        {
+                            if (isset($options[$optionId]))
+                                $list[] = $options[$optionId];
+                        }
+                        $answers[$question->title] = implode('; ', $list);
+                    } else if ($question->answerType == "TIME_SPAN")
+                    {
+                        if(!strstr($answer->value, ";")){
+                            $times = array();
+                            if(preg_match("/(\d*)\sYEARS/i", $answer->value, $test))
+                                $times[] = $test[0];
+                            if(preg_match("/(\d*)\sMONTHS/i", $answer->value, $test))
+                                $times[] = $test[0];
+                            if(preg_match("/(\d*)\sWEEKS/i", $answer->value, $test))
+                                $times[] = $test[0];
+                            if(preg_match("/(\d*)\sDAYS/i", $answer->value, $test))
+                                $times[] = $test[0];
+                            if(preg_match("/(\d*)\sHOURS/i", $answer->value, $test))
+                                $times[] = $test[0];
+                            if(preg_match("/(\d*)\sMINUTES/i", $answer->value, $test))
+                                $times[] = $test[0];
+                            $answer->value = implode("; ", $times);
+                        }
+                        $answers[$question->title] = $answer->value;
+                    } else
+                    {
+                        $answers[$question->title] = $answer->value;
+                    }
+                } else if ($answer->skipReason == "DONT_KNOW"){
+                        $answers[$question->title] = $study->valueDontKnow;
+                } else if ($answer->skipReason == "REFUSE"){
+                        $answers[$question->title] = $study->valueRefusal;
+                } else if($answer->value == $study->valueLogicalSkip)
+                {
+                    $answers[$question->title] = $study->valueLogicalSkip;
+                } else {
+                    $answers[$question->title] = "";
+                }
+            }
+
+            foreach ($network_questions as $question)
+            {
+                $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question->id));
+                if(!$answer){
+                    $answers[$question->title] = $study->valueNotYetAnswered;
+                    continue;
+                }
+                if ($answer->value !== "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip)
+                {
+                    if ($question->answerType == "SELECTION")
+                    {
+                        if (isset($options[$answer]))
+                            $answers[$question->title] = $options[$answer];
+                        else
+                            $answers[$question->title] = "";
+                    } else if ($question->answerType == "MULTIPLE_SELECTION")
+                    {
+                        $optionIds = explode(',', $answer->value);
+                        $list = array();
+                        foreach ($optionIds as $optionId)
+                        {
+                            if (isset($options[$optionId]))
+                                $list[] = $options[$optionId];
+                        }
+                        $answers[$question->title] = implode('; ', $list);
+                    } else
+                    {
+                        $answers[$question->title] = $answer->value;
+                    }
+                } else if ($answer->skipReason == "DONT_KNOW")
+                {
+                    $answers[$question->title] = $study->valueDontKnow;
+                } else if ($answer->skipReason == "REFUSE")
+                {
+                    $answers[$question->title] = $study->valueRefusal;
+                }  else if($answer->value == $study->valueLogicalSkip)
+                {
+                    $answers[$question->title] = $study->valueLogicalSkip;
+                } else {
+                    $answers[$question->title] = "";
+                }
+            }
+
+            if (isset($stats))
+            {
+                $answers["Density"] = $stats->getDensity();
+                $answers["Max Degree Value"] = $stats->maxDegree();
+                $answers["Max Betweenness Value"] = $stats->maxBetweenness();
+                $answers["Max Eigenvector Value"] = $stats->maxEigenvector();
+                $answers["Degree Centralization"] = $stats->degreeCentralization();
+                $answers["Betweenness Centralization"] = $stats->betweennessCentralization();
+                $answers["Components"] = count($stats->components);
+                $answers["Dyads"] = count($stats->dyads);
+                $answers["Isolates"] = count($stats->isolates);
+            }
+
+            if (isset($alter->id))
+            {
+                if($matchAtAll){
+                    $matchId = "";
+                    $matchName = "";
+            		$criteria = array(
+            			'condition'=>"alterId1 = $alter->id OR alterId2 = $alter->id",
+            		);
+            		$match = MatchedAlters::model()->find($criteria);
+                    if($match){
+                        $matchId = $match->id;
+                        $matchName = $match->matchedName;
+                    }
+					
+					
+                    $answers["Dyad Match ID"] = $matchIntId;
+                    $answers["Match User"] = $matchUser;
+                    $answers["Alter Number"] = $count;
+                    $answers["Alter Name"] = $alter->name;
+                    $answers["Matched Alter Name"] = $matchName;
+                    $answers["Alter Pair ID"] = $matchId;
+                }else{
+                    $answers["Alter Number"] = $count;
+                    $answers["Alter Name"] = $alter->name;
+                }
+                foreach ($name_gen_questions as $question)
+                {
+                    if(count($name_gen_questions) == 1){
+                        $answers[$question->title]  = 1;
+                        continue;
+                    }
+                    $nameGenQIds = explode(",",$alter->nameGenQIds);
+                    if(in_array($question->id, $nameGenQIds)){
+                        $answers[$question->title]  = 1;
+                    }else{
+                        $answers[$question->title]  = 0;
+                    }
+                }
+                foreach ($alter_questions as $question)
+                {
+                    $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question->id, "alterId1"=>$alter->id));
+                    if(!$answer){
+                        $answers[$question->title] = $study->valueNotYetAnswered;
+                        continue;
+                    }
+                    if ($answer->value != "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip)
+                    {
+                        if ($question->answerType == "SELECTION")
+                        {
+                            $answers[$question->title] = $options[$answer->value];
+                        } else if ($question->answerType == "MULTIPLE_SELECTION")
+                        {
+                            $optionIds = explode(',', $answer->value);
+                            $list = array();
+                            foreach ($optionIds as $optionId)
+                            {
+                                if (isset($options[$optionId]))
+                                    $list[] = $options[$optionId];
+                            }
+                            if (count($list) == 0)
+                                $answers[$question->title] = $study->valueNotYetAnswered;
+                            else
+                                $answers[$question->title] = implode('; ', $list);
+                        } else
+                        {
+                            $answers[$question->title] = $answer->value;
+                        }
+                    } else if ($answer->skipReason == "DONT_KNOW"){
+                            $answers[$question->title] = $study->valueDontKnow;
+                    } else if ($answer->skipReason == "REFUSE"){
+                            $answers[$question->title] = $study->valueRefusal;
+                    } else if($answer->value == $study->valueLogicalSkip)
+                    {
+                        $answers[$question->title] = $study->valueLogicalSkip;
+                    } else {
+                        $answers[$question->title] = "";
+                    }
+                }
+            }else{
+				
+                $answers['Alter Number'] = 0;
+                $answers['Alter Name'] = "";
+				
+                foreach ($alter_questions as $question)
+                {
+                    $answers[$question->title] = $study->valueNotYetAnswered;
+                }
+            }
+
+            if (isset($stats))
+            {
+                $answers["Degree"] = $stats->getDegree($alter->id);
+                $answers["Betweenness"] = $stats->getBetweenness($alter->id);
+                $answers["Eigenvector"] = $stats->eigenvectorCentrality($alter->id);
+            }
+            if ($file === null) {
+            	$all_answers[] = $answers;
+            }else{
+            	fputcsv($file, $answers);
+            }
+            //$text .= implode(',', $answers) . "\n";
+            $count++;
+        }
+
+	    if ($file === null){
+			return $all_answers;
+	    }else{
+	    	die();
+		    fclose($file);
+	    }
+	    //return $text;
+    }
+
+    public function exportEgoLevel($file)
+    {
+        $all_questions = Question::find()->where(["studyId"=>$this->studyId])->orderBy(["ordering"=>"ASC"])->all();
+        $ego_id_questions = [];
+        $ego_questions = [];
+        $alter_questions = [];
+        $network_questions = [];
+        $name_gen_questions = [];
+        $previous_questions = [];
+        foreach($all_questions as $question){
+            if($question->subjectType == "EGO_ID")
+                $ego_id_questions[] = $question;
+            if($question->subjectType == "EGO")
+                $ego_questions[] = $question;
+            if($question->subjectType == "ALTER")
+                $alter_questions[] = $question;
+            if($question->subjectType == "NETWORK")
+                $network_questions[] = $question;
+            if($question->subjectType == "NAME_GENERATOR")
+                $name_gen_questions[] = $question;
+            if($question->subjectType == "PREVIOUS_ALTER")
+                $previous_questions[] = $question;
+        }
+
+        $text = "";
+        $count = 1;
+
+        $matchIntId = "";
+        $matchUser = "";
+        $criteria = array(
+            'condition' => "studyId = $this->studyId",
+        );
+
+        $answers = array();
+        $answers[] = $this->id;
+
+        $study = Study::findOne($this->studyId);
+        $optionsRaw = QuestionOption::findAll(array("studyId" => $study->id));
+
+        // create an array with option ID as key
+        $options = array();
+        $optionLabels = array();
+        foreach ($optionsRaw as $option) {
+            $options[$option->id] = $option->value;
+            $optionLabels[$option->id] = $option->name;
+        }
+
+        $alters = Alters::find()
+        ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id .", interviewId)"))
+        ->all();
+
+        foreach ($ego_id_questions as $question)
+        {
+            $result = Answer::findOne(array("interviewId" => $this->id, "questionId" => $question->id));
+            $answer = $result->value;
+
+            if ($question->answerType == "MULTIPLE_SELECTION")
+            {
+                $optionIds = explode(',', $answer);
+                foreach ($optionIds as $optionId)
+                {
+                    if (isset($options[$optionId])){
+                        $ego_ids[$question->title] = $options[$optionId];
+                        if($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER")
+                            $ego_id_string[] = $optionLabels[$optionId];
+                    }else{
+                        $ego_ids[$question->title] = "MISSING_OPTION ($optionId)";
+                        if($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER")
+                            $ego_id_string[] = "MISSING_OPTION ($optionId)";
+                    }
+                }
+                if(!$optionIds){
+                    $ego_ids[$question->title] = "";
+                    if($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER")
+                        $ego_id_string[] = "";
+                }
+            } else
+            {
+                $ego_ids[$question->title] = str_replace(',', '', $answer);
+                if($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER")
+                    $ego_id_string[] = str_replace(',', '', $answer);
+            }
+        }
+        $answers[] = implode("_", $ego_id_string);
+        $answers[] = date("Y-m-d h:i:s", $this->start_date);
+        $answers[] = date("Y-m-d h:i:s", $this->complete_date);
+
+        foreach ($ego_ids as $eid) {
+            $answers[] = $eid;
+        }
+        foreach ($ego_questions as $question) {
+            $answer = Answer::findOne(array("interviewId" => $this->id, "questionId" => $question->id));
+            if (!$answer) {
+                $answers[] = $study->valueNotYetAnswered;
+                continue;
+            }
+
+            if ($answer->value !== "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip) {
+                if ($question->answerType == "SELECTION") {
+                    if (isset($options[$answer->value]))
+                        $answers[] = $options[$answer->value];
+                    else
+                        $answers[] = "";
+                } else if ($question->answerType == "MULTIPLE_SELECTION") {
+                    $optionIds = explode(',', $answer->value);
+                    $list = array();
+                    foreach ($optionIds as $optionId) {
+                        if (isset($options[$optionId]))
+                            $list[] = $options[$optionId];
+                    }
+                    $answers[] = implode('; ', $list);
+                } else if ($question->answerType == "TIME_SPAN") {
+                    if (!strstr($answer->value, ";")) {
+                        $times = array();
+                        if (preg_match("/(\d*)\sYEARS/i", $answer->value, $test))
+                            $times[] = $test[0];
+                        if (preg_match("/(\d*)\sMONTHS/i", $answer->value, $test))
+                            $times[] = $test[0];
+                        if (preg_match("/(\d*)\sWEEKS/i", $answer->value, $test))
+                            $times[] = $test[0];
+                        if (preg_match("/(\d*)\sDAYS/i", $answer->value, $test))
+                            $times[] = $test[0];
+                        if (preg_match("/(\d*)\sHOURS/i", $answer->value, $test))
+                            $times[] = $test[0];
+                        if (preg_match("/(\d*)\sMINUTES/i", $answer->value, $test))
+                            $times[] = $test[0];
+                        $answer->value = implode("; ", $times);
+                    }
+                    $answers[] = $answer->value;
+                } else {
+                    $answer->value = str_replace('amp;', "", $answer->value);
+                    $answers[] = htmlspecialchars_decode($answer->value);
+                }
+            } else if ($answer->skipReason == "DONT_KNOW") {
+                $answers[] = $study->valueDontKnow;
+            } else if ($answer->skipReason == "REFUSE") {
+                $answers[] = $study->valueRefusal;
+            } else if ($answer->value == $study->valueLogicalSkip) {
+                $answers[] = $study->valueLogicalSkip;
+            } else {
+                $answers[] = "";
+            }
+        }
+
+        foreach ($network_questions as $question) {
+            $answer = Answer::findOne(array("interviewId" => $this->id, "questionId" => $question->id));
+            if (!$answer) {
+                $answers[] = $study->valueNotYetAnswered;
+                continue;
+            }
+            if ($answer->value !== "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip) {
+                if ($question->answerType == "SELECTION") {
+                    if (isset($options[$answer]))
+                        $answers[] = $options[$answer];
+                    else
+                        $answers[] = "";
+                } else if ($question->answerType == "MULTIPLE_SELECTION") {
+                    $optionIds = explode(',', $answer->value);
+                    $list = array();
+                    foreach ($optionIds as $optionId) {
+                        if (isset($options[$optionId]))
+                            $list[] = $options[$optionId];
+                    }
+                    $answers[] = implode('; ', $list);
+                } else {
+                    $answer->value = str_replace('amp;', "", $answer->value);
+                    $answers[] = htmlspecialchars_decode($answer->value);
+                }
+            } else if ($answer->skipReason == "DONT_KNOW") {
+                $answers[] = $study->valueDontKnow;
+            } else if ($answer->skipReason == "REFUSE") {
+                $answers[] = $study->valueRefusal;
+            } else if ($answer->value == $study->valueLogicalSkip) {
+                $answers[] = $study->valueLogicalSkip;
+            } else {
+                $answers[] = "";
+            }
+        }
+        //print_r($answers);
+        fputcsv($file, $answers);
+        fclose($file);
     }
 
     public function exportAlterPairData($file, $study, $withAlters = false)

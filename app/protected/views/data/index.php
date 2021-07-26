@@ -5,7 +5,7 @@ use yii\helpers\Url;
 
 ?>
 <script>
-function exportEgoStudy() {
+function exportEgoLevel() {
     var total = $("input[type='checkbox'][name*='export']:checked").length;
     var finished = 0;
     var batchSize = 1;
@@ -21,7 +21,7 @@ function exportEgoStudy() {
         start = d.getTime();
         return $.ajax({
             type: "POST",
-            url: rootUrl + "/data/exportegostudy",
+            url: rootUrl + "/data/exportegolevel",
             data: {
                 studyId: $("#studyId").val(),
                 interviewId: interviewId,
@@ -41,7 +41,7 @@ function exportEgoStudy() {
     }
     batchPromiseRecursive().then(function() {
         $("#status").html("Done!");
-        $('#analysis').attr('action', rootUrl + '/data/exportegostudyall');
+        $('#analysis').attr('action', rootUrl + '/data/exportegolevelall');
         let interviewIds = [];
         $("input[type='checkbox'][name*='export']:checked").each(function() {
             interviewIds.push($(this).attr("id").match(/\d+/g)[0]);
@@ -244,7 +244,7 @@ function deleteInterviews() {
                 aria-valuemin="0" aria-valuemax="100">
             </div>
         </div>
-
+        <button onclick='exportEgoLevel()' class='authorButton'>Export Ego Level Data</button>
         <button onclick='exportEgo()' class='authorButton'>Export Ego Alter Data</button>
         <button onclick='exportAlterPair()' class='authorButton'>Export Alter Pair Data</button>
         <button onclick='exportOther()' class='authorButton'>Export Other Specify Data</button>
