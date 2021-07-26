@@ -124,7 +124,7 @@ class Interview extends \yii\db\ActiveRecord
             $interviewIds = Interview::multiInterviewIds($this->id, $study);
             $prevIds = array();
             if(is_array($interviewIds))
-                $prevIds = array_diff($interviewIds, array($interviewId));
+                $prevIds = array_diff($interviewIds, array($this->id));
             foreach($prevIds as $i_id){
                 $results = Alters::find()
                 ->where(new \yii\db\Expression("FIND_IN_SET(" . $i_id .", interviewId)"))
@@ -177,7 +177,10 @@ class Interview extends \yii\db\ActiveRecord
 
                 #OK FOR SQL INJECTION
                 $result = Answer::findOne(array("interviewId" => $this->id, "questionId" => $question->id));
-                $answer = $result->value;
+                if(!$result)
+                    $answer = $study->valueNotYetAnswered;
+                else
+                    $answer = $result->value;
 
                 if ($question->answerType == "MULTIPLE_SELECTION") {
                     $optionIds = explode(',', $answer);
@@ -859,7 +862,10 @@ class Interview extends \yii\db\ActiveRecord
         foreach ($ego_id_questions as $question)
         {
             $result = Answer::findOne(array("interviewId" => $this->id, "questionId" => $question->id));
-            $answer = $result->value;
+            if(!$result)
+                $answer = $study->valueNotYetAnswered;
+            else
+                $answer = $result->value;
 
             if ($question->answerType == "MULTIPLE_SELECTION")
             {
@@ -1105,6 +1111,8 @@ class Interview extends \yii\db\ActiveRecord
                 foreach ($alters as $alter) {
                     $answerArray = array();
                     $otherSpecifies = array();
+                    if(!isset($answers[$question->id . "-" . $alter->id]))
+                        continue;
                     $response = $answers[$question->id . "-" . $alter->id]->otherSpecifyText;
                     if (!$response) {
                         continue;

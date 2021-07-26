@@ -323,7 +323,7 @@ class DataController extends Controller
                 unlink($filePath);
             }
         }
-        return $this->response->sendContentAsFile($text,'test.csv')->send();
+        return $this->response->sendContentAsFile($text, $study->name . '-ego-alter.csv')->send();
     }
 
     public function actionExportegolevel()
@@ -333,7 +333,7 @@ class DataController extends Controller
         }
 
         $filePath = getcwd()."/assets/".$_POST['studyId'];
-        if (file_exists($filePath . "/" . $_POST['interviewId'] . "-ego-level-data.csv")) {
+        if (file_exists($filePath . "/" . $_POST['interviewId'] . "-ego-level.csv")) {
             echo "success";
         }
 
@@ -348,7 +348,7 @@ class DataController extends Controller
 
         $interview = Interview::findOne($_POST['interviewId']);
         if ($interview) {
-            $file = fopen($filePath . "/" . $_POST['interviewId'] . "-ego-level-data.csv", "w") or die("Unable to open file!");
+            $file = fopen($filePath . "/" . $_POST['interviewId'] . "-ego-level.csv", "w") or die("Unable to open file!");
             $interview->exportEgoLevel($file);
             return $this->renderAjax("/layouts/ajax", ["json"=>"success"]);
         }
@@ -410,13 +410,13 @@ class DataController extends Controller
 
         $text = implode(',', $headers) . "\n";
         foreach ($interviewIds as $interviewId) {
-            $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . "-ego-level-data.csv";
+            $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . "-ego-level.csv";
             if (file_exists($filePath)) {
                 $text .= file_get_contents($filePath);
                 unlink($filePath);
             }
         }
-        return $this->response->sendContentAsFile($text, $study->name . '-alter-pair.csv.csv')->send();
+        return $this->response->sendContentAsFile($text, $study->name . '-ego-level.csv')->send();
     }
 
     public function actionExportalterpair()
@@ -493,7 +493,7 @@ class DataController extends Controller
                 unlink($filePath);
             }
         }
-        return $this->response->sendContentAsFile($text, $study->name . '-alter-pair.csv.csv')->send();
+        return $this->response->sendContentAsFile($text, $study->name . '-alter-pair.csv')->send();
     }
 
     public function actionExportother()

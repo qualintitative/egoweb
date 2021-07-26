@@ -232,7 +232,7 @@ function deleteInterviews() {
                 <input type="checkbox" id="withAlters1"> Include Alter Names
       
                 Network Statistics
-                <?php echo Html::dropDownList('adjacencyExpressionId', '', $expressions, ['empty' => '(none)',
+                <?php echo Html::dropDownList('expressionId', '', $expressions, ['prompt' => '(none)',
                 'onchange' => '$("#expressionId").val($(this).val())']);
                 ?>
             </div>
