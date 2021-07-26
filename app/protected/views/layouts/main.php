@@ -29,7 +29,11 @@ AppAsset::register($this);
     <?php $this->beginBody() ?>
 
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+                <?php if (Yii::$app->user->isGuest): ?>
                 <img src="/favicon.ico" width="32" height="32" alt="">
+                <?php else: ?>
+                <a href="/admin"><img src="/favicon.ico" width="32" height="32" alt=""></a>
+                <?php endif; ?>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01"
                     aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
                     <?php echo $this->title; ?>
@@ -79,8 +83,7 @@ AppAsset::register($this);
                                         Interview</a>
                                     <ul class="dropdown-menu bg-dark">
                                         <?php foreach(Yii::$app->user->identity->studies as $study):?>
-                                        <li><?php echo Html::a(substr($study->name,0,24), ["/interview/" . $study->id . "#/page/0"], ['class'=>'dropdown-item']); ?>
-                                        </li>
+                                        <li><?php echo Html::a(substr($study->name,0,24), ["/interview/" . $study->id . "#/page/0"], ['class'=>'dropdown-item']); ?></li>
                                         <?php endforeach; ?>
                                     </ul>
                                 <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle"
