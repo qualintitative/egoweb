@@ -69,9 +69,10 @@ class ImportExportController extends Controller
 
     public function actionImportstudy()
     {
+        $message = "ERROR";
         switch ($_FILES['files']['error'][0]) {
             case UPLOAD_ERR_OK:
-                $message = false;;
+                $message = false;
                 break;
             case UPLOAD_ERR_INI_SIZE:
                 $message .= ' - file(s) too large.  upload size defined in php.ini exceeded';

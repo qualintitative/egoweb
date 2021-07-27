@@ -107,7 +107,7 @@ class Interview extends \yii\db\ActiveRecord
         ->all();
 
         if (!$alters) {
-            $alters = array('0' => array('id' => null));
+            $alters = array('0' => new Alters);
         } else {
             if (isset($_POST['expressionId']) && $_POST['expressionId']) {
                 $stats = new Statistics;
@@ -319,7 +319,8 @@ class Interview extends \yii\db\ActiveRecord
                 $aStudies = array();
                 foreach($aInts as $aInt){
                     $int = Interview::findOne($aInt);
-                    $aStudies[] = $int->studyId;
+                    if($int)
+                        $aStudies[] = $int->studyId;
                 }
                 foreach($multiQs as $q){
                     $answers[] = intval(in_array($q->studyId, $aStudies));
@@ -1133,7 +1134,10 @@ class Interview extends \yii\db\ActiveRecord
                                 $answerArray[$other_options[$optionId]->name] = $otherSpecifies[$optionId];
                             }
                         } else {
-                            $answerArray[$other_options[$optionId]->name] = "";
+                            if(isset($other_options[$optionId]))
+                                $answerArray[$other_options[$optionId]->name] = "";
+                            else
+                                $other_options["OTHER SPECIFY"]  = "ERROR:$question->id:$optionId"; 
                         }
                     }
 
