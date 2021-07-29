@@ -80,45 +80,45 @@ use yii\helpers\Html;
             <b-form-select v-model="study.multiSessionEgoId" :options="options" name="Study[multiSessionEgoId]" id="Study_multiSessionEgoId"></b-form-select>
             </div>
         </div>
-    <div class="form-group mt-4">
-        <b-form-checkbox
-        id="Study_hideEgoIdPage"
-        v-model="study.hideEgoIdPage"
-        name="Study[hideEgoIdPage]"
-        value="1"
-        unchecked-value="0"
-        >
-        Hide Ego Id Page (for studies will Ego Id prefills)
-        </b-form-checkbox>
+        <div class="form-group mt-4">
+            <b-form-checkbox
+            id="Study_hideEgoIdPage"
+            v-model="study.hideEgoIdPage"
+            name="Study[hideEgoIdPage]"
+            value="1"
+            unchecked-value="0"
+            >
+            Hide Ego Id Page (for studies will Ego Id prefills)
+            </b-form-checkbox>
 
-        <b-form-checkbox
-        id="Study_fillAlterList"
-        v-model="study.fillAlterList"
-        name="Study[fillAlterList]"
-        value="1"
-        unchecked-value="0"
-        >
-        Populate alter list from participant list 
-        </b-form-checkbox>
-        <b-form-checkbox
-        id="Study_restrictAlters"
-        v-model="study.restrictAlters"
-        name="Study[restrictAlters]"
-        value="1"
-        unchecked-value="0"
-        >
-        Restrict alters to participant list
-        </b-form-checkbox>
-        <b-form-checkbox
-        id="Study_useAsAlters"
-        v-model="study.useAsAlters"
-        name="Study[useAsAlters]"
-        value="1"
-        unchecked-value="0"
-        >
-        Populate alter list from participant list
-        </b-form-checkbox>
-</div>
+            <b-form-checkbox
+            id="Study_fillAlterList"
+            v-model="study.fillAlterList"
+            name="Study[fillAlterList]"
+            value="1"
+            unchecked-value="0"
+            >
+            Populate alter list from participant list 
+            </b-form-checkbox>
+            <b-form-checkbox
+            id="Study_restrictAlters"
+            v-model="study.restrictAlters"
+            name="Study[restrictAlters]"
+            value="1"
+            unchecked-value="0"
+            >
+            Restrict alters to participant list
+            </b-form-checkbox>
+            <b-form-checkbox
+            id="Study_useAsAlters"
+            v-model="study.useAsAlters"
+            name="Study[useAsAlters]"
+            value="1"
+            unchecked-value="0"
+            >
+            Fill auto-complete with participant list
+            </b-form-checkbox>
+        </div>
         <div class="btn-group col mt-3 row">
                 <button id="saveStudy" class="btn btn-success">Save</button>
                 <b-button class="btn btn-warning" @click="replicateStudy">Replicate</b-button>
