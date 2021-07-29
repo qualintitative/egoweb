@@ -169,7 +169,12 @@ class SiteController extends Controller
      */
     public function actionCreate()
     {
+        $users = User::find()->all();
+        if (count($users) != 0)
+            return $this->goBack();
+
         $model = new SignupForm();
+
         if (Yii::$app->request->isPost) {
 
             if ($model->load(Yii::$app->request->post())) {               
