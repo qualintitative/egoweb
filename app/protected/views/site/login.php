@@ -5,7 +5,9 @@
 /* @var $model \app\models\LoginForm */
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\bootstrap4\ActiveForm;
+use yii\captcha\Captcha;
 
 $this->params['breadcrumbs'][] = $this->title;
 ?>
@@ -17,11 +19,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row">
         <div class="col-lg-5">
             <?php $form = ActiveForm::begin(['id' => 'login-form']); ?>
-
                 <?= $form->field($model, 'username')->textInput(['autofocus' => true]) ?>
 
                 <?= $form->field($model, 'password')->passwordInput() ?>
-
+                <?php if($failedCount > 3): ?>
+                <?= $form->field($model, 'captcha')->widget(Captcha::className()) ?>
+                <?php endif; ?>
                 <?= $form->field($model, 'rememberMe')->checkbox() ?>
 
                 <div style="color:#999;margin:1em 0">
@@ -33,6 +36,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
 
             <?php ActiveForm::end(); ?>
+            <span class="text-white"><?php echo $failedCount; ?></span>
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    $(function () {
+      //Processing click refresh verification code
+      $("#loginform-captcha-image").on("click", function () {
+        $.get("<?php echo Url::toRoute('site/captcha') ?>?refresh", function (data) {
+          $("#loginform-captcha-image").attr("src", data["url"]);
+        }, "json");
+      });
+    });
+  </script>

@@ -13,6 +13,7 @@ class LoginForm extends Model
     public $username;
     public $password;
     public $rememberMe = true;
+    public $captcha;
 
     private $_user;
 
@@ -27,6 +28,7 @@ class LoginForm extends Model
             [['username', 'password'], 'required'],
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
+            ['captcha', 'string'],
             // password is validated by validatePassword()
             ['password', 'validatePassword'],
         ];
@@ -56,8 +58,16 @@ class LoginForm extends Model
      */
     public function login()
     {
-        if ($this->validate()) {
-            return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
+        $failedCount = Yii::$app->session->get('loginFailed') ?  Yii::$app->session->get('loginFailed') : 0;
+        if($failedCount > 3 && $this->captcha == ""){
+            Yii::$app->session->setFlash('error', 'More than 3 failed login attempts');
+        }else{
+            if ($this->validate()) {
+                return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
+            } else {
+                $failedCount++;
+                Yii::$app->session->set('loginFailed', $failedCount);
+            }
         }
         
         return false;

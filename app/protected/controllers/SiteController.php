@@ -33,9 +33,14 @@ class SiteController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'login', 'create', 'request-password-reset', 'reset-password'],
+                        'actions' => ['index', 'login', 'create', 'request-password-reset', 'reset-password', 'captcha'],
                         'allow' => true,
                         'roles' => ['?'],
+                    ],
+                    [
+                        'actions' => ['create'],
+                        'allow' => false,
+                        'roles' => ['@'],
                     ],
                     [
                         'allow' => true,
@@ -64,7 +69,24 @@ class SiteController extends Controller
             ],
             'captcha' => [
                 'class' => 'yii\captcha\CaptchaAction',
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+                'fixedVerifyCode' => null,
+                //Background color
+                'backColor' => 0xFFFFFF,
+                //Maximum number of displays
+                'maxLength' => 4,
+                //Minimum number of displays
+                'minLength' => 4,
+                //Spacing
+                'padding' => 2,
+                //Height
+                'height' => 30,
+                //Width
+                'width' => 85,
+                //Font color
+                'foreColor' => 0x000000,
+                //Set character offset
+                'offset' => 4,
+                //'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
     }
@@ -100,6 +122,8 @@ class SiteController extends Controller
             return $this->response->redirect(Url::toRoute('/site/create'));
 
         $this->view->title = "EgoWeb 2.0";
+        $failedCount = Yii::$app->session->get('loginFailed') ?  Yii::$app->session->get('loginFailed') : 0;    
+
         if (!Yii::$app->user->isGuest) {
             return $this->response->redirect(Url::toRoute('/admin'));
         }
@@ -107,12 +131,21 @@ class SiteController extends Controller
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             // return $this->goBack();
-            return $this->response->redirect(Url::toRoute('/admin'));
+            if ($failedCount < 3 || $this->createAction('captcha')->validate($model->captcha, false)) {
+                Yii::$app->session->set('loginFailed', null);
+                return $this->response->redirect(Url::toRoute('/admin'));
+            }else{
+                $model->password = '';
+                return $this->render('login', [
+                    'failedCount' => $failedCount,
+                    'model' => $model,
+                ]);
+            }
 
         } else {
             $model->password = '';
-
             return $this->render('login', [
+                'failedCount' => $failedCount,
                 'model' => $model,
             ]);
         }
@@ -126,7 +159,6 @@ class SiteController extends Controller
     public function actionLogout()
     {
         Yii::$app->user->logout();
-
         return $this->redirect(Yii::$app->request->referrer);
     }
 
