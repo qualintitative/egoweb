@@ -680,7 +680,7 @@ class AuthoringController extends Controller
 					//AlterList::sortOrder($ordering, $studyId);
 				}
 			}else{
-				$this->deleteAllAlters($id);
+				$this->deleteAll($id);
 			}
             return $this->redirect(Yii::$app->request->referrer);
         }elseif (isset($_POST['AlterPrompt']) && isset($_POST['AlterPrompt']['id'])) {
@@ -764,13 +764,14 @@ class AuthoringController extends Controller
         }
 	}
 
-    protected function deleteAllAlters($id){
+    protected function deleteAll($id){
 		$models = AlterList::findAll(array('studyId'=>$id));
 		foreach($models as $model){
 			$model->delete();
 		}
         $study = Study::findOne($id);
         $study->save();
+        return $this->redirect(Yii::$app->request->referrer);
 	}
 
 }

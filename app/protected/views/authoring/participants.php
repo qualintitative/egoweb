@@ -105,10 +105,13 @@ use yii\helpers\Html;
                             <button class="btn btn-primary btn-sm float-right">Upload</button>
                             <?= Html::endForm() ?>
                         </td>
-                        <td colspan=2>
+                        <td>
                             <?= Html::beginForm(['/authoring/exportalterlist/'.$study['id']], 'post', [ 'id'=>'exportAlterList', 'enctype' => 'multipart/form-data']) ?>
                             <button class="btn btn-info btn-sm float-right">export particpants</button>
                             <?= Html::endForm() ?>
+                        </td>
+                        <td>
+                            <b-button class="btn btn-info btn-sm float-right btn-danger" @click="deleteAllAlterList">Delete All</b-button>
                         </td>
                     </tr>
                 </template>
@@ -166,6 +169,12 @@ new Vue({
         deleteAlterList(id) {
             $("#deleteAlterListId").val(id);
             $("#deleteAlterList").submit();
+        },
+        deleteAllAlterList(id) {
+            if(confirm("Delete the entire list of participants?")){
+                $("#deleteAlterListId").val("all");
+                $("#deleteAlterList").submit();
+            }
         },
         setAttribute(item, type) {
             return {
