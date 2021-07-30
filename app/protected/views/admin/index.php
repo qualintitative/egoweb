@@ -28,26 +28,29 @@ use app\models\Interview;
         <div id="collapse-<?php echo $study->id; ?>" class="collapse"
             aria-labelledby="heading-<?php echo $study->id; ?>" data-parent="#accordion">
             <div class="card-body">
-                <div class="btn-toolbar justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+                <div class="row">
+                <div class="col-sm-3" role="toolbar" aria-label="Toolbar with button groups">
 
                     <?php echo Html::a("Start new interview", ["/interview/" . $study->id . "#page/0"], ["class"=>"btn btn-link btn-primary text-light"]); ?>
 
-                    
+
                 </div>
                 <?php
-$interviews = Interview::findAll([
+$interviews = Interview::find()->where([
     "studyId"=>$study->id
-]);
+])->andWhere(["<>", "completed", "-1"])->all();
 ?>
                 <?php if(count($interviews) > 0): ?>
-                <div class="list-group">
-                    <?php foreach($interviews as $interview): ?>
-                    <?php if($interview->completed > -1): ?>
-                    <?php echo Html::a($interview->egoId, ["/interview/" . $study->id . "/" . $interview->id . "#page/" . $interview->completed ], ["class"=>"list-group-item list-group-item-action"]); ?>
+                <div class="list-group col-sm-9">
+                    <?php if(count($interviews) > 0): ?>
+                    <div class="list-group-item list-group-item-action bg-dark text-white">Continue incomplete interview</div>
                     <?php endif; ?>
+                    <?php foreach($interviews as $interview): ?>
+                    <?php echo Html::a($interview->egoId, ["/interview/" . $study->id . "/" . $interview->id . "#page/" . $interview->completed ], ["class"=>"list-group-item list-group-item-action"]); ?>
                     <?php endforeach; ?>
                 </div>
                 <?php endif; ?>
+                    </div>
             </div>
         </div>
     </div>
