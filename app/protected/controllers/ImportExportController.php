@@ -131,7 +131,7 @@ class ImportExportController extends Controller
                 }
 
                 if ($key == "name") {
-                    $oldStudy = Study::findOne(array("name"=>$value));
+                    $oldStudy = Study::findOne(array("name"=>strval($value)));
                     if ($oldStudy && !$_POST['newName']) {
                         $merge = true;
                         $newStudy = $oldStudy;
@@ -266,7 +266,7 @@ class ImportExportController extends Controller
                                 $value = intval($value);
                             }
                             if ($key != "id") {
-                                $newAlterPrompt->$key = $value;
+                                $newAlterPrompt->$key = strval($value);
                             }
                             if ($key == "questionId") {
                                 if (isset($newQuestionIds[intval($value)])) {
