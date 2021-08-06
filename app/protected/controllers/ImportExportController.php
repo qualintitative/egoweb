@@ -422,7 +422,7 @@ class ImportExportController extends Controller
                         $newInterviewIds[intval($oldInterviewId)] =  $newInterviewId;
                     }
 
-					if (count($interview->matchedAlters->matchedAlter) > 0) {
+					if ($interview->matchedAlters->matchedAlter && count($interview->matchedAlters->matchedAlter) > 0) {
 						foreach ($interview->matchedAlters->matchedAlter as $match) {
 							$newMatch = new MatchedAlters;
 							foreach ($match->attributes() as $key=>$value) {
@@ -799,15 +799,18 @@ class ImportExportController extends Controller
                 }
             }
 
-            $nGorder = json_decode($alter->ordering, true);
-            $newOrder = array();
-            foreach($nGorder as $nQid=>$norder){
-                if(isset($newQuestionIds[$nQid]))
-                    $newOrder[$newQuestionIds[$nQid]] = $norder;
-                else
-                    $newOrder[$nQid] = $norder;
+            if (stristr($alter->ordering, "{")) {
+                $nGorder = json_decode($alter->ordering, true);
+                $newOrder = array();
+                foreach ($nGorder as $nQid=>$norder) {
+                    if (isset($newQuestionIds[$nQid])) {
+                        $newOrder[$newQuestionIds[$nQid]] = $norder;
+                    } else {
+                        $newOrder[$nQid] = $norder;
+                    }
+                }
+                $alter->ordering = json_encode($newOrder);
             }
-            $alter->ordering = json_encode($newOrder);
             $alter->save();
 		}
 		foreach ($newInterviewIds as $oldId=>$newId) {

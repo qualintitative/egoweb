@@ -14,6 +14,10 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-protected',
+            'csrfCookie' => [
+                'httpOnly' => true,
+                'secure' => isset($_SERVER['HTTPS']),
+            ],
         ],
         'user' => [
             'identityClass' => 'app\models\User',
@@ -23,6 +27,10 @@ return [
         'session' => [
             // this is the name of the session cookie used for login on the protected
             'name' => 'advanced-protected',
+            'cookieParams' => [
+                'httpOnly' => true,
+                'secure' => isset($_SERVER['HTTPS']),
+            ],
         ],
         'db' => [
             'class' => 'yii\db\Connection',
