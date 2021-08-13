@@ -422,9 +422,10 @@ class ApiController extends Controller
 	{
 		// set the status
 		$status_header = 'HTTP/1.1 ' . $status . ' ' . self::getStatusCodeMessage($status);
-		header($status_header);
+		//header($status_header);
 		// and the content type
-		header('Content-type: ' . $content_type);
+		//header('Content-type: ' . $content_type);
+		//\Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
 		// pages with body are easy
 		if($body != '')
@@ -434,10 +435,16 @@ class ApiController extends Controller
 				if( $status != 200 && $status != 201 ){
 					$body = array( 'error'=> $body );
 				}
-				echo json_encode( $body, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+				return \Yii::createObject([
+					'class' => 'yii\web\Response',
+					'format' => \yii\web\Response::FORMAT_JSON,
+					'data' =>  $body,
+					'statusCode' => $status,
+					'statusText' => self::getStatusCodeMessage($status),
+				]);
 			}
 			else{
-				echo $body;
+				return $body;
 			}
 		}
 		// we need to create the body if none is passed
