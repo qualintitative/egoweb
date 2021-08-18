@@ -30,6 +30,27 @@ use app\models\LoginForm;
 
 class ApiController extends Controller
 {
+		   /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+					[
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
 	// Members
 	/**
 	 * Key which has to be in HTTP USERNAME and PASSWORD headers
@@ -61,6 +82,11 @@ class ApiController extends Controller
 		if( $headers['api_key'] != Yii::$app->params['apiKey'] ){
 			return $this->sendResponse( 421, "Invalid API Key" );
 		}
+	}
+
+	public function beforeAction($action) {
+		$this->enableCsrfValidation = false;	
+		return parent::beforeAction($action);
 	}
 
 	// Survey Actions

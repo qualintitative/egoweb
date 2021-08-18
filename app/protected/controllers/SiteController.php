@@ -33,7 +33,7 @@ class SiteController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'login', 'create', 'request-password-reset', 'reset-password', 'captcha'],
+                        'actions' => ['index', 'login', 'create', 'request-password-reset', 'reset-password', 'captcha', 'error'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -108,6 +108,16 @@ class SiteController extends Controller
             return $this->response->redirect(Url::toRoute('/site/create'));
 
         return $this->render('index');
+    }
+
+     /**
+     * Displays error.
+     *
+     * @return mixed
+     */
+    public function actionError()
+    {
+        return $this->render('error');
     }
 
     /**

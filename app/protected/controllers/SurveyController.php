@@ -30,6 +30,49 @@ use app\models\LoginForm;
 
 class SurveyController extends Controller
 {
+	   /**
+     * {@inheritdoc}
+     */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+					[
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function actions()
+    {
+        return [
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
+            ],
+            'captcha' => [
+                'class' => 'yii\captcha\CaptchaAction',
+                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+            ],
+        ];
+    }
+
+	public function beforeAction($action) {
+		$this->enableCsrfValidation = false;	
+		return parent::beforeAction($action);
+	}
+
 	public function actionIndex(){
 		$input = null;
 
@@ -71,7 +114,7 @@ class SurveyController extends Controller
 	/**
 	 *
 	 */
-	public function actionGetLink(){
+	public function actionGetlink(){
 		$input = file_get_contents('php://input');
 		if(empty( $input ) ){
 			return ApiController::sendResponse( 419, 'Missing payload' );
@@ -88,7 +131,7 @@ class SurveyController extends Controller
 
 		if( self::checkSurveyId($decoded['survey_id']) ){
             $link = $this->generateSurveyURL();
-            $payload = $this->encryptPayload($decoded);
+			$payload = $this->encryptPayload($decoded);
             return ApiController::sendResponse( 200, array( 'link'=>$link, 'payload'=>$payload ) );
         }
 	}
@@ -242,7 +285,7 @@ class SurveyController extends Controller
 	public function encryptPayload( $payload ){
 
 		$plain = json_encode( $payload );
-		$encrypted = encrypt( $plain );
+		$encrypted = Tools::encrypt( $plain );
 
 		return $encrypted;
 	}

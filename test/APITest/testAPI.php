@@ -14,15 +14,23 @@ function callAPI($json){
     global $EGOWEB_URL;
 	$url = $EGOWEB_URL.'/survey/getlink';
 	$ch = curl_init();
+	ob_start();  
+    $out = fopen('php://output', 'w');
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_POST, true);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 	curl_setopt($ch, CURLOPT_HEADER, 1);
+	curl_setopt($ch, CURLOPT_VERBOSE, true);
+	curl_setopt($ch, CURLOPT_STDERR, $out);  
+
 	//curl_setopt($c, CURLOPT_HTTPPROXYTUNNEL, true);
 	curl_setopt($ch, CURLOPT_URL, $url);
 	//curl_setopt($ch, CURLOPT_PROXY, '127.0.0.1:8888');
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $json);
 	$ret = curl_exec($ch);
+	fclose($out);  
+	$debug = ob_get_clean();
+	//echo $debug;
 	$responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 	$header_len = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 	$header = substr($ret, 0, $header_len);
@@ -34,7 +42,7 @@ function callAPI($json){
 	}
 	$response = json_decode( $result,true );
 	if (empty($response)){
-		throw new Exception("Invalid response");
+		throw new Exception("Invalid response".$result);
 	}
 	if(!empty($response['error'])){
 		throw new Exception($response['error']);
@@ -58,6 +66,7 @@ try {
 	));
 	$response = callAPI($json);
 	if (empty($response['link'])){
+		print_r($response);
 		throw new Exception("Missing link!");
 	}
 	if (empty($response['payload'])){
