@@ -202,7 +202,7 @@ class SurveyController extends Controller
 	 * @return array
 	 */
 	public function receive( $payload ){
-		$plain = decrypt( $payload);
+		$plain = Tools::decrypt( $payload);
 		if( !isset( $plain ) ){
 			return ApiController::sendResponse( 422, 'Unable to decrypt payload' );
 		}
@@ -312,7 +312,7 @@ class SurveyController extends Controller
         }
         else if( $interview->completed == -1 ){
 			if ($redirect){
-				self::redirect($redirect);
+				return $this->redirect($redirect);
 			}
             $msg = "User already completed survey";
             return ApiController::sendResponse( 420, $msg );
