@@ -68,6 +68,108 @@ class Interview extends \yii\db\ActiveRecord
         return $interview;
     }
 
+    /**
+     * retrieves interview (or create new one) from MMIC prime key
+     * @param $studyId
+     * @param $primekey
+     * @param $prefill (Ego ID Prefill)
+     * @param $question (Ego Questions Prefill)
+     * @return array|bool|CActiveRecord|Interview|mixed|null
+     */
+    public static function getInterviewFromPrimekey($studyId, $primekey, $prefill, $questions = array())
+    {
+        $answers = Answer::findAll(array(
+            'questionType' => 'EGO_ID',
+            'studyId' => $studyId
+        ));
+
+        foreach ($answers as $answer) {
+            if ($answer->value == $primekey) {
+                return Interview::findOne($answer->interviewId);
+            }
+        }
+
+        $egoQs = Question::find()
+        ->where(new \yii\db\Expression("studyId = $studyId and subjectType = 'EGO_ID' AND answerType != 'RANDOM_NUMBER'"))
+        ->orderBy(["ordering"=>"ASC"])->all();
+        $study = Study::findOne($studyId);
+
+        if (count($egoQs) == 0) {
+            return false;
+        }
+
+        $interview = new Interview;
+        $interview->studyId = $studyId;
+        $interview->completed = 0;
+        $interview->save();
+
+        $prefill['prime_key'] = $primekey;
+        foreach ($egoQs as $egoQ) {
+            $egoIdQ = new Answer;
+            $egoIdQ->interviewId = $interview->id;
+            $egoIdQ->studyId = $studyId;
+            $egoIdQ->questionType = "EGO_ID";
+            $egoIdQ->answerType = $egoQ->answerType;
+            $egoIdQ->questionId = $egoQ->id;
+            $egoIdQ->skipReason = "NONE";
+            if (isset($prefill[$egoQ->title])) {
+                $egoIdQ->value = strval($prefill[$egoQ->title]);
+            } else {
+                $egoIdQ->skipReason = "DONT_KNOW";
+                $egoIdQ->value = $study->valueDontKnow;
+            }
+            if(!$egoIdQ->save()){
+                echo $egoQ->title;
+                print_r($egoIdQ->errors);
+                die();
+            }
+        }
+
+        $randoms = Question::findAll(array("answerType" => "RANDOM_NUMBER", "studyId" => $studyId));
+        foreach ($randoms as $q) {
+            $a = $q->id;
+            $answer = new Answer;
+            $answer->interviewId = $interview->id;
+            $answer->studyId = $studyId;
+            $answer->questionType = "EGO_ID";
+            $answer->answerType = "RANDOM_NUMBER";
+            $answer->questionId = $q->id;
+            $answer->skipReason = "NONE";
+            $answer->value = mt_rand($q->minLiteral, $q->maxLiteral);
+            $answer->save();
+        }
+
+        if (count($questions) > 0)
+            $interview->fillQs($questions, $interview->id, $studyId);
+
+        return $interview;
+    }
+
+    public static function fillQs($qs, $interviewId, $studyId)
+    {
+        foreach ($qs as $title => $value) {
+            $question = Question::findOne(array("title" => $title, "studyId" => $studyId));
+            $answer = Answer::findOne(array("interviewId" => $interviewId, "questionId" => $question->id));
+            if ($answer)
+                continue;
+            $answer = new Answer;
+            $answer->interviewId = $interviewId;
+            $answer->studyId = $studyId;
+            $answer->questionType = $question->subjectType;
+            $answer->answerType = $question->answerType;
+            $answer->questionId = $question->id;
+            $answer->skipReason = "NONE";
+            if ($value) {
+                $answer->value = $value;
+            } else {
+                $answer->skipReason = "DONT_KNOW";
+                $study = Study::findOne($studyId);
+                $answer->value = $study->valueDontKnow;
+            }
+            $answer->save();
+        }
+    }
+
     public function getEgoId()
     {   
         $egoIdString = [];        

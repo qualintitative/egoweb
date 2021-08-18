@@ -96,6 +96,7 @@ class SurveyController extends Controller
 		}
 
 		$decoded = json_decode( $input, true );
+
 		if( empty( $decoded ) ){
 			return ApiController::sendResponse( 422, 'Unable to decode input:'.$input );
 		}
@@ -312,7 +313,7 @@ class SurveyController extends Controller
         }
         else if( $interview->completed == -1 ){
 			if ($redirect){
-				return $this->redirect($redirect);
+				Yii::$app->response->redirect($redirect, 301)->send();
 			}
             $msg = "User already completed survey";
             return ApiController::sendResponse( 420, $msg );
@@ -322,11 +323,10 @@ class SurveyController extends Controller
                 Yii::$app->session['redirect'] = $redirect;
 				
             $url = Url::base(true);
-
-			return $this->redirect($url  .  "/interview/".$study->id."/".
-                            $interview->id."/".
-                            "#/page/".$interview->completed
-                            );
+			Yii::$app->response->redirect($url  .  "/interview/".$study->id."/".
+				$interview->id.
+				"#/page/".$interview->completed, 301
+				)->send();
         }
     }
 
