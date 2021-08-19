@@ -109,7 +109,7 @@ class SurveyController extends Controller
 			return ApiController::sendResponse( 424, 'payload attribute not set' );
 		}
 
-		return $this->receive( $decoded["payload"] );
+		$this->receive( $decoded["payload"] );
 	}
 
 	/**
@@ -196,7 +196,6 @@ class SurveyController extends Controller
 
 	}
 
-
 	/**
 	 * handles the request payload
 	 * @param string $payload
@@ -251,8 +250,8 @@ class SurveyController extends Controller
 
 			if( array_key_exists ( 'prefill', $decoded ) ) $prefill = $decoded['prefill'];
 			if( array_key_exists ( 'questions', $decoded ) ) $questions = $decoded['questions'];
-
-            $this->createSurvey( $decoded['survey_id'], $decoded['user_id'], $prefill, $questions, $decoded['redirect']);
+			
+            return $this->createSurvey( $decoded['survey_id'], $decoded['user_id'], $prefill, $questions, $decoded['redirect']);
 		}
 	}
 
@@ -266,9 +265,9 @@ class SurveyController extends Controller
 		$login->password = $password;
 		if( $login->validate() && $login->login() ){
 			if(Yii::$app->user->isGuest)
-				$this->redirect(Url::to('/'));
+				Yii::$app->response->redirect(Url::to('/'));
 			else
-				$this->redirect(Url::to('admin/'));
+				Yii::$app->response->redirect(Url::to('admin/'));
 		}
 	}
 
@@ -298,7 +297,6 @@ class SurveyController extends Controller
      * @param null $redirect
      */
     public function createSurvey( $surveyId, $userId, $prefill=null, $questions=array(), $redirect=null ){
-
         $study = Study::findOne( $surveyId );
         if( !$study ){
             $msg = "Invalid survey_id";
@@ -313,7 +311,7 @@ class SurveyController extends Controller
         }
         else if( $interview->completed == -1 ){
 			if ($redirect){
-				Yii::$app->response->redirect($redirect, 301)->send();
+				return Yii::$app->response->redirect($redirect);
 			}
             $msg = "User already completed survey";
             return ApiController::sendResponse( 420, $msg );
@@ -322,11 +320,11 @@ class SurveyController extends Controller
             if( isset( $redirect ) )
                 Yii::$app->session['redirect'] = $redirect;
 				
-            $url = Url::base(true);
-			Yii::$app->response->redirect($url  .  "/interview/".$study->id."/".
-				$interview->id.
-				"#/page/".$interview->completed, 301
-				)->send();
+            $url = Url::base(true) .  "/interview/".$study->id."/".
+			$interview->id.
+			"#/page/".$interview->completed;
+
+			return Yii::$app->response->redirect($url);
         }
     }
 
