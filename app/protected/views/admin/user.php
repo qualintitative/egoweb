@@ -35,10 +35,10 @@ use yii\helpers\Html;
 
             <tr  >
                 <td>
-                    <input name="User[name]">
+                    <input name="User[name]" placeholder="Name">
                 </td>
                 <td>
-                    <input name="User[email]" >
+                    <input name="User[email]" placeholder="Email">
                 </td>
                 <td>
                     <b-form-select

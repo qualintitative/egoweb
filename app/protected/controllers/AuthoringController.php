@@ -97,8 +97,8 @@ class AuthoringController extends Controller
                 if(count($data) == 3){
                     $nameGenColumn = 2;
                 }else if(count($data) == 4){
-                    $interviewerColumn = 2;
-                    $nameGenColumn = 3;
+                    $interviewerColumn = 3;
+                    $nameGenColumn = 2;
                 }
                 $model->nameGenQIds = '';
                 if($nameGenColumn && stristr($data[$nameGenColumn], ";")){
@@ -110,7 +110,7 @@ class AuthoringController extends Controller
                     }
                     $model->nameGenQIds = implode(",", $qIds);
                 }elseif(isset($nameGenQIds[$data[$nameGenColumn]])){
-                    $model->nameGenQIds = $nameGenQIds[$data[$nameGenColumn]];
+                    $model->nameGenQIds = strval($nameGenQIds[$data[$nameGenColumn]]);
                 }
                 if($interviewerColumn && isset($data[$interviewerColumn])){
                     $model->interviewerId =  array_search($data[$interviewerColumn], $interviewers);

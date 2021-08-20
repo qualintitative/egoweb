@@ -35,7 +35,7 @@ use app\models\Interview;
 
 
                 </div>
-                <?php
+<?php
 $interviews = Interview::find()->where([
     "studyId"=>$study->id
 ])->andWhere(["<>", "completed", "-1"])->all();
