@@ -119,7 +119,7 @@ class Interview extends \yii\db\ActiveRecord
                 $egoIdQ->value = $study->valueDontKnow;
             }
             if(!$egoIdQ->save()){
-                echo $egoQ->title;
+                echo $egoQ->title.':'.$egoIdQ->value;
                 print_r($egoIdQ->errors);
                 die();
             }

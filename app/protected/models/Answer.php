@@ -38,7 +38,8 @@ class Answer extends \yii\db\ActiveRecord
     {
         return [
             [['active', 'questionId', 'interviewId', 'alterId1', 'alterId2', 'studyId'], 'integer'],
-            [['value', 'otherSpecifyText', 'skipReason', 'questionType', 'answerType'], 'string'],
+            [['otherSpecifyText', 'skipReason', 'questionType', 'answerType'], 'string'],
+            ['value','default', 'value'=>""],
         ];
     }
 
