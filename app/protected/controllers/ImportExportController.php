@@ -250,8 +250,6 @@ class ImportExportController extends Controller
                 if ($newStudy->multiSessionEgoId != 0 && isset($newQuestionIds[intval($newStudy->multiSessionEgoId)])) {
                     $newStudy->multiSessionEgoId = $newQuestionIds[intval($newStudy->multiSessionEgoId)];
                     if ($newStudy->save()) {
-                        echo $newStudy->multiSessionEgoId;
-                        echo "<br>";
                     } else {
                         echo "Multi-ssssion: ";
                         print_r($newStudy->getErrors());
@@ -401,8 +399,6 @@ class ImportExportController extends Controller
 
 
             if (count($study->interviews) != 0) {
-                echo "new study $newStudy->id : ";
-                echo $newStudy->multiSessionEgoId;
                 foreach ($study->interviews->interview as $interview) {
                     $newInterview = new Interview;
                     foreach ($interview->attributes() as $key=>$value) {
@@ -451,7 +447,7 @@ class ImportExportController extends Controller
                             }
                             if ($userExists != false) {
                                 $newUserIds[$oldUserId] = $users[$userExists];
-                                echo $users[$userExists];
+                                //echo $users[$userExists];
                                 continue;
                             }
 							$newUser = new User;
@@ -720,8 +716,8 @@ class ImportExportController extends Controller
                 if ($questionIds != "") {
                     $questionIds = explode(',', $questionIds);
                     foreach ($questionIds as &$questionId) {
-                        if (isset($newQuestionIds[$questionId])) {
-                            $questionId = $newQuestionIds[$questionId];
+                        if (isset($newQuestionIds[intval($questionId)])) {
+                            $questionId = $newQuestionIds[intval($questionId)];
                         } else {
                             $questionId = '';
                         }
@@ -744,8 +740,8 @@ class ImportExportController extends Controller
                 if ($newExpression->value != "") {
                     $questionIds = explode(',', $newExpression->value);
                     foreach ($questionIds as &$questionId) {
-                        if (isset($newQuestionIds[$questionId])) {
-                            $questionId = $newQuestionIds[$questionId];
+                        if (isset($newQuestionIds[intval($questionId)])) {
+                            $questionId = $newQuestionIds[intval($questionId)];
                         } else {
                             $questionId = '';
                         }
@@ -794,8 +790,8 @@ class ImportExportController extends Controller
                 }
                 $alter->nameGenQIds = implode(",", $nQIds);
             }else{
-                if (isset($newQuestionIds[$alter->nameGenQIds])) {
-                    $alter->nameGenQIds = $newQuestionIds[$alter->nameGenQIds];
+                if (isset($newQuestionIds[intval($alter->nameGenQIds)])) {
+                    $alter->nameGenQIds = strval($newQuestionIds[intval($alter->nameGenQIds)]);
                 }
             }
 
@@ -803,16 +799,20 @@ class ImportExportController extends Controller
                 $nGorder = json_decode($alter->ordering, true);
                 $newOrder = array();
                 foreach ($nGorder as $nQid=>$norder) {
-                    if (isset($newQuestionIds[$nQid])) {
-                        $newOrder[$newQuestionIds[$nQid]] = $norder;
+                    if (isset($newQuestionIds[intval($nQid)])) {
+                        $newOrder[$newQuestionIds[intval($nQid)]] = $norder;
                     } else {
                         $newOrder[$nQid] = $norder;
                     }
                 }
                 $alter->ordering = json_encode($newOrder);
             }
-            $alter->save();
+            if(!$alter->save()){
+                print_r($alter->errors);
+                die();
+            }
 		}
+        
 		foreach ($newInterviewIds as $oldId=>$newId) {
 			$matches = MatchedAlters::findAll(array("interviewId1"=>$oldId));
 			if (count($matches) > 0) {
@@ -865,7 +865,7 @@ class ImportExportController extends Controller
                 }
             }
 		}
-        return $this->response->redirect(Url::toRoute('/authoring/' . $newStudy->id));
+        return $this->redirect(Url::toRoute('/authoring/' . $newStudy->id));
     }
 
     public function actionIndex()

@@ -104,10 +104,14 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
                 }
                 // we put alters in lists according to the name generator question id
                 if (nGs.indexOf($scope.questions[0].ID.toString()) != -1) {
-                    if (typeof nGorder[$scope.questions[0].ID] != "undefined")
-                        $scope.nGalters[parseInt(nGorder[$scope.questions[0].ID])] = $scope.alters[k];
-                    else
+                    if (typeof nGorder[$scope.questions[0].ID] != "undefined"){
+                        if(typeof $scope.nGalters[parseInt(nGorder[$scope.questions[0].ID])] == "undefined")
+                            $scope.nGalters[parseInt(nGorder[$scope.questions[0].ID])] = $scope.alters[k];
+                        else 
+                            $scope.nGalters.push($scope.alters[k]);
+                    }else{
                         $scope.nGalters.push($scope.alters[k]);
+                    }
                 } else {
                     if (typeof $scope.listedAlters[k] == "undefined")
                         $scope.listedAlters[k] = alters[k];

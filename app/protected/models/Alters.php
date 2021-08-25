@@ -34,6 +34,7 @@ class Alters extends \yii\db\ActiveRecord
         return [
             [['active'], 'integer'],
             [['name', 'interviewId', 'nameGenQIds'], 'string'],
+            ['nameGenQIds','default', 'value'=>"0"],
             [['interviewId'], 'required'],
             [['ordering', 'alterListId'], 'string', 'max' => 500],
         ];
