@@ -62,6 +62,14 @@ class DataController extends Controller
         ];
     }
 
+    public function actionEdit($id)
+    {
+        $interview = Interview::findOne($id);
+        $interview->completed = 0;
+        $interview->save();
+        return $this->redirect(Yii::$app->request->referrer);
+    }
+
     /**
      * Displays homepage.
      *
