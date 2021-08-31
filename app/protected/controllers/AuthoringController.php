@@ -127,7 +127,7 @@ class AuthoringController extends Controller
         return $this->redirect(Yii::$app->request->referrer);
 	}
 
-	public function actionImportprompts()
+	public function actionImportprompts($id)
 	{
 		if(!is_uploaded_file($_FILES['userfile']['tmp_name'])) //checks that file is uploaded
 			die("Error importing Variable Alter Prompts");
@@ -136,7 +136,7 @@ class AuthoringController extends Controller
 			$data = fgetcsv($file);
 			if(isset($data[0]) && $data[0]){
 				$model = new AlterPrompt;
-				$model->studyId = $_POST['studyId'];
+				$model->studyId = $id;
                 $model->questionId = $_POST['questionId'];
 				$model->afterAltersEntered = trim($data[0]);
 				$model->display = isset($data[1]) ? $data[1] : "";
@@ -144,7 +144,7 @@ class AuthoringController extends Controller
 			}
 		}
 		fclose($file);
-        $prompts = AlterPrompt::findAll(['studyId = '.$_POST['studyId']])->asArray();
+        $prompts = AlterPrompt::find()->where(['studyId'=>$id,'questionId'=>$_POST['questionId']])->orderBy(['afterAltersEntered'=>'ASC'])->asArray()->all();
         return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($prompts)]);
 	}
 

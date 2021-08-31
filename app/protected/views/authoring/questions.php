@@ -409,14 +409,23 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                             </template>
                             <template v-slot:custom-foot>
                                 <tr class="text-white" >
-                                    <td>
+                                    <td class="col-md-2">
                                         <input class="form-control input-xs" v-model="newPromptAfter" name="AlterPrompt[afterAltersEntered]" />
                                     </td>
-                                    <td>
+                                    <td class="col-md-2">
                                         <input class="form-control input-xs" v-model="newPromptDisplay" name="AlterPrompt[display]" />
                                     </td>
                                     <td>
                                         <b-button @click="newPrompt" variant="primary" size="xs">Add</b-button>
+                                    </td>
+                                </tr>
+                                <tr class="text-black" >
+                                    <td></td>
+                                    <td>
+                                        <input  :id="'prompt_' + question.id" type="file" />
+                                    </td>
+                                    <td>
+                                        <b-button @click="uploadPrompt" variant="primary" size="xs">Upload</b-button>
                                     </td>
                                 </tr>
                             </template>   
@@ -578,6 +587,7 @@ QestionEditor = Vue.component('question-editor', {
     props: ['question'],
     data() {
         return {
+            file: null,
             closed: true,
             option_fields: [{
                 key: "name",
@@ -826,6 +836,32 @@ QestionEditor = Vue.component('question-editor', {
                     });
             })(self);
         },
+        uploadPrompt(e) {
+            //$("#import_userfile")[0].files = [this.file]
+            console.log($("#prompt_" + this.question.id)[0].files);
+            $("#import_userfile")[0].files = $("#prompt_" + this.question.id)[0].files;
+            $("#import_questionId").val(this.question.id);
+            if(!$("#import_userfile")[0].value){
+                alert("No file selected")
+                return;
+            }
+            self = this;
+            (function(self) {
+                var form_data = new FormData($("#importPrompt")[0]);
+                console.log(form_data);
+                $.ajax({
+                    url:'/authoring/importprompts/' + self.question.studyId, 
+                    data:form_data,
+                    processData: false,
+                    contentType: false,
+                    method:"POST",
+                    success:function(data) {
+                        $("#import_userfile")[0].value = null;
+                        self.question.alterPrompts = JSON.parse(data);
+                    }
+                });
+            })(self);
+        },
         editPrompt(promptId) {
             for (p in this.question.alterPrompts) {
                 if (this.question.alterPrompts[p].id == promptId) {
@@ -1004,7 +1040,7 @@ new Vue({
         }else{
             this.questions[k].nParams = JSON.parse(this.questions[k].networkParams);
             for(p in defaultParams){
-                var egoOption = efaultParams[p].options[0];
+                var egoOption = defaultParams[p].options[0];
                 var defaultOption = defaultParams[p].options[1];
                 var newOptions = [];
                 if(typeof this.questions[k].nParams[p] == "undefined"){
@@ -1071,6 +1107,10 @@ $("form").on("keypress", function(event) {
     }
 });
 </script>
+<?= Html::beginForm(['/authoring/importprompts/'.$study->id], 'post', [ 'id'=>'importPrompt', "class"=>"d-none", 'enctype' => 'multipart/form-data']) ?>
+<input type="file" id="import_userfile" name="userfile" />
+<input type="hidden" id="import_questionId" name="questionId" />
+<?= Html::endForm() ?>
 <?= Html::beginForm(['/authoring/'.$study->id], 'post', [ 'id'=>'alterPrompt', "class"=>"d-none"]) ?>
 <input type="hidden" id="AlterPrompt_id" name="AlterPrompt[id]">
 <input type="hidden" id="AlterPrompt_studyId" name="AlterPrompt[studyId]" value="<?php echo $study->id; ?>">
