@@ -343,7 +343,7 @@ td {
 
 @media (max-width: 768px) {
     [role="main"] {
-        padding-top: 0px!important;
+        padding-top: 20px!important;
     }
     .row.ng-scope {
         margin-left:0!important;
@@ -1176,5 +1176,9 @@ html {
     width: 100%;
     height: 60px; /* Set the fixed height of the footer here */
     line-height: 60px; /* Vertically center the text there */
+  }
+
+  .palette-sun-flower {
+    background-color: #f1c40f;
   }
   
