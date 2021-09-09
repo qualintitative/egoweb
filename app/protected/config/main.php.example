@@ -84,7 +84,7 @@ return [
 		'exportFilePath' => '',
 		// Enabling audio upload may make your server less secure
 		'enableAudioUpload' => false,
-        'surveyURL' => 'http://'.$_SERVER['HTTP_HOST'].'/survey',
+        'surveyURL' => 'http://'.$_SERVER['SERVER_NAME'].'/survey',
         'APIPassword' => 'yourpasswordhere',
         'encryptionKey' => 'old_key1old_key1',
         'user.passwordResetTokenExpire' => 3600,
