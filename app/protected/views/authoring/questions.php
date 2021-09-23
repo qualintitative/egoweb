@@ -1046,6 +1046,8 @@ new Vue({
                 if(typeof this.questions[k].nParams[p] == "undefined"){
                     this.questions[k].nParams[p] = defaultParams[p];
                 }else{
+                    if(typeof this.questions[k].nParams[p].questionId == "undefined")
+                        this.questions[k].nParams[p].questionId = "";
                     if(p == "nodeColor" || p == "nodeSize" || p == "nodeShape"){
                         for(var i = 0; i < this.questions[k].nParams[p].options.length; i++){
                             if(this.questions[k].nParams[p].options[i].id == "default")
