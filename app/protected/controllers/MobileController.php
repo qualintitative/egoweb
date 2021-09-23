@@ -315,7 +315,7 @@ class MobileController extends Controller
                 if ($oldStudy) {
                     $interviews = Interview::findAll(array("studyId"=>$oldStudy->id));
                     foreach ($interviews as $interview) {
-                        $egoId = Interview::getEgoId($interview->id);
+                        $egoId = $interview->egoid;
                         if ($egoId == $data['interviews'][0]["EGOID"]) {
                             echo $egoId . ": interview already exists";
                             die();
@@ -331,7 +331,8 @@ class MobileController extends Controller
             // validate user input and redirect to the previous page if valid
             if ($model->validate() && $model->login()) {
             } else {
-                throw new \yii\web\HttpException(500,'Internal Server Error');
+                print_r($model->errors);
+                //throw new \yii\web\HttpException(500,'Internal Server Error');
                 die();
             }
             $errors = 0;
@@ -651,15 +652,20 @@ class MobileController extends Controller
                         }
                     }
                 }
-                $nGorder = json_decode($alter['ORDERING'], true);
-                $newOrder = array();
-				foreach($nGorder as $nQid=>$norder){
-					if(isset($newData['newQuestionIds'][$nQid]))
-                        $newOrder[$newData['newQuestionIds'][$nQid]] = $norder;
-                    else
-                        $newOrder[$nQid] = $norder;
-				}
-                $newAlter->ordering = json_encode($newOrder);
+                if (is_numeric($alter['ORDERING'])) {
+                    $newAlter->ordering = $alter['ORDERING'];
+                }else{
+                    $nGorder = json_decode($alter['ORDERING'], true);
+                    $newOrder = array();
+                    foreach ($nGorder as $nQid=>$norder) {
+                        if (isset($newData['newQuestionIds'][$nQid])) {
+                            $newOrder[$newData['newQuestionIds'][$nQid]] = $norder;
+                        } else {
+                            $newOrder[$nQid] = $norder;
+                        }
+                    }
+                    $newAlter->ordering = json_encode($newOrder);
+                }
                 if (!$newAlter->save()) {
                     echo $questionTitles[$alter['NAMEGENQIDS']];
                     echo $newData["nameGenQId"];

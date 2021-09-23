@@ -152,11 +152,11 @@ class Study extends \yii\db\ActiveRecord
 		foreach($questions as $question){
 		  $newQuestion = Question::findOne($newQuestionIds[$question->id]);
 		  if($newQuestion){
-			  if(is_numeric($newQuestion->minPrevQues) && $newQuestion->minPrevQues != 0)
+			  if(is_numeric($newQuestion->minPrevQues) && $newQuestion->minPrevQues != 0 && isset($newQuestionIds[$newQuestion->minPrevQues]))
 				  $newQuestion->minPrevQues = $newQuestionIds[$newQuestion->minPrevQues];
-			  if(is_numeric($newQuestion->maxPrevQues) && $newQuestion->maxPrevQues != 0)
+			  if(is_numeric($newQuestion->maxPrevQues) && $newQuestion->maxPrevQues != 0 && isset($newQuestionIds[$newQuestion->maxPrevQues]))
 				  $newQuestion->maxPrevQues = $newQuestionIds[$newQuestion->maxPrevQues];
-			  if(is_numeric($newQuestion->networkParams) && $newQuestion->networkParams != 0)
+			  if(is_numeric($newQuestion->networkParams) && $newQuestion->networkParams != 0 && isset($newQuestionIds[$newQuestion->networkParams]))
 				  $newQuestion->networkParams = $newQuestionIds[$newQuestion->networkParams];
 			  $newQuestion->save();
 
