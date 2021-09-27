@@ -37,7 +37,7 @@ echo Html::dropdownlist(
 );
 ?>
 <div id="interview-1"></div>
-
+<br>
 <?php
 
 echo Html::dropdownlist(
