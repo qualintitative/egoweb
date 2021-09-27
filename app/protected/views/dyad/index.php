@@ -37,10 +37,7 @@ echo Html::dropdownlist(
 );
 ?>
 <div id="interview-1"></div>
-</div>
-</div>
-<div class="card">
-<div class="card-body">
+
 <?php
 
 echo Html::dropdownlist(

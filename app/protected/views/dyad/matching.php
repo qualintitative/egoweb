@@ -4,8 +4,8 @@ use app\models\Question;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 ?>
-<script src="/js/levenshtein.js" type="text/javascript"></script>
-<script src="/js/doublemetaphone.js" type="text/javascript"></script>
+<script src="/www/js/levenshtein.js" type="text/javascript"></script>
+<script src="/www/js/doublemetaphone.js" type="text/javascript"></script>
 <script>
 alters1 = <?php echo json_encode($alters1); ?>;
 alters2 = <?php echo json_encode($alters2); ?>;
@@ -18,6 +18,8 @@ altersL = new Object;
 altersLId = new Object;
 altersDId = new Object;
 
+matchedIds = new Object;
+
 dm = new DoubleMetaphone;
 discardNames = ["i", "ii", "iii", "iv", "v", "jr", "sr"]
 dm.maxCodeLen = 64;
@@ -27,7 +29,7 @@ for(j in alters1){
     for(k in alters2){
         name1 = alters1[j].toLowerCase().replace(/\./g,' ').trim().split(" ");
         name2 = alters2[k].toLowerCase().replace(/\./g,' ').trim().split(" ");
-
+        console.log(name1,name2);
         last1 = false;
         last2 = false;
         first1 = name1[0].charAt(0).toLowerCase();
@@ -49,6 +51,7 @@ for(j in alters1){
         d1 = dm.doubleMetaphone(name1[0]).primary;
         d2 = dm.doubleMetaphone(name2[0]).primary;
         ds = new Levenshtein(d1, d2);
+        console.log(ds.distance, d1, d2)
         if(ds.distance < altersD[j]){
 
             if(!last1 || !last2 || last1 == last2){
@@ -94,8 +97,10 @@ for(j in alters1){
       altersL[j] = 0;
       altersLId[j] = altersDId[j];
     }
-
 }
+    
+
+
 function autoMatch(){
     $(".aMatch").each(function(){
         var id = $(this).attr("id");
@@ -153,7 +158,7 @@ function save(sId, id1, id2, matchId, notes){
     if(typeof alterName != "undefined" && alterName.trim() == ""){
         alert ("Please enter a name!");
     }else{
-        $.post("/dyad/savematch", {id:matchId, studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, notes: notes, userId: <?php echo Yii::$app->user->identity->id; ?>, <?php echo Yii::$app->request->csrfParam . ':"' . Yii::$app->request->getCsrfToken() . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
+        $.post("/dyad/savematch", {id:matchId, studyId:sId, alterId1:id1, alterId2:id2, matchedName: alterName, notes: notes, userId: "<?php echo Yii::$app->user->identity->id; ?>", "<?php echo Yii::$app->request->csrfParam . '":"' . Yii::$app->request->getCsrfToken() . '"' ?>, interviewId1:<?php echo $interview1->id; ?>, interviewId2:<?php echo $interview2->id; ?>}, function(data){
             if(id1 == "0"){
                 document.location.href = document.referrer; //$("#markMatch").html(data);
             }else{
@@ -168,7 +173,7 @@ function save(sId, id1, id2, matchId, notes){
 }
 
 function unMatch(sId, id1, id2){
-    $.post("/dyad/unmatch", {studyId:sId, alterId1:id1, alterId2:id2, <?php echo Yii::$app->request->csrfParam . ':"' . Yii::$app->request->getCsrfToken() . '"' ?>}, function(data){
+    $.post("/dyad/unmatch", {studyId:sId, alterId1:id1, alterId2:id2, "<?php echo Yii::$app->request->csrfParam . '":"' . Yii::$app->request->getCsrfToken() . '"' ?>}, function(data){
         if(id1 == 0){
             $("#markMatch").html("<button onclick='save(studyId, 0, 0)' class='btn btn-success'>Finished Matching</button>");
         }else{

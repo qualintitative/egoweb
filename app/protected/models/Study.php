@@ -83,7 +83,7 @@ class Study extends \yii\db\ActiveRecord
         ->all();
         foreach($studies as $study){
             $newEgoIdQ = Question::findOne($study->multiSessionEgoId);
-            if($newEgoIdQ->title == $egoIdQ->title)
+            if($newEgoIdQ && $newEgoIdQ->title == $egoIdQ->title)
                 $multiIdQs[] = $newEgoIdQ;
         }
 
