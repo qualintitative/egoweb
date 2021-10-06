@@ -289,12 +289,16 @@ $marked = MatchedAlters::find()
                 $selectedName = "";
                 $matchId = "";
                 $notes = "";
+            }  
+            $alters2List = [''=>"No Match"];
+            foreach($alters2 as $index=>$name){
+                $alters2List[$index] = $name;
             }
                     if(count($alters2) > 0){
                         echo Html::dropdownlist(
                             'alterId2',
                             $selected,
-                            array_merge([''=>"No Match"], $alters2),
+                            $alters2List,
                             array("class"=>"aMatch", "id"=>$alterId, "matchId"=>$matchId, "onChange"=>'matchUp(this)')
                         );
                     }

@@ -5,6 +5,7 @@ use yii\helpers\Html;
 <div id="authoring-app">
     <div class="row">
         <div class="col-md-4">
+            <h4>Users</h4>
             <?= Html::beginForm(['/authoring/addinterviewer/'.$study['id']], 'post', [ 'id'=>'addInterviewer']) ?>
             <input type="hidden" name="Interviewer[studyId]" value="<?php echo $study['id']; ?>" />
             <b-table class="options" head-variant="dark" :tbody-tr-attr="setAttribute" :items="interviewers"
@@ -33,7 +34,7 @@ use yii\helpers\Html;
         <?= Html::endForm() ?>
 
         <div class="col-md-8">
-
+            <h4>Participants</h4>
             <b-table class="options" head-variant="dark" :tbody-tr-attr="setAttribute" :items="alterList"
                 :fields="list_fields" striped responsive="sm">
                 <template #cell(name)="row">

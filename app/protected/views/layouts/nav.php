@@ -28,7 +28,7 @@ echo Nav::widget([
 
         ],
         [
-            'label' => 'Participants', 
+            'label' => 'Users & Participants', 
             'url' => ['/authoring/participants/'  . $study['id']],
             'active' => in_array(\Yii::$app->controller->action->id, ['participants']),
 
