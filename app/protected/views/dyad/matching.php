@@ -294,8 +294,8 @@ $marked = MatchedAlters::find()
                         echo Html::dropdownlist(
                             'alterId2',
                             $selected,
-                            $alters2,
-                            array('empty' => 'No Match', "class"=>"aMatch", "id"=>$alterId, "matchId"=>$matchId, "onChange"=>'matchUp(this)')
+                            array_merge([''=>"No Match"], $alters2),
+                            array("class"=>"aMatch", "id"=>$alterId, "matchId"=>$matchId, "onChange"=>'matchUp(this)')
                         );
                     }
                 ?></td>

@@ -8,7 +8,7 @@ services:
       - 20080:80
     volumes:
       # Re-use local composer cache via host-volume
-      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      # - ~/.composer-docker/cache:/root/.composer/cache:delegated
       # Mount source-code for development
       - ./:/app
 
@@ -16,9 +16,9 @@ services:
     image: mysql:5.7
     environment:
       - MYSQL_ROOT_PASSWORD=verysecret
-      - MYSQL_DATABASE=yii2advanced
-      - MYSQL_USER=yii2advanced
-      - MYSQL_PASSWORD=secret
+      - MYSQL_DATABASE=egoweb
+      - MYSQL_USER=egowebuser
+      - MYSQL_PASSWORD=egowebpass
 
   #pgsql:
   #  image: postgres:9.5
