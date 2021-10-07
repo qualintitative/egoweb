@@ -255,7 +255,9 @@ class Interview extends \yii\db\ActiveRecord
                 else
                     $matchInt = Interview::findOne($match->interviewId1);
                 $matchIntId = $match->getMatchId();
-                $matchUser = User::getName($match->userId);
+                
+                $matchU = User::findOne($match->userId);
+                $matchUser = $matchU->name;
             }
         }
         $study = Study::findOne($this->studyId);
@@ -620,7 +622,8 @@ class Interview extends \yii\db\ActiveRecord
                 else
                     $matchInt = Interview::model()->findByPk($match->interviewId1);
                 $matchIntId = $match->getMatchId();
-                $matchUser = User::getName($match->userId);
+                $matchU = User::findOne($match->userId);
+                $matchUser = $matchU->name;
             }
         }
         $all_answers = array();

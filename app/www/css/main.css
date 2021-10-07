@@ -1182,3 +1182,7 @@ html {
     background-color: #f1c40f;
   }
   
+  .success{
+      background-color:#cff0d8!important;
+      opacity: 1;
+  }

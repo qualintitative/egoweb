@@ -30,7 +30,7 @@ use app\models\Interview;
         $mark = "";
         $matchId = "";
         $matchUser = "";
-        $match = MatchedAlters::find()->where(["interviewId1"=>$interview->id])->orWhere(["interviewId1"=>$interview->id])->one();
+        $match = MatchedAlters::find()->where(["interviewId1"=>$interview->id])->orWhere(["interviewId2"=>$interview->id])->one();
         $mark = "class='warning'";
         if($match){
             $mark = "class='success'";      
