@@ -3,22 +3,29 @@ version: '3.2'
 services:
 
   app:
-    build: app
+    build:
+      context: ./
+      dockerfile: app.Dockerfile
     ports:
       - 20080:80
     volumes:
       # Re-use local composer cache via host-volume
       # - ~/.composer-docker/cache:/root/.composer/cache:delegated
       # Mount source-code for development
-      - ./:/app
+      - ./app:/app
 
   mysql:
     image: mysql:5.7
     environment:
-      - MYSQL_ROOT_PASSWORD=verysecret
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
       - MYSQL_DATABASE=egoweb
       - MYSQL_USER=egowebuser
       - MYSQL_PASSWORD=egowebpass
+    ports:
+      - 20001:3306
+    volumes:
+      - ./sql/egoweb_db.sql:/docker-entrypoint-initdb.d/datadump.sql
+
 
   #pgsql:
   #  image: postgres:9.5

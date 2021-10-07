@@ -1,0 +1,93 @@
+<?php
+return [
+    'id' => 'egoweb-server',
+    'name'=>'EgoWeb 2.0',
+    'basePath' => dirname(__DIR__),
+    'bootstrap' => ['log'],
+    /*'bootstrap' => ['log', 'gii', 'debug'],
+    'modules' => [
+        'gii' => 'yii\gii\Module',
+        'debug' => 'yii\debug\Module',
+    ],*/
+    'controllerNamespace' => 'app\controllers',
+    'defaultRoute' => 'site/index',
+    'components' => [
+        'request' => [
+            'csrfParam' => '_csrf-protected',
+            'csrfCookie' => [
+                'httpOnly' => true,
+                'secure' => isset($_SERVER['HTTPS']),
+            ],
+        ],
+        'user' => [
+            'identityClass' => 'app\models\User',
+            'enableAutoLogin' => false,
+            'identityCookie' => ['name' => '_identity-protected', 'httpOnly' => true],
+        ],
+        'session' => [
+            // this is the name of the session cookie used for login on the protected
+            'name' => 'advanced-protected',
+            'cookieParams' => [
+                'httpOnly' => true,
+                'secure' => isset($_SERVER['HTTPS']),
+            ],
+        ],
+        'db' => [
+            'class' => 'yii\db\Connection',
+            'dsn' => 'mysql:host=mysql;dbname=egoweb',
+            'username' => 'egowebuser',
+            'password' => 'egowebpass',
+            'charset' => 'utf8',
+        ],
+        'authManager' => [
+            'class' => 'yii\rbac\DbManager',
+            // uncomment if you want to cache RBAC items hierarchy
+            // 'cache' => 'cache',
+        ],
+        'log' => [
+            'traceLevel' => YII_DEBUG ? 3 : 0,
+            'targets' => [
+                [
+                    'class' => 'yii\log\FileTarget',
+                    'levels' => ['error', 'warning'],
+                ],
+            ],
+        ],
+        'errorHandler' => [
+            'errorAction' => 'site/error',
+        ],
+        
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+                'mobile/syncData/<id:\w*>' => 'mobile/sync-data',
+                'mobile/uploadData' => 'mobile/upload-data',
+                'debug/<controller>/<action>' => 'debug/<controller>/<action>',
+                'interview/<studyId:\d+>/<interviewId:\d+>' => 'interview/view',
+                'site/reset-password/<token:\w+>' => 'site/reset-password',
+                'interview/<studyId:\d+>' => 'interview/view',
+                '<controller>/<id:\d+>' => '<controller>/index',
+                '<controller>/<action>' => '<controller>/<action>',
+                '<controller>/<action>/<id:\d+>' => '<controller>/<action>',
+            ],
+        ],
+        
+    ],
+    'params' => [
+        'version'=>'2.0.10.0',
+		// this is used in contact page
+		'adminEmail' => 'admin@egoweb.com',
+		// The max login attempt before showing captcha
+		'maxLoginAttempts' => 3,
+		'maxUploadFileSize' => 1024 * 1024 * 3, // 3MB		// file path for study export
+		'exportFilePath' => '',
+		// Enabling audio upload may make your server less secure
+		'enableAudioUpload' => false,
+        'surveyURL' => 'http://'.$_SERVER['SERVER_NAME'].'/survey',
+        'APIPassword' => 'yourpasswordhere',
+        'encryptionKey' => 'old_key1old_key1',
+        'user.passwordResetTokenExpire' => 3600,
+        'user.passwordMinLength' => 8,
+    ],
+];
