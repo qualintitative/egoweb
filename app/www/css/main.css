@@ -1186,3 +1186,8 @@ html {
       background-color:#cff0d8!important;
       opacity: 1;
   }
+
+  .warning {
+    background-color:#fcf8d3!important;
+    opacity: 1;
+  }

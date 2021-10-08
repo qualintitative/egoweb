@@ -31,9 +31,12 @@ use app\models\Interview;
         $matchId = "";
         $matchUser = "";
         $match = MatchedAlters::find()->where(["interviewId1"=>$interview->id])->orWhere(["interviewId2"=>$interview->id])->one();
-        $mark = "class='warning'";
-        if($match){
-            $mark = "class='success'";      
+        $hasMatches = $interview->hasMatches;
+        if($hasMatches){
+              if($hasMatches == 1)
+                $mark = "class='success'";
+              else
+                $mark = "class='warning'";
             if($interview->id == $match->interviewId1)
                 $matchInt = Interview::findOne($match->interviewId2);
             else

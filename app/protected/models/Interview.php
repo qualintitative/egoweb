@@ -1411,6 +1411,18 @@ class Interview extends \yii\db\ActiveRecord
         file_put_contents($filePath, $output);
     }
 
+    public function getHasMatches()
+    {
+        $matches = MatchedAlters::find()->where(['interviewId1' => $this->id])->orWhere(['interviewId2' => $this->id])->all();
+        foreach ($matches as $match) {
+            if ($match->notes != "")
+                return 2;
+        }
+        if (count($matches) > 0)
+            return 1;
+        return false;
+    }
+
     /**
      * {@inheritdoc}
      */
