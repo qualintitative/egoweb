@@ -251,7 +251,7 @@ $marked = MatchedAlters::find()
         ArrayHelper::map(
             Question::find()->where(array('subjectType'=>"ALTER", "studyId"=>$study->id))->orderBy(array( 'ordering'=>"ASC"))->all()
         , 'id','title'),
-        array('empty' => 'Choose Question', "class"=>"ml-3","onChange"=>'loadR($(this).val());$("#prompt").html(prompts[$(this).val()])')
+        array('empty' => 'Choose Question', "id"=>"question", "class"=>"ml-3","onChange"=>'loadR($(this).val());$("#prompt").html(prompts[$(this).val()])')
     );
     ?>
     </div>

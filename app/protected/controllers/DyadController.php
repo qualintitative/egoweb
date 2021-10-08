@@ -99,7 +99,7 @@ class DyadController extends Controller
           $study = Study::findOne($interview1->studyId);
           $result = Alters::find()
           ->where(new \yii\db\Expression("FIND_IN_SET(" . $interview1->id .", interviewId)"))
-          ->orderBy(['ordering'=>'ASC'])
+          ->orderBy(['id'=>'ASC'])
           ->all();
   		foreach($result as $alter){
       		$alters1[$alter->id] = $alter->name;
@@ -107,7 +107,7 @@ class DyadController extends Controller
  
         $result = Alters::find()
         ->where(new \yii\db\Expression("FIND_IN_SET(" . $interview2->id .", interviewId)"))
-        ->orderBy(['ordering'=>'ASC'])
+        ->orderBy(['id'=>'ASC'])
         ->all();
 
   		foreach($result as $alter){
