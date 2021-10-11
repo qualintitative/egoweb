@@ -70,8 +70,8 @@ AppAsset::register($this);
                 <?php if (!Yii::$app->user->isGuest): ?>
 
                 <div class="collapse navbar-collapse" id="mainMenu">
-
                     <ul class="navbar-nav ml-auto">
+                    <span class="interviewee"></span>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">

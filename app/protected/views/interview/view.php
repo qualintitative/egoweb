@@ -1,6 +1,7 @@
 <script>
 baseUrl = document.location.protocol + "//" + document.location.hostname + "/www/";
 study = <?php echo $study ?>;
+egoIdString = "<?php echo $ego_id_string ?>";
 questions = <?php echo $questions ?>;
 ego_id_questions = <?php echo $ego_id_questions ?>;
 ego_questions = <?php echo $ego_questions ?>;

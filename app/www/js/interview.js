@@ -80,7 +80,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     $scope.hasRefuse = false;
     $scope.showPrevAlters = false;
     $scope.alterMatchName = "";
-    current_array_ids = []
+    current_array_ids = [];
+    $(".interviewee").text(egoIdString);
     if (typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR") {
         alterPromptPage = true;
         for (k in $scope.alters) {

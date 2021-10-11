@@ -339,6 +339,7 @@ class InterviewController extends Controller
 
         return $this->render('view', array(
                 "study"=>json_encode(Tools::mToA($study)),
+                "ego_id_string"=>($interview ? $interview->egoid : ""),
                 "questions"=>json_encode($questions),
                 "ego_id_questions"=>json_encode($ego_id_questions),
                 "ego_questions"=>json_encode($ego_questions),
