@@ -719,7 +719,8 @@ class AuthoringController extends Controller
 			foreach($_POST['questions'] as $order=>$q){
                 $question = Question::findOne($q['id']);
                 $question->ordering = $order;
-                $question->save();
+                if(!$question->save())
+                    print_r($question->errors);
 			}
         }
     }

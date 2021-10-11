@@ -1085,15 +1085,19 @@ new Vue({
         reorderQuestion(event) {
             var questions = $.extend(true, [], this.questions);
             questions.splice(event.newIndex, 0, questions.splice(event.oldIndex, 1)[0])
+            qList = [];
             for (q in questions) {
                 questions[q].ordering = q;
+                qList.push({id:questions[q].id})
             }
             this.questions = questions;
+
             self = this;
             (function(self) {
                 $.post('/authoring/ajaxreorder/' + self.study.id, {
                     questions: {
-                        ...self.questions
+                        ...qList
+                        //...self.questions
                     }
                 }, function(data) {});
             })(self);
