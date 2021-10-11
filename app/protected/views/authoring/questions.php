@@ -464,7 +464,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
 
                     <div v-if="question.preface != null && question.preface != ''">
                         <label for="Question_preface" class="col-form-label">Preface (Deprecated.  Please copy into a new NO_RESPONSE question)</label>
-                        <textarea>{{question.preface}}</textarea>
+                        <textarea name="Question[preface]">{{question.preface}}</textarea>
                     </div>
 
                     <div v-if="question.id" class="btn-group col row mt-3">
