@@ -38,6 +38,11 @@ class DataController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
+                        'actions' => ['savegraph'],
+                        'allow' => true,
+                        'roles' => ['?'],
+                    ],
+                    [
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -282,7 +287,7 @@ class DataController extends Controller
             $headers[] = "Isolates";
         }
         $matchAtAll = MatchedAlters::findOne(array(
-            "studyId = " . $study->id,
+            "studyId" => $study->id,
         ));
         if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
             $multiQs = $study->multiIdQs();

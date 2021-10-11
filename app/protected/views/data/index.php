@@ -229,7 +229,7 @@ function deleteInterviews() {
                 <a class="btn btn-sm btn-info float-right" href="/authoring/<?php echo $study->id; ?>">Authoring</a>
             </div>
             <div class="col-sm-8 float-left mb-3">
-                <input type="checkbox" id="withAlters1"> Include Alter Names
+                <input type="checkbox" id="withAlters1" checked> Include Alter Names
       
                 Network Statistics
                 <?php echo Html::dropDownList('expressionId', '', $expressions, ['prompt' => '(none)',
@@ -314,6 +314,6 @@ function deleteInterviews() {
 echo Html::hiddenInput('studyId', $study->id, [ 'id'=>'studyId']);
 echo Html::hiddenInput('interviewIds', '', [ 'id'=>'interviewIds']);
 echo Html::hiddenInput('expressionId', '', [ 'id'=>'expressionId']);
-echo Html::hiddenInput('withAlters', "", array('id' => 'withAlters'));
+echo Html::hiddenInput('withAlters', "1", array('id' => 'withAlters'));
 ?>
 <?= Html::endForm() ?>
