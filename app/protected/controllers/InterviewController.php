@@ -105,7 +105,8 @@ class InterviewController extends Controller
                         }
                     }
                 }
-                Yii::$app->session->set('redirect', $_GET['redirect_url']);
+                if(isset($_GET['redirect_url']))
+                    Yii::$app->session->set('redirect', $_GET['redirect_url']);
                 if(!isset($interview)){
                     $interview = new Interview;
                     $interview->studyId = $study->id;
@@ -135,7 +136,6 @@ class InterviewController extends Controller
                 }
                 $this->redirect("/interview/".$study->id."/". $interview->id . "/#/page/" . $page . "/");
         }else{
-            Yii::$app->session->set('redirect', null);
             $study = Study::findOne($studyId);
         }
         $this->view->title = $study->name;
