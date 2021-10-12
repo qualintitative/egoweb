@@ -607,20 +607,14 @@ class Interview extends \yii\db\ActiveRecord
 
         $matchIntId = "";
         $matchUser = "";
-        $criteria = array(
-            'condition'=>"studyId = $this->studyId",
-        );
-        $matchAtAll = MatchedAlters::model()->find($criteria);
+        $matchAtAll = MatchedAlters::findOne(["studyId"=>$this->studyId]);
         if($matchAtAll){
-    		$criteria = array(
-    			'condition'=>"interviewId1 = $this->id OR interviewId2 = $this->id",
-    		);
-    		$match = MatchedAlters::model()->find($criteria);
+    		$match = MatchedAlters::find()->where(["interviewId1" => $this->id])->orWhere(["interviewId2" => $this->id])->one();
     		if($match){
                 if($this->id == $match->interviewId1)
-                    $matchInt = Interview::model()->findByPk($match->interviewId2);
+                    $matchInt = Interview::findOne($match->interviewId2);
                 else
-                    $matchInt = Interview::model()->findByPk($match->interviewId1);
+                    $matchInt = Interview::findOne($match->interviewId1);
                 $matchIntId = $match->getMatchId();
                 $matchU = User::findOne($match->userId);
                 $matchUser = $matchU->name;
@@ -633,8 +627,8 @@ class Interview extends \yii\db\ActiveRecord
             $answers['Interview ID'] = $this->id;
             $ego_ids = array();
             $ego_id_string = array();
-            $study = Study::model()->findByPk($this->studyId);
-            $optionsRaw = QuestionOption::model()->findAllByAttributes(array("studyId"=>$study->id));
+            $study = Study::findOne($this->studyId);
+            $optionsRaw = QuestionOption::findAll(array("studyId"=>$study->id));
 
             // create an array with option ID as key
             $options = array();
@@ -646,7 +640,7 @@ class Interview extends \yii\db\ActiveRecord
             }
             foreach ($ego_id_questions as $question)
             {
-                $result = Answer::model()->findByAttributes(array("interviewId" => $this->id, "questionId" => $question->id));
+                $result = Answer::findOne(array("interviewId" => $this->id, "questionId" => $question->id));
                 $answer = $result->value;
 
                 if ($question->answerType == "MULTIPLE_SELECTION")
@@ -686,7 +680,7 @@ class Interview extends \yii\db\ActiveRecord
             foreach ($ego_questions as $question)
             {
 				
-                $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question->id));
+                $answer = Answer::findOne(array("interviewId"=>$this->id, "questionId"=>$question->id));
                 if(!$answer){
                     $answers[$question->title] = $study->valueNotYetAnswered;
                     continue;
@@ -747,7 +741,7 @@ class Interview extends \yii\db\ActiveRecord
 
             foreach ($network_questions as $question)
             {
-                $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question->id));
+                $answer = Answer::findOne(array("interviewId"=>$this->id, "questionId"=>$question->id));
                 if(!$answer){
                     $answers[$question->title] = $study->valueNotYetAnswered;
                     continue;
@@ -806,10 +800,7 @@ class Interview extends \yii\db\ActiveRecord
                 if($matchAtAll){
                     $matchId = "";
                     $matchName = "";
-            		$criteria = array(
-            			'condition'=>"alterId1 = $alter->id OR alterId2 = $alter->id",
-            		);
-            		$match = MatchedAlters::model()->find($criteria);
+            		$match = MatchedAlters::find()->where(["alterId1"=>$alter->id])->orWhere(["alterId2"=>$alter->id])->one();
                     if($match){
                         $matchId = $match->id;
                         $matchName = $match->matchedName;
@@ -841,7 +832,7 @@ class Interview extends \yii\db\ActiveRecord
                 }
                 foreach ($alter_questions as $question)
                 {
-                    $answer = Answer::model()->findByAttributes(array("interviewId"=>$this->id, "questionId"=>$question->id, "alterId1"=>$alter->id));
+                    $answer = Answer::findOne(array("interviewId"=>$this->id, "questionId"=>$question->id, "alterId1"=>$alter->id));
                     if(!$answer){
                         $answers[$question->title] = $study->valueNotYetAnswered;
                         continue;
