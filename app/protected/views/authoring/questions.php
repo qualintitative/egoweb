@@ -459,7 +459,6 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                     </div>
 
                     <div v-if="question.subjectType == 'NETWORK'">
-                    {{question.networkParams}}
                     <?= $this->render('/authoring/network'); ?>
                     </div>
 
