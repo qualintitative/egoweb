@@ -105,7 +105,7 @@ class InterviewController extends Controller
                         }
                     }
                 }
-                Yii::app()->session['redirect'] = $_GET['redirect_url'];
+                Yii::$app->session->set('redirect', $_GET['redirect_url']);
                 if(!isset($interview)){
                     $interview = new Interview;
                     $interview->studyId = $study->id;
@@ -135,6 +135,7 @@ class InterviewController extends Controller
                 }
                 $this->redirect("/interview/".$study->id."/". $interview->id . "/#/page/" . $page . "/");
         }else{
+            Yii::$app->session->set('redirect', null);
             $study = Study::findOne($studyId);
         }
         $this->view->title = $study->name;
@@ -358,7 +359,7 @@ class InterviewController extends Controller
                 "prevAlters"=>json_encode($prevAlters),
                 "graphs"=>json_encode($graphs),
                 "allNotes"=>json_encode($notes),
-                "participantList"=>json_encode($participantList),
+                "participantList"=>json_encode($participantList) ? json_encode($participantList) : "[]",
                 "questionList"=>json_encode($questionList),
                 "questionTitles"=>json_encode($study->questionTitles()),
                 "audio"=>json_encode($audio),

@@ -913,7 +913,7 @@ function initStats(question) {
                         gc_color = this.params['nodeColor']['options'][p]['color'];
                 }
                 return this.gradient[gc_color][value];
-            } else if (typeof this.params['nodeColor']['questionId'] != "undefined" && this.params['nodeColor']['questionId'].search("expression") != -1) {
+            } else if (typeof this.params['nodeColor']['questionId'] != "undefined" && this.params['nodeColor']['questionId'].toString().search("expression") != -1) {
                 var qId = this.params['nodeColor']['questionId'].split("_");
                 if (evalExpression(qId[1], nodeId) == true) {
                     for (p in this.params['nodeColor']['options']) {
@@ -958,6 +958,7 @@ function initStats(question) {
                     min = 0;
                 }
                 value = Math.round(((value - min) / (range)) * 9) + 1;
+                console.log("size", value * 2);
                 return value * 2;
             }
             if (nodeId != -1 && typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "betweenness") {
@@ -970,6 +971,7 @@ function initStats(question) {
                     min = 0;
                 }
                 value = Math.round(((value - min) / (range)) * 9) + 1;
+                console.log("size", value * 2);
                 return value * 2;
             }
             if (nodeId != -1 && typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "eigenvector") {
@@ -982,6 +984,7 @@ function initStats(question) {
                     min = 0;
                 }
                 value = Math.round(((value - min) / (range)) * 9) + 1;
+                console.log("size", value * 2);
                 return value * 2;
             }
             if (typeof this.params['nodeSize']['questionId'] != "undefined" && typeof answers[this.params['nodeSize']['questionId'] + "-" + nodeId] != "undefined")
@@ -997,7 +1000,8 @@ function initStats(question) {
                     defaultNodeSize = this.params['nodeSize']['options'][p]['size'];
             }
         }
-        return defaultNodeSize;
+        console.log("default size", defaultNodeSize * 2);
+        return defaultNodeSize * 2;
     }
 
     this.getNodeShape = function(nodeId) {
@@ -1027,7 +1031,7 @@ function initStats(question) {
             else
                 var answer = "";
             for (p in this.params['edgeColor']['options']) {
-                if (this.params['edgeColor']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+                if ((this.params['edgeColor']['options'][p]['id'] == "default" || this.params['edgeColor']['options'][p]['id'] == 0) && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
                     defaultEdgeColor = this.params['edgeColor']['options'][p]['color'];
                 if (this.params['edgeColor']['options'][p]['id'] == answer || $.inArray(this.params['edgeColor']['options'][p]['id'], answer) != -1)
                     return this.params['edgeColor']['options'][p]['color'];

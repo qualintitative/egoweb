@@ -25,10 +25,12 @@ participantList = <?php echo $participantList ?>;
 audio = <?php echo $audio; ?>;
 otherGraphs = <?php echo $otherGraphs; ?>;
 csrf = '<?php echo Yii::$app->request->getCsrfToken(); ?>';
-if('<?php echo Yii::$app->session->get('redirect'); ?>' != '')
-    window.localStorage.setItem('redirect', '<?php echo Yii::$app->session->get('redirect'); ?>');
-redirect = window.localStorage.getItem('redirect');
 isGuest = <?php echo (Yii::$app->user->isGuest ? 1 : 0); ?>;
+if(isGuest && '<?php echo Yii::$app->session->get('redirect'); ?>' != '')
+    window.localStorage.setItem('redirect', '<?php echo Yii::$app->session->get('redirect'); ?>');
+else 
+    window.localStorage.setItem('redirect', '');
+redirect = window.localStorage.getItem('redirect');
 </script>
 <?php 
 $this->registerAssetBundle(\yii\web\JqueryAsset::className(), \yii\web\View::POS_HEAD); 

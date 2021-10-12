@@ -459,6 +459,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                     </div>
 
                     <div v-if="question.subjectType == 'NETWORK'">
+                    {{question.networkParams}}
                     <?= $this->render('/authoring/network'); ?>
                     </div>
 
@@ -1025,46 +1026,80 @@ new Vue({
                 this.questions[k].allOptionJson = JSON.parse(this.questions[k].allOptionString);
             else
                 this.questions[k].allOptionJson = {"YES_LABEL":"Yes", "NO_LABEL":"No", "NEW_NAME_LABEL":""};
-        }
-        var defaultParams = {
-            nodeColor:{questionId:'', options:[{id:-1, color:"#000"}, {id:'default', color:"#000"}]},
-            nodeSize:{questionId:'', options:[{id:-1, size:2}, {id:'default', size:2}]},
-            nodeShape:{questionId:'', options:[{id:-1, shape:'circle'},{id:'default', shape:'circle'}]},
-            edgeColor:{questionId:'', options:[{id:'default', color:"#000"}]},
-            edgeSize:{questionId:'', options:[{id:'default', size:1}]},
-            egoEdgeColor:{questionId:'', options:[]},
-            egoEdgeSize:{questionId:'', options:[]},
-        }
-        if(this.questions[k].networkParams == "" || this.questions[k].networkParams == null){
-            this.questions[k].nParams = defaultParams
-        }else{
-            this.questions[k].nParams = JSON.parse(this.questions[k].networkParams);
-            for(p in defaultParams){
-                var egoOption = defaultParams[p].options[0];
-                var defaultOption = defaultParams[p].options[1];
-                var newOptions = [];
-                if(typeof this.questions[k].nParams[p] == "undefined"){
-                    this.questions[k].nParams[p] = defaultParams[p];
+        
+            var defaultParams = {
+                nodeColor:{questionId:'', options:[{id:-1, color:"#000"}, {id:'default', color:"#000"}]},
+                nodeSize:{questionId:'', options:[{id:-1, size:2}, {id:'default', size:2}]},
+                nodeShape:{questionId:'', options:[{id:-1, shape:'circle'},{id:'default', shape:'circle'}]},
+                edgeColor:{questionId:'', options:[{id:'default', color:"#000"}]},
+                edgeSize:{questionId:'', options:[{id:'default', size:1}]},
+                egoEdgeColor:{questionId:'', options:[{id:'default', color:"#000"}]},
+                egoEdgeSize:{questionId:'', options:[{id:'default', size:1}]},
+            }
+            if(this.questions[k].subjectType == "NETWORK"){
+                if(this.questions[k].networkParams == "" || this.questions[k].networkParams == null || this.questions[k].networkParams == "null"){
+                    this.questions[k].nParams = defaultParams
                 }else{
-                    if(typeof this.questions[k].nParams[p].questionId == "undefined")
-                        this.questions[k].nParams[p].questionId = "";
-                    if(p == "nodeColor" || p == "nodeSize" || p == "nodeShape"){
-                        for(var i = 0; i < this.questions[k].nParams[p].options.length; i++){
-                            if(this.questions[k].nParams[p].options[i].id == "default")
-                                defaultOption = this.questions[k].nParams[p].options[i];
-                            else if(this.questions[k].nParams[p].options[i].id == -1)
-                                egoOption = this.questions[k].nParams[p].options[i];
-                            else
-                                newOptions.push(this.questions[k].nParams[p].options[i]);
+                    this.questions[k].nParams = JSON.parse(this.questions[k].networkParams);
+                    for(p in defaultParams){
+                        var egoOption = defaultParams[p].options[0];
+                        var defaultOption = defaultParams[p].options[1];
+                        var newOptions = [];
+                        if(typeof this.questions[k].nParams[p] == "undefined"){
+                            this.questions[k].nParams[p] = defaultParams[p];
+                        }else{
+                            if(typeof this.questions[k].nParams[p].questionId == "undefined")
+                                this.questions[k].nParams[p].questionId = "";
+                            if(p == "nodeColor" || p == "nodeSize" || p == "nodeShape"){
+                                for(var i = 0; i < this.questions[k].nParams[p].options.length; i++){
+                                    if(this.questions[k].nParams[p].options[i].id == "default")
+                                        defaultOption = this.questions[k].nParams[p].options[i];
+                                    else if(this.questions[k].nParams[p].options[i].id == -1)
+                                        egoOption = this.questions[k].nParams[p].options[i];
+                                    else
+                                        newOptions.push(this.questions[k].nParams[p].options[i]);
+                                }
+                                if(typeof alterQOptions[this.questions[k].nParams[p].questionId] != "undefined")
+                                  console.log(p, this.questions[k].nParams[p].options.length, alterQOptions[this.questions[k].nParams[p].questionId].length,  alterQOptions[this.questions[k].nParams[p].questionId].length + 2 - this.questions[k].nParams[p].options.length )
+                                if(!isNaN(this.questions[k].nParams[p].questionId) && typeof alterQOptions[this.questions[k].nParams[p].questionId] != "undefined" && alterQOptions[this.questions[k].nParams[p].questionId].length + 2 - this.questions[k].nParams[p].options.length  > 0){
+                                    console.log(alterQOptions[this.questions[k].nParams[p].questionId].length + 2 - this.questions[k].nParams[p].options.length )
+                                    for(var i = 0; i <  alterQOptions[this.questions[k].nParams[p].questionId].length + 2 - this.questions[k].nParams[p].options.length ; i++){
+                                        newOptions.push(this.questions[k].nParams[p].options[0]);
+                                    }
+                                }
+                                newOptions.unshift(defaultOption);
+                                newOptions.unshift(egoOption);
+                                this.questions[k].nParams[p].options = newOptions;
+                                if(typeof alterQOptions[this.questions[k].nParams[p].questionId] != "undefined")
+                                  console.log(p + " changed",this.questions[k].nParams[p].options.length, alterQOptions[this.questions[k].nParams[p].questionId].length, this.questions[k].nParams[p].options)
+
+                            }else if(p == "edgeColor" || p == "edgeSize" || p == "egoEdgeColor" || p == "egoEdgeSize"){
+                                for(var i = 0; i < this.questions[k].nParams[p].options.length; i++){
+                                    if(this.questions[k].nParams[p].options[i].id == 0)
+                                        this.questions[k].nParams[p].options[i].id = "default"
+                                    if(this.questions[k].nParams[p].options[i].id == "default")
+                                        defaultOption = this.questions[k].nParams[p].options[i];
+                                    else
+                                        newOptions.push(this.questions[k].nParams[p].options[i]);
+                                }
+                                if(!isNaN(this.questions[k].nParams[p].questionId) && typeof alterPairQOptions[this.questions[k].nParams[p].questionId] != "undefined" &&  alterPairQOptions[this.questions[k].nParams[p].questionId].length + 1 - this.questions[k].nParams[p].options.length  > 0){
+                                    for(var i = 0; i <  alterPairQOptions[this.questions[k].nParams[p].questionId].length + 1 - this.questions[k].nParams[p].options.length ; i++){
+                                        newOptions.push(defaultOption);
+                                    }
+                                    console.log("mod pair", newOptions.length, this.questions[k].nParams[p].questionId,alterPairQOptions[this.questions[k].nParams[p].questionId], alterPairQOptions[this.questions[k].nParams[p].questionId].length)
+                                }
+                                newOptions.unshift(defaultOption);
+                                this.questions[k].nParams[p].options = newOptions;
+                                console.log(p, this.questions[k].nParams[p])
+                            }
                         }
-                        newOptions.unshift(defaultOption);
-                        newOptions.unshift(egoOption);
-                        this.questions[k].nParams[p].options = newOptions;
                     }
+                    console.log(questions[k].title, this.questions[k].nParams.nodeColor.questionId)
+
                 }
+                new_question.nParams = defaultParams;
             }
         }
-        new_question.nParams = defaultParams;
     },
     mounted() {
         var self = this;
@@ -1091,7 +1126,6 @@ new Vue({
                 qList.push({id:questions[q].id})
             }
             this.questions = questions;
-
             self = this;
             (function(self) {
                 $.post('/authoring/ajaxreorder/' + self.study.id, {
