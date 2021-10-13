@@ -145,35 +145,37 @@ class AdminController extends Controller
         return $this->response->redirect(Url::toRoute('/admin/user'));
     }
 
+    public function actionErrors()
+    {
+        $text = "";
+        $myfile = fopen(getcwd() . "/protected/runtime/logs/app.log", "r") or die("Unable to open file!");
+        while(!feof($myfile)) {
+            $text .= fgets($myfile) . "<br>";
+        }
+        fclose($myfile);
+        return $this->renderAjax("/layouts/ajax", ["json"=>$text]);
+    }
+
     public function actionMigrate()
     {
-        echo $this->runMigrationTool()  . "<br>done!";
+        $oldApp = \Yii::$app;
+        new \yii\console\Application([
+            'id'            => 'Command runner',
+            'basePath'      => '@app',
+            'components'    => [
+                'db' => $oldApp->db,
+            ],
+        ]);
+        \Yii::$app->runAction('migrate/up', ['migrationPath' => '@console/migrations/', 'interactive' => false]);
+        \Yii::$app = $oldApp;
+        echo  "<br>done!";
     }
 
     public function actionUpdate()
     {
-        echo $this->runGitUpdate();
-    }
-
-    private function runMigrationTool()
-    {
-        echo "running migration tool...";
-        $migration = new Controllers\MigrateController("migrate",Yii::$app);
-        return $migration->run('migrate', ['migrationPath' => '@console/migrations/']);
-    }
-
-    private function runGitUpdate()
-    {
-        $commandPath = Yii::app()->getBasePath() . "/../../";
-        $runner = new CConsoleCommandRunner();
-        $runner->addCommands($commandPath);
-
-        $commandPath = Yii::getFrameworkPath() . DIRECTORY_SEPARATOR . 'cli' . DIRECTORY_SEPARATOR . 'commands';
-        $runner->addCommands($commandPath);
-        $args = array('git', 'pull', '');
-        ob_start();
-        $runner->run($args);
-        echo htmlentities(ob_get_clean(), null, Yii::app()->charset);
+        $path =  realpath("../");
+        $op = shell_exec('cd ' .   $path . ' && /usr/bin/git pull 2>&1');
+        \yii\helpers\VarDumper::dump($op, 10, 1);
     }
 
 }
