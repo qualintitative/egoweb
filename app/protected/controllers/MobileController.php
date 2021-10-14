@@ -377,7 +377,8 @@ class MobileController extends Controller
                 foreach ($data['questions'] as $q) {
                     $question = new Question;
                     foreach ($question->attributes as $key=>$value) {
-                        $question->$key = $q[strtoupper($key)];
+                        if(isset($q[strtoupper($key)]))
+                            $question->$key = $q[strtoupper($key)];
                     }
                     array_push($questions, $question);
                 }
@@ -385,7 +386,8 @@ class MobileController extends Controller
                 foreach ($data['questionOptions'] as $o) {
                     $option = new QuestionOption;
                     foreach ($option->attributes as $key=>$value) {
-                        $option->$key = $o[strtoupper($key)];
+                        if(isset($o[strtoupper($key)]))
+                            $option->$key = $o[strtoupper($key)];
                     }
                     array_push($options, $option);
                 }
