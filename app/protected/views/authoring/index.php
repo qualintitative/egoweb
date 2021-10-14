@@ -148,7 +148,26 @@ SummerNote = Vue.component('summer-note', {
                     $(this).summernote("code", self.model);
                 },
                 onKeyup: function(e) {
-                    self.$emit("update:model", $(this).summernote('code'));
+                    var text = $(this).summernote('code');
+                    while(text.startsWith('<p><br></p>')){
+                        text = text.replace('<p><br></p>','')
+                    }
+                    while(text.endsWith('<p><br></p>')){
+                        text = text.replace(new RegExp('<p><br></p>$'),'')
+                    }
+                    $(this).summernote('code', text);
+                    self.$emit("update:model", text);
+                },
+                onChangeCodeview: function(e) {
+                    var text = $(this).summernote('code');
+                    while(text.startsWith('<p><br></p>')){
+                        text = text.replace('<p><br></p>','')
+                    }
+                    while(text.endsWith('<p><br></p>')){
+                        text = text.replace(new RegExp('<p><br></p>$'),'')
+                    }
+                    $(this).summernote('code', text);
+                    self.$emit("update:model", text);
                 }
             }
 

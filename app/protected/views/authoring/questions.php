@@ -536,13 +536,27 @@ SummerNote = Vue.component('summer-note', {
                 },
                 onKeyup: function(e) {
                     var text = rebuildEgowebTags($(this).summernote('code').replace(' draggable="false"', ''),self.vid);
+                    while(text.startsWith('<p><br></p>')){
+                        text = text.replace('<p><br></p>','')
+                    }
+                    while(text.endsWith('<p><br></p>')){
+                        text = text.replace(new RegExp('<p><br></p>$'),'')
+                    }
+                    $(this).summernote('code', text);
                     self.$emit("update:model", text);
                     parseEgowebTags(text, self.vid);
                 },
                 onChangeCodeview: function(e) {
                     $("#" + self.vid.split("_")[0] + "_prompt").val($(this).summernote('code'));
-                    self.$emit("update:model", $(this).summernote('code'));
-                    console.log(self.model)
+                    var text = $(this).summernote('code');
+                    while(text.startsWith('<p><br></p>')){
+                        text = text.replace('<p><br></p>','')
+                    }
+                    while(text.endsWith('<p><br></p>')){
+                        text = text.replace(new RegExp('<p><br></p>$'),'')
+                    }
+                    $(this).summernote('code', text);
+                    self.$emit("update:model", text);
                 },
                 onPaste: function(e) {
                     var thisNote = $(this);
