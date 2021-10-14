@@ -243,7 +243,7 @@ class InterviewController extends Controller
         }
         if (count($results) > 0) {
             foreach ($results as $result) {
-                if ($autocompleteList == false && (Yii::$app->user->identity->isSuperAdmin() || ($result->interviewerId == Yii::$app->user->identity->id || !$result->interviewerId))) {
+                if ($autocompleteList == false && (!$result->interviewerId || (Yii::$app->user->identity != null && (Yii::$app->user->identity->isSuperAdmin() || $result->interviewerId == Yii::$app->user->identity->id)))) {
                     if (!in_array($result->name, $ego_id_answers) && !in_array($result->email, $ego_id_answers)) {
                         $participantList[] = Tools::mToA($result);
                     }
