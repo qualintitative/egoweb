@@ -732,8 +732,8 @@ class ImportExportController extends Controller
             } elseif ($newExpression->type == "Compound") {
                 $expressionIds = explode(',', $newExpression->value);
                 foreach ($expressionIds as &$expressionId) {
-                    if (is_numeric($expressionId) && isset($newExpressionIds[$expressionId])) {
-                        $expressionId = $newExpressionIds[$expressionId];
+                    if (is_numeric($expressionId) && isset($newExpressionIds[intval($expressionId)])) {
+                        $expressionId = $newExpressionIds[intval($expressionId)];
                     }
                 }
                 $newExpression->value = implode(',', $expressionIds);
@@ -750,7 +750,10 @@ class ImportExportController extends Controller
                     $newExpression->value = implode(',', $questionIds);
                 }
             }
-            $newExpression->save();
+            if(!$newExpression->save()){
+                print_r($newExpression->errors);
+                die();
+            }
         }
 		foreach ($newAlterIds as $oldId=>$newId) {
 			$alter = Alters::findOne($newId);

@@ -1054,6 +1054,7 @@ new Vue({
                     this.questions[k].nParams = defaultParams
                 }else{
                     this.questions[k].nParams = JSON.parse(this.questions[k].networkParams);
+                    console.log(questions[k].title, this.questions[k].nParams.nodeColor.questionId)
                     for(p in defaultParams){
                         var egoOption = defaultParams[p].options[0];
                         var defaultOption = defaultParams[p].options[1];
@@ -1064,50 +1065,71 @@ new Vue({
                             if(typeof this.questions[k].nParams[p].questionId == "undefined")
                                 this.questions[k].nParams[p].questionId = "";
                             if(p == "nodeColor" || p == "nodeSize" || p == "nodeShape"){
+                                let oIds = [];
                                 for(var i = 0; i < this.questions[k].nParams[p].options.length; i++){
-                                    if(this.questions[k].nParams[p].options[i].id == "default")
+                                    if(this.questions[k].nParams[p].options[i].id == "default"){
                                         defaultOption = this.questions[k].nParams[p].options[i];
-                                    else if(this.questions[k].nParams[p].options[i].id == -1)
-                                        egoOption = this.questions[k].nParams[p].options[i];
-                                    else
-                                        newOptions.push(this.questions[k].nParams[p].options[i]);
+                                    }else if(this.questions[k].nParams[p].options[i].id == -1){
+                                            egoOption = this.questions[k].nParams[p].options[i];
+                                    }else{
+                                        if (oIds.indexOf(this.questions[k].nParams[p].options[i].id.toString()) == -1) {
+                                            newOptions.push(this.questions[k].nParams[p].options[i]);
+                                            oIds.push(this.questions[k].nParams[p].options[i].id.toString())
+                                        }
+                                    }
                                 }
                                 if(typeof alterQOptions[this.questions[k].nParams[p].questionId] != "undefined")
-                                  console.log(p, this.questions[k].nParams[p].options.length, alterQOptions[this.questions[k].nParams[p].questionId].length,  alterQOptions[this.questions[k].nParams[p].questionId].length + 2 - this.questions[k].nParams[p].options.length )
-                                if(!isNaN(this.questions[k].nParams[p].questionId) && typeof alterQOptions[this.questions[k].nParams[p].questionId] != "undefined" && alterQOptions[this.questions[k].nParams[p].questionId].length + 2 - this.questions[k].nParams[p].options.length  > 0){
+                                console.log(newOptions, alterQOptions[this.questions[k].nParams[p].questionId].length + 2, this.questions[k].nParams[p].options.length)
+                                if(!isNaN(this.questions[k].nParams[p].questionId) && typeof alterQOptions[this.questions[k].nParams[p].questionId] != "undefined" && alterQOptions[this.questions[k].nParams[p].questionId].length + 2 - newOptions.length  > 0){
                                     console.log(alterQOptions[this.questions[k].nParams[p].questionId].length + 2 - this.questions[k].nParams[p].options.length )
-                                    for(var i = 0; i <  alterQOptions[this.questions[k].nParams[p].questionId].length + 2 - this.questions[k].nParams[p].options.length ; i++){
-                                        newOptions.push(this.questions[k].nParams[p].options[0]);
+                                    for(q in alterQOptions[this.questions[k].nParams[p].questionId]){
+                                        console.log(oIds,alterQOptions[this.questions[k].nParams[p].questionId][q].id)
+                                        if(oIds.indexOf(alterQOptions[this.questions[k].nParams[p].questionId][q].id) == -1){
+                                            let newDefaultOption = $.extend(true, {}, defaultOption);
+                                            newDefaultOption.id = parseInt(alterQOptions[this.questions[k].nParams[p].questionId][q].id);
+                                            console.log(newDefaultOption)
+                                            newOptions.push(newDefaultOption);
+                                        }
                                     }
                                 }
                                 newOptions.unshift(defaultOption);
                                 newOptions.unshift(egoOption);
                                 this.questions[k].nParams[p].options = newOptions;
                                 if(typeof alterQOptions[this.questions[k].nParams[p].questionId] != "undefined")
-                                  console.log(p + " changed",this.questions[k].nParams[p].options.length, alterQOptions[this.questions[k].nParams[p].questionId].length, this.questions[k].nParams[p].options)
+                                  console.log(p + " changed",this.questions[k].nParams[p].options.length, alterQOptions[this.questions[k].nParams[p].questionId].length, this.questions[k].nParams[p].options, alterQOptions[this.questions[k].nParams[p].questionId])
 
                             }else if(p == "edgeColor" || p == "edgeSize" || p == "egoEdgeColor" || p == "egoEdgeSize"){
+                                let oIds = [];
                                 for(var i = 0; i < this.questions[k].nParams[p].options.length; i++){
                                     if(this.questions[k].nParams[p].options[i].id == 0)
                                         this.questions[k].nParams[p].options[i].id = "default"
-                                    if(this.questions[k].nParams[p].options[i].id == "default")
+                                    if(this.questions[k].nParams[p].options[i].id == "default"){
                                         defaultOption = this.questions[k].nParams[p].options[i];
-                                    else
-                                        newOptions.push(this.questions[k].nParams[p].options[i]);
+                                    }else{
+                                        if (oIds.indexOf(this.questions[k].nParams[p].options[i].id.toString()) == -1) {
+                                            newOptions.push(this.questions[k].nParams[p].options[i]);
+                                            oIds.push(this.questions[k].nParams[p].options[i].id.toString());
+                                        }
+                                    }
                                 }
-                                if(!isNaN(this.questions[k].nParams[p].questionId) && typeof alterPairQOptions[this.questions[k].nParams[p].questionId] != "undefined" &&  alterPairQOptions[this.questions[k].nParams[p].questionId].length + 1 - this.questions[k].nParams[p].options.length  > 0){
-                                    for(var i = 0; i <  alterPairQOptions[this.questions[k].nParams[p].questionId].length + 1 - this.questions[k].nParams[p].options.length ; i++){
-                                        newOptions.push(defaultOption);
+                                if(!isNaN(this.questions[k].nParams[p].questionId) && typeof alterPairQOptions[this.questions[k].nParams[p].questionId] != "undefined" &&  alterPairQOptions[this.questions[k].nParams[p].questionId].length + 1 - newOptions.length  > 0){
+                                    for(q in alterPairQOptions[this.questions[k].nParams[p].questionId]){
+                                        console.log(alterPairQOptions[this.questions[k].nParams[p].questionId][q].id)
+                                        if(oIds.indexOf(alterPairQOptions[this.questions[k].nParams[p].questionId][q].id) == -1){
+                                            var newDefaultOption = $.extend(true, {}, defaultOption);
+                                            newDefaultOption.id = parseInt(alterPairQOptions[this.questions[k].nParams[p].questionId][q].id);
+                                            console.log(newDefaultOption)
+                                            newOptions.push(newDefaultOption);
+                                        }
                                     }
                                     console.log("mod pair", newOptions.length, this.questions[k].nParams[p].questionId,alterPairQOptions[this.questions[k].nParams[p].questionId], alterPairQOptions[this.questions[k].nParams[p].questionId].length)
                                 }
                                 newOptions.unshift(defaultOption);
                                 this.questions[k].nParams[p].options = newOptions;
-                                console.log(p, this.questions[k].nParams[p])
+                                //console.log(p, this.questions[k].nParams[p])
                             }
                         }
                     }
-                    console.log(questions[k].title, this.questions[k].nParams.nodeColor.questionId)
 
                 }
                 new_question.nParams = defaultParams;

@@ -946,7 +946,6 @@ function initStats(question) {
 
     this, getNodeSize = function(nodeId) {
         var defaultNodeSize = 4;
-        console.log(this.params)
         if (nodeId != -1 && typeof this.params['nodeSize'] != "undefined") {
             if (typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "degree") {
                 max = maxDegree;
@@ -958,7 +957,6 @@ function initStats(question) {
                     min = 0;
                 }
                 value = Math.round(((value - min) / (range)) * 9) + 1;
-                console.log("size", value * 2);
                 return value * 2;
             }
             if (nodeId != -1 && typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "betweenness") {
@@ -971,7 +969,6 @@ function initStats(question) {
                     min = 0;
                 }
                 value = Math.round(((value - min) / (range)) * 9) + 1;
-                console.log("size", value * 2);
                 return value * 2;
             }
             if (nodeId != -1 && typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "eigenvector") {
@@ -984,7 +981,6 @@ function initStats(question) {
                     min = 0;
                 }
                 value = Math.round(((value - min) / (range)) * 9) + 1;
-                console.log("size", value * 2);
                 return value * 2;
             }
             if (typeof this.params['nodeSize']['questionId'] != "undefined" && typeof answers[this.params['nodeSize']['questionId'] + "-" + nodeId] != "undefined")
@@ -992,11 +988,13 @@ function initStats(question) {
             else
                 var answer = "";
             for (p in this.params['nodeSize']['options']) {
+                console.log(this.params['nodeSize']['options'][p]['id'])
+                //console.log("answer", nodeId, alterNames[nodeId],this.params['nodeSize']['options'][p]['id'].toString(), answer, $.inArray(this.params['nodeSize']['options'][p]['id'].toString(),  answer), this.params['nodeSize']['options'][p]['size']);
                 if (this.params['nodeSize']['options'][p]['id'] == -1 && nodeId == -1)
                     defaultNodeSize = this.params['nodeSize']['options'][p]['size'];
                 if (this.params['nodeSize']['options'][p]['id'] == "default" && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
                     defaultNodeSize = this.params['nodeSize']['options'][p]['size'];
-                if (nodeId != -1 && (this.params['nodeSize']['options'][p]['id'] == answer || $.inArray(this.params['nodeSize']['options'][p]['id'], answer) != -1))
+                if (nodeId != -1 && (this.params['nodeSize']['options'][p]['id'] == answer || $.inArray(this.params['nodeSize']['options'][p]['id'].toString(), answer) != -1))
                     defaultNodeSize = this.params['nodeSize']['options'][p]['size'];
             }
         }
