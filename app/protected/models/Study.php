@@ -127,6 +127,7 @@ class Study extends \yii\db\ActiveRecord
 		$newQuestionIds = array();
 		$newOptionIds = array();
 		$newExpressionIds = array();
+		$nameGenQIds = array();
 
 		$newStudy = new Study;
 		$newStudy->attributes = $study->attributes;
@@ -146,6 +147,9 @@ class Study extends \yii\db\ActiveRecord
 			if($newStudy->multiSessionEgoId == $question->id){
 				$newStudy->multiSessionEgoId = $newQuestion->id;
 				$newStudy->save();
+			}
+			if($newQuestion->subjectType == "NAME_GENERATOR"){
+				$nameGenQIds[] =  $newQuestion->id;
 			}
 			$newQuestionIds[$question->id] = $newQuestion->id;
 		}
@@ -317,6 +321,7 @@ class Study extends \yii\db\ActiveRecord
 			'newQuestionIds'=>$newQuestionIds,
 			'newOptionIds'=>$newOptionIds,
 			'newExpressionIds'=>$newExpressionIds,
+			'nameGenQIds'=>$nameGenQIds,
 		);
 
 		return $data;

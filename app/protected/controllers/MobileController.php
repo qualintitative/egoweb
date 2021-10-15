@@ -374,12 +374,29 @@ class MobileController extends Controller
                     $study->name = $data['study']['NAME'] . " 2";
                 }
                 $questions = array();
+                $add = 0;
                 foreach ($data['questions'] as $q) {
+                    if($data['study']['ALTERPROMPT'] != "" && $q['SUBJECTTYPE'] == "ALTER"){
+                        $question = new Question;
+                        $add = 1;
+                        $question->attributes = array(
+                            'subjectType' => "NAME_GENERATOR",
+                            'prompt' => $study->alterPrompt,
+                            'studyId' => $id,
+                            'title' => "ALTER_PROMPT",
+                            'answerType' => "NAME_GENERATOR",
+                            'ordering' => $ordering + $add,
+                        );
+                        array_push($questions, $question);
+                    }
                     $question = new Question;
                     foreach ($question->attributes as $key=>$value) {
-                        if(isset($q[strtoupper($key)]))
+                        if (isset($q[strtoupper($key)])) {
                             $question->$key = $q[strtoupper($key)];
+                        }
                     }
+                    $question->ordering = intval($question->ordering) + $add;
+                    $ordering = $question->ordering;
                     array_push($questions, $question);
                 }
                 $options = array();
@@ -474,15 +491,22 @@ class MobileController extends Controller
                         continue;
                     }
 				}
-				if (stristr($alter['INTERVIEWID'], ","))
-					$nameGenQIds = explode(",", $alter['NAMEGENQIDS']);
-				else
-					$nameGenQIds = array($alter['NAMEGENQIDS']);
-				foreach($nameGenQIds as &$nQid){
-					if(isset($newData['newQuestionIds'][$nQid]))
-						$nQid = $newData['newQuestionIds'][$nQid];
-				}
-                $newAlter->nameGenQIds = implode(",", $nameGenQIds);
+                if (isset($alter['NAMEGENQIDS'])) {
+                    if (stristr($alter['NAMEGENQIDS'], ",")) {
+                        $nameGenQIds = explode(",", $alter['NAMEGENQIDS']);
+                    } else {
+                        $nameGenQIds = array($alter['NAMEGENQIDS']);
+                    }
+                    foreach ($nameGenQIds as &$nQid) {
+                        if (isset($newData['newQuestionIds'][$nQid])) {
+                            $nQid = $newData['newQuestionIds'][$nQid];
+                        }
+                    }
+                    $newAlter->nameGenQIds = implode(",", $nameGenQIds);
+                }else{
+                    if(isset($newData['nameGenQIds'][0]))
+                        $newAlter->nameGenQIds = $newData['nameGenQIds'][0];
+                }
                 if(!is_numeric($alter['ORDERING'])){
                     $nGorder = json_decode($alter['ORDERING'], true);
                     $newOrder = array();
