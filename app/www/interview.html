@@ -1,39 +1,11 @@
-<div class="col-sm-12 no-padding" ng-if="header != '' && subjectType == 'NETWORK'" ng-bind-html="header">{{ header }}
-</div>
-
-<div id="visualizePlugin" ng-if="subjectType == 'NETWORK' && (graphExpressionId > 0 || starExpressionId > 0 )" class="col-sm-6 pull-right">
-    <div id="infovis"></div>
-    <div class="row">
-    <div class="col-sm-4 pull-left" id="legend">
-        <canvas id="legend"></canvas>
-    </div>
-    <div class="col-sm-4" id="left-container"></div>
-    <div class="col-sm-4 pull-right hidden-xs" ng-if="redirect == false">
-        <button id="fullscreenButton" onclick="fullscreen()" class="btn btn-info print-button" id="fullscreenButton">Fullscreen</button>
-        <button id="printButton" class="btn btn-primary print-button" style="margin-top:10px" ng-click="print(graphExpressionId, graphInterviewId, graphParams)">Print Preview</button>
-        <div ng-repeat="graph in otherGraphs" style="margin-top:10px">
-            <a href="javascript:void(0)" ng-click="print(graph.expressionId, graph.interviewId, graph.params)">{{graph.studyName}} graph</a><br>
-        </div>
-        <button id="toggleButton" class="btn btn-warning print-button" style="margin-top:10px" onclick="toggleLabels()">Toggle Labels</button>
-        <form id="graph-form" method="post">
-            <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
-            <input value="{{ graphId }}" name="Graph[id]" id="Graph_id" type="hidden">
-            <input value="{{ graphInterviewId }}" name="Graph[interviewId]" id="Graph_interviewId" type="hidden">
-            <input value="{{ graphExpressionId }}" name="Graph[expressionId]" id="Graph_expressionId" type="hidden">
-            <input value="{{ graphNodes }}" name="Graph[nodes]" id="Graph_nodes" type="hidden">
-            <input value="{{ graphParams }}" name="Graph[params]" id="Graph_params" type="hidden">
-            <button id="redrawButton" class="btn btn-danger print-button" style="margin-top:10px" onclick="redraw();return false;">Redraw</button>
-        </form>
-    </div>
-</div>
-</div>
+<div class="col-sm-12 no-padding" ng-if="header != '' && subjectType == 'NETWORK'" ng-bind-html="header">{{ header }}</div>
 
 <div ng-if="subjectType != 'NAME_GENERATOR'" class="col-sm-12">
-<span ng-if="(answerForm.$submitted || errors[0] == 'That name is already on this list' || errors[0] == 'Name cannot be blank' || errors[0] == 'Name not found in list' || errors[keys(errors)[0]] == 'Please modify the name so it\'s not identical to the previous name entered.' || errors[0] == 'That name has already been listed') && errors">
-    <div class="alert alert-danger" role="alert" ng-if="$index == 0" ng-repeat="error in errors">
-        {{ error }}
-    </div>
-</span>
+    <span ng-if="(answerForm.$submitted || errors[0] == 'That name is already on this list' || errors[0] == 'Name cannot be blank' || errors[0] == 'Name not found in list' || errors[keys(errors)[0]] == 'Please modify the name so it\'s not identical to the previous name entered.' || errors[0] == 'That name has already been listed') && errors">
+        <div class="alert alert-danger" role="alert" ng-if="$index == 0" ng-repeat="error in errors">
+            {{ error }}
+        </div>
+    </span>
 </div>
 
 <div ng-if="subjectType == 'NAME_GENERATOR'" ng-class="{'col-xs-12 col-sm-9': questions[0].SUBJECTTYPE == 'NAME_GENERATOR', 'col-md-12': questions[0].SUBJECTTYPE != 'NAME_GENERATOR'}">
@@ -85,6 +57,7 @@
     </div>
 </div>
 
+
 <div id="alterListBox" class="col-xs-12 col-sm-3" ng-if="questions[0].SUBJECTTYPE == 'NAME_GENERATOR'">
     <span class="name-title">Names</span>
     <table class="items" width="100%">
@@ -112,6 +85,7 @@
         </div>
     </div>
 </div>
+
 <form id="answerForm" name="answerForm" ng-submit="submitForm(answerForm.$valid)" novalidate ng-class="{'col-sm-6': subjectType == 'NETWORK'}">
 
     <table id="qTable" ng-class="{qTable: askingStyleList != false}" ng-if="askingStyleList != false">
@@ -492,6 +466,35 @@
         <button ng-if="questions[0].ANSWERTYPE != 'NAME_GENERATOR' && conclusion == true && redirect != false" id="next" class='btn orangebutton' type="submit">Next</button>
     </div>
 </form>
+
+
+<div id="visualizePlugin" ng-if="subjectType == 'NETWORK' && (graphExpressionId > 0 || starExpressionId > 0 )" class="col-sm-6 pull-right">
+    <div id="infovis"></div>
+    <div class="row">
+        <div class="col-sm-4 pull-left" id="legend">
+            <canvas id="legend"></canvas>
+        </div>
+        <div class="col-sm-4" id="left-container"></div>
+        <div class="col-sm-4 pull-right hidden-xs" ng-if="redirect == false">
+            <button id="fullscreenButton" onclick="fullscreen()" class="btn btn-info print-button" id="fullscreenButton">Fullscreen</button>
+            <button id="printButton" class="btn btn-primary print-button" style="margin-top:10px" ng-click="print(graphExpressionId, graphInterviewId, graphParams)">Print Preview</button>
+            <div ng-repeat="graph in otherGraphs" style="margin-top:10px">
+                <a href="javascript:void(0)" ng-click="print(graph.expressionId, graph.interviewId, graph.params)">{{graph.studyName}} graph</a><br>
+            </div>
+            <button id="toggleButton" class="btn btn-warning print-button" style="margin-top:10px" onclick="toggleLabels()">Toggle Labels</button>
+            <form id="graph-form" method="post">
+                <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
+                <input value="{{ graphId }}" name="Graph[id]" id="Graph_id" type="hidden">
+                <input value="{{ graphInterviewId }}" name="Graph[interviewId]" id="Graph_interviewId" type="hidden">
+                <input value="{{ graphExpressionId }}" name="Graph[expressionId]" id="Graph_expressionId" type="hidden">
+                <input value="{{ graphNodes }}" name="Graph[nodes]" id="Graph_nodes" type="hidden">
+                <input value="{{ graphParams }}" name="Graph[params]" id="Graph_params" type="hidden">
+                <button id="redrawButton" class="btn btn-danger print-button" style="margin-top:10px" onclick="redraw();return false;">Redraw</button>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="col-sm-12" ng-if="footer != ''" ng-bind-html="footer">{{ footer }}</div>
 <!-- Modal -->
 <div class="modal fade" id="myModal" role="dialog">
