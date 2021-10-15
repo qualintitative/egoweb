@@ -1065,33 +1065,36 @@ new Vue({
                             if(typeof this.questions[k].nParams[p].questionId == "undefined")
                                 this.questions[k].nParams[p].questionId = "";
                             if(p == "nodeColor" || p == "nodeSize" || p == "nodeShape"){
-                                let oIds = [];
+                                let oIds = {};
                                 for(var i = 0; i < this.questions[k].nParams[p].options.length; i++){
+                                    if(this.questions[k].nParams[p].options[i].id == 0)
+                                        this.questions[k].nParams[p].options[i].id = "default";
                                     if(this.questions[k].nParams[p].options[i].id == "default"){
                                         defaultOption = this.questions[k].nParams[p].options[i];
                                     }else if(this.questions[k].nParams[p].options[i].id == -1){
-                                            egoOption = this.questions[k].nParams[p].options[i];
+                                        egoOption = this.questions[k].nParams[p].options[i];
                                     }else{
-                                        if (oIds.indexOf(this.questions[k].nParams[p].options[i].id.toString()) == -1) {
-                                            newOptions.push(this.questions[k].nParams[p].options[i]);
-                                            oIds.push(this.questions[k].nParams[p].options[i].id.toString())
+                                        console.log(!(this.questions[k].nParams[p].options[i].id.toString() in oIds))
+                                        if (!(this.questions[k].nParams[p].options[i].id.toString() in oIds)) {
+                                            oIds[this.questions[k].nParams[p].options[i].id.toString()] = this.questions[k].nParams[p].options[i];
                                         }
                                     }
                                 }
-                                if(typeof alterQOptions[this.questions[k].nParams[p].questionId] != "undefined")
-                                console.log(newOptions, alterQOptions[this.questions[k].nParams[p].questionId].length + 2, this.questions[k].nParams[p].options.length)
-                                if(!isNaN(this.questions[k].nParams[p].questionId) && typeof alterQOptions[this.questions[k].nParams[p].questionId] != "undefined" && alterQOptions[this.questions[k].nParams[p].questionId].length + 2 - newOptions.length  > 0){
+                                if(!isNaN(this.questions[k].nParams[p].questionId) && typeof alterQOptions[this.questions[k].nParams[p].questionId] != "undefined")
+                                //if(!isNaN(this.questions[k].nParams[p].questionId) && typeof alterQOptions[this.questions[k].nParams[p].questionId] != "undefined" && alterQOptions[this.questions[k].nParams[p].questionId].length + 2 - newOptions.length  > 0){
                                     console.log(alterQOptions[this.questions[k].nParams[p].questionId].length + 2 - this.questions[k].nParams[p].options.length )
                                     for(q in alterQOptions[this.questions[k].nParams[p].questionId]){
                                         console.log(oIds,alterQOptions[this.questions[k].nParams[p].questionId][q].id)
-                                        if(oIds.indexOf(alterQOptions[this.questions[k].nParams[p].questionId][q].id) == -1){
+                                        if(!(alterQOptions[this.questions[k].nParams[p].questionId][q].id in oIds)){
                                             let newDefaultOption = $.extend(true, {}, defaultOption);
-                                            newDefaultOption.id = parseInt(alterQOptions[this.questions[k].nParams[p].questionId][q].id);
+                                            newDefaultOption.id = alterQOptions[this.questions[k].nParams[p].questionId][q].id;
                                             console.log(newDefaultOption)
                                             newOptions.push(newDefaultOption);
+                                        }else{
+                                            newOptions.push(oIds[alterQOptions[this.questions[k].nParams[p].questionId][q].id]);
                                         }
                                     }
-                                }
+                             //   }
                                 newOptions.unshift(defaultOption);
                                 newOptions.unshift(egoOption);
                                 this.questions[k].nParams[p].options = newOptions;
@@ -1099,27 +1102,28 @@ new Vue({
                                   console.log(p + " changed",this.questions[k].nParams[p].options.length, alterQOptions[this.questions[k].nParams[p].questionId].length, this.questions[k].nParams[p].options, alterQOptions[this.questions[k].nParams[p].questionId])
 
                             }else if(p == "edgeColor" || p == "edgeSize" || p == "egoEdgeColor" || p == "egoEdgeSize"){
-                                let oIds = [];
+                                let oIds = {};
                                 for(var i = 0; i < this.questions[k].nParams[p].options.length; i++){
                                     if(this.questions[k].nParams[p].options[i].id == 0)
                                         this.questions[k].nParams[p].options[i].id = "default"
                                     if(this.questions[k].nParams[p].options[i].id == "default"){
                                         defaultOption = this.questions[k].nParams[p].options[i];
                                     }else{
-                                        if (oIds.indexOf(this.questions[k].nParams[p].options[i].id.toString()) == -1) {
-                                            newOptions.push(this.questions[k].nParams[p].options[i]);
-                                            oIds.push(this.questions[k].nParams[p].options[i].id.toString());
+                                        if (!(this.questions[k].nParams[p].options[i].id.toString() in oIds)) {
+                                            oIds[this.questions[k].nParams[p].options[i].id.toString()] = this.questions[k].nParams[p].options[i];
                                         }
                                     }
                                 }
-                                if(!isNaN(this.questions[k].nParams[p].questionId) && typeof alterPairQOptions[this.questions[k].nParams[p].questionId] != "undefined" &&  alterPairQOptions[this.questions[k].nParams[p].questionId].length + 1 - newOptions.length  > 0){
+                                if(!isNaN(this.questions[k].nParams[p].questionId) && typeof alterPairQOptions[this.questions[k].nParams[p].questionId] != "undefined"){
                                     for(q in alterPairQOptions[this.questions[k].nParams[p].questionId]){
                                         console.log(alterPairQOptions[this.questions[k].nParams[p].questionId][q].id)
-                                        if(oIds.indexOf(alterPairQOptions[this.questions[k].nParams[p].questionId][q].id) == -1){
+                                        if(!(alterPairQOptions[this.questions[k].nParams[p].questionId][q].id in oIds)){
                                             var newDefaultOption = $.extend(true, {}, defaultOption);
                                             newDefaultOption.id = parseInt(alterPairQOptions[this.questions[k].nParams[p].questionId][q].id);
                                             console.log(newDefaultOption)
                                             newOptions.push(newDefaultOption);
+                                        }else{
+                                            newOptions.push(oIds[alterPairQOptions[this.questions[k].nParams[p].questionId][q].id]);
                                         }
                                     }
                                     console.log("mod pair", newOptions.length, this.questions[k].nParams[p].questionId,alterPairQOptions[this.questions[k].nParams[p].questionId], alterPairQOptions[this.questions[k].nParams[p].questionId].length)
