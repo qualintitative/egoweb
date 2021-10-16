@@ -149,28 +149,29 @@ SummerNote = Vue.component('summer-note', {
                 },
                 onKeyup: function(e) {
                     var text = $(this).summernote('code');
-                    while(text.startsWith('<p><br></p>')){
+                    if ($(this).summernote('isEmpty')) {
                         text = text.replace('<p><br></p>','')
+                        $(this).summernote('code', text);
                     }
-                    while(text.endsWith('<p><br></p>')){
-                        text = text.replace(new RegExp('<p><br></p>$'),'')
-                    }
-                    $(this).summernote('code', text);
                     self.$emit("update:model", text);
                 },
                 onChangeCodeview: function(e) {
                     var text = $(this).summernote('code');
-                    while(text.startsWith('<p><br></p>')){
+                    if ($(this).summernote('isEmpty')) {
                         text = text.replace('<p><br></p>','')
+                        $(this).summernote('code', text);
                     }
-                    while(text.endsWith('<p><br></p>')){
-                        text = text.replace(new RegExp('<p><br></p>$'),'')
-                    }
-                    $(this).summernote('code', text);
                     self.$emit("update:model", text);
                 }
             }
-
+        });
+        $(this.$refs.summernote).on('summernote.codeview.toggled', function(e) {
+            self.isCodeview = !self.isCodeview;
+            var text = $(this).summernote('code');
+            if ($(this).summernote('isEmpty') || text == '<p><br></p>') {
+                text = text.replace('<p><br></p>','')
+                $(this).summernote('code', text);
+            }
         });
     },
     methods: {

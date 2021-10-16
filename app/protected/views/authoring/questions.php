@@ -529,33 +529,24 @@ SummerNote = Vue.component('summer-note', {
             disableDragAndDrop: true,
             height: 100,
             toolbar: noteBar,
-            
             callbacks: {
                 onInit: function() {
                     $(this).summernote("code", parseEgowebTags(self.model, self.vid));
                 },
                 onKeyup: function(e) {
-                    var text = rebuildEgowebTags($(this).summernote('code').replace(' draggable="false"', ''),self.vid);
-                    while(text.startsWith('<p><br></p>')){
+                    var text = rebuildEgowebTags($(this).summernote('code').replace(/ draggable=\"false\"/g, ''),self.vid);
+                    if ($(this).summernote('isEmpty')) {
                         text = text.replace('<p><br></p>','')
                     }
-                    while(text.endsWith('<p><br></p>')){
-                        text = text.replace(new RegExp('<p><br></p>$'),'')
-                    }
-                    $(this).summernote('code', text);
+                    $("#" + self.vid.split("_")[0] + "_prompt").val(text);
                     self.$emit("update:model", text);
+                    console.log("change", text)
                     parseEgowebTags(text, self.vid);
                 },
                 onChangeCodeview: function(e) {
-                    $("#" + self.vid.split("_")[0] + "_prompt").val($(this).summernote('code'));
                     var text = $(this).summernote('code');
-                    while(text.startsWith('<p><br></p>')){
-                        text = text.replace('<p><br></p>','')
-                    }
-                    while(text.endsWith('<p><br></p>')){
-                        text = text.replace(new RegExp('<p><br></p>$'),'')
-                    }
-                    $(this).summernote('code', text);
+                    console.log("change codeview", text);
+                    $("#" + self.vid.split("_")[0] + "_prompt").val(text);
                     self.$emit("update:model", text);
                 },
                 onPaste: function(e) {
@@ -570,7 +561,6 @@ SummerNote = Vue.component('summer-note', {
                     }, 10);
                 }
             }
-
         });
         $(this.$refs.summernote).on('summernote.codeview.toggled', function(e) {
             self.isCodeview = !self.isCodeview;
@@ -925,6 +915,7 @@ QestionEditor = Vue.component('question-editor', {
             }
         },
         saveQuestion() {
+            $("#" + this.question.id + "_prompt").val(rebuildEgowebTags($("#" + this.question.id + "_prompt").val(), this.question.id + "_prompt"));
            $("#form-" + this.question.id).submit();
         },
         duplicateQuestion() {

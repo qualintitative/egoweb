@@ -266,6 +266,7 @@ function parseEgowebTags(e, id) {
 
 function rebuildEgowebTags(withCode, id) {
     console.log("rebuilding " + id, eTags[id])
+    console.log(withCode)
     var imageDir = "/www/images/";
     if (typeof eTags[id] == "undefined")
         return withCode;
@@ -935,7 +936,7 @@ function initStats(question) {
                     if (this.params['nodeColor']['options'][p]['id'] == -1 && nodeId == -1)
                         return this.params['nodeColor']['options'][p]['color'];
                     if (this.params['nodeColor']['options'][p]['id'] == "default" && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
-                        defaultNodeColor = this.params['nodeColor']['options'][p]['color'];
+                        return this.params['nodeColor']['options'][p]['color'];
                     if (nodeId != -1 && (this.params['nodeColor']['options'][p]['id'] == answer || $.inArray(this.params['nodeColor']['options'][p]['id'], answer) != -1))
                         return this.params['nodeColor']['options'][p]['color'];
                 }
