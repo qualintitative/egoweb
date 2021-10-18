@@ -288,7 +288,6 @@ function rebuildEgowebTags(withCode, id) {
 
     if (typeof eTags[id].varSnips != "undefined") {
         var varSnips = eTags[id].varSnips;
-
         for (i = 0; i < varSnips.length; i++) {
             if (withCode.match("<img id=\"var_" + i + "\" src=\"" + imageDir + "var.png\">"))
                 withCode = withCode.replace("<img id=\"var_" + i + "\" src=\"" + imageDir + "var.png\">", varSnips[i]);
@@ -545,7 +544,7 @@ function initStats(question) {
     nodes = [];
     edges = [];
     var n = [];
-    var expressionId = question.NETWORKRELATIONSHIPEXPRID;
+    expressionId = question.NETWORKRELATIONSHIPEXPRID;
     var starExpressionId = parseInt(question.USELFEXPRESSION);
 
     if (!question.NETWORKPARAMS)

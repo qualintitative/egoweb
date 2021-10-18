@@ -324,7 +324,7 @@ class InterviewController extends Controller
                     unset($prevAlters[$result->id]);
                 $alters[$result->id] = Tools::mToA($result);
             }
-            $results = Graph::find(array('interviewId'=>$interviewId))->all();
+            $results = Graph::find()->where(array('interviewId'=>$interviewId))->all();
             foreach($results as $result){
                 $graphs[$result->expressionId] = Tools::mToA($result);
             }
