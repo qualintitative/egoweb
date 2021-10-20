@@ -185,7 +185,7 @@ class SiteController extends Controller
 
         $model = new SignupForm();
 
-        $table = Yii::$app->db->schema->getTableSchema('mytable');
+        $table = Yii::$app->db->schema->getTableSchema('user');
         if (isset($table->columns['lastActivity'])) {
             $oldApp = \Yii::$app;
             new \yii\console\Application([
