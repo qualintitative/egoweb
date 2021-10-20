@@ -375,8 +375,13 @@ class MobileController extends Controller
                 }
                 $questions = array();
                 $add = 0;
+                $nameGenExists = false;
                 foreach ($data['questions'] as $q) {
-                    if($data['study']['ALTERPROMPT'] != "" && $q['SUBJECTTYPE'] == "ALTER"){
+                    if($q['SUBJECTTYPE'] == "NAME_GENERATOR")
+                        $nameGenExists = true;
+                }
+                foreach ($data['questions'] as $q) {
+                    if($nameGenExists == false && $q['SUBJECTTYPE'] == "ALTER"){
                         $question = new Question;
                         $add = 1;
                         $question->attributes = array(
@@ -693,7 +698,6 @@ class MobileController extends Controller
                     $newAlter->ordering = json_encode($newOrder);
                 }
                 if (!$newAlter->save()) {
-                    echo $questionTitles[$alter['NAMEGENQIDS']];
                     echo $newData["nameGenQId"];
                     echo $alter['NAMEGENQIDS'];
                     print_r($newAlter->getErrors());
