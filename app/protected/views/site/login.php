@@ -9,7 +9,6 @@ use yii\helpers\Url;
 use yii\bootstrap4\ActiveForm;
 use yii\captcha\Captcha;
 
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-login">
     <h1 id="form-header">Log In</h1>

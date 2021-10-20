@@ -8,7 +8,6 @@ use yii\helpers\Html;
 use yii\bootstrap4\ActiveForm;
 
 $this->title = 'Create Admin User';
-$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-signup">
     <h1 id="form-header"><?= Html::encode($this->title) ?></h1>
