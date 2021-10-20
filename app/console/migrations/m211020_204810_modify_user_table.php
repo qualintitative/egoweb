@@ -12,7 +12,7 @@ class m211020_204810_modify_user_table extends Migration
      */
     public function safeUp()
     {
-        $table = Yii::$app->db->schema->getTableSchema('mytable');
+        $table = Yii::$app->db->schema->getTableSchema('user');
         if (isset($table->columns['lastActivity']))
             $this->dropColumn('user', 'lastActivity');
     }
