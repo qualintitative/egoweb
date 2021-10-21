@@ -61,8 +61,8 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                'mobile/syncData' => 'mobile/sync-data',
-                'mobile/uploadData' => 'mobile/upload-data',
+                'mobile/syncData<url:(.*)>' => 'mobile/sync-data',
+                'mobile/uploadData<url:(.*)>' => 'mobile/upload-data',
                 'debug/<controller>/<action>' => 'debug/<controller>/<action>',
                 'interview/<studyId:\d+>/<interviewId:\d+>' => 'interview/view',
                 'site/reset-password/<token:\w+>' => 'site/reset-password',

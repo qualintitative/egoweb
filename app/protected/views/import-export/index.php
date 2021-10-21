@@ -220,6 +220,9 @@ use yii\helpers\Url;
             $("#sendNotice").html($("#sendNotice").html() + "<br>" + "Prepared interview... ");
             if (!servers[$("#serverAddress option:selected").val()].ADDRESS.match("http"))
               servers[$("#serverAddress option:selected").val()].ADDRESS = 'http://' + servers[$("#serverAddress option:selected").val()].ADDRESS;
+            console.log(servers[$("#serverAddress option:selected").val()].ADDRESS.charAt(servers[$("#serverAddress option:selected").val()].ADDRESS.length-1))
+            if(servers[$("#serverAddress option:selected").val()].ADDRESS.charAt(servers[$("#serverAddress option:selected").val()].ADDRESS.length-1) == "/")
+            servers[$("#serverAddress option:selected").val()].ADDRESS = servers[$("#serverAddress option:selected").val()].ADDRESS.slice(0,-1);
             $("#sendJson").val(res);
             return $.ajax({
               type: "POST",

@@ -1123,6 +1123,7 @@ class ImportExportController extends Controller
             $questions[] = Tools::mToA($result);
         }
         $results = QuestionOption::findAll(array("studyId"=>$id));
+        $options = [];
         foreach ($results as $result) {
             $options[] = Tools::mToA($result);
         }
