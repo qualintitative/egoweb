@@ -139,7 +139,7 @@
                                 <div class="col-sm-3">
                                     <b-form-select 
                                     v-if="question.nParams.nodeShape" 
-                                    v-model="question.nParams.nodeShape.options[0].shape"
+                                    v-model="question.nParams.nodeShape.options[1].shape"
                                         :options="nodeShapes"
                                         @change="forceUpdate"
                                         >
@@ -155,7 +155,7 @@
                                 <div class="col-sm-3">
                                     <b-form-select 
                                     v-if="question.nParams.nodeShape" 
-                                    v-model="question.nParams.nodeShape.options[index+1].shape"
+                                    v-model="question.nParams.nodeShape.options[index+2].shape"
                                         :options="nodeShapes"
                                         @change="forceUpdate"
                                         >

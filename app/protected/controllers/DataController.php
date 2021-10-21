@@ -116,6 +116,7 @@ class DataController extends Controller
          
             $result = Question::find()->where(["studyId"=>$studyId])->andWhere(['!=', 'subjectType', 'EGO_ID'])->orderBy(["ordering"=>"ASC"])->asArray()->all();
             $questions = [];
+            $notes = [];
             foreach($result as $question){
                 $question['options'] = QuestionOption::find()->where(['questionId'=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
                 $questions[$question['id']] = $question;

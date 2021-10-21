@@ -13,6 +13,22 @@ class m211020_204810_modify_user_table extends Migration
     public function safeUp()
     {
         $table = Yii::$app->db->schema->getTableSchema('user');
+        
+        if(!isset($table->columns['password_reset_token']))
+            $this->addColumn('user', 'password_reset_token', 'varchar(255)');
+
+        if(!isset($table->columns['auth_key']))
+            $this->addColumn('user', 'auth_key', 'varchar(255)');
+
+        if(!isset($table->columns['status']))
+            $this->addColumn('user', 'status', 'tinyint');
+        
+        if(!isset($table->columns['created_at']))
+            $this->addColumn('user', 'created_at', 'int');
+
+        if(!isset($table->columns['updated_at']))
+            $this->addColumn('user', 'updated_at', 'int');
+
         if (isset($table->columns['lastActivity']))
             $this->dropColumn('user', 'lastActivity');
     }

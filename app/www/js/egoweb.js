@@ -544,7 +544,7 @@ function initStats(question) {
     nodes = [];
     edges = [];
     var n = [];
-    expressionId = question.NETWORKRELATIONSHIPEXPRID;
+    var expressionId = question.NETWORKRELATIONSHIPEXPRID;
     var starExpressionId = parseInt(question.USELFEXPRESSION);
 
     if (!question.NETWORKPARAMS)
@@ -1003,14 +1003,14 @@ function initStats(question) {
     }
 
     this.getNodeShape = function(nodeId) {
-        var defaultNodeShape = "chircle";
+        var defaultNodeShape = "circle";
         if (typeof this.params['nodeShape'] != "undefined") {
             if (typeof this.params['nodeShape']['questionId'] != "undefined" && typeof answers[this.params['nodeShape']['questionId'] + "-" + nodeId] != "undefined")
                 var answer = answers[this.params['nodeShape']['questionId'] + "-" + nodeId].VALUE.split(",");
             else
                 var answer = "";
             for (p in this.params['nodeShape']['options']) {
-                if (this.params['nodeShape']['options'][p]['id'] == 0 && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
+                if (this.params['nodeShape']['options'][p]['id'] == "default" && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
                     defaultNodeShape = this.params['nodeShape']['options'][p]['shape'];
                 if (this.params['nodeShape']['options'][p]['id'] == -1 && nodeId == -1)
                     defaultNodeShape = this.params['nodeShape']['options'][p]['shape'];
@@ -1018,6 +1018,7 @@ function initStats(question) {
                     return this.params['nodeShape']['options'][p]['shape'];
             }
         }
+        console.log("default node shape", defaultNodeShape, this.params['nodeShape']['options'])
         return defaultNodeShape;
     }
 
@@ -1159,6 +1160,8 @@ function initStats(question) {
 
     setTimeout(function() {
         sigma.renderers.def = sigma.renderers.canvas;
+        if(typeof s != "undefined")
+            delete s;
         s = new sigma({
             graph: g,
             renderer: {

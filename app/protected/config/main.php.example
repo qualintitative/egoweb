@@ -61,7 +61,7 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                'mobile/syncData/<id:\w*>' => 'mobile/sync-data',
+                'mobile/syncData' => 'mobile/sync-data',
                 'mobile/uploadData' => 'mobile/upload-data',
                 'debug/<controller>/<action>' => 'debug/<controller>/<action>',
                 'interview/<studyId:\d+>/<interviewId:\d+>' => 'interview/view',

@@ -156,11 +156,11 @@ new Vue({
         var alterPairQOptions = {};
         var alterShapeQOptions = {};
         alterQs.push({text:"Degree Centrality", value:"degree"})
-        alterQOptions["degree"] = [{id:"degree",name:"Color"}]
+        alterQOptions["degree"] = [{id:"degree",name:""}]
         alterQs.push({text:"Betweenness Centrality", value:"betweenness"})
-        alterQOptions["betweenness"] = [{id:"betweenness",name:"Color"}]
+        alterQOptions["betweenness"] = [{id:"betweenness",name:""}]
         alterQs.push({text:"Eigenvector Centrality", value:"eigenvector"})
-        alterQOptions["eigenvector"] = [{id:"eigenvector",name:"Color"}]
+        alterQOptions["eigenvector"] = [{id:"eigenvector",name:""}]
 
         for(k in this.questions){
             this.questions[k].numQuestions = numQuestions.slice();
@@ -252,9 +252,9 @@ new Vue({
     },
     methods: {
         forceUpdate() {
-
             this.question.networkParams = JSON.stringify(this.question.nParams);
             for(k in this.question){
+                console.log(k);
                 this.question[k.toUpperCase()] = this.question[k];
             }
             this.$forceUpdate();
@@ -262,7 +262,6 @@ new Vue({
         refreshGraph() {
             if(typeof s != "undefined"){
                 s.stopForceAtlas2();
-                delete s;
                 $("#infovis").empty();
             }
             initStats(this.question);
@@ -310,6 +309,9 @@ new Vue({
             }
             this.question.nParams[param].options = newOptions;
             this.question.networkParams = JSON.stringify(this.question.nParams)
+            for(k in this.question){
+                this.question[k.toUpperCase()] = this.question[k];
+            }
             console.log(this.question.nParams[param].options);
             this.$forceUpdate();
         },

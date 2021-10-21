@@ -965,11 +965,11 @@ new Vue({
                 'BIT_MINUTE': 32,
             };
         alterQs.push({text:"Degree Centrality", value:"degree"})
-        alterQOptions["degree"] = [{id:"degree",name:"Color"}]
+        alterQOptions["degree"] = [{id:"degree",name:""}]
         alterQs.push({text:"Betweenness Centrality", value:"betweenness"})
-        alterQOptions["betweenness"] = [{id:"betweenness",name:"Color"}]
+        alterQOptions["betweenness"] = [{id:"betweenness",name:""}]
         alterQs.push({text:"Eigenvector Centrality", value:"eigenvector"})
-        alterQOptions["eigenvector"] = [{id:"eigenvector",name:"Color"}]
+        alterQOptions["eigenvector"] = [{id:"eigenvector",name:""}]
         this.new_question.timeBits = {};
         for (var t in bitVals) {
             this.new_question.timeBits[t] = this.new_question.timeUnits & bitVals[t];
