@@ -354,7 +354,8 @@ class MobileController extends Controller
                 $options = QuestionOption::findAll(array("studyId"=>$oldStudy->id));
                 $newOptionIds = array();
                 foreach ($options as $option) {
-                    $newOptionIds[$newQuestionTitles[$option->questionId]."_".$option->name] = $option->id;
+                    if(isset($newQuestionTitles[$option->questionId]))
+                        $newOptionIds[$newQuestionTitles[$option->questionId]."_".$option->name] = $option->id;
                 }
                 echo "Merging with existing study $oldStudy->name. ";
                 $data['interviews'][0]['STUDYID'] = $oldStudy->id;
