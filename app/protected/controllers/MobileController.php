@@ -358,7 +358,8 @@ class MobileController extends Controller
                         $newOptionIds[$newQuestionTitles[$option->questionId]."_".$option->name] = $option->id;
                 }
                 echo "Merging with existing study $oldStudy->name. ";
-                $data['interviews'][0]['STUDYID'] = $oldStudy->id;
+                if(count($data['interviews']) > 0)
+                   $data['interviews'][0]['STUDYID'] = $oldStudy->id;
                 $newData = array(
 					"studyId"=>$oldStudy->id,
 					"newQuestionIds"=>$newQuestionIds,
