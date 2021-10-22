@@ -35,7 +35,7 @@ class MobileController extends Controller
 {
     public function beforeAction($action)
     {
-        $this->enableCsrfValidation = false;
+        Yii::$app->request->enableCsrfValidation = false;
         return parent::beforeAction($action);
     }
         /**
@@ -54,7 +54,7 @@ class MobileController extends Controller
                     // Allow only headers 'X-Wsse'
 
                     // Allow credentials (cookies, authorization headers, etc.) to be exposed to the browser
-                    //'Access-Control-Allow-Credentials' => true,
+                    'Access-Control-Allow-Credentials' => null,
                     // Allow OPTIONS caching
                     'Access-Control-Max-Age' => 86400,
                     // Allow the X-Pagination-Current-Page header to be exposed to the browser.
