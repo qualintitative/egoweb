@@ -382,7 +382,7 @@ class AuthoringController extends Controller
             if ($user) {
                 $userIds[] = $user->id;
                 $interviewerList[$user->id] = $user->name;
-                $interviewers[] = ["id"=>$user->id,"interviewer"=>$user->name, "role"=>User::roles()[$user->permissions]];
+                $interviewers[] = ["id"=>$user->id,"user"=>$user->name, "role"=>User::roles()[$user->permissions]];
             }
         }
 

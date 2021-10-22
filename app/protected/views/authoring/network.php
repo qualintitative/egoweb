@@ -277,6 +277,12 @@
                         <div v-if="question.uselfExpression">
 
                             <div class="form-group row">
+                                <label class="offset-sm-1 col-sm-3 col-form-label">Ego Label</label>
+                                <div class="col-sm-8">
+                                <input class="form-control" v-model="question.nParams.egoLabel" @change="forceUpdate">
+                                </div>
+                            </div>
+                            <div class="form-group row">
                                 <label class="offset-sm-1 col-sm-3 col-form-label">Ego Node Color</label>
                                 <div class="col-sm-5">
                                     <b-form-select 

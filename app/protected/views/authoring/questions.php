@@ -1032,6 +1032,7 @@ new Vue({
                 this.questions[k].allOptionJson = {"YES_LABEL":"Yes", "NO_LABEL":"No", "NEW_NAME_LABEL":""};
         
             var defaultParams = {
+                egoLabel:"You",
                 nodeColor:{questionId:'', options:[{id:-1, color:"#000"}, {id:'default', color:"#000"}]},
                 nodeSize:{questionId:'', options:[{id:-1, size:2}, {id:'default', size:2}]},
                 nodeShape:{questionId:'', options:[{id:-1, shape:'circle'},{id:'default', shape:'circle'}]},
@@ -1045,14 +1046,15 @@ new Vue({
                     this.questions[k].nParams = defaultParams
                 }else{
                     this.questions[k].nParams = JSON.parse(this.questions[k].networkParams);
-                    console.log(questions[k].title, this.questions[k].nParams.nodeColor.questionId)
                     for(p in defaultParams){
-                        var egoOption = defaultParams[p].options[0];
-                        var defaultOption = defaultParams[p].options[1];
-                        var newOptions = [];
                         if(typeof this.questions[k].nParams[p] == "undefined"){
                             this.questions[k].nParams[p] = defaultParams[p];
                         }else{
+                            if(p != "egoLabel"){
+                                var egoOption = defaultParams[p].options[0];
+                                var defaultOption = defaultParams[p].options[1];
+                                var newOptions = [];
+                            }
                             if(typeof this.questions[k].nParams[p].questionId == "undefined")
                                 this.questions[k].nParams[p].questionId = "";
                             if(p == "nodeColor" || p == "nodeSize" || p == "nodeShape"){
