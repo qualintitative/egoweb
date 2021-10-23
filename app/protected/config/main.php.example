@@ -67,6 +67,7 @@ return [
                 'interview/<studyId:\d+>/<interviewId:\d+>' => 'interview/view',
                 'site/reset-password/<token:\w+>' => 'site/reset-password',
                 'interview/<studyId:\d+>' => 'interview/view',
+                'interview/graph/<interviewId:\d+>/<graphId:\d+>/<questionId:\d+>' => 'interview/graph',
                 '<controller>/<id:\d+>' => '<controller>/index',
                 '<controller>/<action>' => '<controller>/<action>',
                 '<controller>/<action>/<id:\d+>' => '<controller>/<action>',

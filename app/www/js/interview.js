@@ -57,6 +57,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     $scope.graphId = "";
     $scope.graphExpressionId = "";
     $scope.graphInterviewId = "";
+    $scope.graphQuestionId = "";
     $scope.graphNodes = "";
     $scope.graphParams = "";
     $scope.otherSpecify = {};
@@ -454,6 +455,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
                 $scope.graphInterviewId = graphs[expressionId].INTERVIEWID;
                 $scope.graphNodes = graphs[expressionId].NODES;
                 $scope.graphParams = $scope.questions[k].NETWORKPARAMS;
+                $scope.graphQuestionId = $scope.questions[k].ID;
                 if (typeof allNotes[expressionId] != "undefined")
                     notes = allNotes[expressionId];
             } else {
@@ -502,16 +504,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
     $scope.errors = new Object;
 
-    $scope.print = function(e_Id, i_Id, params) {
-        if (typeof e_Id == "undefined")
-            e_Id = $scope.graphExpressionId;
-        if (typeof i_Id == "undefined")
-            i_Id = interviewId;
-        if ($scope.starExpressionId == false)
-            s_Id = "";
-        else
-            s_Id = "&starExpressionId=" + $scope.starExpressionId;
-        url = "/data/visualize?print&expressionId=" + e_Id + "&interviewId=" + i_Id + s_Id + "&params=" + encodeURIComponent(params) + "&labelThreshold=" + s.renderers[0].settings("labelThreshold");
+    $scope.print = function(i_Id, g_Id, q_Id) {
+        url = "/interview/graph/" + i_Id + "/" + g_Id + "/" + q_Id
         window.open(url);
     }
 

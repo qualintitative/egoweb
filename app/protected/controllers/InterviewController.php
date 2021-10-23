@@ -40,7 +40,7 @@ class InterviewController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['view', 'save', 'alter', 'deletealter'],
+                        'actions' => ['view', 'save', 'alter', 'deletealter', 'graph'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
@@ -282,6 +282,7 @@ class InterviewController extends Controller
                                 "interviewId" => $i_id,
                                 "expressionId" => $networkExprId,
                                 "studyName" => $s->name,
+                                "questionId" => $question->id,
                                 "params"=> $question->networkParams,
                             );
                         }
@@ -606,7 +607,7 @@ class InterviewController extends Controller
                                 $alterListIds = array_filter($alterListIds, function($value) { return !is_null($value) && $value !== ''; });    
                                 $alterListIds[] = $alter->id;
                                 $alterListIds = array_unique($alterListIds);
-                                $prevAlter->alterListId =  implode(",", $alterListIds);
+                                $prevAlter->alterListId = implode(",", $alterListIds);
                                 $prevAlter->save();
                             }
                         }
@@ -817,5 +818,47 @@ class InterviewController extends Controller
             $json = json_encode($alters);
             return $this->renderAjax("/layouts/ajax",["json"=>$json]);
         }
+    }
+
+    public function actionGraph($interviewId, $graphId, $questionId)
+    {
+        $graph = false;
+        $result = Graph::find()->where(array('interviewId'=>$interviewId, "id"=>$graphId))->one();
+        $question = Tools::mToA(Question::findOne($questionId));
+        if($result)
+            $graphs = array($result->expressionId=>Tools::mToA($result));
+        $alters = array();
+        $results = Alters::find()
+        ->where(new \yii\db\Expression("FIND_IN_SET(:interviewId, interviewId)"))
+        ->addParams([':interviewId' => $interviewId])
+        ->all();
+        foreach($results as $result){
+            if(isset($prevAlters[$result->id]))
+                unset($prevAlters[$result->id]);
+            $alters[$result->id] = Tools::mToA($result);
+        }
+        $interview = Interview::findOne($interviewId);
+        $results = Question::find()->where(["studyId"=>$interview->studyId])->orderBy(["id"=>"ASC"])->all();
+        $questions = [];
+        foreach($results as $result)
+            $questions[$result->id] = Tools::mToA($result);
+        $expressions = array();
+        $results = Expression::find(array("studyId"=>$interview->studyId))->all();
+        foreach($results as $result)
+            $expressions[$result->id] = Tools::mToA($result);
+        $answerList = Answer::findAll(array('interviewId'=>$interviewId));
+        $answers = [];
+        foreach($answerList as $answer){
+            if($answer->alterId1 && $answer->alterId2)
+                $array_id = $answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2;
+            else if ($answer->alterId1 && ! $answer->alterId2)
+                    $array_id = $answer->questionId . "-" . $answer->alterId1;
+                else
+                    $array_id = $answer->questionId;
+                $answers[$array_id] = Tools::mToA($answer);
+        }
+        $study = Study::findOne($interview->studyId);
+        $notes = Note::findAll(array("interviewId"=>$interviewId, "expressionId"=>$question['NETWORKRELATIONSHIPEXPRID']));
+        return $this->renderAjax("graph",["study"=>$study,"interview"=>$interview, "graphId"=>$graphId, "question"=>json_encode($question, true), "graphs"=>json_encode($graphs, true), "alters"=>$alters,"questions"=>json_encode($questions, true),"expressions"=>json_encode($expressions, true),"answers"=>json_encode($answers), "notes"=>$notes]);
     }
 }

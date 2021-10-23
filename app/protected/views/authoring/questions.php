@@ -1074,27 +1074,24 @@ new Vue({
                                     }
                                 }
                                 if(!isNaN(this.questions[k].nParams[p].questionId) && typeof alterQOptions[this.questions[k].nParams[p].questionId] != "undefined")
-                                //if(!isNaN(this.questions[k].nParams[p].questionId) && typeof alterQOptions[this.questions[k].nParams[p].questionId] != "undefined" && alterQOptions[this.questions[k].nParams[p].questionId].length + 2 - newOptions.length  > 0){
                                     console.log(alterQOptions[this.questions[k].nParams[p].questionId].length + 2 - this.questions[k].nParams[p].options.length )
-                                    for(q in alterQOptions[this.questions[k].nParams[p].questionId]){
-                                        console.log(oIds,alterQOptions[this.questions[k].nParams[p].questionId][q].id)
-                                        if(!(alterQOptions[this.questions[k].nParams[p].questionId][q].id in oIds)){
-                                            let newDefaultOption = $.extend(true, {}, defaultOption);
-                                            newDefaultOption.id = alterQOptions[this.questions[k].nParams[p].questionId][q].id;
-                                            console.log(newDefaultOption)
-                                            newOptions.push(newDefaultOption);
-                                        }else{
-                                            newOptions.push(oIds[alterQOptions[this.questions[k].nParams[p].questionId][q].id]);
-                                        }
+                                for(q in alterQOptions[this.questions[k].nParams[p].questionId]){
+                                    console.log(oIds,alterQOptions[this.questions[k].nParams[p].questionId][q].id)
+                                    if(!(alterQOptions[this.questions[k].nParams[p].questionId][q].id in oIds)){
+                                        let newDefaultOption = $.extend(true, {}, defaultOption);
+                                        newDefaultOption.id = alterQOptions[this.questions[k].nParams[p].questionId][q].id;
+                                        console.log(newDefaultOption)
+                                        newOptions.push(newDefaultOption);
+                                    }else{
+                                        newOptions.push(oIds[alterQOptions[this.questions[k].nParams[p].questionId][q].id]);
                                     }
-                             //   }
+                                }
                                 newOptions.unshift(defaultOption);
                                 newOptions.unshift(egoOption);
                                 this.questions[k].nParams[p].options = newOptions;
-                                if(typeof alterQOptions[this.questions[k].nParams[p].questionId] != "undefined")
-                                  console.log(p + " changed",this.questions[k].nParams[p].options.length, alterQOptions[this.questions[k].nParams[p].questionId].length, this.questions[k].nParams[p].options, alterQOptions[this.questions[k].nParams[p].questionId])
-
-                            }else if(p == "edgeColor" || p == "edgeSize" || p == "egoEdgeColor" || p == "egoEdgeSize"){
+                          //      if(typeof alterQOptions[this.questions[k].nParams[p].questionId] != "undefined")
+                           //       console.log(p + " changed",this.questions[k].nParams[p].options.length, alterQOptions[this.questions[k].nParams[p].questionId].length, this.questions[k].nParams[p].options, alterQOptions[this.questions[k].nParams[p].questionId])
+                            }else if(p == "edgeColor" || p == "edgeSize"){
                                 let oIds = {};
                                 for(var i = 0; i < this.questions[k].nParams[p].options.length; i++){
                                     if(this.questions[k].nParams[p].options[i].id == 0)
@@ -1119,11 +1116,41 @@ new Vue({
                                             newOptions.push(oIds[alterPairQOptions[this.questions[k].nParams[p].questionId][q].id]);
                                         }
                                     }
-                                    console.log("mod pair", newOptions.length, this.questions[k].nParams[p].questionId,alterPairQOptions[this.questions[k].nParams[p].questionId], alterPairQOptions[this.questions[k].nParams[p].questionId].length)
                                 }
                                 newOptions.unshift(defaultOption);
                                 this.questions[k].nParams[p].options = newOptions;
-                                //console.log(p, this.questions[k].nParams[p])
+                            }else if (p == "egoEdgeColor" || p == "egoEdgeSize"){
+                                let oIds = {};
+                                for(var i = 0; i < this.questions[k].nParams[p].options.length; i++){
+                                    if(this.questions[k].nParams[p].options[i].id == 0)
+                                        this.questions[k].nParams[p].options[i].id = "default";
+                                    if(this.questions[k].nParams[p].options[i].id == "default"){
+                                        defaultOption = this.questions[k].nParams[p].options[i];
+                                    }else{
+                                        if (!(this.questions[k].nParams[p].options[i].id.toString() in oIds)) {
+                                            oIds[this.questions[k].nParams[p].options[i].id.toString()] = this.questions[k].nParams[p].options[i];
+                                        }
+                                    }
+                                }
+                                if(!isNaN(this.questions[k].nParams[p].questionId) && typeof alterShapeQOptions[this.questions[k].nParams[p].questionId] != "undefined")
+                                    console.log(alterShapeQOptions[this.questions[k].nParams[p].questionId].length + 2 - this.questions[k].nParams[p].options.length )
+                                if(!isNaN(this.questions[k].nParams[p].questionId) && typeof alterShapeQOptions[this.questions[k].nParams[p].questionId] != "undefined"){
+
+                                    for(q in alterShapeQOptions[this.questions[k].nParams[p].questionId]){
+                                        console.log(oIds,alterShapeQOptions[this.questions[k].nParams[p].questionId][q].id)
+                                        if(!(alterQOptions[this.questions[k].nParams[p].questionId][q].id in oIds)){
+                                            let newDefaultOption = $.extend(true, {}, defaultOption);
+                                            newDefaultOption.id = alterShapeQOptions[this.questions[k].nParams[p].questionId][q].id;
+                                            console.log(newDefaultOption)
+                                            newOptions.push(newDefaultOption);
+                                        }else{
+                                            newOptions.push(oIds[alterShapeQOptions[this.questions[k].nParams[p].questionId][q].id]);
+                                        }
+                                    }
+                                }
+                              //  newOptions.unshift(defaultOption);
+                                this.questions[k].nParams[p].options = newOptions;
+                                console.log(p, this.questions[k].nParams[p])
                             }
                         }
                     }

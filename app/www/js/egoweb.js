@@ -563,9 +563,9 @@ function initStats(question) {
         var expression = expressions[expressionId];
     if (typeof expressions[starExpressionId] != "undefined")
         var starExpression = expressions[starExpressionId];
-    console.log(expressions, starExpression)
+    //console.log(expressions, starExpression)
     if (expression == undefined && starExpression == undefined)
-        return
+        return;
 
     //if(expression == undefined && expression.QUESTIONID)
     //var question = questions[expression.QUESTIONID];
@@ -945,9 +945,10 @@ function initStats(question) {
     }
 
     this, getNodeSize = function(nodeId) {
+        console.log("get node size", nodeId,this.params['nodeSize']['options'])
         var defaultNodeSize = 4;
-        if (nodeId != -1 && typeof this.params['nodeSize'] != "undefined") {
-            if (typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "degree") {
+        if (typeof this.params['nodeSize'] != "undefined") {
+            if (nodeId != -1 && typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "degree") {
                 max = maxDegree;
                 min = minDegree;
                 value = connections[nodeId].length;
@@ -988,14 +989,14 @@ function initStats(question) {
             else
                 var answer = "";
             for (p in this.params['nodeSize']['options']) {
-                console.log(this.params['nodeSize']['options'][p]['id'])
-                //console.log("answer", nodeId, alterNames[nodeId],this.params['nodeSize']['options'][p]['id'].toString(), answer, $.inArray(this.params['nodeSize']['options'][p]['id'].toString(),  answer), this.params['nodeSize']['options'][p]['size']);
                 if (this.params['nodeSize']['options'][p]['id'] == -1 && nodeId == -1)
-                    defaultNodeSize = this.params['nodeSize']['options'][p]['size'];
+                    console.log("Ego node size");
+                if (this.params['nodeSize']['options'][p]['id'] == -1 && nodeId == -1)
+                    return this.params['nodeSize']['options'][p]['size'] * 2;
                 if (this.params['nodeSize']['options'][p]['id'] == "default" && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
-                    defaultNodeSize = this.params['nodeSize']['options'][p]['size'];
+                    return this.params['nodeSize']['options'][p]['size'] * 2;
                 if (nodeId != -1 && (this.params['nodeSize']['options'][p]['id'] == answer || $.inArray(this.params['nodeSize']['options'][p]['id'].toString(), answer) != -1))
-                    defaultNodeSize = this.params['nodeSize']['options'][p]['size'];
+                    return this.params['nodeSize']['options'][p]['size'] * 2;
             }
         }
         console.log("default size", defaultNodeSize * 2);
@@ -1011,9 +1012,9 @@ function initStats(question) {
                 var answer = "";
             for (p in this.params['nodeShape']['options']) {
                 if (this.params['nodeShape']['options'][p]['id'] == "default" && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
-                    defaultNodeShape = this.params['nodeShape']['options'][p]['shape'];
+                    return this.params['nodeShape']['options'][p]['shape'];
                 if (this.params['nodeShape']['options'][p]['id'] == -1 && nodeId == -1)
-                    defaultNodeShape = this.params['nodeShape']['options'][p]['shape'];
+                    return this.params['nodeShape']['options'][p]['shape'];
                 if (nodeId != -1 && (this.params['nodeShape']['options'][p]['id'] == answer || $.inArray(this.params['nodeShape']['options'][p]['id'], answer) != -1))
                     return this.params['nodeShape']['options'][p]['shape'];
             }
@@ -1041,7 +1042,9 @@ function initStats(question) {
 
     this.getEgoEdgeColor = function(nodeId1) {
         var defaultEdgeColor = "#ccc";
+        console.log("egoEdgeColor", this.params['egoEdgeColor'])
         if (typeof this.params['egoEdgeColor'] != "undefined") {
+            console.log(answers[this.params['egoEdgeColor']['questionId'] + "-" + nodeId1])
             if (typeof this.params['egoEdgeColor']['questionId'] != "undefined" && typeof answers[this.params['egoEdgeColor']['questionId'] + "-" + nodeId1] != "undefined")
                 var answer = answers[this.params['egoEdgeColor']['questionId'] + "-" + nodeId1].VALUE.split(",");
             else
@@ -1113,7 +1116,7 @@ function initStats(question) {
             "size": this.getNodeSize(alters[a].ID),
         });
         if (starExpression != undefined) {
-            if (evalExpression(starExpressionId, alters[a].ID, alters2[b].ID) == true) {
+            if (evalExpression(starExpressionId, alters[a].ID) == true) {
                 edges.push({
                     "id": "-1_" + alters[a].ID,
                     "source": alters[a].ID.toString(),

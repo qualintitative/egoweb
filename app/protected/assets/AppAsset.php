@@ -15,8 +15,8 @@ class AppAsset extends AssetBundle
         'css/summernote-bs4.min.css',
         'www/css/main.css',
         'www/css/all.css',
-        'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-vue/2.21.2/bootstrap-vue-icons.min.css',
-        'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-vue/2.21.2/bootstrap-vue.min.css',
+        'www/css/bootstrap-vue-icons.min.css',
+        'www/css/bootstrap-vue.min.css',
     ];
     public $js = [
         'www/js/egoweb.js',

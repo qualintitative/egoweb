@@ -350,7 +350,7 @@
                                 <div class="col-sm-4">
                                     <b-form-select 
                                     v-if="question.nParams.egoEdgeColor" 
-                                    v-model="question.nParams.egoEdgeColor.options[index].size"
+                                    v-model="question.nParams.egoEdgeColor.options[index].color"
                                         :options="colors"
                                         @change="forceUpdate"
                                         >
