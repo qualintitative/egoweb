@@ -331,7 +331,7 @@
                             </div>
 
                             <div class="form-group row">
-                                <label class="offset-sm-1 col-sm-3 col-form-label">Ego Edge Color</label>
+                                <label class="offset-sm-1 col-sm-3 col-form-label">Ego-Alter Edge Color</label>
                                 <div class="col-sm-8">
                                     <b-form-select 
                                     v-if="question.nParams.egoEdgeColor" 
@@ -362,7 +362,7 @@
                             </div>
 
                             <div class="form-group row">
-                                <label class="offset-sm-1 col-sm-3 col-form-label">Ego Edge Size</label>
+                                <label class="offset-sm-1 col-sm-3 col-form-label">Ego-AlterEdge Size</label>
                                 <div class="col-sm-8">
                                     <b-form-select 
                                     v-if="question.nParams.egoEdgeSize" 
