@@ -83,7 +83,7 @@ use yii\helpers\Html;
                                 </div>
                                 <div class="col-sm-2">
                                     <b-form-select name="AlterList[interviewerId]" :options="interviewers"
-                                        class="mb-3 text-black input-xs" value-field="id" text-field="user"
+                                        class="mb-3 text-black input-xs" value-field="id" text-field="name"
                                         stacked>
                                         <template #first>
                                             <b-form-select-option value="" selected>-- Interviewer --
@@ -133,7 +133,7 @@ new Vue({
     data() {
         return {
             user_fields: [
-                'user',
+                'name',
                 'role',
                 {
                     key: "details",

@@ -446,20 +446,20 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         if ($scope.questions[k].SUBJECTTYPE == "NETWORK") {
             var expressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
             notes = [];
+            $scope.graphExpressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
+            $scope.graphQuestionId = $scope.questions[k].ID;
             if (typeof otherGraphs[$scope.questions[k].TITLE] != "undefined")
                 $scope.otherGraphs = otherGraphs[$scope.questions[k].TITLE];
             if (typeof graphs[expressionId] != "undefined") {
                 $scope.graphId = graphs[expressionId].ID;
-                $scope.graphExpressionId = graphs[expressionId].EXPRESSIONID;
+                //$scope.graphExpressionId = graphs[expressionId].EXPRESSIONID;
                 graphExpressionId = $scope.graphExpressionId;
                 $scope.graphInterviewId = graphs[expressionId].INTERVIEWID;
                 $scope.graphNodes = graphs[expressionId].NODES;
                 $scope.graphParams = $scope.questions[k].NETWORKPARAMS;
-                $scope.graphQuestionId = $scope.questions[k].ID;
                 if (typeof allNotes[expressionId] != "undefined")
                     notes = allNotes[expressionId];
             } else {
-                $scope.graphExpressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
                 graphExpressionId = $scope.graphExpressionId;
                 if (typeof allNotes[graphExpressionId] != "undefined")
                     notes = allNotes[graphExpressionId];
@@ -505,7 +505,11 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     $scope.errors = new Object;
 
     $scope.print = function(i_Id, g_Id, q_Id) {
-        url = "/interview/graph/" + i_Id + "/" + g_Id + "/" + q_Id
+        var expressionId = $scope.graphExpressionId;
+        console.log(g_Id, graphs[expressionId])
+        if (g_Id == "" && typeof graphs[expressionId] != "undefined")
+            g_Id = graphs[expressionId].ID;
+        url = "/interview/graph/" + i_Id + "/" + g_Id + "/" + q_Id;
         window.open(url);
     }
 

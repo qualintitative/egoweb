@@ -103,7 +103,7 @@ class User extends ActiveRecord implements IdentityInterface
     {
         $users = User::find()->all();
         foreach ($users as $u) {
-            if ($u->email == $email) {
+            if ($u->email == trim($email)) {
                 return $u;
             }
         }

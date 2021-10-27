@@ -8,7 +8,15 @@ use app\models\Interview;
        
 
 <div id="accordion" class="fill-page">
-    <?php foreach(Yii::$app->user->identity->studies as $study):?>
+    <?php foreach(Yii::$app->user->identity->studies as $index=>$study):?>
+    <?php if($index == 0 && $study->multiSessionEgoId): ?>
+        <?php $hasMulti = true; ?>
+        <div><h3>Multi-session Studies</h3></div>
+    <?php endif; ?>
+    <?php if($index != 0 && !$study->multiSessionEgoId && isset($hasMulti)): ?>
+        <?php unset($hasMulti); ?>
+        <div><br><h3>Single session Studies</h3></div>
+    <?php endif; ?>
     <div class="card">
         <div class="card-header" id="heading-<?php echo $study->id; ?>">
             <h5 class="mb-0">
@@ -20,7 +28,6 @@ use app\models\Interview;
                 <div class="btn-group float-right" role="group" aria-label="<?php echo $study->name; ?>">
                         <?php echo Html::a("Authoring", ["/authoring/" . $study->id], ["class"=>"btn btn-link btn-info text-light"]); ?>
                         <?php echo Html::a("Data Processing", ["/data/" . $study->id], ["class"=>"btn btn-link btn-secondary text-light"]); ?>
-
                     </div>
             </h5>
         </div>

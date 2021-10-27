@@ -82,32 +82,37 @@ class AdminController extends Controller
             $user->save();
             $userA['link'] = Yii::$app->urlManager->createAbsoluteUrl(['site/reset-password', 'token' => $user->password_reset_token]);
             $users[] = $userA;
-            if(isset($_POST['User']) && $_POST['User']['email'] == $user['email'])
-                $userExists = true;
-        }
-        $user = new User;
-        if ($user->load(Yii::$app->request->post()) && $user->validate()) {
-            if ($userExists == false) {
-                $user->generateAuthKey();
-                $user->generatePasswordResetToken();
-                $user->name = $_POST['User']['name'];
-                $user->email = $_POST['User']['email'];
-                $user->permissions = $_POST['User']['permissions'];
-                $user->password = Yii::$app->security->generateRandomString();
-                if ($user->save()) {
-                    Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
-                    return $this->response->redirect(Url::toRoute('/admin/user'));
-                } else {
-                    Yii::$app->session->setFlash('error', 'Error creating user');
+            if (Yii::$app->request->isPost) {
+                if (trim($_POST['User']['email']) == $userA['email']) {
+                    $userExists = true;
                 }
-            }else{
-                Yii::$app->session->setFlash('error', 'Error creating user');
-                return $this->response->redirect(Url::toRoute('/admin/user'));
+            }
+        }
+        if (Yii::$app->request->isPost) {
+            $user = new User;
+            if ($user->load(Yii::$app->request->post()) && $user->validate()) {
+                if ($userExists == false) {
+                    $user->generateAuthKey();
+                    $user->generatePasswordResetToken();
+                    $user->name = $_POST['User']['name'];
+                    $user->email = trim($_POST['User']['email']);
+                    $user->permissions = $_POST['User']['permissions'];
+                    $user->password = Yii::$app->security->generateRandomString();
+                    if ($user->save()) {
+                        Yii::$app->session->setFlash('success', 'Created new user');
+                        return $this->response->redirect(Url::toRoute('/admin/user'));
+                    } else {
+                        Yii::$app->session->setFlash('error', 'Error creating user');
+                    }
+                } else {
+                    Yii::$app->session->setFlash('error', 'User email already exists: ' . trim($_POST['User']['email']));
+                    return $this->response->redirect(Url::toRoute('/admin/user'));
+                }
             }
         }
         $roles = [];
         foreach(User::roles() as $permission=>$role){
-            $roles[] = ["text"=>$role, "value"=>$permission];
+            $roles[$permission] = ["text"=>$role, "value"=>$permission];
         }
         return $this->render('user',[
             "users"=>$users,
@@ -122,25 +127,33 @@ class AdminController extends Controller
                 throw new CHttpException(500, "Invalid userId specified ".$_GET['userId']." !");
             }
             $user = User::findOne($_POST['User']['id']);
+            if ($user->email != trim($_POST['User']['email'])) {
+                if (User::findByUsername($_POST['User']['email']) != null) {
+                    Yii::$app->session->setFlash('error', 'User email already exists: ' .  $_POST['User']['email']);
+                    return $this->response->redirect(Url::toRoute('/admin/user'));
+                }
+            }
             $user->name = $_POST['User']['name'];
-            $user->email = $_POST['User']['email'];
+            $user->email = trim($_POST['User']['email']);
             $user->permissions = $_POST['User']['permissions'];
             if ($user->save()) {
-                Yii::$app->session->setFlash('success', 'Thank you for registration. Please check your inbox for verification email.');
+                Yii::$app->session->setFlash('success', 'Updated user ' .  $_POST['User']['email']);
                 return $this->response->redirect(Url::toRoute('/admin/user'));
             }else{
                 Yii::$app->session->setFlash('error', 'Error creating user');
             }
-        } else {
-            $model = new User;
         }
     }
 
     public function actionUserdelete()
     {
         if (isset($_POST['User']['id']) && Yii::$app->user->identity->id != $_POST['User']['id']) {
-            $model = User::findOne($_POST['User']['id']);
-            $model->delete();
+            $user = User::findOne($_POST['User']['id']);
+            $email = $user->email;
+            $user->delete();
+            Yii::$app->session->setFlash('success', 'Deleted user ' . $email);
+        }else{
+            Yii::$app->session->setFlash('error', 'Cannot your own account');
         }
         return $this->response->redirect(Url::toRoute('/admin/user'));
     }

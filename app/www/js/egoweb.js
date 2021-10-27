@@ -1192,6 +1192,8 @@ function initStats(question) {
                 }
             }
         } else {
+            $('#fullscreenButton').prop('disabled', true);
+            $("#printButton").attr("disabled",true);
             s.startForceAtlas2({
                 "worker": false,
                 "outboundAttractionDistribution": true,
@@ -1210,6 +1212,7 @@ function initStats(question) {
                 if(typeof saveNodes != "undefined")
                     saveNodes();
                 $('#fullscreenButton').prop('disabled', false);
+                $("#printButton").attr("disabled", false);
             }, 5000);
         }
         s.refresh();

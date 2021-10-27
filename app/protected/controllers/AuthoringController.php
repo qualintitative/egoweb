@@ -382,7 +382,7 @@ class AuthoringController extends Controller
             if ($user) {
                 $userIds[] = $user->id;
                 $interviewerList[$user->id] = $user->name;
-                $interviewers[] = ["id"=>$user->id,"user"=>$user->name, "role"=>User::roles()[$user->permissions]];
+                $interviewers[] = ["id"=>$user->id,"name"=>$user->name, "role"=>User::roles()[$user->permissions]];
             }
         }
 
@@ -391,7 +391,7 @@ class AuthoringController extends Controller
             $interviewer = "";
             if(isset($interviewerList[$item->interviewerId]))
                 $interviewer = $interviewerList[$item->interviewerId];
-            $alterList[] = ["id"=>$item->id, "name"=>$item->name, "email"=>$item->email, "nameGenQIds"=>$item->nameGenQIds, "nameGenQIdsArray"=>explode(",",$item->nameGenQIds), "interviewerId"=>$item->interviewerId];
+            $alterList[] = ["id"=>$item->id, "name"=>$item->name, "email"=>$item->email, "nameGenQIds"=>$item->nameGenQIds, "nameGenQIdsArray"=>explode(",",$item->nameGenQIds), "assign to user"=>$interviewer];
         }
         $result = User::find()->where(['<=', 'permissions', 5])->andWhere(['not', ['id'=>$userIds]])->all();
         foreach ($result as $item) {
