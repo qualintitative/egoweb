@@ -686,8 +686,8 @@ class MobileController extends Controller
                         }
                         $newAlter->nameGenQIds = implode(",", $newQids);
                     } else {
-                        $qTitle = $questionTitles[$alter['NAMEGENQIDS']];
-                        if (isset($newData['newQuestionIds'][$qTitle])) {
+                        if (isset($questionTitles[$qId]) && isset($newData['newQuestionIds'][$qTitle])) {
+                            $qTitle = $questionTitles[$alter['NAMEGENQIDS']];
                             $newAlter->nameGenQIds = strval($newData['newQuestionIds'][$qTitle]);
                         } else {
                             $newAlter->nameGenQIds = strval($newData["nameGenQId"]);
