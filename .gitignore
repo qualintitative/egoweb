@@ -20,7 +20,6 @@ Thumbs.db
 #############
 app/protected/web/assets/*
 !app/protected/web/assets/.gitignore
-app/protected/runtime/*
 !app/protected/runtime/.gitignore
 app/protected/data/*.db
 app/themes/classic/views/
@@ -29,7 +28,10 @@ app/themes/classic/views/
 ########################
 app/protected/config/main.php
 app/protected/config/console.php
+app/protected/runtime/
 app/protected/runtime/*
+app/assets/
+app/assets/*
 
 # device specific files #
 #########################
