@@ -723,10 +723,10 @@ class MobileController extends Controller
         foreach ($data['answers'] as $answer) {
             $newAnswer = new Answer;
             if ($newData) {
-                $qTitle = $questionTitles[$answer['QUESTIONID']];
-                if (!isset($newData['newQuestionIds'][$qTitle])) {
+                if (!isset($questionTitles[$answer['QUESTIONID']]) || !isset($newData['newQuestionIds'][$qTitle])) {
                     continue;
                 }
+                $qTitle = $questionTitles[$answer['QUESTIONID']];
                 $newAnswer->questionId = $newData['newQuestionIds'][$qTitle];
                 $newAnswer->studyId = $newData['studyId'];
                 if ($answer['ANSWERTYPE'] == "MULTIPLE_SELECTION") {
