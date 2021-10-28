@@ -177,8 +177,33 @@ class ImportExportController extends Controller
                         }
                     }
                 }
-
+                $hasNameGen = false;
+                $nameGenQId = "0";
                 foreach ($study->questions->question as $question) {
+                    foreach ($question->attributes() as $key=>$value) {
+                        if ($value == "NAME_GENERATOR") {
+                            $hasNameGen = true;
+                        }
+                    }
+                }
+                $qCount = 0;
+                $egoCount = 0;
+                foreach ($study->questions->question as $question) {
+                    if(!$hasNameGen && $question->attributes()->subjectType == "ALTER"){
+                        $newQuestion = new Question;
+                        $hasNameGen = true;
+                        $newQuestion->attributes = array(
+                            'subjectType' => "NAME_GENERATOR",
+                            'prompt' => $newStudy->alterPrompt,
+                            'studyId' => $newStudyId,
+                            'title' => "ALTER_PROMPT",
+                            'answerType' => "NAME_GENERATOR",
+                            'ordering' => $qCount,
+                        );
+                        $qCount++;
+                        $newQuestion->save();
+                        $nameGenQId = strval($newQuestion->id);
+                    }
                     $newQuestion = new Question;
                     $newQuestion->studyId = $newStudy->id;
                     foreach ($question->attributes() as $key=>$value) {
@@ -186,7 +211,17 @@ class ImportExportController extends Controller
                             $oldId = intval($value);
                         }
                         if ($key == "ordering") {
-                            $value = intval($value);
+                            if ($nameGenQId == "0") {
+                                $value = intval($value);
+                            }else{
+                                if($question->attributes()->subjectType == "EGO_ID"){
+                                    $value = $egoCount;
+                                    $egoCount++;
+                                }else{
+                                    $value = $qCount;
+                                    $qCount++;
+                                }
+                            }
                         }
                         if ($key!="key" && $key != "id" && $key != "networkNShapeQId") {
                             $newQuestion->$key = html_entity_decode($value);
@@ -303,16 +338,14 @@ class ImportExportController extends Controller
                         //    $newExpression->questionId = $newQuestionIds[intval($newExpression->questionId)];
                         //}
 
-                        //$newExpression->value = $expression->value;
+                        $newExpression->value = strval($expression->value);
                         if (!$newExpression->save()) {
                             echo "Expression: " . print_r($newExpression->getErrors());
                         } else {
                             $newExpressionIds[$oldExpressionId] = $newExpression->id;
                         }
                     }
-
                 }
-
                 // loop through questions and relink network params
                 $questions = Question::findAll(array('studyId'=>$newStudy->id));
                 if (count($questions) > 0) {
@@ -495,7 +528,7 @@ class ImportExportController extends Controller
                             if(in_array(intval($thisAlterId), array_keys($newAlterIds)))
                                 continue;
                             if (!$newAlter->nameGenQIds) {
-                                $newAlter->nameGenQIds = 0;
+                                $newAlter->nameGenQIds = $nameGenQId;
                             }
                             if (!preg_match("/,/", $newAlter->interviewId)) {
                                 $newAlter->interviewId = $newInterviewId;
@@ -564,7 +597,8 @@ class ImportExportController extends Controller
                                         $nodes = json_decode(htmlspecialchars_decode($value), true);
                                         foreach ($nodes as $node) {
                                             $oldNodeId = $node['id'];
-                                            $node['id'] =  $newAlterIds[intval($node['id'])];
+                                            if(is_numeric($node['id']) && isset($newAlterIds[intval($node['id'])]))
+                                                $node['id'] =  $newAlterIds[intval($node['id'])];
                                             $nodes[$node['id']] = $node;
                                             unset($nodes[$oldNodeId]);
                                         }
@@ -694,11 +728,10 @@ class ImportExportController extends Controller
             // reference the correct question, since we're not using old ids
             if ($newExpression->type == "Selection") {
                 $optionIds = explode(',', $newExpression->value);
-
                 foreach ($optionIds as &$optionId) {
-                    if (is_numeric($optionId) && isset($newOptionIds[$optionId])) {
+                    if (is_numeric($optionId) && isset($newOptionIds[intval($optionId)])) {
                         //  echo $newOptionIds[$optionId];
-                        $optionId = $newOptionIds[$optionId];
+                        $optionId = $newOptionIds[intval($optionId)];
                     }
                 }
                 $newExpression->value = implode(',', $optionIds);
@@ -710,7 +743,7 @@ class ImportExportController extends Controller
                 if ($expressionIds != "") {
                     $expressionIds = explode(',', $expressionIds);
                     foreach ($expressionIds as &$expressionId) {
-                        $expressionId = $newExpressionIds[$expressionId];
+                        $expressionId = $newExpressionIds[intval($expressionId)];
                     }
                     $expressionIds = implode(',', $expressionIds);
                 }
@@ -728,7 +761,7 @@ class ImportExportController extends Controller
                 $newExpression->value = $times . ":" .  $expressionIds . ":" . $questionIds;
             } elseif ($newExpression->type == "Comparison") {
                 list($value, $expressionId) = explode(':', $newExpression->value);
-                $newExpression->value = $value . ":" . $newExpressionIds[$expressionId];
+                $newExpression->value = $value . ":" . $newExpressionIds[intval($expressionId)];
             } elseif ($newExpression->type == "Compound") {
                 $expressionIds = explode(',', $newExpression->value);
                 foreach ($expressionIds as &$expressionId) {

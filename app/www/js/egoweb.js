@@ -1019,11 +1019,12 @@ function initStats(question) {
                     return this.params['nodeShape']['options'][p]['shape'];
             }
         }
-        console.log("default node shape", defaultNodeShape, this.params['nodeShape']['options'])
+        //console.log("default node shape", defaultNodeShape, this.params['nodeShape']['options'])
         return defaultNodeShape;
     }
 
     this.getEdgeColor = function(nodeId1, nodeId2) {
+        console.log("default edge color " + defaultEdgeColor)
         var defaultEdgeColor = "#ccc";
         if (typeof this.params['edgeColor'] != "undefined") {
             if (typeof this.params['edgeColor']['questionId'] != "undefined" && typeof answers[this.params['edgeColor']['questionId'] + "-" + nodeId1 + "and" + nodeId2] != "undefined")
