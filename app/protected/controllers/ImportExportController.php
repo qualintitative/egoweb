@@ -399,8 +399,11 @@ class ImportExportController extends Controller
                     }
                 }
             } else {
+                $nameGenQId = "0";
                 $questions = Question::findAll(array('studyId'=>$newStudy->id));
                 foreach ($questions as $question) {
+                    if($question->subjectType == "NAME_GENERATOR")
+                        $nameGenQId = strval($question->id);
                     $qIds[$question->title] = $question->id;
                 }
                 $options = QuestionOption::findAll(array('studyId'=>$newStudy->id));
