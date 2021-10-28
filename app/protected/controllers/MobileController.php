@@ -742,7 +742,8 @@ class MobileController extends Controller
                     foreach (preg_split('/;;/', $answer['OTHERSPECIFYTEXT']) as $other) {
                         if ($other && strstr($other, ':')) {
                             list($key, $val) = preg_split('/:/', $other);
-                            $responses[] = $newData['newOptionIds'][$qTitle."_".$optionNames[$key]] . ":" .$val;
+                            if(isset($optionNames[$key]) && isset($newData['newOptionIds'][$qTitle."_".$optionNames[$key]]))
+                                $responses[] = $newData['newOptionIds'][$qTitle."_".$optionNames[$key]] . ":" .$val;
                         }
                     }
                     $answer['OTHERSPECIFYTEXT'] = implode(";;", $responses);
