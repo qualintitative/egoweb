@@ -777,10 +777,10 @@ class MobileController extends Controller
         }
         foreach ($data['graphs'] as $graph) {
             $newGraph = new Graph;
-            $newGraph->expressionId = $note["EXPRESSIONID"];
-            $newGraph->interviewId = $newInterviewIds[(int)$note["INTERVIEWID"]];
-            $newGraph->params = $note["PARAMS"];
-            $newGraph->nodes = $note["NODES"];
+            $newGraph->expressionId = $graph["EXPRESSIONID"];
+            $newGraph->interviewId = $newInterviewIds[(int)$graph["INTERVIEWID"]];
+            $newGraph->params = $graph["PARAMS"];
+            $newGraph->nodes = $graph["NODES"];
             $newGraph->save();
         }
         return true;
