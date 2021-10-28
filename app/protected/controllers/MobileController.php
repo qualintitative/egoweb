@@ -739,6 +739,7 @@ class MobileController extends Controller
                 }
                 $newAnswer->value = html_entity_decode($answer['VALUE'], ENT_QUOTES);
                 if ($answer['OTHERSPECIFYTEXT']) {
+                    $responses = [];
                     foreach (preg_split('/;;/', $answer['OTHERSPECIFYTEXT']) as $other) {
                         if ($other && strstr($other, ':')) {
                             list($key, $val) = preg_split('/:/', $other);
