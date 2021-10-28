@@ -731,7 +731,7 @@ class MobileController extends Controller
                 if ($answer['ANSWERTYPE'] == "MULTIPLE_SELECTION") {
                     $values = explode(',', $answer['VALUE']);
                     foreach ($values as &$value) {
-                        if (isset($newData['newOptionIds'][$qTitle . "_" . $optionNames[$value]])) {
+                        if (isset($optionNames[$value]) && isset($newData['newOptionIds'][$qTitle . "_" . $optionNames[$value]])) {
                             $value = $newData['newOptionIds'][$qTitle . "_" . $optionNames[$value]];
                         }
                     }
