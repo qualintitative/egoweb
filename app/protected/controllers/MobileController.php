@@ -677,8 +677,8 @@ class MobileController extends Controller
                         $qIds = explode(",", $alter['NAMEGENQIDS']);
                         $newQids = array();
                         foreach ($qIds as $qId) {
-                            $qTitle = $questionTitles[$qId];
-                            if (isset($newData['newQuestionIds'][$qTitle])) {
+                            if (isset($questionTitles[$qId]) && isset($newData['newQuestionIds'][$qTitle])) {
+                                $qTitle = $questionTitles[$qId];
                                 $newQids[] = $newData['newQuestionIds'][$qTitle];
                             } else {
                                 $newQids[] = $newData["nameGenQId"];
