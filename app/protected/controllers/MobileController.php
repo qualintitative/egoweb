@@ -654,7 +654,8 @@ class MobileController extends Controller
                 if (stristr($alter['INTERVIEWID'], ",")) {
                     $interviewIds = explode(",", $alter['INTERVIEWID']);
                     foreach ($interviewIds as &$i) {
-                        $i = $newInterviewIds[$i];
+                        if(isset($newInterviewIds[$i]))
+                            $i = $newInterviewIds[$i];
                     }
                     $interviewIds = implode(",", $interviewIds);
                     if ($interviewIds != $alter['INTERVIEWID']) {
