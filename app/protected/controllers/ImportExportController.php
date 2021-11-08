@@ -338,7 +338,7 @@ class ImportExportController extends Controller
                         //    $newExpression->questionId = $newQuestionIds[intval($newExpression->questionId)];
                         //}
 
-                        $newExpression->value = strval($expression->value);
+                        $newExpression->value = strval($expression->attributes()->value);
                         if (!$newExpression->save()) {
                             echo "Expression: " . print_r($newExpression->getErrors());
                         } else {
