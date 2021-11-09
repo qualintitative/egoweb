@@ -21,6 +21,7 @@ use app\models\AlterPrompt;
 use app\models\Interview;
 use app\models\Interviewer;
 use app\models\AlterList;
+use yii\data\Pagination;
 
 /**
  * Site controller
@@ -87,7 +88,7 @@ class AuthoringController extends Controller
 		while(! feof($file)){
 			$data = fgetcsv($file);
 			if(isset($data[0]) && $data[0]){
-                $alterlist = AlterList::findAll(['studyId = '.$id]);
+                $alterlist = AlterList::findAll(['studyId'=>$id]);
 				$model = new AlterList;
 				$model->ordering = count($alterlist);
 				$model->name = trim($data[0]);
@@ -371,7 +372,7 @@ class AuthoringController extends Controller
         $study = Study::findOne($id)->toArray();
         $this->view->title = $study['name'];
         $result = Interviewer::find()->where(["studyId"=>$id])->all();
-        
+
         $interviewers = [];
         $alterList = [];
         $interviewerList = [];
@@ -386,19 +387,24 @@ class AuthoringController extends Controller
             }
         }
 
-        $result = AlterList::find()->where(["studyId"=>$id])->all();
-        foreach ($result as $item) {
+        $result = AlterList::find()->where(["studyId"=>$id]);
+        $pagination = new Pagination(['totalCount' => $result->count()]);
+        $items = $result->offset($pagination->offset)
+        ->limit($pagination->limit)
+        ->all();
+    
+        foreach ($items as $item) {
             $interviewer = "";
             if(isset($interviewerList[$item->interviewerId]))
                 $interviewer = $interviewerList[$item->interviewerId];
-            $alterList[] = ["id"=>$item->id, "name"=>$item->name, "email"=>$item->email, "nameGenQIds"=>$item->nameGenQIds, "nameGenQIdsArray"=>explode(",",$item->nameGenQIds), "assign to user"=>$interviewer];
+            $alterList[] = ["id"=>$item->id, "name"=>$item->name, "email"=>$item->email, "nameGenQIds"=>$item->nameGenQIds, "nameGenQIdsArray"=>explode(",",$item->nameGenQIds), "interviewerId"=>$item->interviewerId];
         }
         $result = User::find()->where(['<=', 'permissions', 5])->andWhere(['not', ['id'=>$userIds]])->all();
         foreach ($result as $item) {
             $users[] = $item->toArray();
         }
         $questions = Question::find()->where(["subjectType"=>"NAME_GENERATOR", "studyId"=>$id])->asArray()->all();
-        return $this->render('participants',["study"=>$study, "interviewers"=>$interviewers, "alterList"=>$alterList, "users"=>$users, "questions"=>$questions]);
+        return $this->render('participants',["study"=>$study, "interviewers"=>$interviewers, "alterList"=>$alterList, "users"=>$users, "questions"=>$questions, "pagination"=>$pagination]);
     }
 
     public function actionExpressions($id)
@@ -607,10 +613,12 @@ class AuthoringController extends Controller
      		$alterList->name = trim($alterList->name);
             $alterList->studyId = $id;
             $study->save();
-            if($alterList->save())
-                return $this->redirect(Yii::$app->request->referrer);
-            else
+            if ($alterList->save()) {
+                if(!isset($_POST['AlterList']['id']))
+                    return $this->redirect(Yii::$app->request->referrer);
+            }else{
                 print_r($alterList->errors);
+            }
         }elseif(isset($_POST['AlterPrompt'])){
             $prompts = json_decode($_POST['prompts']);
             if($_POST['AlterPrompt']['id']){

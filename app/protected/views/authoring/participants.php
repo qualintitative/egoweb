@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+use yii\bootstrap4\LinkPager;
 ?>
 <?= $this->render('/layouts/nav', ['study'=> $study]); ?>
 <div id="authoring-app">
@@ -21,7 +22,7 @@ use yii\helpers\Html;
                             </b-form-select>
                         </td>
                         <td>
-                            <button class="btn btn-primary button-xs">Create</button>
+                            <button class="btn btn-primary button-xs">Add To Study</button>
                         </td>
                     </tr>
                 </template>
@@ -35,28 +36,33 @@ use yii\helpers\Html;
 
         <div class="col-md-8">
             <h4>Participants</h4>
+<?php
+echo LinkPager::widget([
+'pagination' => $pagination,
+]);
+?>
             <b-table class="options" head-variant="dark" :tbody-tr-attr="setAttribute" :items="alterList"
                 :fields="list_fields" striped responsive="sm">
                 <template #cell(name)="row">
-                    <input class="form-control input-xs" @blur="editOption(row.item.id, this)"
-                        v-on:keyup.13="editOption(row.item.id, this)" v-model="row.item.name" />
+                    <input class="form-control input-xs" @blur="editOption(row.item.id)"
+                        v-on:keyup.13="editOption(row.item.id)" v-model="row.item.name" />
                 </template>
                 <template #cell(email)="row">
-                    <input class="form-control input-xs" @blur="editOption(row.item.id, this)"
-                        v-on:keyup.13="editOption(row.item.id, this)" v-model="row.item.name" />
+                    <input class="form-control input-xs" @blur="editOption(row.item.id)"
+                        v-on:keyup.13="editOption(row.item.id)" v-model="row.item.email" />
                 </template>
                 <template #cell(nameGenQIds)="row">
                     <b-form-checkbox-group v-model="row.item.nameGenQIdsArray" :options="questions" text-field="title"
-                        value-field="id" @change="checkVal($event)">
+                        value-field="id" @change="editVal(row.item.id, $event)">
                     </b-form-checkbox-group>
                 </template>
 
                 <template #cell(interviewerId)="row">
                     <b-form-select v-model="row.item.interviewerId" name="AlterList[interviewerId]"
-                        :options="interviewers" class="mb-3 text-black input-xs" value-field="id"
-                        text-field="interviewer" stacked>
+                        :options="interviewers" class="mb-3 text-black input-xs" value-field="id" @change="editOption(row.item.id)"
+                        text-field="name" stacked>
                         <template #first>
-                            <b-form-select-option value="" selected>-- Interviewer --</b-form-select-option>
+                            <b-form-select-option value="" selected></b-form-select-option>
                         </template>
                     </b-form-select>
                 </template>
@@ -123,6 +129,13 @@ use yii\helpers\Html;
 <?= Html::beginForm(['/authoring/ajaxdelete/'.$study['id']], 'post', [ 'id'=>'deleteAlterList', "class"=>"d-none"]) ?>
 <input type="hidden" id="deleteAlterListId" name="AlterList[id]">
 <?= Html::endForm() ?>
+<?= Html::beginForm(['/authoring/ajaxupdate/'.$study['id']], 'post', [ 'id'=>'updateAlterList', "class"=>"d-none"]) ?>
+<input type="hidden" id="updateAlterListId" name="AlterList[id]">
+<input type="hidden" id="updateAlterListName" name="AlterList[name]">
+<input type="hidden" id="updateAlterListEmail" name="AlterList[email]">
+<input type="hidden" id="updateAlterListNameGenQIds" name="AlterList[nameGenQIds]">
+<input type="hidden" id="updateAlterListInterviewerId" name="AlterList[interviewerId]">
+<?= Html::endForm() ?>
 <script>
 interviewers = <?php echo json_encode($interviewers, ENT_QUOTES); ?>;
 alterList = <?php echo json_encode($alterList, ENT_QUOTES); ?>;
@@ -144,7 +157,7 @@ new Vue({
                 'name',
                 'email',
                 'nameGenQIds',
-                'assign to user',
+                'interviewerId',
                 {
                     key: "details",
                     label: ""
@@ -163,6 +176,24 @@ new Vue({
             this.$forceUpdate();
             this.nameGenQIds = val.join(",")
         },
+        editVal(id, val) {
+            for(k in this.alterList){
+                if(this.alterList[k].id == id){
+                    this.$forceUpdate();
+                    this.alterList[k].nameGenQIds = val.join(",")
+                    this.updateList(id);
+                }
+            }
+
+        },
+        editOption(id) {
+            for(k in this.alterList){
+                if (this.alterList[k].id == id) {
+                    console.log(this.alterList[k]);
+                    this.updateList(id);
+                }
+            }
+        },
         deleteInterviewer(id) {
             $("#deleteInterviewerId").val(id);
             $("#deleteInterviewer").submit();
@@ -175,6 +206,20 @@ new Vue({
             if(confirm("Delete the entire list of participants?")){
                 $("#deleteAlterListId").val("all");
                 $("#deleteAlterList").submit();
+            }
+        },
+        updateList(id){
+            for(k in this.alterList){
+                if(this.alterList[k].id == id){
+                    $("#updateAlterListId").val(this.alterList[k].id);
+                    $("#updateAlterListName").val(this.alterList[k].name);
+                    $("#updateAlterListEmail").val(this.alterList[k].email);
+                    $("#updateAlterListNameGenQIds").val(this.alterList[k].nameGenQIds);
+                    $("#updateAlterListInterviewerId").val(this.alterList[k].interviewerId);
+                    $.post("/authoring/ajaxupdate/<?php echo $study['id']; ?>",$("#updateAlterList").serialize(),function(data){
+                        console.log(data);
+                    });
+                }
             }
         },
         setAttribute(item, type) {
