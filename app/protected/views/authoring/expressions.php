@@ -81,7 +81,7 @@ use common\widgets\Alert;
                     <label for="Expression_name" class="col-md-2 col-form-label">TRUE if</label>
                     <div class="col-md-3">
                         <b-form-select v-model="expressions[id].operator" name="Expression[operator]">
-                        <b-form-select-option value="Some" selected>Some </b-form-select-option>
+                        <b-form-select-option value="Some" selected>Some</b-form-select-option>
                         <b-form-select-option value="All">All</b-form-select-option>
                         <b-form-select-option value="None">None</b-form-select-option>
                         </b-form-select>
@@ -108,7 +108,7 @@ use common\widgets\Alert;
                 <b-form-select v-model="expressions[id].operator"  name="Expression[operator]" class="col-sm-3 mb-3">
                 <b-form-select-option value="Greater">Greater Than</b-form-select-option>
                 <b-form-select-option value="GreaterOrEqual">Greater Or Equal To</b-form-select-option>
-                <b-form-select-option value="Equals">Equals</b-form-select-option>
+                <b-form-select-option value="Equals" selected>Equals</b-form-select-option>
                 <b-form-select-option value="LessOrEqual">Less Or Equal To</b-form-select-option>
                 <b-form-select-option value="Less">Less Than</b-form-select-option>
                 </b-form-select>
@@ -123,7 +123,7 @@ use common\widgets\Alert;
                     <label for="Expression_questionId" class="col-md-3 col-form-label"><b>TRUE</b> if answer</label>
                     <div class="col-md-4">
                         <b-form-select v-model="expressions[id].operator"  name="Expression[operator]">
-                            <b-form-select-option value="Contains">CONTAINS</b-form-select-option>
+                            <b-form-select-option value="Contains" selected>CONTAINS</b-form-select-option>
                             <b-form-select-option value="Equals">EQUALS</b-form-select-option>
                         </b-form-select>
                     </div>
@@ -135,7 +135,7 @@ use common\widgets\Alert;
             <div class="row form-group">
                 <div class="col-md-3">
                     <b-form-select v-model="expressions[id].resultForUnanswered" name="Expression[resultForUnanswered]" class="mb-3">
-                    <b-form-select-option value="0">False</b-form-select-option>
+                    <b-form-select-option value="0" selected>False</b-form-select-option>
                     <b-form-select-option value="1">True</b-form-select-option>
                     </b-form-select>
                 </div>
@@ -150,7 +150,7 @@ use common\widgets\Alert;
             <label for="Expression_name" class="col-md-2 col-form-label">TRUE if</label>
             <div class="col-md-3">
                 <b-form-select v-model="expressions[id].operator"  name="Expression[operator]">
-                <b-form-select-option value="Some">Some </b-form-select-option>
+                <b-form-select-option value="Some" selected>Some</b-form-select-option>
                 <b-form-select-option value="All">All</b-form-select-option>
                 <b-form-select-option value="None">None</b-form-select-option>
                 </b-form-select>
@@ -170,7 +170,7 @@ use common\widgets\Alert;
         <div class="row form-group">
             <div class="col-md-3">
                 <b-form-select v-model="expressions[id].resultForUnanswered" class="mb-3" name="Expression[resultForUnanswered]">
-                <b-form-select-option value="0">False</b-form-select-option>
+                <b-form-select-option value="0" selected>False</b-form-select-option>
                 <b-form-select-option value="1">True</b-form-select-option>
                 </b-form-select>
             </div>
@@ -186,7 +186,7 @@ use common\widgets\Alert;
             </div>
             <label class="col-sm-2">times the</label>
             <b-form-select v-model="expressions[id].operator"  name="Expression[operator]" class="col-sm-2">
-            <b-form-select-option value="Sum">Sum </b-form-select-option>
+            <b-form-select-option value="Sum" selected>Sum</b-form-select-option>
             <b-form-select-option value="Count">Count</b-form-select-option>
             </b-form-select>
             <div class="col-md-3">of the selected </div>
@@ -231,7 +231,7 @@ use common\widgets\Alert;
                 <b-form-select v-model="expressions[id].operator"  name="Expression[operator]" class="col-sm-3">
                 <b-form-select-option value="Greater">Greater Than</b-form-select-option>
                 <b-form-select-option value="GreaterOrEqual">Greater Or Equal To</b-form-select-option>
-                <b-form-select-option value="Equals">Equals</b-form-select-option>
+                <b-form-select-option value="Equals" selected>Equals</b-form-select-option>
                 <b-form-select-option value="LessOrEqual">Less Or Equal To</b-form-select-option>
                 <b-form-select-option value="Less">Less Than</b-form-select-option>
                 </b-form-select>
@@ -258,7 +258,7 @@ use common\widgets\Alert;
             <label for="Expression_name" class="col-md-2 col-form-label">TRUE if</label>
             <div class="col-md-3">
                 <b-form-select v-model="expressions[id].operator"  name="Expression[operator]">
-                <b-form-select-option value="Some">Some </b-form-select-option>
+                <b-form-select-option value="Some" selected>Some</b-form-select-option>
                 <b-form-select-option value="All">All</b-form-select-option>
                 <b-form-select-option value="None">None</b-form-select-option>
                 </b-form-select>
