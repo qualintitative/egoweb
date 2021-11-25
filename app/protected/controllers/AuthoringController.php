@@ -242,7 +242,9 @@ class AuthoringController extends Controller
             $answerTypes[] = ["value"=>$a, "text"=>$a];
         }
         $subjectTypes = false;
-
+        foreach($questions as &$question){
+            $question['options'] = QuestionOption::find()->where(['questionId'=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+        }
         $new_question = new Question;
         $new_question->id = 0;
         $new_question->studyId = $study->id;
@@ -587,7 +589,10 @@ class AuthoringController extends Controller
                     return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($options)]);
                 }else{
                     $option = new QuestionOption;
-                    $option->ordering = count($options);
+                    if(!is_array($options))
+                        $option->ordering = 0;
+                    else
+                        $option->ordering = count($options);
                     $option->studyId = $id;
                 }
              }

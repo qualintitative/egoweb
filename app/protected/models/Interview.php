@@ -172,10 +172,28 @@ class Interview extends \yii\db\ActiveRecord
 
     public function getEgoId()
     {   
-        $egoIdString = [];        
+        $egoIdString = [];
+        $questions = Question::find()->where(array('subjectType' => "EGO_ID"))->andWhere(['!=', 'answerType', 'STORED_VALUE'])->andWhere(['!=', 'answerType', 'RANDOM_NUMBER'])->all();
+        $ego_id_questions = [];
+        $options = [];
+        foreach($questions as $question){
+            $ego_id_questions[$question->id] = $question;
+            if($question->answerType == "MULTIPLE_SELECTION"){
+                $result = QuestionOption::find()->where(["questionId"=>$question->id])->orderBy(["ordering"=>"ASC"])->all();
+                foreach($result as $option){
+                    $options[$option->id] = $option->value;
+                }
+            }
+
+
+        }
         $answers = Answer::find()->where(array('questionType' => "EGO_ID", "interviewId" => $this->id))->andWhere(['!=', 'answerType', 'STORED_VALUE'])->andWhere(['!=', 'answerType', 'RANDOM_NUMBER'])->all();
         foreach($answers as $answer){
-            $egoIdString[] = $answer->value;
+            if(isset($ego_id_questions[$answer->questionId]) && $ego_id_questions[$answer->questionId]->answerType == "MULTIPLE_SELECTION" && isset($options[$answer->value])){
+                $egoIdString[] = $options[$answer->value];
+            }else{
+                $egoIdString[] = $answer->value;
+            }
         }
         return implode("_", $egoIdString);
     }
