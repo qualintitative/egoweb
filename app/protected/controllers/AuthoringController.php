@@ -747,34 +747,36 @@ class AuthoringController extends Controller
 		header("Content-Disposition: attachment; filename=".$study->name."-predefined-alters".".csv");
 		header("Content-Type: application/force-download");
 
+        $ego_id = Question::findOne(array("studyId"=>$study->id, "subjectType"=>"EGO_ID", "useAlterListField"=>array("name", "email", "id")));
+
 		$headers = array();
-		$headers[] = 'Study ID';
+		$headers[] = 'Study Name';
 		$headers[] = "Alter ID";
 		$headers[] = "Alter Name";
 		$headers[] = "Alter Email";
-		$headers[] = "Link With Key";
+        if ($ego_id)
+		    $headers[] = "Link With Key";
 		echo implode(',', $headers) . "\n";
 
-        $ego_id = Question::findOne(array("studyId"=>$study->id, "subjectType"=>"EGO_ID", "useAlterListField"=>array("name", "email", "id")));
-        if ($ego_id) {
-            foreach ($alters as $alter) {
-                $row = array();
+        //if ($ego_id) {
+        foreach ($alters as $alter) {
+            $row = array();
+            $key = "";
+            $row[] = $study->name;
+            $row[] = $alter->id;
+            $row[] = $alter->name;
+            $row[] = $alter->email;
+            if ($ego_id) {
                 if ($ego_id->useAlterListField == "name") {
                     $key = md5($alter->name);
                 } elseif ($ego_id->useAlterListField == "email") {
                     $key = md5($alter->email);
                 } elseif ($ego_id->useAlterListField == "id") {
                     $key = md5($alter->id);
-                } else {
-                    $key = "";
                 }
-                $row[] = $study->id;
-                $row[] = $alter->id;
-                $row[] = $alter->name;
-                $row[] = $alter->email;
                 $row[] =  Url::base(true) . Url::toRoute("/interview/".$study->id."#/page/0/".$key);
-                echo implode(',', $row) . "\n";
             }
+            echo implode(',', $row) . "\n";
         }
 	}
 

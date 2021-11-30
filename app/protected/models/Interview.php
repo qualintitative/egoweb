@@ -181,7 +181,7 @@ class Interview extends \yii\db\ActiveRecord
             if($question->answerType == "MULTIPLE_SELECTION"){
                 $result = QuestionOption::find()->where(["questionId"=>$question->id])->orderBy(["ordering"=>"ASC"])->all();
                 foreach($result as $option){
-                    $options[$option->id] = $option->value;
+                    $options[$option->id] = $option->name;
                 }
             }
 
