@@ -373,8 +373,8 @@ class AuthoringController extends Controller
     {
         $study = Study::findOne($id)->toArray();
         $this->view->title = $study['name'];
+        $ego_id = Question::findOne(array("studyId"=>$study['id'], "subjectType"=>"EGO_ID", "useAlterListField"=>array("name", "email", "id")));
         $result = Interviewer::find()->where(["studyId"=>$id])->all();
-
         $interviewers = [];
         $alterList = [];
         $interviewerList = [];
@@ -397,9 +397,22 @@ class AuthoringController extends Controller
     
         foreach ($items as $item) {
             $interviewer = "";
+            $url = "No Ego Id question Use List field selected";
             if(isset($interviewerList[$item->interviewerId]))
                 $interviewer = $interviewerList[$item->interviewerId];
-            $alterList[] = ["id"=>$item->id, "name"=>$item->name, "email"=>$item->email, "nameGenQIds"=>$item->nameGenQIds, "nameGenQIdsArray"=>explode(",",$item->nameGenQIds), "interviewerId"=>$item->interviewerId];
+            if ($ego_id) {
+                if ($ego_id) {
+                    if ($ego_id->useAlterListField == "name") {
+                        $key = md5($item->name);
+                    } elseif ($ego_id->useAlterListField == "email") {
+                        $key = md5($item->email);
+                    } elseif ($ego_id->useAlterListField == "id") {
+                        $key = md5($item->id);
+                    }
+                }
+                $url = Url::base(true) . Url::toRoute("/interview/".$study['id']."#/page/0/".$key);
+            }
+            $alterList[] = ["id"=>$item->id, "name"=>$item->name, "email"=>$item->email, "nameGenQIds"=>$item->nameGenQIds, "nameGenQIdsArray"=>explode(",",$item->nameGenQIds), "interviewerId"=>$item->interviewerId, "url"=>$url];
         }
         $result = User::find()->where(['<=', 'permissions', 5])->andWhere(['not', ['id'=>$userIds]])->all();
         foreach ($result as $item) {
@@ -407,6 +420,28 @@ class AuthoringController extends Controller
         }
         $questions = Question::find()->where(["subjectType"=>"NAME_GENERATOR", "studyId"=>$id])->asArray()->all();
         return $this->render('participants',["study"=>$study, "interviewers"=>$interviewers, "alterList"=>$alterList, "users"=>$users, "questions"=>$questions, "pagination"=>$pagination]);
+    }
+
+    public function actionGetlink($id){
+        $study = Study::findOne($id);
+        $ego_id = Question::findOne(array("studyId"=>$study->id, "subjectType"=>"EGO_ID", "useAlterListField"=>array("name", "email", "id")));
+        $alter = AlterList::find()
+        ->where(["id"=>$_POST['alterListId']])
+        ->one();
+        $key = "";
+        $study = Study::findOne($id);
+        if ($ego_id) {
+            if ($ego_id) {
+                if ($ego_id->useAlterListField == "name") {
+                    $key = md5($alter->name);
+                } elseif ($ego_id->useAlterListField == "email") {
+                    $key = md5($alter->email);
+                } elseif ($ego_id->useAlterListField == "id") {
+                    $key = md5($alter->id);
+                }
+            }
+        }
+        return Url::base(true) . Url::toRoute("/interview/".$study->id."#/page/0/".$key);
     }
 
     public function actionExpressions($id)
@@ -746,6 +781,7 @@ class AuthoringController extends Controller
 		header("Content-Type: application/octet-stream");
 		header("Content-Disposition: attachment; filename=".$study->name."-predefined-alters".".csv");
 		header("Content-Type: application/force-download");
+
 
         $ego_id = Question::findOne(array("studyId"=>$study->id, "subjectType"=>"EGO_ID", "useAlterListField"=>array("name", "email", "id")));
 

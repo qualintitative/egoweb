@@ -56,7 +56,6 @@ echo LinkPager::widget([
                         value-field="id" @change="editVal(row.item.id, $event)">
                     </b-form-checkbox-group>
                 </template>
-
                 <template #cell(interviewerId)="row">
                     <b-form-select v-model="row.item.interviewerId" name="AlterList[interviewerId]"
                         :options="interviewers" class="mb-3 text-black input-xs" value-field="id" @change="editOption(row.item.id)"
@@ -66,8 +65,12 @@ echo LinkPager::widget([
                         </template>
                     </b-form-select>
                 </template>
-                <template #cell(details)="row">
+                <template #cell(info)="row">
+                    <b-link href="#" @click="row.toggleDetails"><i class="fas fa-link"></i></b-link>
                     <b-link href="#" @click="deleteAlterList(row.item.id)"><i class="fas fa-times"></i></b-link>
+                </template>
+                <template #row-details="row">
+                    {{row.item.url}}
                 </template>
                 <template v-slot:custom-foot>
                     <tr>
@@ -159,7 +162,7 @@ new Vue({
                 'nameGenQIds',
                 'interviewerId',
                 {
-                    key: "details",
+                    key: "info",
                     label: ""
                 }
             ],
@@ -201,6 +204,11 @@ new Vue({
         deleteAlterList(id) {
             $("#deleteAlterListId").val(id);
             $("#deleteAlterList").submit();
+        },
+        getLink(id) {
+            $.post("/authoring/getlink/<?php echo $study['id']; ?>", {'alterListId': id}, function(data){
+                console.log(data);
+            });
         },
         deleteAllAlterList(id) {
             if(confirm("Delete the entire list of participants?")){
