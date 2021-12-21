@@ -22,13 +22,13 @@ class SignupCest
         $I->seeValidationError('Username cannot be blank.');
         $I->seeValidationError('Email cannot be blank.');
         $I->seeValidationError('Password cannot be blank.');
-
     }
 
     public function signupWithWrongEmail(FunctionalTester $I)
     {
         $I->submitForm(
-            $this->formId, [
+            $this->formId,
+            [
             'SignupForm[username]'  => 'tester',
             'SignupForm[email]'     => 'ttttt',
             'SignupForm[password]'  => 'tester_password',

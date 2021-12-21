@@ -136,7 +136,7 @@ describe('Complete Test', function () {
             if (typeof studyTest.questions[i].options[j].otherSpecify != "undefined" && studyTest.questions[i].options[j].otherSpecify == true)
               $('//*[@id="form-' + qId + '"]').$('//label[@for="' + qId + '_QuestionOption_otherSpecify"]').click()
             $('//*[@id="form-' + qId + '"]').$('button=Add').click();
-            browser.pause(500);
+            browser.pause(1000);
           }
           for (let j = 0; j < studyTest.questions[i].options.length; j++) {
 
@@ -147,22 +147,27 @@ describe('Complete Test', function () {
           if (typeof studyTest.questions[i].params.max != "undefined")
             $('//*[@id="form-0"]').$('//*[@id="' + qId + '_maxLiteral"]').setValue(studyTest.questions[i].params.max);
           $('//*[@id="form-0"]').$('button=Create').click();
+          //$("//button[contains(text(),'" + studyTest.questions[i].title + "')]").waitForExist(egoOpts.waitTime);
           browser.pause(3000);
 
           btnNewQ = $("//button[contains(text(),'" + studyTest.questions[i].title + "')]")
           qId = btnNewQ.getAttribute("aria-controls").replace("accordion-","");
-          btnNewQ.click()
+          btnNewQ.click();
+          btnNewQ.scrollIntoView();
+          browser.pause(1000);
+
           if (typeof studyTest.questions[i].params.alterPrompts != "undefined") {
             var alterPrompts = studyTest.questions[i].params.alterPrompts;
             for (a in alterPrompts) {
               $('//*[@id="form-' + qId + '"]').$('//input[@name="AlterPrompt[afterAltersEntered]"]').setValue(a);
               $('//*[@id="form-' + qId + '"]').$('//input[@name="AlterPrompt[display]"]').setValue(alterPrompts[a]);
               $('//*[@id="form-' + qId + '"]').$('button=Add').click()
-              browser.pause(500)
+              browser.pause(1000)
             }
           }
         } else {
           $('//*[@id="form-0"]').$('button=Create').click();
+          //$("//button[contains(text(),'" + studyTest.questions[i].title + "')]").waitForExist(egoOpts.waitTime);
           browser.pause(3000)
         }
       });

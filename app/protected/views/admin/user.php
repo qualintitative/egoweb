@@ -1,5 +1,6 @@
 <?php
 use yii\helpers\Html;
+
 ?>
 <div id="useradmin-app">
 <?= Html::beginForm(['/admin/user'], 'post', [ 'id'=>'addUser']) ?>

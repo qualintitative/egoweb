@@ -23,17 +23,18 @@ function getInterviews(dropdown, container){
 <?php
 
 echo Html::dropdownlist(
-	'studyId',
-	'',
+    'studyId',
+    '',
     ArrayHelper::map(
-        $studies
-    , 'id','name'),
+        $studies,
+        'id',
+        'name'
+    ),
     array(
         'prompt' => 'Select Study',
         'onchange'=>"js:getInterviews(\$(this), '#interview-1')",
         'class'=>'form-control'
     )
-
 );
 ?>
 <div id="interview-1"></div>
@@ -41,17 +42,18 @@ echo Html::dropdownlist(
 <?php
 
 echo Html::dropdownlist(
-	'studyId',
-	'',
+    'studyId',
+    '',
     ArrayHelper::map(
-        $studies
-    , 'id','name'),
+        $studies,
+        'id',
+        'name'
+    ),
     array(
         'prompt' => 'Select Different Study',
         'onchange'=>"js:getInterviews(\$(this), '#interview-2')",
         'class'=>'form-control'
     )
-
 );
 ?>
 <div id="interview-2"></div>

@@ -2,6 +2,7 @@
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+
 ?>
 
 <div class="row">
@@ -36,15 +37,15 @@ use yii\helpers\Url;
       <div id="export-panel" class="card-body">
         <?= Html::beginForm(['/import-export/exportstudy'], 'post', array('id' => 'export')) ?>
         <?= Html::dropDownList(
-        'studyId',
-        '',
-        ArrayHelper::map($studies, 'id', 'name'),
-        ['class' => 'form-control',
+    'studyId',
+    '',
+    ArrayHelper::map($studies, 'id', 'name'),
+    ['class' => 'form-control',
         'empty' => 'Select',
         'prompt'=>'Select',
         'onchange' => "js:getInterviews(\$(this), '#export-interviews')",
         ]
-        ) ?>
+) ?>
     
         <div id="export-interviews"></div>
         <div id="exportNotice" class="col-sm-12 alert alert-success" style="display:none"></div>
@@ -113,7 +114,7 @@ use yii\helpers\Url;
             'onchange' => "checkDelete()",
 
             ]
-            ) ?>
+        ) ?>
           </div>
           <a id="deleteServer" style="display:none" class="btn btn-xs pull-right btn-danger" href="javascript:void(0);" onclick="deleteServer($('#serverAddress option:selected').val())">Delete</a>
         </div>
@@ -121,10 +122,10 @@ use yii\helpers\Url;
           <label class="col-sm-3">Study</label>
           <div class='col-sm-9'>
             <?= Html::dropDownList(
-            'studyId',
-            '',
-            ArrayHelper::map($studies, 'id', 'name'),
-            ['class' => 'form-control',
+                'studyId',
+                '',
+                ArrayHelper::map($studies, 'id', 'name'),
+                ['class' => 'form-control',
             'prompt'=>'Select',
             'onchange' => "js:getInterviews(\$(this),'#send-interviews')",
             'id' => 'sendStudy',

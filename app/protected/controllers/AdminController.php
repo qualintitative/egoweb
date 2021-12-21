@@ -76,7 +76,7 @@ class AdminController extends Controller
         $result = User::find()->all();
         $users = [];
         $userExists = false;
-        foreach($result as $user){
+        foreach ($result as $user) {
             $user->generatePasswordResetToken();
             $userA = $user->toArray();
             $user->save();
@@ -111,10 +111,10 @@ class AdminController extends Controller
             }
         }
         $roles = [];
-        foreach(User::roles() as $permission=>$role){
+        foreach (User::roles() as $permission=>$role) {
             $roles[$permission] = ["text"=>$role, "value"=>$permission];
         }
-        return $this->render('user',[
+        return $this->render('user', [
             "users"=>$users,
             "roles"=>$roles,
         ]);
@@ -139,7 +139,7 @@ class AdminController extends Controller
             if ($user->save()) {
                 Yii::$app->session->setFlash('success', 'Updated user ' .  $_POST['User']['email']);
                 return $this->response->redirect(Url::toRoute('/admin/user'));
-            }else{
+            } else {
                 Yii::$app->session->setFlash('error', 'Error creating user');
             }
         }
@@ -152,7 +152,7 @@ class AdminController extends Controller
             $email = $user->email;
             $user->delete();
             Yii::$app->session->setFlash('success', 'Deleted user ' . $email);
-        }else{
+        } else {
             Yii::$app->session->setFlash('error', 'Cannot your own account');
         }
         return $this->response->redirect(Url::toRoute('/admin/user'));
@@ -162,7 +162,7 @@ class AdminController extends Controller
     {
         $text = "";
         $myfile = fopen(getcwd() . "/protected/runtime/logs/app.log", "r") or die("Unable to open file!");
-        while(!feof($myfile)) {
+        while (!feof($myfile)) {
             $text .= fgets($myfile) . "<br>";
         }
         fclose($myfile);
@@ -190,5 +190,4 @@ class AdminController extends Controller
         $op = shell_exec('cd ' .   $path . ' && /usr/bin/git pull 2>&1');
         \yii\helpers\VarDumper::dump($op, 10, 1);
     }
-
 }

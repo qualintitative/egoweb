@@ -10,6 +10,7 @@ use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 use app\models\Study;
 use common\widgets\Alert;
+
 AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
@@ -82,15 +83,15 @@ AppAsset::register($this);
                                 <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle" href="#">New
                                         Interview</a>
                                     <ul class="dropdown-menu bg-dark">
-                                        <?php foreach(Yii::$app->user->identity->studies as $study):?>
-                                        <li><?php echo Html::a(substr($study->name,0,24), ["/interview/" . $study->id . "#/page/0"], ['class'=>'dropdown-item']); ?></li>
+                                        <?php foreach (Yii::$app->user->identity->studies as $study):?>
+                                        <li><?php echo Html::a(substr($study->name, 0, 24), ["/interview/" . $study->id . "#/page/0"], ['class'=>'dropdown-item']); ?></li>
                                         <?php endforeach; ?>
                                     </ul>
                                 <li class="dropdown-submenu"><a class="dropdown-item dropdown-toggle"
                                         href="#">Authoring</a>
                                     <ul class="dropdown-menu bg-dark">
-                                        <?php foreach(Yii::$app->user->identity->studies as $study):?>
-                                        <li><?php echo Html::a(substr($study->name,0,24), ["/authoring/" . $study->id], ['class'=>'dropdown-item']); ?>
+                                        <?php foreach (Yii::$app->user->identity->studies as $study):?>
+                                        <li><?php echo Html::a(substr($study->name, 0, 24), ["/authoring/" . $study->id], ['class'=>'dropdown-item']); ?>
                                         </li>
                                         <?php endforeach; ?>
                                     </ul>
@@ -99,8 +100,8 @@ AppAsset::register($this);
                                         Processing</a>
 
                                     <ul class="dropdown-menu bg-dark">
-                                        <?php foreach(Yii::$app->user->identity->studies as $study):?>
-                                        <li><?php echo Html::a(substr($study->name,0,24), ["/data/" . $study->id], ['class'=>'dropdown-item']); ?>
+                                        <?php foreach (Yii::$app->user->identity->studies as $study):?>
+                                        <li><?php echo Html::a(substr($study->name, 0, 24), ["/data/" . $study->id], ['class'=>'dropdown-item']); ?>
                                         </li>
                                         <?php endforeach; ?>
                                     </ul>

@@ -1,6 +1,7 @@
 <?php
 use yii\helpers\Html;
 use app\models\Interview;
+
 ?>
 <div id="accordion">
 <div class="card bg-dark text-light">
@@ -8,7 +9,7 @@ use app\models\Interview;
         Studies
 </div>
 </div>
-<?php foreach(Yii::$app->user->identity->studies as $study):?>
+<?php foreach (Yii::$app->user->identity->studies as $study):?>
     <div class="card">
     <div class="card-header" id="heading-<?php echo $study->id; ?>">
       <h5 class="mb-0">
@@ -35,10 +36,10 @@ $interviews = Interview::findAll([
     "studyId"=>$study->id
 ]);
 ?>
-<?php if(count($interviews) > 0): ?>
+<?php if (count($interviews) > 0): ?>
     <div class="list-group">
-<?php foreach($interviews as $interview): ?>
-    <?php if($interview->completed > -1): ?>
+<?php foreach ($interviews as $interview): ?>
+    <?php if ($interview->completed > -1): ?>
     <?php echo Html::a($interview->egoId, ["/interview/" . $study->id . "/" . $interview->id . "#page/" . $interview->completed ], ["class"=>"list-group-item list-group-item-action"]); ?>
 <?php endif; ?>
     <?php endforeach; ?>

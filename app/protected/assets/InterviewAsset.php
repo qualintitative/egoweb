@@ -38,5 +38,4 @@ class InterviewAsset extends AssetBundle
     public $depends = [
         'app\assets\AppAsset',
         ];
-
 }

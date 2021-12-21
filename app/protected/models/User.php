@@ -9,7 +9,6 @@ use yii\web\IdentityInterface;
 use app\helpers\Tools;
 use app\models\Study;
 
-
 /**
  * User model
  *
@@ -133,7 +132,8 @@ class User extends ActiveRecord implements IdentityInterface
      * @param string $token verify email token
      * @return static|null
      */
-    public static function findByVerificationToken($token) {
+    public static function findByVerificationToken($token)
+    {
         return static::findOne([
             'verification_token' => $token,
             'status' => self::STATUS_INACTIVE
@@ -205,11 +205,9 @@ class User extends ActiveRecord implements IdentityInterface
             || $matches[1] > 30
         ) {
             return false;
-        }else{
+        } else {
             return Yii::$app->security->validatePassword($password, $this->password);
-
         }
-    
     }
 
     /**
@@ -256,8 +254,8 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function beforeSave($insert)
     {
-        $this->name = Tools::encrypt( $this->name );
-        $this->email = Tools::encrypt( $this->email );
+        $this->name = Tools::encrypt($this->name);
+        $this->email = Tools::encrypt($this->email);
 
         return parent::beforeSave($insert);
     }
@@ -267,16 +265,16 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public function afterFind()
     {
-        $this->name = Tools::decrypt( $this->name );
-        $this->email = Tools::decrypt($this->email );
+        $this->name = Tools::decrypt($this->name);
+        $this->email = Tools::decrypt($this->email);
 
         return parent::afterFind();
     }
 
 
-    public function getStudies() 
+    public function getStudies()
     {
-        if(count($this->_studies) == 0){
+        if (count($this->_studies) == 0) {
             if (!Yii::$app->user->identity->isSuperAdmin()) {
                 $userId = Yii::$app->user->identity->id;
                 $interviewers = Interviewer::findAll(["interviewerId"=>$userId]);
@@ -288,12 +286,12 @@ class User extends ActiveRecord implements IdentityInterface
                     ->where(["userId"=>$userId])
                     ->orWhere(["id"=>$studyIds])
                     ->orderBy(
-                    [
+                        [
                         'multiSessionEgoId' => SORT_DESC,
                         'id'=>SORT_DESC
                     ]
-                )->all();
-            }else{
+                    )->all();
+            } else {
                 $this->_studies = Study::find()->orderBy(
                     [
                     'multiSessionEgoId' => SORT_DESC,

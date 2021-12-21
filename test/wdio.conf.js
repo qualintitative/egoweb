@@ -26,14 +26,14 @@ exports.config = {
   //  'authoring/07_delete.js'
   //     'authoring/08_complete_test.js'
  //     'authoring/09_expressions.js'
-   //  'interview/01_basic_fields.js'
-     //    'interview/02_multiple_select.js'
-     //   'interview/03_skiplogic_simple.js'
-   //   'interview/04_skiplogic_compound.js',
-    //   'interview/05_alters.js'
-    //   'interview/06_finish.js'
-      'authoring/*.js',
-      'interview/*.js'
+//     'interview/01_basic_fields.js',
+//         'interview/02_multiple_select.js',
+   //   'interview/03_skiplogic_simple.js',
+    //  'interview/04_skiplogic_compound.js'
+  //     'interview/05_alters.js',
+   //    'interview/06_finish.js'
+      // 'authoring/*.js',
+       'interview/*.js'
   ],
   // Patterns to exclude.
   exclude: [
@@ -70,17 +70,12 @@ exports.config = {
     maxInstances: 1,
     //
    browserName: 'chrome',
-   // browserName: 'firefox',
-    'moz:firefoxOptions': {
-      // flag to activate Firefox headless mode (see https://github.com/mozilla/geckodriver/blob/master/README.md#firefox-capabilities for more details about moz:firefoxOptions)
-   //   args: ['-headless']
-    },
     acceptInsecureCerts: true,
     'goog:chromeOptions': {
       // to run chrome headless the following flags are required
       // (see https://developers.google.com/web/updates/2017/04/headless-chrome)
-      //   args: ['--headless', '--disable-gpu', '--window-size=1024,768'],
-     // args: ['--headless', '--disable-gpu'],
+     //     args: ['--headless', '--disable-gpu', '--window-size=1200,800'],
+     //    args: ['--headless', '--disable-gpu'],
     }
     // If outputDir is provided WebdriverIO can capture driver session logs
     // it is possible to configure which logTypes to include/exclude.
@@ -110,8 +105,8 @@ exports.config = {
     // ignoreDefaultArgs: ['-foreground'], // set value to true to ignore all default arguments
   }
   ],
-  height: 600,
-  width: 800,
+  height: 800,
+  width: 1200,
   //
   // ===================
   // Test Configurations
@@ -143,7 +138,7 @@ exports.config = {
   // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
   // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
   // gets prepended directly.
-  baseUrl: 'http://localhost',
+  baseUrl: 'http://egoweb2.local',
   //
   // Default timeout for all waitFor* commands.
   waitforTimeout: 10000,

@@ -135,7 +135,7 @@ class IwPage extends Page {
 
 
     goToQuestion(question) {
-        this.open(this.navLinks[question]);
+        super.open(this.navLinks[question]);
         this.pause();
     }
 
@@ -306,7 +306,7 @@ class IwPage extends Page {
         let selector = this.getTableCellSelector(row, 1);
         let el = $(selector);
         let foo = el.getAttribute("class");
-        return (foo.indexOf("bg-danger") !== -1);
+        return (foo.indexOf("alert-danger") !== -1);
     }
 
 
@@ -351,12 +351,12 @@ class IwPage extends Page {
             this.updateNavLinks();
 
             if (startPage != null)
-                this.open(this.navLinks[startPage]);
+                super.open(this.navLinks[startPage]);
             else
-                this.open(this.navLinks["INTRODUCTION"]);
+                super.open(this.navLinks["INTRODUCTION"]);
         } else {
             this.ewid = max + 1 + Math.floor(Math.random() * 100);
-            console.log("new interview")
+            //console.log("new interview")
             this.startInterviewLink.click();
             browser.pause(1000)
             this.goForwardToQuestion("EGO ID");
@@ -369,7 +369,7 @@ class IwPage extends Page {
             this.updateNavLinks();
 
             if (startPage != null)
-                this.open(this.navLinks[startPage]);
+                super.open(this.navLinks[startPage]);
         }
 
         return this;

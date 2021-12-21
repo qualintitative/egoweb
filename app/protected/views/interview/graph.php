@@ -22,12 +22,13 @@ initStats(question);
 	<?php echo "<h2 class='margin-top-10'>" . $study->name . " &nbsp| &nbsp" . $interview->egoid ."</h2>"; ?>
 </div>
 <div id="infovis" style="width:80%;height:80%;"></div>
-<?php  
-foreach($notes as $note) {
-			if(is_numeric($note->alterId))
-				$label = $alters[$note->alterId]['NAME'];
-			else
-				$label = str_replace("graphNote-", "", $note->alterId);
-			echo "<div style='width:50%;float:left;padding-right:20px;clear:both' class=''><h3>" . $label . " </h3><small>$note->notes</small></div>";
-		}
+<?php
+foreach ($notes as $note) {
+    if (is_numeric($note->alterId)) {
+        $label = $alters[$note->alterId]['NAME'];
+    } else {
+        $label = str_replace("graphNote-", "", $note->alterId);
+    }
+    echo "<div style='width:50%;float:left;padding-right:20px;clear:both' class=''><h3>" . $label . " </h3><small>$note->notes</small></div>";
+}
 ?>

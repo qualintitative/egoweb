@@ -145,8 +145,7 @@ function save(questions, page, url, scope){
                 if(redirect.indexOf("ipsos") != -1)
                     redirect = redirect + "&ext_st=1&Termpoint8=&intlen=" + Math.round((Math.round(Date.now() /1000) - interview.START_DATE) / 60);
                 document.location = redirect;
-            }
-            else {
+            } else {
                 document.location =  rootUrl + "/admin";
             }
         });

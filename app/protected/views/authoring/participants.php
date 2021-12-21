@@ -1,6 +1,7 @@
 <?php
 use yii\helpers\Html;
 use yii\bootstrap4\LinkPager;
+
 ?>
 <?= $this->render('/layouts/nav', ['study'=> $study]); ?>
 <div id="authoring-app">

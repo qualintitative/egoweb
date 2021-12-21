@@ -23,6 +23,7 @@ use app\models\Alters;
 use app\models\Note;
 use app\models\Graph;
 use app\models\MatchedAlters;
+
 /**
  * Site controller
  */
@@ -90,9 +91,11 @@ class DataController extends Controller
             $questionIds[] = $question->id;
         }
         $expressions = ArrayHelper::map(
-            Expression::findAll(["studyId"=>$study->id, "questionId"=>$questionIds])
-        , 'id','name');
-        return $this->render('index',['study'=>$study, 'expressions'=>$expressions]);
+            Expression::findAll(["studyId"=>$study->id, "questionId"=>$questionIds]),
+            'id',
+            'name'
+        );
+        return $this->render('index', ['study'=>$study, 'expressions'=>$expressions]);
     }
 
     public function actionVisualize($id)
@@ -117,7 +120,7 @@ class DataController extends Controller
             $result = Question::find()->where(["studyId"=>$studyId])->andWhere(['!=', 'subjectType', 'EGO_ID'])->orderBy(["ordering"=>"ASC"])->asArray()->all();
             $questions = [];
             $notes = [];
-            foreach($result as $question){
+            foreach ($result as $question) {
                 $question['options'] = QuestionOption::find()->where(['questionId'=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
                 $questions[$question['id']] = $question;
             }
@@ -127,33 +130,34 @@ class DataController extends Controller
             $new_question = $new_question->toArray();
             $expressions = [];
             $results = Expression::find()->where(["studyId"=>$study->id])->asArray()->all();
-            foreach($results as $expression){
+            foreach ($results as $expression) {
                 $expressions[$expression['id']] = $expression;
             }
             $answerList = Answer::findAll(array('interviewId'=>$id));
-            foreach($answerList as $answer){
-                if($answer->alterId1 && $answer->alterId2)
+            foreach ($answerList as $answer) {
+                if ($answer->alterId1 && $answer->alterId2) {
                     $array_id = $answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2;
-                else if ($answer->alterId1 && ! $answer->alterId2)
-                        $array_id = $answer->questionId . "-" . $answer->alterId1;
-                    else
-                        $array_id = $answer->questionId;
-                    $answers[$array_id] = Tools::mToA($answer);
+                } elseif ($answer->alterId1 && ! $answer->alterId2) {
+                    $array_id = $answer->questionId . "-" . $answer->alterId1;
+                } else {
+                    $array_id = $answer->questionId;
+                }
+                $answers[$array_id] = Tools::mToA($answer);
             }
             $alters = array();
             $results = Alters::find()
             ->where(new \yii\db\Expression("FIND_IN_SET(:interviewId, interviewId)"))
             ->addParams([':interviewId' => $id])
             ->all();
-            foreach($results as $result){
+            foreach ($results as $result) {
                 $alters[$result->id] = Tools::mToA($result);
             }
-            $results = Graph::find(array('interviewId'=>$id))->all();
-            foreach($results as $result){
+            $results = Graph::find()->where(array('interviewId'=>$id))->all();
+            foreach ($results as $result) {
                 $graphs[$result->expressionId] = Tools::mToA($result);
             }
-            $results = Note::find(array("interviewId"=>$id))->all();
-            foreach($results as $result){
+            $results = Note::find()->where(array("interviewId"=>$id))->all();
+            foreach ($results as $result) {
                 $notes[$result->expressionId][$result->alterId] = $result->notes;
             }
             if (isset($_GET['print'])) {
@@ -169,7 +173,8 @@ class DataController extends Controller
                     true
                 );
             } else {
-                return $this->render('visualize',
+                return $this->render(
+                    'visualize',
                     array(
                         'graphs'=>$graphs,
                         'study'=>$study,
@@ -246,19 +251,25 @@ class DataController extends Controller
         $network_questions = [];
         $name_gen_questions = [];
         $previous_questions = [];
-        foreach($all_questions as $question){
-            if($question->subjectType == "EGO_ID")
+        foreach ($all_questions as $question) {
+            if ($question->subjectType == "EGO_ID") {
                 $ego_id_questions[] = $question;
-            if($question->subjectType == "EGO")
+            }
+            if ($question->subjectType == "EGO") {
                 $ego_questions[] = $question;
-            if($question->subjectType == "ALTER")
+            }
+            if ($question->subjectType == "ALTER") {
                 $alter_questions[] = $question;
-            if($question->subjectType == "NETWORK")
+            }
+            if ($question->subjectType == "NETWORK") {
                 $network_questions[] = $question;
-            if($question->subjectType == "NAME_GENERATOR")
+            }
+            if ($question->subjectType == "NAME_GENERATOR") {
                 $name_gen_questions[] = $question;
-            if($question->subjectType == "PREVIOUS_ALTER")
+            }
+            if ($question->subjectType == "PREVIOUS_ALTER") {
                 $previous_questions[] = $question;
+            }
         }
 
         $headers = array();
@@ -290,9 +301,9 @@ class DataController extends Controller
         $matchAtAll = MatchedAlters::findOne(array(
             "studyId" => $study->id,
         ));
-        if(isset($study->multiSessionEgoId) && $study->multiSessionEgoId){
+        if (isset($study->multiSessionEgoId) && $study->multiSessionEgoId) {
             $multiQs = $study->multiIdQs();
-            foreach($multiQs as $q){
+            foreach ($multiQs as $q) {
                 $s = Study::findOne($q->studyId);
                 $headers[] = $s->name;
             }
@@ -301,15 +312,16 @@ class DataController extends Controller
             $headers[] = "Dyad Match ID";
             $headers[] = "Match User";
             $headers[] = "Alter Number";
-            if($withAlters){
+            if ($withAlters) {
                 $headers[] = "Alter Name";
                 $headers[] = "Matched Alter Name";
             }
             $headers[] = "Alter Pair ID";
         } else {
             $headers[] = "Alter Number";
-            if($withAlters)
+            if ($withAlters) {
                 $headers[] = "Alter Name";
+            }
         }
         foreach ($name_gen_questions as $question) {
             $headers[] = $question->title;
@@ -327,7 +339,7 @@ class DataController extends Controller
         }
 
         $interviewIds = array();
-        $interviewIds = explode(",",$_POST['interviewIds']);
+        $interviewIds = explode(",", $_POST['interviewIds']);
 
         $text = implode(',', $headers) . "\n";
         foreach ($interviewIds as $interviewId) {
@@ -391,17 +403,22 @@ class DataController extends Controller
         $alter_questions = [];
         $network_questions = [];
         $name_gen_questions = [];
-        foreach($all_questions as $question){
-            if($question->subjectType == "EGO_ID")
+        foreach ($all_questions as $question) {
+            if ($question->subjectType == "EGO_ID") {
                 $ego_id_questions[] = $question;
-            if($question->subjectType == "EGO")
+            }
+            if ($question->subjectType == "EGO") {
                 $ego_questions[] = $question;
-            if($question->subjectType == "ALTER")
+            }
+            if ($question->subjectType == "ALTER") {
                 $alter_questions[] = $question;
-            if($question->subjectType == "NETWORK")
+            }
+            if ($question->subjectType == "NETWORK") {
                 $network_questions[] = $question;
-            if($question->subjectType == "NAME_GENERATOR")
+            }
+            if ($question->subjectType == "NAME_GENERATOR") {
                 $name_gen_questions[] = $question;
+            }
         }
 
         $headers = array();
@@ -420,7 +437,7 @@ class DataController extends Controller
         }
 
         $interviewIds = array();
-        $interviewIds = explode(",",$_POST['interviewIds']);
+        $interviewIds = explode(",", $_POST['interviewIds']);
 
         $text = implode(',', $headers) . "\n";
         foreach ($interviewIds as $interviewId) {
@@ -487,17 +504,19 @@ class DataController extends Controller
         $headers[] = 'Interview ID';
         $headers[] = 'EgoID';
         $headers[] = "Alter 1 " . $idNumber;
-        if($withAlters)
+        if ($withAlters) {
             $headers[] = "Alter 1 Name";
+        }
         $headers[] = "Alter 2 " . $idNumber;
-        if($withAlters)
+        if ($withAlters) {
             $headers[] = "Alter 2 Name";
+        }
         foreach ($alter_pair_questions as $question) {
             $headers[] = $question->title;
         }
 
         $interviewIds = array();
-        $interviewIds = explode(",",$_POST['interviewIds']);
+        $interviewIds = explode(",", $_POST['interviewIds']);
         
         $text = implode(',', $headers) . "\n";
         foreach ($interviewIds as $interviewId) {
@@ -548,7 +567,7 @@ class DataController extends Controller
         $headers[] = "TEXT";
 
         $text = implode(',', $headers) . "\n";
-        $interviewIds = explode(",",$_POST['interviewIds']);
+        $interviewIds = explode(",", $_POST['interviewIds']);
         foreach ($interviewIds as $interviewId) {
             $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . "-other-specify.csv";
             if (file_exists($filePath)) {
@@ -661,7 +680,7 @@ class DataController extends Controller
                         $interviewIds = array_diff($interviewIds, array($interviewId));
                         $alter->interviewId = implode(",", $interviewIds);
                         $alter->save();
-                    }else{
+                    } else {
                         $alter->delete();
                     }
                 }

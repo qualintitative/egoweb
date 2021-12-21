@@ -3,6 +3,7 @@ use app\models\MatchedAlters;
 use app\models\Question;
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
+
 ?>
 <script src="/www/js/levenshtein.js" type="text/javascript"></script>
 <script src="/www/js/doublemetaphone.js" type="text/javascript"></script>
@@ -246,13 +247,15 @@ $marked = MatchedAlters::find()
     <div id="prompt">Display Alter Question Response</div>
     <?php
     echo Html::dropdownlist(
-        'question',
-        '',
-        ArrayHelper::map(
-            Question::find()->where(array('subjectType'=>"ALTER", "studyId"=>$study->id))->orderBy(array( 'ordering'=>"ASC"))->all()
-        , 'id','title'),
-        array('empty' => 'Choose Question', "id"=>"question", "class"=>"ml-3","onChange"=>'loadR($(this).val());$("#prompt").html(prompts[$(this).val()])')
-    );
+    'question',
+    '',
+    ArrayHelper::map(
+            Question::find()->where(array('subjectType'=>"ALTER", "studyId"=>$study->id))->orderBy(array( 'ordering'=>"ASC"))->all(),
+            'id',
+            'title'
+        ),
+    array('empty' => 'Choose Question', "id"=>"question", "class"=>"ml-3","onChange"=>'loadR($(this).val());$("#prompt").html(prompts[$(this).val()])')
+);
     ?>
     </div>
 </div>
@@ -268,33 +271,34 @@ $marked = MatchedAlters::find()
         <th>Matched Alter name</th>
         <th>Notes</th>
     </tr>
-    <?php if($alters1):?>
-    <?php foreach($alters1 as $alterId=>$alter): ?>
+    <?php if ($alters1):?>
+    <?php foreach ($alters1 as $alterId=>$alter): ?>
 
     <tr>
         <td><?php echo $alter; ?></td>
         <td class="responses" alterId=<?php echo $alterId; ?>></td>
         <td><?php
-            foreach($alters2 as $aid=>$name)
+            foreach ($alters2 as $aid=>$name) {
                 $alterIds2[] = $aid;
+            }
 
             $match = MatchedAlters::findOne(array("alterId1"=>$alterId, "alterId2"=>$alterIds2));
-            if($match){
+            if ($match) {
                 $selected = $match->alterId2;
                 $selectedName = $match->matchedName;
                 $matchId = $match->id;
                 $notes = $match->notes;
-            }else{
+            } else {
                 $selected = "";
                 $selectedName = "";
                 $matchId = "";
                 $notes = "";
-            }  
+            }
             $alters2List = [''=>"No Match"];
-            foreach($alters2 as $index=>$name){
+            foreach ($alters2 as $index=>$name) {
                 $alters2List[$index] = $name;
             }
-                    if(count($alters2) > 0){
+                    if (count($alters2) > 0) {
                         echo Html::dropdownlist(
                             'alterId2',
                             $selected,
@@ -304,13 +308,13 @@ $marked = MatchedAlters::find()
                     }
                 ?></td>
         <td id="<?php echo $alterId; ?>-alter2" class="responses" alterId=<?php echo $selected; ?>></td>
-        <td><?php echo Html::input('text',"name",$selectedName ,array("id"=>$alterId."-name", "style"=>($selectedName == "" ? "display:none;": ""))); ?></td>
+        <td><?php echo Html::input('text', "name", $selectedName, array("id"=>$alterId."-name", "style"=>($selectedName == "" ? "display:none;": ""))); ?></td>
         <td><?php echo Html::checkBox("$alterId-hasNotes", $notes ?  true : false, array("id"=>"$alterId-hasNotes","onclick"=>"toggleNotes($alterId)","style"=>($match ?  "": "display:none;"))); ?></td>
-        <td><?php echo Html::input('text',$alterId."-notes", $notes ,array("id"=>$alterId."-notes", "onkeyup"=>"$('#$alterId-save').show()", "style"=>($notes ?  "": "display:none;"))); ?></td>
+        <td><?php echo Html::input('text', $alterId."-notes", $notes, array("id"=>$alterId."-notes", "onkeyup"=>"$('#$alterId-save').show()", "style"=>($notes ?  "": "display:none;"))); ?></td>
 
         <td id="<?php echo $alterId; ?>-buttons">
             <?php
-                if(isset($match)){
+                if (isset($match)) {
                     echo "<button class='btn btn-xs btn-danger unMatch-$alterId' onclick='unMatch(studyId, $match->alterId1, $selected)'>Unmatch</button>";
                     echo "<button style='display:none;' id='$alterId-save' class='btn btn-xs btn-success' onclick='save(studyId, $match->alterId1, $selected, $match->id, \$(\"#$alterId-notes\").val())'>Save</button>";
                 }

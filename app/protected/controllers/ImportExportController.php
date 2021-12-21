@@ -96,7 +96,7 @@ class ImportExportController extends Controller
         }
         if (!is_uploaded_file($_FILES['files']['tmp_name'][0])) { //checks that file is uploaded
             die("Error importing study: " . $message);
-		}
+        }
 
         $newInterviewIds = array();
         $newAlterIds = array();
@@ -106,7 +106,7 @@ class ImportExportController extends Controller
         $newOptionIds = array();
         $newUserIds = array();
         $users = array();
-        foreach($result as $u){
+        foreach ($result as $u) {
             $users[$u->email] = intval($u->id);
         }
         foreach ($_FILES['files']['tmp_name'] as $tmp_name) {
@@ -189,7 +189,7 @@ class ImportExportController extends Controller
                 $qCount = 0;
                 $egoCount = 0;
                 foreach ($study->questions->question as $question) {
-                    if(!$hasNameGen && $question->attributes()->subjectType == "ALTER"){
+                    if (!$hasNameGen && $question->attributes()->subjectType == "ALTER") {
                         $newQuestion = new Question;
                         $hasNameGen = true;
                         $newQuestion->attributes = array(
@@ -213,11 +213,11 @@ class ImportExportController extends Controller
                         if ($key == "ordering") {
                             if ($nameGenQId == "0") {
                                 $value = intval($value);
-                            }else{
-                                if($question->attributes()->subjectType == "EGO_ID"){
+                            } else {
+                                if ($question->attributes()->subjectType == "EGO_ID") {
                                     $value = $egoCount;
                                     $egoCount++;
-                                }else{
+                                } else {
                                     $value = $qCount;
                                     $qCount++;
                                 }
@@ -402,8 +402,9 @@ class ImportExportController extends Controller
                 $nameGenQId = "0";
                 $questions = Question::findAll(array('studyId'=>$newStudy->id));
                 foreach ($questions as $question) {
-                    if($question->subjectType == "NAME_GENERATOR")
+                    if ($question->subjectType == "NAME_GENERATOR") {
                         $nameGenQId = strval($question->id);
+                    }
                     $qIds[$question->title] = $question->id;
                 }
                 $options = QuestionOption::findAll(array('studyId'=>$newStudy->id));
@@ -454,67 +455,71 @@ class ImportExportController extends Controller
                         $newInterviewIds[intval($oldInterviewId)] =  $newInterviewId;
                     }
 
-					if ($interview->matchedAlters->matchedAlter && count($interview->matchedAlters->matchedAlter) > 0) {
-						foreach ($interview->matchedAlters->matchedAlter as $match) {
-							$newMatch = new MatchedAlters;
-							foreach ($match->attributes() as $key=>$value) {
-								if (in_array($key, array("ordering", "studyId", "interviewId1", "interviewId2", "alterId1", "alterId2", "userId"))) {
-									$value = intval($value);
-								}
-								if ($key != "id") {
-									$newMatch->$key = $value;
-								}
-							}
-							$newMatch->studyId = $newStudy->id;
-							if (!$newMatch->save()) {
-								echo "Matched Alter Error: $newMatch->interviewId1 :" . $newMatch->interviewId2 .":" .print_r($newMatch->errors) . "end";
-								die();
-							}
-						}
-					}
+                    if ($interview->matchedAlters->matchedAlter && count($interview->matchedAlters->matchedAlter) > 0) {
+                        foreach ($interview->matchedAlters->matchedAlter as $match) {
+                            $newMatch = new MatchedAlters;
+                            foreach ($match->attributes() as $key=>$value) {
+                                if (in_array($key, array("ordering", "studyId", "interviewId1", "interviewId2", "alterId1", "alterId2", "userId"))) {
+                                    $value = intval($value);
+                                }
+                                if ($key != "id") {
+                                    $newMatch->$key = $value;
+                                }
+                            }
+                            $newMatch->studyId = $newStudy->id;
+                            if (!$newMatch->save()) {
+                                echo "Matched Alter Error: $newMatch->interviewId1 :" . $newMatch->interviewId2 .":" .print_r($newMatch->errors) . "end";
+                                die();
+                            }
+                        }
+                    }
                     if ($interview->users && count($interview->users->user) > 0) {
                         foreach ($interview->users->user as $u) {
                             $userExists = false;
                             foreach ($u->attributes() as $key=>$value) {
-                                if($key == "email" && in_array(strval($value), array_keys($users)))
+                                if ($key == "email" && in_array(strval($value), array_keys($users))) {
                                     $userExists = strval($value);
-                                if ($key == "id")
+                                }
+                                if ($key == "id") {
                                     $oldUserId = intval($value);
+                                }
                             }
                             if ($userExists != false) {
                                 $newUserIds[$oldUserId] = $users[$userExists];
                                 //echo $users[$userExists];
                                 continue;
                             }
-							$newUser = new User;
-							foreach ($u->attributes() as $key=>$value) {
-								if (in_array($key, array("ordering", "studyId", "interviewId1", "interviewId2", "alterId1", "alterId2", "userId"))) {
-									$value = intval($value);
-								}
-								if ($key != "id") {
-									$newUser->$key = $value;
+                            $newUser = new User;
+                            foreach ($u->attributes() as $key=>$value) {
+                                if (in_array($key, array("ordering", "studyId", "interviewId1", "interviewId2", "alterId1", "alterId2", "userId"))) {
+                                    $value = intval($value);
+                                }
+                                if ($key != "id") {
+                                    $newUser->$key = $value;
                                 }
                                 if ($key == "email") {
-                                    if(strval($value) == "")
+                                    if (strval($value) == "") {
                                         $email = false;
-                                    else 
+                                    } else {
                                         $email = strval($value);
+                                    }
                                 }
                             }
                             $newUser->confirm = $newUser->password;
-                            if($email == false)
+                            if ($email == false) {
                                 continue;
-							if (!$newUser->save()) {
+                            }
+                            if (!$newUser->save()) {
                                 print_r($users);
                                 echo $newUser->email;
-								echo "User Error: $newUser->id :" . print_r($newUser->errors);
-								die();
-							}else{
+                                echo "User Error: $newUser->id :" . print_r($newUser->errors);
+                                die();
+                            } else {
                                 $newUserId = Yii::$app->db->getLastInsertID();
                                 $newUserIds[$oldUserId] = $newUserId;
                                 $users[$email] = $newUserId;
                             }
-						}
+                        }
                     }
                     if (count($interview->alters->alter) != 0) {
                         foreach ($interview->alters->alter as $alter) {
@@ -528,8 +533,9 @@ class ImportExportController extends Controller
                                 }
                             }
                             //skip alter if it's already exists in array
-                            if(in_array(intval($thisAlterId), array_keys($newAlterIds)))
+                            if (in_array(intval($thisAlterId), array_keys($newAlterIds))) {
                                 continue;
+                            }
                             if (!$newAlter->nameGenQIds) {
                                 $newAlter->nameGenQIds = $nameGenQId;
                             }
@@ -588,8 +594,9 @@ class ImportExportController extends Controller
                                                 }
                                                 if (isset($param['options']) && count($param['options']) > 0) {
                                                     foreach ($param['options'] as &$option) {
-                                                        if(isset( $newOptionIds[intval($option['id'])]))
+                                                        if (isset($newOptionIds[intval($option['id'])])) {
                                                             $option['id'] = $newOptionIds[intval($option['id'])];
+                                                        }
                                                     }
                                                 }
                                             }
@@ -600,8 +607,9 @@ class ImportExportController extends Controller
                                         $nodes = json_decode(htmlspecialchars_decode($value), true);
                                         foreach ($nodes as $node) {
                                             $oldNodeId = $node['id'];
-                                            if(is_numeric($node['id']) && isset($newAlterIds[intval($node['id'])]))
+                                            if (is_numeric($node['id']) && isset($newAlterIds[intval($node['id'])])) {
                                                 $node['id'] =  $newAlterIds[intval($node['id'])];
+                                            }
                                             $nodes[$node['id']] = $node;
                                             unset($nodes[$oldNodeId]);
                                         }
@@ -645,11 +653,10 @@ class ImportExportController extends Controller
 
 
                                 if ($key == "questionId") {
-                                    if(isset($newQuestionIds[intval($value)])){
+                                    if (isset($newQuestionIds[intval($value)])) {
                                         $newAnswer->questionId = $newQuestionIds[intval($value)];
                                         $oldQId = intval($value);
                                     }
-
                                 }
 
                                 if ($key == "answerType") {
@@ -721,7 +728,7 @@ class ImportExportController extends Controller
                     }
                 }
             }
-		}
+        }
         // second loop to replace old ids in Expression->value
         foreach ($newExpressionIds as $oldExpId=>$newExpId) {
             $newExpression = Expression::findOne($newExpId);
@@ -786,50 +793,50 @@ class ImportExportController extends Controller
                     $newExpression->value = implode(',', $questionIds);
                 }
             }
-            if(!$newExpression->save()){
+            if (!$newExpression->save()) {
                 print_r($newExpression->errors);
                 die();
             }
         }
-		foreach ($newAlterIds as $oldId=>$newId) {
-			$alter = Alters::findOne($newId);
-			if (preg_match("/,/", $alter->interviewId)) {
-				$values = explode(',', $alter->interviewId);
-				foreach ($values as &$value) {
-					if (isset($newInterviewIds[intval($value)])) {
-						$value = $newInterviewIds[intval($value)];
-					}
-				}
-				$alter->interviewId = implode(',', $values);
+        foreach ($newAlterIds as $oldId=>$newId) {
+            $alter = Alters::findOne($newId);
+            if (preg_match("/,/", $alter->interviewId)) {
+                $values = explode(',', $alter->interviewId);
+                foreach ($values as &$value) {
+                    if (isset($newInterviewIds[intval($value)])) {
+                        $value = $newInterviewIds[intval($value)];
+                    }
+                }
+                $alter->interviewId = implode(',', $values);
             }
             if (preg_match("/,/", $alter->alterListId)) {
-				$values = explode(',', $alter->alterListId);
+                $values = explode(',', $alter->alterListId);
                 $vs = array();
-				foreach ($values as $value) {
-					if (isset($newInterviewIds[intval($value)])) {
-						$vs[] = $newInterviewIds[intval($value)];
-					}
+                foreach ($values as $value) {
+                    if (isset($newInterviewIds[intval($value)])) {
+                        $vs[] = $newInterviewIds[intval($value)];
+                    }
                     if (isset($newAlterIds[intval($value)])) {
-						$vs[] = $newAlterIds[intval($value)];
-					}
-				}
-				$alter->alterListId = implode(',', $vs);
+                        $vs[] = $newAlterIds[intval($value)];
+                    }
+                }
+                $alter->alterListId = implode(',', $vs);
             } elseif (isset($newInterviewIds[intval($alter->alterListId)])) {
                 $alter->alterListId = $newInterviewIds[intval($alter->alterListId)];
             } elseif (isset($newAlterIds[intval($alter->alterListId)])) {
                 $alter->alterListId = $newAlterIds[intval($alter->alterListId)];
             }
 
-            if (stristr($alter->nameGenQIds, ",")){
+            if (stristr($alter->nameGenQIds, ",")) {
                 $nQIds = explode(",", $alter->nameGenQIds);
-                foreach($nQIds as &$nQId){
+                foreach ($nQIds as &$nQId) {
                     $nQId = intval($nQId);
                     if (isset($newQuestionIds[$nQId])) {
                         $nQId = $newQuestionIds[$nQId];
                     }
                 }
                 $alter->nameGenQIds = implode(",", $nQIds);
-            }else{
+            } else {
                 if (isset($newQuestionIds[intval($alter->nameGenQIds)])) {
                     $alter->nameGenQIds = strval($newQuestionIds[intval($alter->nameGenQIds)]);
                 }
@@ -847,55 +854,55 @@ class ImportExportController extends Controller
                 }
                 $alter->ordering = json_encode($newOrder);
             }
-            if(!$alter->save()){
+            if (!$alter->save()) {
                 print_r($alter->errors);
                 die();
             }
-		}
+        }
         
-		foreach ($newInterviewIds as $oldId=>$newId) {
-			$matches = MatchedAlters::findAll(array("interviewId1"=>$oldId));
-			if (count($matches) > 0) {
-				foreach ($matches as $match) {
-					if (isset($newInterviewIds[intval($match->interviewId1)])) {
-						$match->interviewId1 = $newInterviewIds[intval($match->interviewId1)];
-					}
-					if (isset($newInterviewIds[intval($match->interviewId2)])) {
-						$match->interviewId2 = $newInterviewIds[intval($match->interviewId2)];
-					}
-					if (isset($newAlterIds[intval($match->alterId1)])) {
-						$match->alterId1 = $newAlterIds[intval($match->alterId1)];
-					}
-					if (isset($newAlterIds[intval($match->alterId2)])) {
-						$match->alterId2 = $newAlterIds[intval($match->alterId2)];
+        foreach ($newInterviewIds as $oldId=>$newId) {
+            $matches = MatchedAlters::findAll(array("interviewId1"=>$oldId));
+            if (count($matches) > 0) {
+                foreach ($matches as $match) {
+                    if (isset($newInterviewIds[intval($match->interviewId1)])) {
+                        $match->interviewId1 = $newInterviewIds[intval($match->interviewId1)];
                     }
-					if (isset($newUserIds[intval($match->userId)])) {
-						$match->userId = $newUserIds[intval($match->userId)];
-					}
-					$match->save();
-				}
+                    if (isset($newInterviewIds[intval($match->interviewId2)])) {
+                        $match->interviewId2 = $newInterviewIds[intval($match->interviewId2)];
+                    }
+                    if (isset($newAlterIds[intval($match->alterId1)])) {
+                        $match->alterId1 = $newAlterIds[intval($match->alterId1)];
+                    }
+                    if (isset($newAlterIds[intval($match->alterId2)])) {
+                        $match->alterId2 = $newAlterIds[intval($match->alterId2)];
+                    }
+                    if (isset($newUserIds[intval($match->userId)])) {
+                        $match->userId = $newUserIds[intval($match->userId)];
+                    }
+                    $match->save();
+                }
             }
             
             $matches = MatchedAlters::findAll(array("interviewId2"=>$oldId));
             if (count($matches) > 0) {
-				foreach ($matches as $match) {
-					if (isset($newInterviewIds[intval($match->interviewId1)])) {
-						$match->interviewId1 = $newInterviewIds[intval($match->interviewId1)];
-					}
-					if (isset($newInterviewIds[intval($match->interviewId2)])) {
-						$match->interviewId2 = $newInterviewIds[intval($match->interviewId2)];
-					}
-					if (isset($newAlterIds[intval($match->alterId1)])) {
-						$match->alterId1 = $newAlterIds[intval($match->alterId1)];
-					}
-					if (isset($newAlterIds[intval($match->alterId2)])) {
-						$match->alterId2 = $newAlterIds[intval($match->alterId2)];
+                foreach ($matches as $match) {
+                    if (isset($newInterviewIds[intval($match->interviewId1)])) {
+                        $match->interviewId1 = $newInterviewIds[intval($match->interviewId1)];
                     }
-					if (isset($newUserIds[intval($match->userId)])) {
-						$match->userId = $newUserIds[intval($match->userId)];
-					}
-					$match->save();
-				}
+                    if (isset($newInterviewIds[intval($match->interviewId2)])) {
+                        $match->interviewId2 = $newInterviewIds[intval($match->interviewId2)];
+                    }
+                    if (isset($newAlterIds[intval($match->alterId1)])) {
+                        $match->alterId1 = $newAlterIds[intval($match->alterId1)];
+                    }
+                    if (isset($newAlterIds[intval($match->alterId2)])) {
+                        $match->alterId2 = $newAlterIds[intval($match->alterId2)];
+                    }
+                    if (isset($newUserIds[intval($match->userId)])) {
+                        $match->userId = $newUserIds[intval($match->userId)];
+                    }
+                    $match->save();
+                }
             }
             $prevAnswers = Answer::findAll(array("interviewId"=>$newId, "questionType"=>"PREVIOUS_ALTER"));
             if (count($prevAnswers) > 0) {
@@ -904,7 +911,7 @@ class ImportExportController extends Controller
                     $prevAnswer->save();
                 }
             }
-		}
+        }
         return $this->redirect(Url::toRoute('/authoring/' . $newStudy->id));
     }
 
@@ -918,17 +925,18 @@ class ImportExportController extends Controller
             $server->save();
             return $this->response->redirect(Url::toRoute('/import-export'));
         }
-        if (!Yii::$app->user->identity->isSuperAdmin())
+        if (!Yii::$app->user->identity->isSuperAdmin()) {
             $result = Server::findAll();
-        else
+        } else {
             $result = Server::findAll(array("userId"=>Yii::$app->user->identity->id));
+        }
         $servers = array();
         foreach ($result as $server) {
             $servers[$server->id] = Tools::mtoA($server);
         }
 
         $studies = Yii::$app->user->identity->studies;
-        return $this->render('index',["servers"=>$servers, "studies"=>$studies]);
+        return $this->render('index', ["servers"=>$servers, "studies"=>$studies]);
     }
 
     public function actionAjaxinterviews($id)
@@ -966,14 +974,14 @@ class ImportExportController extends Controller
             $columns['alterPrompt'] = Yii::$app->db->getTableSchema("alterPrompt")->getColumnNames();
             $columns['alterList'] = Yii::$app->db->getTableSchema("alterList")->getColumnNames();
             $columns['graphs'] = Yii::$app->db->getTableSchema("graphs")->getColumnNames();
-			$columns['notes'] = Yii::$app->db->getTableSchema("notes")->getColumnNames();
+            $columns['notes'] = Yii::$app->db->getTableSchema("notes")->getColumnNames();
             $columns['matchedAlters'] = Yii::$app->db->getTableSchema("matchedAlters")->getColumnNames();
             $columns['user'] = Yii::$app->db->getTableSchema("user")->getColumnNames();
             $file = fopen($filePath . "/" .  $interview->id . ".xml", "w") or die("Unable to open file!");
             fclose($file);
             $interview->exportStudyInterview($filePath . "/" .  $interview->id . ".xml", $columns);
             echo "success";
-        }else{
+        } else {
             echo "fail";
         }
     }
@@ -995,8 +1003,9 @@ class ImportExportController extends Controller
         //header("Content-Disposition: attachment; filename=".$study->name.".study");
         //header("Content-Type: application/octet-stream");
         $interviewIds = [];
-        if(isset($_POST['export']))
-           $interviewIds = $_POST['export'];
+        if (isset($_POST['export'])) {
+            $interviewIds = $_POST['export'];
+        }
 
         $questions = Question::find()->where(array('studyId'=>$study->id))->orderBy(array('subjectType'=>'ASC', 'ordering'=>'ASC'))->all();
         $expressions = Expression::findAll(array('studyId'=>$study->id));
@@ -1017,7 +1026,7 @@ class ImportExportController extends Controller
                 $alter = Alters::find()
                 ->where(new \yii\db\Expression("FIND_IN_SET(" . $result->id .", interviewId)"))
                 ->orderBy(['ordering'=>'ASC'])
-                ->all();         
+                ->all();
                 $alters[$result->id] = $alter;
                 $graph = Graph::findAll(array("interviewId"=>$result->id));
                 $graphs[$result->id] = $graph;
@@ -1140,7 +1149,7 @@ class ImportExportController extends Controller
         $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/$study->name.study";
 
         return Yii::$app->response->sendFile($filePath, "$study->name.study")
-        ->on(\yii\web\Response::EVENT_AFTER_SEND, function($event) {
+        ->on(\yii\web\Response::EVENT_AFTER_SEND, function ($event) {
             unlink($event->data);
         }, $filePath);
     }
@@ -1209,7 +1218,7 @@ class ImportExportController extends Controller
                 $results = Alters::find()
                 ->where(new \yii\db\Expression("FIND_IN_SET(" . $interviewId .", interviewId)"))
                 ->orderBy(['ordering'=>'ASC'])
-                ->all();  
+                ->all();
                 foreach ($results as $result) {
                     $alters[] = Tools::mToA($result);
                 }
@@ -1244,7 +1253,7 @@ class ImportExportController extends Controller
         } else {
             $data = $studies[0];
         }
-        return $this->renderAjax('/layouts/ajax',['json'=>json_encode($data)]);
+        return $this->renderAjax('/layouts/ajax', ['json'=>json_encode($data)]);
     }
 
     public function actionDeleteserver()

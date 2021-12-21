@@ -45,20 +45,24 @@ class Answer extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-        if($this->value != "")
-            $this->value = Tools::encrypt( $this->value );
-        if($this->otherSpecifyText != "")
-            $this->otherSpecifyText = Tools::encrypt( $this->otherSpecifyText );
+        if ($this->value != "") {
+            $this->value = Tools::encrypt($this->value);
+        }
+        if ($this->otherSpecifyText != "") {
+            $this->otherSpecifyText = Tools::encrypt($this->otherSpecifyText);
+        }
 
         return parent::beforeSave($insert);
     }
 
     public function afterFind()
     {
-        if(strlen($this->value) >= 8)
-            $this->value = Tools::decrypt( $this->value );
-        if(strlen($this->otherSpecifyText) >= 8)
-            $this->otherSpecifyText = Tools::decrypt($this->otherSpecifyText );
+        if (strlen($this->value) >= 8) {
+            $this->value = Tools::decrypt($this->value);
+        }
+        if (strlen($this->otherSpecifyText) >= 8) {
+            $this->otherSpecifyText = Tools::decrypt($this->otherSpecifyText);
+        }
 
         return parent::afterFind();
     }

@@ -98,23 +98,23 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-
         if (!Yii::$app->user->isGuest) {
             return $this->response->redirect(Url::toRoute('/admin'));
         }
 
         $users = User::find()->all();
-        if (count($users) == 0)
+        if (count($users) == 0) {
             return $this->response->redirect(Url::toRoute('/site/create'));
+        }
 
         return $this->render('index');
     }
 
-     /**
-     * Displays error.
-     *
-     * @return mixed
-     */
+    /**
+    * Displays error.
+    *
+    * @return mixed
+    */
     public function actionError()
     {
         return $this->render('error');
@@ -128,11 +128,26 @@ class SiteController extends Controller
     public function actionLogin()
     {
         $users = User::find()->all();
-        if (count($users) == 0)
+        if (count($users) == 0) {
             return $this->response->redirect(Url::toRoute('/site/create'));
+        }
 
+        $table = Yii::$app->db->schema->getTableSchema('user');
+        if (isset($table->columns['lastActivity'])) {
+            $oldApp = \Yii::$app;
+            new \yii\console\Application([
+                'id'            => 'Command runner',
+                'basePath'      => '@app',
+                'components'    => [
+                    'db' => $oldApp->db,
+                ],
+            ]);
+            \Yii::$app->runAction('migrate/up', ['migrationPath' => '@console/migrations/', 'interactive' => false]);
+            \Yii::$app = $oldApp;
+        }
+        
         $this->view->title = "EgoWeb 2.0";
-        $failedCount = Yii::$app->session->get('loginFailed') ?  Yii::$app->session->get('loginFailed') : 0;    
+        $failedCount = Yii::$app->session->get('loginFailed') ?  Yii::$app->session->get('loginFailed') : 0;
 
         if (!Yii::$app->user->isGuest) {
             return $this->response->redirect(Url::toRoute('/admin'));
@@ -144,14 +159,13 @@ class SiteController extends Controller
             if ($failedCount < 3 || $this->createAction('captcha')->validate($model->captcha, false)) {
                 Yii::$app->session->set('loginFailed', null);
                 return $this->response->redirect(Url::toRoute('/admin'));
-            }else{
+            } else {
                 $model->password = '';
                 return $this->render('login', [
                     'failedCount' => $failedCount,
                     'model' => $model,
                 ]);
             }
-
         } else {
             $model->password = '';
             return $this->render('login', [
@@ -180,8 +194,9 @@ class SiteController extends Controller
     public function actionCreate()
     {
         $users = User::find()->all();
-        if (count($users) != 0)
+        if (count($users) != 0) {
             return $this->goBack();
+        }
 
         $model = new SignupForm();
 
@@ -200,8 +215,7 @@ class SiteController extends Controller
         }
     
         if (Yii::$app->request->isPost) {
-
-            if ($model->load(Yii::$app->request->post())) {               
+            if ($model->load(Yii::$app->request->post())) {
                 $user = new User();
                 $user->name = $model->name;
                 $user->email = $model->email;
@@ -222,7 +236,7 @@ class SiteController extends Controller
                     print_r($user->errors);
                     die();
                 }
-            }else{
+            } else {
                 print_r($model->errors);
                 die();
             }
@@ -275,10 +289,10 @@ class SiteController extends Controller
             $user = $model->resetPassword();
             if ($user && Yii::$app->user->login($user)) {
                 return $this->response->redirect(Url::toRoute('/admin'));
-            }else{
+            } else {
                 print_r($user->errors);
             }
-        }else{
+        } else {
             print_r($model->errors);
         }
 

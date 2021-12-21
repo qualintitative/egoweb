@@ -41,9 +41,10 @@ class PasswordResetRequestForm extends Model
         /* @var $user User */
         $user = false;
         $users = User::find()->all();
-        foreach($users as $u){
-            if($u->email == $this->email)
+        foreach ($users as $u) {
+            if ($u->email == $this->email) {
                 $user = $u;
+            }
         }
         if (!$user) {
             return false;

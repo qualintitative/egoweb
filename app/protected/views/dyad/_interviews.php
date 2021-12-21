@@ -14,35 +14,40 @@ use app\models\Interview;
         <th class="hidden-xs">Completed</th>
         <th class="hidden-xs">Dyad Match ID</th>
         <th class="hidden-xs">Match User</th>
-        <?php if(Yii::$app->user->identity->permissions >= 3): ?>
+        <?php if (Yii::$app->user->identity->permissions >= 3): ?>
         <th><em class="fa fa-cog"></em></th>
         <?php endif;?>
     </tr>
   </thead>
   <tbody>
 <?php
-
-    foreach($interviews as $interview){
-        if($interview->completed == -1)
+    foreach ($interviews as $interview) {
+        if ($interview->completed == -1) {
             $completed = "<span style='color:#0B0'>". date("Y-m-d h:i:s", $interview->complete_date) . "</span>";
-        else
+        } else {
             $completed = "";
+        }
         $mark = "";
         $matchId = "";
         $matchUser = "";
         $match = MatchedAlters::find()->where(["interviewId1"=>$interview->id])->orWhere(["interviewId2"=>$interview->id])->one();
         $hasMatches = $interview->hasMatches;
-        if($hasMatches){
-              if($hasMatches == 1)
+        if ($hasMatches) {
+            if ($hasMatches == 1) {
                 $mark = "class='success'";
-              else
+            } else {
                 $mark = "class='warning'";
-            if($interview->id == $match->interviewId1)
+            }
+            if ($interview->id == $match->interviewId1) {
                 $matchInt = Interview::findOne($match->interviewId2);
-            else
+            } else {
                 $matchInt = Interview::findOne($match->interviewId1);
+            }
             $matchId = $match->getMatchId();
-            $matchUser = $users[$match->userId]->name;
+            if(isset($users[$match->userId]))
+                $matchUser = $users[$match->userId]->name;
+            else 
+                $matchUser = "User Not Found";
         }
         echo "<tr $mark>";
         echo "<td>".Html::checkbox('export[' .$interview['id'].']'). "</td><td>" . $interview->egoId."</td>";
@@ -50,9 +55,9 @@ use app\models\Interview;
         echo "<td class='hidden-xs'>".$completed."</td>";
         echo "<td class='hidden-xs'>".$matchId."</td>";
         echo "<td class='hidden-xs'>".$matchUser."</td>";
-        if(Yii::$app->user->identity->permissions >= 3){
+        if (Yii::$app->user->identity->permissions >= 3) {
             echo "<td>";
-            echo Html::button('Review',array("class"=>"btn btn-xs btn-info", 'submit'=>Url::to('/interview/'.$study->id.'/'.$interview->id.'/#/page/0')));
+            echo Html::button('Review', array("class"=>"btn btn-xs btn-info", 'submit'=>Url::to('/interview/'.$study->id.'/'.$interview->id.'#/page/0')));
             echo "</td>";
         }
         echo "</tr>";

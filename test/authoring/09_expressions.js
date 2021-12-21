@@ -30,7 +30,7 @@ describe('Create Expressions', function () {
         AuthoringPage.expressionSelect.selectByVisibleText(expressionType);
         //AuthoringPage.expressionNew.click()
         browser.pause(3000);
-        console.log(studyTest.expressions[i].question)
+        console.log(studyTest.expressions[i].name + ":" + studyTest.expressions[i].question)
         if (expressionType == "Simple")
           AuthoringPage.expressionQuestion.selectByVisibleText(studyTest.expressions[i].question);
 

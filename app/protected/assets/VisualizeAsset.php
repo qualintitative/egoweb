@@ -29,5 +29,4 @@ class VisualizeAsset extends AssetBundle
     public $depends = [
         'app\assets\AppAsset',
         ];
-
 }

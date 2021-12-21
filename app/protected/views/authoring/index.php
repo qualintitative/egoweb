@@ -17,7 +17,7 @@ use yii\helpers\Html;
     </div>
     <div class="col-md-6">
     <span class="badge badge-light mt-2">last modified: {{study.modified}}</span>
-        <?php if($interviews > 0): ?>
+        <?php if ($interviews > 0): ?>
         <a class="btn btn-sm btn-info float-right" href="/data/<?php echo $study['id']; ?>">Data Processing (<?php echo $interviews; ?>)</a>
         <?php endif; ?>
     </div>

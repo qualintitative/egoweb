@@ -35,11 +35,11 @@ class MobileController extends Controller
 {
     public $enableCsrfValidation = false;
 
-        /**
+    /**
      * {@inheritdoc}
      */
     public function behaviors()
-    {        
+    {
         return [
             'corsFilter' => [
                 'class' => \yii\filters\Cors::class,
@@ -121,7 +121,7 @@ class MobileController extends Controller
     public function actionCheck()
     {
         $json = "success";
-        return $this->renderAjax('/layouts/ajax',["json"=>$json]);
+        return $this->renderAjax('/layouts/ajax', ["json"=>$json]);
     }
 
     public function actionAjaxstudies()
@@ -133,9 +133,9 @@ class MobileController extends Controller
             foreach ($studies as $study) {
                 $json[$study->id] = $study->name;
             }
-            return $this->renderAjax('/layouts/ajax',["json"=>json_encode($json)]);
-        }else{
-            throw new \yii\web\HttpException(404,'Oops. Not logged in.');
+            return $this->renderAjax('/layouts/ajax', ["json"=>json_encode($json)]);
+        } else {
+            throw new \yii\web\HttpException(404, 'Oops. Not logged in.');
         }
     }
 
@@ -202,7 +202,7 @@ class MobileController extends Controller
             'columns'=>$columns,
         );
 
-        return $this->renderAjax('/layouts/ajax',["json"=>json_encode($data)]);
+        return $this->renderAjax('/layouts/ajax', ["json"=>json_encode($data)]);
     }
 
     public function actionAuthenticate()
@@ -216,7 +216,7 @@ class MobileController extends Controller
                 echo "failed";
             }
         } else {
-            throw new \yii\web\HttpException(404,'Oops. Not logged in.');
+            throw new \yii\web\HttpException(404, 'Oops. Not logged in.');
         }
     }
 
@@ -231,12 +231,12 @@ class MobileController extends Controller
                 foreach ($studies as $study) {
                     $json[] = array("id"=>$study->id, "name"=>$study->name);
                 }
-                return $this->renderAjax('/layouts/ajax',["json"=>json_encode($json)]);
+                return $this->renderAjax('/layouts/ajax', ["json"=>json_encode($json)]);
             } else {
                 echo "failed";
             }
-        }else{
-            throw new \yii\web\HttpException(404,'Oops. Not logged in.');
+        } else {
+            throw new \yii\web\HttpException(404, 'Oops. Not logged in.');
         }
     }
 
@@ -247,7 +247,7 @@ class MobileController extends Controller
             $errors = 0;
             $data = json_decode($_POST['data'], true);
             if (!$data['study']['ID']) {
-                throw new \yii\web\HttpException(500,'Internal Server Error');
+                throw new \yii\web\HttpException(500, 'Internal Server Error');
                 die();
             }
             $oldStudy = Study::findOne(array("name"=>$data['study']['NAME']));
@@ -300,7 +300,7 @@ class MobileController extends Controller
                 $json = "Errors encountered!";
             }
         }
-        return $this->renderAjax('/layouts/ajax',["json"=>$json]);
+        return $this->renderAjax('/layouts/ajax', ["json"=>$json]);
     }
 
     public function actionSyncData()
@@ -326,12 +326,12 @@ class MobileController extends Controller
                         $egoId = $interview->egoid;
                         if ($egoId == $data['interviews'][0]["EGOID"]) {
                             $json = $egoId . ": interview already exists";
-                            return $this->renderAjax('/layouts/ajax',["json"=>$json]);
+                            return $this->renderAjax('/layouts/ajax', ["json"=>$json]);
                         }
                     }
                 }
             } else {
-                throw new \yii\web\HttpException(500,'Internal Server Error');
+                throw new \yii\web\HttpException(500, 'Internal Server Error');
                 die();
             }
             $model = new LoginForm;
@@ -339,12 +339,12 @@ class MobileController extends Controller
             // validate user input and redirect to the previous page if valid
             if ($model->validate() && $model->login()) {
             } else {
-                throw new \yii\web\HttpException(500,'Internal Server Error');
+                throw new \yii\web\HttpException(500, 'Internal Server Error');
                 die();
             }
             $errors = 0;
             if (!$data['study']['ID']) {
-                throw new \yii\web\HttpException(500,'Internal Server Error');
+                throw new \yii\web\HttpException(500, 'Internal Server Error');
                 die();
             }
             if ($oldStudy) {
@@ -362,19 +362,22 @@ class MobileController extends Controller
                 $options = QuestionOption::findAll(array("studyId"=>$oldStudy->id));
                 $newOptionIds = array();
                 foreach ($options as $option) {
-                    if(isset($newQuestionTitles[$option->questionId]))
+                    if (isset($newQuestionTitles[$option->questionId])) {
                         $newOptionIds[$newQuestionTitles[$option->questionId]."_".$option->name] = $option->id;
+                    }
                 }
-                if(count($data['interviews']) > 0)
-                   $data['interviews'][0]['STUDYID'] = $oldStudy->id;
+                if (count($data['interviews']) > 0) {
+                    $data['interviews'][0]['STUDYID'] = $oldStudy->id;
+                }
                 $newData = array(
-					"studyId"=>$oldStudy->id,
-					"newQuestionIds"=>$newQuestionIds,
-					"newOptionIds"=>$newOptionIds,
-					"nameGenQId"=>$nameGenQId,
-				);
-                if($this->saveAnswersMerge($data, $newData) == false)
+                    "studyId"=>$oldStudy->id,
+                    "newQuestionIds"=>$newQuestionIds,
+                    "newOptionIds"=>$newOptionIds,
+                    "nameGenQId"=>$nameGenQId,
+                );
+                if ($this->saveAnswersMerge($data, $newData) == false) {
                     $errors++;
+                }
             } else {
                 $study = new Study;
                 foreach ($study->attributes as $key=>$value) {
@@ -387,11 +390,12 @@ class MobileController extends Controller
                 $add = 0;
                 $nameGenExists = false;
                 foreach ($data['questions'] as $q) {
-                    if($q['SUBJECTTYPE'] == "NAME_GENERATOR")
+                    if ($q['SUBJECTTYPE'] == "NAME_GENERATOR") {
                         $nameGenExists = true;
+                    }
                 }
                 foreach ($data['questions'] as $q) {
-                    if($nameGenExists == false && $q['SUBJECTTYPE'] == "ALTER"){
+                    if ($nameGenExists == false && $q['SUBJECTTYPE'] == "ALTER") {
                         $question = new Question;
                         $add = 1;
                         $question->attributes = array(
@@ -418,8 +422,9 @@ class MobileController extends Controller
                 foreach ($data['questionOptions'] as $o) {
                     $option = new QuestionOption;
                     foreach ($option->attributes as $key=>$value) {
-                        if(isset($o[strtoupper($key)]))
+                        if (isset($o[strtoupper($key)])) {
                             $option->$key = $o[strtoupper($key)];
+                        }
                     }
                     array_push($options, $option);
                 }
@@ -445,21 +450,20 @@ class MobileController extends Controller
                 if ($newData) {
                     $this->saveAnswers($data, $newData);
                     $json =  "Generated new study: " . $study->name . ". ";
-                    return $this->renderAjax('/layouts/ajax',["json"=>$json]);
+                    return $this->renderAjax('/layouts/ajax', ["json"=>$json]);
                 } else {
                     $json =  "Error while attempting to create a new study.";
-                    return $this->renderAjax('/layouts/ajax',["json"=>$json]);
+                    return $this->renderAjax('/layouts/ajax', ["json"=>$json]);
                 }
             }
             if ($errors == 0) {
                 $json =  "Upload completed.";
             } else {
                 $json =  "Errors encountered!";
-                return $this->renderAjax('/layouts/ajax',["json"=>$json]);
-
+                return $this->renderAjax('/layouts/ajax', ["json"=>$json]);
             }
         }
-        return $this->renderAjax('/layouts/ajax',["json"=>$json]);
+        return $this->renderAjax('/layouts/ajax', ["json"=>$json]);
     }
 
     private function saveAnswers($data, $newData = null)
@@ -493,8 +497,9 @@ class MobileController extends Controller
                 if (stristr($alter['INTERVIEWID'], ",")) {
                     $interviewIds = explode(",", $alter['INTERVIEWID']);
                     foreach ($interviewIds as &$i) {
-                        if(isset($newInterviewIds[$i]))
+                        if (isset($newInterviewIds[$i])) {
                             $i = $newInterviewIds[$i];
+                        }
                     }
                     $interviewIds = implode(",", $interviewIds);
                     if ($interviewIds != $alter['INTERVIEWID']) {
@@ -508,7 +513,7 @@ class MobileController extends Controller
                     } else {
                         continue;
                     }
-				}
+                }
                 if (isset($alter['NAMEGENQIDS'])) {
                     if (stristr($alter['NAMEGENQIDS'], ",")) {
                         $nameGenQIds = explode(",", $alter['NAMEGENQIDS']);
@@ -521,11 +526,12 @@ class MobileController extends Controller
                         }
                     }
                     $newAlter->nameGenQIds = implode(",", $nameGenQIds);
-                }else{
-                    if(isset($newData['nameGenQIds'][0]))
+                } else {
+                    if (isset($newData['nameGenQIds'][0])) {
                         $newAlter->nameGenQIds = $newData['nameGenQIds'][0];
+                    }
                 }
-                if(!is_numeric($alter['ORDERING'])){
+                if (!is_numeric($alter['ORDERING'])) {
                     $nGorder = json_decode($alter['ORDERING'], true);
                     $newOrder = array();
                     foreach ($nGorder as $nQid=>$norder) {
@@ -536,7 +542,7 @@ class MobileController extends Controller
                         }
                     }
                     $newAlter->ordering = json_encode($newOrder);
-                }else{
+                } else {
                     $newAlter->ordering = strval($alter['ORDERING']);
                 }
                 if (!$newAlter->save()) {
@@ -650,12 +656,13 @@ class MobileController extends Controller
         if (isset($data['alters'])) {
             foreach ($data['alters'] as $alter) {
                 $newAlter = new Alters;
-				$newAlter->name = html_entity_decode($alter['NAME'], ENT_QUOTES);
+                $newAlter->name = html_entity_decode($alter['NAME'], ENT_QUOTES);
                 if (stristr($alter['INTERVIEWID'], ",")) {
                     $interviewIds = explode(",", $alter['INTERVIEWID']);
                     foreach ($interviewIds as &$i) {
-                        if(isset($newInterviewIds[$i]))
+                        if (isset($newInterviewIds[$i])) {
                             $i = $newInterviewIds[$i];
+                        }
                     }
                     $interviewIds = implode(",", $interviewIds);
                     if ($interviewIds != $alter['INTERVIEWID']) {
@@ -696,7 +703,7 @@ class MobileController extends Controller
                 }
                 if (is_numeric($alter['ORDERING'])) {
                     $newAlter->ordering = $alter['ORDERING'];
-                }else{
+                } else {
                     $nGorder = json_decode($alter['ORDERING'], true);
                     $newOrder = array();
                     foreach ($nGorder as $nQid=>$norder) {
@@ -744,8 +751,9 @@ class MobileController extends Controller
                     foreach (preg_split('/;;/', $answer['OTHERSPECIFYTEXT']) as $other) {
                         if ($other && strstr($other, ':')) {
                             list($key, $val) = preg_split('/:/', $other);
-                            if(isset($optionNames[$key]) && isset($newData['newOptionIds'][$qTitle."_".$optionNames[$key]]))
+                            if (isset($optionNames[$key]) && isset($newData['newOptionIds'][$qTitle."_".$optionNames[$key]])) {
                                 $responses[] = $newData['newOptionIds'][$qTitle."_".$optionNames[$key]] . ":" .$val;
+                            }
                         }
                     }
                     $answer['OTHERSPECIFYTEXT'] = implode(";;", $responses);

@@ -533,9 +533,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
                 if ($scope.refuseCount > 0 && $scope.answers[current_array_ids[r]].SKIPREASON == "NONE" && $('#Answer_' + current_array_ids[r] + '_VALUE').val() == "") {
                     $scope.answers[current_array_ids[r]].SKIPREASON = "REFUSE";
                     $('input[name="Answer[' + current_array_ids[r] + '][skipReason]').val("REFUSE");
-                    $scope.answerForm.$setDirty();
                 }
             }
+            $scope.answerForm.$setDirty();
             save($scope.questions, $routeParams.page, $location.absUrl().replace($location.url(), ''), $scope);
         } else {
             if ($scope.hasRefuse)

@@ -3,6 +3,7 @@ use yii\helpers\Html;
 use app\models\MatchedAlters;
 use app\models\User;
 use yii\helpers\Url;
+
 ?>
 <script>
 function exportEgoLevel() {
@@ -286,7 +287,10 @@ function deleteInterviews() {
                 $mark = "class='success'";
                 $matchId = $match->getMatchId();
                 $matchU = User::findOne($match->userId);
-                $matchUser = $matchU->name;
+                if($matchU)
+                    $matchUser = $matchU->name;
+                else
+                    $matchUser = "User Not Found";
             }
             echo "<tr $mark>";
             echo "<td>" . Html::checkbox('export[' . $interview->id . ']', false, ['id'=>'export_' . $interview->id  ]) . "</td><td>" . $interview->egoId . "</td>";

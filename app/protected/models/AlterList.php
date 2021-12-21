@@ -41,20 +41,24 @@ class AlterList extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-        if($this->name != "")
-            $this->name = Tools::encrypt( $this->name );
-        if($this->email != "")
-            $this->email = Tools::encrypt( $this->email );
+        if ($this->name != "") {
+            $this->name = Tools::encrypt($this->name);
+        }
+        if ($this->email != "") {
+            $this->email = Tools::encrypt($this->email);
+        }
 
         return parent::beforeSave($insert);
     }
 
     public function afterFind()
     {
-        if(strlen($this->name) >= 8)
-            $this->name = Tools::decrypt( $this->name );
-        if(strlen($this->email) >= 8)
-            $this->email = Tools::decrypt( $this->email );
+        if (strlen($this->name) >= 8) {
+            $this->name = Tools::decrypt($this->name);
+        }
+        if (strlen($this->email) >= 8) {
+            $this->email = Tools::decrypt($this->email);
+        }
     
         return parent::afterFind();
     }

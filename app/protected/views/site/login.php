@@ -21,7 +21,7 @@ use yii\captcha\Captcha;
                 <?= $form->field($model, 'username')->textInput(['autofocus' => true])->label('Email') ?>
 
                 <?= $form->field($model, 'password')->passwordInput() ?>
-                <?php if($failedCount > 3): ?>
+                <?php if ($failedCount > 3): ?>
                 <?= $form->field($model, 'captcha')->widget(Captcha::className()) ?>
                 <?php endif; ?>
                 <?= $form->field($model, 'rememberMe')->checkbox() ?>

@@ -59,9 +59,9 @@ class LoginForm extends Model
     public function login()
     {
         $failedCount = Yii::$app->session->get('loginFailed') ?  Yii::$app->session->get('loginFailed') : 0;
-        if($failedCount > 3 && $this->captcha == ""){
+        if ($failedCount > 3 && $this->captcha == "") {
             Yii::$app->session->setFlash('error', 'More than 3 failed login attempts');
-        }else{
+        } else {
             if ($this->validate()) {
                 return Yii::$app->user->login($this->getUser(), $this->rememberMe ? 3600 * 24 * 30 : 0);
             } else {
@@ -82,7 +82,7 @@ class LoginForm extends Model
     {
         if ($this->_user === null) {
             $this->_user = User::findByUsername($this->username);
-         //   echo $this->username . $this->_user->email;
+            //   echo $this->username . $this->_user->email;
            // die();
         }
 

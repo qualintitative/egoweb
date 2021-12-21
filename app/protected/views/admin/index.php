@@ -2,18 +2,19 @@
 use yii\helpers\Html;
 use app\models\User;
 use app\models\Interview;
+
 ?>
 
 
        
 
 <div id="accordion" class="fill-page">
-    <?php foreach(Yii::$app->user->identity->studies as $index=>$study):?>
-    <?php if($index == 0 && $study->multiSessionEgoId): ?>
+    <?php foreach (Yii::$app->user->identity->studies as $index=>$study):?>
+    <?php if ($index == 0 && $study->multiSessionEgoId): ?>
         <?php $hasMulti = true; ?>
         <div><h3>Multi-session Studies</h3></div>
     <?php endif; ?>
-    <?php if($index != 0 && !$study->multiSessionEgoId && isset($hasMulti)): ?>
+    <?php if ($index != 0 && !$study->multiSessionEgoId && isset($hasMulti)): ?>
         <?php unset($hasMulti); ?>
         <div><br><h3>Single session Studies</h3></div>
     <?php endif; ?>
@@ -47,12 +48,12 @@ $interviews = Interview::find()->where([
     "studyId"=>$study->id
 ])->andWhere(["<>", "completed", "-1"])->all();
 ?>
-                <?php if(count($interviews) > 0): ?>
+                <?php if (count($interviews) > 0): ?>
                 <div class="list-group col-sm-9">
-                    <?php if(count($interviews) > 0): ?>
+                    <?php if (count($interviews) > 0): ?>
                     <div class="list-group-item list-group-item-action bg-dark text-white">Continue incomplete interview</div>
                     <?php endif; ?>
-                    <?php foreach($interviews as $interview): ?>
+                    <?php foreach ($interviews as $interview): ?>
                     <?php echo Html::a($interview->egoId, ["/interview/" . $study->id . "/" . $interview->id . "#page/" . $interview->completed ], ["class"=>"list-group-item list-group-item-action"]); ?>
                     <?php endforeach; ?>
                 </div>
@@ -83,7 +84,7 @@ $interviews = Interview::find()->where([
        
 
         <div class="row">
-        <?php if(Yii::$app->user->identity->isAdmin()): ?>
+        <?php if (Yii::$app->user->identity->isAdmin()): ?>
 
             <div class="card col-sm-6">
                 <div class="card-body">
@@ -98,7 +99,7 @@ $interviews = Interview::find()->where([
             </div>
             <?php endif; ?>
 
-            <?php if(Yii::$app->user->identity->permissions >= 3): ?>
+            <?php if (Yii::$app->user->identity->permissions >= 3): ?>
 
             <div class="card col-sm-6">
                 <div class="card-body">
@@ -111,7 +112,7 @@ $interviews = Interview::find()->where([
             </div>
             <?php endif;?>
 
-            <?php if(Yii::$app->user->identity->isSuperAdmin()): ?>
+            <?php if (Yii::$app->user->identity->isSuperAdmin()): ?>
             <div class="card col-sm-6">
                 <div class="card-body">
                     <h3><?=Html::a('User Admin', ["/admin/user"])?></h3>
