@@ -87,6 +87,7 @@ return [
 		'enableAudioUpload' => false,
         'surveyURL' => 'http://'.$_SERVER['SERVER_NAME'].'/survey',
         'APIPassword' => 'yourpasswordhere',
+        'encrytionAlgo' => 'AES-128-CBC',
         'encryptionKey' => 'old_key1old_key1',
         'user.passwordResetTokenExpire' => 3600,
         'user.passwordMinLength' => 8,

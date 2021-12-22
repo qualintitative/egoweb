@@ -288,7 +288,7 @@ class SiteController extends Controller
             Yii::$app->session->setFlash('success', 'New password saved.');
             $user = $model->resetPassword();
             if ($user && Yii::$app->user->login($user)) {
-                return $this->response->redirect(Url::toRoute('/admin'));
+                return $this->response->redirect(Url::toRoute('/admin'))->send();
             } else {
                 print_r($user->errors);
             }
