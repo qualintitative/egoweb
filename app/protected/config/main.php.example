@@ -78,7 +78,7 @@ return [
     'params' => [
         'version'=>'2.0.10.0',
 		// this is used in contact page
-		'adminEmail' => 'egoweb-support@brand.org',
+		'adminEmail' => 'egoweb-support@rand.org',
 		// The max login attempt before showing captcha
 		'maxLoginAttempts' => 3,
 		'maxUploadFileSize' => 1024 * 1024 * 3, // 3MB		// file path for study export
