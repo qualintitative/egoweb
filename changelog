@@ -1,6 +1,12 @@
 # Changelog
 
-## [Unreleased]
+## [2.0.10.1] - 2022-01-19
+- added other specify data to <VAR> tag display
+
+## [2.0.10.0] - 2022-01-01
+- updated to Yii 2.0
+- updated to Bootstrap 4
+- updated to jQuery v3.5.1
 
 ## [2.0.9.12] - 2021-06-23
 - merge alter label fix
