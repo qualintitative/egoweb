@@ -98,6 +98,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
+        $this->view->title = "EgoWeb 2.0";
         if (!Yii::$app->user->isGuest) {
             return $this->response->redirect(Url::toRoute('/admin'));
         }
@@ -193,6 +194,7 @@ class SiteController extends Controller
      */
     public function actionCreate()
     {
+        $this->view->title = "EgoWeb 2.0";
         $users = User::find()->all();
         if (count($users) != 0) {
             return $this->goBack();
@@ -253,6 +255,7 @@ class SiteController extends Controller
      */
     public function actionRequestPasswordReset()
     {
+        $this->view->title = "EgoWeb 2.0";
         $model = new PasswordResetRequestForm();
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
@@ -278,6 +281,8 @@ class SiteController extends Controller
      */
     public function actionResetPassword($token)
     {
+        $this->view->title = "EgoWeb 2.0";
+
         try {
             $model = new ResetPasswordForm($token);
         } catch (InvalidArgumentException $e) {
