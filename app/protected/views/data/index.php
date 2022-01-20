@@ -1,9 +1,11 @@
 <?php
 use yii\helpers\Html;
 use app\models\MatchedAlters;
+use app\models\Interview;
 use app\models\User;
 use yii\helpers\Url;
-
+use yii\data\Pagination;
+use yii\bootstrap4\LinkPager;
 ?>
 <script>
 function exportEgoLevel() {
@@ -322,7 +324,12 @@ function deleteInterviews() {
     </thead>
     <tbody>
         <?php
-        foreach ($study->interviews as $interview) {
+        $result = Interview::find()->where(["studyId"=>$study->id]);
+        $pagination = new Pagination(['totalCount' => $result->count(), 'pageSize'=>200]);
+        $items = $result->offset($pagination->offset)
+        ->limit($pagination->limit)
+        ->all();
+        foreach ($items as $interview) {
             if ($interview->completed == -1) {
                 $completed = "<span style='color:#0B0'>" . date("Y-m-d H:i:s", $interview->complete_date) . "</span>";
             } else {
@@ -363,7 +370,11 @@ function deleteInterviews() {
 
     </tbody>
 </table>
-
+<?php
+echo LinkPager::widget([
+'pagination' => $pagination,
+]);
+?>
 <?= Html::beginForm([''], 'post', [ 'id'=>'analysis']) ?>
 <?php
 echo Html::hiddenInput('studyId', $study->id, [ 'id'=>'studyId']);
