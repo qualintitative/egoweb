@@ -1353,6 +1353,22 @@ class Interview extends \yii\db\ActiveRecord
         }
     }
 
+    public function exportCompletionData($file)
+    {
+        $all_questions = Question::find()->where(["studyId"=>$this->studyId])->orderBy(["ordering"=>"ASC"])->all();
+        foreach ($all_questions as $question){
+            $answer = Answer::findOne(["interviewId"=>$this->id, "questionId"=>$question->id]);
+            if ($answer) {
+                $row = array();
+                $row[] = $this->id;
+                $row[] = Interview::getEgoId($this->id);
+                $row[] = $question->title;
+                $row[] = date("Y-m-d h:i:s", $answer->timestamp);
+                fputcsv($file, $row);
+            }
+        }
+    }
+
     public function exportStudyInterview($filePath, $columns)
     {
         $exclude = array("studyId", "active");

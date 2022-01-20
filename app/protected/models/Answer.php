@@ -51,6 +51,7 @@ class Answer extends \yii\db\ActiveRecord
         if ($this->otherSpecifyText != "") {
             $this->otherSpecifyText = Tools::encrypt($this->otherSpecifyText);
         }
+        $this->timestamp = time();
 
         return parent::beforeSave($insert);
     }
@@ -85,6 +86,7 @@ class Answer extends \yii\db\ActiveRecord
             'studyId' => 'Study ID',
             'questionType' => 'Question Type',
             'answerType' => 'Answer Type',
+            'timestamp' => 'Timestamp',
         ];
     }
 }

@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.10.2] - 2022-01-19
+- added completion time for individual responses (answers)
+
 ## [2.0.10.1] - 2022-01-19
 - added other specify data to <VAR> tag display
 

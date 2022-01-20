@@ -578,6 +578,54 @@ class DataController extends Controller
         return $this->response->sendContentAsFile($text, $study->name . '-other-specify.csv')->send();
     }
 
+    public function actionExportcompletion()
+    {
+        $filePath = getcwd()."/assets/".$_POST['studyId'];
+        if (file_exists($filePath . "/" . $_POST['interviewId'] . "-completion-time.csv")) {
+            return $this->renderAjax("/layouts/ajax", ["json"=>"success"]);
+        }
+
+        if (!is_dir($filePath)) {
+            mkdir($filePath, 0777, true);
+        }
+        
+        $study = Study::findOne($_POST['studyId']);
+        $interview = Interview::findOne($_POST['interviewId']);
+        if ($interview) {
+            $file = fopen($filePath . "/" . $_POST['interviewId'] . "-completion-time.csv", "w") or die("Unable to open file!");
+            $interview->exportCompletionData($file, $study);
+            return $this->renderAjax("/layouts/ajax", ["json"=>"success"]);
+        }
+        return $this->renderAjax("/layouts/ajax", ["json"=>"fail"]);
+    }
+
+
+    public function actionExportcompletionall()
+    {
+        if (!isset($_POST['studyId']) || $_POST['studyId'] == "") {
+            die("nothing to export");
+        }
+
+        $study = Study::findOne($_POST['studyId']);
+
+        $headers = array();
+        $headers[] = 'INTERVIEW ID';
+        $headers[] = "EGO ID";
+        $headers[] = "QUESTION";
+        $headers[] = "COMPLETION TIME";
+
+        $text = implode(',', $headers) . "\n";
+        $interviewIds = explode(",", $_POST['interviewIds']);
+        foreach ($interviewIds as $interviewId) {
+            $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . "-completion-time.csv";
+            if (file_exists($filePath)) {
+                $text .= file_get_contents($filePath);
+                unlink($filePath);
+            }
+        }
+        return $this->response->sendContentAsFile($text, $study->name . '-completion-time.csv')->send();
+    }
+
     public function actionSavegraph()
     {
         if ($_POST['Graph']) {
