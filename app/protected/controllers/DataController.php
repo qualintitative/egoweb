@@ -611,9 +611,10 @@ class DataController extends Controller
         $headers = array();
         $headers[] = 'INTERVIEW ID';
         $headers[] = "EGO ID";
-        $headers[] = "QUESTION";
-        $headers[] = "COMPLETION TIME";
-
+        $all_questions = Question::find()->where(["studyId"=>$_POST['studyId']])->orderBy(["ordering"=>"ASC"])->all();
+        foreach ($all_questions as $question) {
+            $headers[] = $question->title;
+        }
         $text = implode(',', $headers) . "\n";
         $interviewIds = explode(",", $_POST['interviewIds']);
         foreach ($interviewIds as $interviewId) {
