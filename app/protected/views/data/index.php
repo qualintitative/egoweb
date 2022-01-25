@@ -325,7 +325,7 @@ function deleteInterviews() {
     <tbody>
         <?php
         $result = Interview::find()->where(["studyId"=>$study->id]);
-        $pagination = new Pagination(['totalCount' => $result->count(), 'pageSize'=>200]);
+        $pagination = new Pagination(['totalCount' => $result->count(), 'pageSize'=>500]);
         $items = $result->offset($pagination->offset)
         ->limit($pagination->limit)
         ->all();
