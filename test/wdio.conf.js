@@ -32,7 +32,7 @@ exports.config = {
     //  'interview/04_skiplogic_compound.js'
   //     'interview/05_alters.js',
    //    'interview/06_finish.js'
-      // 'authoring/*.js',
+       'authoring/*.js',
        'interview/*.js'
   ],
   // Patterns to exclude.

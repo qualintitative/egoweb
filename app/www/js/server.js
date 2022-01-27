@@ -92,6 +92,13 @@ function save(questions, page, url, scope){
         saveNodes();
     }
     var saveUrl = rootUrl + "/interview/save";
+    if(interview.COMPLETED == -1){
+        var nextUrl = rootUrl + "/interview/" + study.ID + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
+        if(typeof hashKey != "undefined")
+            nextUrl = nextUrl + "/" + hashKey;
+        document.location = nextUrl;
+        return;
+    }
     if(typeof questions[0] == "undefined"){
         if(scope.answerForm.$pristine == false || scope.conclusion == true){
             $.post(saveUrl, $('#answerForm').serialize(), function(data){

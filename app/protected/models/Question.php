@@ -22,8 +22,10 @@ use Yii;
  * @property string|null $allButton
  * @property string|null $pageLevelDontKnowButton
  * @property string|null $pageLevelRefuseButton
- * @property int|null $dontKnowButton
- * @property int|null $refuseButton
+ * @property int|null    $dontKnowButton
+ * @property string|null $dontKnowText
+ * @property int|null    $refuseButton
+ * @property string|null $refuseText
  * @property string|null $allOptionString
  * @property string|null $uselfExpression
  * @property string|null $minLimitType
@@ -100,7 +102,7 @@ class Question extends \yii\db\ActiveRecord
     {
         return [
             [['active', 'ordering', 'otherSpecify', 'minLiteral', 'maxLiteral', 'minCheckableBoxes', 'maxCheckableBoxes', 'minListRange', 'maxListRange', 'timeUnits', 'symmetric', 'studyId', 'answerReasonExpressionId', 'networkRelationshipExprId', 'networkNColorQId', 'networkNSizeQId', 'networkEColorQId', 'networkESizeQId'], 'integer'],
-            [['title', 'prompt', 'preface', 'citation', 'subjectType', 'answerType', 'pageLevelDontKnowButton', 'pageLevelRefuseButton', 'allOptionString', 'uselfExpression', 'minLimitType', 'minPrevQues', 'maxLimitType', 'maxPrevQues', 'listRangeString', 'networkParams', 'useAlterListField', 'javascript'], 'string'],
+            [['title', 'prompt', 'preface', 'citation', 'subjectType', 'answerType', 'pageLevelDontKnowButton', 'pageLevelRefuseButton', 'allOptionString', 'uselfExpression', 'minLimitType', 'minPrevQues', 'maxLimitType', 'maxPrevQues', 'listRangeString', 'networkParams', 'useAlterListField', 'javascript', 'dontKnowText', 'refuseText'], 'string'],
             [['askingStyleList', 'dontKnowButton', 'refuseButton', 'restrictList', 'autocompleteList', 'prefillList', 'keepOnSamePage'], 'boolean'],
             ['preface','default', 'value'=>""],
             [['allButton', 'noneButton','withListRange','askingStyleList'], 'default', 'value' => 0],
@@ -129,7 +131,9 @@ class Question extends \yii\db\ActiveRecord
             'pageLevelDontKnowButton' => 'Page Level Dont Know Button',
             'pageLevelRefuseButton' => 'Page Level Refuse Button',
             'dontKnowButton' => 'Dont Know Button',
+            'dontKnowText' => 'Dont Know Text',
             'refuseButton' => 'Refuse Button',
+            'refuseText' => 'Refuse Text',
             'allOptionString' => 'All Option String',
             'uselfExpression' => 'Uself Expression',
             'minLimitType' => 'Min Limit Type',

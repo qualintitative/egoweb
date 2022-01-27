@@ -35,8 +35,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
     // Insert our new styles before the first script tag
     $('head').append(style);
-    $scope.questions = qFromList($routeParams.page)
-    $scope.page = $routeParams.page;
+    $scope.page = 0;
+    if($routeParams.page != -1)
+        $scope.page = $routeParams.page;
+    $scope.questions = qFromList($scope.page)
     $scope.study = study;
     $scope.csrf = csrf;
     $scope.interviewId = interviewId;
@@ -159,10 +161,18 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         if ($("#menu_" + $scope.page).length > 0)
             $("#second").scrollTop($("#second").scrollTop() - $("#second").offset().top + $("#menu_" + $scope.page).offset().top);
     }
+    if($("#second li").length != 0 && $routeParams.page == -1){
+        var nextUrl =  rootUrl + "/interview/" + study.ID + "/" + interviewId + "#/page/" + ($("#second li").length - 1);
+        document.location = nextUrl;
+    }
 
     for (var k in $scope.questions) {
         var array_id = $scope.questions[k].array_id;
         current_array_ids.push(array_id);
+        if(!$scope.questions[k].DONTKNOWTEXT)
+            $scope.questions[k].DONTKNOWTEXT = "Don't Know";
+        if(!$scope.questions[k].REFUSETEXT)
+            $scope.questions[k].REFUSETEXT = "Refuse";
         if ($scope.questions[k].USEALTERLISTFIELD == "name" || $scope.questions[k].USEALTERLISTFIELD == "email") {
             for (p in participantList) {
                 var qIds = [];
@@ -219,7 +229,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
             $scope.options['all'] = $.extend(true, {}, options[$scope.questions[k].ID]);
             if ($scope.questions[k].DONTKNOWBUTTON == true) {
                 var button = new Object;
-                button.NAME = "Don't Know";
+                button.NAME = $scope.questions[k].DONTKNOWTEXT;
                 button.ID = "DONT_KNOW";
                 button.checked = false;
                 $scope.options['all'][Object.keys($scope.options['all']).length] = button;
@@ -227,7 +237,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
             if ($scope.questions[k].REFUSEBUTTON == true) {
                 var button = new Object;
-                button.NAME = "Refuse";
+                button.NAME = $scope.questions[k].REFUSETEXT;
                 button.ID = "REFUSE";
                 button.checked = false;
                 $scope.options['all'][Object.keys($scope.options['all']).length] = button;
@@ -366,7 +376,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
         if ($scope.questions[k].DONTKNOWBUTTON == true) {
             var button = new Object;
-            button.NAME = "Don't Know";
+            button.NAME = $scope.questions[k].DONTKNOWTEXT;
             button.ID = "DONT_KNOW";
             button.checked = false;
             if ($scope.answers[array_id].SKIPREASON == "DONT_KNOW")
@@ -376,7 +386,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
         if ($scope.questions[k].REFUSEBUTTON == true) {
             var button = new Object;
-            button.NAME = "Refuse";
+            button.NAME = $scope.questions[k].REFUSETEXT;
             button.ID = "REFUSE";
             $scope.hasRefuse = true;
             button.checked = false;
@@ -519,7 +529,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
     $scope.goBack = function() {
         var url = $location.absUrl().replace($location.url(), '');
-        url = url + "page/" + (parseInt($routeParams.page) - 1);
+        url = url + "page/" + (parseInt($scope.page) - 1);
         if (typeof hashKey != "undefined")
             url = url + "/" + hashKey;
         document.location = url;
@@ -536,7 +546,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
                 }
             }
             $scope.answerForm.$setDirty();
-            save($scope.questions, $routeParams.page, $location.absUrl().replace($location.url(), ''), $scope);
+            save($scope.questions, $scope.page, $location.absUrl().replace($location.url(), ''), $scope);
         } else {
             if ($scope.hasRefuse)
                 $scope.refuseCount++;

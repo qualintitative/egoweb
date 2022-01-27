@@ -96,7 +96,7 @@
             <tr class="panel multi multi-header" ng-if="askingStyleList != false && questions[0].SUBJECTTYPE != 'PREFACE'"">
                 <td style="min-width:180px"></td>
                 <td ng-if="(answerType == 'TEXTUAL' || answerType == 'NUMERICAL') && askingStyleList != false" style="width:{{ fixedWidth }}"></td>
-                <td ng-repeat="option in options[askingStyleList]">{{ option.NAME }}</td>
+                <td ng-repeat="option in options[askingStyleList]"><label>{{ option.NAME }}</label></td>
             </tr>
         </thead>
         <tbody>
@@ -269,7 +269,7 @@
         </tr>
         <tr class="multi" ng-if="askingStyleList != false && options['all']">
             <td class="palette-sun-flower">
-                <label>Set All</label>
+                <label id="set-all"></label>
             </td>
             <td class="palette-sun-flower" ng-if="(answerType == 'TEXTUAL' || answerType == 'NUMERICAL') && askingStyleList != false" style="width:{{ fixedWidth }}"></td>
             <td class="palette-sun-flower" ng-repeat="option in options['all']" style="width:{{ fixedWidth }}">

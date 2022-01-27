@@ -134,11 +134,11 @@ describe('Alters', function () {
         }
 
         // check the table headers
-        expect(IwPage.getTableHeaderText(2)).toBe("Option 1");
-        expect(IwPage.getTableHeaderText(3)).toBe("Option 2");
-        expect(IwPage.getTableHeaderText(4)).toBe("Option 3");
-        expect(IwPage.getTableHeaderText(5)).toBe("Don't Know");
-        expect(IwPage.getTableHeaderText(6)).toBe("Refuse");
+        expect(IwPage.getTableHeaderText(2)).toContain("Option 1");
+        expect(IwPage.getTableHeaderText(3)).toContain("Option 2");
+        expect(IwPage.getTableHeaderText(4)).toContain("Option 3");
+        expect(IwPage.getTableHeaderText(5)).toContain("Don't Know");
+        expect(IwPage.getTableHeaderText(6)).toContain("Refuse");
 
         // click next, even though no cell is selected
         IwPage.next();

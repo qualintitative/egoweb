@@ -75,20 +75,20 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                         </div>
                     </div>
                     <div class="form-group row">
-
-
                         <div class="offset-md-4 col-6 col-sm-4">
                             <b-form-checkbox class="col mb-1" :id="question.id + '_dontKnowButton'" v-model="question.dontKnowButton" name="Question[dontKnowButton]" value="1" unchecked-value="0">
-                                Don't know
+                                Don't Know
                             </b-form-checkbox>
                             <b-form-checkbox class="col mb-1" :id="question.id + '_refuseButton'" v-model="question.refuseButton" name="Question[refuseButton]" value="1" unchecked-value="0">
                                 Refuse
                             </b-form-checkbox>
-                        </div>
-                        <div class="col-6 col-sm-4">
                             <b-form-checkbox v-if="question.subjectType != 'NAME_GENERATOR'" class="col mb-1" :id="question.id + '_askingStyleList'" v-model="question.askingStyleList" name="Question[askingStyleList]" value="1" unchecked-value="0">
                                 List Style
                             </b-form-checkbox>
+                        </div>
+                        <div class="col-6 col-sm-4">
+                            <input type="text" v-model="question.dontKnowText" v-if="question.dontKnowButton && question.dontKnowButton == true" class="form-control input-xs" name="Question[dontKnowText]" :id="question.id + '_dontKnowText'">
+                            <input type="text" v-model="question.refuseText" v-if="question.refuseButton && question.refuseButton == true" class="form-control input-xs" name="Question[refuseText]" :id="question.id + '_refuseText'">
                             <b-form-checkbox v-if="question.subjectType == 'ALTER' || question.subjectType == 'ALTER_PAIR'" class="col mb-1" :id="question.id + '_allButton'" v-model="question.allButton" name="Question[allButton]" value="1" unchecked-value="0">
                                 Set All
                             </b-form-checkbox>
@@ -906,6 +906,7 @@ QestionEditor = Vue.component('question-editor', {
                 this.$forceUpdate();
             }else if(val == "NETWORK"){
                 this.question.answerType = "TEXTUAL_PP";
+                this.question.networkParams = JSON.stringify(this.question.nParams);
                 this.$forceUpdate();
             }
         },
@@ -972,10 +973,16 @@ new Vue({
         alterQs.push({text:"Eigenvector Centrality", value:"eigenvector"})
         alterQOptions["eigenvector"] = [{id:"eigenvector",name:""}]
         this.new_question.timeBits = {};
+        this.new_question.dontKnowText = "Don't Know";
+        this.new_question.refuseText = "Refuse";
         for (var t in bitVals) {
             this.new_question.timeBits[t] = this.new_question.timeUnits & bitVals[t];
         }
         for(k in this.questions){
+            if(!this.questions[k].dontKnowText)
+                this.questions[k].dontKnowText = "Don't Know";
+            if(!this.questions[k].refuseText)
+                this.questions[k].refuseText = "Refuse";
             this.questions[k].numQuestions = numQuestions.slice();
             if(this.questions[k].answerType == "NUMERICAL"){
                 numQuestions.push({text:this.questions[k].title,value:this.questions[k].id});
@@ -1044,7 +1051,8 @@ new Vue({
             }
             if(this.questions[k].subjectType == "NETWORK"){
                 if(this.questions[k].networkParams == "" || this.questions[k].networkParams == null || this.questions[k].networkParams == "null"){
-                    this.questions[k].nParams = defaultParams
+                    this.questions[k].nParams = defaultParams;
+                    this.questions[k].networkParams = JSON.stringify(this.questions[k].nParams);
                 }else{
                     this.questions[k].nParams = JSON.parse(this.questions[k].networkParams);
                     for(p in defaultParams){

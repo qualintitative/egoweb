@@ -101,9 +101,8 @@ class InterviewController extends Controller
                         $interview = Interview::findOne($a->interviewId);
                         if($interview){
                             $page = 0;
-                            if ($interview->completed != -1) {
+                            if ($interview->completed)
                                 $page = $interview->completed;
-                            }
                         }
                     }
                 }
@@ -445,7 +444,7 @@ class InterviewController extends Controller
                 $array_id = $Answer['questionId'];
             }
 
-            if ($Answer['questionType'] == "EGO_ID" && $Answer['value'] != "" && !$interviewId) {
+            if ($Answer['questionType'] == "EGO_ID" && isset($Answer['value']) && $Answer['value'] != "" && !$interviewId) {
                 foreach ($_POST['Answer'] as $ego_id) {
                     $ego_id_q = Question::findOne($ego_id['questionId']);
                     if (in_array($ego_id_q->useAlterListField, array("name", "email"))) {

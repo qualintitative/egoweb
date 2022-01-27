@@ -1192,3 +1192,11 @@ html {
     background-color:#fcf8d3!important;
     opacity: 1;
   }
+
+  #set-all:after {
+    content: 'Set All';
+  }
+
+  #answerForm label {
+      margin-top:5px;
+  }
