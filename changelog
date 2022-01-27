@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.0.10.2] - 2022-01-25
+- added custom don't know / refuse text
+- updated selenium tests
+- added redirect to completion page for finished guest interviews
+
 ## [2.0.10.2] - 2022-01-19
 - added completion time for individual responses (answers)
 - pagination for data section
