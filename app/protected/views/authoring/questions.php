@@ -74,21 +74,26 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                             </b-form-select>
                         </div>
                     </div>
-                    <div class="form-group row">
-                        <div class="offset-md-4 col-6 col-sm-4">
-                            <b-form-checkbox class="col mb-1" :id="question.id + '_dontKnowButton'" v-model="question.dontKnowButton" name="Question[dontKnowButton]" value="1" unchecked-value="0">
-                                Don't Know
-                            </b-form-checkbox>
-                            <b-form-checkbox class="col mb-1" :id="question.id + '_refuseButton'" v-model="question.refuseButton" name="Question[refuseButton]" value="1" unchecked-value="0">
-                                Refuse
-                            </b-form-checkbox>
-                            <b-form-checkbox v-if="question.subjectType != 'NAME_GENERATOR'" class="col mb-1" :id="question.id + '_askingStyleList'" v-model="question.askingStyleList" name="Question[askingStyleList]" value="1" unchecked-value="0">
+                    <div class="offset-md-4 col-md-8 form-group row">
+                        <b-form-checkbox class="col mb-1" :id="question.id + '_dontKnowButton'" v-model="question.dontKnowButton" name="Question[dontKnowButton]" value="1" unchecked-value="0">
+                            Don't Know
+                        </b-form-checkbox>
+                        <div class="col-7">
+                            <input type="text" v-model="question.dontKnowText" v-if="question.dontKnowButton && question.dontKnowButton == true" class="form-control input-xs" name="Question[dontKnowText]" :id="question.id + '_dontKnowText'">
+                        </div>
+                    </div>
+                    <div class="offset-md-4 col-md-8 form-group row">
+                        <b-form-checkbox class="col mb-1" :id="question.id + '_refuseButton'" v-model="question.refuseButton" name="Question[refuseButton]" value="1" unchecked-value="0">
+                            Refuse
+                        </b-form-checkbox>
+                        <div class="col-7">
+                            <input type="text" v-model="question.refuseText" v-if="question.refuseButton && question.refuseButton == true" class="form-control input-xs" name="Question[refuseText]" :id="question.id + '_refuseText'">
+                        </div>
+                    </div>
+                    <div class="offset-md-4 col-md-8 form-group row">
+                            <b-form-checkbox v-if="question.subjectType != 'NAME_GENERATOR'" class="col-5 mb-1" :id="question.id + '_askingStyleList'" v-model="question.askingStyleList" name="Question[askingStyleList]" value="1" unchecked-value="0">
                                 List Style
                             </b-form-checkbox>
-                        </div>
-                        <div class="col-6 col-sm-4">
-                            <input type="text" v-model="question.dontKnowText" v-if="question.dontKnowButton && question.dontKnowButton == true" class="form-control input-xs" name="Question[dontKnowText]" :id="question.id + '_dontKnowText'">
-                            <input type="text" v-model="question.refuseText" v-if="question.refuseButton && question.refuseButton == true" class="form-control input-xs" name="Question[refuseText]" :id="question.id + '_refuseText'">
                             <b-form-checkbox v-if="question.subjectType == 'ALTER' || question.subjectType == 'ALTER_PAIR'" class="col mb-1" :id="question.id + '_allButton'" v-model="question.allButton" name="Question[allButton]" value="1" unchecked-value="0">
                                 Set All
                             </b-form-checkbox>
