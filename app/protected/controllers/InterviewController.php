@@ -458,7 +458,10 @@ class InterviewController extends Controller
                 }
     
                 if ($ego_id_q && !$key) {
-                    $participantList = AlterList::findAll(array("studyId"=>$study->id, "interviewerId"=>array(0, Yii::$app->user->identity->id)));
+                    $checkIntId = 0;
+                    if (!Yii::$app->user->isGuest)
+                        $checkIntId = Yii::$app->user->identity->id;
+                    $participantList = AlterList::findAll(array("studyId"=>$study->id, "interviewerId"=>array(0, $checkIntId)));     
                     $ego_id_a = Answer::findAll(array("studyId"=>$study->id, "questionType"=>"EGO_ID"));
                     $ego_id_answers = array();
                     foreach ($ego_id_a as $a) {
