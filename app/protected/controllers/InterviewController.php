@@ -482,7 +482,7 @@ class InterviewController extends Controller
                                 $check = true;
                             }
                         }
-                        if (Yii::app()->user->isGuest && ($prop == "name" || $prop == "email")) {
+                        if (Yii::$app->user->isGuest && ($prop == "name" || $prop == "email")) {
                             $check = true;
                         }
                         if ($check == false) {
