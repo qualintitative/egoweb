@@ -91,14 +91,12 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                         </div>
                     </div>
                     <div class="offset-md-4 col-md-8 form-group row">
-                            <b-form-checkbox v-if="question.subjectType != 'NAME_GENERATOR'" class="col-5 mb-1" :id="question.id + '_askingStyleList'" v-model="question.askingStyleList" name="Question[askingStyleList]" value="1" unchecked-value="0">
-                                List Style
-                            </b-form-checkbox>
-                            <b-form-checkbox v-if="question.subjectType == 'ALTER' || question.subjectType == 'ALTER_PAIR'" class="col mb-1" :id="question.id + '_allButton'" v-model="question.allButton" name="Question[allButton]" value="1" unchecked-value="0">
-                                Set All
-                            </b-form-checkbox>
-                        </div>
-
+                        <b-form-checkbox v-if="question.subjectType != 'NAME_GENERATOR'" class="col-5 mb-1" :id="question.id + '_askingStyleList'" v-model="question.askingStyleList" name="Question[askingStyleList]" value="1" unchecked-value="0">
+                            List Style
+                        </b-form-checkbox>
+                        <b-form-checkbox v-if="question.subjectType == 'ALTER' || question.subjectType == 'ALTER_PAIR'" class="col mb-1" :id="question.id + '_allButton'" v-model="question.allButton" name="Question[allButton]" value="1" unchecked-value="0">
+                            Set All
+                        </b-form-checkbox>
                     </div>
                     <div class="form-group row">
                         <label for="Question_prompt" class="col-sm-4 col-form-label">Prompt</label>
