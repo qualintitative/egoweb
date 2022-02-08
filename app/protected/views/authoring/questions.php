@@ -715,10 +715,12 @@ QestionEditor = Vue.component('question-editor', {
             }else{ 
                 if(param == "nodeShape" || param == "egoEdgeColor" || param == "egoEdgeSize")
                     var options = this.question.alterShapeQOptions[this.question.nParams[param].questionId];
-                else 
+                else
                     var options = this.question.alterPairQOptions[this.question.nParams[param].questionId];
                 if(param == "egoEdgeColor" || param == "egoEdgeSize")
                     var newOptions = [];
+                else if(param == "nodeShape")
+                    var newOptions = [egoOption, defaultOption];
                 else
                     var newOptions = [defaultOption];
             }
@@ -728,7 +730,7 @@ QestionEditor = Vue.component('question-editor', {
             for(k in options){
                 var data = {};
                 data["id"] = options[k].id;
-                console.log(options[k])
+                //console.log(options[k])
 
                 if(param == "egoEdgeColor")
                     data[typeName] = "#000";
@@ -742,7 +744,7 @@ QestionEditor = Vue.component('question-editor', {
             }
             this.question.nParams[param].options = newOptions;
             this.question.networkParams = JSON.stringify(this.question.nParams)
-            console.log(this.question.nParams[param].options);
+            console.log(param, this.question.nParams[param].options);
             this.$forceUpdate();
         },
         reorderOption(event) {
