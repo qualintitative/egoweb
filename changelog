@@ -1,6 +1,9 @@
 # Changelog
 
-## [2.0.10.2] - 2022-01-25
+## [2.0.10.4] - 2022-02-17
+- fixed 24 completion time export bug
+
+## [2.0.10.3] - 2022-01-25
 - added custom don't know / refuse text
 - updated selenium tests
 - added redirect to completion page for finished guest interviews
