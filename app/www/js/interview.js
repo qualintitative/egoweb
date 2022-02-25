@@ -543,6 +543,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
                 if ($scope.refuseCount > 0 && $scope.answers[current_array_ids[r]].SKIPREASON == "NONE" && $('#Answer_' + current_array_ids[r] + '_VALUE').val() == "") {
                     $scope.answers[current_array_ids[r]].SKIPREASON = "REFUSE";
                     $('input[name="Answer[' + current_array_ids[r] + '][skipReason]').val("REFUSE");
+                    for(o in $scope.options[array_id]){
+                        if($scope.options[array_id][o].ID == "REFUSE"){
+                            $("label[for='multiselect-"+ array_id+"_" + o + "']").click();
+                            //$scope.options[array_id][o].checked = true;
+                        }
+                    }
                 }
             }
             $scope.answerForm.$setDirty();

@@ -347,7 +347,10 @@ class Interview extends \yii\db\ActiveRecord
             }
             $answers[] = implode("_", $ego_id_string);
             $answers[] = date("Y-m-d H:i:s", $this->start_date);
-            $answers[] = date("Y-m-d H:i:s", $this->complete_date);
+            if($this->completed == -1)
+                $answers[] = date("Y-m-d H:i:s", $this->complete_date);
+            else
+                $answers[] = "";
             foreach ($ego_ids as $eid) {
                 $answers[] = $eid;
             }
@@ -725,7 +728,10 @@ class Interview extends \yii\db\ActiveRecord
             }
             $answers["EgoID"] = implode("_", $ego_id_string);
             $answers['Start Time'] = date("Y-m-d H:i:s", $this->start_date);
-            $answers['End Time'] = date("Y-m-d H:i:s", $this->complete_date);
+            if($this->completed == -1)
+                $answers['End Time'] = date("Y-m-d H:i:s", $this->complete_date);
+            else
+                $answers['End Time'] = "";
             foreach ($ego_ids as $title => $eid) {
                 $answers[$title] = $eid;
             }
@@ -1033,7 +1039,10 @@ class Interview extends \yii\db\ActiveRecord
         }
         $answers[] = implode("_", $ego_id_string);
         $answers[] = date("Y-m-d H:i:s", $this->start_date);
-        $answers[] = date("Y-m-d H:i:s", $this->complete_date);
+        if($this->completed == -1)
+            $answers[] = date("Y-m-d H:i:s", $this->complete_date);
+        else
+            $answers[] = "";
 
         foreach ($ego_ids as $eid) {
             $answers[] = $eid;
