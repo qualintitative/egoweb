@@ -47,24 +47,6 @@ if ($interviewId && $expressionId) {
     echo "<br clear=all>";
     $stats = new Statistics;
     $stats->initComponents($interviewId, $expressionId);
-    /*
-        foreach($stats->nodes as $node){
-            echo $node . ":" . $stats->names[$node] . ": degrees: ". $stats->getDegree($node). "<br>";
-            echo $node . ":" . $stats->names[$node] . ": betweenness: ". $stats->getBetweenness($node). "<br>";
-            //echo $stats->names[$node] . ": closeness: ". $stats->getCloseness($node)."<br>";
-            echo $node . ":" .  $stats->names[$node] . ": eigenvector: ". $stats->eigenvectorCentrality($node)."<br>";
-        }
-        echo "<br>";
-        echo "Density:". $stats->getDensity()."<br>";
-        echo "Max degree value:" .$stats->maxDegree()."<br>";
-        echo "Max betweenness value:" .$stats->maxBetweenness()."<br>";
-        echo "Max eigenvector value:" .$stats->maxEigenvector()."<br>";
-        echo "Degree Centralization:" . $stats->degreeCentralization()."<br>";
-        echo "Betweenness Centralization:" . $stats->betweennessCentralization()."<br>";
-        echo "Components:".count($stats->components)."<br>";
-        echo "Dyads:".count($stats->dyads)."<br>";
-        echo "Isolates:".count($stats->isolates)."<br>";
-    */
 }
 
 ?>

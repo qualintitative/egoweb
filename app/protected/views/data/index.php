@@ -308,7 +308,7 @@ function deleteInterviews() {
 </div>
 
 
-<table class="table table-striped table-bordered table-list">
+<table id="dTable" class="table table-striped table-bordered table-list">
     <thead>
         <tr>
             <th><input type="checkbox" onclick="$('input[type=checkbox]').prop('checked', $(this).prop('checked'))"
@@ -383,3 +383,13 @@ echo Html::hiddenInput('expressionId', '', [ 'id'=>'expressionId']);
 echo Html::hiddenInput('withAlters', "1", array('id' => 'withAlters'));
 ?>
 <?= Html::endForm() ?>
+<?php
+$this->registerAssetBundle(\yii\web\JqueryAsset::className(), \yii\web\View::POS_HEAD);
+use app\assets\DataAsset;
+DataAsset::register($this);
+?>
+<script>
+$(document).ready(function() {
+    $('#dTable').DataTable();
+} );
+</script>
