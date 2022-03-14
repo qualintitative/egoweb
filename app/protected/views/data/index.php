@@ -1,6 +1,7 @@
 <?php
 use yii\helpers\Html;
 use app\models\MatchedAlters;
+use app\models\Alters;
 use app\models\Interview;
 use app\models\User;
 use yii\helpers\Url;
@@ -316,6 +317,7 @@ function deleteInterviews() {
             <th>Ego ID</th>
             <th class="d-none d-sm-table-cell">Started</th>
             <th class="d-none d-sm-table-cell">Completed</th>
+            <th class="d-none d-sm-table-cell"># of Alters</th>
             <th class="d-none d-sm-table-cell">Dyad Match ID</th>
             <th class="d-none d-sm-table-cell">Match User</th>
             <th><em class="fa fa-cog"></em></th>
@@ -330,6 +332,10 @@ function deleteInterviews() {
         ->limit($pagination->limit)
         ->all();
         foreach ($items as $interview) {
+            $alters = Alters::find()
+            ->where(new \yii\db\Expression("FIND_IN_SET(:interviewId, interviewId)"))
+            ->addParams([':interviewId' => $interview->id])
+            ->all();
             if ($interview->completed == -1) {
                 $completed = "<span style='color:#0B0'>" . date("Y-m-d H:i:s", $interview->complete_date) . "</span>";
             } else {
@@ -354,6 +360,7 @@ function deleteInterviews() {
             echo "<td>" . Html::checkbox('export[' . $interview->id . ']', false, ['id'=>'export_' . $interview->id  ]) . "</td><td>" . $interview->egoId . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . \Yii::$app->formatter->asDate($interview->start_date, "php:Y-m-d H:i:s") . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . $completed . "</td>";
+            echo "<td class='d-none d-sm-table-cell'>" . count($alters) . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . $matchId . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . $matchUser . "</td>";
             echo "<td>";
