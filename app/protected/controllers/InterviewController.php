@@ -87,7 +87,7 @@ class InterviewController extends Controller
     }
 
     /**
-     * Main page.
+     * This is the main page.  Fetches the study, questions, responses, and other relevant data and displays page.
      */
     public function actionView($studyId, $interviewId = null)
     {
@@ -294,6 +294,8 @@ class InterviewController extends Controller
                         $graphId = "";
                         $s = Study::findOne($oldInterview->studyId);
                         $question = Question::findOne(["title"=>$nq['TITLE'], "studyId"=>$s->id]);
+                        if(!$question)
+                            continue;
                         $networkExprId = $question->networkRelationshipExprId;
                         if ($networkExprId) {
                             $graphId = Graph::findOne(["expressionId"=>$networkExprId, "interviewId"=>$i_id]);
@@ -397,6 +399,9 @@ class InterviewController extends Controller
         );
     }
 
+    /**
+     * Saves response data
+     */
     public function actionSave()
     {
         $errors = 0;

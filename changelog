@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.0.10.5] - 2022-03-15
+- fixed network question multi-session bug
+- added alter number to data processing page
+- added search and filter function for data processing
+
 ## [2.0.10.4] - 2022-02-17
 - fixed 24 completion time export bug
 
