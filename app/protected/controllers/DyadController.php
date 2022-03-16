@@ -62,6 +62,9 @@ class DyadController extends Controller
     }
 
 
+    /**
+     * Lists studies and interviews for dynamic matching of alter data
+     */
     public function actionIndex()
     {
         $this->view->title = "EgoWeb 2.0";

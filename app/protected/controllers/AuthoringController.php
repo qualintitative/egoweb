@@ -323,6 +323,9 @@ class AuthoringController extends Controller
         return $this->response->redirect(Url::toRoute('/authoring/questions/' . $id));
     }
 
+    /**
+     * Add, delete, and edit questions
+     */
     public function actionQuestions($id)
     {
         $study = Study::findOne($id);

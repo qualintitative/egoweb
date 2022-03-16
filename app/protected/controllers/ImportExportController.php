@@ -66,7 +66,9 @@ class ImportExportController extends Controller
         ];
     }
 
-
+    /**
+     * Creates a new study in the database from a .study XML file
+     */
     public function actionImportstudy()
     {
         $message = "ERROR";

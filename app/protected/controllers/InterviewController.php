@@ -400,7 +400,7 @@ class InterviewController extends Controller
     }
 
     /**
-     * Saves response data
+     * Saves response data after each interview page (cliking on Next)
      */
     public function actionSave()
     {

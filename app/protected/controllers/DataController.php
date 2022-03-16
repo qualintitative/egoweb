@@ -77,7 +77,7 @@ class DataController extends Controller
     }
 
     /**
-     * Displays homepage.
+     * Lists interviews of a given study for further data processing
      *
      * @return mixed
      */
@@ -98,6 +98,10 @@ class DataController extends Controller
         return $this->render('index', ['study'=>$study, 'expressions'=>$expressions]);
     }
 
+
+    /**
+     * Generates network graph using alter data from an interview
+     */
     public function actionVisualize($id)
     {
         $graphs = array();
