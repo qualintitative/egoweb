@@ -1041,9 +1041,10 @@ new Vue({
             }
             if(this.questions[k].allOptionString)
                 this.questions[k].allOptionJson = JSON.parse(this.questions[k].allOptionString);
-            else
+            else {
                 this.questions[k].allOptionJson = {"YES_LABEL":"Yes", "NO_LABEL":"No", "NEW_NAME_LABEL":""};
-        
+                this.questions[k].allOptionString = JSON.stringify(this.questions[k].allOptionJson);
+            }
             var defaultParams = {
                 egoLabel:"You",
                 nodeColor:{questionId:'', options:[{id:-1, color:"#000"}, {id:'default', color:"#000"}]},
