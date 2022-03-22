@@ -409,13 +409,15 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
             if ($scope.alterName.trim().toLowerCase() == $scope.alterMatchName.trim().toLowerCase())
                 button.OTHERSPECIFY = true
             $scope.options[array_id][Object.keys($scope.options[array_id]).length] = button;
-            var button = new Object;
-            button.NAME = allOptions["NEW_NAME_LABEL"];
-            button.ID = "NEW_NAME";
-            button.checked = false;
-            if ($scope.alterName.trim().toLowerCase() == $scope.alterMatchName.trim().toLowerCase())
-                button.OTHERSPECIFY = true;
-            $scope.options[array_id][Object.keys($scope.options[array_id]).length] = button;
+            if(typeof allOptions["NEW_NAME_LABEL"] != "undefined" && allOptions["NEW_NAME_LABEL"] != ""){
+                var button = new Object;
+                button.NAME = allOptions["NEW_NAME_LABEL"];
+                button.ID = "NEW_NAME";
+                button.checked = false;
+                if ($scope.alterName.trim().toLowerCase() == $scope.alterMatchName.trim().toLowerCase())
+                    button.OTHERSPECIFY = true;
+                $scope.options[array_id][Object.keys($scope.options[array_id]).length] = button;
+            }
         }
         if ($scope.colspan == false) {
             $scope.colspan = 1

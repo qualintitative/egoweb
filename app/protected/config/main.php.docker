@@ -76,7 +76,7 @@ return [
         
     ],
     'params' => [
-        'version'=>'2.0.10.5',
+        'version'=>'2.0.10.6',
 		// this is used in contact page
 		'adminEmail' => 'egoweb-support@rand.org',
 		// The max login attempt before showing captcha

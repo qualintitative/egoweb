@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.10.6] - 2022-03-21
+- fixed merge alter label issue
+
 ## [2.0.10.5] - 2022-03-15
 - fixed network question multi-session bug
 - added alter number to data processing page
