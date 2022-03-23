@@ -302,6 +302,7 @@ class InterviewController extends Controller
                         }
                         if ($graphId) {
                             $otherGraphs[$nq['TITLE']][] = array(
+                                "id" => $graphId,
                                 "interviewId" => $i_id,
                                 "expressionId" => $networkExprId,
                                 "studyName" => $s->name,
