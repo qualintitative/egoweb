@@ -291,18 +291,18 @@ class InterviewController extends Controller
                             continue;
                         }
                         $oldInterview = Interview::findOne($i_id);
-                        $graphId = "";
+                        $graph = "";
                         $s = Study::findOne($oldInterview->studyId);
                         $question = Question::findOne(["title"=>$nq['TITLE'], "studyId"=>$s->id]);
                         if(!$question)
                             continue;
                         $networkExprId = $question->networkRelationshipExprId;
                         if ($networkExprId) {
-                            $graphId = Graph::findOne(["expressionId"=>$networkExprId, "interviewId"=>$i_id]);
+                            $graph = Graph::findOne(["expressionId"=>$networkExprId, "interviewId"=>$i_id]);
                         }
-                        if ($graphId) {
+                        if ($graph) {
                             $otherGraphs[$nq['TITLE']][] = array(
-                                "id" => $graphId,
+                                "id" => $graph->id,
                                 "interviewId" => $i_id,
                                 "expressionId" => $networkExprId,
                                 "studyName" => $s->name,
