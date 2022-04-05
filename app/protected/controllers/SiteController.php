@@ -92,7 +92,7 @@ class SiteController extends Controller
     }
 
     /**
-     * Displays homepage.
+     * Default homepage.  Redrects user to login page or admin page based on login status.
      *
      * @return mixed
      */

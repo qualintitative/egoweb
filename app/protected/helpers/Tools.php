@@ -70,10 +70,10 @@ class Tools
             return rtrim($text, "\0");
         }
         if ($pad > $text_len) {
-            return false;
+            return rtrim($text, "\0");
         }
         if (strspn($text, chr($pad), $text_len - $pad) != $pad) {
-            return false;
+            return rtrim($text, "\0");
         }
         return mb_substr($text, 0, - 1 * $pad, "8bit");
     }

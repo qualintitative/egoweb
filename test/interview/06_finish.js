@@ -1,7 +1,6 @@
-var IwPage = require('../pageobjects/interview.page');
+const IwPage = require('../pageobjects/interview.page');
 var assert = require('assert');
 const env = require("../.env");
-const { Browser } = require('selenium-webdriver');
 
 describe('Finish Interview', function () {
     before(function () {

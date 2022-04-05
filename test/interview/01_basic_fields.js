@@ -1,12 +1,12 @@
-var IwPage = require('../pageobjects/interview.page');
+const IwPage = require('../pageobjects/interview.page');
 var assert = require('assert');
 const env = require("../.env");
 
 describe('Basic Fields', function () {
     before(function () {
         // login
-        
         IwPage.login(egoOpts.loginInterviewer.username, egoOpts.loginInterviewer.password);
+
         // start test1 interview
         IwPage.openInterview("TEST_STUDY", "basic_start");
 
@@ -38,8 +38,8 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['num']['field'];
 
         // num
-        IwPage.inputField().waitForExist(egoOpts.waitTime);
-        IwPage.inputField().setValue(55);
+        IwPage.inputField.waitForExist(egoOpts.waitTime);
+        IwPage.inputField.setValue(55);
         IwPage.next();
 
         // numdkrf
@@ -47,8 +47,8 @@ describe('Basic Fields', function () {
         IwPage.back();
 
         // num
-        IwPage.inputField().waitForExist(egoOpts.waitTime);
-        expect(IwPage.inputField().getValue()).toBe("55");
+        IwPage.inputField.waitForExist(egoOpts.waitTime);
+        expect(IwPage.inputField.getValue()).toBe("55");
     });
 
     it("should handle negative numbers in number field", function () {
@@ -56,8 +56,8 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['num']['field'];
 
         // num
-        IwPage.inputField().waitForExist(egoOpts.waitTime);
-        IwPage.inputField().setValue(-7);
+        IwPage.inputField.waitForExist(egoOpts.waitTime);
+        IwPage.inputField.setValue(-7);
         IwPage.next();
 
         // next question
@@ -65,8 +65,8 @@ describe('Basic Fields', function () {
         IwPage.back();
 
         // num
-        IwPage.inputField().waitForExist(egoOpts.waitTime);
-        expect(IwPage.inputField().getValue()).toBe("-7");
+        IwPage.inputField.waitForExist(egoOpts.waitTime);
+        expect(IwPage.inputField.getValue()).toBe("-7");
 
     });
 
@@ -75,8 +75,8 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['num']['field'];
 
         // num
-        IwPage.inputField().waitForExist(egoOpts.waitTime);
-        IwPage.inputField().setValue("abc");
+        IwPage.inputField.waitForExist(egoOpts.waitTime);
+        IwPage.inputField.setValue("abc");
         IwPage.next();
 
         // error message
@@ -84,7 +84,7 @@ describe('Basic Fields', function () {
         expect($("div.alert").getText()).toBe("Please enter a number.");
 
         // fix error
-        IwPage.inputField().setValue("5");
+        IwPage.inputField.setValue("5");
         IwPage.next();
 
         // numdkrf
@@ -96,24 +96,24 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['numdkrf']['field'];
 
         // numdkrf
-        IwPage.inputField().waitForExist(egoOpts.waitTime);
+        IwPage.inputField.waitForExist(egoOpts.waitTime);
 
-        IwPage.inputField().setValue("99");
+        IwPage.inputField.setValue("99");
 
         // dk should clear value
         IwPage.dkLabel.click();
-        expect(IwPage.inputField().getValue()).toBe("");
+        expect(IwPage.inputField.getValue()).toBe("");
         IwPage.next();
 
         // next page
         expect(IwPage.questionTitle.getText()).not.toBe("numdkrf");
         IwPage.back();
 
-        IwPage.inputField().setValue("44");
+        IwPage.inputField.setValue("44");
 
         //rf should clear value
         IwPage.rfLabel.click();
-        expect(IwPage.inputField().getValue()).toBe("");
+        expect(IwPage.inputField.getValue()).toBe("");
         IwPage.next();
 
         // next page
@@ -125,10 +125,10 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['num0to100']['field'];
 
         // num0to100
-        IwPage.inputField().waitForExist(egoOpts.waitTime);
+        IwPage.inputField.waitForExist(egoOpts.waitTime);
 
         // try min value
-        IwPage.inputField().setValue("0");
+        IwPage.inputField.setValue("0");
         IwPage.next();
 
         // next page
@@ -136,7 +136,7 @@ describe('Basic Fields', function () {
         IwPage.back();
 
         // try max value
-        IwPage.inputField().setValue("100");
+        IwPage.inputField.setValue("100");
         IwPage.next();
 
         // next page
@@ -144,7 +144,7 @@ describe('Basic Fields', function () {
         IwPage.back();
 
         // try a value inside range
-        IwPage.inputField().setValue("73");
+        IwPage.inputField.setValue("73");
         IwPage.next();
 
         expect(IwPage.questionTitle.getText()).not.toBe("num0to100");
@@ -155,10 +155,10 @@ describe('Basic Fields', function () {
         let field = IwPage.fieldValues['num0to100']['field'];
 
         // num0to100
-        IwPage.inputField().waitForExist(egoOpts.waitTime);
+        IwPage.inputField.waitForExist(egoOpts.waitTime);
 
         // try value below min
-        IwPage.inputField().setValue("-1");
+        IwPage.inputField.setValue("-1");
         IwPage.next();
 
         // error message
@@ -166,7 +166,7 @@ describe('Basic Fields', function () {
         expect($("div.alert").getText()).toBe("The range of valid answers is 0 to 100." + IwPage.clickError);
 
         // fix value
-        IwPage.inputField().setValue("0");
+        IwPage.inputField.setValue("0");
         IwPage.next();
 
         // next page
@@ -174,10 +174,10 @@ describe('Basic Fields', function () {
         IwPage.back();
 
         // num0to100
-        IwPage.inputField().waitForExist(egoOpts.waitTime);
+        IwPage.inputField.waitForExist(egoOpts.waitTime);
 
         // try value below min
-        IwPage.inputField().setValue("101");
+        IwPage.inputField.setValue("101");
         IwPage.next();
 
         // error message
@@ -185,7 +185,7 @@ describe('Basic Fields', function () {
         expect($("div.alert").getText()).toBe("The range of valid answers is 0 to 100." + IwPage.clickError);
 
         // fix value
-        IwPage.inputField().setValue("100");
+        IwPage.inputField.setValue("100");
         IwPage.next();
 
         // next page
@@ -194,7 +194,7 @@ describe('Basic Fields', function () {
 
     it("should show error if textual value is blank", function() {
         IwPage.goToQuestion("textual");
-        IwPage.inputField().setValue("");
+        IwPage.inputField.setValue("");
         IwPage.next();
 
         // error message
@@ -202,10 +202,9 @@ describe('Basic Fields', function () {
         expect($("div.alert").getText()).toBe("Value cannot be blank." + IwPage.clickError);
 
         expect(IwPage.questionTitle.getText()).toBe("textual");
-        IwPage.inputField().setValue("test");
+        IwPage.inputField.setValue("test");
         IwPage.next();
         browser.pause(5000)
-        console.log(IwPage.questionTitle.getText())
         expect(IwPage.questionTitle.getText()).not.toBe("textual");
     });
 
@@ -228,6 +227,7 @@ describe('Basic Fields', function () {
         $("div.alert").waitForExist(egoOpts.waitTime);
         expect($("div.alert").getText()).toBe("Please enter a day of the month."  + IwPage.clickError);
         IwPage.dayField().setValue("31");
+        browser.pause(500);
         IwPage.next();
         expect(IwPage.questionTitle.getText()).not.toBe("date");
     });

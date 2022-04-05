@@ -1,4 +1,4 @@
-var IwPage = require('../pageobjects/interview.page');
+const IwPage = require('../pageobjects/interview.page');
 var assert = require('assert');
 const env = require("../.env");
 

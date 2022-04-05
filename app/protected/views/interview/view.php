@@ -2,13 +2,8 @@
 baseUrl = document.location.protocol + "//" + document.location.hostname + "/www/";
 study = <?php echo $study ?>;
 egoIdString = "<?php echo $ego_id_string ?>";
-questions = <?php echo $questions ?>;
 ego_id_questions = <?php echo $ego_id_questions ?>;
-ego_questions = <?php echo $ego_questions ?>;
-alter_questions = <?php echo $alter_questions ?>;
-alter_pair_questions = <?php echo $alter_pair_questions ?>;
-network_questions = <?php echo $network_questions ?>;
-name_gen_questions = <?php echo $name_gen_questions; ?>;
+questions = <?php echo $questions ?>;
 expressions = <?php echo $expressions ?>;
 options = <?php echo $options ?>;
 interviewId = <?php echo $interviewId ? $interviewId : "undefined" ?>;
@@ -35,7 +30,6 @@ redirect = window.localStorage.getItem('redirect');
 <?php
 $this->registerAssetBundle(\yii\web\JqueryAsset::className(), \yii\web\View::POS_HEAD);
 use app\assets\InterviewAsset;
-
 InterviewAsset::register($this);
 ?>
 <div id="ngView" ng-view class="row"></div>

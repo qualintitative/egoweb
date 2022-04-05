@@ -37,13 +37,13 @@ class Interview extends \yii\db\ActiveRecord
         ];
     }
 
-    public static function multiInterviewIds($interviewId = null, $study = null)
+    public function multiInterviewIds($interviewId = null)
     {
-        $interview = Interview::findOne($interviewId);
-        $egoAnswer = Answer::findOne(array("interviewId" => $interview->id, "questionId" => $study->multiSessionEgoId));
+        $study = Study::findOne($this->studyId);
+        $egoAnswer = Answer::findOne(array("interviewId" => $this->id, "questionId" => $study->multiSessionEgoId));
         $interviewIds = array();
         $multiIdQs = $study->multiIdQs();
-        if ($interview && $study && $study->multiSessionEgoId) {
+        if ($study && $study->multiSessionEgoId) {
             foreach ($multiIdQs as $q) {
                 $newAnswers = Answer::findAll(array("studyId" => $q->studyId, "questionId" => $q->id));
                 foreach ($newAnswers as $a) {
@@ -53,7 +53,7 @@ class Interview extends \yii\db\ActiveRecord
                 }
             }
         } else {
-            $interviewIds = $interview->id;
+            $interviewIds = [$this->id];
         }
         return $interviewIds;
     }
@@ -250,7 +250,7 @@ class Interview extends \yii\db\ActiveRecord
         }
 
         if ($multiQs) {
-            $interviewIds = Interview::multiInterviewIds($this->id, $study);
+            $interviewIds = $this->multiInterviewIds();
             $prevIds = array();
             if (is_array($interviewIds)) {
                 $prevIds = array_diff($interviewIds, array($this->id));

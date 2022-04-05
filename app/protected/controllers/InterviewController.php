@@ -88,9 +88,11 @@ class InterviewController extends Controller
 
     /**
      * This is the main page.  Fetches the study, questions, responses, and other relevant data and displays page.
+     * /interview/{studyId}/{interviewId}
      */
     public function actionView($studyId, $interviewId = null)
     {
+        // check for IPSOS / KnowledgePanel integration
         if ($studyId == 0 && isset($_GET["study"])) {
             $study = Study::findOne(["name"=>$_GET["study"]]);
             $q = Question::find()->where(array("subjectType"=>"EGO_ID", "studyId"=>$study->id))->orderBy(['ordering'=>'ASC'])->one();
@@ -114,6 +116,7 @@ class InterviewController extends Controller
                 $interview = new Interview;
                 $interview->studyId = $study->id;
                 $page = 1;
+                $answers = [];
                 if ($interview->save()) {
                     $interviewId = $interview->id;
                     $egoQs = Question::find()->where(array("subjectType"=>"EGO_ID", "studyId"=>$study->id))->all();
@@ -134,72 +137,41 @@ class InterviewController extends Controller
                         } else {
                             $answers[$a]->value = $_GET[$q->title];
                         }
-                        //print_r($_GET);
                         $answers[$a]->save();
                     }
                 }
             }
             $this->redirect("/interview/".$study->id."/". $interview->id . "#/page/" . $page . "/");
-        } else {
-            $study = Study::findOne($studyId);
-        }
-        $this->view->title = $study->name;
-        if ($study->multiSessionEgoId) {
-            $questions = Question::find()
-            ->where(new \yii\db\Expression("title = (SELECT title FROM question WHERE id = " . $study->multiSessionEgoId . ")"))
-            ->all();
-            $multiIds = array();
-            foreach ($questions as $question) {
-                $check = Study::findOne($question->studyId);
-                if ($check->multiSessionEgoId != 0) {
-                    $multiIds[] = $question->studyId;
-                }
-            }
-        } else {
-            $multiIds = $study->id;
         }
 
-        $expressions = array();
-        $results = Expression::find()->where(array("studyId"=>$multiIds))->all();
-        foreach ($results as $result) {
-            $expressions[$result->id] = Tools::mToA($result);
-        }
-        $questions = array();
+
+        // load study along with attached multi session studies
+        $study = Study::findOne($studyId);
+        $this->view->title = $study->name;
+        $multiIds = $study->multiStudyIds();
+
+
+        // fetches questions
         $audio = array();
-        if (file_exists(getcwd()."/assets/audio/".$study->id . "/STUDY/ALTERPROMPT.mp3")) {
-            $audio['ALTERPROMPT'] = "/assets/audio/".$study->id . "/STUDY/ALTERPROMPT.mp3";
-        }
-        $results = Question::find()->where(["studyId"=>$multiIds])->orderBy(["ordering"=>"ASC"])->all();
-        $ego_questions = array();
-        $alter_questions = array();
-        $alter_pair_questions = array();
-        $name_gen_questions = array();
-        $network_questions = array();
+        $questions = array();
         $questionList = array();
+        $network_questions = array();
         $autocompleteList = false;
+        $results = Question::find()->where(["studyId"=>$multiIds])->orderBy(["ordering"=>"ASC"])->all();
         foreach ($results as $result) {
             $questions[$result->id] = Tools::mToA($result);
             if ($result->studyId == $study->id && $result->subjectType != "EGO_ID") {
                 $questionList[] = Tools::mToA($result);
             }
-            if (file_exists(getcwd()."/assets/audio/".$studyId."/PREFACE/". $result->id . ".mp3")) {
-                $audio['PREFACE_' . $result->id] = "/assets/audio/".$study->id . "/PREFACE/" . $result->id . ".mp3";
-            }
-            if (file_exists(getcwd()."/assets/audio/".$study->id . "/" . $result->subjectType . "/" . $result->id . ".mp3")) {
-                $audio[$result->subjectType . $result->id] = "/assets/audio/".$study->id . "/" . $result->subjectType . "/" . $result->id . ".mp3";
-            }
             if ($study->id == $result->studyId) {
                 if ($result->subjectType == "EGO_ID") {
                     $ego_id_questions[] = Tools::mToA($result);
                 }
-                if ($result->subjectType == "EGO") {
-                    $ego_questions[] = Tools::mToA($result);
-                }
-                if ($result->subjectType == "NAME_GENERATOR") {
-                    if (isset($_GET['interviewId']) && $result->autocompleteList) {
+                if ($result->subjectType == "NAME_GENERATOR" && $interviewId) {
+                    if ($result->autocompleteList) {
                         $autocompleteList = true;
                     }
-                    if (isset($_GET['interviewId']) && $result->prefillList) {
+                    if ($result->prefillList) {
                         $check = Alters::find()->where(["interviewId"=>$_GET['interviewId']])->all();
                         if (count($check) == 0) {
                             $alterList = AlterList::find()->where(["studyId"=>$study->id])->all();
@@ -219,13 +191,6 @@ class InterviewController extends Controller
                             }
                         }
                     }
-                    $name_gen_questions[] = Tools::mToA($result);
-                }
-                if ($result->subjectType == "ALTER") {
-                    $alter_questions[] = Tools::mToA($result);
-                }
-                if ($result->subjectType == "ALTER_PAIR") {
-                    $alter_pair_questions[] = Tools::mToA($result);
                 }
                 if ($result->subjectType == "NETWORK") {
                     $network_questions[] = Tools::mToA($result);
@@ -233,32 +198,33 @@ class InterviewController extends Controller
             }
         }
 
+
+        // fetch options
         $options = array();
         $results = QuestionOption::find()->where(array("studyId"=>$multiIds))->all();
         foreach ($results as $result) {
-            if (file_exists(getcwd()."/assets/audio/". $study->id . "/OPTION/" . $result->id . ".mp3")) {
-                $audio['OPTION' . $result->id] = "/assets/audio/".$study->id . "/OPTION/" . $result->id . ".mp3";
-            }
             $options[$result->questionId][$result->ordering] = Tools::mToA($result);
         }
 
-        $answers = array();
-        $interviewId = false;
-        $interview = false;
-        $participantList = array();
-        $otherGraphs = array();
-        $alters = array();
-        $prevAlters = array();
-        $alterPrompts = array();
-        $graphs = array();
-        $notes = array();
-        $results = AlterList::findAll(array("studyId"=>$study->id));
-        $ego_id_a = Answer::findAll(array("studyId"=>$study->id, "questionType"=>"EGO_ID"));
-        $ego_id_answers = array();
 
-        foreach ($ego_id_a as $a) {
+        // fetch expressions
+        $expressions = array();
+        $results = Expression::find()->where(array("studyId"=>$multiIds))->all();
+        foreach ($results as $result) {
+            $expressions[$result->id] = Tools::mToA($result);
+        }
+
+
+        // fetch ego id answers
+        $ego_id_answers = array();
+        $results = Answer::findAll(array("studyId"=>$study->id, "questionType"=>"EGO_ID"));
+        foreach ($results as $a) {
             $ego_id_answers[] = $a->value;
         }
+
+        // fetch participant list
+        $participantList = array();
+        $results = AlterList::findAll(array("studyId"=>$study->id));
         if (count($results) > 0) {
             foreach ($results as $result) {
                 if ($autocompleteList == false && (!$result->interviewerId || (Yii::$app->user->identity != null && (Yii::$app->user->identity->isSuperAdmin() || $result->interviewerId == Yii::$app->user->identity->id)))) {
@@ -271,29 +237,48 @@ class InterviewController extends Controller
             }
         }
 
-        if (isset($_GET['interviewId'])) {
-            $interviewId = $_GET['interviewId'];
-            $interview = Interview::findOne($_GET['interviewId']);
-
-            $interviewIds = Interview::multiInterviewIds($_GET['interviewId'], $study);
-            $prevIds = array();
-            if (is_array($interviewIds)) {
-                $prevIds = array_diff($interviewIds, array($interviewId));
+        // fetch alter prompts
+        $alterPrompts = array();
+        $results = AlterPrompt::findAll(array("studyId"=>$study->id));
+        foreach ($results as $result) {
+            if (!$result->questionId) {
+                $result->questionId = 0;
             }
-            if (is_array($prevIds)) {
-                $answerList = Answer::findAll(array('interviewId'=>$interviewIds));
-                foreach ($network_questions as $nq) {
-                    if (!isset($otherGraphs[$nq['TITLE']])) {
-                        $otherGraphs[$nq['TITLE']] = array();
+            $alterPrompts[$result->questionId][$result->afterAltersEntered] = $result->display;
+        }
+
+
+        // fetch interview data (if exists)
+        $interview = false;
+        $otherGraphs = array();
+        $answers = array();
+        $prevAlters = array();
+        $alters = array();
+        $graphs = array();
+        $notes = array();
+        if ($interviewId != null) {
+            $interview = Interview::findOne($interviewId);
+            $interviewIds = $interview->multiInterviewIds();
+  //          $prevIds = array();
+//            if (is_array($interviewIds)) {
+                $prevIds = array_diff($interviewIds, array($interviewId));
+    //        }
+            if (count($prevIds) > 0) {
+                foreach ($prevIds as $i_id) {
+                    $results = Alters::find()
+                    ->where(new \yii\db\Expression("FIND_IN_SET(" . $i_id .", interviewId)"))
+                    ->all();
+                    foreach ($results as $result) {
+                        $prevAlters[$result->id] = Tools::mToA($result);
                     }
-                    foreach ($prevIds as $i_id) {
-                        if ($i_id == $interviewId) {
-                            continue;
+                    foreach ($network_questions as $nq) {
+                        if (!isset($otherGraphs[$nq['TITLE']])) {
+                            $otherGraphs[$nq['TITLE']] = array();
                         }
                         $oldInterview = Interview::findOne($i_id);
                         $graph = "";
-                        $s = Study::findOne($oldInterview->studyId);
-                        $question = Question::findOne(["title"=>$nq['TITLE'], "studyId"=>$s->id]);
+                        $oldStudy = Study::findOne($oldInterview->studyId);
+                        $question = Question::findOne(["title"=>$nq['TITLE'], "studyId"=>$oldStudy->id]);
                         if(!$question)
                             continue;
                         $networkExprId = $question->networkRelationshipExprId;
@@ -305,25 +290,25 @@ class InterviewController extends Controller
                                 "id" => $graph->id,
                                 "interviewId" => $i_id,
                                 "expressionId" => $networkExprId,
-                                "studyName" => $s->name,
+                                "studyName" => $oldStudy->name,
                                 "questionId" => $question->id,
                                 "params"=> $question->networkParams,
                             );
                         }
                     }
                 }
-            } else {
-                $answerList = Answer::findAll(array('interviewId'=>$_GET['interviewId']));
-            }
-            $results = AlterPrompt::findAll(array("studyId"=>$study->id));
-            foreach ($results as $result) {
-                if (!$result->questionId) {
-                    $result->questionId = 0;
-                }
-                $alterPrompts[$result->questionId][$result->afterAltersEntered] = $result->display;
             }
 
-            foreach ($answerList as $answer) {
+
+            // fetch alters from previous interviews
+            foreach ($prevIds as $i_id) {
+
+            }
+
+
+            // fetch answer data
+            $results = Answer::findAll(array('interviewId'=>$interviewIds));
+            foreach ($results as $answer) {
                 if ($answer->alterId1 && $answer->alterId2) {
                     $array_id = $answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2;
                 } elseif ($answer->alterId1 && ! $answer->alterId2) {
@@ -333,15 +318,11 @@ class InterviewController extends Controller
                 }
                 $answers[$array_id] = Tools::mToA($answer);
             }
-            foreach ($prevIds as $i_id) {
-                $results = Alters::find()
-                ->where(new \yii\db\Expression("FIND_IN_SET(" . $i_id .", interviewId)"))
-                ->all();
-                foreach ($results as $result) {
-                    $prevAlters[$result->id] = Tools::mToA($result);
-                }
-            }
-            $alters = array();
+
+
+
+
+            // fetch alters for current interview
             $results = Alters::find()
             ->where(new \yii\db\Expression("FIND_IN_SET(:interviewId, interviewId)"))
             ->addParams([':interviewId' => $interviewId])
@@ -352,20 +333,20 @@ class InterviewController extends Controller
                 }
                 $alters[$result->id] = Tools::mToA($result);
             }
+
+
+            // fetch graphs
             $results = Graph::find()->where(array('interviewId'=>$interviewId))->all();
             foreach ($results as $result) {
                 $graphs[$result->expressionId] = Tools::mToA($result);
             }
+
+
+            // fetch graph notes
             $results = Note::find()->where(array("interviewId"=>$interviewId))->all();
             foreach ($results as $result) {
                 $notes[$result->expressionId][$result->alterId] = $result->notes;
             }
-        }
-        if (count($prevAlters) == 0) {
-            $prevAlters = (object)[];
-        }
-        if (count($alters) == 0) {
-            $alters = (object)[];
         }
 
         return $this->render(
@@ -374,26 +355,20 @@ class InterviewController extends Controller
                 "study"=>json_encode(Tools::mToA($study)),
                 "ego_id_string"=>($interview ? $interview->egoid : ""),
                 "questions"=>json_encode($questions),
+                "questionList"=>json_encode($questionList),
+                "questionTitles"=>json_encode($study->questionTitles()),
                 "ego_id_questions"=>json_encode($ego_id_questions),
-                "ego_questions"=>json_encode($ego_questions),
-                "name_gen_questions"=>json_encode($name_gen_questions),
-                "alter_questions"=>json_encode($alter_questions),
-                "alter_pair_questions"=>json_encode($alter_pair_questions),
-                "network_questions"=>json_encode($network_questions),
-                //"no_response_questions"=>json_encode($no_response_questions),
-                "expressions"=>json_encode($expressions),
                 "options"=>json_encode($options),
+                "expressions"=>json_encode($expressions),
+                "participantList"=> (count($participantList) != 0 ? json_encode($participantList) : "[]"),
+                "alterPrompts"=>json_encode($alterPrompts),
                 "interviewId" => $interviewId,
                 "interview" => json_encode($interview ? Tools::mToA($interview) : false),
                 "answers"=>json_encode($answers),
-                "alterPrompts"=>json_encode($alterPrompts),
-                "alters"=>json_encode($alters),
-                "prevAlters"=>json_encode($prevAlters),
+                "alters"=>(count($alters) != 0 ? json_encode($alters) : "{}"),
+                "prevAlters"=>(count($prevAlters) != 0 ? json_encode($prevAlters) : "{}"),
                 "graphs"=>json_encode($graphs),
                 "allNotes"=>json_encode($notes),
-                "participantList"=>json_encode($participantList) ? json_encode($participantList) : "[]",
-                "questionList"=>json_encode($questionList),
-                "questionTitles"=>json_encode($study->questionTitles()),
                 "audio"=>json_encode($audio),
                 "otherGraphs"=>json_encode($otherGraphs),
             )
@@ -423,12 +398,11 @@ class InterviewController extends Controller
 
             if ($interviewId && !isset($answers)) {
                 $answers = array();
-                $interviewIds = Interview::multiInterviewIds($interviewId, $study);
-                if (is_array($interviewIds)) {
+                $interview = Interview::findOne($interviewId);
+                $interviewIds = $interview->multiInterviewIds();
+          
                     $answerList = Answer::findAll(array('interviewId'=>$interviewIds));
-                } else {
-                    $answerList = Answer::findAll(array('interviewId'=>$interviewId));
-                }
+            
                 foreach ($answerList as $answer) {
                     if ($answer->alterId1 && $answer->alterId2) {
                         $answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;

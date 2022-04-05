@@ -1,4 +1,4 @@
-var IwPage = require('../pageobjects/interview.page');
+const IwPage = require('../pageobjects/interview.page');
 var assert = require('assert');
 const env = require("../.env");
 
@@ -53,8 +53,8 @@ describe('Skip Logic 1', function () {
 		let field = IwPage.fieldValues['Simple Skip Source 1']['field'];
 
 		// Simple Skip Source 1
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
-		IwPage.inputField().setValue(4);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
+		IwPage.inputField.setValue(4);
 		IwPage.next();
 
 		// Show if Less than or equal to 5
@@ -64,13 +64,13 @@ describe('Skip Logic 1', function () {
 		// Question after skip
 		expect(IwPage.questionTitle.getText()).toBe("Question after skip");
 		IwPage.back();
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 		IwPage.back();
 
 		// Simple Skip Source 1
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
-		expect(IwPage.inputField().getValue()).toBe("4");
-		IwPage.inputField().setValue(6);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
+		expect(IwPage.inputField.getValue()).toBe("4");
+		IwPage.inputField.setValue(6);
 		IwPage.next();
 
 		// Show if more than 5
@@ -82,12 +82,12 @@ describe('Skip Logic 1', function () {
 
 
 		IwPage.back();
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 		IwPage.back();
 
 		// Simple Skip Source 1
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
-		IwPage.inputField().setValue(5);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
+		IwPage.inputField.setValue(5);
 		IwPage.next();
 
 		// Show if equal to 5
@@ -105,14 +105,14 @@ describe('Skip Logic 1', function () {
 		let field = IwPage.fieldValues['Simple Skip Source 1']['field'];
 
 		// Simple Skip Source 1
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 		IwPage.rfLabel.click();
 		IwPage.next();
 
 		// Show if refused
 		expect(IwPage.questionTitle.getText()).toBe("Show if Less than or equal to 5");
 		IwPage.back();
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 		IwPage.dkLabel.click();
 		IwPage.next();
 
@@ -125,7 +125,7 @@ describe('Skip Logic 1', function () {
 		IwPage.goToQuestion('Simple Skip Source 2');
 		let selector = IwPage.getOptionSelector(2);
 		// Simple Skip Source 2
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 
 		// select Option 2 by clicking on label
         IwPage.optionLabel('opt2').click();
@@ -133,7 +133,7 @@ describe('Skip Logic 1', function () {
 		//Show if one option selected
 		expect(IwPage.questionTitle.getText()).toBe("At least one option selected");
 		IwPage.back();
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 
 		//show if 2 options selected
 		IwPage.optionLabel('opt4').click();
@@ -142,7 +142,7 @@ describe('Skip Logic 1', function () {
 		IwPage.back();
 
 		//show if multiple options selected
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 		IwPage.unselectAllOptions(IwPage.fieldValues['Simple Skip Source 2'].options);
 		IwPage.optionLabel('opt5').click();
 		IwPage.optionLabel('opt2').click();
@@ -155,7 +155,7 @@ describe('Skip Logic 1', function () {
 		IwPage.goToQuestion('Simple Skip Source 2');
 		let selector = IwPage.getOptionSelector(2);
 		// Simple Skip Source 2
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 
 		// no options selected
 		IwPage.dkLabel.click();
@@ -164,7 +164,7 @@ describe('Skip Logic 1', function () {
 		expect(IwPage.questionTitle.getText()).toBe("base number");
 
 		IwPage.back();
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 		IwPage.unselectAllOptions(IwPage.fieldValues['Simple Skip Source 2'].options);
 		IwPage.optionLabel('opt5').click();
 		IwPage.optionLabel('opt2').click();
@@ -173,6 +173,7 @@ describe('Skip Logic 1', function () {
         browser.pause(5000);
 		expect(IwPage.questionTitle.getText()).toBe("At least one option selected");
 		IwPage.next();
+		browser.pause(1000);
 		expect(IwPage.questionTitle.getText()).toBe("Several multiple selection responses are selected");
 	});
 
@@ -181,14 +182,14 @@ describe('Skip Logic 1', function () {
 		let field = IwPage.fieldValues['base number']['field'];
 
 		// set base number
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
-		IwPage.inputField().setValue(75);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
+		IwPage.inputField.setValue(75);
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("compare number");
 
 		// set compare number
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
-		IwPage.inputField().setValue(25);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
+		IwPage.inputField.setValue(25);
 		IwPage.next();
 
 		//base > compare
@@ -196,9 +197,9 @@ describe('Skip Logic 1', function () {
 
 		//change compare to be higher than base
 		IwPage.back();
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 		expect(IwPage.questionTitle.getText()).toBe("compare number");
-		IwPage.inputField().setValue(85);
+		IwPage.inputField.setValue(85);
 
 		IwPage.next();
 
@@ -207,11 +208,13 @@ describe('Skip Logic 1', function () {
 
 		//change compare to be equal to base
 		IwPage.back();
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 		expect(IwPage.questionTitle.getText()).toBe("compare number");
-		IwPage.inputField().setValue(75);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
+		IwPage.inputField.setValue(75);
 
 		IwPage.next();
+		browser.pause(5000);
 
 		//base = compare
 		expect(IwPage.questionTitle.getText()).toBe("base is equal to compare");
@@ -223,44 +226,45 @@ describe('Skip Logic 1', function () {
 		let field = IwPage.fieldValues['base number']['field'];
 
 		// set reference number
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
-		IwPage.inputField().setValue(50);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
+		IwPage.inputField.setValue(50);
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("base is Less or Equal");
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("base is More or Equal");
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("landing");
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 		IwPage.back();
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 		IwPage.back();
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 		IwPage.back();
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
-		IwPage.inputField().setValue(49);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
+		IwPage.inputField.setValue(49);
 
 
 		// check lower
 		IwPage.next();
+		browser.pause(1000);
 		expect(IwPage.questionTitle.getText()).toBe("base is Less or Equal");
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("landing");
 		IwPage.back();
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 		IwPage.back();
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 
 		// check higher
-		IwPage.inputField().setValue(51);
+		IwPage.inputField.setValue(51);
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("base is More or Equal");
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 		IwPage.next();
 		expect(IwPage.questionTitle.getText()).toBe("landing");
 
@@ -271,18 +275,21 @@ describe('Skip Logic 1', function () {
 		let field = IwPage.fieldValues['Simple Skip Source 1']['field'];
 
 		// set base number 1
-		IwPage.inputField().waitForExist(egoOpts.waitTime);
-		IwPage.inputField().setValue(5);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
+		IwPage.inputField.setValue(5);
 		IwPage.next();
 
 		//set base number 2
 		IwPage.goForwardToQuestion('base number');
-		IwPage.inputField().setValue(50);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
+		IwPage.inputField.setValue(50);
 		IwPage.next();
 
 		IwPage.goForwardToQuestion('compare number');
-		IwPage.inputField().setValue(50);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
+		IwPage.inputField.setValue(50);
 		IwPage.next();
+		browser.pause(5000);
 
 		//50 < 5+50 : negative test
 		IwPage.goForwardToQuestion('landing 4');
@@ -291,12 +298,16 @@ describe('Skip Logic 1', function () {
 
 
 		IwPage.goBackToQuestion('compare number');
-		IwPage.inputField().setValue(60);
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
+		IwPage.inputField.setValue(60);
+		browser.pause(1000);
 		IwPage.next();
 
 		//60 > 5+45 : positive test
 		IwPage.goForwardToQuestion('landing 4');
+		IwPage.inputField.waitForExist(egoOpts.waitTime);
 		IwPage.next();
+		browser.pause(5000);
 		expect(IwPage.questionTitle.getText()).toBe("compare 2");
 
 	});

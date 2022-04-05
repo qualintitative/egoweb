@@ -76,12 +76,8 @@ class IwPage extends Page {
     /**
      * define or overwrite page methods
      */
-    inputField(id = null) {
-        if (id != null) {
-            return $('input#Answer_' + id + '_VALUE');
-        } else {
-            return $('input[name*="Answer"]');
-        }
+    get inputField() {
+        return $('input[name*="Answer"]');
     }
 
     monthField() {
@@ -193,7 +189,7 @@ class IwPage extends Page {
                 switch (fv.type) {
                     case 'input':
                         // simple text filed
-                        this.inputField(fv.field).setValue(fv.value);
+                        this.inputField.setValue(fv.value);
                         break;
                     case 'ms':
                         for (var key in fv.options) {
@@ -219,10 +215,10 @@ class IwPage extends Page {
 
 
     next() {
-        this.pause(500);
+        browser.pause(egoOpts.pauseTime);
         this.nextButton.waitForExist(egoOpts.waitTime);
         this.nextButton.click();
-        this.pause(1000);
+        browser.pause(egoOpts.pauseTime);
     }
 
 
@@ -351,9 +347,9 @@ class IwPage extends Page {
             this.updateNavLinks();
 
             if (startPage != null)
-                super.open(this.navLinks[startPage]);
+                return super.open(this.navLinks[startPage]);
             else
-                super.open(this.navLinks["INTRODUCTION"]);
+                return super.open(this.navLinks["INTRODUCTION"]);
         } else {
             this.ewid = max + 1 + Math.floor(Math.random() * 100);
             //console.log("new interview")
@@ -362,17 +358,16 @@ class IwPage extends Page {
             this.goForwardToQuestion("EGO ID");
 
             // enter ego id
-            let id = this.inputField();
+            let id = this.inputField;
             id.waitForExist(egoOpts.waitTime);
             id.setValue(this.ewid);
             this.next();
             this.updateNavLinks();
 
             if (startPage != null)
-                super.open(this.navLinks[startPage]);
+            return super.open(this.navLinks[startPage]);
         }
 
-        return this;
     }
 
 

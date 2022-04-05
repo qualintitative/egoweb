@@ -136,7 +136,7 @@ describe('Complete Test', function () {
             if (typeof studyTest.questions[i].options[j].otherSpecify != "undefined" && studyTest.questions[i].options[j].otherSpecify == true)
               $('//*[@id="form-' + qId + '"]').$('//label[@for="' + qId + '_QuestionOption_otherSpecify"]').click()
             $('//*[@id="form-' + qId + '"]').$('button=Add').click();
-            browser.pause(1000);
+            browser.pause(2000);
           }
           for (let j = 0; j < studyTest.questions[i].options.length; j++) {
 
