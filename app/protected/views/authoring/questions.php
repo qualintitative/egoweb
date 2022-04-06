@@ -78,6 +78,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                         <b-form-checkbox class="col mb-1" :id="question.id + '_dontKnowButton'" v-model="question.dontKnowButton" name="Question[dontKnowButton]" value="1" unchecked-value="0">
                             Don't Know
                         </b-form-checkbox>
+                        <input type="hidden" v-if="question.dontKnowButton == 0" name="Question[dontKnowButton]" value="0">
                         <div class="col-7">
                             <input type="text" v-model="question.dontKnowText" v-if="question.dontKnowButton && question.dontKnowButton == true" class="form-control input-xs" name="Question[dontKnowText]" :id="question.id + '_dontKnowText'">
                         </div>
@@ -86,6 +87,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                         <b-form-checkbox class="col mb-1" :id="question.id + '_refuseButton'" v-model="question.refuseButton" name="Question[refuseButton]" value="1" unchecked-value="0">
                             Refuse
                         </b-form-checkbox>
+                        <input type="hidden" v-if="question.refuseButton == 0" name="Question[refuseButton]" value="0">
                         <div class="col-7">
                             <input type="text" v-model="question.refuseText" v-if="question.refuseButton && question.refuseButton == true" class="form-control input-xs" name="Question[refuseText]" :id="question.id + '_refuseText'">
                         </div>
@@ -94,9 +96,11 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                         <b-form-checkbox v-if="question.subjectType != 'NAME_GENERATOR'" class="col-5 mb-1" :id="question.id + '_askingStyleList'" v-model="question.askingStyleList" name="Question[askingStyleList]" value="1" unchecked-value="0">
                             List Style
                         </b-form-checkbox>
+                        <input type="hidden" v-if="question.askingStyleList == 0" name="Question[askingStyleList]" value="0">
                         <b-form-checkbox v-if="question.subjectType == 'ALTER' || question.subjectType == 'ALTER_PAIR'" class="col mb-1" :id="question.id + '_allButton'" v-model="question.allButton" name="Question[allButton]" value="1" unchecked-value="0">
                             Set All
                         </b-form-checkbox>
+                        <input type="hidden" v-if="question.allButton == 0" name="Question[allButton]" value="0">
                     </div>
                     <div class="form-group row">
                         <label for="Question_prompt" class="col-sm-4 col-form-label">Prompt</label>
@@ -120,7 +124,6 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
 
                     <div v-if="question.subjectType == 'MERGE_ALTER'">
                         <input type="hidden" v-model="question.allOptionString" :id="question.id + '_allOptionString'" name="Question[allOptionString]">
-
                         <div class="form-group row">
                             <label :for="question.id + '_minLiteral'" class="col-sm-4 col-form-label">First Name Tolerance</label>
                             <div class="col-sm-2">
@@ -268,7 +271,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                                     Use List Limit
                                 </b-form-checkbox>
                                 <label v-if="question.withListRange == 1" class="col-sm-4 col-form-label">Count Response</label>
-                                
+                                <input type="hidden" v-if="question.withListRange == 0" name="Question[withListRange]" value="0">
                                 <div v-if="question.withListRange == 1" class="col-sm-4">
                                     <b-form-select v-model="question.listRangeString"
                                         value-field="id"
@@ -376,27 +379,32 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                             <div class="col-sm-12">
                                 <b-form-checkbox :id="question.id + '_restrictList'" name="Question[restrictList]" unchecked-value="0" value="1" type="checkbox" v-model="question.restrictList">
                                     Restrict Response to Participant List
-                                </b-form-checkbox>                
+                                </b-form-checkbox>
+                                <input type="hidden" v-if="question.restrictList == 0" name="Question[restrictList]" value="0">         
                             </div>
                             <div class="col-sm-12">
                                 <b-form-checkbox :id="question.id + '_autocompleteList'" name="Question[autocompleteList]" unchecked-value="0" value="1" type="checkbox" v-model="question.autocompleteList">
                                     Fill Autocomplete with Participant List 
-                                </b-form-checkbox>                
+                                </b-form-checkbox>
+                                <input type="hidden" v-if="question.autocompleteList == 0" name="Question[autocompleteList]" value="0">         
                             </div>
                             <div class="col-sm-12">
                                 <b-form-checkbox :id="question.id + '_prefillList'" name="Question[prefillList]" unchecked-value="0" value="1" type="checkbox" v-model="question.prefillList">
                                 Pre-fill Alters from List
-                                </b-form-checkbox>                
+                                </b-form-checkbox>
+                                <input type="hidden" v-if="question.prefillList == 0" name="Question[prefillList]" value="0">         
                             </div>
                             <div class="col-sm-12">
                                 <b-form-checkbox :id="question.id + '_keepOnSamePage'" name="Question[keepOnSamePage]" unchecked-value="0" value="1" type="checkbox" v-model="question.keepOnSamePage">
                                 Show Previous Session Alters
-                                </b-form-checkbox>                
+                                </b-form-checkbox>
+                                <input type="hidden" v-if="question.keepOnSamePage == 0" name="Question[keepOnSamePage]" value="0">         
                             </div>
                             <div class="col-sm-12">
                                 <b-form-checkbox :id="question.id + '_noneButton'" name="Question[noneButton]" unchecked-value="0" value="1" type="checkbox" v-model="question.noneButton">
                                 Allow alters already listed in other name generators
-                                </b-form-checkbox>                
+                                </b-form-checkbox>       
+                                <input type="hidden" v-if="question.noneButton == 0" name="Question[noneButton]" value="0">         
                             </div>
                         </div>
                         <b-table head-variant="dark" class="prompts" :id="question.id+'-alterPrompts'"  :items="question.alterPrompts" :fields="prompt_fields" striped responsive="sm">

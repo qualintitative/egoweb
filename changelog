@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.0.10.7] - 2022-04-06
+- fixed encryption issue when migrating older servers
+- updated selenium tests to run headless
+- refactored and revised code for clarity
+
 ## [2.0.10.6] - 2022-03-21
 - fixed merge alter label issue
 

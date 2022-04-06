@@ -4,6 +4,7 @@ namespace app\models;
 
 use Yii;
 use app\helpers\Statistics;
+use app\helpers\Tools;
 
 /**
  * This is the model class for table "interview".
@@ -17,6 +18,9 @@ use app\helpers\Statistics;
  */
 class Interview extends \yii\db\ActiveRecord
 {
+    private $_multiInterviewIds = false;
+    private $_answers = false;
+
     /**
      * {@inheritdoc}
      */
@@ -33,29 +37,54 @@ class Interview extends \yii\db\ActiveRecord
         return [
             [['active', 'studyId', 'completed', 'start_date', 'complete_date'], 'integer'],
             ['start_date','default', 'value'=>time()],
-
         ];
     }
 
     public function multiInterviewIds($interviewId = null)
     {
-        $study = Study::findOne($this->studyId);
-        $egoAnswer = Answer::findOne(array("interviewId" => $this->id, "questionId" => $study->multiSessionEgoId));
-        $interviewIds = array();
-        $multiIdQs = $study->multiIdQs();
-        if ($study && $study->multiSessionEgoId) {
-            foreach ($multiIdQs as $q) {
-                $newAnswers = Answer::findAll(array("studyId" => $q->studyId, "questionId" => $q->id));
-                foreach ($newAnswers as $a) {
-                    if ($a->value == $egoAnswer->value) {
-                        $interviewIds[] = $a->interviewId;
+        if(!$this->_multiInterviewIds){
+            $study = Study::findOne($this->studyId);
+            $egoAnswer = Answer::findOne(array("interviewId" => $this->id, "questionId" => $study->multiSessionEgoId));
+            $interviewIds = array();
+            $multiIdQs = $study->multiIdQs();
+            if ($study && $study->multiSessionEgoId) {
+                foreach ($multiIdQs as $q) {
+                    $newAnswers = Answer::findAll(array("studyId" => $q->studyId, "questionId" => $q->id));
+                    foreach ($newAnswers as $a) {
+                        if ($a->value == $egoAnswer->value) {
+                            $interviewIds[] = $a->interviewId;
+                        }
                     }
                 }
+            } else {
+                $interviewIds = [$this->id];
             }
-        } else {
-            $interviewIds = [$this->id];
+            $this->_multiInterviewIds = $interviewIds;
         }
-        return $interviewIds;
+        return $this->_multiInterviewIds;
+    }
+
+    public function getAnswers($asArray = false)
+    {
+        if(!$this->_answers || $asArray){
+            $interviewIds = $this->multiInterviewIds();
+            $results = Answer::findAll(array('interviewId'=>$interviewIds));
+            $this->_answers = [];
+            foreach ($results as $answer) {
+                if ($answer->alterId1 && $answer->alterId2) {
+                    $array_id = $answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2;
+                } elseif ($answer->alterId1 && ! $answer->alterId2) {
+                    $array_id = $answer->questionId . "-" . $answer->alterId1;
+                } else {
+                    $array_id = $answer->questionId;
+                }
+                $this->_answers[$array_id] = $answer;
+                $answersArray[$array_id] = Tools::mToA($answer);
+            }
+        }
+        if($asArray)
+            return $answersArray;
+        return $this->_answers;
     }
 
     public static function getInterviewFromEmail($studyId, $email)

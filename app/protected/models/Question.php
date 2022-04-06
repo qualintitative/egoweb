@@ -103,9 +103,9 @@ class Question extends \yii\db\ActiveRecord
         return [
             [['active', 'ordering', 'otherSpecify', 'minLiteral', 'maxLiteral', 'minCheckableBoxes', 'maxCheckableBoxes', 'minListRange', 'maxListRange', 'timeUnits', 'symmetric', 'studyId', 'answerReasonExpressionId', 'networkRelationshipExprId', 'networkNColorQId', 'networkNSizeQId', 'networkEColorQId', 'networkESizeQId'], 'integer'],
             [['title', 'prompt', 'preface', 'citation', 'subjectType', 'answerType', 'pageLevelDontKnowButton', 'pageLevelRefuseButton', 'allOptionString', 'uselfExpression', 'minLimitType', 'minPrevQues', 'maxLimitType', 'maxPrevQues', 'listRangeString', 'networkParams', 'useAlterListField', 'javascript', 'dontKnowText', 'refuseText'], 'string'],
-            [['askingStyleList', 'dontKnowButton', 'refuseButton', 'restrictList', 'autocompleteList', 'prefillList', 'keepOnSamePage'], 'boolean'],
+            [['askingStyleList', 'dontKnowButton', 'refuseButton', 'restrictList', 'autocompleteList', 'prefillList', 'withListRange', 'allButton', 'noneButton', 'keepOnSamePage'], 'boolean'],
             ['preface','default', 'value'=>""],
-            [['allButton', 'noneButton','withListRange','askingStyleList'], 'default', 'value' => 0],
+            [['askingStyleList', 'dontKnowButton', 'refuseButton', 'restrictList', 'autocompleteList', 'prefillList', 'withListRange', 'allButton', 'noneButton', 'keepOnSamePage'], 'default', 'value' => 0],
         ];
     }
 

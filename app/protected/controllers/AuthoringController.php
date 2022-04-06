@@ -223,17 +223,6 @@ class AuthoringController extends Controller
                 $question->ordering = count($questions);
             }
             if ($question->load(Yii::$app->request->post()) && $question->validate()) {
-                $question->attributes = $_POST['Question'];
-                $question->askingStyleList = isset($_POST['Question']['askingStyleList']);
-                $question->dontKnowButton = isset($_POST['Question']['dontKnowButton']);
-                $question->refuseButton = isset($_POST['Question']['refuseButton']);
-                $question->restrictList = isset($_POST['Question']['restrictList']);
-                $question->autocompleteList = isset($_POST['Question']['autocompleteList']);
-                $question->prefillList = isset($_POST['Question']['prefillList']);
-                $question->withListRange = isset($_POST['Question']['withListRange']);
-                $question->allButton = isset($_POST['Question']['allButton']);
-                $question->noneButton = isset($_POST['Question']['noneButton']);
-
                 if ($question->save()) {
                     return $this->response->redirect(Url::toRoute('/authoring/ego_id/' . $study->id));
                 } else {
@@ -331,7 +320,7 @@ class AuthoringController extends Controller
         $study = Study::findOne($id);
         $this->view->title = $study->name;
         $questions = Question::find()->where(["studyId"=>$id])->andWhere(['!=', 'subjectType', 'EGO_ID'])->orderBy(["ordering"=>"ASC"])->asArray()->all();
-        if (Yii::$app->request->post()) {
+        if (Yii::$app->request->isPost) {
             if ($_POST['Question']['id']) {
                 $question = Question::findOne($_POST['Question']['id']);
             } else {
@@ -339,16 +328,6 @@ class AuthoringController extends Controller
                 $question->ordering = count($questions);
             }
             if ($question->load(Yii::$app->request->post()) && $question->validate()) {
-                $question->askingStyleList = isset($_POST['Question']['askingStyleList']);
-                $question->dontKnowButton = isset($_POST['Question']['dontKnowButton']);
-                $question->refuseButton = isset($_POST['Question']['refuseButton']);
-                $question->restrictList = isset($_POST['Question']['restrictList']);
-                $question->autocompleteList = isset($_POST['Question']['autocompleteList']);
-                $question->prefillList = isset($_POST['Question']['prefillList']);
-                $question->withListRange = isset($_POST['Question']['withListRange']);
-                $question->allButton = isset($_POST['Question']['allButton']);
-                $question->noneButton = isset($_POST['Question']['noneButton']);
-
                 if ($question->save()) {
                     $study->save();
                     return $this->response->redirect(Url::toRoute('/authoring/questions/' . $study->id));

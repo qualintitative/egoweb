@@ -148,29 +148,29 @@ class InterviewController extends Controller
         // load study along with attached multi session studies
         $study = Study::findOne($studyId);
         $this->view->title = $study->name;
-        $multiIds = $study->multiStudyIds();
+        $multiStudyIds = $study->multiStudyIds();
 
 
-        // fetches questions
+        // load questions
         $audio = array();
         $questions = array();
         $questionList = array();
         $network_questions = array();
         $autocompleteList = false;
-        $results = Question::find()->where(["studyId"=>$multiIds])->orderBy(["ordering"=>"ASC"])->all();
+        $results = Question::find()->where(["studyId"=>$multiStudyIds])->orderBy(["ordering"=>"ASC"])->all();
         foreach ($results as $result) {
             $questions[$result->id] = Tools::mToA($result);
-            if ($result->studyId == $study->id && $result->subjectType != "EGO_ID") {
-                $questionList[] = Tools::mToA($result);
-            }
             if ($study->id == $result->studyId) {
                 if ($result->subjectType == "EGO_ID") {
                     $ego_id_questions[] = Tools::mToA($result);
+                }else{
+                    $questionList[] = Tools::mToA($result);
                 }
                 if ($result->subjectType == "NAME_GENERATOR" && $interviewId) {
                     if ($result->autocompleteList) {
                         $autocompleteList = true;
                     }
+                    // pre-fill alter list if exists
                     if ($result->prefillList) {
                         $check = Alters::find()->where(["interviewId"=>$_GET['interviewId']])->all();
                         if (count($check) == 0) {
@@ -199,30 +199,30 @@ class InterviewController extends Controller
         }
 
 
-        // fetch options
+        // load options
         $options = array();
-        $results = QuestionOption::find()->where(array("studyId"=>$multiIds))->all();
+        $results = QuestionOption::find()->where(array("studyId"=>$multiStudyIds))->all();
         foreach ($results as $result) {
             $options[$result->questionId][$result->ordering] = Tools::mToA($result);
         }
 
 
-        // fetch expressions
+        // load expressions
         $expressions = array();
-        $results = Expression::find()->where(array("studyId"=>$multiIds))->all();
+        $results = Expression::find()->where(array("studyId"=>$multiStudyIds))->all();
         foreach ($results as $result) {
             $expressions[$result->id] = Tools::mToA($result);
         }
 
 
-        // fetch ego id answers
+        // load ego id answers
         $ego_id_answers = array();
         $results = Answer::findAll(array("studyId"=>$study->id, "questionType"=>"EGO_ID"));
         foreach ($results as $a) {
             $ego_id_answers[] = $a->value;
         }
 
-        // fetch participant list
+        // load participant list
         $participantList = array();
         $results = AlterList::findAll(array("studyId"=>$study->id));
         if (count($results) > 0) {
@@ -237,7 +237,7 @@ class InterviewController extends Controller
             }
         }
 
-        // fetch alter prompts
+        // load alter prompts
         $alterPrompts = array();
         $results = AlterPrompt::findAll(array("studyId"=>$study->id));
         foreach ($results as $result) {
@@ -248,29 +248,30 @@ class InterviewController extends Controller
         }
 
 
-        // fetch interview data (if exists)
+        // load interview data
         $interview = false;
+        $prevAlters = array();
         $otherGraphs = array();
         $answers = array();
-        $prevAlters = array();
         $alters = array();
         $graphs = array();
         $notes = array();
         if ($interviewId != null) {
             $interview = Interview::findOne($interviewId);
             $interviewIds = $interview->multiInterviewIds();
-  //          $prevIds = array();
-//            if (is_array($interviewIds)) {
-                $prevIds = array_diff($interviewIds, array($interviewId));
-    //        }
+            $prevIds = array_diff($interviewIds, array($interviewId));
             if (count($prevIds) > 0) {
                 foreach ($prevIds as $i_id) {
+
+                    // load previous alters
                     $results = Alters::find()
                     ->where(new \yii\db\Expression("FIND_IN_SET(" . $i_id .", interviewId)"))
                     ->all();
                     foreach ($results as $result) {
                         $prevAlters[$result->id] = Tools::mToA($result);
                     }
+
+                    // load previous graphs
                     foreach ($network_questions as $nq) {
                         if (!isset($otherGraphs[$nq['TITLE']])) {
                             $otherGraphs[$nq['TITLE']] = array();
@@ -300,29 +301,11 @@ class InterviewController extends Controller
             }
 
 
-            // fetch alters from previous interviews
-            foreach ($prevIds as $i_id) {
-
-            }
+            // load answers
+            $answers = $interview->getAnswers(true);
 
 
-            // fetch answer data
-            $results = Answer::findAll(array('interviewId'=>$interviewIds));
-            foreach ($results as $answer) {
-                if ($answer->alterId1 && $answer->alterId2) {
-                    $array_id = $answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2;
-                } elseif ($answer->alterId1 && ! $answer->alterId2) {
-                    $array_id = $answer->questionId . "-" . $answer->alterId1;
-                } else {
-                    $array_id = $answer->questionId;
-                }
-                $answers[$array_id] = Tools::mToA($answer);
-            }
-
-
-
-
-            // fetch alters for current interview
+            // load alters for current interview
             $results = Alters::find()
             ->where(new \yii\db\Expression("FIND_IN_SET(:interviewId, interviewId)"))
             ->addParams([':interviewId' => $interviewId])
@@ -335,20 +318,22 @@ class InterviewController extends Controller
             }
 
 
-            // fetch graphs
+            // load graphs
             $results = Graph::find()->where(array('interviewId'=>$interviewId))->all();
             foreach ($results as $result) {
                 $graphs[$result->expressionId] = Tools::mToA($result);
             }
 
 
-            // fetch graph notes
+            // load notes
             $results = Note::find()->where(array("interviewId"=>$interviewId))->all();
             foreach ($results as $result) {
                 $notes[$result->expressionId][$result->alterId] = $result->notes;
             }
         }
 
+
+        // generate view with loaded data
         return $this->render(
             'view',
             array(
@@ -364,58 +349,55 @@ class InterviewController extends Controller
                 "alterPrompts"=>json_encode($alterPrompts),
                 "interviewId" => $interviewId,
                 "interview" => json_encode($interview ? Tools::mToA($interview) : false),
+                "prevAlters"=>(count($prevAlters) != 0 ? json_encode($prevAlters) : "{}"),
+                "otherGraphs"=>json_encode($otherGraphs),
                 "answers"=>json_encode($answers),
                 "alters"=>(count($alters) != 0 ? json_encode($alters) : "{}"),
-                "prevAlters"=>(count($prevAlters) != 0 ? json_encode($prevAlters) : "{}"),
                 "graphs"=>json_encode($graphs),
                 "allNotes"=>json_encode($notes),
                 "audio"=>json_encode($audio),
-                "otherGraphs"=>json_encode($otherGraphs),
             )
         );
     }
+
 
     /**
      * Saves response data after each interview page (cliking on Next)
      */
     public function actionSave()
     {
-        $errors = 0;
-        $key = "";
-        if (isset($_POST["hashKey"])) {
-            $key = $_POST["hashKey"];
-        }
-        if (isset($_POST["studyId"])) {
+        $errorMsg = "";
+        if (isset($_POST["studyId"]))
             $study = Study::findOne($_POST["studyId"]);
-        }
-        $interviewId = null;
-        $loadGuest = false;
-        foreach ($_POST['Answer'] as $Answer) {
-            $errorMsg = "";
-            if ($Answer['interviewId']) {
-                $interviewId = $Answer['interviewId'];
-            }
+        else
+            $errorMsg = "Missing study ID";
+        $interview = null;
+        $firstAnswer = $_POST['Answer'][array_keys($_POST['Answer'])[0]];
+        if($firstAnswer['interviewId'])
+            $interview = Interview::findOne($firstAnswer['interviewId']);
 
-            if ($interviewId && !isset($answers)) {
-                $answers = array();
-                $interview = Interview::findOne($interviewId);
-                $interviewIds = $interview->multiInterviewIds();
-          
-                    $answerList = Answer::findAll(array('interviewId'=>$interviewIds));
-            
-                foreach ($answerList as $answer) {
-                    if ($answer->alterId1 && $answer->alterId2) {
-                        $answers[$answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2] = $answer;
-                    } elseif ($answer->alterId1 && ! $answer->alterId2) {
-                        $answers[$answer->questionId . "-" . $answer->alterId1] = $answer;
-                    } else {
-                        $answers[$answer->questionId] = $answer;
-                    }
-                }
+        
+        // verify guest user with hash key
+        if ($firstAnswer['questionType'] == "EGO_ID" && isset($firstAnswer['value']) && $firstAnswer['value'] != "" && !$interview) {
+            $hashKey = "";
+            if (isset($_POST["hashKey"])) 
+                $hashKey = $_POST["hashKey"];
+            $interview = $this->initiateInterview($_POST['Answer'], $hashKey);
+
+            if(is_string($interview)){
+                $errorMsg = $interview;
+                $interview = null;
             }
-            if (!isset($Answer['questionType'])) {
+        }
+
+
+        // save submited answers
+        if($interview)
+            $answers = $interview->answers;
+        foreach ($_POST['Answer'] as $Answer) {
+            if (!isset($Answer['questionType']))
                 continue;
-            }
+
             if ($Answer['questionType'] == "ALTER" || $Answer['questionType'] == "PREVIOUS_ALTER") {
                 $array_id = $Answer['questionId'] . "-" . $Answer['alterId1'];
             } elseif ($Answer['questionType'] == "ALTER_PAIR") {
@@ -424,234 +406,25 @@ class InterviewController extends Controller
                 $array_id = $Answer['questionId'];
             }
 
-            if ($Answer['questionType'] == "EGO_ID" && isset($Answer['value']) && $Answer['value'] != "" && !$interviewId) {
-                foreach ($_POST['Answer'] as $ego_id) {
-                    $ego_id_q = Question::findOne($ego_id['questionId']);
-                    if (in_array($ego_id_q->useAlterListField, array("name", "email"))) {
-                        $keystr = $ego_id['value'];
-                        break;
-                    }
-                }
-
-                if (!isset($keystr)) {
-                    $ego_id_q = false;
-                }
-    
-                if ($ego_id_q && !$key) {
-                    $checkIntId = 0;
-                    if (!Yii::$app->user->isGuest)
-                        $checkIntId = Yii::$app->user->identity->id;
-                    $participantList = AlterList::findAll(array("studyId"=>$study->id, "interviewerId"=>array(0, $checkIntId)));     
-                    $ego_id_a = Answer::findAll(array("studyId"=>$study->id, "questionType"=>"EGO_ID"));
-                    $ego_id_answers = array();
-                    foreach ($ego_id_a as $a) {
-                        if ($a->questionId == $ego_id_q->id) {
-                            $ego_id_answers[] = $a->value;
-                        }
-                    }
-                    if (count($participantList) == 0 && !Yii::$app->user->isGuest) {
-                        $errors++;
-                        $errorMsg = "$keystr is either not in the participant list or has been assigned to another interviewer";
-                    } else {
-                        $check = false;
-                        $prop = $ego_id_q->useAlterListField;
-                        foreach ($participantList as $participant) {
-                            if (in_array($keystr, $ego_id_answers)) {
-                                $errorMsg = "$keystr has already been used in an interview";
-                            }
-                            if ((($participant->name == $keystr && $prop == "name") || ($participant->email == $keystr && $prop == "email")) && !in_array($keystr, $ego_id_answers)) {
-                                $check = true;
-                            }
-                        }
-                        if (Yii::$app->user->isGuest && ($prop == "name" || $prop == "email")) {
-                            $check = true;
-                        }
-                        if ($check == false) {
-                            $errors++;
-                            if (!$errorMsg) {
-                                $errorMsg = "$keystr is either not in the participant list or has been assigned to another interviewer";
-                            }
-                        }
-                    }
-                }
-
-                if (Yii::$app->user->isGuest) {
-                    if ($key != "") {
-                        if (!$key || ($key && md5($keystr) != $key)) {
-                            $errors++;
-                            $errorMsg = "Participant not found";
-                        }
-                        $loadGuest = true;
-                    } else {
-                        if ($ego_id_q->restrictList == true || !$ego_id_q->useAlterListField) {
-                            $errors++;
-                            $errorMsg = "Participant not found";
-                        }
-                    }
-                }
-
-                if ($errors == 0) {
-                    if (isset($keystr)) {
-                        $interview = Interview::getInterviewFromEmail($Answer['studyId'], $keystr);
-                        if (!$interview) {
-                            $interview = new Interview;
-                            $interview->studyId = $Answer['studyId'];
-                            $loadGuest = false;
-                        } else {
-                            if (!Yii::$app->user->isGuest) {
-                                $errors++;
-                                $errorMsg = "Participant already in existing interview";
-                            } else {
-                                $loadGuest = true;
-                            }
-                        }
-                    } else {
-                        $interview = new Interview;
-                        $interview->studyId = $Answer['studyId'];
-                    }
-                    if ($errors == 0 && $interview->save()) {
-                        $randoms = Question::findAll(array("answerType"=>"RANDOM_NUMBER", "studyId"=>$Answer['studyId']));
-                        foreach ($randoms as $q) {
-                            $a = $q->id;
-                            $answers[$a] = new Answer;
-                            $answers[$a]->interviewId = $interview->id;
-                            $answers[$a]->studyId = $Answer['studyId'];
-                            $answers[$a]->questionType = "EGO_ID";
-                            $answers[$a]->answerType = "RANDOM_NUMBER";
-                            $answers[$a]->questionId = $q->id;
-                            $answers[$a]->skipReason = "NONE";
-                            $answers[$a]->value = mt_rand($q->minLiteral, $q->maxLiteral);
-                            $answers[$a]->save();
-                        }
-                        $interviewId = $interview->id;
-                    } else {
-                        print_r($interview->errors);
-                        die();
-                    }
-                }
-            }
-            if (!isset($answers[$array_id])) {
+            if (!isset($answers[$array_id]))
                 $answers[$array_id] = new Answer;
-            }
+
             $answers[$array_id]->attributes = $Answer;
-            if ($interviewId) {
-                $answers[$array_id]->interviewId = $interviewId;
+            if ($interview) {
+                $answers[$array_id]->interviewId = $interview->id;
                 if (!isset($Answer['questionType'])) {
                     $_POST['page'] = intval($_POST['page']) + 1;
                     continue;
                 }
                 if ($Answer['questionType'] == "MERGE_ALTER") {
-                    $prevAlter = Alters::findOne($Answer['alterId2']);
-                    $alter = Alters::findOne($Answer['alterId1']);
-                    if ($Answer['value'] == "MATCH") {
-                        $intIds = explode(",", $prevAlter->interviewId);
-                        $intIds = array_unique($intIds);
-                        $intIds = array_filter($intIds, function ($value) {
-                            return !is_null($value) && $value !== '';
-                        });
-                        $prevNameQIds = explode(",", $prevAlter->nameGenQIds);
-                        $prevNameQIds = array_unique($prevNameQIds);
-                        $nameQIds = explode(",", $alter->nameGenQIds);
-                        if (stristr($prevAlter->ordering, "{")) {
-                            $prevOrdering = json_decode($prevAlter->ordering, true);
-                        } else {
-                            $prevOrdering = array();
-                            foreach ($intIds as $intId) {
-                                $results = Alters::find()
-                                ->where(new \yii\db\Expression("FIND_IN_SET(" . $intId .", interviewId)"))
-                                ->all();
-                                foreach ($results as $index=>$result) {
-                                    if ($result->name == $prevAlter->name) {
-                                        $rNameQIds = explode(",", $result->nameGenQIds);
-                                        $rNameQIds = array_unique($rNameQIds);
-                                        $prevOrdering[implode(",", $rNameQIds)] = $index;
-                                    }
-                                }
-                            }
-                        }
-                        $ordering = json_decode($alter->ordering, true);
-                        $alterListIds = explode(",", $prevAlter->alterListId);
-                        $alterListIds = array_filter($alterListIds, function ($value) {
-                            return !is_null($value) && $value !== '';
-                        });
-                        $alterListIds[] = $interviewId;
-                        $alterListIds = array_unique($alterListIds);
-                        $prevAlter->alterListId =  implode(",", $alterListIds);
-                        $alterListIds[] = $interviewId;
-
-                        if (!in_array($alter->interviewId, $intIds)) {
-                            $intIds[] = $alter->interviewId;
-                        }
-                        $prevAlter->interviewId = implode(",", $intIds);
-                        foreach ($nameQIds as $unQId) {
-                            if (!in_array($unQId, $prevNameQIds) && isset($ordering[$unQId])) {
-                                $prevNameQIds[] = $unQId;
-                                $prevOrdering[$unQId] = $ordering[$unQId];
-                            }
-                        }
-                        $prevAlter->ordering = json_encode($prevOrdering);
-                        $prevAlter->nameGenQIds = implode(",", $prevNameQIds);
-                        $prevAlter->save();
-                        if ($alter) {
-                            $alter->delete();
-                        }
-                    } else {
-                        if (strtolower($alter->name) == strtolower($prevAlter->name)) {
-                            if ($Answer['value'] == "NEW_NAME") {
-                                $alter->name = str_replace("NEW_NAME:", "", $Answer['otherSpecifyText']);
-                            } else {
-                                $alter->name = str_replace("UNMATCH:", "", $Answer['otherSpecifyText']);
-                            }
-                            if ($alter->name != "" && strtolower($alter->name) != strtolower($prevAlter->name)) {
-                                $alterListIds = explode(",", $alter->alterListId);
-                                $alterListIds = array_filter($alterListIds, function ($value) {
-                                    return !is_null($value) && $value !== '';
-                                });
-                                if (!$alterListIds) {
-                                    $alterListIds = array();
-                                }
-                                $alterListIds[] = $interviewId;
-                                $alterListIds = array_unique($alterListIds);
-                                $alter->alterListId =  implode(",", $alterListIds);
-                                $alter->save();
-                            } else {
-                                echo "{\"error\":\"Please modify the name so it's not identical to the previous name entered.\"}";
-                                die();
-                            }
-                        } else {
-                            if (!isset($alterListIds)) {
-                                $alterListIds = array();
-                            }
-                            if ($Answer['value'] == "NEW_NAME") {
-                                $alterListIds = explode(",", $alter->alterListId);
-                                $alterListIds = array_filter($alterListIds, function ($value) {
-                                    return !is_null($value) && $value !== '';
-                                });
-                                $alterListIds[] = $interviewId;
-                                $alterListIds = array_unique($alterListIds);
-                                $alter->alterListId =  implode(",", $alterListIds);
-                                $alter->save();
-                            } else {
-                                $alterListIds = explode(",", $prevAlter->alterListId);
-                                $alterListIds = array_filter($alterListIds, function ($value) {
-                                    return !is_null($value) && $value !== '';
-                                });
-                                $alterListIds[] = $alter->id;
-                                $alterListIds = array_unique($alterListIds);
-                                $prevAlter->alterListId = implode(",", $alterListIds);
-                                $prevAlter->save();
-                            }
-                        }
-                    }
+                    $this->mergeAlters($Answer);
                     continue;
                 } else {
                     if ($answers[$array_id]->save()) {
-                        if (strlen($answers[$array_id]->value) >= 8) {
+                        if($answers[$array_id]->value)
                             $answers[$array_id]->value = Tools::decrypt($answers[$array_id]->value);
-                        }
-                        if (strlen($answers[$array_id]->otherSpecifyText) >= 8) {
+                        if($answers[$array_id]->otherSpecifyText)
                             $answers[$array_id]->otherSpecifyText = Tools::decrypt($answers[$array_id]->otherSpecifyText);
-                        }
                     } else {
                         print_r($answers[$array_id]->errors);
                         die();
@@ -659,39 +432,241 @@ class InterviewController extends Controller
                 }
             }
         }
-
-        $interview = Interview::findOne($interviewId);
-        if ($loadGuest == false && $interview && $interview->completed != -1 && is_numeric($_POST['page'])) {
-            $interview->completed = (int)$_POST['page'];
-            $interview->save();
-        }
-        if ($interview) {
-            $json["interview"] = Tools::mToA($interview);
-        }
-
         foreach ($answers as $index => $answer) {
             $json["answers"][$index] = Tools::mToA($answer);
         }
 
-        if (isset($_POST['conclusion'])) {
-            $interview = Interview::findOne($interviewId);
-            $interview->completed = -1;
-            $interview->complete_date = time();
-            $interview->save();
 
-            if (isset(Yii::$app->params['exportFilePath']) && Yii::$app->params['exportFilePath']) {
-                $this->exportInterview($interview->id);
+        // update interview object
+        if ($interview) {
+            if ($interview->completed != -1 && is_numeric($_POST['page'])) {
+                $interview->completed = (int)$_POST['page'];
+                $interview->save();
+            }
+            $json["interview"] = Tools::mToA($interview);
+            if (isset($_POST['conclusion'])) {
+                $interview->completed = -1;
+                $interview->complete_date = time();
+                $interview->save();
+                if (isset(Yii::$app->params['exportFilePath']) && Yii::$app->params['exportFilePath']) {
+                    $this->exportInterview($interview->id);
+                }
             }
         }
 
-        if ($errors == 0) {
+
+        // return json
+        if (!$errorMsg)
             $json = json_encode($json);
-        } else {
+        else
             $json = "{\"error\":\"$errorMsg\"}";
-        }
         return $this->renderAjax("/layouts/ajax", ['json'=>$json]);
     }
 
+    // initate interview from answer data
+    private function initiateInterview($Answers, $hashKey = "")
+    {
+        foreach ($Answers as $ego_id) {
+            $Answer = $ego_id;
+            $ego_id_q = Question::findOne($ego_id['questionId']);
+            if (in_array($ego_id_q->useAlterListField, array("name", "email"))) {
+                $keystr = $ego_id['value'];
+                break;
+            }
+        }
+        if (!isset($keystr))
+            $ego_id_q = false;
+
+        if ($ego_id_q && !$hashKey){
+            $checkIntId = 0;
+            if (!Yii::$app->user->isGuest)
+                $checkIntId = Yii::$app->user->identity->id;
+            $participantList = AlterList::findAll(array("studyId"=>$study->id, "interviewerId"=>array(0, $checkIntId)));     
+            $ego_id_a = Answer::findAll(array("studyId"=>$study->id, "questionType"=>"EGO_ID"));
+            $ego_id_answers = array();
+            foreach ($ego_id_a as $a) {
+                if ($a->questionId == $ego_id_q->id) {
+                    $ego_id_answers[] = $a->value;
+                }
+            }
+            if (count($participantList) == 0 && !Yii::$app->user->isGuest) {
+                return "$keystr is either not in the participant list or has been assigned to another interviewer";
+            } else {
+                $check = false;
+                $prop = $ego_id_q->useAlterListField;
+                foreach ($participantList as $participant) {
+                    if (in_array($keystr, $ego_id_answers)) {
+                        return "$keystr has already been used in an interview";
+                    }
+                    if ((($participant->name == $keystr && $prop == "name") || ($participant->email == $keystr && $prop == "email")) && !in_array($keystr, $ego_id_answers)) {
+                        $check = true;
+                    }
+                }
+                if (Yii::$app->user->isGuest && ($prop == "name" || $prop == "email")) {
+                    $check = true;
+                }
+                if ($check == false) {
+                    return "$keystr is either not in the participant list or has been assigned to another interviewer";
+                }
+            }
+        }
+
+        if (Yii::$app->user->isGuest) {
+            if ($hashKey != "") {
+                if (!$hashKey || ($hashKey && md5($keystr) != $hashKey)) {
+                    return "Participant not found";
+                }
+            } else {
+                if ($ego_id_q->restrictList == true || !$ego_id_q->useAlterListField) {
+                    return "Participant not found";
+                }
+            }
+        }
+
+        if (isset($keystr)) {
+            $interview = Interview::getInterviewFromEmail($Answer['studyId'], $keystr);
+            if (!$interview) {
+                $interview = new Interview;
+                $interview->studyId = $Answer['studyId'];
+            } else {
+                if (!Yii::$app->user->isGuest) {
+                    return "Participant already in existing interview";
+                }
+            }
+        } else {
+            $interview = new Interview;
+            $interview->studyId = $Answer['studyId'];
+        }
+
+        if ($interview->save()) {
+            $randoms = Question::findAll(array("answerType"=>"RANDOM_NUMBER", "studyId"=>$Answer['studyId']));
+            foreach ($randoms as $q) {
+                $a = $q->id;
+                $answers[$a] = new Answer;
+                $answers[$a]->interviewId = $interview->id;
+                $answers[$a]->studyId = $Answer['studyId'];
+                $answers[$a]->questionType = "EGO_ID";
+                $answers[$a]->answerType = "RANDOM_NUMBER";
+                $answers[$a]->questionId = $q->id;
+                $answers[$a]->skipReason = "NONE";
+                $answers[$a]->value = mt_rand($q->minLiteral, $q->maxLiteral);
+                $answers[$a]->save();
+            }
+            return $interview;
+        } else {
+            print_r($interview->errors);
+            die();
+        }
+    }
+
+    // merge alter question
+    private function mergeAlters($Answer)
+    {
+        $prevAlter = Alters::findOne($Answer['alterId2']);
+        $alter = Alters::findOne($Answer['alterId1']);
+        if ($Answer['value'] == "MATCH") {
+            $intIds = explode(",", $prevAlter->interviewId);
+            $intIds = array_unique($intIds);
+            $intIds = array_filter($intIds, function ($value) {
+                return !is_null($value) && $value !== '';
+            });
+            $prevNameQIds = explode(",", $prevAlter->nameGenQIds);
+            $prevNameQIds = array_unique($prevNameQIds);
+            $nameQIds = explode(",", $alter->nameGenQIds);
+            if (stristr($prevAlter->ordering, "{")) {
+                $prevOrdering = json_decode($prevAlter->ordering, true);
+            } else {
+                $prevOrdering = array();
+                foreach ($intIds as $intId) {
+                    $results = Alters::find()
+                    ->where(new \yii\db\Expression("FIND_IN_SET(" . $intId .", interviewId)"))
+                    ->all();
+                    foreach ($results as $index=>$result) {
+                        if ($result->name == $prevAlter->name) {
+                            $rNameQIds = explode(",", $result->nameGenQIds);
+                            $rNameQIds = array_unique($rNameQIds);
+                            $prevOrdering[implode(",", $rNameQIds)] = $index;
+                        }
+                    }
+                }
+            }
+            $ordering = json_decode($alter->ordering, true);
+            $alterListIds = explode(",", $prevAlter->alterListId);
+            $alterListIds = array_filter($alterListIds, function ($value) {
+                return !is_null($value) && $value !== '';
+            });
+            $alterListIds[] = $interviewId;
+            $alterListIds = array_unique($alterListIds);
+            $prevAlter->alterListId =  implode(",", $alterListIds);
+            $alterListIds[] = $interviewId;
+
+            if (!in_array($alter->interviewId, $intIds)) {
+                $intIds[] = $alter->interviewId;
+            }
+            $prevAlter->interviewId = implode(",", $intIds);
+            foreach ($nameQIds as $unQId) {
+                if (!in_array($unQId, $prevNameQIds) && isset($ordering[$unQId])) {
+                    $prevNameQIds[] = $unQId;
+                    $prevOrdering[$unQId] = $ordering[$unQId];
+                }
+            }
+            $prevAlter->ordering = json_encode($prevOrdering);
+            $prevAlter->nameGenQIds = implode(",", $prevNameQIds);
+            $prevAlter->save();
+            if ($alter) {
+                $alter->delete();
+            }
+        } else {
+            if (strtolower($alter->name) == strtolower($prevAlter->name)) {
+                if ($Answer['value'] == "NEW_NAME") {
+                    $alter->name = str_replace("NEW_NAME:", "", $Answer['otherSpecifyText']);
+                } else {
+                    $alter->name = str_replace("UNMATCH:", "", $Answer['otherSpecifyText']);
+                }
+                if ($alter->name != "" && strtolower($alter->name) != strtolower($prevAlter->name)) {
+                    $alterListIds = explode(",", $alter->alterListId);
+                    $alterListIds = array_filter($alterListIds, function ($value) {
+                        return !is_null($value) && $value !== '';
+                    });
+                    if (!$alterListIds) {
+                        $alterListIds = array();
+                    }
+                    $alterListIds[] = $interviewId;
+                    $alterListIds = array_unique($alterListIds);
+                    $alter->alterListId =  implode(",", $alterListIds);
+                    $alter->save();
+                } else {
+                    echo "{\"error\":\"Please modify the name so it's not identical to the previous name entered.\"}";
+                    die();
+                }
+            } else {
+                if (!isset($alterListIds)) {
+                    $alterListIds = array();
+                }
+                if ($Answer['value'] == "NEW_NAME") {
+                    $alterListIds = explode(",", $alter->alterListId);
+                    $alterListIds = array_filter($alterListIds, function ($value) {
+                        return !is_null($value) && $value !== '';
+                    });
+                    $alterListIds[] = $interviewId;
+                    $alterListIds = array_unique($alterListIds);
+                    $alter->alterListId =  implode(",", $alterListIds);
+                    $alter->save();
+                } else {
+                    $alterListIds = explode(",", $prevAlter->alterListId);
+                    $alterListIds = array_filter($alterListIds, function ($value) {
+                        return !is_null($value) && $value !== '';
+                    });
+                    $alterListIds[] = $alter->id;
+                    $alterListIds = array_unique($alterListIds);
+                    $prevAlter->alterListId = implode(",", $alterListIds);
+                    $prevAlter->save();
+                }
+            }
+        }
+    }
+
+    // add alter
     public function actionAlter()
     {
         if (isset($_POST['Alters'])) {
