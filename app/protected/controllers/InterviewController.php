@@ -92,7 +92,7 @@ class InterviewController extends Controller
      */
     public function actionView($studyId, $interviewId = null)
     {
-        // check for IPSOS / KnowledgePanel integration
+        // check for IPSOS / KnowledgePanel API integration
         if ($studyId == 0 && isset($_GET["study"])) {
             $study = Study::findOne(["name"=>$_GET["study"]]);
             $q = Question::find()->where(array("subjectType"=>"EGO_ID", "studyId"=>$study->id))->orderBy(['ordering'=>'ASC'])->one();
@@ -363,6 +363,7 @@ class InterviewController extends Controller
 
     /**
      * Saves response data after each interview page (cliking on Next)
+     * /interview/save
      */
     public function actionSave()
     {
@@ -377,7 +378,7 @@ class InterviewController extends Controller
             $interview = Interview::findOne($firstAnswer['interviewId']);
 
         
-        // verify guest user with hash key
+        // verify guest user with hash key / create new interview
         if ($firstAnswer['questionType'] == "EGO_ID" && isset($firstAnswer['value']) && $firstAnswer['value'] != "" && !$interview) {
             $hashKey = "";
             if (isset($_POST["hashKey"])) 
@@ -417,6 +418,7 @@ class InterviewController extends Controller
                     continue;
                 }
                 if ($Answer['questionType'] == "MERGE_ALTER") {
+                    // handle the "merge alter" question type separately
                     $this->mergeAlters($Answer);
                     continue;
                 } else {
