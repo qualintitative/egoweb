@@ -665,7 +665,7 @@ class DataController extends Controller
                 foreach($options as $option){
                     $optionString[] = "'". $option->name . "'" .  ' = ' . $option->value;
                 }
-                $fields[] = implode("; ", $optionString);
+                $fields[] = '"' . implode("; ", $optionString) . '"';
             }elseif($question->answerType == "NUMERICAL"){
                 if($question->minLimitType == "NLT_LITERAL")
                     $fields[] = $question->minLiteral;
