@@ -654,7 +654,7 @@ class DataController extends Controller
             $fields = [];
             $fields[] = $question->ordering + 1 + ($question->subjectType == "EGO_ID" ? 0 : $egoIdCount);
             $fields[] = $question->title;
-            $fields[] = '"' . $question->prompt. '"';
+            $fields[] = '"' . strip_tags($question->prompt) . '"';
             $fields[] = $question->subjectType;
             $fields[] = $question->answerType;
             if($question->answerType == "MULTIPLE_SELECTION"){
