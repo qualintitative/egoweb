@@ -631,6 +631,67 @@ class DataController extends Controller
         return $this->response->sendContentAsFile($text, $study->name . '-completion-time.csv')->send();
     }
 
+    // export codebook
+    public function actionCodebook($id)
+    {
+        $text = "";
+        $rows = [];
+        $study = Study::findOne($id);
+        $fields = ["Question Order","Question Title", "Question Prompt", "Subject Type", "Response Type", "Min", "Max","Options", "Skip Logic Expression"];
+        $rows[] = implode(",", $fields);
+        $results = Expression::find()->where(["studyId"=>$id])->all();
+        $expressions;
+        foreach($results as $expression){
+            $expressions[$expression->id] = $expression->name;
+        }
+        $questions = Question::find()->where(["studyId"=>$id])->orderBy(["ordering"=>"ASC"])->all();
+        $questionTitles = [];
+        foreach($questions as $question){
+            $questionTitles[$question->id] = $question->title;
+        }
+        $egoIdCount = 0;
+        foreach($questions as $question){
+            $fields = [];
+            $fields[] = $question->ordering + 1 + ($question->subjectType == "EGO_ID" ? 0 : $egoIdCount);
+            $fields[] = $question->title;
+            $fields[] = '"' . $question->prompt. '"';
+            $fields[] = $question->subjectType;
+            $fields[] = $question->answerType;
+            if($question->answerType == "MULTIPLE_SELECTION"){
+                $fields[] = $question->minCheckableBoxes;
+                $fields[] = $question->maxCheckableBoxes;
+                $optionString = [];
+                $options = QuestionOption::find()->where(["questionId"=>$question->id])->orderBy(["ordering"=>"ASC"])->all();
+                foreach($options as $option){
+                    $optionString[] = "'". $option->name . "'" .  ' = ' . $option->value;
+                }
+                $fields[] = implode("; ", $optionString);
+            }elseif($question->answerType == "NUMERICAL"){
+                if($question->minLimitType == "NLT_LITERAL")
+                    $fields[] = $question->minLiteral;
+                if($question->minLimitType == "NLT_PREVQUES")
+                    $fields[] = $questionTitles[$question->minPrevQues];
+                if($question->maxLimitType == "NLT_LITERAL")
+                    $fields[] = $question->maxLiteral;
+                if($question->maxLimitType == "NLT_PREVQUES")
+                    $fields[] = $questionTitles[$question->maxPrevQues];
+                $fields[] = "";
+            }else{
+                $fields[] = "";
+                $fields[] = "";
+                $fields[] = "";
+            }
+            if($question->answerReasonExpressionId){
+                $fields[] = $expressions[$question->answerReasonExpressionId];
+            }
+            $rows[] = implode(",", $fields);
+            if($question->subjectType == "EGO_ID")
+                $egoIdCount++;
+        }
+        $text = implode("\r\n", $rows);
+        return $this->response->sendContentAsFile($text, $study->name . '-codebook.csv')->send();
+    }
+
     public function actionSavegraph()
     {
         if ($_POST['Graph']) {

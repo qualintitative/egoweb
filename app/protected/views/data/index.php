@@ -263,6 +263,10 @@ function exportAlterList() {
     $('#analysis').submit();
 }
 
+function exportCodebook() {
+    document.location = rootUrl + "/data/codebook/<?php echo $study->id; ?>";
+}
+
 function deleteInterviews() {
     if (confirm("Are you sure you want to DELETE these interviews?  The data will not be retrievable.")) {
         let interviewIds = [];
@@ -303,6 +307,7 @@ function deleteInterviews() {
         <button onclick='exportAlterPair()' class='authorButton'>Export Alter Pair Data</button>
         <button onclick='exportOther()' class='authorButton'>Export Other Specify Data</button>
         <button onclick='exportCompletion()' class='authorButton'>Export Completion Time Data</button>
+        <button onclick='exportCodebook()' class='authorButton'>Export Codebook</button>
         <button onclick='deleteInterviews()' class='authorButton btn-danger pull-right'>Delete Interviews</button>
 
     </div>
