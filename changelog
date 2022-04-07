@@ -2,6 +2,7 @@
 
 ## [2.0.10.8] - 2022-04-07
 - added Codebook export function to Data processing
+- added error for hide Ego ID option
 
 ## [2.0.10.7] - 2022-04-06
 - fixed encryption issue when migrating older servers

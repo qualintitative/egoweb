@@ -468,7 +468,10 @@ class InterviewController extends Controller
     // initate interview from answer data
     private function initiateInterview($Answers, $hashKey = "")
     {
+        $study = false;
         foreach ($Answers as $ego_id) {
+            if(!$study)
+                $study = Study::findOne($ego_id['studyId']);
             $Answer = $ego_id;
             $ego_id_q = Question::findOne($ego_id['questionId']);
             if (in_array($ego_id_q->useAlterListField, array("name", "email"))) {

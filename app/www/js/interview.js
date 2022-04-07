@@ -83,7 +83,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     $scope.hasRefuse = false;
     $scope.showPrevAlters = false;
     $scope.alterMatchName = "";
+    $scope.errors = new Object;
     current_array_ids = [];
+
     $(".interviewee").text(egoIdString);
     if (typeof $scope.questions[0] != "undefined" && $scope.questions[0].SUBJECTTYPE == "NAME_GENERATOR") {
         alterPromptPage = true;
@@ -167,6 +169,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     }
 
     for (var k in $scope.questions) {
+        if(typeof interviewId == "undefined" && $scope.questions[k].SUBJECTTYPE != "EGO_ID"){
+            $scope.errors[0] = 'The this interview is currently set to provide an ID from an external platform or url. The interview cannot be initiated within the EgoWeb platform. Please change this setting or initiate this interview externally. Settings can be changed in study authoring by deselecting Hide Ego Id Page (for studies will Ego Id prefills)';
+        }
         var array_id = $scope.questions[k].array_id;
         current_array_ids.push(array_id);
         if(!$scope.questions[k].DONTKNOWTEXT)
@@ -513,8 +518,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         window.scrollTo(0, 0);
         eval(study.JAVASCRIPT);
     }, 100);
-
-    $scope.errors = new Object;
 
     $scope.print = function(i_Id, g_Id, q_Id) {
         var expressionId = $scope.graphExpressionId;
