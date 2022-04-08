@@ -646,6 +646,7 @@ class DataController extends Controller
         }
         $questions = Question::find()->where(["studyId"=>$id])->orderBy(["ordering"=>"ASC"])->all();
         $questionTitles = [];
+        $allQuestions = [];
         foreach($questions as $question){
             $questionTitles[$question->id] = $question->title;
             if($question->subjectType == "EGO_ID")
@@ -660,7 +661,7 @@ class DataController extends Controller
             $fields = [];
             $fields[] = $question->ordering + 1 + ($question->subjectType == "EGO_ID" ? 0 : $egoIdCount);
             $fields[] = $question->title;
-            $fields[] = '"' . strip_tags(str_replace('"', "'",$question->prompt)) . '"';
+            $fields[] = '"' . htmlspecialchars(strip_tags(str_replace('"', "'",$question->prompt)), ENT_QUOTES, "UTF-8", false) . '"';
             $fields[] = $question->subjectType;
             $fields[] = $question->answerType;
             if($question->answerType == "MULTIPLE_SELECTION"){
