@@ -982,10 +982,8 @@ class ImportExportController extends Controller
             $file = fopen($filePath . "/" .  $interview->id . ".xml", "w") or die("Unable to open file!");
             fclose($file);
             $interview->exportStudyInterview($filePath . "/" .  $interview->id . ".xml", $columns);
-            echo "success";
-        } else {
-            echo "fail";
         }
+        echo "success";
     }
 
     public function actionExportstudy()
@@ -996,14 +994,12 @@ class ImportExportController extends Controller
 
         $study = Study::findOne($_POST['studyId']);
 
-        $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/$study->name.study";
-        $fp = fopen($filePath, 'w');
+        $filePath = getcwd() . "/assets/" . $_POST['studyId'];
+        if (!is_dir($filePath)) {
+            mkdir($filePath, 0777, true);
+        }
+        $fp = fopen($filePath  . "/$study->name.study", 'w');
 
-    
-
-        //header("Content-type: text/xml; charset=utf-8");
-        //header("Content-Disposition: attachment; filename=".$study->name.".study");
-        //header("Content-Type: application/octet-stream");
         $interviewIds = [];
         if (isset($_POST['export'])) {
             $interviewIds = $_POST['export'];

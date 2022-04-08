@@ -323,10 +323,7 @@ function deleteInterviews() {
             <th class="d-none d-sm-table-cell">Started</th>
             <th class="d-none d-sm-table-cell">Completed</th>
             <th class="d-none d-sm-table-cell"># of Alters</th>
-            <th class="d-none d-sm-table-cell">Dyad Match ID</th>
-            <th class="d-none d-sm-table-cell">Match User</th>
             <th><em class="fa fa-cog"></em></th>
-
         </tr>
     </thead>
     <tbody>
@@ -347,6 +344,7 @@ function deleteInterviews() {
                 $completed = "";
             }
             $mark = "";
+           /*
             $matchId = "";
             $matchUser = "";
             $match = MatchedAlters::find()
@@ -361,13 +359,14 @@ function deleteInterviews() {
                 else
                     $matchUser = "User Not Found";
             }
+            */
             echo "<tr $mark>";
             echo "<td>" . Html::checkbox('export[' . $interview->id . ']', false, ['id'=>'export_' . $interview->id  ]) . "</td><td>" . $interview->egoId . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . \Yii::$app->formatter->asDate($interview->start_date, "php:Y-m-d H:i:s") . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . $completed . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . count($alters) . "</td>";
-            echo "<td class='d-none d-sm-table-cell'>" . $matchId . "</td>";
-            echo "<td class='d-none d-sm-table-cell'>" . $matchUser . "</td>";
+           // echo "<td class='d-none d-sm-table-cell'>" . $matchId . "</td>";
+           // echo "<td class='d-none d-sm-table-cell'>" . $matchUser . "</td>";
             echo "<td>";
             if ($interview->completed == -1) {
                 echo "<a class='btn btn-success btn-xs' href='" . Url::to(['/data/edit/' . $interview->id]) ."'>Edit</a>";
@@ -402,6 +401,8 @@ DataAsset::register($this);
 ?>
 <script>
 $(document).ready(function() {
-    $('#dTable').DataTable();
+    $('#dTable').DataTable( {
+    "paging": false
+});
 } );
 </script>

@@ -648,13 +648,19 @@ class DataController extends Controller
         $questionTitles = [];
         foreach($questions as $question){
             $questionTitles[$question->id] = $question->title;
+            if($question->subjectType == "EGO_ID")
+                $allQuestions[] = $question;
+        }
+        foreach($questions as $question){
+            if($question->subjectType != "EGO_ID")
+            $allQuestions[] = $question;
         }
         $egoIdCount = 0;
-        foreach($questions as $question){
+        foreach($allQuestions as $question){
             $fields = [];
             $fields[] = $question->ordering + 1 + ($question->subjectType == "EGO_ID" ? 0 : $egoIdCount);
             $fields[] = $question->title;
-            $fields[] = '"' . strip_tags($question->prompt) . '"';
+            $fields[] = '"' . strip_tags(str_replace('"', "'",$question->prompt)) . '"';
             $fields[] = $question->subjectType;
             $fields[] = $question->answerType;
             if($question->answerType == "MULTIPLE_SELECTION"){
