@@ -146,7 +146,8 @@ class InterviewController extends Controller
 
 
         // load study along with attached multi session studies
-        $study = Study::findOne($studyId);
+        if(!isset($sutdy))
+            $study = Study::findOne($studyId);
         $this->view->title = $study->name;
         $multiStudyIds = $study->multiStudyIds();
 
