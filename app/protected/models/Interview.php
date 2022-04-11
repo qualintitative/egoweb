@@ -47,7 +47,7 @@ class Interview extends \yii\db\ActiveRecord
             $egoAnswer = Answer::findOne(array("interviewId" => $this->id, "questionId" => $study->multiSessionEgoId));
             $interviewIds = array();
             $multiIdQs = $study->multiIdQs();
-            if ($study && $study->multiSessionEgoId) {
+            if ($study && $study->multiSessionEgoId && $egoAnswer) {
                 foreach ($multiIdQs as $q) {
                     $newAnswers = Answer::findAll(array("studyId" => $q->studyId, "questionId" => $q->id));
                     foreach ($newAnswers as $a) {
