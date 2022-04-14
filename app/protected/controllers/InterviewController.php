@@ -397,8 +397,10 @@ class InterviewController extends Controller
         if($interview)
             $answers = $interview->answers;
         foreach ($_POST['Answer'] as $Answer) {
-            if (!isset($Answer['questionType']))
+            if (!isset($Answer['questionType'])){
+                $_POST['page'] = intval($_POST['page']) + 1;
                 continue;
+            }
 
             if ($Answer['questionType'] == "ALTER" || $Answer['questionType'] == "PREVIOUS_ALTER") {
                 $array_id = $Answer['questionId'] . "-" . $Answer['alterId1'];
@@ -414,13 +416,9 @@ class InterviewController extends Controller
             $answers[$array_id]->attributes = $Answer;
             if ($interview) {
                 $answers[$array_id]->interviewId = $interview->id;
-                if (!isset($Answer['questionType'])) {
-                    $_POST['page'] = intval($_POST['page']) + 1;
-                    continue;
-                }
                 if ($Answer['questionType'] == "MERGE_ALTER") {
                     // handle the "merge alter" question type separately
-                    $this->mergeAlters($Answer);
+                    $this->mergeAlters($Answer, $interview->id);
                     continue;
                 } else {
                     if ($answers[$array_id]->save()) {
@@ -566,7 +564,7 @@ class InterviewController extends Controller
     }
 
     // merge alter question
-    private function mergeAlters($Answer)
+    private function mergeAlters($Answer, $interviewId)
     {
         $prevAlter = Alters::findOne($Answer['alterId2']);
         $alter = Alters::findOne($Answer['alterId1']);
