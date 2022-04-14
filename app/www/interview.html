@@ -1,4 +1,4 @@
-<div class="col-sm-12 no-padding" ng-if="header != ''" ng-bind-html="header">{{ header }}</div>
+<div class="col-sm-12 no-padding" ng-if="header != '' && subjectType != 'NAME_GENERATOR'" ng-bind-html="header">{{ header }}</div>
 
 <div ng-if="subjectType != 'NAME_GENERATOR'" class="col-sm-12">
     <span ng-if="(answerForm.$submitted || errors[0] == 'That name is already on this list' || errors[0] == 'Name cannot be blank' || errors[0] == 'Name not found in list' || errors[keys(errors)[0]] == 'Please modify the name so it\'s not identical to the previous name entered.' || errors[0] == 'That name has already been listed') && errors">
@@ -10,6 +10,9 @@
 
 <div ng-if="subjectType == 'NAME_GENERATOR'" ng-class="{'col-xs-12 col-sm-9': questions[0].SUBJECTTYPE == 'NAME_GENERATOR', 'col-md-12': questions[0].SUBJECTTYPE != 'NAME_GENERATOR'}">
     <div id="floatHeader">
+        <div class="col-sm-12 no-padding" ng-if="header != ''" ng-bind-html="header">
+            {{ header }}
+        </div>
         <span ng-if="(answerForm.$submitted || errors[0] == 'That name is already on this list' || errors[0] == 'Name cannot be blank' || errors[0] == 'Name not found in list' || errors[keys(errors)[0]] == 'Please modify the name so it\'s not identical to the previous name entered.' || errors[0] == 'That name has already been listed') && errors">
             <div class="alert alert-danger" role="alert" ng-if="$index == 0" ng-repeat="error in errors">
                 {{ error }}
