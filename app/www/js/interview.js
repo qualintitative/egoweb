@@ -402,6 +402,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
         if ($scope.questions[k].SUBJECTTYPE == "MERGE_ALTER") {
             var button = new Object;
+            $scope.questions[k].MAXCHECKABLEBOXES = 1;
             var allOptions = JSON.parse($scope.questions[k].ALLOPTIONSTRING);
             button.NAME = allOptions["YES_LABEL"];
             button.ID = "MATCH";
