@@ -322,6 +322,7 @@ function deleteInterviews() {
             <th>Ego ID</th>
             <th class="d-none d-sm-table-cell">Started</th>
             <th class="d-none d-sm-table-cell">Completed</th>
+            <th class="d-none d-sm-table-cell">Interview Length</th>
             <th class="d-none d-sm-table-cell"># of Alters</th>
             <th><em class="fa fa-cog"></em></th>
         </tr>
@@ -339,34 +340,18 @@ function deleteInterviews() {
             ->addParams([':interviewId' => $interview->id])
             ->all();
             if ($interview->completed == -1) {
-                $completed = "<span style='color:#0B0'>" . date("Y-m-d H:i:s", $interview->complete_date) . "</span>";
+                $completed = "<span style='color:#0B0'>" .  \Yii::$app->formatter->asDate($interview->complete_date, "php:Y-m-d H:i:s") . "</span>";
+                $intlen = "<span style='color:#0B0'>" . round(($interview->complete_date - $interview->start_date) / 60) . " minutes</span>";
             } else {
                 $completed = "";
+                $intlen = "";
             }
-            $mark = "";
-           /*
-            $matchId = "";
-            $matchUser = "";
-            $match = MatchedAlters::find()
-            ->where(new \yii\db\Expression("interviewId1 = $interview->id OR interviewId2 = $interview->id"))
-            ->one();
-            if ($match) {
-                $mark = "class='success'";
-                $matchId = $match->getMatchId();
-                $matchU = User::findOne($match->userId);
-                if($matchU)
-                    $matchUser = $matchU->name;
-                else
-                    $matchUser = "User Not Found";
-            }
-            */
-            echo "<tr $mark>";
+            echo "<tr>";
             echo "<td>" . Html::checkbox('export[' . $interview->id . ']', false, ['id'=>'export_' . $interview->id  ]) . "</td><td>" . $interview->egoId . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . \Yii::$app->formatter->asDate($interview->start_date, "php:Y-m-d H:i:s") . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . $completed . "</td>";
+            echo "<td class='d-none d-sm-table-cell'>" . $intlen . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . count($alters) . "</td>";
-           // echo "<td class='d-none d-sm-table-cell'>" . $matchId . "</td>";
-           // echo "<td class='d-none d-sm-table-cell'>" . $matchUser . "</td>";
             echo "<td>";
             if ($interview->completed == -1) {
                 echo "<a class='btn btn-success btn-xs' href='" . Url::to(['/data/edit/' . $interview->id]) ."'>Edit</a>";
@@ -383,8 +368,8 @@ function deleteInterviews() {
 </table>
 <?php
 echo LinkPager::widget([
-'pagination' => $pagination,
-]);
+    'pagination' => $pagination,
+    ]);
 ?>
 <?= Html::beginForm([''], 'post', [ 'id'=>'analysis']) ?>
 <?php
@@ -402,6 +387,9 @@ DataAsset::register($this);
 <script>
 $(document).ready(function() {
     $('#dTable').DataTable( {
+    "emptyTable":     "No data available in table",
+    "info":           "", //"Showing _START_ to _END_ of _TOTAL_ entries",
+    "infoEmpty":      "", //"Showing 0 to 0 of 0 entries",
     "paging": false
 });
 } );

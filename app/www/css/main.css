@@ -1200,3 +1200,7 @@ html {
   #answerForm label {
       margin-top:5px;
   }
+
+  #dTable_info {
+      float:left;
+  }
