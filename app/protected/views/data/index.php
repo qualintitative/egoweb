@@ -341,7 +341,7 @@ function deleteInterviews() {
             ->all();
             if ($interview->completed == -1) {
                 $completed = "<span style='color:#0B0'>" .  \Yii::$app->formatter->asDate($interview->complete_date, "php:Y-m-d H:i:s") . "</span>";
-                $intlen = "<span style='color:#0B0'>" . round(($interview->complete_date - $interview->start_date) / 60) . " minutes</span>";
+                $intlen = "<span style='color:#0B0'>" . round(($interview->complete_date - $interview->start_date) / 60) . "</span>";
             } else {
                 $completed = "";
                 $intlen = "";
