@@ -329,11 +329,11 @@ function deleteInterviews() {
     </thead>
     <tbody>
         <?php
-        $result = Interview::find()->where(["studyId"=>$study->id]);
-        $pagination = new Pagination(['totalCount' => $result->count(), 'pageSize'=>500]);
-        $items = $result->offset($pagination->offset)
-        ->limit($pagination->limit)
-        ->all();
+        $items = Interview::find()->where(["studyId"=>$study->id])->all();
+        //$pagination = new Pagination(['totalCount' => $result->count(), 'pageSize'=>500]);
+        //$items = $result->offset($pagination->offset)
+        //->limit($pagination->limit)
+        //->all();
         foreach ($items as $interview) {
             $alters = Alters::find()
             ->where(new \yii\db\Expression("FIND_IN_SET(:interviewId, interviewId)"))
@@ -367,9 +367,11 @@ function deleteInterviews() {
     </tbody>
 </table>
 <?php
+/*
 echo LinkPager::widget([
     'pagination' => $pagination,
     ]);
+*/
 ?>
 <?= Html::beginForm([''], 'post', [ 'id'=>'analysis']) ?>
 <?php
@@ -387,10 +389,11 @@ DataAsset::register($this);
 <script>
 $(document).ready(function() {
     $('#dTable').DataTable( {
+     lengthMenu: [10, 50, 100, 500],
     "emptyTable":     "No data available in table",
-    "info":           "", //"Showing _START_ to _END_ of _TOTAL_ entries",
-    "infoEmpty":      "", //"Showing 0 to 0 of 0 entries",
-    "paging": false
+  //  "info":           "", //"Showing _START_ to _END_ of _TOTAL_ entries",
+  //  "infoEmpty":      "", //"Showing 0 to 0 of 0 entries",
+  //  "paging": false
 });
 } );
 </script>

@@ -15,6 +15,7 @@ class DataAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         '/www/css/dataTables.bootstrap4.min.css',
+        '/www/css/jquery.dataTables.min.css',
     ];
     public $js = [
         '/www/js/dataTables.bootstrap4.js',
