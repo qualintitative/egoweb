@@ -259,6 +259,9 @@ class InterviewController extends Controller
         $notes = array();
         if ($interviewId != null) {
             $interview = Interview::findOne($interviewId);
+            if($interview && $interview->completed == -1 && Yii::$app->user->isGuest){
+                return $this->response->redirect(Url::toRoute('/admin'));
+            }
             $interviewIds = $interview->multiInterviewIds();
             $prevIds = array_diff($interviewIds, array($interviewId));
             if (count($prevIds) > 0) {
