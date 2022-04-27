@@ -471,6 +471,7 @@ class InterviewController extends Controller
     private function initiateInterview($Answers, $hashKey = "")
     {
         $study = false;
+        $keystr = false;
         foreach ($Answers as $ego_id) {
             if(!$study)
                 $study = Study::findOne($ego_id['studyId']);
@@ -530,7 +531,7 @@ class InterviewController extends Controller
             }
         }
 
-        if (isset($keystr)) {
+        if ($keystr) {
             $interview = Interview::getInterviewFromEmail($Answer['studyId'], $keystr);
             if (!$interview) {
                 $interview = new Interview;
