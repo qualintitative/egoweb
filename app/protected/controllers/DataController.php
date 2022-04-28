@@ -663,10 +663,12 @@ class DataController extends Controller
         }
         $egoIdCount = 0;
         foreach($allQuestions as $question){
+            $question->prompt = str_replace('’', "'",$question->prompt);
+            $question->prompt = preg_replace('/[[:^print:]]/', " ", $question->prompt);
             $fields = [];
             $fields[] = $question->ordering + 1 + ($question->subjectType == "EGO_ID" ? 0 : $egoIdCount);
             $fields[] = $question->title;
-            $fields[] = '"' . htmlspecialchars(strip_tags(str_replace('"', "'",$question->prompt)), ENT_QUOTES, "UTF-8", false) . '"';
+            $fields[] = '"' . strip_tags(str_replace('"', "'",$question->prompt)) . '"';
             $fields[] = $question->subjectType;
             $fields[] = $question->answerType;
             if($question->answerType == "MULTIPLE_SELECTION"){
