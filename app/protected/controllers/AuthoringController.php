@@ -24,7 +24,8 @@ use app\models\AlterList;
 use yii\data\Pagination;
 
 /**
- * Site controller
+ * Authoring controller
+ * edit and create studies, set interviewer permissions
  */
 class AuthoringController extends Controller
 {
@@ -68,7 +69,10 @@ class AuthoringController extends Controller
         ];
     }
 
-
+    /**
+     * Import participant list
+     * /authoring/importlist/{id}
+     */
     public function actionImportlist($id)
     {
         if (!is_uploaded_file($_FILES['userfile']['tmp_name'])) { //checks that file is uploaded
@@ -152,6 +156,10 @@ class AuthoringController extends Controller
         return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($prompts)]);
     }
 
+    /**
+     * Create new study
+     * /authoring/create
+     */
     public function actionCreate()
     {
         $study = new Study;
@@ -176,6 +184,10 @@ class AuthoringController extends Controller
         return $this->response->redirect(Url::toRoute('/authoring/' . $data['studyId']));
     }
 
+    /**
+     * Edit study settings
+     * /authoring/{id}
+     */
     public function actionIndex($id)
     {
         $study = Study::findOne($id);
@@ -208,8 +220,10 @@ class AuthoringController extends Controller
         return $this->render('index', ["study"=>$study, "egoIdOptions"=>$egoIdOptions, "interviews"=>$interviews]);
     }
 
-
-
+    /**
+     * Add, delete, and edit Ego ID questions
+     * /authoring/ego_id/{id}
+     */
     public function actionEgo_id($id)
     {
         $study = Study::findOne($id);
@@ -314,6 +328,7 @@ class AuthoringController extends Controller
 
     /**
      * Add, delete, and edit questions
+     * /authoring/questions/{id}
      */
     public function actionQuestions($id)
     {
@@ -358,6 +373,10 @@ class AuthoringController extends Controller
         return $this->render('questions', ["study"=>$study, "questions"=>$questions, "new_question"=>$new_question, "answerTypes"=>$answerTypes, "subjectTypes"=>$subjectTypes, "expressions"=>$expressions]);
     }
 
+    /**
+     * Create participant list and assign interviewers
+     * /authoring/participants/{id}
+     */
     public function actionParticipants($id)
     {
         $study = Study::findOne($id)->toArray();
@@ -435,6 +454,10 @@ class AuthoringController extends Controller
         return Url::base(true) . Url::toRoute("/interview/".$study->id."#/page/0/".$key);
     }
 
+    /**
+     * Add, delete, and edit expressions
+     * /authoring/expressions/{id}
+     */
     public function actionExpressions($id)
     {
         $study = Study::findOne($id);
@@ -514,7 +537,6 @@ class AuthoringController extends Controller
         return $this->render('expressions', ["study"=>$study->toArray(), "expressions"=>$expressions, "questions"=>$questions, "nameGenQuestions"=>$nameGenQuestions, "countExpressions"=>$countExpressions, "countQuestions"=>$countQuestions]);
     }
 
-    
 
     public function actionAddinterviewer($id)
     {

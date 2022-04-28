@@ -28,6 +28,10 @@ use app\models\Graph;
 use app\models\Note;
 use app\models\LoginForm;
 
+/**
+ * API controller
+ * handles 3rd party integration with Confirmit
+ */
 class ApiController extends Controller
 {
     /**

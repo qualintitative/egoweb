@@ -159,7 +159,7 @@ class Question extends \yii\db\ActiveRecord
             'networkNSizeQId' => 'Network N Size Q ID',
             'networkEColorQId' => 'Network E Color Q ID',
             'networkESizeQId' => 'Network E Size Q ID',
-            'useAlterListField' => 'Use Alter List Field',
+            'useAlterListField' => 'Use Participant List Field',
             'javascript' => 'Javascript',
             'restrictList' => 'Restrict List',
             'autocompleteList' => 'Autocomplete List',

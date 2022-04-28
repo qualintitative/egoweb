@@ -29,7 +29,7 @@ use app\models\Note;
 use app\models\LoginForm;
 
 /**
- * Site controller
+ * Mobile controller
  */
 class MobileController extends Controller
 {

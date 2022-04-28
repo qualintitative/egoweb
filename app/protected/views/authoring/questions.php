@@ -93,7 +93,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                         </div>
                     </div>
                     <div class="offset-md-4 col-md-8 form-group row">
-                        <b-form-checkbox v-if="question.subjectType != 'NAME_GENERATOR'" class="col-5 mb-1" :id="question.id + '_askingStyleList'" v-model="question.askingStyleList" name="Question[askingStyleList]" value="1" unchecked-value="0">
+                        <b-form-checkbox v-if="question.subjectType != 'NAME_GENERATOR' && question.subjectType != 'EGO_ID'" class="col-5 mb-1" :id="question.id + '_askingStyleList'" v-model="question.askingStyleList" name="Question[askingStyleList]" value="1" unchecked-value="0">
                             List Style
                         </b-form-checkbox>
                         <input type="hidden" v-if="question.askingStyleList == 0" name="Question[askingStyleList]" value="0">
@@ -112,7 +112,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                 <div class="col-md-6">
 
                     <div class="form-group row" v-if="question.subjectType == 'EGO_ID' || question.subjectType == 'NAME_GENERATOR'">
-                        <label for="question.id + '_useAlterListField'" class="col-sm-4 col-form-label">Use Alter List Field</label>
+                        <label for="question.id + '_useAlterListField'" class="col-sm-4 col-form-label">Use Participant List Field</label>
                         <div class="col-sm-8">
                             <b-form-select v-model="question.useAlterListField"  name="Question[useAlterListField]" :id="question.id + '_useAlterListField'">
                                 <b-select-option value="" selected="selected">None</b-select-option>

@@ -25,7 +25,7 @@ use app\models\Graph;
 use app\models\MatchedAlters;
 
 /**
- * Site controller
+ * Data controller
  */
 class DataController extends Controller
 {
@@ -78,7 +78,7 @@ class DataController extends Controller
 
     /**
      * Lists interviews of a given study for further data processing
-     *
+     * /data/{id}
      * @return mixed
      */
     public function actionIndex($id)
@@ -101,6 +101,7 @@ class DataController extends Controller
 
     /**
      * Generates network graph using alter data from an interview
+     * /data/visualize/{id}
      */
     public function actionVisualize($id)
     {
@@ -199,6 +200,10 @@ class DataController extends Controller
         }
     }
 
+    /**
+     * Exports ego-alter data from single interview
+     * /data/expertegoalter
+     */
     public function actionExportegoalter()
     {
         if (!isset($_POST['studyId'])) {

@@ -15,7 +15,8 @@ use app\models\SignUpForm;
 use yii\helpers\Url;
 
 /**
- * Site controller
+ * Admin controller
+ * home page for logged in user
  */
 class AdminController extends Controller
 {

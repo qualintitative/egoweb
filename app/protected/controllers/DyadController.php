@@ -23,7 +23,8 @@ use app\models\Alters;
 use app\models\MatchedAlters;
 
 /**
- * Site controller
+ * Dyad controller
+ * handles alter matching (data processing)
  */
 class DyadController extends Controller
 {

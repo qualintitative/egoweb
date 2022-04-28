@@ -28,7 +28,7 @@ use app\models\Graph;
 use app\models\Note;
 
 /**
- * Site controller
+ * Import Export controller
  */
 class ImportExportController extends Controller
 {

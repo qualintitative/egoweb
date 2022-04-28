@@ -27,7 +27,7 @@ use app\models\Answer;
 use yii\helpers\Url;
 
 /**
- * Site controller
+ * Interview controller
  */
 class InterviewController extends Controller
 {
@@ -482,7 +482,7 @@ class InterviewController extends Controller
                 break;
             }
         }
-        if (!isset($keystr))
+        if (!$keystr)
             $ego_id_q = false;
 
         if ($ego_id_q && !$hashKey){
@@ -674,7 +674,11 @@ class InterviewController extends Controller
         }
     }
 
-    // add alter
+
+    /**
+     * Saves new alter to database
+     * /interview/alter
+     */
     public function actionAlter()
     {
         if (isset($_POST['Alters'])) {
@@ -750,6 +754,10 @@ class InterviewController extends Controller
         }
     }
 
+    /**
+     * Deletes alter
+     * /interview/deletealter
+     */
     public function actionDeletealter()
     {
         if (isset($_POST['Alters'])) {
@@ -839,6 +847,10 @@ class InterviewController extends Controller
         }
     }
 
+    /**
+     * Loads graph
+     * /interview/graph/{interviewId}/{graphId}/{questionId}
+     */
     public function actionGraph($interviewId, $graphId, $questionId)
     {
         $graph = false;

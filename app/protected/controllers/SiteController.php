@@ -123,8 +123,7 @@ class SiteController extends Controller
 
     /**
      * Logs in a user.
-     *
-     * @return mixed
+     * /site/login
      */
     public function actionLogin()
     {
@@ -178,8 +177,7 @@ class SiteController extends Controller
 
     /**
      * Logs out the current user.
-     *
-     * @return mixed
+     * /site/logout
      */
     public function actionLogout()
     {
@@ -188,9 +186,8 @@ class SiteController extends Controller
     }
 
     /**
-     * Signs user up.
-     *
-     * @return mixed
+     * Creates new super user
+     * /site/create
      */
     public function actionCreate()
     {
@@ -250,8 +247,7 @@ class SiteController extends Controller
 
     /**
      * Requests password reset.
-     *
-     * @return mixed
+     * /site/request-password-reset
      */
     public function actionRequestPasswordReset()
     {
@@ -274,7 +270,7 @@ class SiteController extends Controller
 
     /**
      * Resets password.
-     *
+     * /site/reset-password
      * @param string $token
      * @return mixed
      * @throws BadRequestHttpException
@@ -308,7 +304,7 @@ class SiteController extends Controller
 
     /**
      * Verify email address
-     *
+     * 
      * @param string $token
      * @throws BadRequestHttpException
      * @return yii\web\Response
