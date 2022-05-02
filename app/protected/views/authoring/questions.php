@@ -92,15 +92,20 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                             <input type="text" v-model="question.refuseText" v-if="question.refuseButton && question.refuseButton == true" class="form-control input-xs" name="Question[refuseText]" :id="question.id + '_refuseText'">
                         </div>
                     </div>
-                    <div class="offset-md-4 col-md-8 form-group row">
-                        <b-form-checkbox v-if="question.subjectType != 'NAME_GENERATOR' && question.subjectType != 'EGO_ID'" class="col-5 mb-1" :id="question.id + '_askingStyleList'" v-model="question.askingStyleList" name="Question[askingStyleList]" value="1" unchecked-value="0">
-                            Stem and Leaf
-                        </b-form-checkbox>
-                        <input type="hidden" v-if="question.askingStyleList == 0" name="Question[askingStyleList]" value="0">
-                        <b-form-checkbox v-if="question.subjectType == 'ALTER' || question.subjectType == 'ALTER_PAIR'" class="col mb-1" :id="question.id + '_allButton'" v-model="question.allButton" name="Question[allButton]" value="1" unchecked-value="0">
+                    <div class="offset-md-4 col-md-8 form-group row" v-if="question.subjectType == 'ALTER' || question.subjectType == 'ALTER_PAIR'" >
+                        <b-form-checkbox class="col mb-1" :id="question.id + '_allButton'" v-model="question.allButton" name="Question[allButton]" value="1" unchecked-value="0">
                             Set All
                         </b-form-checkbox>
                         <input type="hidden" v-if="question.allButton == 0" name="Question[allButton]" value="0">
+                        <div class="col-7">
+                            <input type="text" v-model="question.setAllText" v-if="question.allButton && question.allButton == true" class="form-control input-xs" name="Question[setAllText]" :id="question.id + '_setAllText'">
+                        </div>
+                    </div>
+                    <div class="offset-md-4 col-md-8 form-group row" v-if="question.subjectType != 'NAME_GENERATOR' && question.subjectType != 'EGO_ID'">
+                        <b-form-checkbox class="col-8 mb-1" :id="question.id + '_askingStyleList'" v-model="question.askingStyleList" name="Question[askingStyleList]" value="1" unchecked-value="0">
+                            Stem and Leaf
+                        </b-form-checkbox>
+                        <input type="hidden" v-if="question.askingStyleList == 0" name="Question[askingStyleList]" value="0">
                     </div>
                     <div class="form-group row">
                         <label for="Question_prompt" class="col-sm-4 col-form-label">Prompt</label>

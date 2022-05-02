@@ -53,6 +53,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     $scope.answerType = false;
     $scope.qId = "";
     $scope.prompt = "";
+    $scope.setAllText = "Set All";
     $scope.alterName = "";
     $scope.dates = new Object;
     $scope.time_spans = new Object;
@@ -178,6 +179,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
             $scope.questions[k].DONTKNOWTEXT = "Don't Know";
         if(!$scope.questions[k].REFUSETEXT)
             $scope.questions[k].REFUSETEXT = "Refuse";
+        if($scope.questions[k].SETALLTEXT)
+            $scope.setAllText = $scope.questions[k].SETALLTEXT;
         if ($scope.questions[k].USEALTERLISTFIELD == "name" || $scope.questions[k].USEALTERLISTFIELD == "email") {
             for (p in participantList) {
                 var qIds = [];

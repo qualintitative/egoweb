@@ -67,6 +67,28 @@ class AdminController extends Controller
      */
     public function actionIndex()
     {
+        $mFiles = scandir($_SERVER['DOCUMENT_ROOT'] . "/console/migrations/");
+        $mFile = array_pop($mFiles);
+        $dCount = (new \yii\db\Query())
+        ->select(['version'])
+        ->from('migration')
+        ->all();
+        $dFile = $dCount[count($dCount)-1]['version'].".php";
+        // check if migrations are up to date;
+        if ($mFile != $dFile) {
+            $oldApp = \Yii::$app;
+            new \yii\console\Application([
+                'id'            => 'Command runner',
+                'basePath'      => '@app',
+                'components'    => [
+                    'db' => $oldApp->db,
+                ],
+            ]);
+            \Yii::$app->runAction('migrate/up', ['migrationPath' => '@console/migrations/', 'interactive' => false]);
+            \Yii::$app = $oldApp;
+            Yii::$app->session->setFlash('success', 'Migrated database');
+            return $this->response->redirect(Url::toRoute('/admin'));
+        }
         $this->view->title = "EgoWeb 2.0";
         return $this->render('index');
     }

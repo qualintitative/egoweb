@@ -269,7 +269,7 @@
         </tr>
         <tr class="multi" ng-if="askingStyleList != false && options['all']">
             <td class="palette-sun-flower">
-                <label id="set-all"></label>
+                <label id="set-all">{{setAllText}}</label>
             </td>
             <td class="palette-sun-flower" ng-if="(answerType == 'TEXTUAL' || answerType == 'NUMERICAL') && askingStyleList != false" style="width:{{ fixedWidth }}"></td>
             <td class="palette-sun-flower" ng-repeat="option in options['all']" style="width:{{ fixedWidth }}">

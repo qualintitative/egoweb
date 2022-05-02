@@ -132,6 +132,16 @@ class SiteController extends Controller
             return $this->response->redirect(Url::toRoute('/site/create'));
         }
 
+        $mFiles = scandir($_SERVER['DOCUMENT_ROOT'] . "/console/migrations/");
+        $mFile = array_pop($mFiles);
+        //$mCount = count(glob($_SERVER['DOCUMENT_ROOT'] . "/console/migrations/*"));
+        $dCount = (new \yii\db\Query())
+        ->select(['version'])
+        ->from('migration')
+        ->all();
+        if($mFile != $dCount[count($dCount)-1]['version'].".php")
+        die();
+
         $table = Yii::$app->db->schema->getTableSchema('user');
         if (isset($table->columns['lastActivity'])) {
             $oldApp = \Yii::$app;
