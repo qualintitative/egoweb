@@ -927,8 +927,8 @@ class ImportExportController extends Controller
             $server->save();
             return $this->response->redirect(Url::toRoute('/import-export'));
         }
-        if (!Yii::$app->user->identity->isSuperAdmin()) {
-            $result = Server::findAll();
+        if (Yii::$app->user->identity->isSuperAdmin()) {
+            $result = Server::find()->all();
         } else {
             $result = Server::findAll(array("userId"=>Yii::$app->user->identity->id));
         }
