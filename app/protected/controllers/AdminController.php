@@ -67,7 +67,7 @@ class AdminController extends Controller
      */
     public function actionIndex()
     {
-        $mFiles = scandir($_SERVER['DOCUMENT_ROOT'] . "/console/migrations/");
+        $mFiles = scandir(__DIR__."/../../console/migrations/");
         $mFile = array_pop($mFiles);
         $dCount = (new \yii\db\Query())
         ->select(['version'])
