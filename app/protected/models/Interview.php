@@ -1404,6 +1404,8 @@ class Interview extends \yii\db\ActiveRecord
                     $row[] = date("Y-m-d H:i:s", $answer->timestamp);
                 else
                     $row[] = "";
+            }else{
+                $row[] = "";
             }
         }
         fputcsv($file, $row);
