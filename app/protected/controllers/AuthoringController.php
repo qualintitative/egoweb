@@ -516,20 +516,20 @@ class AuthoringController extends Controller
         $questions = [];
         $nameGenQuestions = [];
         foreach ($result as $question) {
+            if ($study->multiSessionEgoId) {
+                $question['title'] = $studyNames[$question['studyId']] .":".$question['title'];
+            }
             if ($question['subjectType'] == "NAME_GENERATOR") {
                 $nameGenQuestions[] = $question;
+            }
+            if ($question['answerType'] == "NUMERICAL" || $question['answerType'] == "RANDOM_NUMBER" || $question['answerType'] == "STORED_VALUE") {
+                $countQuestions[] = $question;
             }
             if ($question['answerType'] == "NO_RESPONSE" ||
                 $question['subjectType'] == "NAME_GENERATOR" ||
                 $question['subjectType'] == "MERGE_ALTER" ||
                 $question['subjectType'] == "NETWORK") {
                 continue;
-            }
-            if ($question['answerType'] == "NUMERICAL" || $question['answerType'] == "RANDOM_NUMBER" || $question['answerType'] == "STORED_VALUE") {
-                $countQuestions[] = $question;
-            }
-            if ($study->multiSessionEgoId) {
-                $question['title'] = $studyNames[$question['studyId']] .":".$question['title'];
             }
             $questions[$question['id']] = $question;
             $questions[$question['id']]['optionsList'] = QuestionOption::find()->where(["questionId"=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
