@@ -642,7 +642,7 @@ class DataController extends Controller
         $text = "";
         $rows = [];
         $study = Study::findOne($id);
-        $fields = ["Question Order","Question Title", "Question Prompt", "Subject Type", "Response Type", "Min", "Max","Options", "Skip Logic Expression"];
+        $fields = ["Question Order","Question Title", "Question Prompt", "Stem and Leaf", "Subject Type", "Response Type", "Min", "Max","Options", "Skip Logic Expression"];
         $rows[] = implode(",", $fields);
         $results = Expression::find()->where(["studyId"=>$id])->all();
         $expressions;
@@ -665,10 +665,13 @@ class DataController extends Controller
         foreach($allQuestions as $question){
             $question->prompt = str_replace('’', "'",$question->prompt);
             $question->prompt = preg_replace('/[[:^print:]]/', " ", $question->prompt);
+            $question->citation = str_replace('’', "'",$question->citation);
+            $question->citation = preg_replace('/[[:^print:]]/', " ", $question->citation);
             $fields = [];
             $fields[] = $question->ordering + 1 + ($question->subjectType == "EGO_ID" ? 0 : $egoIdCount);
             $fields[] = $question->title;
             $fields[] = '"' . strip_tags(str_replace('"', "'",$question->prompt)) . '"';
+            $fields[] = '"' . strip_tags(str_replace('"', "'",$question->citation)) . '"';
             $fields[] = $question->subjectType;
             $fields[] = $question->answerType;
             if($question->answerType == "MULTIPLE_SELECTION"){
