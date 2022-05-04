@@ -80,7 +80,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                         </b-form-checkbox>
                         <input type="hidden" v-if="question.dontKnowButton == 0" name="Question[dontKnowButton]" value="0">
                         <div class="col-7">
-                            <input type="text" v-model="question.dontKnowText" v-if="question.dontKnowButton && question.dontKnowButton == true" class="form-control input-xs" name="Question[dontKnowText]" :id="question.id + '_dontKnowText'">
+                            <input type="text" v-model="question.dontKnowText" v-if="question.dontKnowButton && question.dontKnowButton == true" class="form-control input-xs" name="Question[dontKnowText]" :id="question.id + '_dontKnowText'" maxlength="32">
                         </div>
                     </div>
                     <div class="offset-md-4 col-md-8 form-group row">
@@ -89,7 +89,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                         </b-form-checkbox>
                         <input type="hidden" v-if="question.refuseButton == 0" name="Question[refuseButton]" value="0">
                         <div class="col-7">
-                            <input type="text" v-model="question.refuseText" v-if="question.refuseButton && question.refuseButton == true" class="form-control input-xs" name="Question[refuseText]" :id="question.id + '_refuseText'">
+                            <input type="text" v-model="question.refuseText" v-if="question.refuseButton && question.refuseButton == true" class="form-control input-xs" name="Question[refuseText]" :id="question.id + '_refuseText'" maxlength="32">
                         </div>
                     </div>
                     <div class="offset-md-4 col-md-8 form-group row" v-if="question.subjectType == 'ALTER' || question.subjectType == 'ALTER_PAIR'" >
@@ -98,7 +98,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                         </b-form-checkbox>
                         <input type="hidden" v-if="question.allButton == 0" name="Question[allButton]" value="0">
                         <div class="col-7">
-                            <input type="text" v-model="question.setAllText" v-if="question.allButton && question.allButton == true" class="form-control input-xs" name="Question[setAllText]" :id="question.id + '_setAllText'">
+                            <input type="text" v-model="question.setAllText" v-if="question.allButton && question.allButton == true" class="form-control input-xs" name="Question[setAllText]" :id="question.id + '_setAllText'"  maxlength="32">
                         </div>
                     </div>
                     <div class="offset-md-4 col-md-8 form-group row" v-if="question.subjectType != 'NAME_GENERATOR' && question.subjectType != 'EGO_ID'">
