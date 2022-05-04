@@ -102,8 +102,11 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                         </div>
                     </div>
                     <div class="offset-md-4 col-md-8 form-group row" v-if="question.subjectType != 'NAME_GENERATOR' && question.subjectType != 'EGO_ID'">
-                        <b-form-checkbox class="col-8 mb-1" :id="question.id + '_askingStyleList'" v-model="question.askingStyleList" name="Question[askingStyleList]" value="1" unchecked-value="0">
+                        <b-form-checkbox v-if="question.subjectType != 'ALTER' && question.subjectType != 'ALTER_PAIR'" class="col-8 mb-1" :id="question.id + '_askingStyleList'" v-model="question.askingStyleList" name="Question[askingStyleList]" value="1" unchecked-value="0">
                             Stem and Leaf
+                        </b-form-checkbox>
+                        <b-form-checkbox v-if="question.subjectType == 'ALTER' || question.subjectType == 'ALTER_PAIR'" class="col-8 mb-1" :id="question.id + '_askingStyleList'" v-model="question.askingStyleList" name="Question[askingStyleList]" value="1" unchecked-value="0">
+                            List Style
                         </b-form-checkbox>
                         <input type="hidden" v-if="question.askingStyleList == 0" name="Question[askingStyleList]" value="0">
                     </div>
