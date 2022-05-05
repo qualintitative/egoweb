@@ -814,9 +814,8 @@ class AuthoringController extends Controller
 
         $headers = array();
         $headers[] = 'Study Name';
-        $headers[] = "Alter ID";
-        $headers[] = "Alter Name";
-        $headers[] = "Alter Email";
+        $headers[] = "Name";
+        $headers[] = "Email";
         if ($ego_id) {
             $headers[] = "Link With Key";
         }
@@ -827,7 +826,6 @@ class AuthoringController extends Controller
             $row = array();
             $key = "";
             $row[] = $study->name;
-            $row[] = $alter->id;
             $row[] = $alter->name;
             $row[] = $alter->email;
             if ($ego_id) {
