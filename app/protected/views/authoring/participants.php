@@ -79,14 +79,14 @@ echo LinkPager::widget([
                             <?= Html::beginForm(['/authoring/ajaxupdate/'.$study['id']], 'post', [ 'id'=>'addAlterList']) ?>
                 
                             <div class="row">
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <input class="form-control input-xs" name="AlterList[name]">
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-sm-2">
                                     <input class="form-control input-xs" name="AlterList[email]">
                                 </div>
                                 <input type="hidden" v-model="nameGenQIds" name="AlterList[nameGenQIds]" />
-                                <div class="col-sm-2">
+                                <div class="col-sm-4">
                                     <b-form-checkbox-group :options="questions" text-field="title" value-field="id"
                                         @change="checkVal($event)">
                                     </b-form-checkbox-group>
@@ -158,9 +158,18 @@ new Vue({
                 }
             ],
             list_fields: [
-                'name',
-                'email',
-                'nameGenQIds',
+                {
+                    key:'name',
+                    class:'col-2'
+                },
+                {
+                    key:'email',
+                    class:'col-2'
+                },
+                {
+                    key:'nameGenQIds',
+                    class:'col-4'
+                },
                 'interviewerId',
                 {
                     key: "info",
