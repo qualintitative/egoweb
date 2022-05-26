@@ -60,10 +60,14 @@ function exportEgo() {
     var finished = 0;
     withAlters = 0;
     var batchSize = 1;
+    multiSesh = 1;
     var interviews = $("input[type='checkbox'][name*='export']:checked");
     if ($("#withAlters1").prop("checked") == true)
         withAlters = 1;
+    if ($("#multiSession1").prop("checked") == false)
+        multiSesh = 0;
     $("#withAlters").val(withAlters);
+    $("#multiSession").val(multiSesh);
     $(".progress-bar").width(0);
     var batchPromiseRecursive = function() {
         if (interviews.length == 0) {
@@ -80,6 +84,7 @@ function exportEgo() {
                 studyId: $("#studyId").val(),
                 interviewId: interviewId,
                 withAlters: withAlters,
+                multiSession: multiSesh,
                 expressionId: $("#expressionId").val(),
                 YII_CSRF_TOKEN: $("input[name='YII_CSRF_TOKEN']").val()
             },
@@ -294,7 +299,9 @@ function deleteInterviews() {
                 'onchange' => '$("#expressionId").val($(this).val())']);
                 ?>
             </div>
-
+            <div class="col-sm-12">
+                <input type="checkbox" id="multiSession1" checked> Include Multisession data
+            </div>
         </div>
         <div id="status"></div>
         <div class="progress row mb-3">
@@ -379,6 +386,8 @@ echo Html::hiddenInput('studyId', $study->id, [ 'id'=>'studyId']);
 echo Html::hiddenInput('interviewIds', '', [ 'id'=>'interviewIds']);
 echo Html::hiddenInput('expressionId', '', [ 'id'=>'expressionId']);
 echo Html::hiddenInput('withAlters', "1", array('id' => 'withAlters'));
+echo Html::hiddenInput('multiSession', "1", array('id' => 'multiSession'));
+
 ?>
 <?= Html::endForm() ?>
 <?php

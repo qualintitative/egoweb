@@ -229,7 +229,7 @@ class Interview extends \yii\db\ActiveRecord
         return implode("_", $egoIdString);
     }
 
-    public function exportEgoAlterData($file = null, $withAlters = false)
+    public function exportEgoAlterData($file = null, $withAlters = false, $multiSession = true)
     {
         $all_questions = Question::find()->where(["studyId"=>$this->studyId])->orderBy(["ordering"=>"ASC"])->all();
         $ego_id_questions = [];
@@ -278,7 +278,7 @@ class Interview extends \yii\db\ActiveRecord
             $multiQs = $study->multiIdQs();
         }
 
-        if ($multiQs) {
+        if ($multiSession && $multiQs) {
             $interviewIds = $this->multiInterviewIds();
             $prevIds = array();
             if (is_array($interviewIds)) {
@@ -332,7 +332,6 @@ class Interview extends \yii\db\ActiveRecord
         foreach ($alters as $alter) {
             $answers = array();
             $answers[] = $this->id;
-            $answers[] = $alter->id;
             $ego_ids = array();
             $ego_id_string = array();
 
@@ -495,21 +494,6 @@ class Interview extends \yii\db\ActiveRecord
                 $answers[] = count($stats->isolates);
             }
 
-            if ($multiQs) {
-                $aInts = explode(",", $alter->interviewId);
-                $aStudies = array();
-                foreach ($aInts as $aInt) {
-                    $int = Interview::findOne($aInt);
-                    if ($int) {
-                        $aStudies[] = $int->studyId;
-                    }
-                }
-                foreach ($multiQs as $q) {
-                    $answers[] = intval(in_array($q->studyId, $aStudies));
-                }
-            }
-
-
             if (isset($alter->id)) {
                 if ($matchAtAll) {
                     $matchId = "";
@@ -629,6 +613,22 @@ class Interview extends \yii\db\ActiveRecord
                 $answers[] = $stats->getDegree($alter->id);
                 $answers[] = $stats->getBetweenness($alter->id);
                 $answers[] = $stats->eigenvectorCentrality($alter->id);
+            }
+
+
+            if ($multiSession && $multiQs) {
+                $answers[] = $alter->id;
+                $aInts = explode(",", $alter->interviewId);
+                $aStudies = array();
+                foreach ($aInts as $aInt) {
+                    $int = Interview::findOne($aInt);
+                    if ($int) {
+                        $aStudies[] = $int->studyId;
+                    }
+                }
+                foreach ($multiQs as $q) {
+                    $answers[] = intval(in_array($q->studyId, $aStudies));
+                }
             }
             if ($file === null) {
                 $all_answers[] = $answers;

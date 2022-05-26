@@ -224,10 +224,15 @@ class DataController extends Controller
             $withAlters = boolval($_POST['withAlters']);
         }
 
+        $multiSesh = true;
+        if (isset($_POST['multiSession'])) {
+            $multiSesh = boolval($_POST['multiSession']);
+        }
+
         $interview = Interview::findOne($_POST['interviewId']);
         if ($interview) {
             $file = fopen($filePath . "/" . $_POST['interviewId'] . "-ego-alter.csv", "w") or die("Unable to open file!");
-            $interview->exportEgoAlterData($file, $withAlters);
+            $interview->exportEgoAlterData($file, $withAlters, $multiSesh);
             return $this->renderAjax("/layouts/ajax", ["json"=>"success"]);
         }
         return $this->renderAjax("/layouts/ajax", ["json"=>"fail"]);
@@ -248,6 +253,11 @@ class DataController extends Controller
         $withAlters = false;
         if (isset($_POST['withAlters'])) {
             $withAlters = boolval($_POST['withAlters']);
+        }
+
+        $multiSesh = true;
+        if (isset($_POST['multiSession'])) {
+            $multiSesh = boolval($_POST['multiSession']);
         }
 
         $study = Study::findOne($_POST['studyId']);
@@ -283,7 +293,6 @@ class DataController extends Controller
 
         $headers = array();
         $headers[] = 'Interview ID';
-        $headers[] = 'Alter ID';
         $headers[] = "EgoID";
         $headers[] = 'Start Time';
         $headers[] = 'End Time';
@@ -310,13 +319,7 @@ class DataController extends Controller
         $matchAtAll = MatchedAlters::findOne(array(
             "studyId" => $study->id,
         ));
-        if (isset($study->multiSessionEgoId) && $study->multiSessionEgoId) {
-            $multiQs = $study->multiIdQs();
-            foreach ($multiQs as $q) {
-                $s = Study::findOne($q->studyId);
-                $headers[] = $s->name;
-            }
-        }
+
         if ($matchAtAll) {
             $headers[] = "Dyad Match ID";
             $headers[] = "Match User";
@@ -345,6 +348,15 @@ class DataController extends Controller
             $headers[] = "Degree";
             $headers[] = "Betweenness";
             $headers[] = "Eigenvector";
+        }
+
+        if ($multiSesh && isset($study->multiSessionEgoId) && $study->multiSessionEgoId) {
+            $headers[] = 'Alter ID';
+            $multiQs = $study->multiIdQs();
+            foreach ($multiQs as $q) {
+                $s = Study::findOne($q->studyId);
+                $headers[] = $s->name;
+            }
         }
 
         $interviewIds = array();

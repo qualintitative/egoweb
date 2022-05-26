@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.10.11] - 2022-05-25
+- added new option for exporting multisession data
+
 ## [2.0.10.10] - 2022-05-05
 - added set all custom field
 - fixes codebook / participant export
