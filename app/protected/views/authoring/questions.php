@@ -21,6 +21,7 @@ answerTypes = <?php echo json_encode($answerTypes, ENT_QUOTES); ?>;
 subjectTypes = <?php echo json_encode($subjectTypes, ENT_QUOTES); ?>;
 new_question = <?php echo json_encode($new_question, ENT_QUOTES); ?>;
 questions = <?php echo json_encode($questions, ENT_QUOTES); ?>;
+all_questions = <?php echo json_encode($all_questions, ENT_QUOTES); ?>;
 expressions = <?php echo json_encode($expressions, ENT_QUOTES); ?>;
 study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
 </script>
@@ -962,6 +963,7 @@ new Vue({
         return {
             new_question: new_question,
             questions: questions,
+            all_questions: all_questions,
             study: study,
             origPrompt:study.egoIdPrompt,
         }
@@ -1012,22 +1014,26 @@ new Vue({
                 multiQuestions.push({text:this.questions[k].title,value:this.questions[k].id});
             }
 
-            if (this.questions[k].subjectType == "ALTER"){
-                alterQs.push({text:this.questions[k].title, value:this.questions[k].id})
-                alterQOptions[questions[k].id] =  questions[k].options;
-                alterShapeQs.push({text:this.questions[k].title, value:this.questions[k].id})
-                alterShapeQOptions[questions[k].id] =  questions[k].options;
-                alterQIds.push(parseInt(this.questions[k].id))
-            }
-            if (this.questions[k].subjectType == "ALTER_PAIR") {
-                alterPairQs.push({text:this.questions[k].title, value:this.questions[k].id})
-                alterPairQOptions[questions[k].id] =  questions[k].options;
-                alterPairQIds.push(parseInt(this.questions[k].id));
-            }   
+
+
    
             this.questions[k].timeBits = {};
             for (var t in bitVals) {
                 this.questions[k].timeBits[t] = this.questions[k].timeUnits & bitVals[t];
+            }
+        }
+        for(k in this.all_questions){
+            if (this.all_questions[k].subjectType == "ALTER"){
+                alterQs.push({text:this.all_questions[k].title, value:this.all_questions[k].id})
+                alterQOptions[all_questions[k].id] =  all_questions[k].optionsList;
+                alterShapeQs.push({text:this.all_questions[k].title, value:this.all_questions[k].id})
+                alterShapeQOptions[all_questions[k].id] =  all_questions[k].optionsList;
+                alterQIds.push(parseInt(this.all_questions[k].id))
+            }
+            if (this.all_questions[k].subjectType == "ALTER_PAIR") {
+                alterPairQs.push({text:this.all_questions[k].title, value:this.all_questions[k].id})
+                alterPairQOptions[all_questions[k].id] =  all_questions[k].optionsList;
+                alterPairQIds.push(parseInt(this.all_questions[k].id));
             }
         }
         for(k in expressions){
@@ -1039,6 +1045,8 @@ new Vue({
                 alterShapeQOptions["expression_" + expressions[k].id] = [{id:1,name:"True"},{id:0,name:"False"}]
             }
             if(alterPairQIds.indexOf(parseInt(expressions[k].questionId)) != -1)
+                alterPairExps.push(expressions[k])
+            if(expressions[k].type == "Compound")
                 alterPairExps.push(expressions[k])
         }
         for(k in this.questions){

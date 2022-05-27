@@ -259,7 +259,7 @@ class AuthoringController extends Controller
         $new_question = $new_question->toArray();
 
         $expressions = Expression::find()->where(["studyId"=>$study->id])->asArray()->all();
-        return $this->render('questions', ["study"=>$study, "questions"=>$questions, "new_question"=>$new_question, "answerTypes"=>$answerTypes, "subjectTypes"=>$subjectTypes, "expressions"=>$expressions]);
+        return $this->render('questions', ["study"=>$study, "questions"=>$questions, "all_questions"=>[], "new_question"=>$new_question, "answerTypes"=>$answerTypes, "subjectTypes"=>$subjectTypes, "expressions"=>$expressions]);
     }
 
     // convertss to new master list format from older format
@@ -332,8 +332,20 @@ class AuthoringController extends Controller
      */
     public function actionQuestions($id)
     {
+        $studyNames = [];
+        $allQuestions = [];
         $study = Study::findOne($id);
         $this->view->title = $study->name;
+        if ($study->multiSessionEgoId) {
+            $multiQs = $study->multiIdQs();
+            foreach ($multiQs as $q) {
+                $studyIds[] = $q->studyId;
+                $s = Study::findOne($q->studyId);
+                $studyNames[$q->studyId] = $s->name;
+            }
+        } else {
+            $studyIds = $id;
+        }
         $questions = Question::find()->where(["studyId"=>$id])->andWhere(['!=', 'subjectType', 'EGO_ID'])->orderBy(["ordering"=>"ASC"])->asArray()->all();
         if (Yii::$app->request->isPost) {
             if ($_POST['Question']['id']) {
@@ -358,6 +370,20 @@ class AuthoringController extends Controller
                 $question['alterPrompts'] = AlterPrompt::find()->where(array('questionId'=>$question['id']))->orderBy(["afterAltersEntered"=>"ASC"])->asArray()->all();
             }
         }
+        $result = Question::find()->where(["studyId"=>$studyIds])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+        foreach ($result as $question) {
+            if ($study->multiSessionEgoId) {
+                $question['title'] = $studyNames[$question['studyId']] .":".$question['title'];
+            }
+            if ($question['answerType'] == "NO_RESPONSE" ||
+                $question['subjectType'] == "NAME_GENERATOR" ||
+                $question['subjectType'] == "MERGE_ALTER" ||
+                $question['subjectType'] == "NETWORK") {
+                continue;
+            }
+            $allQuestions[$question['id']] = $question;
+            $allQuestions[$question['id']]['optionsList'] = QuestionOption::find()->where(["questionId"=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+        }
         $new_question = new Question;
         $new_question->studyId = $study->id;
         $new_question->id = 0;
@@ -370,7 +396,7 @@ class AuthoringController extends Controller
         }
         $expressions = Expression::find()->where(["studyId"=>$study->id])->asArray()->all();
 
-        return $this->render('questions', ["study"=>$study, "questions"=>$questions, "new_question"=>$new_question, "answerTypes"=>$answerTypes, "subjectTypes"=>$subjectTypes, "expressions"=>$expressions]);
+        return $this->render('questions', ["study"=>$study, "questions"=>$questions, "all_questions"=>$allQuestions, "new_question"=>$new_question, "answerTypes"=>$answerTypes, "subjectTypes"=>$subjectTypes, "expressions"=>$expressions]);
     }
 
     /**
