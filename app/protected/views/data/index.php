@@ -291,15 +291,16 @@ function deleteInterviews() {
             <div class="col-sm-4 float-right">
                 <a class="btn btn-sm btn-info float-right" href="/authoring/<?php echo $study->id; ?>">Authoring</a>
             </div>
-            <div class="col-sm-8 float-left mb-3">
-                <input type="checkbox" id="withAlters1" checked> Include Alter Names
-      
+            <div class="col-sm-12 float-left">
                 Network Statistics
                 <?php echo Html::dropDownList('expressionId', '', $expressions, ['prompt' => '(none)',
                 'onchange' => '$("#expressionId").val($(this).val())']);
                 ?>
             </div>
-            <div class="col-sm-12">
+            <div class="col-sm-8 float-left mb-3">
+                <input type="checkbox" id="withAlters1" checked> Include Alter Names
+            </div>
+            <div class="col-sm-12 float-left">
                 <input type="checkbox" id="multiSession1" checked> Include Multisession data
             </div>
         </div>

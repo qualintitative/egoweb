@@ -23,6 +23,7 @@ new_question = <?php echo json_encode($new_question, ENT_QUOTES); ?>;
 questions = <?php echo json_encode($questions, ENT_QUOTES); ?>;
 all_questions = <?php echo json_encode($all_questions, ENT_QUOTES); ?>;
 expressions = <?php echo json_encode($expressions, ENT_QUOTES); ?>;
+studyNames = <?php echo json_encode($studyNames, ENT_QUOTES); ?>;
 study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
 </script>
 <script type="text/x-template" id="questionEditor">
@@ -1024,14 +1025,14 @@ new Vue({
         }
         for(k in this.all_questions){
             if (this.all_questions[k].subjectType == "ALTER"){
-                alterQs.push({text:this.all_questions[k].title, value:this.all_questions[k].id})
+                alterQs.push({text:studyNames[this.all_questions[k].id] + ":" + this.all_questions[k].title, value:this.all_questions[k].id})
                 alterQOptions[all_questions[k].id] =  all_questions[k].optionsList;
-                alterShapeQs.push({text:this.all_questions[k].title, value:this.all_questions[k].id})
+                alterShapeQs.push({text:studyNames[this.all_questions[k].id] + ":" + this.all_questions[k].title, value:this.all_questions[k].id})
                 alterShapeQOptions[all_questions[k].id] =  all_questions[k].optionsList;
                 alterQIds.push(parseInt(this.all_questions[k].id))
             }
             if (this.all_questions[k].subjectType == "ALTER_PAIR") {
-                alterPairQs.push({text:this.all_questions[k].title, value:this.all_questions[k].id})
+                alterPairQs.push({text:studyNames[this.all_questions[k].id] + ":" + this.all_questions[k].title, value:this.all_questions[k].id})
                 alterPairQOptions[all_questions[k].id] =  all_questions[k].optionsList;
                 alterPairQIds.push(parseInt(this.all_questions[k].id));
             }
