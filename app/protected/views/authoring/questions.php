@@ -400,9 +400,27 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                             </div>
                             <div class="col-sm-12">
                                 <b-form-checkbox :id="question.id + '_prefillList'" name="Question[prefillList]" unchecked-value="0" value="1" type="checkbox" v-model="question.prefillList">
-                                Pre-fill Alters from List
+                                Pre-fill Alters from Participant List
                                 </b-form-checkbox>
                                 <input type="hidden" v-if="question.prefillList == 0" name="Question[prefillList]" value="0">         
+                            </div>
+                            <div class="col-sm-12">
+                                <b-form-checkbox :id="question.id + '_restrictPrev'" name="Question[restrictPrev]" unchecked-value="0" value="1" type="checkbox" v-model="question.restrictPrev">
+                                    Restrict Response to Previous Alters
+                                </b-form-checkbox>
+                                <input type="hidden" v-if="question.restrictPrev == 0" name="Question[restrictPrev]" value="0">         
+                            </div>
+                            <div class="col-sm-12">
+                                <b-form-checkbox :id="question.id + '_autocompletePrev'" name="Question[autocompletePrev]" unchecked-value="0" value="1" type="checkbox" v-model="question.autocompletePrev">
+                                    Fill Autocomplete with Previous Alters 
+                                </b-form-checkbox>
+                                <input type="hidden" v-if="question.autocompletePrev == 0" name="Question[autocompletePrev]" value="0">         
+                            </div>
+                            <div class="col-sm-12">
+                                <b-form-checkbox :id="question.id + '_prefillPrev'" name="Question[prefillPrev]" unchecked-value="0" value="1" type="checkbox" v-model="question.prefillPrev">
+                                Pre-fill Alters from Previous Alters
+                                </b-form-checkbox>
+                                <input type="hidden" v-if="question.prefillPrev == 0" name="Question[prefillPrev]" value="0">         
                             </div>
                             <div class="col-sm-12">
                                 <b-form-checkbox :id="question.id + '_keepOnSamePage'" name="Question[keepOnSamePage]" unchecked-value="0" value="1" type="checkbox" v-model="question.keepOnSamePage">

@@ -158,6 +158,54 @@ class InterviewController extends Controller
         $questionList = array();
         $network_questions = array();
         $autocompleteList = false;
+        $interview = false;
+        $prevAlters = array();
+        $otherGraphs = array();
+        if($interviewId != null){
+            $interview = Interview::findOne($interviewId);
+            $interviewIds = $interview->multiInterviewIds();
+            $prevIds = array_diff($interviewIds, array($interviewId));
+            if (count($prevIds) > 0) {
+                foreach ($prevIds as $i_id) {
+
+                    // load previous alters
+                    $results = Alters::find()
+                    ->where(new \yii\db\Expression("FIND_IN_SET(" . $i_id .", interviewId)"))
+                    ->all();
+                    foreach ($results as $result) {
+                        $prevAlters[$result->id] = Tools::mToA($result);
+                        $prevAlterObjs[$result->id] = $result;
+                    }
+
+                    // load previous graphs
+                    foreach ($network_questions as $nq) {
+                        if (!isset($otherGraphs[$nq['TITLE']])) {
+                            $otherGraphs[$nq['TITLE']] = array();
+                        }
+                        $oldInterview = Interview::findOne($i_id);
+                        $graph = "";
+                        $oldStudy = Study::findOne($oldInterview->studyId);
+                        $question = Question::findOne(["title"=>$nq['TITLE'], "studyId"=>$oldStudy->id]);
+                        if(!$question)
+                            continue;
+                        $networkExprId = $question->networkRelationshipExprId;
+                        if ($networkExprId) {
+                            $graph = Graph::findOne(["expressionId"=>$networkExprId, "interviewId"=>$i_id]);
+                        }
+                        if ($graph) {
+                            $otherGraphs[$nq['TITLE']][] = array(
+                                "id" => $graph->id,
+                                "interviewId" => $i_id,
+                                "expressionId" => $networkExprId,
+                                "studyName" => $oldStudy->name,
+                                "questionId" => $question->id,
+                                "params"=> $question->networkParams,
+                            );
+                        }
+                    }
+                }
+            }
+        }
         $results = Question::find()->where(["studyId"=>$multiStudyIds])->orderBy(["ordering"=>"ASC"])->all();
         foreach ($results as $result) {
             $questions[$result->id] = Tools::mToA($result);
@@ -173,23 +221,47 @@ class InterviewController extends Controller
                     }
                     // pre-fill alter list if exists
                     if ($result->prefillList) {
-                        $check = Alters::find()->where(["interviewId"=>$_GET['interviewId']])->all();
+                        $check = Alters::find()->where(["interviewId"=>$interviewId])->all();
                         if (count($check) == 0) {
                             $alterList = AlterList::find()->where(["studyId"=>$study->id])->all();
-                            $names = array();
-                            foreach ($alterList as $a) {
-                                $names[] = $a->name;
-                            }
                             $count = 0;
                             foreach ($alterList as $a) {
                                 $alter = new Alters;
-                                $alter->ordering = $count;
+                                $ordering = [$result->id => $count];
+                                $alter->ordering = json_encode($ordering);
                                 $alter->interviewId = $_GET['interviewId'];
                                 $alter->name = $a->name;
                                 $alter->nameGenQIds = $a->nameGenQIds;
                                 $alter->save();
                                 $count++;
                             }
+                        }
+                    }
+                    if ($result->prefillPrev) {
+                        $check = Alters::find()
+                        ->where(new \yii\db\Expression("FIND_IN_SET(:interviewId, interviewId)"))
+                        ->addParams([':interviewId' => $interviewId])
+                        ->all();
+                        if (count($check) == 0) {
+                            $count = 0;
+                            foreach ($prevAlterObjs as $a) {
+                                $nameGenQIds = explode(",", $a->nameGenQIds);
+                                $nameGenQIds[] = $result->id;
+                                $a->nameGenQIds = implode(",", $nameGenQIds);
+                                $interviewIds = explode(",", $a->interviewId);
+                                $interviewIds[] = $interviewId;
+                                $a->interviewId = implode(",", $interviewIds);
+                                if (!is_numeric($a->ordering)) {
+                                    $ordering = json_decode($a->ordering, true);
+                                }else{
+                                    $ordering = [];
+                                }
+                                $ordering[$result->id] = $count;
+                                $a->ordering = json_encode($ordering);
+                                $a->save();
+                                $count++;
+                            }
+                            $prevAlters = [];
                         }
                     }
                 }
@@ -249,60 +321,16 @@ class InterviewController extends Controller
         }
 
 
-        // load interview data
-        $interview = false;
-        $prevAlters = array();
-        $otherGraphs = array();
+        // load remaining data
         $answers = array();
         $alters = array();
         $graphs = array();
         $notes = array();
-        if ($interviewId != null) {
-            $interview = Interview::findOne($interviewId);
+        if ($interview) {
             if($interview && $interview->completed == -1 && Yii::$app->user->isGuest){
                 return $this->response->redirect(Url::toRoute('/admin'));
             }
-            $interviewIds = $interview->multiInterviewIds();
-            $prevIds = array_diff($interviewIds, array($interviewId));
-            if (count($prevIds) > 0) {
-                foreach ($prevIds as $i_id) {
-
-                    // load previous alters
-                    $results = Alters::find()
-                    ->where(new \yii\db\Expression("FIND_IN_SET(" . $i_id .", interviewId)"))
-                    ->all();
-                    foreach ($results as $result) {
-                        $prevAlters[$result->id] = Tools::mToA($result);
-                    }
-
-                    // load previous graphs
-                    foreach ($network_questions as $nq) {
-                        if (!isset($otherGraphs[$nq['TITLE']])) {
-                            $otherGraphs[$nq['TITLE']] = array();
-                        }
-                        $oldInterview = Interview::findOne($i_id);
-                        $graph = "";
-                        $oldStudy = Study::findOne($oldInterview->studyId);
-                        $question = Question::findOne(["title"=>$nq['TITLE'], "studyId"=>$oldStudy->id]);
-                        if(!$question)
-                            continue;
-                        $networkExprId = $question->networkRelationshipExprId;
-                        if ($networkExprId) {
-                            $graph = Graph::findOne(["expressionId"=>$networkExprId, "interviewId"=>$i_id]);
-                        }
-                        if ($graph) {
-                            $otherGraphs[$nq['TITLE']][] = array(
-                                "id" => $graph->id,
-                                "interviewId" => $i_id,
-                                "expressionId" => $networkExprId,
-                                "studyName" => $oldStudy->name,
-                                "questionId" => $question->id,
-                                "params"=> $question->networkParams,
-                            );
-                        }
-                    }
-                }
-            }
+            
 
 
             // load answers
@@ -684,13 +712,24 @@ class InterviewController extends Controller
         if (isset($_POST['Alters'])) {
             $interview = Interview::findOne($_POST['Alters']['interviewId']);
             $studyId = $interview->studyId;
-
+            $nameGenQ = Question::findOne($_POST['Alters']['nameGenQIds']);
             $alters = json_decode($_POST['currentAlters'], true);
+            $prevAlters = json_decode($_POST['prevAlters'], true);
+            $newAlterId = false;
             $alterNames = array();
             $alterGroups = array();
             foreach ($alters as $alter) {
                 $alterNames[$alter['ID']] = strtolower($alter['NAME']);
                 $alterGroups[$alter['NAME']] = explode(",", $alter['NAMEGENQIDS']);
+            }
+            if($nameGenQ->restrictPrev == true || $nameGenQ->autocompletePrev == true){
+                foreach ($prevAlters as $alter) {
+                    $alterNames[$alter['ID']] = strtolower($alter['NAME']);
+                    $alterGroups[$alter['NAME']] = explode(",", $alter['NAMEGENQIDS']);
+                    $pre_names[] = $alter['NAME'];
+                }
+                if($nameGenQ->restrictPrev == true)
+                    $restrictList = false;
             }
             $model = new Alters;
             $model->attributes = $_POST['Alters'];
@@ -698,8 +737,16 @@ class InterviewController extends Controller
             if (in_array(strtolower($_POST['Alters']['name']), $alterNames)) {
                 if (!in_array($_POST['Alters']['nameGenQIds'], $alterGroups[$_POST['Alters']['name']])) {
                     $model = Alters::findOne(array_search(strtolower($_POST['Alters']['name']), $alterNames));
+                    $newAlterId = $model->id;
                     $alterGroups[$_POST['Alters']['name']][] = $_POST['Alters']['nameGenQIds'];
                     $model->nameGenQIds = implode(",", $alterGroups[$_POST['Alters']['name']]);
+                    if($model->interviewId != $_POST['Alters']['interviewId']){
+                        $interviewIds = explode(",", $model->interviewId);
+                        if(!in_array($_POST['Alters']['interviewId'], $interviewIds)){
+                            $interviewIds[] = $_POST['Alters']['interviewId'];
+                            $model->interviewId = implode(",", $interviewIds);
+                        }
+                    }
                     if (!is_numeric($model->ordering)) {
                         $ordering = json_decode($model->ordering, true);
                         $ordering[$_POST['Alters']['nameGenQIds']] = intval($_POST['Alters']['ordering']);
@@ -742,7 +789,8 @@ class InterviewController extends Controller
                     print_r($model->errors);
                     die();
                 } else {
-                    $newAlterId = Yii::$app->db->getLastInsertID();
+                    if($newAlterId == false)
+                        $newAlterId = Yii::$app->db->getLastInsertID();
                     $result = Alters::findOne($newAlterId);
                     $model->id = $newAlterId;
                     $model->name = Tools::decrypt($model->name);

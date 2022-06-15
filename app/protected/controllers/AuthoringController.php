@@ -259,7 +259,7 @@ class AuthoringController extends Controller
         $new_question = $new_question->toArray();
 
         $expressions = Expression::find()->where(["studyId"=>$study->id])->asArray()->all();
-        return $this->render('questions', ["study"=>$study, "questions"=>$questions, "all_questions"=>[], "new_question"=>$new_question, "answerTypes"=>$answerTypes, "subjectTypes"=>$subjectTypes, "expressions"=>$expressions]);
+        return $this->render('questions', ["study"=>$study, "studyNames"=>[], "questions"=>$questions, "all_questions"=>[], "new_question"=>$new_question, "answerTypes"=>$answerTypes, "subjectTypes"=>$subjectTypes, "expressions"=>$expressions]);
     }
 
     // convertss to new master list format from older format

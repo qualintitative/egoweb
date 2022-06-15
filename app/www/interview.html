@@ -26,10 +26,11 @@
             <a ng-if='audio["ALTERPROMPT"]' class="play-sound" ng-click='playSound("ALTERPROMPT")' href="javascript:void(0)"><span class="fui-volume"></span></a>
             <form ng-if="!questions[0].MAXLITERAL || keys(nGalters).length < questions[0].MAXLITERAL" id="alterForm" name="alterForm" ng-submit="addAlter(alterForm.$valid)" novalidate>
                 <input name="currentAlters" value='{{ alters }}' type="hidden">
+                <input name="prevAlters" value='{{ prevAlters }}' type="hidden">
                 <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
                 <div class="form-group table-cell">
-                    <input class="answerInput" name="Alters[name]" id="Alters_name" type="text" value="{{ alterName }}" style="float:left" ng-if="questions[0].AUTOCOMPLETELIST != true">
-                    <div ng-if="questions[0].AUTOCOMPLETELIST == true">
+                    <input class="answerInput" name="Alters[name]" id="Alters_name" type="text" value="{{ alterName }}" style="float:left" ng-if="questions[0].AUTOCOMPLETELIST != true && questions[0].AUTOCOMPLETEPREV != true">
+                    <div ng-if="questions[0].AUTOCOMPLETELIST == true || questions[0].AUTOCOMPLETEPREV == true">
                         <input name="Alters[name]" id="Alters_name" type="hidden" value="{{ alterName }}">
                         <autocomplete attr-input-class="answerInput" ng-disabled="interview.COMPLETED == -1" style="float:left" ng-model="alterName" data="participants"></autocomplete>
                     </div>

@@ -111,14 +111,21 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
                 }
                 // we put alters in lists according to the name generator question id
                 if (nGs.indexOf($scope.questions[0].ID.toString()) != -1) {
-                    if (typeof nGorder[$scope.questions[0].ID] != "undefined"){
+                   // if (typeof nGorder[$scope.questions[0].ID] != "undefined"){
                         //if(typeof $scope.nGalters[parseInt(nGorder[$scope.questions[0].ID])] == "undefined")
                         //    $scope.nGalters[parseInt(nGorder[$scope.questions[0].ID])] = $scope.alters[k];
                         //else 
+                        var ordering = JSON.parse($scope.alters[k].ORDERING);
+                        if(typeof ordering[$scope.questions[0].ID.toString()] != "undefined"){
+                            var listOrder = ordering[$scope.questions[0].ID.toString()];
+                            $scope.nGalters[parseInt(listOrder)] = $scope.alters[k];
+                        }else{
                             $scope.nGalters.push($scope.alters[k]);
-                    }else{
-                        $scope.nGalters.push($scope.alters[k]);
-                    }
+                        }
+                          //  $scope.nGalters=    sortByKey($scope.nGalters);
+                 //   }else{
+                   //       $scope.nGalters.push($scope.alters[k]);
+                    //}
                 } else {
                     if (typeof $scope.listedAlters[k] == "undefined")
                         $scope.listedAlters[k] = alters[k];
@@ -200,26 +207,26 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
                 }
             }
         }
-        if (Object.keys($scope.prevAlters).length > 0) {
+        if(($scope.questions[k].RESTRICTPREV == true || $scope.questions[k].AUTOCOMPLETEPREV == true) && Object.keys($scope.prevAlters).length > 0) {
             for (n in $scope.prevAlters) {
-                if (study.RESTRICTALTERS) {
+                //if (study.RESTRICTALTERS) {
                     if ($scope.participants.indexOf($scope.prevAlters[n].NAME) == -1)
                         $scope.participants.push($scope.prevAlters[n].NAME);
-                } else {
-                    $scope.participants.push($scope.prevAlters[n].NAME);
-                }
+               // } else {
+                //    $scope.participants.push($scope.prevAlters[n].NAME);
+               // }
             }
         }
-        if (Object.keys($scope.listedAlters).length > 0) {
-            for (n in $scope.listedAlters) {
-                if (study.RESTRICTALTERS) {
-                    if ($.inArray($scope.listedAlters[n].NAME, $scope.participants) == -1)
-                        $scope.participants.push($scope.listedAlters[n].NAME);
-                } else {
-                    $scope.participants.push($scope.listedAlters[n].NAME);
-                }
-            }
-        }
+      //  if(($scope.questions[0].RESTRICTLIST == true || $scope.questions[0].AUTOCOMPLETELIST == true) && Object.keys($scope.listedAlters).length > 0) {
+        //    for (n in $scope.listedAlters) {
+                //if (study.RESTRICTALTERS) {
+          //          if ($.inArray($scope.listedAlters[n].NAME, $scope.participants) == -1)
+            //            $scope.participants.push($scope.listedAlters[n].NAME);
+               // } else {
+                //    $scope.participants.push($scope.listedAlters[n].NAME);
+                //}
+       //     }
+        //}
         if ($scope.questions[k].ALTERID1 && typeof alters[parseInt($scope.questions[k].ALTERID1)] != "undefined") {
             $scope.alterName = alters[parseInt($scope.questions[k].ALTERID1)].NAME;
             console.log("alter name", $scope.alterName)
@@ -275,6 +282,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
         if ($scope.questions[k].SUBJECTTYPE == "NAME_GENERATOR") {
             $scope.showPrevAlters = $scope.questions[k].KEEPONSAMEPAGE == 1 ? true : false;
+            
             if (typeof alterPrompts[$scope.questions[k].ID] != "undefined" && typeof alterPrompts[$scope.questions[k].ID][Object.keys($scope.alters).length] != "undefined")
                 $scope.alterPrompt = alterPrompts[$scope.questions[k].ID][Object.keys($scope.alters).length];
         }
@@ -585,8 +593,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         }
 
         // check pre-defined participant list
-        if ($scope.participants.length > 0 && $scope.questions[0].RESTRICTLIST == true) {
-            if ($scope.participants.indexOf($("#Alters_name").val().trim()) == -1) {
+        if ($scope.participants.length > 0 && ($scope.questions[0].RESTRICTLIST == true || $scope.questions[0].RESTRICTPREV == true)) {
+            if ($scope.participants.indexOf($("#Alters_name").val().trim()) == -1 || $scope.participants.length == 0) {
                 $scope.errors[0] = 'Name not found in list';
             }
         }
@@ -600,6 +608,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
             $('.alterSubmit').prop("disabled", true);
             saveAlter.getAlters().then(function(data) {
                 alters = JSON.parse(data);
+                console.log(alters);
                 for (k in alters) {
                     if (typeof prevAlters[k] != "undefined") {
                         deletedPrevAlters[k] = $.extend(true, {}, prevAlters[k]);
