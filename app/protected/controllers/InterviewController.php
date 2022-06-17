@@ -889,24 +889,35 @@ class InterviewController extends Controller
             $results = Alters::find()
             ->where(new \yii\db\Expression("FIND_IN_SET(" . $interviewId .", interviewId)"))
             ->all();
+            $newOrdering = [];
+            $oldOrdering = [];
             foreach ($results as $index=>$model) {
                 if (is_numeric($model->ordering)) {
                     $nGorder = array($nameQId=>$index);
                     $model->ordering = json_encode($nGorder);
                     $model->save();
                 }else{
-                    $newOrdering = json_decode($model->ordering, true);
-                    if(isset($newOrdering[$nameQId]) && $newOrdering[$nameQId] > $ordering){
-                        $newOrdering[$nameQId]--;
-                        $model->ordering = json_encode($newOrdering);
+                    $ordering = json_decode($model->ordering, true);
+                    if(isset($ordering[$nameQId])){
+                        $newOrdering[$ordering[$nameQId]] = $model;
+                    }
+                }
+            }
+            ksort($newOrdering);
+            $count = 0;
+            foreach($newOrdering as $model){
+                $ordering = json_decode($model->ordering, true);
+                if(isset($ordering[$nameQId])){
+                    if($ordering[$nameQId] != $count){
+                        $ordering[$nameQId] = $count;
+                        $model->ordering = json_encode($ordering);
                         $model->save();
                         $model->name = Tools::decrypt($model->name);
-
                     }
+                    $count++;
                 }
                 $alters[$model->id] = Tools::mToA($model);
             }
-
             $json = json_encode($alters);
             return $this->renderAjax("/layouts/ajax", ["json"=>$json]);
         }
