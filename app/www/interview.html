@@ -63,7 +63,7 @@
     <span class="name-title">Names</span>
     <table class="items" width="100%">
         <tbody>
-            <tr class="multi" ng-repeat="alter in nGalters track by alter.ID">
+            <tr class="multi" ng-repeat="alter in nGalters track by $index">
                 <td style="width:25px;" id="ordering">{{ $index + 1 }}</td>
                 <td style="width:auto;">{{ alter.NAME }}</td>
                 <td style="width:25px;"><a class="alter-delete" title="Delete" ng-click="removeAlter(alter.ID, questions[0].ID)"><span class="fas fa-times"></span></a></td>
