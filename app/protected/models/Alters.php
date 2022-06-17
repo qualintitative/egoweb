@@ -68,14 +68,21 @@ class Alters extends \yii\db\ActiveRecord
                 $nGorder = array($nameGenQId=>$index);
                 $model->ordering = json_encode($nGorder);
                 $model->save();
+            }else{
+                $newOrdering = json_decode($model->ordering, true);
+                if($newOrdering[$nameGenQId] > $ordering){
+                    $newOrdering[$nameGenQId]--;
+                    $model->ordering = json_encode($newOrdering);
+                    $model->save();
+                }
             }
         }
-        $models = Alters::find()
-        ->where(new \yii\db\Expression("FIND_IN_SET(" . $interviewId .", interviewId) AND JSON_EXTRACT(ordering, '$.\"$nameGenQId\"') > $ordering"))
-        ->all();
-        foreach ($models as $index=>$model) {
-            Alters::moveUp($model->id, $nameGenQId);
-        }
+        //$models = Alters::find()
+        //->where(new \yii\db\Expression("FIND_IN_SET(" . $interviewId .", interviewId) AND JSON_EXTRACT(ordering, '$.\"$nameGenQId\"') > $ordering"))
+        //->all();
+        //foreach ($models as $index=>$model) {
+        //    Alters::moveUp($model->id, $nameGenQId);
+        //}
     }
 
     public static function moveUp($id, $nameGenQId)
