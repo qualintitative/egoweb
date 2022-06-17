@@ -634,7 +634,15 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
             alters = JSON.parse(data);
             if (typeof deletedPrevAlters[alterId] != "undefined" && typeof prevAlters[alterId] == "undefined" && typeof alters[alterId] == "undefined") {
                 prevAlters[alterId] = $.extend(true, {}, deletedPrevAlters[alterId]);
+                let nameGenQIds = prevAlters[alterId].NAMEGENQIDS.split(",");
+                let newNameGenQIds = [];
+                for(k in nameGenQIds){
+                    if(nameGenQIds[k] != nameGenQId)
+                        newNameGenQIds.push(nameGenQIds[k]);
+                }
+                prevAlters[alterId].NAMEGENQIDS = newNameGenQIds.join(",");
                 $scope.prevAlters = prevAlters;
+
                 delete deletedPrevAlters[alterId];
             }
             masterList = [];

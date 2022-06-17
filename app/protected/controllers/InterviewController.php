@@ -756,6 +756,9 @@ class InterviewController extends Controller
                     }
                 } else {
                     $model->addError('name', $_POST['Alters']['name']. ' has already been added!');
+                    echo "name error:" . $_POST['Alters']['nameGenQIds'];
+                    print_r($alterGroups[$_POST['Alters']['name']]);
+                    die();
                 }
             }
 
@@ -877,17 +880,31 @@ class InterviewController extends Controller
                         $model->delete();
                     }
                 }
-                if (is_numeric($ordering)) {
-                    Alters::sortOrder($ordering, $interviewId, $nameQId);
-                }
+                //if (is_numeric($ordering)) {
+                //    Alters::sortOrder($ordering, $interviewId, $nameQId);
+                //}
             }
 
             $alters = array();
             $results = Alters::find()
             ->where(new \yii\db\Expression("FIND_IN_SET(" . $interviewId .", interviewId)"))
             ->all();
-            foreach ($results as $result) {
-                $alters[$result->id] = Tools::mToA($result);
+            foreach ($results as $index=>$model) {
+                if (is_numeric($model->ordering)) {
+                    $nGorder = array($nameQId=>$index);
+                    $model->ordering = json_encode($nGorder);
+                    $model->save();
+                }else{
+                    $newOrdering = json_decode($model->ordering, true);
+                    if(isset($newOrdering[$nameQId]) && $newOrdering[$nameQId] > $ordering){
+                        $newOrdering[$nameQId]--;
+                        $model->ordering = json_encode($newOrdering);
+                        $model->save();
+                        $model->name = Tools::decrypt($model->name);
+
+                    }
+                }
+                $alters[$model->id] = Tools::mToA($model);
             }
 
             $json = json_encode($alters);
