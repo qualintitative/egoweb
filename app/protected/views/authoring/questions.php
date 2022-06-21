@@ -423,6 +423,12 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                                 <input type="hidden" v-if="question.prefillPrev == 0" name="Question[prefillPrev]" value="0">         
                             </div>
                             <div class="col-sm-12">
+                                <b-form-checkbox :id="question.id + '_hideNameGenQ'" name="Question[hideNameGenQ]" unchecked-value="0" value="1" type="checkbox" v-model="question.hideNameGenQ">
+                                Hide Name Generator Question
+                                </b-form-checkbox>
+                                <input type="hidden" v-if="question.hideNameGenQ == 0" name="Question[hideNameGenQ]" value="0">         
+                            </div>
+                            <div class="col-sm-12">
                                 <b-form-checkbox :id="question.id + '_keepOnSamePage'" name="Question[keepOnSamePage]" unchecked-value="0" value="1" type="checkbox" v-model="question.keepOnSamePage">
                                 Show Previous Session Alters
                                 </b-form-checkbox>

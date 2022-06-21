@@ -1423,7 +1423,7 @@ function buildList() {
             i++;
             masterList[i] = new Object;
         }
-        if (questionList[j].SUBJECTTYPE == "NAME_GENERATOR") {
+        if (questionList[j].SUBJECTTYPE == "NAME_GENERATOR" && questionList[j].HIDENAMEGENQ != true) {
             if (questionList[j].PREFACE != "") {
                 var preface = new Object;
                 preface.ID = questionList[j].ID;

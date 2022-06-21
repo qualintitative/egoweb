@@ -105,7 +105,7 @@ class Question extends \yii\db\ActiveRecord
             [['title', 'prompt', 'preface', 'citation', 'subjectType', 'answerType', 'pageLevelDontKnowButton', 'pageLevelRefuseButton', 'allOptionString', 'uselfExpression', 'minLimitType', 'minPrevQues', 'maxLimitType', 'maxPrevQues', 'listRangeString', 'networkParams', 'useAlterListField', 'javascript', 'dontKnowText', 'refuseText', 'setAllText'], 'string'],
             [['askingStyleList', 'dontKnowButton', 'refuseButton', 'restrictList', 'autocompleteList', 'prefillList', 'withListRange', 'allButton', 'noneButton', 'keepOnSamePage'], 'boolean'],
             ['preface','default', 'value'=>""],
-            [['askingStyleList', 'dontKnowButton', 'refuseButton', 'restrictList', 'autocompleteList', 'prefillList', 'restrictPrev', 'autocompletePrev', 'prefillPrev', 'withListRange', 'allButton', 'noneButton', 'keepOnSamePage'], 'default', 'value' => 0],
+            [['askingStyleList', 'dontKnowButton', 'refuseButton', 'restrictList', 'autocompleteList', 'prefillList', 'restrictPrev', 'autocompletePrev', 'prefillPrev', 'hideNameGenQ', 'withListRange', 'allButton', 'noneButton', 'keepOnSamePage'], 'default', 'value' => 0],
         ];
     }
 
@@ -168,6 +168,7 @@ class Question extends \yii\db\ActiveRecord
             'restrictPrev' => 'Restrict Previous Alters',
             'autocompletePrev' => 'Autocomplete Previous Alters',
             'prefillPrev' => 'Prefill with Previous Alters',
+            'hideNameGenQ' => 'Hide Name Generator Question',
         ];
     }
 }
