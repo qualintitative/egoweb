@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.10.12] - 2022-06-22
+- aaded hide name generator question option
+- added option for auto-loading alters from previous session
+- added option for restricting name gen to prev alters
+- added option to fill name gen autocomplete with prev alters
+- added ability to select previous session question options in network questions
+
 ## [2.0.10.11] - 2022-05-25
 - added new option for exporting multisession data
 

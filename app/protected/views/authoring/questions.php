@@ -418,11 +418,11 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                             </div>
                             <div class="col-sm-12">
                                 <b-form-checkbox :id="question.id + '_prefillPrev'" name="Question[prefillPrev]" unchecked-value="0" value="1" type="checkbox" v-model="question.prefillPrev">
-                                Pre-fill Alters from Previous Alters
+                                    Pre-fill Alters from Previous Alters
                                 </b-form-checkbox>
                                 <input type="hidden" v-if="question.prefillPrev == 0" name="Question[prefillPrev]" value="0">         
                             </div>
-                            <div class="col-sm-12">
+                            <div class="col-sm-12" v-if="question.prefillPrev != false">
                                 <b-form-checkbox :id="question.id + '_hideNameGenQ'" name="Question[hideNameGenQ]" unchecked-value="0" value="1" type="checkbox" v-model="question.hideNameGenQ">
                                 Hide Name Generator Question
                                 </b-form-checkbox>
