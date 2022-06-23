@@ -132,6 +132,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
                 }
             }
         }
+        console.log(alters, $scope.listedAlters);
         $scope.prevAlters = prevAlters;
         console.log($scope.nGalters);
     } else {
@@ -1540,8 +1541,9 @@ function buildList() {
                         l1 = dm.doubleMetaphone(name1[name1.length - 1]).primary;
                         l2 = dm.doubleMetaphone(name2[name2.length - 1]).primary;
                         ls = new Levenshtein(l1, l2);
+                        console.log(l1, l2, ls.distance, maxlTol);
                         // last name distance
-                        if (ls.distance < maxlTol) {
+                        if (ls.distance <= maxlTol) {
                             // first letter of first name matches
                             if (first1 == first2 && matchedIds[k].indexOf(l) == -1) {
                                 // l is alter2 id

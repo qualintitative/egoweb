@@ -890,7 +890,6 @@ class InterviewController extends Controller
             ->where(new \yii\db\Expression("FIND_IN_SET(" . $interviewId .", interviewId)"))
             ->all();
             $newOrdering = [];
-            $oldOrdering = [];
             foreach ($results as $index=>$model) {
                 if (is_numeric($model->ordering)) {
                     $nGorder = array($nameQId=>$index);
@@ -900,6 +899,8 @@ class InterviewController extends Controller
                     $ordering = json_decode($model->ordering, true);
                     if(isset($ordering[$nameQId])){
                         $newOrdering[$ordering[$nameQId]] = $model;
+                    }else{
+                        $alters[$model->id] = Tools::mToA($model);
                     }
                 }
             }

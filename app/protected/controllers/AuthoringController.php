@@ -371,18 +371,19 @@ class AuthoringController extends Controller
             }
         }
         $result = Question::find()->where(["studyId"=>$studyIds])->orderBy(["ordering"=>"ASC"])->asArray()->all();
-        foreach ($result as $question) {
+        foreach ($result as $q) {
             //if ($study->multiSessionEgoId) {
             //    $question['title'] = $studyNames[$question['studyId']] .":".$question['title'];
             //}
-            if ($question['answerType'] == "NO_RESPONSE" ||
-                $question['subjectType'] == "NAME_GENERATOR" ||
-                $question['subjectType'] == "MERGE_ALTER" ||
-                $question['subjectType'] == "NETWORK") {
+            if ($q['answerType'] == "NO_RESPONSE" ||
+                $q['subjectType'] == "NAME_GENERATOR" ||
+                $q['subjectType'] == "MERGE_ALTER" ||
+                $q['subjectType'] == "NETWORK") {
                 continue;
             }
-            $allQuestions[$question['id']] = $question;
-            $allQuestions[$question['id']]['optionsList'] = QuestionOption::find()->where(["questionId"=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+            $q['optionsList'] = QuestionOption::find()->where(["questionId"=>$q['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+
+            $allQuestions[] = $q;
         }
         $new_question = new Question;
         $new_question->studyId = $study->id;

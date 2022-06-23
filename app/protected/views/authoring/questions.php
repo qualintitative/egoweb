@@ -22,6 +22,7 @@ subjectTypes = <?php echo json_encode($subjectTypes, ENT_QUOTES); ?>;
 new_question = <?php echo json_encode($new_question, ENT_QUOTES); ?>;
 questions = <?php echo json_encode($questions, ENT_QUOTES); ?>;
 all_questions = <?php echo json_encode($all_questions, ENT_QUOTES); ?>;
+console.log(all_questions);
 expressions = <?php echo json_encode($expressions, ENT_QUOTES); ?>;
 studyNames = <?php echo json_encode($studyNames, ENT_QUOTES); ?>;
 study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
@@ -103,7 +104,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                             <input type="text" v-model="question.setAllText" v-if="question.allButton && question.allButton == true" class="form-control input-xs" name="Question[setAllText]" :id="question.id + '_setAllText'"  maxlength="32">
                         </div>
                     </div>
-                    <div class="offset-md-4 col-md-8 form-group row" v-if="question.subjectType != 'NAME_GENERATOR' && question.subjectType != 'EGO_ID'">
+                    <div class="offset-md-4 col-md-8 form-group row" v-if="question.subjectType != 'NAME_GENERATOR' && question.subjectType != 'EGO_ID' && question.subjectType != 'NETWORK' && question.subjectType != 'NO_RESPONSE'">
                         <b-form-checkbox v-if="question.subjectType != 'ALTER' && question.subjectType != 'ALTER_PAIR'" class="col-8 mb-1" :id="question.id + '_askingStyleList'" v-model="question.askingStyleList" name="Question[askingStyleList]" value="1" unchecked-value="0">
                             Stem and Leaf
                         </b-form-checkbox>
@@ -135,11 +136,11 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                     <div v-if="question.subjectType == 'MERGE_ALTER'">
                         <input type="hidden" v-model="question.allOptionString" :id="question.id + '_allOptionString'" name="Question[allOptionString]">
                         <div class="form-group row">
-                            <label :for="question.id + '_minLiteral'" class="col-sm-4 col-form-label">First Name Tolerance</label>
+                            <label :for="question.id + '_minLiteral'" class="col-sm-4 col-form-label">First Name Syllable Difference</label>
                             <div class="col-sm-2">
                                 <input :id="question.id + '_minLiteral'" class="form-control" name="Question[minLiteral]" v-model="question.minLiteral">
                             </div>
-                            <label :for="question.id + '_maxLiteral'" class="col-sm-4 col-form-label">Last Name Tolerance</label>
+                            <label :for="question.id + '_maxLiteral'" class="col-sm-4 col-form-label">Last Name Syllable Difference</label>
                             <div class="col-sm-2">
                                 <input :id="question.id + '_maxLiteral'" class="form-control" name="Question[maxLiteral]" v-model="question.maxLiteral">
                             </div>
@@ -994,6 +995,8 @@ new Vue({
         }
     },
     created() {
+        console.log(questions, all_questions)
+
         var numQuestions = [];
         var multiQuestions = [];
         var alterQs = [];
