@@ -1074,8 +1074,14 @@ new Vue({
             }
             if(alterPairQIds.indexOf(parseInt(expressions[k].questionId)) != -1)
                 alterPairExps.push(expressions[k])
-            if(expressions[k].type == "Compound")
-                alterPairExps.push(expressions[k])
+            if(expressions[k].type == "Compound"){
+                alterExps.push(expressions[k]);
+                alterQs.push({text:expressions[k].name, value:"expression_" + expressions[k].id})
+                alterShapeQs.push({text:expressions[k].name, value:"expression_" + expressions[k].id})
+                alterQOptions["expression_" + expressions[k].id] = [{id:1,name:"True"},{id:0,name:"False"}]
+                alterShapeQOptions["expression_" + expressions[k].id] = [{id:1,name:"True"},{id:0,name:"False"}]
+                alterPairExps.push(expressions[k]);
+            }
         }
         for(k in this.questions){
             this.questions[k].alterQs = alterQs;

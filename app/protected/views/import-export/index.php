@@ -100,6 +100,7 @@ use yii\helpers\Url;
         Send Study to Server
       </div>
       <div class="card-body">
+        <p>* Multi-session data will be lost.  Use export study function and import multiple study files to preserve multi-session data.</p>
         <?= Html::beginForm([''], 'post', array('id' => 'syncForm')) ?>
         <div class="row mb-3">
           <label class="col-sm-3">Server</label>
