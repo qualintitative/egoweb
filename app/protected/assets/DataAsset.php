@@ -15,10 +15,10 @@ class DataAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         '/www/css/dataTables.bootstrap4.min.css',
-        '/www/css/jquery.dataTables.min.css',
+     //   '/www/css/jquery.dataTables.min.css',
     ];
     public $js = [
-        '/www/js/dataTables.bootstrap4.js',
+        //'/www/js/dataTables.bootstrap4.min.js',
         '/www/js/jquery.dataTables.js',
     ];
     public $jsOptions = [ 'position' => \yii\web\View::POS_HEAD ];

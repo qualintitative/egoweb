@@ -14,23 +14,22 @@ module.exports = class Page {
     get inputPassword () { return $('#loginform-password') }
     get btnLogin () { return $('button[type="submit"]') }
 
-    login (username, password) {
-        this.open()
-        this.inputUsername.setValue(username);
-        this.inputPassword.setValue(password);
-        this.btnLogin.click(); 
-        browser.pause(2000);
+    async login (username, password) {
+       // this.open()
+        //this.inputUsername.setValue(username);
+        //this.inputPassword.setValue(password);
+        await this.btnLogin.click(); 
     }
 
-    open (path) {
+    async open (path) {
         if(path == null)
-            return browser.url('site/login');
+            await browser.url('site/login');
         else
-            return browser.url(path)
+            await browser.url(path)
     }
 
     // update summernote fields
-    updateNoteField (field, val) {
-        browser.execute("$('" + field + "').summernote('code', '" + val.replace(/'/g, "\\'") + "')");
+    async updateNoteField (field, val) {
+        await browser.execute("$('" + field + "').summernote('code', '" + val.replace(/'/g, "\\'") + "');");
     }
 }

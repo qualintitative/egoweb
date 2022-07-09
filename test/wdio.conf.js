@@ -19,21 +19,21 @@ exports.config = {
   specs: [
     //  'authoring/01_create_study.js'
     //  'authoring/02_ego_id_questions.js'
-    //  'authoring/03_questions.js'
-      //  'authoring/04_duplicate.js'
-    //  'authoring/05_edit.js'
-   // 'authoring/06_rearrange.js'
-  //  'authoring/07_delete.js'
-  //     'authoring/08_complete_test.js'
- //     'authoring/09_expressions.js'
-  //     'interview/01_basic_fields.js',
+    //  ,'authoring/03_questions.js'
+   //    'authoring/04_duplicate.js'
+ //     ,'authoring/05_edit.js'
+//    ,'authoring/06_rearrange.js'
+   // 'authoring/07_delete.js'
+   //    'authoring/08_complete_test.js'
+  //    'authoring/09_expressions.js'
+  //    'interview/01_basic_fields.js',
   //      'interview/02_multiple_select.js',
   //    'interview/03_skiplogic_simple.js',
   //    'interview/04_skiplogic_compound.js'
   //     'interview/05_alters.js',
    //    'interview/06_finish.js'
-       'authoring/*.js',
-       'interview/*.js'
+      'authoring/*.js',
+   //    'interview/*.js'
   ],
   // Patterns to exclude.
   exclude: [
@@ -74,7 +74,9 @@ exports.config = {
     'goog:chromeOptions': {
       // to run chrome headless the following flags are required
       // (see https://developers.google.com/web/updates/2017/04/headless-chrome)
-          args: ['--headless', '--disable-gpu', '--window-size=1200,800'],
+      //       args: ['--disable-gpu', '--window-size=1200,800'],
+
+   //       args: ['--headless', '--disable-gpu', '--window-size=1200,800'],
      //    args: ['--headless', '--disable-gpu'],
     }
     // If outputDir is provided WebdriverIO can capture driver session logs

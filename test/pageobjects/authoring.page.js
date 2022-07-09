@@ -11,7 +11,11 @@ class AuthoringPage extends Page {
     get btnCreate () { return $('button[type="submit"]') }
     get btnSaveStudy () { return $('//*[@id="saveStudy"]') }
     get studyIntro () { return $('//main/div/form/div[2]/div[1]/div/div[3]/div[2]') }
-    get studyEgoId () { return $('//*[@id="study-form"]/div[2]/div[2]/div/div[6]') }
+    get studyEgoId () { return $('//main/div/div[1]/div/div[3]/div[2]') }
+    get settingsLink () { return  $('//main//a[text()="Settings"]') }
+    get egoIdLink () { return  $('//main//a[text()="Ego ID"]') }
+    get questionsLink () { return  $('//main//a[text()="Questions"]') }
+    get expressionsLink () { return  $('//main//a[text()="Expressions"]') }
     get btnCreateQ () { return $('button=Create') }
     get expressionName () { return $('//*[@id="Expression_name"]') }
     get expressionOperator () { return $('//*[@name="Expression[operator]"]') }
@@ -23,14 +27,11 @@ class AuthoringPage extends Page {
     get expressionSelect () { return $('//select[@id="form-type"]') }
     get expressionId () { return $('//*[@id="expressionId"]') }
     get expressionCompare () { return $('//*[@id="compare"]') }
+    get studyLink () { return $('//div[@aria-label="' + studyTest.settings.title + '"]//a[text()="Authoring"]') }
 
-    createStudy (studyName) {
-        this.inputCreate.setValue(studyName);
-        this.btnCreate.click();
-    }
 
-    open () {
-        return super.open('/admin');
+    async open () {
+        await super.open('/admin');
     }
 }
 

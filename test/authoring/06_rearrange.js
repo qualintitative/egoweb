@@ -3,33 +3,31 @@ var assert = require('assert');
 const env = require("../.env");
 
 describe('Rearrange Questions', function () {
-  before(function () {
-    AuthoringPage.open();
-    AuthoringPage.login(egoOpts.loginAdmin.username, egoOpts.loginAdmin.password);
+  before(async function () {
+    await AuthoringPage.open();
+    await AuthoringPage.inputUsername.setValue(egoOpts.loginAdmin.username)
+    await AuthoringPage.inputPassword.setValue(egoOpts.loginAdmin.password)
+    await AuthoringPage.login();
+    const studyUrl = await AuthoringPage.studyLink.getAttribute("href");
+    await browser.url(studyUrl);
   });
   describe('Rearrange', function () {
 
-    it('Go to question list page', function () {
-      studyLink = $('//div[@aria-label="' + studyTest.settings.title + '"]//a[text()="Authoring"]')
-      studyUrl = studyLink.getAttribute("href");
-      browser.url(studyUrl);
-      idQLink = $('//main//a[text()="Questions"]')
-      expect(idQLink).toBeExisting();
-      browserUrl = idQLink.getAttribute("href");
-      browser.url(browserUrl)
-      browser.pause(1000);
+    it('Go to question list page', async function () {
+      browserUrl = await AuthoringPage.questionsLink.getAttribute("href");
+      await browser.url(browserUrl);
     });
 
-    it('Rearange', function () {
-      btnQ0 = $$("//header/button")[0]
-      var label0 = btnQ0.getText();
-      btnQ1 = $$("//header/button")[1]
-      var label1 = btnQ1.getText();
-      btnQ2 = $$("//header/button")[2]
-      var label2 = btnQ2.getText();
+    it('Rearange', async function () {
+      btnQ0 = await $$("//header/button")[0]
+      var label0 = await btnQ0.getText();
+      btnQ1 = await $$("//header/button")[1]
+      var label1 = await btnQ1.getText();
+      btnQ2 = await $$("//header/button")[2]
+      var label2 = await btnQ2.getText();
       
 
-        browser.performActions([{
+        await browser.performActions([{
           type: 'pointer',
           id: 'pointer1',
           parameters: { pointerType: 'mouse' },
@@ -42,7 +40,7 @@ describe('Rearrange Questions', function () {
       
 
         // emulate drop with js
-        browser.execute(
+        await browser.execute(
           function (elemDrag, elemDrop) {
             const pos = elemDrop.getBoundingClientRect()
             const center2X = Math.floor((pos.left + pos.right) / 2)
@@ -61,13 +59,12 @@ describe('Rearrange Questions', function () {
           btnQ0,
           btnQ2
         )
-        browser.pause(3000);
-
-      browser.url(browserUrl)
-      browser.pause(1000);
-      place0 = $$("//header/button")[0].getText();
-      place1 = $$("//header/button")[1].getText();
-      place2 = $$("//header/button")[2].getText();
+      await browser.pause(3000);
+      await browser.url(browserUrl)
+      //browser.pause(1000);
+      place0 = await $$("//header/button")[0].getText();
+      place1 = await $$("//header/button")[1].getText();
+      place2 = await $$("//header/button")[2].getText();
  
       assert.strictEqual(place2, label0);
       

@@ -6,7 +6,7 @@ use yii\helpers\Html;
 <div id="authoring-app">
     <?php if (Yii::$app->controller->action->id == "ego_id"): ?>
     <div class="col-md-12 mb-3">
-        <label for="Study_egoIdPrompt" class="col-sm-12 col-form-label">Ego ID Prompt<b-button class="float-right btn btn-success btn-sm col-1" :disabled="origPrompt == study.egoIdPrompt" @click="saveStudy">save</b-button></label>
+        <label for="Study_egoIdPrompt" class="col-sm-12 col-form-label">Ego ID Prompt<b-button id="saveEgoId" class="float-right btn btn-success btn-sm col-1" @click="saveStudy">save</b-button></label>
         <summer-note :model.sync="study.egoIdPrompt" ref="Study_egoIdPrompt" name="Study[egoIdPrompt]" vid="Study_egoIdPrompt"></summer-note>
     </div>
     <?php endif; ?>
@@ -1238,16 +1238,17 @@ new Vue({
     },
     methods: {
         saveStudy() {
-            self = this;
+            //self = this;
             (function(self) {
-                $.post('/authoring/ajaxupdate/' + self.study.id, {
+                return $.post('/authoring/ajaxupdate/' + self.study.id, {
                     Study: {
-                        ...self.study
+                        "id":self.study.id,
+                        "egoIdPrompt":$("#Study_egoIdPrompt").val()
                     }
                 }, function(data) {
                     self.origPrompt = self.study.egoIdPrompt;
                 });
-            })(self);
+            })(this);
         },
         reorderQuestion(event) {
             var questions = $.extend(true, [], this.questions);

@@ -3,46 +3,46 @@ var assert = require('assert');
 const env = require("../.env");
 
 describe('Create Regular Questions', function () {
-  before(function () {
-    AuthoringPage.open();
-    AuthoringPage.login(egoOpts.loginAdmin.username, egoOpts.loginAdmin.password);
+  before(async function () {
+    await AuthoringPage.open();
+    await AuthoringPage.inputUsername.setValue(egoOpts.loginAdmin.username)
+    await AuthoringPage.inputPassword.setValue(egoOpts.loginAdmin.password)
+    await AuthoringPage.login();
+    const studyUrl = await AuthoringPage.studyLink.getAttribute("href");
+    await browser.url(studyUrl);
   });
   describe('create text question', function () {
-    it('Go to question list page', function () {
-      //AuthoringPage.open();
-      studyLink = $('//div[@aria-label="' + studyTest.settings.title + '"]//a[text()="Authoring"]')
-      studyUrl = studyLink.getAttribute("href");
-      browser.url(studyUrl);
-      idQLink = $('//main//a[text()="Questions"]')
-      expect(idQLink).toBeExisting();
-      browserUrl = idQLink.getAttribute("href");
-      browser.url(browserUrl)
+    it('Go to question list page', async function () {      
+      browserUrl = await AuthoringPage.questionsLink.getAttribute("href");
+      await browser.url(browserUrl);
     });
-    it('Create textual_1', function () {
+    it('Create textual_1', async function () {
       var qId = '0';
-      btnNewQ = $("//button[contains(text(),'" + studyTest.questions[0].title + "')]")
-      if(typeof btnNewQ.error != "undefined")
+      btnNewQ = await $("//button[contains(text(),'" + studyTest.questions[0].title + "')]")
+      if(typeof btnNewQ.error != "undefined"){
         btnNewQ = $('button=Create New Question');
-      else 
-        qId = btnNewQ.getAttribute("aria-controls").replace("accordion-","");
-      expect(btnNewQ).toBeExisting();
-      btnNewQ.click();
-      browser.pause(1000);
-      $("//*[@id='" + qId + "_title']").waitForExist(egoOpts.waitTime);
-      $("//*[@id='" + qId + "_title']").setValue(studyTest.questions[0].title);
-      AuthoringPage.updateNoteField("#" + qId + "_prompt", studyTest.questions[0].prompt);
+      } else {
+        qId = await btnNewQ.getAttribute("aria-controls");
+        qId = qId.replace("accordion-","");
+      }
+      await expect(btnNewQ).toBeExisting();
+      await btnNewQ.click();
+      //await browser.pause(1000);
+      //$("//*[@id='" + qId + "_title']").waitForExist(egoOpts.waitTime);
+      await $("//*[@id='" + qId + "_title']").setValue(studyTest.questions[0].title);
+      await AuthoringPage.updateNoteField("#" + qId + "_prompt", studyTest.questions[0].prompt);
       if(qId == '0'){
-        $('//*[@id="form-0"]').$('[name="Question[answerType]"]').selectByVisibleText(studyTest.questions[0].answerType)
-        $('//*[@id="form-0"]').$('button=Create').click();
+        await $('//*[@id="form-0"]').$('[name="Question[answerType]"]').selectByVisibleText(studyTest.questions[0].answerType)
+        await $('//*[@id="form-0"]').$('button=Create').click();
       }else{
-        $('//*[@id="form-' + qId + '"]').$('[name="Question[answerType]"]').selectByVisibleText(studyTest.questions[0].answerType)
-        $('//*[@id="form-' + qId + '"]').$('button=Save').click();
+        await $('//*[@id="form-' + qId + '"]').$('[name="Question[answerType]"]').selectByVisibleText(studyTest.questions[0].answerType)
+        await $('//*[@id="form-' + qId + '"]').$('button=Save').click();
       }
     });
-    it('check saved changes to textual_1', function () {
-      browser.url(browserUrl);
-      btnNewQ = $("//button[contains(text(),'" + studyTest.questions[0].title + "')]")
-      expect(btnNewQ).toBeExisting();
+    it('check saved changes to textual_1', async function () {
+      await browser.url(browserUrl);
+      btnNewQ = await $("//button[contains(text(),'" + studyTest.questions[0].title + "')]")
+      await expect(btnNewQ).toBeExisting();
     });;
   })
 });

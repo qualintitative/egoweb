@@ -19,19 +19,18 @@ class InterviewAsset extends AssetBundle
     public $js = [
         '/www/js/angular.min.js',
         '/www/js/angular-route.min.js',
-'/www/js/autocomplete.js',
-'/www/js/jquery.floatThead.js',
-'/www/js/1.0.3/sigma.min.js',
-'/www/js/1.0.3/plugins/sigma.plugins.dragNodes.js',
-'/www/js/1.0.3/plugins/shape-library.js',
-'/www/js/1.0.3/plugins/sigma.renderers.customShapes.min.js',
-'/www/js/1.0.3/plugins/sigma.layout.forceAtlas2.min.js',
-'/www/js/plugins/sigma.notes.js',
-'/www/js/levenshtein.js',
-'/www/js/doublemetaphone.js',
-'/www/js/server.js',
-'/www/js/interview.js',
-
+        '/www/js/autocomplete.js',
+        '/www/js/jquery.floatThead.js',
+        '/www/js/1.0.3/sigma.min.js',
+        '/www/js/1.0.3/plugins/sigma.plugins.dragNodes.js',
+        '/www/js/1.0.3/plugins/shape-library.js',
+        '/www/js/1.0.3/plugins/sigma.renderers.customShapes.min.js',
+        '/www/js/1.0.3/plugins/sigma.layout.forceAtlas2.min.js',
+        '/www/js/plugins/sigma.notes.js',
+        '/www/js/levenshtein.js',
+        '/www/js/doublemetaphone.js',
+        '/www/js/server.js',
+        '/www/js/interview.js',
     ];
     public $jsOptions = [ 'position' => \yii\web\View::POS_HEAD ];
 
