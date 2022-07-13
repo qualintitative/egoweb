@@ -44,24 +44,16 @@ describe('Complete Test', function () {
         i++;
         var qId = '0';
         var nltVals = ["NLT_LITERAL","NLT_PREVQUES","NLT_NONE"];
-        idQLink = await $('//main//a[text()="Questions"]')
         btnNewQ = await $('button=Create New Question');
         //expect(btnNewQ).toBeExisting();
-        //browser.pause(1000);
-    //    console.log("first click")
+        console.log(studyTest.questions[i].title)
         await btnNewQ.click();
-  //      console.log("second click")
-        await btnNewQ.scrollIntoView();
-        //browser.pause(1000);
-        //$("//*[@id='" + qId + "_title']").waitForExist(egoOpts.waitTime)
+        browser.pause(1000);
+
         await $("//*[@id='" + qId + "_title']").setValue(studyTest.questions[i].title);
         await AuthoringPage.updateNoteField("#" + qId + "_prompt", studyTest.questions[i].prompt);
-        //$('//*[@id="form-0"]').$('[name="Question[answerType]"]').waitForExist(egoOpts.waitTime)
         await $('//*[@id="form-0"]').$('[name="Question[answerType]"]').selectByVisibleText(studyTest.questions[i].answerType)
-        //browser.pause(5000);
-        //console.log( $('//*[@id="form-0"]').$('[name="Question[subjectType]"]').getValue())
         await $('//*[@id="form-0"]').$('[name="Question[subjectType]"]').selectByVisibleText(studyTest.questions[i].questionType)
-        //browser.pause(2000);
 
         if (typeof studyTest.questions[i].params.dontKnowButton != "undefined")
           await $('//*[@id="form-0"]').$('//label[@for="' + qId + '_dontKnowButton"]').click()
@@ -87,9 +79,7 @@ describe('Complete Test', function () {
 
 
 
-      //  if (typeof studyTest.questions[i].params.timeUnits != "undefined") {
-        //  $('//*[@id="form-0"]').$('//label[contains(text(),"Hours")]').waitForExist(egoOpts.waitTime)
-
+        if (typeof studyTest.questions[i].params.timeUnits != "undefined") {
           var timeUnits = studyTest.questions[i].params.timeUnits;
           if (timeBits(timeUnits, "YEAR"))
             await $('//*[@id="form-0"]').$('//label[contains(text(),"Years")]').click();
@@ -104,32 +94,21 @@ describe('Complete Test', function () {
           if (timeBits(timeUnits, "MINUTE"))
             await $('//label[@for="0-time-MINUTE"]').click();
             //browser.pause(500);
-     //   }
+        }
+        
         if (studyTest.questions[i].options.length > 0) {
+         // await $('//*[@id="form-0"]').$('button=Create').scrollIntoView();
           await $('//*[@id="form-0"]').$('button=Create').click();
           //browser.pause(3000);
           btnNewQ = await $("//button[contains(text(),'" + studyTest.questions[i].title + "')]")
-          qId = await btnNewQ.getAttribute("aria-controls");
+          let qId = await btnNewQ.getAttribute("aria-controls");
           qId = qId.replace("accordion-","");
-          console.log("third click")
+          //console.log("third click")
           await btnNewQ.click();
-          console.log("fourth click")
+          //console.log("fourth click")
           await btnNewQ.scrollIntoView();
           await browser.pause(1000);
 
-
-
-          // $('//*[@id="form-' + qId + '"]').$('[name="Question[minCheckableBoxes]"]').scrollIntoView();
-/*          
-            browser.execute(function (qId) {
-              qId = $($(".items > div")[$(".items > div").length - 1]).attr("id");
-              $("#" + qId + "_allButton[type='checkbox']").click();
-              $("#data-" + qId + " #question-form .form").scrollTop(600);
-            })*/
-            //$('//*[@id="form-' + qId + '"]').$('//input[@type="checkbox" and @name="Question[allButton]"]').scrollIntoView();
-            //$('//*[@id="form-' + qId + '"]').$('//input[@type="checkbox" and @name="Question[allButton]"]').click()
-         
-          //btnNewQ.$('.optionLink').click();
 
           for (let j = 0; j < studyTest.questions[i].options.length; j++) {
             //$('//*[@id="form-' + qId + '"]').$('//input[@name="' + qId + '_QuestionOption_name"]').waitForExist(egoOpts.waitTime);
@@ -138,22 +117,20 @@ describe('Complete Test', function () {
             if (typeof studyTest.questions[i].options[j].otherSpecify != "undefined" && studyTest.questions[i].options[j].otherSpecify == true)
               await $('//*[@id="form-' + qId + '"]').$('//label[@for="' + qId + '_QuestionOption_otherSpecify"]').click()
             await $('//*[@id="form-' + qId + '"]').$('button=Add').click();
-            await browser.pause(1000);
+            await browser.pause(500);
           }
-          for (let j = 0; j < studyTest.questions[i].options.length; j++) {
 
-          }
         } else if (studyTest.questions[i].questionType == "NAME_GENERATOR") {
           if (typeof studyTest.questions[i].params.min != "undefined")
-            await $('//*[@id="form-0"]').$('//*[@id="' + qId + '_minLiteral"]').setValue(studyTest.questions[i].params.min);
+            await $('//*[@id="form-0"]').$('//*[@id="0_minLiteral"]').setValue(studyTest.questions[i].params.min);
           if (typeof studyTest.questions[i].params.max != "undefined")
-            await $('//*[@id="form-0"]').$('//*[@id="' + qId + '_maxLiteral"]').setValue(studyTest.questions[i].params.max);
-          await $('//*[@id="form-0"]').$('button=Create').click();
+            await $('//*[@id="form-0"]').$('//*[@id="0_maxLiteral"]').setValue(studyTest.questions[i].params.max);
+            await $('//*[@id="form-0"]').$('button=Create').click();
           //$("//button[contains(text(),'" + studyTest.questions[i].title + "')]").waitForExist(egoOpts.waitTime);
-          await browser.pause(3000);
+          await browser.pause(1000);
 
           btnNewQ = await $("//button[contains(text(),'" + studyTest.questions[i].title + "')]")
-          qId = await btnNewQ.getAttribute("aria-controls");
+          let qId = await btnNewQ.getAttribute("aria-controls");
           qId = qId.replace("accordion-","");
           await btnNewQ.click();
           await btnNewQ.scrollIntoView();
@@ -165,15 +142,17 @@ describe('Complete Test', function () {
               await $('//*[@id="form-' + qId + '"]').$('//input[@name="AlterPrompt[afterAltersEntered]"]').setValue(a);
               await $('//*[@id="form-' + qId + '"]').$('//input[@name="AlterPrompt[display]"]').setValue(alterPrompts[a]);
               await $('//*[@id="form-' + qId + '"]').$('button=Add').click()
-              await browser.pause(1000)
+              await browser.pause(500)
             }
           }
         } else {
 
           let createBtn = await $('//*[@id="form-0"]').$('button=Create')
-          console.log(createBtn);
+          btnNewQ = await $("//button[contains(text(),'Create New Question')]")
+          await btnNewQ.scrollIntoView();
+        //  await createBtn.scrollIntoView();
+          //await browser.pause(1000);
           await createBtn.click();
-
           //$("//button[contains(text(),'" + studyTest.questions[i].title + "')]").waitForExist(egoOpts.waitTime);
           await browser.pause(1000)
         }

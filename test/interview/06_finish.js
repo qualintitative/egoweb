@@ -3,19 +3,21 @@ var assert = require('assert');
 const env = require("../.env");
 
 describe('Finish Interview', function () {
-    before(function () {
-        // login
-        IwPage.login(egoOpts.loginInterviewer.username, egoOpts.loginInterviewer.password);
-
+    before(async function () {
+        await IwPage.open();
+        await IwPage.inputUsername.setValue(egoOpts.loginAdmin.username)
+        await IwPage.inputPassword.setValue(egoOpts.loginAdmin.password)
+        await IwPage.login();
+    
         // start test1 interview
-        IwPage.openInterview("TEST_STUDY");
-
+        await IwPage.openInterview("TEST_STUDY");
     });
 
-    it("should finish the interview", function () {
-        IwPage.goToQuestion('finish');
-        IwPage.finish();
-        browser.pause(2000);
-        expect(IwPage.questionTitle.getText()).toBe("CONCLUSION");
+    it("should finish the interview", async function () {
+        await IwPage.goToQuestion('finish');
+        await IwPage.finish();
+        await browser.pause(2000);
+        var qTitle = await IwPage.questionTitle;
+        await expect(await qTitle.getText()).toBe("CONCLUSION");
     });
 });

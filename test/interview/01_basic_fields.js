@@ -2,272 +2,297 @@ const IwPage = require('../pageobjects/interview.page');
 var assert = require('assert');
 const env = require("../.env");
 
-describe('Basic Fields', function () {
-    before(function () {
-        // login
-        IwPage.login(egoOpts.loginInterviewer.username, egoOpts.loginInterviewer.password);
+describe('Basic Fields', function() {
+  before(async function() {
+    // login
+    await IwPage.open();
+    await IwPage.inputUsername.setValue(egoOpts.loginAdmin.username)
+    await IwPage.inputPassword.setValue(egoOpts.loginAdmin.password)
+    await IwPage.login();
 
-        // start test1 interview
-        IwPage.openInterview("TEST_STUDY", "basic_start");
+    // start test1 interview
+    await IwPage.openInterview("TEST_STUDY", "basic_start");
+  });
 
-        // set valid field values for moving forward through survey
-        IwPage.fieldValues = {
-            'num' : {
-                type: 'input',
-                value: '5'
-            },
-            'numdkrf' : {
-                type: 'input',
-                value: '5'
-            },
-            'num0to100' : {
-                type: 'input',
-                value: '5'
-            }
-        }
+  beforeEach(async function() {
+    // every test starts at first question in survey
+    //   await IwPage.goToQuestion("basic_start");
+  });
 
-    });
+  it("should handle positive numbers in number field", async function() {
+    //console.log("going to question ");
+    await IwPage.goToQuestion('num');
+    //let field = IwPage.fieldValues['num']['field'];
 
-    beforeEach(function () {
-        // every test starts at first question in survey
-        IwPage.goToQuestion("basic_start");
-    });
+    // 
 
-    it("should handle positive numbers in number field", function () {
-        IwPage.goToQuestion('num');
-        let field = IwPage.fieldValues['num']['field'];
+    await IwPage.inputField.setValue(55);
+    await IwPage.next();
 
-        // num
-        IwPage.inputField.waitForExist(egoOpts.waitTime);
-        IwPage.inputField.setValue(55);
-        IwPage.next();
+    // num
+    var qTitle = await IwPage.questionTitle;
+    console.log(await qTitle.getText());
+    await expect(await qTitle.getText()).not.toBe("num");
 
-        // numdkrf
-        expect(IwPage.questionTitle.getText()).not.toBe("num");
-        IwPage.back();
+    // go back and check input value
+    await IwPage.back();
+    var iField = await IwPage.inputField;
+    await expect(await iField.getValue()).toBe("55");
+  });
 
-        // num
-        IwPage.inputField.waitForExist(egoOpts.waitTime);
-        expect(IwPage.inputField.getValue()).toBe("55");
-    });
+  it("should handle negative numbers in number field", async function() {
+    await IwPage.goToQuestion('num');
+    //let field = IwPage.fieldValues['num']['field'];
 
-    it("should handle negative numbers in number field", function () {
-        IwPage.goToQuestion('num');
-        let field = IwPage.fieldValues['num']['field'];
+    // num
+    await IwPage.inputField.setValue(-7);
+    await IwPage.next();
 
-        // num
-        IwPage.inputField.waitForExist(egoOpts.waitTime);
-        IwPage.inputField.setValue(-7);
-        IwPage.next();
+    var qTitle = await IwPage.questionTitle;
+    //console.log(await qTitle.getText());
+    await expect(await qTitle.getText()).not.toBe("num");
 
-        // next question
-        expect(IwPage.questionTitle.getText()).not.toBe("num");
-        IwPage.back();
+    // go back and check input value
+    await IwPage.back();
+    var iField = await IwPage.inputField;
+    await expect(await iField.getValue()).toBe("-7");
+  });
 
-        // num
-        IwPage.inputField.waitForExist(egoOpts.waitTime);
-        expect(IwPage.inputField.getValue()).toBe("-7");
+  it("should show error for letters in number field", async function() {
+    await IwPage.goToQuestion('num');
+    //let field = IwPage.fieldValues['num']['field'];
 
-    });
+    // num
+    //IwPage.inputField.waitForExist(egoOpts.waitTime);
+    await IwPage.inputField.setValue("abc");
+    await IwPage.next();
 
-    it("should show error for letters in number field", function() {
-        IwPage.goToQuestion('num');
-        let field = IwPage.fieldValues['num']['field'];
+    // error message
+    //$("div.alert").waitForExist(egoOpts.waitTime);
+    let alert = await $("div.alert");
+    await expect(await alert.getText()).toBe("Please enter a number.");
 
-        // num
-        IwPage.inputField.waitForExist(egoOpts.waitTime);
-        IwPage.inputField.setValue("abc");
-        IwPage.next();
+    // fix error
+    await IwPage.inputField.setValue("5");
+    await IwPage.next();
 
-        // error message
-        $("div.alert").waitForExist(egoOpts.waitTime);
-        expect($("div.alert").getText()).toBe("Please enter a number.");
+    // numdkrf
+    var qTitle = await IwPage.questionTitle;
+    expect(await qTitle.getText()).not.toBe("num");
+  });
 
-        // fix error
-        IwPage.inputField.setValue("5");
-        IwPage.next();
+  it("should handle DK and RF with number field", async function() {
+    await IwPage.goToQuestion('numdkrf');
+    //let field = IwPage.fieldValues['numdkrf']['field'];
 
-        // numdkrf
-        expect(IwPage.questionTitle.getText()).not.toBe("num");
-    });
+    // numdkrf
+    //IwPage.inputField.waitForExist(egoOpts.waitTime);
 
-    it("should handle DK and RF with number field", function() {
-        IwPage.goToQuestion('numdkrf');
-        let field = IwPage.fieldValues['numdkrf']['field'];
+    await IwPage.inputField.setValue("99");
 
-        // numdkrf
-        IwPage.inputField.waitForExist(egoOpts.waitTime);
+    // dk should clear value
+    await IwPage.dkLabel.click();
+    var iField = await IwPage.inputField;
+    await expect(await iField.getValue()).toBe("");
+    await IwPage.next();
 
-        IwPage.inputField.setValue("99");
+    // next page
+    var qTitle = await IwPage.questionTitle;
+    await expect(await qTitle.getText()).not.toBe("numdkrf");
+    await IwPage.back();
 
-        // dk should clear value
-        IwPage.dkLabel.click();
-        expect(IwPage.inputField.getValue()).toBe("");
-        IwPage.next();
+    await IwPage.inputField.setValue("44");
 
-        // next page
-        expect(IwPage.questionTitle.getText()).not.toBe("numdkrf");
-        IwPage.back();
+    //rf should clear value
+    await IwPage.rfLabel.click();
+    iField = await IwPage.inputField;
+    await expect(await iField.getValue()).toBe("");
+    await IwPage.next();
 
-        IwPage.inputField.setValue("44");
+    // next page
+    qTitle = await IwPage.questionTitle;
+    await expect(await qTitle.getText()).not.toBe("numdkrf");
+  });
 
-        //rf should clear value
-        IwPage.rfLabel.click();
-        expect(IwPage.inputField.getValue()).toBe("");
-        IwPage.next();
+  it("should succeed if number value is within min/max range", async function() {
+    await IwPage.goToQuestion("num0to100");
+    //let field = IwPage.fieldValues['num0to100']['field'];
 
-        // next page
-        expect(IwPage.questionTitle.getText()).not.toBe("numdkrf");
-    });
+    // num0to100
 
-    it("should succeed if number value is within min/max range", function() {
-        IwPage.goToQuestion("num0to100");
-        let field = IwPage.fieldValues['num0to100']['field'];
+    // try min value
+    await IwPage.inputField.setValue("0");
+    await IwPage.next();
 
-        // num0to100
-        IwPage.inputField.waitForExist(egoOpts.waitTime);
+    // next page
+    var qTitle = await IwPage.questionTitle;
+    await expect(await qTitle.getText()).not.toBe("num0to100");
+    await IwPage.back();
 
-        // try min value
-        IwPage.inputField.setValue("0");
-        IwPage.next();
+    // try max value
+    await IwPage.inputField.setValue("100");
+    await IwPage.next();
 
-        // next page
-        expect(IwPage.questionTitle.getText()).not.toBe("num0to100");
-        IwPage.back();
+    // next page
+    qTitle = await IwPage.questionTitle;
+    await expect(await qTitle.getText()).not.toBe("num0to100");
+    await IwPage.back();
 
-        // try max value
-        IwPage.inputField.setValue("100");
-        IwPage.next();
+    // try a value inside range
+    await IwPage.inputField.setValue("73");
+    await IwPage.next();
 
-        // next page
-        expect(IwPage.questionTitle.getText()).not.toBe("num0to100");
-        IwPage.back();
+    qTitle = await IwPage.questionTitle;
+    await expect(await qTitle.getText()).not.toBe("num0to100");
+  });
 
-        // try a value inside range
-        IwPage.inputField.setValue("73");
-        IwPage.next();
+  it("should show error if number value is outside min/max range", async function() {
+    await IwPage.goToQuestion("num0to100");
+    //let field = IwPage.fieldValues['num0to100']['field'];
 
-        expect(IwPage.questionTitle.getText()).not.toBe("num0to100");
-    });
+    // num0to100
+    // IwPage.inputField.waitForExist(egoOpts.waitTime);
 
-    it("should show error if number value is outside min/max range", function() {
-        IwPage.goToQuestion("num0to100");
-        let field = IwPage.fieldValues['num0to100']['field'];
+    // try value below min
+    await IwPage.inputField.setValue("-1");
+    await IwPage.next();
 
-        // num0to100
-        IwPage.inputField.waitForExist(egoOpts.waitTime);
+    // error message
+    var alert = await $("div.alert");
+    //.waitForExist(egoOpts.waitTime);
+    await expect(await alert.getText()).toBe("The range of valid answers is 0 to 100." + IwPage.clickError);
 
-        // try value below min
-        IwPage.inputField.setValue("-1");
-        IwPage.next();
+    // fix value
+    await IwPage.inputField.setValue("0");
+    await IwPage.next();
 
-        // error message
-        $("div.alert").waitForExist(egoOpts.waitTime);
-        expect($("div.alert").getText()).toBe("The range of valid answers is 0 to 100." + IwPage.clickError);
+    // next page
+    var qTitle = await IwPage.questionTitle;
+    await expect(await qTitle.getText()).not.toBe("num0to100");
+    await IwPage.back();
 
-        // fix value
-        IwPage.inputField.setValue("0");
-        IwPage.next();
+    // num0to100
+    // IwPage.inputField.waitForExist(egoOpts.waitTime);
 
-        // next page
-        expect(IwPage.questionTitle.getText()).not.toBe("num0to100");
-        IwPage.back();
+    // try value below min
+    await IwPage.inputField.setValue("101");
+    await IwPage.next();
 
-        // num0to100
-        IwPage.inputField.waitForExist(egoOpts.waitTime);
+    // error message
+    alert = await $("div.alert");
+    //$("div.alert").waitForExist(egoOpts.waitTime);
+    await expect(await alert.getText()).toBe("The range of valid answers is 0 to 100." + IwPage.clickError);
 
-        // try value below min
-        IwPage.inputField.setValue("101");
-        IwPage.next();
+    // fix value
+    await IwPage.inputField.setValue("100");
+    await IwPage.next();
 
-        // error message
-        $("div.alert").waitForExist(egoOpts.waitTime);
-        expect($("div.alert").getText()).toBe("The range of valid answers is 0 to 100." + IwPage.clickError);
+    // next page
+    qTitle = await IwPage.questionTitle;
+    await expect(await qTitle.getText()).not.toBe("num0to100");
+  });
 
-        // fix value
-        IwPage.inputField.setValue("100");
-        IwPage.next();
+  it("should show error if textual value is blank", async function() {
+    await IwPage.goToQuestion("textual");
+    await IwPage.inputField.setValue("");
+    await IwPage.next();
 
-        // next page
-        expect(IwPage.questionTitle.getText()).not.toBe("num0to100");
-    });
+    // error message
+    var alert = $("div.alert");
+    await expect(await alert.getText()).toBe("Value cannot be blank." + IwPage.clickError);
 
-    it("should show error if textual value is blank", function() {
-        IwPage.goToQuestion("textual");
-        IwPage.inputField.setValue("");
-        IwPage.next();
+    var qTitle = await IwPage.questionTitle;
+    await expect(await qTitle.getText()).toBe("textual");
+    await IwPage.inputField.setValue("test");
+    await IwPage.next();
+    //browser.pause(5000)
+    qTitle = await IwPage.questionTitle;
+    await expect(await qTitle.getText()).not.toBe("textual");
+  });
 
-        // error message
-        $("div.alert").waitForExist(egoOpts.waitTime);
-        expect($("div.alert").getText()).toBe("Value cannot be blank." + IwPage.clickError);
+  it("should show error when date fields are missing", async function() {
+    await IwPage.goToQuestion("date");
 
-        expect(IwPage.questionTitle.getText()).toBe("textual");
-        IwPage.inputField.setValue("test");
-        IwPage.next();
-        browser.pause(5000)
-        expect(IwPage.questionTitle.getText()).not.toBe("textual");
-    });
+    // reset values
+    var month = await IwPage.monthField;
+    await month.selectByVisibleText('Select month');
+    var year = await IwPage.yearField;
+    await year.setValue("");
+    var day = IwPage.dayField;
+    await day.setValue("");
 
-    it("should show error when date fields are missing", function() {
-        IwPage.goToQuestion("date");
-        IwPage.next();
-         // error message
-         $("div.alert").waitForExist(egoOpts.waitTime);
-         expect($("div.alert").getText()).toBe("Please enter a month." + IwPage.clickError);
- 
-        IwPage.monthField().selectByVisibleText('December');
-        browser.pause(500);
-        //IwPage.next();
-        $("div.alert").waitForExist(egoOpts.waitTime);
-        expect($("div.alert").getText()).toBe("Please enter a valid year." + IwPage.clickError);
+    await IwPage.next();
 
-        IwPage.yearField().setValue("1999");
-        //IwPage.next();
+    // error message
+    var alert = await $("div.alert");
+    await expect(await alert.getText()).toBe("Please enter a month." + IwPage.clickError);
 
-        $("div.alert").waitForExist(egoOpts.waitTime);
-        expect($("div.alert").getText()).toBe("Please enter a day of the month."  + IwPage.clickError);
-        IwPage.dayField().setValue("31");
-        browser.pause(500);
-        IwPage.next();
-        expect(IwPage.questionTitle.getText()).not.toBe("date");
-    });
+    await month.selectByVisibleText('December');
+    //await browser.pause(500);
+    //IwPage.next();
+    alert = await $("div.alert");
+    //$("div.alert").waitForExist(egoOpts.waitTime);
+    await expect(await alert.getText()).toBe("Please enter a valid year." + IwPage.clickError);
 
-    it("should show error when hour and minute fields are missing", function() {
-        IwPage.goToQuestion("hour_min");
-        IwPage.next();
-        $("div.alert").waitForExist(egoOpts.waitTime);
-        expect($("div.alert").getText()).toBe("Please enter the time of day."  + IwPage.clickError);
+    await year.setValue("1999");
+    //IwPage.next();
+    //alert = await $("div.alert");
+    //$("div.alert").waitForExist(egoOpts.waitTime);
+    await expect(await alert.getText()).toBe("Please enter a day of the month." + IwPage.clickError);
+    await day.setValue("31");
+    //await browser.pause(500);
+    await IwPage.next();
+    qTitle = await IwPage.questionTitle;
+    await expect(await qTitle.getText()).not.toBe("date");
+  });
 
-        IwPage.hourField().setValue('23');
-        IwPage.minuteField().setValue('60');
+  it("should show error when hour and minute fields are missing", async function() {
+    await IwPage.goToQuestion("hour_min");
 
-        $("div.alert").waitForExist(egoOpts.waitTime);
-        expect($("div.alert").getText()).toBe("Please enter the time of day."  + IwPage.clickError);
+    var hour = await IwPage.hourField;
+    var minute = await IwPage.minuteField;
+    var pm = await IwPage.pmField;
+    var refuse = await IwPage.rfLabel;
+    await hour.setValue('');
+    await minute.setValue('');
+    //await IwPage.next();
+    await refuse.click();
+    await refuse.click();
+    await IwPage.next();
 
-        IwPage.pmField().click();
+    var alert = await $("div.alert");
+    await expect(await alert.getText()).toBe("Please enter the time of day." + IwPage.clickError);
 
+    await minute.setValue('60');
+    await hour.setValue('23');
+    await expect(await alert.getText()).toBe("Please enter the time of day." + IwPage.clickError);
 
-        $("div.alert").waitForExist(egoOpts.waitTime);
-        expect($("div.alert").getText()).toBe("Please enter 0 to 59 for MM."  + IwPage.clickError);
+    await pm.click();
+    await expect(await alert.getText()).toBe("Please enter 0 to 59 for MM." + IwPage.clickError);
 
-        IwPage.minuteField().setValue("59");
+    await minute.setValue("59");
+    await expect(await alert.getText()).toBe("Please enter 1 to 12 for HH." + IwPage.clickError);
 
-        $("div.alert").waitForExist(egoOpts.waitTime);
-        expect($("div.alert").getText()).toBe("Please enter 1 to 12 for HH."  + IwPage.clickError);
+    await hour.setValue('11');
+    await IwPage.next();
+    ''
 
-        IwPage.hourField().setValue('11');
-        IwPage.next();
-        expect(IwPage.questionTitle.getText()).not.toBe("hour_min");
-    });
+    var qTitle = await IwPage.questionTitle;
+    await expect(await qTitle.getText()).not.toBe("hour_min");
+  });
 
-    it("only weeks and days are displayed", function() {
-        IwPage.goToQuestion("weeks_days");
-        $("label=Weeks").waitForExist(egoOpts.waitTime);
-        $("label=Days").waitForExist(egoOpts.waitTime);
-        expect($('label=Years').isExisting()).toBe(false);
-        expect($('label=Months').isExisting()).toBe(false);
-        expect($('label=Hours').isExisting()).toBe(false);
-        expect($('label=Minutes').isExisting()).toBe(false);
-    });
+  it("only weeks and days are displayed", async function() {
+    await IwPage.goToQuestion("weeks_days");
+
+    var years = await $('label=Years');
+    var months = await $('label=Months');
+    var hours = await $('label=Months');
+    var minutes = await $('label=Minutes');
+
+    await expect(await years.isExisting()).toBe(false);
+    await expect(await months.isExisting()).toBe(false);
+    await expect(await hours.isExisting()).toBe(false);
+    await expect(await minutes.isExisting()).toBe(false);
+  });
 
 });

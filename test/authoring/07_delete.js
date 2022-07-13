@@ -28,7 +28,7 @@ describe('Delete Questions', function () {
       await browser.url(browserUrl)
       let btnNewQ = await $("//button[contains(text(),'" + studyTest.questions[0].title + "_COPY_COPY')]")
       assert.strictEqual(await btnNewQ.isExisting(), false);
-      await browser.pause(5000);
+      await browser.pause(3000);
     });
     it('Delete more', async function () {
       let btnNewQ = await $("//button[contains(text(),'" + studyTest.questions[2].title + "')]")
@@ -36,9 +36,7 @@ describe('Delete Questions', function () {
       let qId = await btnNewQ.getAttribute("aria-controls");
       qId = qId.replace("accordion-","");
       await btnNewQ.click();
-      await browser.pause(5000);
-
-      console.log("interact " + qId);
+      await browser.pause(3000);
       btnDeleteQ = await $('//*[@id="form-' + qId + '"]').$('button=Delete');
       await btnNewQ.scrollIntoView();
       assert.strictEqual(await btnDeleteQ.isExisting(), true);
@@ -56,6 +54,7 @@ describe('Delete Questions', function () {
       let qId = await btnNewQ.getAttribute("aria-controls");
       qId = qId.replace("accordion-","");
       await btnNewQ.click();
+      await browser.pause(3000);
       await $('//*[@id="form-' + qId + '"]').$('button=Delete').click();
     });
     it('check to see if dupicate exists', async function () {

@@ -16,6 +16,8 @@ describe('Create Study', function () {
         await $("button=Create").click();
         await expect(AuthoringPage.loggedIn).toBeExisting();
         await browser.url("site/logout");
+      } else {
+        console.log("skipping admin creation");
       }
     });
   });
