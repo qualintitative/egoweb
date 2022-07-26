@@ -718,18 +718,20 @@ class InterviewController extends Controller
             $newAlterId = false;
             $alterNames = array();
             $alterGroups = array();
+            $prev_names = array();
+            $preset_names = array();
             foreach ($alters as $alter) {
                 $alterNames[$alter['ID']] = strtolower($alter['NAME']);
                 $alterGroups[$alter['NAME']] = explode(",", $alter['NAMEGENQIDS']);
             }
-            if($nameGenQ->restrictPrev == true || $nameGenQ->autocompletePrev == true){
+            if($nameGenQ->restrictPrev == true){
                 foreach ($prevAlters as $alter) {
-                    $alterNames[$alter['ID']] = strtolower($alter['NAME']);
-                    $alterGroups[$alter['NAME']] = explode(",", $alter['NAMEGENQIDS']);
-                    $pre_names[] = $alter['NAME'];
+                    //$alterNames[$alter['ID']] = strtolower($alter['NAME']);
+                    //$alterGroups[$alter['NAME']] = explode(",", $alter['NAMEGENQIDS']);
+                    $prev_names[] = $alter['NAME'];
                 }
-                if($nameGenQ->restrictPrev == true)
-                    $restrictList = false;
+            //  if($nameGenQ->restrictPrev == true)
+            //      $restrictList = false;
             }
             $model = new Alters;
             $model->attributes = $_POST['Alters'];
@@ -756,30 +758,38 @@ class InterviewController extends Controller
                     }
                 } else {
                     $model->addError('name', $_POST['Alters']['name']. ' has already been added!');
-                    echo "name error:" . $_POST['Alters']['nameGenQIds'];
-                    print_r($alterGroups[$_POST['Alters']['name']]);
-                    die();
+                   // echo "name already in list:" . $_POST['Alters']['nameGenQIds'];
+                    //print_r($alterGroups[$_POST['Alters']['name']]);
+                   // die();
                 }
             }
 
-            $pre_names = array();
             $preset_alters = AlterList::findAll(array("studyId"=>$studyId));
             foreach ($preset_alters as $alter) {
-                $pre_names[] = $alter->name;
+                $preset_names[] = $alter->name;
             }
-            $study = Study::findOne($studyId);
+            //$study = Study::findOne($studyId);
+            /*
             $restrictList = false;
             $results = Question::find()->where(array("studyId"=>$studyId, "subjectType"=>"NAME_GENERATOR"))->orderBy(['ordering'=>'ASC'])->all();
             foreach ($results as $result) {
                 if ($result->restrictList == true) {
                     $restrictList = true;
                 }
-            }
+            }*/
             // check to see if pre-defined alters exist.  If they do exist, check name against list
-            if ($restrictList) {
-                if (count($pre_names) > 0) {
-                    if (!in_array($_POST['Alters']['name'], $pre_names)) {
-                        $model->addError('name', $_POST['Alters']['name']. ' is not in our list of participants');
+            if ($nameGenQ->restrictPrev) {
+                if (count($prev_names) > 0) {
+                    if (!in_array($_POST['Alters']['name'], $prev_names)) {
+                        $model->addError('name', $_POST['Alters']['name']. ' is not in our list of previous alters');
+                    }
+                }
+            }
+
+            if ($nameGenQ->restrictList) {
+                if (count($preset_names) > 0) {
+                    if (!in_array($_POST['Alters']['name'], $preset_names)) {
+                        $model->addError('name', $_POST['Alters']['name']. ' is not in our list of previous alters');
                     }
                 }
             }

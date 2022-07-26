@@ -584,10 +584,11 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         $("#Alters_name").val($("#Alters_name").val().trim());
         for (k in $scope.alters) {
             if ($("#Alters_name").val().toLowerCase() == $scope.alters[k].NAME.toLowerCase()) {
-                if ($scope.questions[0].NONEBUTTON != true)
-                    $scope.errors[0] = 'That name has already been listed';
+                //if ($scope.questions[0].NONEBUTTON != true)
+                //    $scope.errors[0] = 'That name has already been listed';
+                var nameGenQIds = [];
                 if ($scope.alters[k].NAMEGENQIDS != null)
-                    var nameGenQIds = $scope.alters[k].NAMEGENQIDS.split(",");
+                    nameGenQIds = $scope.alters[k].NAMEGENQIDS.split(",");
                 if (nameGenQIds.indexOf($("#Alters_nameGenQIds").val()) > -1)
                     $scope.errors[0] = 'That name is already on this list';
             }
