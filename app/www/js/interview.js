@@ -584,8 +584,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         $("#Alters_name").val($("#Alters_name").val().trim());
         for (k in $scope.alters) {
             if ($("#Alters_name").val().toLowerCase() == $scope.alters[k].NAME.toLowerCase()) {
-                //if ($scope.questions[0].NONEBUTTON != true)
-                //    $scope.errors[0] = 'That name has already been listed';
+                // dis-allow names entered from previous name generators in current interview
+                if ($scope.questions[0].NONEBUTTON != true)
+                    $scope.errors[0] = 'That name has already been listed';
                 var nameGenQIds = [];
                 if ($scope.alters[k].NAMEGENQIDS != null)
                     nameGenQIds = $scope.alters[k].NAMEGENQIDS.split(",");
