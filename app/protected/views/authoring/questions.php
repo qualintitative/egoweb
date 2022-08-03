@@ -1170,8 +1170,8 @@ new Vue({
                                 let oIds = {};
                                 console.log("edge options", this.questions[k].nParams[p].options)
                                 for(var i = 0; i < this.questions[k].nParams[p].options.length; i++){
-                                    //if(this.questions[k].nParams[p].options[i].id == 0)
-                                    //    this.questions[k].nParams[p].options[i].id = "default"
+                                    if(this.questions[k].nParams[p].options[i].id == 0 && isNaN(p))
+                                        this.questions[k].nParams[p].options[i].id = "default"
                                     if(this.questions[k].nParams[p].options[i].id == "default"){
                                         defaultOption = this.questions[k].nParams[p].options[i];
                                     }else{
