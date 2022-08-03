@@ -447,6 +447,7 @@ function evalExpression(id, alterId1, alterId2) {
         return result;
     }
     if (expressions[id].TYPE == "Compound") {
+        console.log("compound")
         var subexpressions = expressions[id].VALUE.split(',');
         var trues = 0;
         for (var k in subexpressions) {
@@ -455,7 +456,7 @@ function evalExpression(id, alterId1, alterId2) {
                 continue;
             var isTrue = evalExpression(parseInt(subexpressions[k]), alterId1, alterId2);
             if (expressions[id].OPERATOR == "Some" && isTrue == true) {
-                console.log(expressions[id].NAME + ":true");
+                console.log("compound:" + expressions[id].NAME + ":true");
                 return true;
             }
             if (isTrue == true)
@@ -1026,7 +1027,20 @@ function initStats(question) {
     this.getEdgeColor = function(nodeId1, nodeId2) {
         console.log("default edge color " + defaultEdgeColor)
         var defaultEdgeColor = "#ccc";
-        if (typeof this.params['edgeColor'] != "undefined") {
+        if (typeof this.params['edgeColor']['questionId'] != "undefined" && this.params['edgeColor']['questionId'].toString().search("expression") != -1) {
+            var qId = this.params['edgeColor']['questionId'].split("_");
+            if (evalExpression(qId[1], nodeId1, nodeId2) == true) {
+                for (p in this.params['edgeColor']['options']) {
+                    if (this.params['edgeColor']['options'][p]['id'] == 1)
+                        return this.params['edgeColor']['options'][p]['color'];
+                }
+            } else {
+                for (p in this.params['edgeColor']['options']) {
+                    if (this.params['edgeColor']['options'][p]['id'] == 0)
+                        return this.params['edgeColor']['options'][p]['color'];
+                }
+            }
+        } else if (typeof this.params['edgeColor'] != "undefined") {
             if (typeof this.params['edgeColor']['questionId'] != "undefined" && typeof answers[this.params['edgeColor']['questionId'] + "-" + nodeId1 + "and" + nodeId2] != "undefined")
                 var answer = answers[this.params['edgeColor']['questionId'] + "-" + nodeId1 + "and" + nodeId2].VALUE.split(",");
             else
@@ -1043,9 +1057,9 @@ function initStats(question) {
 
     this.getEgoEdgeColor = function(nodeId1) {
         var defaultEdgeColor = "#ccc";
-        console.log("egoEdgeColor", this.params['egoEdgeColor'])
+        //console.log("egoEdgeColor", this.params['egoEdgeColor'])
         if (typeof this.params['egoEdgeColor'] != "undefined") {
-            console.log(answers[this.params['egoEdgeColor']['questionId'] + "-" + nodeId1])
+            //console.log(answers[this.params['egoEdgeColor']['questionId'] + "-" + nodeId1])
             if (typeof this.params['egoEdgeColor']['questionId'] != "undefined" && typeof answers[this.params['egoEdgeColor']['questionId'] + "-" + nodeId1] != "undefined")
                 var answer = answers[this.params['egoEdgeColor']['questionId'] + "-" + nodeId1].VALUE.split(",");
             else
@@ -1062,7 +1076,20 @@ function initStats(question) {
 
     this.getEdgeSize = function(nodeId1, nodeId2) {
         var defaultEdgeSize = 1;
-        if (typeof this.params['edgeSize'] != "undefined") {
+        if (typeof this.params['edgeSize']['questionId'] != "undefined" && this.params['edgeSize']['questionId'].toString().search("expression") != -1) {
+            var qId = this.params['edgeSize']['questionId'].split("_");
+            if (evalExpression(qId[1], nodeId1, nodeId2) == true) {
+                for (p in this.params['edgeSize']['options']) {
+                    if (this.params['edgeSize']['options'][p]['id'] == 1)
+                        return this.params['edgeSize']['options'][p]['size'];
+                }
+            } else {
+                for (p in this.params['edgeSize']['options']) {
+                    if (this.params['edgeSize']['options'][p]['id'] == 0)
+                        return this.params['edgeSize']['options'][p]['size'];
+                }
+            }
+        } else if (typeof this.params['edgeSize'] != "undefined") {
             if (typeof this.params['edgeSize']['questionId'] != "undefined" && typeof answers[this.params['edgeSize']['questionId'] + "-" + nodeId1 + "and" + nodeId2] != "undefined")
                 var answer = answers[this.params['edgeSize']['questionId'] + "-" + nodeId1 + "and" + nodeId2].VALUE.split(",");
             else

@@ -1076,11 +1076,13 @@ new Vue({
                 alterPairExps.push(expressions[k])
             if(expressions[k].type == "Compound"){
                 alterExps.push(expressions[k]);
-                alterQs.push({text:expressions[k].name, value:"expression_" + expressions[k].id})
-                alterShapeQs.push({text:expressions[k].name, value:"expression_" + expressions[k].id})
-                alterQOptions["expression_" + expressions[k].id] = [{id:1,name:"True"},{id:0,name:"False"}]
-                alterShapeQOptions["expression_" + expressions[k].id] = [{id:1,name:"True"},{id:0,name:"False"}]
                 alterPairExps.push(expressions[k]);
+                alterQs.push({text:expressions[k].name, value:"expression_" + expressions[k].id})
+                alterQOptions["expression_" + expressions[k].id] = [{id:1,name:"True"},{id:0,name:"False"}]
+                alterShapeQs.push({text:expressions[k].name, value:"expression_" + expressions[k].id})
+                alterShapeQOptions["expression_" + expressions[k].id] = [{id:1,name:"True"},{id:0,name:"False"}]
+                alterPairQs.push({text:expressions[k].name, value:"expression_" + expressions[k].id})
+                alterPairQOptions["expression_" + expressions[k].id] = [{id:1,name:"True"},{id:0,name:"False"}]
             }
         }
         for(k in this.questions){
@@ -1166,9 +1168,10 @@ new Vue({
                            //       console.log(p + " changed",this.questions[k].nParams[p].options.length, alterQOptions[this.questions[k].nParams[p].questionId].length, this.questions[k].nParams[p].options, alterQOptions[this.questions[k].nParams[p].questionId])
                             }else if(p == "edgeColor" || p == "edgeSize"){
                                 let oIds = {};
+                                console.log("edge options", this.questions[k].nParams[p].options)
                                 for(var i = 0; i < this.questions[k].nParams[p].options.length; i++){
-                                    if(this.questions[k].nParams[p].options[i].id == 0)
-                                        this.questions[k].nParams[p].options[i].id = "default"
+                                    //if(this.questions[k].nParams[p].options[i].id == 0)
+                                    //    this.questions[k].nParams[p].options[i].id = "default"
                                     if(this.questions[k].nParams[p].options[i].id == "default"){
                                         defaultOption = this.questions[k].nParams[p].options[i];
                                     }else{
@@ -1177,13 +1180,12 @@ new Vue({
                                         }
                                     }
                                 }
-                                if(!isNaN(this.questions[k].nParams[p].questionId) && typeof alterPairQOptions[this.questions[k].nParams[p].questionId] != "undefined"){
+                                if(typeof alterPairQOptions[this.questions[k].nParams[p].questionId] != "undefined"){
                                     for(q in alterPairQOptions[this.questions[k].nParams[p].questionId]){
-                                        console.log(alterPairQOptions[this.questions[k].nParams[p].questionId][q].id)
+                                        //console.log(alterPairQOptions[this.questions[k].nParams[p].questionId][q].id)
                                         if(!(alterPairQOptions[this.questions[k].nParams[p].questionId][q].id in oIds)){
                                             var newDefaultOption = $.extend(true, {}, defaultOption);
                                             newDefaultOption.id = parseInt(alterPairQOptions[this.questions[k].nParams[p].questionId][q].id);
-                                            console.log(newDefaultOption)
                                             newOptions.push(newDefaultOption);
                                         }else{
                                             newOptions.push(oIds[alterPairQOptions[this.questions[k].nParams[p].questionId][q].id]);
@@ -1191,6 +1193,8 @@ new Vue({
                                     }
                                 }
                                 newOptions.unshift(defaultOption);
+                                console.log("fix 2", newOptions)
+
                                 this.questions[k].nParams[p].options = newOptions;
                             }else if (p == "egoEdgeColor" || p == "egoEdgeSize"){
                                 let oIds = {};
