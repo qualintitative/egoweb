@@ -948,7 +948,20 @@ function initStats(question) {
     this, getNodeSize = function(nodeId) {
         console.log("get node size", nodeId,this.params['nodeSize']['options'])
         var defaultNodeSize = 4;
-        if (typeof this.params['nodeSize'] != "undefined") {
+        if (typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'].toString().search("expression") != -1) {
+            var qId = this.params['nodeSize']['questionId'].split("_");
+            if (evalExpression(qId[1], nodeId) == true) {
+                for (p in this.params['nodeSize']['options']) {
+                    if (this.params['nodeSize']['options'][p]['id'] == 1)
+                        return this.params['nodeSize']['options'][p]['size'];
+                }
+            } else {
+                for (p in this.params['nodeSize']['options']) {
+                    if (this.params['nodeSize']['options'][p]['id'] == 0)
+                        return this.params['nodeSize']['options'][p]['size'];
+                }
+            }
+        } else if (typeof this.params['nodeSize'] != "undefined") {
             if (nodeId != -1 && typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "degree") {
                 max = maxDegree;
                 min = minDegree;
@@ -1006,7 +1019,20 @@ function initStats(question) {
 
     this.getNodeShape = function(nodeId) {
         var defaultNodeShape = "circle";
-        if (typeof this.params['nodeShape'] != "undefined") {
+        if (typeof this.params['nodeShape']['questionId'] != "undefined" && this.params['nodeShape']['questionId'].toString().search("expression") != -1) {
+            var qId = this.params['nodeShape']['questionId'].split("_");
+            if (evalExpression(qId[1], nodeId) == true) {
+                for (p in this.params['nodeShape']['options']) {
+                    if (this.params['nodeShape']['options'][p]['id'] == 1)
+                        return this.params['nodeShape']['options'][p]['shape'];
+                }
+            } else {
+                for (p in this.params['nodeShape']['options']) {
+                    if (this.params['nodeShape']['options'][p]['id'] == 0)
+                        return this.params['nodeShape']['options'][p]['shape'];
+                }
+            }
+        } else if (typeof this.params['nodeShape'] != "undefined") {
             if (typeof this.params['nodeShape']['questionId'] != "undefined" && typeof answers[this.params['nodeShape']['questionId'] + "-" + nodeId] != "undefined")
                 var answer = answers[this.params['nodeShape']['questionId'] + "-" + nodeId].VALUE.split(",");
             else
