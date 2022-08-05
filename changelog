@@ -1,5 +1,10 @@
 # Changelog
 
+## [2.0.10.13] - 2022-08-05
+- added compound expression support to network expressions
+- fixed network graph bug
+- updated selenium tests to latest version of node with async
+
 ## [2.0.10.12] - 2022-06-22
 - aaded hide name generator question option
 - added option for auto-loading alters from previous session
