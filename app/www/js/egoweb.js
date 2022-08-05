@@ -976,7 +976,7 @@ function initStats(question) {
                     min = 0;
                 }
                 value = Math.round(((value - min) / (range)) * 9) + 1;
-                return value * 2;
+                return value;
             }
             if (nodeId != -1 && typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "betweenness") {
                 max = maxBetweenness;
@@ -988,7 +988,7 @@ function initStats(question) {
                     min = 0;
                 }
                 value = Math.round(((value - min) / (range)) * 9) + 1;
-                return value * 2;
+                return value;
             }
             if (nodeId != -1 && typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "eigenvector") {
                 max = maxEigenvector;
@@ -1000,7 +1000,7 @@ function initStats(question) {
                     min = 0;
                 }
                 value = Math.round(((value - min) / (range)) * 9) + 1;
-                return value * 2;
+                return value;
             }
             if (typeof this.params['nodeSize']['questionId'] != "undefined" && typeof answers[this.params['nodeSize']['questionId'] + "-" + nodeId] != "undefined")
                 var answer = answers[this.params['nodeSize']['questionId'] + "-" + nodeId].VALUE.split(",");
@@ -1018,7 +1018,7 @@ function initStats(question) {
             }
         }
         console.log("default size", defaultNodeSize * 2);
-        return defaultNodeSize * 2;
+        return defaultNodeSize;
     }
 
     this.getNodeShape = function(nodeId) {
@@ -1160,7 +1160,7 @@ function initStats(question) {
             'y': Math.random(),
             "type": this.getNodeShape(-1),
             "color": this.getNodeColor(-1),
-            "size": this.getNodeSize(-1),
+            "size": parseInt(this.getNodeSize(-1)) * 2,
         })
     }
     for (a in alters) {
@@ -1171,7 +1171,7 @@ function initStats(question) {
             'y': Math.random(),
             "type": this.getNodeShape(alters[a].ID),
             "color": this.getNodeColor(alters[a].ID),
-            "size": parseInt(this.getNodeSize(alters[a].ID)),
+            "size": parseInt(this.getNodeSize(alters[a].ID)) * 2,
         });
         if (starExpression != undefined) {
             if (evalExpression(starExpressionId, alters[a].ID) == true) {
