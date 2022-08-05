@@ -1010,14 +1010,13 @@ function initStats(question) {
                 if (this.params['nodeSize']['options'][p]['id'] == -1 && nodeId == -1)
                     console.log("Ego node size");
                 if (this.params['nodeSize']['options'][p]['id'] == -1 && nodeId == -1)
-                    return this.params['nodeSize']['options'][p]['size'] * 2;
+                    return this.params['nodeSize']['options'][p]['size'];
                 if (this.params['nodeSize']['options'][p]['id'] == "default" && (answer == "" || parseInt(answer) == parseInt(study.VALUELOGICALSKIP) || parseInt(answer) == parseInt(study.VALUEREFUSAL) || parseInt(answer) == parseInt(study.VALUEDONTKNOW)))
-                    return this.params['nodeSize']['options'][p]['size'] * 2;
+                    return this.params['nodeSize']['options'][p]['size'];
                 if (nodeId != -1 && (this.params['nodeSize']['options'][p]['id'] == answer || $.inArray(this.params['nodeSize']['options'][p]['id'].toString(), answer) != -1))
-                    return this.params['nodeSize']['options'][p]['size'] * 2;
+                    return this.params['nodeSize']['options'][p]['size'];
             }
         }
-        console.log("default size", defaultNodeSize * 2);
         return defaultNodeSize;
     }
 
