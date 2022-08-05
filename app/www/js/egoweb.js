@@ -1171,7 +1171,7 @@ function initStats(question) {
             'y': Math.random(),
             "type": this.getNodeShape(alters[a].ID),
             "color": this.getNodeColor(alters[a].ID),
-            "size": this.getNodeSize(alters[a].ID),
+            "size": parseInt(this.getNodeSize(alters[a].ID)),
         });
         if (starExpression != undefined) {
             if (evalExpression(starExpressionId, alters[a].ID) == true) {
