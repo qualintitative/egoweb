@@ -952,13 +952,17 @@ function initStats(question) {
             var qId = this.params['nodeSize']['questionId'].split("_");
             if (evalExpression(qId[1], nodeId) == true) {
                 for (p in this.params['nodeSize']['options']) {
-                    if (this.params['nodeSize']['options'][p]['id'] == 1)
+                    if (this.params['nodeSize']['options'][p]['id'] == 1){
+                        console.log("nodeSize true:" + this.params['nodeSize']['options'][p]['size']);
                         return this.params['nodeSize']['options'][p]['size'];
+                    }
                 }
             } else {
                 for (p in this.params['nodeSize']['options']) {
-                    if (this.params['nodeSize']['options'][p]['id'] == 0)
+                    if (this.params['nodeSize']['options'][p]['id'] == 0){
+                        console.log("nodeSize false:" + this.params['nodeSize']['options'][p]['size']);
                         return this.params['nodeSize']['options'][p]['size'];
+                    }
                 }
             }
         } else if (typeof this.params['nodeSize'] != "undefined") {
