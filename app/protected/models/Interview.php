@@ -206,10 +206,12 @@ class Interview extends \yii\db\ActiveRecord
     public function getEgoId()
     {
         $egoIdString = [];
-        $questions = Question::find()->where(array('subjectType' => "EGO_ID"))->andWhere(['!=', 'answerType', 'STORED_VALUE'])->andWhere(['!=', 'answerType', 'RANDOM_NUMBER'])->all();
+        $questions = Question::find()->where(array('studyId'=>$this->studyId,'subjectType' => "EGO_ID"))->orderBy(["ordering"=>"ASC"])->all();
         $ego_id_questions = [];
         $options = [];
         foreach ($questions as $question) {
+            if($question->answerType == "STORED_VALUE" || $question->answerType == "RANDOM_NUMBER")
+                continue;
             $ego_id_questions[$question->id] = $question;
             if ($question->answerType == "MULTIPLE_SELECTION") {
                 $result = QuestionOption::find()->where(["questionId"=>$question->id])->orderBy(["ordering"=>"ASC"])->all();
@@ -1200,13 +1202,22 @@ class Interview extends \yii\db\ActiveRecord
         foreach ($optionsRaw as $option) {
             $options[$option->id] = $option->value;
         }
+        $result = Answer::findAll([
+            "interviewId"=>$this->id,
+            "questionType"=>"ALTER_PAIR",
+        ]);
+        $ap_answers = array();
+        foreach ($result as $answer) {
+            $ap_answers[$answer->questionId][$answer->alterId1][$answer->alterId2] = $answer;;
+        }
+        $ego_id = Interview::getEgoId($this->id);
 
         foreach ($alters as $alter) {
             array_shift($alters2);
             foreach ($alters2 as $alter2) {
                 $answers = array();
                 $answers[] = $this->id;
-                $answers[] = Interview::getEgoId($this->id);
+                $answers[] = $ego_id;
                 $answers[] = $alterNum[$alter->id];
                 if ($withAlters) {
                     $answers[] = str_replace(",", ";", $alter->name);
@@ -1216,15 +1227,10 @@ class Interview extends \yii\db\ActiveRecord
                     $answers[] = $alter2->name;
                 }
                 foreach ($alter_pair_questions as $question) {
-                    $result = Answer::findOne([
-                        "interviewId"=>$this->id,
-                        "questionId"=>$question->id,
-                        "alterId1"=>$alter->id,
-                        "alterId2"=>$alter2->id,
-                    ]);
-                    if (!$result) {
+                    if(!isset($ap_answers[$question->id][$alter->id][$alter2->id]))
                         continue;
-                    }
+                    $result = $ap_answers[$question->id][$alter->id][$alter2->id];
+                    
                     $answer = $result->value;
                     $skipReason = $result->skipReason;
                     if ($answer != "" && $skipReason == "NONE") {

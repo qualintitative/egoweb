@@ -69,11 +69,15 @@ class AdminController extends Controller
     {
         $mFiles = scandir(__DIR__."/../../console/migrations/");
         $mFile = array_pop($mFiles);
+        $dbConnect = \Yii::$app->get('db');
+        $dFile = false;
+        if(in_array("migration", $dbConnect->schema->getTableNames())){
         $dCount = (new \yii\db\Query())
         ->select(['version'])
         ->from('migration')
         ->all();
         $dFile = $dCount[count($dCount)-1]['version'].".php";
+        }
         // check if migrations are up to date;
         if ($mFile != $dFile) {
             $oldApp = \Yii::$app;
@@ -89,6 +93,7 @@ class AdminController extends Controller
             Yii::$app->session->setFlash('success', 'Migrated database');
             return $this->response->redirect(Url::toRoute('/admin'));
         }
+    
         $this->view->title = "EgoWeb 2.0";
         return $this->render('index');
     }

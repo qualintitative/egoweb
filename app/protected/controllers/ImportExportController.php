@@ -909,6 +909,8 @@ class ImportExportController extends Controller
             $prevAnswers = Answer::findAll(array("interviewId"=>$newId, "questionType"=>"PREVIOUS_ALTER"));
             if (count($prevAnswers) > 0) {
                 foreach ($prevAnswers as $prevAnswer) {
+                    if(!isset($newAlterIds[intval($prevAnswer->alterId1)]))
+                        continue;
                     $prevAnswer->alterId1 = $newAlterIds[intval($prevAnswer->alterId1)];
                     $prevAnswer->save();
                 }
