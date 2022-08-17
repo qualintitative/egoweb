@@ -1107,6 +1107,7 @@ new Vue({
             }
             var defaultParams = {
                 egoLabel:"You",
+                nodeSkipLogic: false,
                 nodeColor:{questionId:'', options:[{id:-1, color:"#000"}, {id:'default', color:"#000"}]},
                 nodeSize:{questionId:'', options:[{id:-1, size:2}, {id:'default', size:2}]},
                 nodeShape:{questionId:'', options:[{id:-1, shape:'circle'},{id:'default', shape:'circle'}]},

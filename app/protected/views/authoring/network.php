@@ -19,7 +19,22 @@
                         <input type="hidden" v-model="question.networkParams" name="Question[networkParams]">
                     
                         <div v-if="question.networkRelationshipExprId">
-                    
+                        <div class="form-group row">
+                                <label class="offset-sm-1 col-sm-3 col-form-label">Node Skip Logic</label>
+                                <div class="col-sm-5">
+                                    <b-form-select 
+                                    v-model="question.nParams.nodeSkipLogic"
+                                        @change="resetParams('nodeSkipLogic')"
+                                        text-field="name"
+                                        value-field="id"
+                                        :options="question.alterExps"
+                                        >
+                                        <template #first>
+                                            <b-form-select-option value="">-- Please select an option --</b-form-select-option>
+                                        </template>
+                                    </b-form-select>
+                                </div>
+                    </div>
                             <div class="form-group row">
                                 <label class="offset-sm-1 col-sm-3 col-form-label">Node Color</label>
                                 <div class="col-sm-5">

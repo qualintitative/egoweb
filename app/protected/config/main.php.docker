@@ -50,6 +50,7 @@ return [
                 [
                     'class' => 'yii\log\FileTarget',
                     'levels' => ['error', 'warning'],
+                    'fileMode' => 200,
                 ],
             ],
         ],
