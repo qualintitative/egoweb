@@ -111,6 +111,8 @@ class DataController extends Controller
         $egoIds = [];
         foreach($interviews as $interview){
             $alters[$interview->id] = 0;
+            if(!isset($egoid_answers[$interview->id]))
+                $egoid_answers[$interview->id] = ["error"];
             $egoIds[$interview->id] = implode("_", $egoid_answers[$interview->id]);
             $allInterviewIds[] = $interview->id;
         }
