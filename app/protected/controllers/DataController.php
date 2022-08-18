@@ -95,7 +95,40 @@ class DataController extends Controller
             'id',
             'name'
         );
-        return $this->render('index', ['study'=>$study, 'expressions'=>$expressions]);
+        $alters = [];
+        $allInterviewIds = [];
+        $interviews = Interview::find()->where(["studyId"=>$study->id])->all();
+        $result = Answer::findAll([
+            "studyId"=>$study->id,
+            "questionType"=>"EGO_ID",
+        ]);
+        $egoid_answers = array();
+        foreach ($result as $answer) {
+            if(!isset($egoid_answers[$answer->interviewId]))
+                $egoid_answers[$answer->interviewId] = [];
+            $egoid_answers[$answer->interviewId][] = $answer->value;
+        }
+        $egoIds = [];
+        foreach($interviews as $interview){
+            $alters[$interview->id] = 0;
+            $egoIds[$interview->id] = implode("_", $egoid_answers[$interview->id]);
+            $allInterviewIds[] = $interview->id;
+        }
+        $allAlters = (new \yii\db\Query())
+        ->select(['interviewId'])
+        ->from('alters')
+        ->all();
+        foreach($allAlters as $alter){
+            $interviewIds = explode(",", $alter['interviewId']);
+            foreach($interviewIds as $interviewId){
+                if(in_array($interviewId, $allInterviewIds)){
+                    if(isset($alters[$interviewId]))
+                        $alters[$interviewId]++;
+                }
+            }
+
+        }
+        return $this->render('index', ['study'=>$study, 'expressions'=>$expressions, 'interviews'=>$interviews, 'alters' => $alters, 'egoIds' => $egoIds]);
     }
 
 

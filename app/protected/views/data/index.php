@@ -342,11 +342,8 @@ function deleteInterviews() {
         //$items = $result->offset($pagination->offset)
         //->limit($pagination->limit)
         //->all();
-        foreach ($items as $interview) {
-            $alters = Alters::find()
-            ->where(new \yii\db\Expression("FIND_IN_SET(:interviewId, interviewId)"))
-            ->addParams([':interviewId' => $interview->id])
-            ->all();
+        foreach ($interviews as $interview) {
+            
             if ($interview->completed == -1) {
                 $completed = "<span style='color:#0B0'>" .  \Yii::$app->formatter->asDate($interview->complete_date, "php:Y-m-d H:i:s") . "</span>";
                 $intlen = "<span style='color:#0B0'>" . round(($interview->complete_date - $interview->start_date) / 60) . "</span>";
@@ -355,11 +352,11 @@ function deleteInterviews() {
                 $intlen = "";
             }
             echo "<tr>";
-            echo "<td>" . Html::checkbox('export[' . $interview->id . ']', false, ['id'=>'export_' . $interview->id  ]) . "</td><td>" . $interview->egoId . "</td>";
+            echo "<td>" . Html::checkbox('export[' . $interview->id . ']', false, ['id'=>'export_' . $interview->id  ]) . "</td><td>" . $egoIds[$interview->id] . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . \Yii::$app->formatter->asDate($interview->start_date, "php:Y-m-d H:i:s") . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . $completed . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . $intlen . "</td>";
-            echo "<td class='d-none d-sm-table-cell'>" . count($alters) . "</td>";
+            echo "<td class='d-none d-sm-table-cell'>" . $alters[$interview->id] . "</td>";
             echo "<td>";
             if ($interview->completed == -1) {
                 echo "<a class='btn btn-success btn-xs' href='" . Url::to(['/data/edit/' . $interview->id]) ."'>Edit</a>";

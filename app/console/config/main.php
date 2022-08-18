@@ -21,6 +21,13 @@ return [
           ],
     ],
     'components' => [
+        'db' => [
+            'class' => 'yii\db\Connection',
+            'dsn' => 'mysql:host=localhost;dbname=egoweb',
+            'username' => 'egowebuser',
+            'password' => 'egowebpass',
+            'charset' => 'utf8',
+        ],
         'log' => [
             'targets' => [
                 [
