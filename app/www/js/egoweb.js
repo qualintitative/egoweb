@@ -1163,15 +1163,34 @@ function initStats(question) {
         })
     }
     for (a in alters) {
-        nodes.push({
-            'id': alters[a].ID.toString(),
-            'label': alters[a].NAME + (typeof notes[alters[a].ID] != "undefined" ? " �" : ""),
-            'x': Math.random(),
-            'y': Math.random(),
-            "type": this.getNodeShape(alters[a].ID),
-            "color": this.getNodeColor(alters[a].ID),
-            "size": parseInt(this.getNodeSize(alters[a].ID)) * 2,
-        });
+            if(!isNaN(parseInt(this.params.nodeSkipLogic))){
+                console.log("node Skip Logic");
+                if (evalExpression(this.params.nodeSkipLogic, alters[a].ID)){
+                    nodes.push({
+                        'id': alters[a].ID.toString(),
+                        'label': alters[a].NAME + (typeof notes[alters[a].ID] != "undefined" ? " �" : ""),
+                        'x': Math.random(),
+                        'y': Math.random(),
+                        "type": this.getNodeShape(alters[a].ID),
+                        "color": this.getNodeColor(alters[a].ID),
+                        "size": parseInt(this.getNodeSize(alters[a].ID)) * 2,
+                    });
+                }else{
+                    continue;
+                }
+            }else{
+
+                nodes.push({
+                    'id': alters[a].ID.toString(),
+                    'label': alters[a].NAME + (typeof notes[alters[a].ID] != "undefined" ? " �" : ""),
+                    'x': Math.random(),
+                    'y': Math.random(),
+                    "type": this.getNodeShape(alters[a].ID),
+                    "color": this.getNodeColor(alters[a].ID),
+                    "size": parseInt(this.getNodeSize(alters[a].ID)) * 2,
+                });
+            }
+        
         if (starExpression != undefined) {
             if (evalExpression(starExpressionId, alters[a].ID) == true) {
                 edges.push({
@@ -1187,6 +1206,10 @@ function initStats(question) {
         delete alters2[keys[0]];
         if (expression != undefined) {
             for (b in alters2) {
+                if(!isNaN(parseInt(this.params.nodeSkipLogic))){
+                    if (!evalExpression(this.params.nodeSkipLogic, alters2[b].ID))
+                        continue;
+                }
                 if (evalExpression(expressionId, alters[a].ID, alters2[b].ID) == true) {
                     edges.push({
                         "id": alters[a].ID + "_" + alters2[b].ID,
@@ -1199,7 +1222,7 @@ function initStats(question) {
             }
         }
     }
-
+    console.log("nodes", nodes, "edges", edges)
 
     g = {
         nodes: nodes,

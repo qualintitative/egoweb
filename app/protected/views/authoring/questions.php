@@ -746,6 +746,13 @@ QestionEditor = Vue.component('question-editor', {
         resetParams(param) {
             var newOptions = [];
             var defaultOption, egoOption;
+            if(param == "nodeSkipLogic"){
+                this.question.nParams[param].options = newOptions;
+                this.question.networkParams = JSON.stringify(this.question.nParams)
+                console.log(param, this.question.nParams[param].options);
+                this.$forceUpdate();
+                return;
+            }
             for(var i = 0; i < this.question.nParams[param].options.length; i++){
                 if(this.question.nParams[param].options[i].id == "default")
                     defaultOption = this.question.nParams[param].options[i];
@@ -1123,6 +1130,8 @@ new Vue({
                 }else{
                     this.questions[k].nParams = JSON.parse(this.questions[k].networkParams);
                     for(p in defaultParams){
+                        if(p == "nodeSkipLogic")
+                            continue;
                         if(typeof this.questions[k].nParams[p] == "undefined"){
                             this.questions[k].nParams[p] = defaultParams[p];
                         }else{
