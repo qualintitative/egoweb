@@ -20,11 +20,11 @@
                     
                         <div v-if="question.networkRelationshipExprId">
                         <div class="form-group row">
-                                <label class="offset-sm-1 col-sm-3 col-form-label">Node Skip Logic</label>
+                                <label class="offset-sm-1 col-sm-3 col-form-label">Node Display</label>
                                 <div class="col-sm-5">
                                     <b-form-select 
-                                    v-model="question.nParams.nodeSkipLogic"
-                                        @change="resetParams('nodeSkipLogic')"
+                                    v-model="question.nParams.nodeDisplay"
+                                        @change="resetParams('nodeDisplay')"
                                         text-field="name"
                                         value-field="id"
                                         :options="question.alterExps"

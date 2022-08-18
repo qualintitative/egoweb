@@ -746,7 +746,7 @@ QestionEditor = Vue.component('question-editor', {
         resetParams(param) {
             var newOptions = [];
             var defaultOption, egoOption;
-            if(param == "nodeSkipLogic"){
+            if(param == "nodeDisplay"){
                 this.question.nParams[param].options = newOptions;
                 this.question.networkParams = JSON.stringify(this.question.nParams)
                 console.log(param, this.question.nParams[param].options);
@@ -1114,7 +1114,7 @@ new Vue({
             }
             var defaultParams = {
                 egoLabel:"You",
-                nodeSkipLogic: false,
+                nodeDisplay: false,
                 nodeColor:{questionId:'', options:[{id:-1, color:"#000"}, {id:'default', color:"#000"}]},
                 nodeSize:{questionId:'', options:[{id:-1, size:2}, {id:'default', size:2}]},
                 nodeShape:{questionId:'', options:[{id:-1, shape:'circle'},{id:'default', shape:'circle'}]},
@@ -1130,7 +1130,7 @@ new Vue({
                 }else{
                     this.questions[k].nParams = JSON.parse(this.questions[k].networkParams);
                     for(p in defaultParams){
-                        if(p == "nodeSkipLogic")
+                        if(p == "nodeDisplay")
                             continue;
                         if(typeof this.questions[k].nParams[p] == "undefined"){
                             this.questions[k].nParams[p] = defaultParams[p];
