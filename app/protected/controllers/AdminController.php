@@ -104,9 +104,10 @@ class AdminController extends Controller
         $result = Answer::findAll([
             "questionType"=>"EGO_ID",
         ]);
-       
 
         foreach ($result as $answer) {
+            if($answer->answerType == "RANDOM_NUMBER" || $answer->answerType == "STORED_VALUE")
+                continue;
             if(!isset($egoid_answers[$answer->interviewId]))
                 $egoid_answers[$answer->interviewId] = [];
             $egoid_answers[$answer->interviewId][] = $answer->value;

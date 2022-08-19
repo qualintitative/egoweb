@@ -104,6 +104,8 @@ class DataController extends Controller
         ]);
         $egoid_answers = array();
         foreach ($result as $answer) {
+            if($answer->answerType == "RANDOM_NUMBER" || $answer->answerType == "STORED_VALUE")
+                continue;
             if(!isset($egoid_answers[$answer->interviewId]))
                 $egoid_answers[$answer->interviewId] = [];
             $egoid_answers[$answer->interviewId][] = $answer->value;
