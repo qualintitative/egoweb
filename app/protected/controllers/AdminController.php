@@ -11,6 +11,8 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 use app\helpers\Tools;
 use app\models\User;
+use app\models\Answer;
+use app\models\Interview;
 use app\models\SignUpForm;
 use yii\helpers\Url;
 
@@ -95,7 +97,32 @@ class AdminController extends Controller
         }
     
         $this->view->title = "EgoWeb 2.0";
-        return $this->render('index');
+        $interviews = [];
+        $egoid_answers = [];
+        $egoIds = [];
+
+        $result = Answer::findAll([
+            "questionType"=>"EGO_ID",
+        ]);
+       
+
+        foreach ($result as $answer) {
+            if(!isset($egoid_answers[$answer->interviewId]))
+                $egoid_answers[$answer->interviewId] = [];
+            $egoid_answers[$answer->interviewId][] = $answer->value;
+        }
+
+        $result = Interview::find()->where(["<>", "completed", "-1"])->all();
+
+        foreach($result as $interview){
+            if(!isset($egoid_answers[$interview->id]))
+                $egoid_answers[$interview->id] = ["error"];
+            $egoIds[$interview->id] = implode("_", $egoid_answers[$interview->id]);
+            if(!isset($interviews[$interview->studyId]))
+                $interviews[$interview->studyId] = [];
+            $interviews[$interview->studyId][] = $interview;
+        }
+        return $this->render('index', ["interviews" => $interviews, "egoIds" => $egoIds]);
     }
 
     public function actionUser()

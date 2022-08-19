@@ -43,18 +43,11 @@ use app\models\Interview;
 
 
                 </div>
-<?php
-$interviews = Interview::find()->where([
-    "studyId"=>$study->id
-])->andWhere(["<>", "completed", "-1"])->all();
-?>
-                <?php if (count($interviews) > 0): ?>
+                <?php if (isset($interviews[$study->id]) && count($interviews[$study->id]) > 0): ?>
                 <div class="list-group col-sm-9">
-                    <?php if (count($interviews) > 0): ?>
                     <div class="list-group-item list-group-item-action bg-dark text-white">Continue incomplete interview</div>
-                    <?php endif; ?>
-                    <?php foreach ($interviews as $interview): ?>
-                    <?php echo Html::a($interview->egoId, ["/interview/" . $study->id . "/" . $interview->id . "#page/" . $interview->completed ], ["class"=>"list-group-item list-group-item-action"]); ?>
+                    <?php foreach ($interviews[$study->id] as $interview): ?>
+                    <?php echo Html::a($egoIds[$interview->id], ["/interview/" . $study->id . "/" . $interview->id . "#page/" . $interview->completed ], ["class"=>"list-group-item list-group-item-action"]); ?>
                     <?php endforeach; ?>
                 </div>
                 <?php endif; ?>
