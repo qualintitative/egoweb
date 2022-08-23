@@ -500,10 +500,30 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
             if ($scope.questions[k].USELFEXPRESSION && parseInt($scope.questions[k].USELFEXPRESSION) != 0)
                 $scope.starExpressionId = parseInt($scope.questions[k].USELFEXPRESSION);
             initStats($scope.questions[k]);
+
+        }
+        if($scope.questions[k].SUBJECTTYPE == "GRAPH"){
+            notes = [];
+
+            var nGraphs = JSON.parse($scope.questions[k].NETWORKGRAPHS);
+            console.log(nGraphs.length)
+            for(var g = 0; g < nGraphs.length; g++){
+                console.log("nGraph:" + g,nGraphs[g].questionId, questions[parseInt(nGraphs[g].questionId)])
+
+                initStats(questions[parseInt(nGraphs[g].questionId)], "infovis" + g);
+            }
         }
         setTimeout(
             function() {
                 eval($scope.questions[k].JAVASCRIPT);
+                if($scope.questions[k].SUBJECTTYPE == "GRAPH"){
+                    var nGraphs = JSON.parse($scope.questions[k].NETWORKGRAPHS);
+                    for(var g = 0; g < nGraphs.length; g++){
+
+                    $('#imagevis' + g).attr("src", nGraphs[g].questionLabel);
+                    }
+
+                }
                 if (typeof $(".answerInput")[0] != "undefined")
                     $(".answerInput")[0].focus();
                 if (!isGuest && $("#menu_" + $scope.page).length != 0)
@@ -1758,6 +1778,7 @@ function buildList() {
 
         if (questionList[j].SUBJECTTYPE == "NETWORK") {
             questionList[j].array_id = questionList[j].ID;
+            /*
             if (questionList[j].PREFACE != "") {
                 var preface = new Object;
                 preface.ID = questionList[j].ID;
@@ -1771,6 +1792,15 @@ function buildList() {
                 i++;
                 masterList[i] = new Object;
             }
+            */
+            if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                evalQIndex.push(i);
+            masterList[i][questionList[j].ID] = questionList[j];
+            i++;
+            masterList[i] = new Object;
+        }
+        if (questionList[j].SUBJECTTYPE == "GRAPH") {
+            questionList[j].array_id = questionList[j].ID;
             if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
                 evalQIndex.push(i);
             masterList[i][questionList[j].ID] = questionList[j];

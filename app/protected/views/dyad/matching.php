@@ -144,7 +144,7 @@ function matchUp(s){
         $("#" + id + "-notes").val("");
         $("#" + id + "-notes").hide();
         $("#" + id + "-name").val($("option:selected", s).text());
-        $("#" + id + "-buttons").html("<button id='" + id + "-save' class='btn btn-xs btn-success btn-xs' onclick='save(" + studyId + "," +id + "," + id2 +","+ (matchId ? matchId : 0) +", $(\"#"+id+"-notes\").val())'>save</button>");;
+        $("#" + id + "-buttons").html("<button id='" + id + "-save' class='btn btn-xs btn-success btn-xs' onclick='save(" + studyId + "," +id + "," + id2 +","+ (matchId ? matchId : 0) +", $(\"#"+id+"-notes\").val())'>save</button>");
     }else{
         $("#" + id + "-alter2").html("");
         $("#" + id + "-name").hide();

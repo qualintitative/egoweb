@@ -505,10 +505,21 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                         </div>
                     </div>
 
-                    <div v-if="question.subjectType == 'NETWORK'">
                     <?= $this->render('/authoring/network'); ?>
-                    </div>
 
+                    <div v-if="question.subjectType == 'GRAPH'">
+                    <input type="hidden" v-model="question.networkGraphs" name="Question[networkGraphs]">
+Graph question
+<div v-for="(graph, g) in question.nGraphs">
+    <b-form-select
+    v-model="graph.questionId"
+    :options="question.nQuestions"
+    @change="resetGraphs()"></b-form-select>
+    <img :src="graph.questionLabel">
+    <input :id="g + '_' + question.id" type="file" @change="storeImage">
+</div>
+</div>
+                    </div>
                     <div v-if="question.preface != null && question.preface != ''">
                         <label for="Question_preface" class="col-form-label">Preface (Deprecated.  Please copy into a new NO_RESPONSE question)</label>
                         <textarea name="Question[preface]">{{question.preface}}</textarea>
@@ -558,8 +569,8 @@ Vue.directive('sortable', {
 });
 
 SummerNote = Vue.component('summer-note', {
-    template: '<textarea ref="summernote" :id="vid" :name="name"></textarea>',
-    props: ['name', 'model', 'vid'],
+    template: '<textarea ref="summernote" :id="vid" :name="name" :v-model="vmodel"></textarea>',
+    props: ['name', 'model', 'vid', 'vmodel'],
     computed: {
         summernote() {
             return $(this.$refs.summernote);
@@ -587,7 +598,6 @@ SummerNote = Vue.component('summer-note', {
                     }
                     $("#" + self.vid.split("_")[0] + "_prompt").val(text);
                     self.$emit("update:model", text);
-                    console.log("change", text)
                     parseEgowebTags(text, self.vid);
                 },
                 onChangeCodeview: function(e) {
@@ -796,6 +806,25 @@ QestionEditor = Vue.component('question-editor', {
             this.question.networkParams = JSON.stringify(this.question.nParams)
             console.log(param, this.question.nParams[param].options);
             this.$forceUpdate();
+        },
+        storeImage(event) {
+            console.log(event)
+            console.log(event.target.id.split("_"))
+            g = event.target.id.split("_")[0];
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.addEventListener("load", () => {
+                this.question.nGraphs[g].questionLabel = reader.result;
+                this.resetGraphs();
+            }, false);
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        },
+        resetGraphs() {
+                this.question.networkGraphs = JSON.stringify(this.question.nGraphs)
+                console.log(this.question.networkGraphs);
+                this.$forceUpdate();
         },
         reorderOption(event) {
             var options = $.extend(true, [], this.question.options);
@@ -1016,6 +1045,7 @@ new Vue({
         var alterQOptions = {};
         var alterPairQOptions = {};
         var alterShapeQOptions = {};
+        var nQuestions = [];
         var bitVals = {
                 'BIT_YEAR': 1,
                 'BIT_MONTH': 2,
@@ -1048,15 +1078,15 @@ new Vue({
             if (this.questions[k].answerType == "MULTIPLE_SELECTION") {
                 multiQuestions.push({text:this.questions[k].title,value:this.questions[k].id});
             }
-
-
-
    
             this.questions[k].timeBits = {};
             for (var t in bitVals) {
                 this.questions[k].timeBits[t] = this.questions[k].timeUnits & bitVals[t];
             }
+            if (questions[k].subjectType == "NETWORK")
+                nQuestions.push({text:this.questions[k].title,value:this.questions[k].id});
         }
+
         for(k in this.all_questions){
             if (this.all_questions[k].subjectType == "ALTER"){
                 alterQs.push({text:studyNames[this.all_questions[k].studyId] + ":" + this.all_questions[k].title, value:this.all_questions[k].id})
@@ -1070,7 +1100,10 @@ new Vue({
                 alterPairQOptions[all_questions[k].id] =  all_questions[k].optionsList;
                 alterPairQIds.push(parseInt(this.all_questions[k].id));
             }
+
+
         }
+        console.log("nQuestions", nQuestions);
         for(k in expressions){
             if(alterQIds.indexOf(parseInt(expressions[k].questionId)) != -1){
                 alterExps.push(expressions[k])
@@ -1102,6 +1135,8 @@ new Vue({
             this.questions[k].alterPairQOptions = alterPairQOptions;
             this.questions[k].alterShapeQOptions = alterShapeQOptions;
             this.questions[k].multiQuestions = [];
+            this.questions[k].nQuestions = nQuestions;
+
             for(m in multiQuestions){
                 if(multiQuestions[m].value != this.questions[k].id)
                     this.questions[k].multiQuestions.push(multiQuestions[m])
@@ -1122,6 +1157,19 @@ new Vue({
                 edgeSize:{questionId:'', options:[{id:'default', size:1}]},
                 egoEdgeColor:{questionId:'', options:[{id:'default', color:"#000"}]},
                 egoEdgeSize:{questionId:'', options:[{id:'default', size:1}]},
+            }
+            var defaultGraphs = [
+                {questionId:'', questionLabel:''},
+                {questionId:'', questionLabel:''},
+                {questionId:'', questionLabel:''}
+            ];
+            if(this.questions[k].subjectType == "GRAPH"){
+                if(this.questions[k].networkGraphs == "" || this.questions[k].networkGraphs == null || this.questions[k].networkGraphs == "null"){
+                    this.questions[k].nGraphs = defaultGraphs;
+                    this.questions[k].networkGraphs = JSON.stringify(this.questions[k].nGraphs);
+                }else{
+                    this.questions[k].nGraphs = JSON.parse(this.questions[k].networkGraphs);
+                }
             }
             if(this.questions[k].subjectType == "NETWORK"){
                 if(this.questions[k].networkParams == "" || this.questions[k].networkParams == null || this.questions[k].networkParams == "null"){

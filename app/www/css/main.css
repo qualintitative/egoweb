@@ -778,6 +778,20 @@ label.prompt,
     overflow: hidden;
 }
 
+.infovis {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    margin: auto;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.info-label {
+    max-width:100%;
+    max-height:auto;
+}
+
 #print-view #infovis {
     width: 900px;
     height: 675px;
