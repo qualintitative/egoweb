@@ -540,7 +540,10 @@ function countQuestion(questionId, operator, alterId1, alterId2) {
     }
 }
 
-function initStats(question, container) {
+function initStats(question, container, scalar) {
+    if(scalar == null)
+        scalar = 1.5;
+    console.log("scalar", scalar);
     shortPaths = new Object;
     connections = [];
     var nodes = [];
@@ -1162,7 +1165,7 @@ function initStats(question, container) {
             'y': Math.random(),
             "type": this.getNodeShape(-1),
             "color": this.getNodeColor(-1),
-            "size": parseInt(this.getNodeSize(-1)) * 2,
+            "size": parseInt(this.getNodeSize(-1)) * scalar,
         })
     }
     for (a in alters) {
@@ -1175,7 +1178,7 @@ function initStats(question, container) {
                     'y': Math.random(),
                     "type": this.getNodeShape(alters[a].ID),
                     "color": this.getNodeColor(alters[a].ID),
-                    "size": parseInt(this.getNodeSize(alters[a].ID)) * 2,
+                    "size": parseInt(this.getNodeSize(alters[a].ID)) * scalar,
                 });
             }else{
                 continue;
@@ -1188,7 +1191,7 @@ function initStats(question, container) {
                 'y': Math.random(),
                 "type": this.getNodeShape(alters[a].ID),
                 "color": this.getNodeColor(alters[a].ID),
-                "size": parseInt(this.getNodeSize(alters[a].ID)) * 2,
+                "size": parseInt(this.getNodeSize(alters[a].ID)) * scalar,
             });
         }
         

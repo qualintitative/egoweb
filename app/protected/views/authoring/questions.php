@@ -507,18 +507,20 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
 
                     <?= $this->render('/authoring/network'); ?>
 
-                    <div v-if="question.subjectType == 'GRAPH'">
+                    <div v-if="question.subjectType == 'MULTI_GRAPH'">
                     <input type="hidden" v-model="question.networkGraphs" name="Question[networkGraphs]">
-Graph question
-<div v-for="(graph, g) in question.nGraphs">
-    <b-form-select
-    v-model="graph.questionId"
-    :options="question.nQuestions"
-    @change="resetGraphs()"></b-form-select>
-    <img :src="graph.questionLabel">
-    <input :id="g + '_' + question.id" type="file" @change="storeImage">
-</div>
-</div>
+                        Graph question
+                        <div v-for="(graph, g) in question.nGraphs">
+                        <input type="text" v-model="graph.title" @change="resetGraphs()">
+
+                            <b-form-select
+                            v-model="graph.questionId"
+                            :options="question.nQuestions"
+                            @change="resetGraphs()"></b-form-select>
+                            <img :src="graph.questionLabel">
+                            <input :id="g + '_' + question.id" type="file" @change="storeImage">
+                        </div>
+                        </div>
                     </div>
                     <div v-if="question.preface != null && question.preface != ''">
                         <label for="Question_preface" class="col-form-label">Preface (Deprecated.  Please copy into a new NO_RESPONSE question)</label>
@@ -1159,16 +1161,23 @@ new Vue({
                 egoEdgeSize:{questionId:'', options:[{id:'default', size:1}]},
             }
             var defaultGraphs = [
-                {questionId:'', questionLabel:''},
-                {questionId:'', questionLabel:''},
-                {questionId:'', questionLabel:''}
+                {title:'', questionId:'', questionLabel:''},
+                {title:'', questionId:'', questionLabel:''},
+                {title:'', questionId:'', questionLabel:''}
             ];
-            if(this.questions[k].subjectType == "GRAPH"){
+            if(this.questions[k].subjectType == "MULTI_GRAPH"){
                 if(this.questions[k].networkGraphs == "" || this.questions[k].networkGraphs == null || this.questions[k].networkGraphs == "null"){
                     this.questions[k].nGraphs = defaultGraphs;
                     this.questions[k].networkGraphs = JSON.stringify(this.questions[k].nGraphs);
                 }else{
                     this.questions[k].nGraphs = JSON.parse(this.questions[k].networkGraphs);
+                    for(g in defaultGraphs){
+                        for(o in defaultGraphs[g]){
+                            if(typeof this.questions[k].nGraphs[g][o] == "undefined"){
+                                this.questions[k].nGraphs[g][o] = '';
+                            }
+                        }
+                    }
                 }
             }
             if(this.questions[k].subjectType == "NETWORK"){

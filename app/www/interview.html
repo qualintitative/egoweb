@@ -1,15 +1,18 @@
 <div class="col-sm-12 no-padding" ng-if="header != '' && subjectType != 'NAME_GENERATOR'" ng-bind-html="header">{{ header }}</div>
 
-<div id="graphPlugin" ng-if="subjectType == 'GRAPH'" class="col-sm-12 row">
+<div id="graphPlugin" ng-if="subjectType == 'MULTI_GRAPH'" class="col-sm-12 row">
     <div class="col-sm-4">
+        <span class="info-title">{{graphTitle[0]}}</span>
         <div id="infovis0" class="infovis"></div>
         <img id="imagevis0" class="info-label">
     </div>
     <div class="col-sm-4">
+        <span class="info-title">{{graphTitle[1]}}</span>
         <div id="infovis1" class="infovis"></div>
         <img id="imagevis1" class="info-label">
     </div>
     <div class="col-sm-4">
+        <span class="info-title">{{graphTitle[2]}}</span>
         <div id="infovis2" class="infovis"></div>
         <img id="imagevis2" class="info-label">
     </div>

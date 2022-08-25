@@ -65,7 +65,7 @@ class Question extends \yii\db\ActiveRecord
         'ALTER',
         'ALTER_PAIR',
         'NETWORK',
-        'GRAPH',
+        'MULTI_GRAPH',
         'MERGE_ALTER',
         'PREVIOUS_ALTER',
     ];

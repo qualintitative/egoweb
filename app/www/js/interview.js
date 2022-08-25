@@ -85,6 +85,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     $scope.showPrevAlters = false;
     $scope.alterMatchName = "";
     $scope.errors = new Object;
+    $scope.graphTitle = [];
     current_array_ids = [];
 
     $(".interviewee").text(egoIdString);
@@ -502,21 +503,21 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
             initStats($scope.questions[k]);
 
         }
-        if($scope.questions[k].SUBJECTTYPE == "GRAPH"){
+        if($scope.questions[k].SUBJECTTYPE == "MULTI_GRAPH"){
             notes = [];
 
             var nGraphs = JSON.parse($scope.questions[k].NETWORKGRAPHS);
             console.log(nGraphs.length)
             for(var g = 0; g < nGraphs.length; g++){
                 console.log("nGraph:" + g,nGraphs[g].questionId, questions[parseInt(nGraphs[g].questionId)])
-
-                initStats(questions[parseInt(nGraphs[g].questionId)], "infovis" + g);
+                $scope.graphTitle[g] = nGraphs[g].title;
+                initStats(questions[parseInt(nGraphs[g].questionId)], "infovis" + g, 1);
             }
         }
         setTimeout(
             function() {
                 eval($scope.questions[k].JAVASCRIPT);
-                if($scope.questions[k].SUBJECTTYPE == "GRAPH"){
+                if($scope.questions[k].SUBJECTTYPE == "MULTI_GRAPH"){
                     var nGraphs = JSON.parse($scope.questions[k].NETWORKGRAPHS);
                     for(var g = 0; g < nGraphs.length; g++){
 
@@ -1799,7 +1800,7 @@ function buildList() {
             i++;
             masterList[i] = new Object;
         }
-        if (questionList[j].SUBJECTTYPE == "GRAPH") {
+        if (questionList[j].SUBJECTTYPE == "MULTI_GRAPH") {
             questionList[j].array_id = questionList[j].ID;
             if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
                 evalQIndex.push(i);
