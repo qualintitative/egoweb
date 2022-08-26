@@ -14,6 +14,7 @@ noteBar = [
 ];
 
 eTags = [];
+s = [];
 jQuery.browser = {};
 (function() {
     jQuery.browser.msie = false;
@@ -539,12 +540,17 @@ function countQuestion(questionId, operator, alterId1, alterId2) {
     }
 }
 
-function initStats(question) {
+function initStats(question, container, scalar) {
+    if(scalar == null)
+        scalar = 1.5;
+    console.log("scalar", scalar);
     shortPaths = new Object;
     connections = [];
-    nodes = [];
-    edges = [];
+    var nodes = [];
+    var edges = [];
     var n = [];
+    if(container == null)
+        container = "infovis";
     var expressionId = question.NETWORKRELATIONSHIPEXPRID;
     var starExpressionId = parseInt(question.USELFEXPRESSION);
 
@@ -1159,7 +1165,7 @@ function initStats(question) {
             'y': Math.random(),
             "type": this.getNodeShape(-1),
             "color": this.getNodeColor(-1),
-            "size": parseInt(this.getNodeSize(-1)) * 2,
+            "size": parseInt(this.getNodeSize(-1)) * scalar,
         })
     }
     for (a in alters) {
@@ -1172,7 +1178,7 @@ function initStats(question) {
                     'y': Math.random(),
                     "type": this.getNodeShape(alters[a].ID),
                     "color": this.getNodeColor(alters[a].ID),
-                    "size": parseInt(this.getNodeSize(alters[a].ID)) * 2,
+                    "size": parseInt(this.getNodeSize(alters[a].ID)) * scalar,
                 });
             }else{
                 continue;
@@ -1185,7 +1191,7 @@ function initStats(question) {
                 'y': Math.random(),
                 "type": this.getNodeShape(alters[a].ID),
                 "color": this.getNodeColor(alters[a].ID),
-                "size": parseInt(this.getNodeSize(alters[a].ID)) * 2,
+                "size": parseInt(this.getNodeSize(alters[a].ID)) * scalar,
             });
         }
         
@@ -1222,7 +1228,7 @@ function initStats(question) {
     }
     console.log("nodes", nodes, "edges", edges)
 
-    g = {
+    var g = {
         nodes: nodes,
         edges: edges,
     };
@@ -1240,13 +1246,11 @@ function initStats(question) {
     max_edge_size = Math.max.apply(Math, sizes);
 
     setTimeout(function() {
-        sigma.renderers.def = sigma.renderers.canvas;
-        if(typeof s != "undefined")
-            delete s;
-        s = new sigma({
+        sigma.renderers.def = sigma.renderers.canvas;    
+        var newGraph = new sigma({
             graph: g,
             renderer: {
-                container: document.getElementById('infovis'),
+                container: document.getElementById(container),
                 type: 'canvas'
             },
             settings: {
@@ -1260,10 +1264,11 @@ function initStats(question) {
                 sideMargin: 2
             }
         });
+        s.push(newGraph);
         if (typeof graphs[expressionId] != "undefined") {
             savedNodes = JSON.parse(graphs[expressionId].NODES);
             for (var k in savedNodes) {
-                var node = s.graph.nodes(k.toString());
+                var node = s[s.length - 1].graph.nodes(k.toString());
                 if (node) {
                     node.x = savedNodes[k].x;
                     node.y = savedNodes[k].y;
@@ -1272,7 +1277,7 @@ function initStats(question) {
         } else {
             $('#fullscreenButton').prop('disabled', true);
             $("#printButton").attr("disabled",true);
-            s.startForceAtlas2({
+            s[s.length - 1].startForceAtlas2({
                 "worker": false,
                 "outboundAttractionDistribution": true,
                 "speed": 2000,
@@ -1286,15 +1291,15 @@ function initStats(question) {
                 "simpleIntervals": 1000
             });
             setTimeout(function(){
-                s.stopForceAtlas2();
+                s[s.length - 1].stopForceAtlas2();
                 if(typeof saveNodes != "undefined")
                     saveNodes();
                 $('#fullscreenButton').prop('disabled', false);
                 $("#printButton").attr("disabled", false);
             }, 5000);
         }
-        s.refresh();
-        initNotes(s);
+        s[s.length-1].refresh();
+        //initNotes(s);
     }, 1);
 }
 

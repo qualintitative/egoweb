@@ -85,6 +85,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     $scope.showPrevAlters = false;
     $scope.alterMatchName = "";
     $scope.errors = new Object;
+    $scope.graphTitle = [];
+    $scope.graphSize = [];
+    $scope.nGraphs = [];
     current_array_ids = [];
 
     $(".interviewee").text(egoIdString);
@@ -500,6 +503,15 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
             if ($scope.questions[k].USELFEXPRESSION && parseInt($scope.questions[k].USELFEXPRESSION) != 0)
                 $scope.starExpressionId = parseInt($scope.questions[k].USELFEXPRESSION);
             initStats($scope.questions[k]);
+
+        }
+        if($scope.questions[k].SUBJECTTYPE == "MULTI_GRAPH"){
+            notes = [];
+            $scope.nGraphs = JSON.parse($scope.questions[k].NETWORKGRAPHS);
+            for(var g = 0; g <  $scope.nGraphs.length; g++){
+                if($scope.nGraphs[g].questionId && $scope.nGraphs[g].questionId != "")
+                initStats(questions[parseInt($scope.nGraphs[g].questionId)], "infovis" + g, 1);
+            }
         }
         setTimeout(
             function() {
@@ -1758,6 +1770,7 @@ function buildList() {
 
         if (questionList[j].SUBJECTTYPE == "NETWORK") {
             questionList[j].array_id = questionList[j].ID;
+            /*
             if (questionList[j].PREFACE != "") {
                 var preface = new Object;
                 preface.ID = questionList[j].ID;
@@ -1771,6 +1784,15 @@ function buildList() {
                 i++;
                 masterList[i] = new Object;
             }
+            */
+            if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                evalQIndex.push(i);
+            masterList[i][questionList[j].ID] = questionList[j];
+            i++;
+            masterList[i] = new Object;
+        }
+        if (questionList[j].SUBJECTTYPE == "MULTI_GRAPH") {
+            questionList[j].array_id = questionList[j].ID;
             if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
                 evalQIndex.push(i);
             masterList[i][questionList[j].ID] = questionList[j];

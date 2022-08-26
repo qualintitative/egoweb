@@ -65,6 +65,7 @@ class Question extends \yii\db\ActiveRecord
         'ALTER',
         'ALTER_PAIR',
         'NETWORK',
+        'MULTI_GRAPH',
         'MERGE_ALTER',
         'PREVIOUS_ALTER',
     ];
@@ -101,8 +102,8 @@ class Question extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['active', 'ordering', 'otherSpecify', 'minLiteral', 'maxLiteral', 'minCheckableBoxes', 'maxCheckableBoxes', 'minListRange', 'maxListRange', 'timeUnits', 'symmetric', 'studyId', 'answerReasonExpressionId', 'networkRelationshipExprId', 'networkNColorQId', 'networkNSizeQId', 'networkEColorQId', 'networkESizeQId'], 'integer'],
-            [['title', 'prompt', 'preface', 'citation', 'subjectType', 'answerType', 'pageLevelDontKnowButton', 'pageLevelRefuseButton', 'allOptionString', 'uselfExpression', 'minLimitType', 'minPrevQues', 'maxLimitType', 'maxPrevQues', 'listRangeString', 'networkParams', 'useAlterListField', 'javascript', 'dontKnowText', 'refuseText', 'setAllText'], 'string'],
+            [['active', 'ordering', 'otherSpecify', 'minLiteral', 'maxLiteral', 'minCheckableBoxes', 'maxCheckableBoxes', 'minListRange', 'maxListRange', 'timeUnits', 'symmetric', 'studyId', 'answerReasonExpressionId', 'networkRelationshipExprId'], 'integer'],
+            [['title', 'prompt', 'preface', 'citation', 'subjectType', 'answerType', 'pageLevelDontKnowButton', 'pageLevelRefuseButton', 'allOptionString', 'uselfExpression', 'minLimitType', 'minPrevQues', 'maxLimitType', 'maxPrevQues', 'listRangeString', 'networkParams','networkGraphs', 'useAlterListField', 'javascript', 'dontKnowText', 'refuseText', 'setAllText'], 'string'],
             [['askingStyleList', 'dontKnowButton', 'refuseButton', 'restrictList', 'autocompleteList', 'prefillList', 'withListRange', 'allButton', 'noneButton', 'keepOnSamePage'], 'boolean'],
             ['preface','default', 'value'=>""],
             [['askingStyleList', 'dontKnowButton', 'refuseButton', 'restrictList', 'autocompleteList', 'prefillList', 'restrictPrev', 'autocompletePrev', 'prefillPrev', 'hideNameGenQ', 'withListRange', 'allButton', 'noneButton', 'keepOnSamePage'], 'default', 'value' => 0],
@@ -156,10 +157,11 @@ class Question extends \yii\db\ActiveRecord
             'answerReasonExpressionId' => 'Answer Reason Expression ID',
             'networkRelationshipExprId' => 'Network Relationship Expr ID',
             'networkParams' => 'Network Params',
-            'networkNColorQId' => 'Network N Color Q ID',
-            'networkNSizeQId' => 'Network N Size Q ID',
-            'networkEColorQId' => 'Network E Color Q ID',
-            'networkESizeQId' => 'Network E Size Q ID',
+            //'networkNColorQId' => 'Network N Color Q ID',
+            //'networkNSizeQId' => 'Network N Size Q ID',
+            //'networkEColorQId' => 'Network E Color Q ID',
+            //'networkESizeQId' => 'Network E Size Q ID',
+            'networkGraphs' => 'networkGraphs',
             'useAlterListField' => 'Use Participant List Field',
             'javascript' => 'Javascript',
             'restrictList' => 'Restrict List',

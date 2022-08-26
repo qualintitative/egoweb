@@ -1,5 +1,13 @@
 <div class="col-sm-12 no-padding" ng-if="header != '' && subjectType != 'NAME_GENERATOR'" ng-bind-html="header">{{ header }}</div>
 
+<div id="graphPlugin" ng-if="subjectType == 'MULTI_GRAPH'" class="col-sm-12 row">
+    <div ng-repeat="graph in nGraphs" ng-class="{'col-xl-4': nGraphs.length == 3 || nGraphs.length == 6, 'info-space': $index < nGraphs.length / 2 && (nGraphs.length == 4 || nGraphs.length == 6)}" class="col-lg-6 multi-graph">
+        <span class="info-title" ng-if="graph.title != ''">{{graph.title}}</span>
+        <div id="infovis{{$index}}" class="infovis" ng-if="graph.questionId != ''"></div>
+        <img id="imagevis{{$index}}" ng-if="graph.questionLabel != ''" ng-src="{{graph.questionLabel}}" class="info-label" style="height:{{graph.size}}vh">
+    </div>
+</div>
+
 <div ng-if="subjectType != 'NAME_GENERATOR'" class="col-sm-12">
     <span ng-if="(answerForm.$submitted || errors[0] == 'That name is already on this list' || errors[0] == 'Name cannot be blank' || errors[0] == 'Name not found in list' || errors[keys(errors)[0]] == 'Please modify the name so it\'s not identical to the previous name entered.' || errors[0] == 'That name has already been listed') && errors">
         <div class="alert alert-danger" role="alert" ng-if="$index == 0" ng-repeat="error in errors">

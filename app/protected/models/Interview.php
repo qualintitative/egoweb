@@ -1208,7 +1208,7 @@ class Interview extends \yii\db\ActiveRecord
         ]);
         $ap_answers = array();
         foreach ($result as $answer) {
-            $ap_answers[$answer->questionId][$answer->alterId1][$answer->alterId2] = $answer;;
+            $ap_answers[$answer->questionId][$answer->alterId1][$answer->alterId2] = $answer;
         }
         $ego_id = Interview::getEgoId($this->id);
 

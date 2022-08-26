@@ -505,10 +505,55 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                         </div>
                     </div>
 
-                    <div v-if="question.subjectType == 'NETWORK'">
                     <?= $this->render('/authoring/network'); ?>
-                    </div>
 
+                    <div v-if="question.subjectType == 'MULTI_GRAPH'">
+                        <input type="hidden" v-model="question.networkGraphs" name="Question[networkGraphs]">
+                        <div v-for="(graph, g) in question.nGraphs">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Graph #{{g+1}} Title</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control input-xs" v-model="graph.title" @change="resetGraphs()">
+                                </div>
+                                <div class="col-sm-2">
+                                    <b-button class="btn btn-danger" @click="deleteGraph(g)">Delete</b-button>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Network</label>
+                                <div class="col-sm-8">
+                                    <b-form-select
+                                    v-model="graph.questionId"
+                                    :options="question.nQuestions"
+                                    @change="resetGraphs()">
+                                    <template #first>
+                                            <b-form-select-option value="">-- None --</b-form-select-option>
+                                        </template>
+                                </b-form-select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Legend</label>
+                                <div class="col-sm-7">
+                                    <input :id="g + '_' + question.id" type="file" @change="storeImage">
+                                </div>
+                                <div class="col-sm-1">
+                                    <b-link href="#" @click="deleteLabel(g)"><i class="fas fa-times"></i></b-link>
+                                </div>
+                                <div class="col-sm-12" v-if="graph.questionLabel != ''">
+                                    <img :src="graph.questionLabel" :style="'float:right; height:' +  graph.size + 'vh'">
+                                </div>
+                            </div>
+                            <div class="form-group row" v-if="graph.questionLabel != ''">
+                                <label class="col-sm-4 col-form-label">Legend Size ({{graph.size}})</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" type='range' min=10 max=30 @change="resetGraphs()" v-model="graph.size">
+                                </div>
+                            </div>
+                        </div>
+                        <b-button v-if="question.nGraphs.length < 6" @click="addGraph" variant="primary" size="xs">Add Graph</b-button>
+                    </div>
                     <div v-if="question.preface != null && question.preface != ''">
                         <label for="Question_preface" class="col-form-label">Preface (Deprecated.  Please copy into a new NO_RESPONSE question)</label>
                         <textarea name="Question[preface]">{{question.preface}}</textarea>
@@ -558,8 +603,8 @@ Vue.directive('sortable', {
 });
 
 SummerNote = Vue.component('summer-note', {
-    template: '<textarea ref="summernote" :id="vid" :name="name"></textarea>',
-    props: ['name', 'model', 'vid'],
+    template: '<textarea ref="summernote" :id="vid" :name="name" :v-model="vmodel"></textarea>',
+    props: ['name', 'model', 'vid', 'vmodel'],
     computed: {
         summernote() {
             return $(this.$refs.summernote);
@@ -587,7 +632,6 @@ SummerNote = Vue.component('summer-note', {
                     }
                     $("#" + self.vid.split("_")[0] + "_prompt").val(text);
                     self.$emit("update:model", text);
-                    console.log("change", text)
                     parseEgowebTags(text, self.vid);
                 },
                 onChangeCodeview: function(e) {
@@ -795,6 +839,40 @@ QestionEditor = Vue.component('question-editor', {
             this.question.nParams[param].options = newOptions;
             this.question.networkParams = JSON.stringify(this.question.nParams)
             console.log(param, this.question.nParams[param].options);
+            this.$forceUpdate();
+        },
+        storeImage(event) {
+            console.log(event)
+            console.log(event.target.id.split("_"))
+            g = event.target.id.split("_")[0];
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.addEventListener("load", () => {
+                this.question.nGraphs[g].questionLabel = reader.result;
+                this.resetGraphs();
+            }, false);
+            if (file) {
+                reader.readAsDataURL(file);
+            }
+        },
+        resetGraphs() {
+            this.question.networkGraphs = JSON.stringify(this.question.nGraphs)
+            console.log(this.question.networkGraphs);
+            this.$forceUpdate();
+        },
+        deleteLabel(g) {
+            this.question.nGraphs[g].questionLabel = "";
+            this.question.networkGraphs = JSON.stringify(this.question.nGraphs)
+            this.$forceUpdate();
+        },
+        addGraph() {
+            this.question.nGraphs.push(defaultGraph);
+            this.question.networkGraphs = JSON.stringify(this.question.nGraphs)
+            this.$forceUpdate();
+        },
+        deleteGraph(g) {
+            this.question.nGraphs.splice(g, 1);
+            this.question.networkGraphs = JSON.stringify(this.question.nGraphs)
             this.$forceUpdate();
         },
         reorderOption(event) {
@@ -1016,6 +1094,7 @@ new Vue({
         var alterQOptions = {};
         var alterPairQOptions = {};
         var alterShapeQOptions = {};
+        var nQuestions = [];
         var bitVals = {
                 'BIT_YEAR': 1,
                 'BIT_MONTH': 2,
@@ -1048,15 +1127,15 @@ new Vue({
             if (this.questions[k].answerType == "MULTIPLE_SELECTION") {
                 multiQuestions.push({text:this.questions[k].title,value:this.questions[k].id});
             }
-
-
-
    
             this.questions[k].timeBits = {};
             for (var t in bitVals) {
                 this.questions[k].timeBits[t] = this.questions[k].timeUnits & bitVals[t];
             }
+            if (questions[k].subjectType == "NETWORK")
+                nQuestions.push({text:this.questions[k].title,value:this.questions[k].id});
         }
+
         for(k in this.all_questions){
             if (this.all_questions[k].subjectType == "ALTER"){
                 alterQs.push({text:studyNames[this.all_questions[k].studyId] + ":" + this.all_questions[k].title, value:this.all_questions[k].id})
@@ -1070,7 +1149,10 @@ new Vue({
                 alterPairQOptions[all_questions[k].id] =  all_questions[k].optionsList;
                 alterPairQIds.push(parseInt(this.all_questions[k].id));
             }
+
+
         }
+        console.log("nQuestions", nQuestions);
         for(k in expressions){
             if(alterQIds.indexOf(parseInt(expressions[k].questionId)) != -1){
                 alterExps.push(expressions[k])
@@ -1102,6 +1184,8 @@ new Vue({
             this.questions[k].alterPairQOptions = alterPairQOptions;
             this.questions[k].alterShapeQOptions = alterShapeQOptions;
             this.questions[k].multiQuestions = [];
+            this.questions[k].nQuestions = nQuestions;
+
             for(m in multiQuestions){
                 if(multiQuestions[m].value != this.questions[k].id)
                     this.questions[k].multiQuestions.push(multiQuestions[m])
@@ -1122,6 +1206,27 @@ new Vue({
                 edgeSize:{questionId:'', options:[{id:'default', size:1}]},
                 egoEdgeColor:{questionId:'', options:[{id:'default', color:"#000"}]},
                 egoEdgeSize:{questionId:'', options:[{id:'default', size:1}]},
+            }
+            var defaultGraphs = [
+                {title:'', questionId:'', questionLabel:'', size:20},
+                {title:'', questionId:'', questionLabel:'', size:20},
+                {title:'', questionId:'', questionLabel:'', size:20}
+            ];
+            defaultGraph = {title:'', questionId:'', questionLabel:'', size:20};
+            if(this.questions[k].subjectType == "MULTI_GRAPH"){
+                if(this.questions[k].networkGraphs == "" || this.questions[k].networkGraphs == null || this.questions[k].networkGraphs == "null"){
+                    this.questions[k].nGraphs = [defaultGraph];
+                    this.questions[k].networkGraphs = JSON.stringify(this.questions[k].nGraphs);
+                }else{
+                    this.questions[k].nGraphs = JSON.parse(this.questions[k].networkGraphs);
+                    for(g in this.questions[k].nGraphs){
+                        for(o in defaultGraph){
+                            if(typeof this.questions[k].nGraphs[g][o] == "undefined"){
+                                this.questions[k].nGraphs[g][o] = defaultGraph[o];
+                            }
+                        }
+                    }
+                }
             }
             if(this.questions[k].subjectType == "NETWORK"){
                 if(this.questions[k].networkParams == "" || this.questions[k].networkParams == null || this.questions[k].networkParams == "null"){

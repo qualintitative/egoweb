@@ -1,5 +1,8 @@
 # Changelog
 
+## [2.0.10.14] - 2022-08-26
+- added new MULTI_GRAPH question type for displaying multiple graphs
+
 ## [2.0.10.13] - 2022-08-18
 - added compound expression support to network expressions
 - fixed network graph bug
