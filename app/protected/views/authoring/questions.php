@@ -508,19 +508,51 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                     <?= $this->render('/authoring/network'); ?>
 
                     <div v-if="question.subjectType == 'MULTI_GRAPH'">
-                    <input type="hidden" v-model="question.networkGraphs" name="Question[networkGraphs]">
-                        Graph question
+                        <input type="hidden" v-model="question.networkGraphs" name="Question[networkGraphs]">
                         <div v-for="(graph, g) in question.nGraphs">
-                        <input type="text" v-model="graph.title" @change="resetGraphs()">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Graph #{{g+1}} Title</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control input-xs" v-model="graph.title" @change="resetGraphs()">
+                                </div>
+                                <div class="col-sm-2">
+                                    <b-button class="btn btn-danger" @click="deleteGraph(g)">Delete</b-button>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Network</label>
+                                <div class="col-sm-8">
+                                    <b-form-select
+                                    v-model="graph.questionId"
+                                    :options="question.nQuestions"
+                                    @change="resetGraphs()">
+                                    <template #first>
+                                            <b-form-select-option value="">-- None --</b-form-select-option>
+                                        </template>
+                                </b-form-select>
+                                </div>
+                            </div>
 
-                            <b-form-select
-                            v-model="graph.questionId"
-                            :options="question.nQuestions"
-                            @change="resetGraphs()"></b-form-select>
-                            <img :src="graph.questionLabel">
-                            <input :id="g + '_' + question.id" type="file" @change="storeImage">
+                            <div class="form-group row">
+                                <label class="col-sm-4 col-form-label">Legend</label>
+                                <div class="col-sm-7">
+                                    <input :id="g + '_' + question.id" type="file" @change="storeImage">
+                                </div>
+                                <div class="col-sm-1">
+                                    <b-link href="#" @click="deleteLabel(g)"><i class="fas fa-times"></i></b-link>
+                                </div>
+                                <div class="col-sm-12" v-if="graph.questionLabel != ''">
+                                    <img :src="graph.questionLabel" :style="'float:right; height:' +  graph.size + 'vh'">
+                                </div>
+                            </div>
+                            <div class="form-group row" v-if="graph.questionLabel != ''">
+                                <label class="col-sm-4 col-form-label">Legend Size ({{graph.size}})</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" type='range' min=10 max=30 @change="resetGraphs()" v-model="graph.size">
+                                </div>
+                            </div>
                         </div>
-                        </div>
+                        <b-button v-if="question.nGraphs.length < 6" @click="addGraph" variant="primary" size="xs">Add Graph</b-button>
                     </div>
                     <div v-if="question.preface != null && question.preface != ''">
                         <label for="Question_preface" class="col-form-label">Preface (Deprecated.  Please copy into a new NO_RESPONSE question)</label>
@@ -824,9 +856,24 @@ QestionEditor = Vue.component('question-editor', {
             }
         },
         resetGraphs() {
-                this.question.networkGraphs = JSON.stringify(this.question.nGraphs)
-                console.log(this.question.networkGraphs);
-                this.$forceUpdate();
+            this.question.networkGraphs = JSON.stringify(this.question.nGraphs)
+            console.log(this.question.networkGraphs);
+            this.$forceUpdate();
+        },
+        deleteLabel(g) {
+            this.question.nGraphs[g].questionLabel = "";
+            this.question.networkGraphs = JSON.stringify(this.question.nGraphs)
+            this.$forceUpdate();
+        },
+        addGraph() {
+            this.question.nGraphs.push(defaultGraph);
+            this.question.networkGraphs = JSON.stringify(this.question.nGraphs)
+            this.$forceUpdate();
+        },
+        deleteGraph(g) {
+            this.question.nGraphs.splice(g, 1);
+            this.question.networkGraphs = JSON.stringify(this.question.nGraphs)
+            this.$forceUpdate();
         },
         reorderOption(event) {
             var options = $.extend(true, [], this.question.options);
@@ -1161,20 +1208,21 @@ new Vue({
                 egoEdgeSize:{questionId:'', options:[{id:'default', size:1}]},
             }
             var defaultGraphs = [
-                {title:'', questionId:'', questionLabel:''},
-                {title:'', questionId:'', questionLabel:''},
-                {title:'', questionId:'', questionLabel:''}
+                {title:'', questionId:'', questionLabel:'', size:20},
+                {title:'', questionId:'', questionLabel:'', size:20},
+                {title:'', questionId:'', questionLabel:'', size:20}
             ];
+            defaultGraph = {title:'', questionId:'', questionLabel:'', size:20};
             if(this.questions[k].subjectType == "MULTI_GRAPH"){
                 if(this.questions[k].networkGraphs == "" || this.questions[k].networkGraphs == null || this.questions[k].networkGraphs == "null"){
-                    this.questions[k].nGraphs = defaultGraphs;
+                    this.questions[k].nGraphs = [defaultGraph];
                     this.questions[k].networkGraphs = JSON.stringify(this.questions[k].nGraphs);
                 }else{
                     this.questions[k].nGraphs = JSON.parse(this.questions[k].networkGraphs);
-                    for(g in defaultGraphs){
-                        for(o in defaultGraphs[g]){
+                    for(g in this.questions[k].nGraphs){
+                        for(o in defaultGraph){
                             if(typeof this.questions[k].nGraphs[g][o] == "undefined"){
-                                this.questions[k].nGraphs[g][o] = '';
+                                this.questions[k].nGraphs[g][o] = defaultGraph[o];
                             }
                         }
                     }

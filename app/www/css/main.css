@@ -340,6 +340,12 @@ td {
 .open>.dropdown-menu {
     margin-top: 0px!important;
 }
+@media (max-width: 1200px) {
+    .multi-graph {
+        padding-bottom:30px;
+        margin-bottom:15px;
+    }
+}
 
 @media (max-width: 768px) {
     [role="main"] {
@@ -788,18 +794,22 @@ label.prompt,
 }
 
 .info-label {
-    max-height:160px;
+    height: 20vh;
     display: block;
     margin-left: auto;
     margin-right: auto;
-    margin-top:20px;
+    margin-top:15px;
 }
 
 .info-title {
     display:block;
-    margin-bottom:20px;
+    margin-bottom:15px;
     text-align:center;
     font-weight: bold;
+}
+
+.info-space {
+    margin-bottom:30px;
 }
 
 #print-view #infovis {

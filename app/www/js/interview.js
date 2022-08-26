@@ -86,6 +86,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     $scope.alterMatchName = "";
     $scope.errors = new Object;
     $scope.graphTitle = [];
+    $scope.graphSize = [];
+    $scope.nGraphs = [];
     current_array_ids = [];
 
     $(".interviewee").text(egoIdString);
@@ -505,26 +507,15 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         }
         if($scope.questions[k].SUBJECTTYPE == "MULTI_GRAPH"){
             notes = [];
-
-            var nGraphs = JSON.parse($scope.questions[k].NETWORKGRAPHS);
-            console.log(nGraphs.length)
-            for(var g = 0; g < nGraphs.length; g++){
-                console.log("nGraph:" + g,nGraphs[g].questionId, questions[parseInt(nGraphs[g].questionId)])
-                $scope.graphTitle[g] = nGraphs[g].title;
-                initStats(questions[parseInt(nGraphs[g].questionId)], "infovis" + g, 1);
+            $scope.nGraphs = JSON.parse($scope.questions[k].NETWORKGRAPHS);
+            for(var g = 0; g <  $scope.nGraphs.length; g++){
+                if($scope.nGraphs[g].questionId && $scope.nGraphs[g].questionId != "")
+                initStats(questions[parseInt($scope.nGraphs[g].questionId)], "infovis" + g, 1);
             }
         }
         setTimeout(
             function() {
                 eval($scope.questions[k].JAVASCRIPT);
-                if($scope.questions[k].SUBJECTTYPE == "MULTI_GRAPH"){
-                    var nGraphs = JSON.parse($scope.questions[k].NETWORKGRAPHS);
-                    for(var g = 0; g < nGraphs.length; g++){
-
-                    $('#imagevis' + g).attr("src", nGraphs[g].questionLabel);
-                    }
-
-                }
                 if (typeof $(".answerInput")[0] != "undefined")
                     $(".answerInput")[0].focus();
                 if (!isGuest && $("#menu_" + $scope.page).length != 0)
