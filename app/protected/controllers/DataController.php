@@ -731,6 +731,11 @@ class DataController extends Controller
                 foreach($options as $option){
                     $optionString[] = "'". $option->name . "'" .  ' = ' . $option->value;
                 }
+                if($question->dontKnowButton)
+                    $optionString[] = "'". ($question->dontKnowText ? $question->dontKnowText : "Don't Know") . "'" .  ' = ' . $study->valueDontKnow;
+                if($question->refuseButton)
+                    $optionString[] = "'". ($question->refuseText ? $question->refuseText :"Refuse") . "'" .  ' = ' . $study->valueRefusal;
+
                 $fields[] = '"' . implode("; ", $optionString) . '"';
             }elseif($question->answerType == "NUMERICAL"){
                 if($question->minLimitType == "NLT_LITERAL")

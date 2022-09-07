@@ -65,7 +65,7 @@ class Tools
         $text_len = mb_strlen($text, "8bit");
         if($text_len == 0)
             return false;
-        $pad = ord($text {$text_len - 1});
+        $pad = ord($text[$text_len - 1]);
         if ($text_len && ! $pad) {
             return rtrim($text, "\0");
         }

@@ -1,6 +1,7 @@
 # Changelog
 
 ## [2.0.10.14] - 2022-08-26
+- Don't Know and Refusal values added to codebook export
 - added new MULTI_GRAPH question type for displaying multiple graphs
 
 ## [2.0.10.13] - 2022-08-18
