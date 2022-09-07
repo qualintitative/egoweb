@@ -207,9 +207,12 @@ function saveSkip(interviewId, questionId, alterId1, alterId2, arrayId)
 function saveNodes()
 {
 	var nodes = {};
-	for(var k in s.graph.nodes()){
-		nodes[s.graph.nodes()[k].id] = s.graph.nodes()[k];
-	}
+    for(var sg in s){
+        var graphNodes = s[sg].graph.nodes();
+        for(var k in graphNodes){
+            nodes[graphNodes[k].id] = graphNodes[k];
+        }
+    }
 	$("#Graph_nodes").val(JSON.stringify(nodes));
 	$.post( "/data/savegraph", $('#graph-form').serialize(), function( data ) {
     	//graphs[expressionId].NODES = JSON.stringify(nodes);
