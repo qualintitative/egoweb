@@ -287,8 +287,8 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         if ($scope.questions[k].SUBJECTTYPE == "NAME_GENERATOR") {
             $scope.showPrevAlters = $scope.questions[k].KEEPONSAMEPAGE == 1 ? true : false;
             
-            if (typeof alterPrompts[$scope.questions[k].ID] != "undefined" && typeof alterPrompts[$scope.questions[k].ID][Object.keys($scope.alters).length] != "undefined")
-                $scope.alterPrompt = alterPrompts[$scope.questions[k].ID][Object.keys($scope.alters).length];
+            if (typeof alterPrompts[$scope.questions[k].ID] != "undefined" && typeof alterPrompts[$scope.questions[k].ID][Object.keys($scope.nGalters).length] != "undefined")
+                $scope.alterPrompt = alterPrompts[$scope.questions[k].ID][Object.keys($scope.nGalters).length];
         }
         for (o in $scope.options[array_id]) {
             $scope.options[array_id][o].checked = false;

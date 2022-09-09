@@ -142,7 +142,7 @@ class AuthoringController extends Controller
         $file = fopen($_FILES['userfile']['tmp_name'], "r");
         while (! feof($file)) {
             $data = fgetcsv($file);
-            if (isset($data[0]) && $data[0]) {
+            if (isset($data[0])) {
                 $model = new AlterPrompt;
                 $model->studyId = $id;
                 $model->questionId = $_POST['questionId'];
