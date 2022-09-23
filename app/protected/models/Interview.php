@@ -318,7 +318,10 @@ class Interview extends \yii\db\ActiveRecord
                 $matchIntId = $match->getMatchId();
                 
                 $matchU = User::findOne($match->userId);
-                $matchUser = $matchU->name;
+                if($matchU)
+                   $matchUser = $matchU->name;
+                else
+                    $matchUser = "User not found";
             }
         }
         $study = Study::findOne($this->studyId);
