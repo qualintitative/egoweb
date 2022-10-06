@@ -423,7 +423,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                                 </b-form-checkbox>
                                 <input type="hidden" v-if="question.prefillPrev == 0" name="Question[prefillPrev]" value="0">         
                             </div>
-                            <div class="col-sm-12" v-if="question.prefillPrev != false">
+                            <div class="col-sm-12" v-if="question.prefillPrev != false || question.prefillList != false">
                                 <b-form-checkbox :id="question.id + '_hideNameGenQ'" name="Question[hideNameGenQ]" unchecked-value="0" value="1" type="checkbox" v-model="question.hideNameGenQ">
                                 Hide Name Generator Question
                                 </b-form-checkbox>

@@ -396,7 +396,7 @@ DataAsset::register($this);
 <script>
 $(document).ready(function() {
     $('#dTable').DataTable( {
-     lengthMenu: [10, 50, 100, 500],
+     lengthMenu: [10, 50, 100, 500, 2500],
     "emptyTable":     "No data available in table",
   //  "info":           "", //"Showing _START_ to _END_ of _TOTAL_ entries",
   //  "infoEmpty":      "", //"Showing 0 to 0 of 0 entries",

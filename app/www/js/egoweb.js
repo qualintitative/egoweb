@@ -16,6 +16,8 @@ noteBar = [
 eTags = [];
 s = [];
 jQuery.browser = {};
+expressionIds = {};
+networkParams = {};
 (function() {
     jQuery.browser.msie = false;
     jQuery.browser.version = 0;
@@ -1265,6 +1267,7 @@ function initStats(question, container, scalar) {
             }
         });
         s.push(newGraph);
+        console.log("net params"  + question.NETWORKPARAMS)
         if (typeof graphs[expressionId] != "undefined") {
             savedNodes = JSON.parse(graphs[expressionId].NODES);
             for (var k in savedNodes) {
@@ -1275,9 +1278,11 @@ function initStats(question, container, scalar) {
                 }
             }
         } else {
+            sIndex = s.length - 1;
+            console.log("sinex " + sIndex + " expression Id " + expressionId);
             $('#fullscreenButton').prop('disabled', true);
             $("#printButton").attr("disabled",true);
-            s[s.length - 1].startForceAtlas2({
+            s[sIndex].startForceAtlas2({
                 "worker": false,
                 "outboundAttractionDistribution": true,
                 "speed": 2000,
@@ -1290,17 +1295,20 @@ function initStats(question, container, scalar) {
                 "complexIntervals": 500,
                 "simpleIntervals": 1000
             });
+            networkParams[sIndex] = question.NETWORKPARAMS;
+            expressionIds[sIndex] = expressionId;
             setTimeout(function(){
-                s[s.length - 1].stopForceAtlas2();
+                s[sIndex].stopForceAtlas2();
+                console.log("node index" +sIndex)
                 if(typeof saveNodes != "undefined")
-                    saveNodes();
+                    saveNodes(sIndex);
                 $('#fullscreenButton').prop('disabled', false);
                 $("#printButton").attr("disabled", false);
-            }, 5000);
+            }, 5000, sIndex);
         }
         s[s.length-1].refresh();
         //initNotes(s);
-    }, 1);
+    }, 1, question);
 }
 
 function fullscreen() {
