@@ -204,17 +204,22 @@ function saveSkip(interviewId, questionId, alterId1, alterId2, arrayId)
     });
 }
 
-function saveNodes()
+function saveNodes(sg)
 {
 	var nodes = {};
-    for(var sg in s){
+    //for(var sg in s){
         var graphNodes = s[sg].graph.nodes();
         for(var k in graphNodes){
             nodes[graphNodes[k].id] = graphNodes[k];
         }
-    }
-	$("#Graph_nodes").val(JSON.stringify(nodes));
-	$.post( "/data/savegraph", $('#graph-form').serialize(), function( data ) {
+    //}
+    $("#Graph_nodes").val(JSON.stringify(nodes));
+    console.log('Graph[expressionId]'+sg+expressionIds[sg])
+    if($('#graph-form').length > 0)
+	    var data = $('#graph-form').serialize();
+    else
+        var data = {'Graph[nodes]':JSON.stringify(nodes), 'Graph[interviewId]':interviewId, 'Graph[expressionId]':expressionIds[sg], 'Graph[params]':networkParams[sg]};
+	$.post( "/data/savegraph", data, function( data ) {
     	//graphs[expressionId].NODES = JSON.stringify(nodes);
         graphs = JSON.parse(data);
 		console.log("nodes saved");

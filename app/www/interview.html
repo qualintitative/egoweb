@@ -95,7 +95,7 @@
     </div>
 </div>
 
-<form id="answerForm" name="answerForm" ng-submit="submitForm(answerForm.$valid)" novalidate ng-class="{'col-sm-6': subjectType == 'NETWORK'}">
+<form id="answerForm" name="answerForm" ng-submit="submitForm(answerForm.$valid)" novalidate ng-class="{'col-sm-6': subjectType == 'NETWORK' || subjectType == 'MULTI_GRAPH'}">
 
     <table id="qTable" ng-class="{qTable: askingStyleList != false}" ng-if="askingStyleList != false">
         <thead>

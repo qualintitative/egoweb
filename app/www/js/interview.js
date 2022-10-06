@@ -1439,7 +1439,7 @@ function buildList() {
             masterList[i] = new Object;
         }
         if (questionList[j].SUBJECTTYPE == "NAME_GENERATOR") {
-            if(questionList[j].PREFILLPREV == true && questionList[j].HIDENAMEGENQ == true)
+            if(questionList[j].HIDENAMEGENQ == true)
                 continue;
             if (questionList[j].PREFACE != "") {
                 var preface = new Object;
