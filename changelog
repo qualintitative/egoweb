@@ -4,6 +4,8 @@
 - fixed variable alter prompts for multiple name generators
 - Don't Know and Refusal values added to codebook export
 - added new MULTI_GRAPH question type for displaying multiple graphs
+- fixed bug with graph loading freezing browser
+- fixed issue with spaces in CONTAINS tag
 
 ## [2.0.10.13] - 2022-08-18
 - added compound expression support to network expressions

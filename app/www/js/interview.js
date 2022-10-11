@@ -2111,8 +2111,10 @@ function interpretTags(string, alterId1, alterId2) {
     for (k in containers) {
         var contains = containers[k].match(/<CONTAINS (.+?) \/>/)[1];
         var parts = contains.split(/\s/);
-        var qTitle = parts[0];
-        var answer = parts[1];
+        //var qTitle = parts[0];
+        //var answer = parts[1];
+        var qTitle = contains.slice(0, contains.indexOf(' '));
+        var answer = contains.slice(contains.indexOf(' ') + 1);
         answer = answer.replace(/"/g, '');
         var question = getQuestion(qTitle);
         if (!question)
@@ -2122,12 +2124,12 @@ function interpretTags(string, alterId1, alterId2) {
             array_id += "-" + alterId1;
         else if (typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
             array_id += 'and' + alterId2;
-
         var lastAnswer = "";
         if (typeof answers[array_id] != 'undefined') {
             if (question.ANSWERTYPE == "MULTIPLE_SELECTION") {
                 for (o in options[question.ID]) {
-                    if ($.inArray(options[question.ID][o].ID, answers[array_id].VALUE.split(",")) != -1)
+                    console.log(options[question.ID][o].NAME, options[question.ID][o].ID.toString(), answers[array_id].VALUE.split(","))
+                    if ($.inArray(options[question.ID][o].ID.toString(), answers[array_id].VALUE.split(",")) != -1)
                         lastAnswer = options[question.ID][o].NAME;
                 }
             } else {
@@ -2150,6 +2152,7 @@ function interpretTags(string, alterId1, alterId2) {
                 if (i == 2 || !isNaN(parseInt(exp[i])))
                     continue;
                 if (exp[i].match("/>")) {
+                    console.log("match exp")
                     exp[i] = interpretTags(exp[i]);
                 } else {
 
@@ -2184,7 +2187,7 @@ function interpretTags(string, alterId1, alterId2) {
                 }
             }
             logic = exp[1] + ' ' + exp[2] + ' ' + exp[3];
-            console.log("logic: " + logic);
+            console.log("logic", exp, logic);
             show = eval(logic);
             if (show) {
                 string = string.replace(showlogic, exp[4]);
