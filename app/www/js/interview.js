@@ -479,6 +479,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         if ($scope.questions[k].SUBJECTTYPE == "NETWORK") {
             var expressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
             notes = [];
+            s = [];
             $scope.graphExpressionId = $scope.questions[k].NETWORKRELATIONSHIPEXPRID;
             $scope.graphQuestionId = $scope.questions[k].ID;
             if (typeof otherGraphs[$scope.questions[k].TITLE] != "undefined")
@@ -507,6 +508,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         }
         if($scope.questions[k].SUBJECTTYPE == "MULTI_GRAPH"){
             notes = [];
+            s = [];
             $scope.nGraphs = JSON.parse($scope.questions[k].NETWORKGRAPHS);
             for(var g = 0; g <  $scope.nGraphs.length; g++){
                 if($scope.nGraphs[g].questionId && $scope.nGraphs[g].questionId != "")
