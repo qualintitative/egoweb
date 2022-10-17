@@ -1281,7 +1281,8 @@ function initStats(question, container, scalar) {
             sIndex = s.length - 1;
             console.log("sinex " + sIndex + " expression Id " + expressionId);
             $('#fullscreenButton').prop('disabled', true);
-            $("#printButton").attr("disabled",true);
+            $("#printButton").attr("disabled", true);
+            $("#next").prop("disabled", true);
             s[sIndex].startForceAtlas2({
                 "worker": false,
                 "outboundAttractionDistribution": true,
@@ -1304,7 +1305,8 @@ function initStats(question, container, scalar) {
                     saveNodes(sIndex);
                 $('#fullscreenButton').prop('disabled', false);
                 $("#printButton").attr("disabled", false);
-            }, 5000, sIndex);
+                $("#next").prop("disabled", false);
+            }, 4000, sIndex);
         }
         s[s.length-1].refresh();
         //initNotes(s);
