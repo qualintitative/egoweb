@@ -2112,6 +2112,7 @@ function interpretTags(string, alterId1, alterId2) {
     containers = string.match(/<CONTAINS (.+?) \/>/g);
     for (k in containers) {
         var contains = containers[k].match(/<CONTAINS (.+?) \/>/)[1];
+        console.log(contains);
         var parts = contains.split(/\s/);
         //var qTitle = parts[0];
         //var answer = parts[1];
@@ -2131,14 +2132,20 @@ function interpretTags(string, alterId1, alterId2) {
             if (question.ANSWERTYPE == "MULTIPLE_SELECTION") {
                 for (o in options[question.ID]) {
                     console.log(options[question.ID][o].NAME, options[question.ID][o].ID.toString(), answers[array_id].VALUE.split(","))
-                    if ($.inArray(options[question.ID][o].ID.toString(), answers[array_id].VALUE.split(",")) != -1)
+                    if ($.inArray(options[question.ID][o].ID.toString(), answers[array_id].VALUE.split(",")) != -1){
                         lastAnswer = options[question.ID][o].NAME;
+                        console.log("answer compare", answer + ":" + lastAnswer);
+                        if(lastAnswer == answer){
+                            string = string.replace("<CONTAINS " + contains + " />", lastAnswer == answer ? 1 : 0);
+                            break;
+                        }
+                    }
                 }
+                string = string.replace("<CONTAINS " + contains + " />", 0);
             } else {
                 lastAnswer = answers[array_id].VALUE;
+                string = string.replace("<CONTAINS " + contains + " />", lastAnswer == answer ? 1 : 0);
             }
-            string = string.replace("<CONTAINS " + contains + " />", lastAnswer == answer ? 1 : 0);
-            console.log(answer + ":" + lastAnswer);
         } else {
             string = string.replace("<CONTAINS " + contains + " />", 0);
         }

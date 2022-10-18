@@ -129,3 +129,8 @@ use app\models\Interview;
         </div>
     </div>
 </div>
+<?php
+$this->registerAssetBundle(\yii\web\JqueryAsset::className(), \yii\web\View::POS_HEAD);
+use app\assets\DataAsset;
+DataAsset::register($this);
+?>
