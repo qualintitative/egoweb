@@ -287,15 +287,15 @@ class User extends ActiveRecord implements IdentityInterface
                     ->orWhere(["id"=>$studyIds])
                     ->orderBy(
                         [
-                        'multiSessionEgoId' => SORT_DESC,
-                        'id'=>SORT_DESC
+                        //'multiSessionEgoId' => SORT_DESC,
+                        'name'=>SORT_ASC
                     ]
                     )->all();
             } else {
                 $this->_studies = Study::find()->orderBy(
                     [
-                    'multiSessionEgoId' => SORT_DESC,
-                    'id'=>SORT_DESC
+                    //'multiSessionEgoId' => SORT_DESC,
+                    'name'=>SORT_ASC
                 ]
                 )->all();
             }

@@ -21,7 +21,7 @@ use app\models\Interview;
                     <?php echo $study->name; ?>
                 </h3>
                 (<?php
-                    echo $multiIdQs[$study->id];
+                    echo $multiIdQs[$study->name];
                 ?>)
                 <div class="btn-group float-right" role="group" aria-label="<?php echo $study->name; ?>">
                         <?php echo Html::a("Authoring", ["/authoring/" . $study->id], ["class"=>"btn btn-link btn-info text-light"]); ?>
