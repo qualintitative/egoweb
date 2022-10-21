@@ -9,15 +9,69 @@ use app\models\Interview;
        
 
 <div id="accordion" class="fill-page">
-    <?php foreach (Yii::$app->user->identity->studies as $index=>$study):?>
-    <?php if ($index == 0 && $study->multiSessionEgoId): ?>
-        <?php $hasMulti = true; ?>
-        <div><h3>Multi-session Studies</h3></div>
-    <?php endif; ?>
-    <?php if ($index != 0 && !$study->multiSessionEgoId && isset($hasMulti)): ?>
-        <?php unset($hasMulti); ?>
-        <div><br><h3>Single session Studies</h3></div>
-    <?php endif; ?>
+<div><h3>Multi-session Studies</h3></div>
+
+    <?php foreach ($multiStudies as $index=>$study):?>
+    <div class="card">
+        <div class="card-header" id="heading-<?php echo $study->id; ?>">
+            <h5 class="mb-0">
+                <h3 class="btn btn-link btn-lg" data-toggle="collapse"
+                    data-target="#collapse-<?php echo $study->id; ?>" aria-expanded="true"
+                    aria-controls="collapse-<?php echo $study->id; ?>">
+                    <?php echo $study->name; ?>
+                </h3>
+                (<?php
+                    echo $multiIdQs[$study->id];
+                ?>)
+                <div class="btn-group float-right" role="group" aria-label="<?php echo $study->name; ?>">
+                        <?php echo Html::a("Authoring", ["/authoring/" . $study->id], ["class"=>"btn btn-link btn-info text-light"]); ?>
+                        <?php echo Html::a("Data Processing", ["/data/" . $study->id], ["class"=>"btn btn-link btn-secondary text-light"]); ?>
+                    </div>
+            </h5>
+        </div>
+
+        <div id="collapse-<?php echo $study->id; ?>" class="collapse"
+            aria-labelledby="heading-<?php echo $study->id; ?>" data-parent="#accordion">
+            <div class="card-body">
+                <div class="row">
+                <div class="col-sm-3" role="toolbar" aria-label="Toolbar with button groups">
+
+                    <?php echo Html::a("Start new interview", ["/interview/" . $study->id . "#page/0"], ["class"=>"btn btn-link btn-primary text-light"]); ?>
+
+
+                </div>
+                <?php if (isset($interviews[$study->id]) && count($interviews[$study->id]) > 0): ?>
+                    <div class="col-sm-9">
+                <table id="study-<?php echo $study->id; ?>" class="table table-bordered table-list study-table">
+                    <thead>
+                    <tr><th class="bg-dark text-white">Continue incomplete interview</th></tr>
+                </thead>
+                    <tbody>
+                    <?php foreach ($interviews[$study->id] as $interview): ?>
+                    <tr><td><?php echo Html::a($egoIds[$interview->id], ["/interview/" . $study->id . "/" . $interview->id . "#page/" . $interview->completed ], ["class"=>"list-group-item list-group-item-action"]); ?></td></tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                    </table>
+                    </div>
+                    <script>
+$(function(){
+    $('#study-<?php echo $study->id; ?>').DataTable( {paging: false, info: false,
+        rowReorder: true,
+        columnDefs: [
+            { orderable: true, targets: 0 }
+        ]
+    });
+});
+</script>
+                <?php endif; ?>
+                    </div>
+            </div>
+        </div>
+    </div>
+    <?php endforeach; ?>
+
+    <div><br><h3>Single session Studies</h3></div>
+    <?php foreach ($studies as $index=>$study):?>
     <div class="card">
         <div class="card-header" id="heading-<?php echo $study->id; ?>">
             <h5 class="mb-0">
