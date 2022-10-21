@@ -165,6 +165,7 @@ class InterviewController extends Controller
             $interview = Interview::findOne($interviewId);
             $interviewIds = $interview->multiInterviewIds();
             $prevIds = array_diff($interviewIds, array($interviewId));
+            $prevAlterObjs = [];
             if (count($prevIds) > 0) {
                 foreach ($prevIds as $i_id) {
 

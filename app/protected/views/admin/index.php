@@ -44,12 +44,28 @@ use app\models\Interview;
 
                 </div>
                 <?php if (isset($interviews[$study->id]) && count($interviews[$study->id]) > 0): ?>
-                <div class="list-group col-sm-9">
-                    <div class="list-group-item list-group-item-action bg-dark text-white">Continue incomplete interview</div>
+                    <div class="col-sm-9">
+                <table id="study-<?php echo $study->id; ?>" class="table table-bordered table-list study-table">
+                    <thead>
+                    <tr><th class="bg-dark text-white">Continue incomplete interview</th></tr>
+                </thead>
+                    <tbody>
                     <?php foreach ($interviews[$study->id] as $interview): ?>
-                    <?php echo Html::a($egoIds[$interview->id], ["/interview/" . $study->id . "/" . $interview->id . "#page/" . $interview->completed ], ["class"=>"list-group-item list-group-item-action"]); ?>
+                    <tr><td><?php echo Html::a($egoIds[$interview->id], ["/interview/" . $study->id . "/" . $interview->id . "#page/" . $interview->completed ], ["class"=>"list-group-item list-group-item-action"]); ?></td></tr>
                     <?php endforeach; ?>
-                </div>
+                    </tbody>
+                    </table>
+                    </div>
+                    <script>
+$(function(){
+    $('#study-<?php echo $study->id; ?>').DataTable( {paging: false, info: false,
+        rowReorder: true,
+        columnDefs: [
+            { orderable: true, targets: 0 }
+        ]
+    });
+});
+</script>
                 <?php endif; ?>
                     </div>
             </div>
@@ -58,6 +74,7 @@ use app\models\Interview;
     <?php endforeach; ?>
 
 </div>
+
 <div class="card fill-page">
     <div class="card-header">
     <?= Html::beginForm(['/authoring/create'], 'post', [ 'id'=>'create', "class"=>"form-inline col-lg-6"]) ?>
