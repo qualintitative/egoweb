@@ -57,6 +57,7 @@ use app\models\Interview;
 $(function(){
     $('#study-<?php echo $study->id; ?>').DataTable( {paging: false, info: false,
         rowReorder: true,
+        pageLength: 500,
         columnDefs: [
             { orderable: true, targets: 0 }
         ]
@@ -114,6 +115,7 @@ $(function(){
 $(function(){
     $('#study-<?php echo $study->id; ?>').DataTable( {paging: false, info: false,
         rowReorder: true,
+        pageLength: 500,
         columnDefs: [
             { orderable: true, targets: 0 }
         ]

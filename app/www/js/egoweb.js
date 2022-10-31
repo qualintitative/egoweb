@@ -1266,6 +1266,7 @@ function initStats(question, container, scalar) {
                 sideMargin: 2
             }
         });
+
         s.push(newGraph);
         console.log("net params"  + question.NETWORKPARAMS)
         if (typeof graphs[expressionId] != "undefined") {
@@ -1309,6 +1310,15 @@ function initStats(question, container, scalar) {
             }, 4000, sIndex);
         }
         s[s.length-1].refresh();
+        if(s.length-1 == 0){
+            sIndex = s.length-1;
+            var dragListener = sigma.plugins.dragNodes(s[s.length-1], s[s.length-1].renderers[0])
+            dragListener.bind('dragend', function(event) {
+                saveNodes(sIndex);
+                console.log(event);
+            });
+        }
+
         //initNotes(s);
     }, 1, question);
 }
