@@ -1311,12 +1311,15 @@ function initStats(question, container, scalar) {
         }
         s[s.length-1].refresh();
         if(s.length-1 == 0){
-            sIndex = s.length-1;
+            sIndex = s.length - 1;
             var dragListener = sigma.plugins.dragNodes(s[s.length-1], s[s.length-1].renderers[0])
             dragListener.bind('dragend', function(event) {
                 saveNodes(sIndex);
                 console.log(event);
             });
+        }else{
+            sIndex = s.length - 1;
+            var dragListener = sigma.plugins.dragNodes(s[sIndex], s[sIndex].renderers[0])
         }
 
         //initNotes(s);
