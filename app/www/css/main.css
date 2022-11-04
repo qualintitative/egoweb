@@ -340,6 +340,15 @@ td {
 .open>.dropdown-menu {
     margin-top: 0px!important;
 }
+
+.study-table tbody tr td {
+    padding:0;
+}
+
+.study-table .list-group-item {
+    border:0;
+}
+
 @media (max-width: 1200px) {
     .multi-graph {
         padding-bottom:30px;

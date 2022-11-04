@@ -13,6 +13,7 @@ use app\helpers\Tools;
 use app\models\User;
 use app\models\Answer;
 use app\models\Interview;
+use app\models\Question;
 use app\models\SignUpForm;
 use yii\helpers\Url;
 
@@ -101,6 +102,36 @@ class AdminController extends Controller
         $egoid_answers = [];
         $egoIds = [];
 
+        $studyEgoIdQs = [];
+        $studies = [];
+        $multiStudies = [];
+        $studyByName = [];
+        $result = Yii::$app->user->identity->studies;
+        $studyNames = [];
+        foreach($result as $study){
+            $studyNames[$study->id] = $study->name;
+            if($study->multiSessionEgoId){
+                $studyByName[$study->name] = $study;
+                $studyEgoIdQs[] = $study->multiSessionEgoId;
+            }else{
+                $studies[] = $study;
+            }
+        }
+
+        $result = Question::findAll([
+            "id"=>$studyEgoIdQs,
+        ]);
+
+        $multiIdQs = [];
+        foreach($result as $q){
+            $multiIdQs[$studyNames[$q->studyId]] = $q->title;
+        }
+        ksort($multiIdQs, SORT_NATURAL | SORT_FLAG_CASE);
+        asort($multiIdQs, SORT_NATURAL | SORT_FLAG_CASE);
+        foreach($multiIdQs as $multi=>$title){
+            $multiStudies[] = $studyByName[$multi];
+        }
+
         $result = Answer::findAll([
             "questionType"=>"EGO_ID",
         ]);
@@ -123,7 +154,7 @@ class AdminController extends Controller
                 $interviews[$interview->studyId] = [];
             $interviews[$interview->studyId][] = $interview;
         }
-        return $this->render('index', ["interviews" => $interviews, "egoIds" => $egoIds]);
+        return $this->render('index', ["interviews" => $interviews, "egoIds" => $egoIds, "studies"=>$studies, "multiStudies"=>$multiStudies, "multiIdQs"=>$multiIdQs]);
     }
 
     public function actionUser()
