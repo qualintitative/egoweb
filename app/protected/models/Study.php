@@ -374,6 +374,10 @@ class Study extends \yii\db\ActiveRecord
         foreach ($alterLists as $alterList) {
             $alterList->delete();
         }
+        $expressions = Expression::findAll(array("studyId"=>$this->id));
+        foreach ($expressions as $expression) {
+            $expression->delete();
+        }
         return true;
     }
 
