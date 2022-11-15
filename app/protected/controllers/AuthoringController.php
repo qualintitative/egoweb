@@ -521,7 +521,6 @@ class AuthoringController extends Controller
                 die();
             }
         }
-        $result = Expression::find()->where(["studyId"=>$id])->all();
         $new_expression = new Expression;
         $new_expression->name = "";
         $new_expression->id = 0;
@@ -533,15 +532,11 @@ class AuthoringController extends Controller
         $expressions[0] = $new_expression->toArray();
         $countQuestions = [];
         $countExpressions = [];
-        foreach ($result as $expression) {
-            $expressions[$expression->id] = $expression->toArray();
-            if ($expression->type == "Counting") {
-                $countExpressions[] = $expression->toArray();
-            }
-        }
+        
         $result = Question::find()->where(["studyId"=>$studyIds])->orderBy(["ordering"=>"ASC"])->asArray()->all();
         $questions = [];
         $nameGenQuestions = [];
+        $questionIds = [];
         foreach ($result as $question) {
             if ($study->multiSessionEgoId) {
                 $question['title'] = $studyNames[$question['studyId']] .":".$question['title'];
@@ -558,10 +553,17 @@ class AuthoringController extends Controller
                 $question['subjectType'] == "NETWORK") {
                 continue;
             }
-            $oList = QuestionOption::find()->where(["questionId"=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
-            if($oList){
-                $questions[$question['id']] = $question;
-                $questions[$question['id']]['optionsList'] = $oList;
+            $questions[$question['id']] = $question;
+            $questionIds[] = $question['id'];
+            $questions[$question['id']]['optionsList'] = QuestionOption::find()->where(["questionId"=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+        }
+        $result = Expression::find()->where(["studyId"=>$id])->all();
+        foreach ($result as $expression) {
+            if(!in_array($expression->questionId, $questionIds))
+                continue;
+            $expressions[$expression->id] = $expression->toArray();
+            if ($expression->type == "Counting") {
+                $countExpressions[] = $expression->toArray();
             }
         }
         return $this->render('expressions', ["study"=>$study->toArray(), "expressions"=>$expressions, "questions"=>$questions, "nameGenQuestions"=>$nameGenQuestions, "countExpressions"=>$countExpressions, "countQuestions"=>$countQuestions]);
