@@ -559,7 +559,7 @@ class AuthoringController extends Controller
         }
         $result = Expression::find()->where(["studyId"=>$id])->all();
         foreach ($result as $expression) {
-            if(!in_array($expression->questionId, $questionIds))
+            if(is_numeric($expression->questionId) && !in_array($expression->questionId, $questionIds))
                 continue;
             $expressions[$expression->id] = $expression->toArray();
             if ($expression->type == "Counting") {
