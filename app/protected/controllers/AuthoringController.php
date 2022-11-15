@@ -558,8 +558,11 @@ class AuthoringController extends Controller
                 $question['subjectType'] == "NETWORK") {
                 continue;
             }
-            $questions[$question['id']] = $question;
-            $questions[$question['id']]['optionsList'] = QuestionOption::find()->where(["questionId"=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+            $oList = QuestionOption::find()->where(["questionId"=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+            if($oList){
+                $questions[$question['id']] = $question;
+                $questions[$question['id']]['optionsList'] = $oList;
+            }
         }
         return $this->render('expressions', ["study"=>$study->toArray(), "expressions"=>$expressions, "questions"=>$questions, "nameGenQuestions"=>$nameGenQuestions, "countExpressions"=>$countExpressions, "countQuestions"=>$countQuestions]);
     }

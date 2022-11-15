@@ -360,6 +360,10 @@ class Study extends \yii\db\ActiveRecord
         }
         $questions = Question::findAll(array("studyId"=>$this->id));
         foreach ($questions as $question) {
+            $qExpressions = Expression::findAll(array("questionId"=>$question->id));
+            foreach($qExpressions as $qExpression){
+                $qExpression->delete();
+            }
             $question->delete();
         }
         $options = QuestionOption::findAll(array("studyId"=>$this->id));
