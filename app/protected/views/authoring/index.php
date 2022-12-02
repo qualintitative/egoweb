@@ -118,6 +118,15 @@ use yii\helpers\Html;
             >
             Fill auto-complete with participant list
             </b-form-checkbox>
+            <b-form-checkbox
+            id="Study_active"
+            v-model="study.active"
+            name="Study[inactive]"
+            value="0"
+            unchecked-value="1"
+            >
+            Disable study for guest users
+            </b-form-checkbox>
         </div>
         <div class="btn-group col mt-3 row">
                 <button id="saveStudy" class="btn btn-success">Save</button>

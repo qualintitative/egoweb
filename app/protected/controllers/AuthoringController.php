@@ -198,6 +198,8 @@ class AuthoringController extends Controller
             $study->fillAlterList = isset($_POST['Study']['fillAlterList']);
             $study->restrictAlters = isset($_POST['Study']['restrictAlters']);
             $study->useAsAlters = isset($_POST['Study']['useAsAlters']);
+            $study->active = intval(!isset($_POST['Study']['inactive']));
+
             if ($study->save()) {
                 return $this->response->redirect(Url::toRoute('/authoring/' . $study->id));
             } else {

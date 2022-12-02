@@ -1847,6 +1847,11 @@ function buildList() {
             }
         }
     }
+    if(study.ACTIVE == 0) {
+        masterList = [];
+        i = 0;
+        masterList[i] = new Object;
+    }
     conclusion = new Object;
     conclusion.TITLE = "CONCLUSION";
     conclusion.ANSWERTYPE = "CONCLUSION";

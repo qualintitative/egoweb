@@ -103,7 +103,7 @@ class InterviewController extends Controller
                         $interview = Interview::findOne($a->interviewId);
                         if($interview){
                             $page = 0;
-                            if ($interview->completed)
+                            if ($interview->completed && $study->active == 1)
                                 $page = $interview->completed;
                         }
                     }
@@ -575,7 +575,7 @@ class InterviewController extends Controller
             $interview->studyId = $Answer['studyId'];
         }
 
-        if ($interview->save()) {
+        if (!$interview->id && $interview->save()) {
             $randoms = Question::findAll(array("answerType"=>"RANDOM_NUMBER", "studyId"=>$Answer['studyId']));
             foreach ($randoms as $q) {
                 $a = $q->id;
@@ -589,11 +589,11 @@ class InterviewController extends Controller
                 $answers[$a]->value = mt_rand($q->minLiteral, $q->maxLiteral);
                 $answers[$a]->save();
             }
-            return $interview;
         } else {
             print_r($interview->errors);
             die();
         }
+        return $interview;
     }
 
     // merge alter question
