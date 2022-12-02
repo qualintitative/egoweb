@@ -589,9 +589,6 @@ class InterviewController extends Controller
                 $answers[$a]->value = mt_rand($q->minLiteral, $q->maxLiteral);
                 $answers[$a]->save();
             }
-        } else {
-            print_r($interview->errors);
-            die();
         }
         return $interview;
     }
