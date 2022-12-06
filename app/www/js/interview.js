@@ -1855,7 +1855,10 @@ function buildList() {
     conclusion = new Object;
     conclusion.TITLE = "CONCLUSION";
     conclusion.ANSWERTYPE = "CONCLUSION";
-    conclusion.PROMPT = study.CONCLUSION;
+    if(study.ACTIVE == 0)
+        conclusion.PROMPT = study.DISABLED;
+    else
+        conclusion.PROMPT = study.CONCLUSION;
     conclusion.array_id = 0;
     masterList[i][0] = conclusion;
     //}

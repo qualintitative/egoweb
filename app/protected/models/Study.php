@@ -57,7 +57,7 @@ class Study extends \yii\db\ActiveRecord
         return [
             [['active', 'minAlters', 'maxAlters', 'valueRefusal', 'valueDontKnow', 'valueLogicalSkip', 'valueNotYetAnswered', 'multiSessionEgoId', 'created_date', 'closed_date', 'status', 'userId'], 'integer'],
             [['name'], 'required'],
-            [['name', 'introduction', 'egoIdPrompt', 'alterPrompt', 'conclusion', 'style', 'javascript', 'footer', 'header'], 'string'],
+            [['name', 'introduction', 'egoIdPrompt', 'alterPrompt', 'conclusion', 'style', 'javascript', 'footer', 'header', 'disabled'], 'string'],
             [['modified'], 'safe'],
             [['hideEgoIdPage','fillAlterList','restrictAlters','useAsAlters'], 'boolean'],
             [['multiSessionEgoId', 'useAsAlters', 'restrictAlters', 'fillAlterList', 'hideEgoIdPage'], 'default', 'value' => 0],
@@ -424,6 +424,7 @@ class Study extends \yii\db\ActiveRecord
             'javascript' => 'Javascript',
             'footer' => 'Footer',
             'header' => 'Header',
+            'disabled' => 'Disabled Page Text',
         ];
     }
 }

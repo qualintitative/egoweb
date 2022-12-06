@@ -128,6 +128,11 @@ use yii\helpers\Html;
             Disable study for guest users
             </b-form-checkbox>
         </div>
+        <div class="col-md-12" v-if="study.active == 0">
+            <label for="Study_disabled" class="col-sm-6 col-form-label">Disabled Page Text</label>
+            <summer-note :model.sync="study.disabled" ref="Study_disabled" name="Study[disabled]" vid="Study_disabled">
+            </summer-note>
+        </div>
         <div class="btn-group col mt-3 row">
                 <button id="saveStudy" class="btn btn-success">Save</button>
                 <b-button class="btn btn-warning" @click="replicateStudy">Replicate</b-button>
