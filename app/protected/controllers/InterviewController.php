@@ -103,7 +103,7 @@ class InterviewController extends Controller
                         $interview = Interview::findOne($a->interviewId);
                         if($interview){
                             $page = 0;
-                            if ($interview->completed && $study->active == 1)
+                            if ($interview->completed && $study->active == 1 && !Yii::$app->user->isGuest)
                                 $page = $interview->completed;
                         }
                     }

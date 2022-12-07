@@ -1847,18 +1847,18 @@ function buildList() {
             }
         }
     }
-    if(study.ACTIVE == 0) {
-        masterList = [];
-        i = 0;
-        masterList[i] = new Object;
-    }
+
     conclusion = new Object;
     conclusion.TITLE = "CONCLUSION";
     conclusion.ANSWERTYPE = "CONCLUSION";
-    if(study.ACTIVE == 0)
+    if(study.ACTIVE == 0 && isGuest){
         conclusion.PROMPT = study.DISABLED;
-    else
+        masterList = [];
+        i = 0;
+        masterList[i] = new Object;
+    }else{
         conclusion.PROMPT = study.CONCLUSION;
+    }
     conclusion.array_id = 0;
     masterList[i][0] = conclusion;
     //}
