@@ -531,6 +531,8 @@ class AuthoringController extends Controller
 
         $new_expression->questionId = null;
         $new_expression->resultForUnanswered = 0;
+        $expressionList = [];
+        $expressionList[0] = $new_expression->toArray();
         $expressions[0] = $new_expression->toArray();
         $countQuestions = [];
         $countExpressions = [];
@@ -559,16 +561,17 @@ class AuthoringController extends Controller
             $questionIds[] = $question['id'];
             $questions[$question['id']]['optionsList'] = QuestionOption::find()->where(["questionId"=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
         }
-        $result = Expression::find()->where(["studyId"=>$id])->all();
+        $result = Expression::find()->where(["studyId"=>$id])->orderBy(["name"=>"ASC"])->all();
         foreach ($result as $expression) {
             if(is_numeric($expression->questionId) && !in_array($expression->questionId, $questionIds))
                 continue;
+            $expressionList[] = $expression->toArray();
             $expressions[$expression->id] = $expression->toArray();
             if ($expression->type == "Counting") {
                 $countExpressions[] = $expression->toArray();
             }
         }
-        return $this->render('expressions', ["study"=>$study->toArray(), "expressions"=>$expressions, "questions"=>$questions, "nameGenQuestions"=>$nameGenQuestions, "countExpressions"=>$countExpressions, "countQuestions"=>$countQuestions]);
+        return $this->render('expressions', ["study"=>$study->toArray(), "expressions"=>$expressions, "expressionList"=>$expressionList, "questions"=>$questions, "nameGenQuestions"=>$nameGenQuestions, "countExpressions"=>$countExpressions, "countQuestions"=>$countQuestions]);
     }
 
 

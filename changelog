@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.10.15] - 2022-12-06
+- added disabled study option and disabled text page
+- fixed issue with cursor not showing in textarea input
+- fixed bug with deleting expressions
+- updated expressions to load alphabetically
+
 ## [2.0.10.14] - 2022-08-26
 - fixed variable alter prompts for multiple name generators
 - Don't Know and Refusal values added to codebook export

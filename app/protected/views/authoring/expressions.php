@@ -17,7 +17,7 @@ use common\widgets\Alert;
     </div>
     <div class="col-4 mb-3">
         <ul class="list-group">
-            <li :class="$route.params.id == k ? 'bg-dark list-group-item' : 'list-group-item'" v-for="(expression, k) in expressions" :key="expression.id">
+            <li :class="$route.params.id == expression.id ? 'bg-dark list-group-item' : 'list-group-item'" v-for="(expression, k) in expressionList" :key="expression.id">
                 <router-link :to="'/' + expression.id">{{expression.name ? expression.name : "New Expression"}}</router-link>
             </li>
         </ul>
@@ -292,6 +292,7 @@ study = <?php echo json_encode($study, ENT_QUOTES); ?>;
 
 questions = <?php echo json_encode($questions, ENT_QUOTES); ?>;
 expressions = <?php echo json_encode($expressions, ENT_QUOTES); ?>;
+expressionList = <?php echo json_encode($expressionList, ENT_QUOTES); ?>;
 countQuestions = <?php echo json_encode($countQuestions, ENT_QUOTES); ?>;
 countExpressions = <?php echo json_encode($countExpressions, ENT_QUOTES); ?>;
 nameGenQuestions = <?php echo json_encode($nameGenQuestions, ENT_QUOTES); ?>;
@@ -480,6 +481,7 @@ new Vue({
   el: '#authoring-app',
     data() {
         return {
+            expressionList: expressionList,
             expressions: expressions,
             study: study,
         }
