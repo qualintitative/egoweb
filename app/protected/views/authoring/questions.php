@@ -1038,14 +1038,14 @@ QestionEditor = Vue.component('question-editor', {
                 this.question.answerType = "MULTIPLE_SELECTION";
                 this.$forceUpdate();
             }else if(val == "NETWORK"){
-                this.question.answerType = "TEXTUAL_PP";
+                //this.question.answerType = "TEXTUAL_PP";
                 this.question.networkParams = JSON.stringify(this.question.nParams);
                 this.$forceUpdate();
             }
         },
         changeAnswerType(val) {
             if(val == "NO_RESPONSE"){
-                this.question.subjectType = "EGO";
+                //this.question.subjectType = "EGO";
                 this.$forceUpdate();
             }
         },

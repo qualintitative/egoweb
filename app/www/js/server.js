@@ -86,7 +86,7 @@ function redraw(params){
 	});
 }
 
-function save(questions, page, url, scope){
+function save(questions, page, url, scope, goingBack){
     if(typeof s != "undefined" && typeof s.isForceAtlas2Running != "undefined" && s.isForceAtlas2Running()){
         s.stopForceAtlas2();
         saveNodes();
@@ -132,7 +132,8 @@ function save(questions, page, url, scope){
                         var nextUrl = rootUrl + "/interview/" + study.ID + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
                         if(typeof hashKey != "undefined")
                             nextUrl = nextUrl + "/" + hashKey;
-                        document.location = nextUrl;
+                        if(goingBack == null)
+                            document.location = nextUrl;
                     }
                 }else{
                     errorMsg = JSON.parse(data);
@@ -144,7 +145,8 @@ function save(questions, page, url, scope){
             var nextUrl =  rootUrl + "/interview/" + study.ID + "/" + interviewId + "#/page/" + (parseInt(page) + 1);
             if(typeof hashKey != "undefined")
                 nextUrl = nextUrl + "/" + hashKey;
-            document.location = nextUrl;
+            if(goingBack == null)
+                document.location = nextUrl;
         }
     }else if(questions[0].ANSWERTYPE == "CONCLUSION"){
         $.post(saveUrl, $('#answerForm').serialize(), function (data) {
@@ -166,7 +168,8 @@ function save(questions, page, url, scope){
         var nextUrl = url + "/page/" + (parseInt(page) + 1);
         if(typeof hashKey != "undefined")
             nextUrl = nextUrl + "/" + hashKey;
-        document.location = nextUrl;
+        if(goingBack == null)
+            document.location = nextUrl;
     }
 }
 

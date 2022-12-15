@@ -5,6 +5,8 @@
 - fixed issue with cursor not showing in textarea input
 - fixed bug with deleting expressions
 - updated expressions to load alphabetically
+- added saving TExTUAL_PP questions when Back button is pressed
+- allows NO_RESPONSE for NETWORK questions
 
 ## [2.0.10.14] - 2022-08-26
 - fixed variable alter prompts for multiple name generators

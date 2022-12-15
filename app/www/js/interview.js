@@ -562,6 +562,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     $scope.goBack = function() {
         var url = $location.absUrl().replace($location.url(), '');
         url = url + "page/" + (parseInt($scope.page) - 1);
+        for(k in $scope.questions){
+            if($scope.questions[k].ANSWERTYPE == "TEXTUAL_PP" && Object.keys($scope.questions).length == 1)
+                save($scope.questions, $scope.page, $location.absUrl().replace($location.url(), ''), $scope, true);
+        }
         if (typeof hashKey != "undefined")
             url = url + "/" + hashKey;
         document.location = url;
