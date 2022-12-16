@@ -10,7 +10,7 @@ use common\widgets\Alert;
     <div class="row py-3">
         <div class="col-12 form-row">
             <div class="col-4">
-                <b-form-select v-model="filterType" class="mb-3" id="filter-type">
+                <b-form-select v-model="filterType" class="mb-3" id="filter-type" @change='changeFilterType'>
                     <b-form-select-option value="">No Filter</b-form-select-option>
                     <b-form-select-option value="expression">Filter by Expression Name</b-form-select-option>
                     <b-form-select-option value="expType">Filter by Expression Type</b-form-select-option>
@@ -537,10 +537,17 @@ use common\widgets\Alert;
             }
         },
         methods: {
+            changeFilterType() {
+                if(this.filterType == ''){
+                    newExpressionList = JSON.parse(JSON.stringify(expressionList));
+                    this.expressionList = newExpressionList;
+                    this.$forceUpdate();
+                }
+            },
             filterExpByName() {
                 newExpressionList = [];
                 newExpressionList[0] = JSON.parse(JSON.stringify(expressionList[0]));
-                for (k in expressionList) {
+                for (k = 1; k < expressionList.length; k++) {
                     if (expressionList[k].name.toLowerCase().indexOf(this.filterName.toLowerCase()) != -1)
                         newExpressionList.push(JSON.parse(JSON.stringify(expressionList[k])));
                 }
@@ -560,7 +567,7 @@ use common\widgets\Alert;
                         qIds.push(parseInt(k));
                 }
                 console.log(qIds)
-                for (k in expressionList) {
+                for (k = 1; k < expressionList.length; k++) {
                     if (qIds.indexOf(expressionList[k].questionId) != -1)
                         newExpressionList.push(JSON.parse(JSON.stringify(expressionList[k])));
                 }
@@ -574,7 +581,7 @@ use common\widgets\Alert;
             filterExpByType() {
                 newExpressionList = [];
                 newExpressionList[0] = JSON.parse(JSON.stringify(expressionList[0]));
-                for (k in expressionList) {
+                for (k = 1; k < expressionList.length; k++) {
                     if (expressionList[k].type == this.filterExpType)
                         newExpressionList.push(JSON.parse(JSON.stringify(expressionList[k])));
                     else if (this.filterExpType == "Simple" && ['Text', 'Number', 'Selection'].indexOf(expressionList[k].type) != -1)
