@@ -1,40 +1,81 @@
 <?php
+
 use yii\helpers\Html;
 use common\widgets\Alert;
 
 ?>
-<?= $this->render('/layouts/nav', ['study'=> $study]); ?>
+<?= $this->render('/layouts/nav', ['study' => $study]); ?>
 
 <div id="authoring-app">
-<div class="row py-3">
-    <div class="col-8 order-2" id="sticky-sidebar">
-        <div class="sticky-top">
-            <div class="nav flex-column ml-2 mr-2">
-            <?= Alert::widget() ?>
-            <router-view v-bind:expressions="expressions"></router-view>
+    <div class="row py-3">
+        <div class="col-12 form-row">
+            <div class="col-4">
+                <b-form-select v-model="filterType" class="mb-3" id="filter-type">
+                    <b-form-select-option value="">No Filter</b-form-select-option>
+                    <b-form-select-option value="expression">Filter by Expression Name</b-form-select-option>
+                    <b-form-select-option value="expType">Filter by Expression Type</b-form-select-option>
+                    <b-form-select-option value="question">Filter by Question Title</b-form-select-option>
+                </b-form-select>
+            </div>
+            <div class="col-8 form-row" v-if="filterType == 'expression'">
+                <div class="col-6">
+                    <input class="form-control" v-model="filterName" v-on:keyup="expFilterKey" type=text />
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-primary" type="button" @click="filterExpByName()">Filter</button>
+                </div>
+            </div>
+            <div class="col-8 form-row" v-if="filterType == 'expType'">
+                <div class="col-6">
+                    <b-form-select v-model="filterExpType" class="mb-3" id="filter-exp-type">
+                        <b-form-select-option value="Simple">Simple</b-form-select-option>
+                        <b-form-select-option value="Counting">Counting</b-form-select-option>
+                        <b-form-select-option value="Comparison">Comparison</b-form-select-option>
+                        <b-form-select-option value="Compound">Compound</b-form-select-option>
+                        <b-form-select-option value="Name Generator">Name Generator</b-form-select-option>
+                    </b-form-select>
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-primary" type="button" @click="filterExpByType()">Filter</button>
+                </div>
+            </div>
+            <div class="col-8 form-row" v-if="filterType == 'question'">
+                <div class="col-6">
+                    <input class="form-control" v-model="filterQ" v-on:keyup="qFilterKey" type=text />
+                </div>
+                <div class="col-6">
+                    <button class="btn btn-primary" type="button" @click="filterExpByQ()">Filter</button>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-4 mb-3">
-        <ul class="list-group">
-            <li :class="$route.params.id == expression.id ? 'bg-dark list-group-item' : 'list-group-item'" v-for="(expression, k) in expressionList" :key="expression.id">
-                <router-link :to="'/' + expression.id">{{expression.name ? expression.name : "New Expression"}}</router-link>
-            </li>
-        </ul>
+        <div class="col-8 order-2" id="sticky-sidebar">
+            <div class="sticky-top">
+                <div class="nav flex-column ml-2 mr-2">
+                    <?= Alert::widget() ?>
+                    <router-view v-bind:expressions="expressions"></router-view>
+                </div>
+            </div>
+        </div>
+        <div class="col-4 mb-3">
+            <ul class="list-group">
+                <li :class="$route.params.id == expression.id ? 'bg-dark list-group-item' : 'list-group-item'" v-for="(expression, k) in expressionList" :key="expression.id">
+                    <router-link :to="'/' + expression.id">{{expression.name ? expression.name : "New Expression"}}</router-link>
+                </li>
+            </ul>
+        </div>
+
+
     </div>
 </div>
-</div>
-<?= Html::beginForm(['/authoring/ajaxdelete/'.$study['id']], 'post', [ 'id'=>'deleteExpression', "class"=>"d-none"]) ?>
+<?= Html::beginForm(['/authoring/ajaxdelete/' . $study['id']], 'post', ['id' => 'deleteExpression', "class" => "d-none"]) ?>
 <input type="hidden" id="deleteExpressionId" name="expressionId">
 <?= Html::endForm() ?>
 <script type="text/x-template" id="expressionEditor">
-<form v-if="id" method="post" action="/authoring/expressions/<?php echo $study['id']; ?>">
+    <form v-if="id" method="post" action="/authoring/expressions/<?php echo $study['id']; ?>">
 
 <input type="hidden" name='_csrf-protected' value= '<?php echo Yii::$app->request->getCsrfToken(); ?>' />
 <input type="hidden" v-model="expressions[id].studyId"  name="Expression[studyId]" id="Expression_studyId">
 <input type="hidden" v-model="expressions[id].id"  name="Expression[id]" id="Expression_id">
-
-
     <b-form-select v-if="id == 0" v-model="selected" class="mb-3" @change="changeType" id="form-type">
         <b-form-select-option value="Simple">Simple</b-form-select-option>
         <b-form-select-option value="Counting">Counting</b-form-select-option>
@@ -288,203 +329,260 @@ use common\widgets\Alert;
 </script>
 
 <script>
-study = <?php echo json_encode($study, ENT_QUOTES); ?>;
+    study = <?php echo json_encode($study, ENT_QUOTES); ?>;
 
-questions = <?php echo json_encode($questions, ENT_QUOTES); ?>;
-expressions = <?php echo json_encode($expressions, ENT_QUOTES); ?>;
-expressionList = <?php echo json_encode($expressionList, ENT_QUOTES); ?>;
-countQuestions = <?php echo json_encode($countQuestions, ENT_QUOTES); ?>;
-countExpressions = <?php echo json_encode($countExpressions, ENT_QUOTES); ?>;
-nameGenQuestions = <?php echo json_encode($nameGenQuestions, ENT_QUOTES); ?>;
+    questions = <?php echo json_encode($questions, ENT_QUOTES); ?>;
+    expressions = <?php echo json_encode($expressions, ENT_QUOTES); ?>;
+    expressionList = <?php echo json_encode($expressionList, ENT_QUOTES); ?>;
+    countQuestions = <?php echo json_encode($countQuestions, ENT_QUOTES); ?>;
+    countExpressions = <?php echo json_encode($countExpressions, ENT_QUOTES); ?>;
+    nameGenQuestions = <?php echo json_encode($nameGenQuestions, ENT_QUOTES); ?>;
 
 
-function dynamicPropsFn (route) {
-  const now = new Date()
-  return {
-    name: (now.getFullYear() + parseInt(route.params.years)) + '!'
-  }
-}
-
-ExpressionEditor = Vue.component('expression-editor', {
-    template: '#expressionEditor',
-    props: ['id'],
-    data() {
+    function dynamicPropsFn(route) {
+        const now = new Date()
         return {
-            selected: 'Simple',
-            questions: questions,
-            expressions: expressions,
-            countQuestions: countQuestions,
-            normalExpressions: [],
-            nameGenQuestions: nameGenQuestions,
-         //   countExpressions: countExpressions,
+            name: (now.getFullYear() + parseInt(route.params.years)) + '!'
         }
-    },
+    }
 
-    created() {
-        if(this.id && this.id != 0){
-            if(this.expressions[this.id].type == "Compound")
-                this.selected = "Compound";
-            else if(this.expressions[this.id].type == "Counting")
-                this.selected = "Counting";
-            else if(this.expressions[this.id].type == "Comparison")
-                this.selected = "Comparison";
-            else if(this.expressions[this.id].type == "Name Generator")
-                this.selected = "Name Generator";
-            else 
-                this.selected = "Simple";
-        }
-        expressions[0].countExpressions = countExpressions;
-        for(k in this.expressions){
-            if(this.expressions[k].value){
-                if(expressions[k].type != "Counting")
-                    this.normalExpressions.push(expressions[k])
-                this.expressions[k].countExpressions = [];
-                for(x in countExpressions){
-                    if(countExpressions[x].id != expressions[k].id)
-                        this.expressions[k].countExpressions.push(countExpressions[x]);
-                }
-                if(this.expressions[k].value.match(","))
-                    this.expressions[k].selectedOptions = this.expressions[k].value.split(",")
+    ExpressionEditor = Vue.component('expression-editor', {
+        template: '#expressionEditor',
+        props: ['id'],
+        data() {
+            return {
+                selected: 'Simple',
+                questions: questions,
+                expressions: expressions,
+                countQuestions: countQuestions,
+                normalExpressions: [],
+                nameGenQuestions: nameGenQuestions,
+            }
+        },
+
+        created() {
+            if (this.id && this.id != 0) {
+                if (this.expressions[this.id].type == "Compound")
+                    this.selected = "Compound";
+                else if (this.expressions[this.id].type == "Counting")
+                    this.selected = "Counting";
+                else if (this.expressions[this.id].type == "Comparison")
+                    this.selected = "Comparison";
+                else if (this.expressions[this.id].type == "Name Generator")
+                    this.selected = "Name Generator";
                 else
-                    this.expressions[k].selectedOptions = [this.expressions[k].value]
-                if(this.expressions[k].value.match(":")){
-                    parts = this.expressions[k].value.split(":")
-                    if(this.expressions[k].type == "Counting"){
-                        this.expressions[k].multiplier = parts[0];
-                        if(parts[1].match(","))
-                            this.expressions[k].selectedExpressions = parts[1].split(",")
-                        else {
-                            if(parts[1])
-                                this.expressions[k].selectedExpressions = [parts[1]];
-                            else 
-                                this.expressions[k].selectedExpressions = [];
-                        }
-                        if(typeof parts[2] != "undefined"){
-                            if(parts[2].match(","))
-                                this.expressions[k].selectedQuestions = parts[2].split(",")
-                            else {
-                                if(parts[2])
-                                    this.expressions[k].selectedQuestions = [parts[2]];
-                                else
-                                    this.expressions[k].selectedQuestions = [];
-                            }
-                        }
-                    }else{
-                        this.expressions[k].compare = parts[0];
-                        this.expressions[k].selectedExpressions = parts[1];
+                    this.selected = "Simple";
+            }
+            expressions[0].countExpressions = countExpressions;
+            for (k in this.expressions) {
+                if (this.expressions[k].value) {
+                    if (expressions[k].type != "Counting")
+                        this.normalExpressions.push(expressions[k])
+                    this.expressions[k].countExpressions = [];
+                    for (x in countExpressions) {
+                        if (countExpressions[x].id != expressions[k].id)
+                            this.expressions[k].countExpressions.push(countExpressions[x]);
                     }
-                }
-                if(this.expressions[k].type == "Name Generator"){
-                    if(this.expressions[k].value.match(","))
+                    if (this.expressions[k].value.match(","))
+                        this.expressions[k].selectedOptions = this.expressions[k].value.split(",")
+                    else
+                        this.expressions[k].selectedOptions = [this.expressions[k].value]
+                    if (this.expressions[k].value.match(":")) {
+                        parts = this.expressions[k].value.split(":")
+                        if (this.expressions[k].type == "Counting") {
+                            this.expressions[k].multiplier = parts[0];
+                            if (parts[1].match(","))
+                                this.expressions[k].selectedExpressions = parts[1].split(",")
+                            else {
+                                if (parts[1])
+                                    this.expressions[k].selectedExpressions = [parts[1]];
+                                else
+                                    this.expressions[k].selectedExpressions = [];
+                            }
+                            if (typeof parts[2] != "undefined") {
+                                if (parts[2].match(","))
+                                    this.expressions[k].selectedQuestions = parts[2].split(",")
+                                else {
+                                    if (parts[2])
+                                        this.expressions[k].selectedQuestions = [parts[2]];
+                                    else
+                                        this.expressions[k].selectedQuestions = [];
+                                }
+                            }
+                        } else {
+                            this.expressions[k].compare = parts[0];
+                            this.expressions[k].selectedExpressions = parts[1];
+                        }
+                    }
+                    if (this.expressions[k].type == "Name Generator") {
+                        if (this.expressions[k].value.match(","))
 
                             this.expressions[k].selectedQuestions = this.expressions[k].value.split(",")
-                        else 
+                        else
                             this.expressions[k].selectedQuestions = [this.expressions[k].value];
+                    }
                 }
             }
-        }
 
-    },
-    watch:{
-        $route (to, from){
-            if(this.id && this.id != 0){
-                if(this.expressions[this.id].type == "Compound")
-                    this.selected = "Compound";
-                else if(this.expressions[this.id].type == "Counting")
-                    this.selected = "Counting";
-                else if(this.expressions[this.id].type == "Comparison")
-                    this.selected = "Comparison";
-                else if(this.expressions[this.id].type == "Name Generator")
-                    this.selected = "Name Generator";
-                else 
+        },
+        watch: {
+            $route(to, from) {
+                if (this.id && this.id != 0) {
+                    if (this.expressions[this.id].type == "Compound")
+                        this.selected = "Compound";
+                    else if (this.expressions[this.id].type == "Counting")
+                        this.selected = "Counting";
+                    else if (this.expressions[this.id].type == "Comparison")
+                        this.selected = "Comparison";
+                    else if (this.expressions[this.id].type == "Name Generator")
+                        this.selected = "Name Generator";
+                    else
+                        this.selected = "Simple";
+                } else {
                     this.selected = "Simple";
-            }else{
-                this.selected = "Simple";
+                }
             }
-        }
-    },
-    methods: {
-        deleteExpression(id){
-            $("#deleteExpressionId").val(id);
-            $("#deleteExpression").submit();
         },
-        changeEQ(val){
-            console.log("change eq " + val)
-            if(typeof val == "undefined")
-                return;
-            if(questions[val].answerType == "MULTIPLE_SELECTION")
-                this.expressions[this.id].type = "Selection"
-            if(questions[val].answerType == "NUMERICAL" || questions[val].answerType == "RANDOM_NUMBER")
-                this.expressions[this.id].type = "Number"
-            if(questions[val].answerType == "TEXTUAL" || questions[val].answerType == "TEXTUAL_PP" || questions[val].answerType == "STORED_VALUE")
-                this.expressions[this.id].type = "Text"
-            console.log(this.expressions[this.id].type)
-            this.$forceUpdate();
-            console.log(this.expressions[this.id].type)
-        },
-        changeType(){
-            if(this.selected != "Simple")
-                this.expressions[this.id].type = this.selected;
-            else
-                this.expressions[this.id].type = null;
-            this.$forceUpdate();
-        },
-        checkVal(val, expId){
-            this.$forceUpdate();
-            this.expressions[expId].value = val.join(",")
-        },
-        buildVal(val,expId){
-            var exps = "";
-            var qs = "";
-            if(this.expressions[expId].selectedExpressions){
-                if(this.expressions[expId].selectedExpressions.length > 1)
-                    exps = this.expressions[expId].selectedExpressions.join(",");
+        methods: {
+            deleteExpression(id) {
+                $("#deleteExpressionId").val(id);
+                $("#deleteExpression").submit();
+            },
+            changeEQ(val) {
+                console.log("change eq " + val)
+                if (typeof val == "undefined")
+                    return;
+                if (questions[val].answerType == "MULTIPLE_SELECTION")
+                    this.expressions[this.id].type = "Selection"
+                if (questions[val].answerType == "NUMERICAL" || questions[val].answerType == "RANDOM_NUMBER")
+                    this.expressions[this.id].type = "Number"
+                if (questions[val].answerType == "TEXTUAL" || questions[val].answerType == "TEXTUAL_PP" || questions[val].answerType == "STORED_VALUE")
+                    this.expressions[this.id].type = "Text"
+                console.log(this.expressions[this.id].type)
+                this.$forceUpdate();
+                console.log(this.expressions[this.id].type)
+            },
+            changeType() {
+                if (this.selected != "Simple")
+                    this.expressions[this.id].type = this.selected;
                 else
-                    exps = this.expressions[expId].selectedExpressions;
-            }
-            if(this.expressions[expId].selectedQuestions){
+                    this.expressions[this.id].type = null;
+                this.$forceUpdate();
+            },
+            checkVal(val, expId) {
+                this.$forceUpdate();
+                this.expressions[expId].value = val.join(",")
+            },
+            buildVal(val, expId) {
+                var exps = "";
+                var qs = "";
+                if (this.expressions[expId].selectedExpressions) {
+                    if (this.expressions[expId].selectedExpressions.length > 1)
+                        exps = this.expressions[expId].selectedExpressions.join(",");
+                    else
+                        exps = this.expressions[expId].selectedExpressions;
+                }
+                if (this.expressions[expId].selectedQuestions) {
 
-                if(this.expressions[expId].selectedQuestions.length > 1)
-                    qs = this.expressions[expId].selectedQuestions.join(",");
-                else 
-                    qs = this.expressions[expId].selectedQuestions;
-            }
-            var newVal = this.expressions[expId].multiplier + ":" + exps + ":" + qs;
-            this.$forceUpdate();
-            this.expressions[expId].value = newVal;
-        },
-        compVal(val,expId){
-            var exps = "";
-            if(this.expressions[expId].selectedExpressions){
-                if(this.expressions[expId].selectedExpressions.length > 1)
-                    exps = this.expressions[expId].selectedExpressions.join(",");
-                else
-                    exps = this.expressions[expId].selectedExpressions;
-            }
-            var newVal = this.expressions[expId].compare + ":" + exps;
-            this.$forceUpdate();
-            this.expressions[expId].value = newVal;
-        },
-    }
-  
-})
-
-const router = new VueRouter({
-  routes: [
-    { path: '/', component: ExpressionEditor }, // No props, no nothing
-    { path: '/:id', component: ExpressionEditor, props: true }, // Pass route.params to props
-  ]
-})
-
-new Vue({
-  router,
-  el: '#authoring-app',
-    data() {
-        return {
-            expressionList: expressionList,
-            expressions: expressions,
-            study: study,
+                    if (this.expressions[expId].selectedQuestions.length > 1)
+                        qs = this.expressions[expId].selectedQuestions.join(",");
+                    else
+                        qs = this.expressions[expId].selectedQuestions;
+                }
+                var newVal = this.expressions[expId].multiplier + ":" + exps + ":" + qs;
+                this.$forceUpdate();
+                this.expressions[expId].value = newVal;
+            },
+            compVal(val, expId) {
+                var exps = "";
+                if (this.expressions[expId].selectedExpressions) {
+                    if (this.expressions[expId].selectedExpressions.length > 1)
+                        exps = this.expressions[expId].selectedExpressions.join(",");
+                    else
+                        exps = this.expressions[expId].selectedExpressions;
+                }
+                var newVal = this.expressions[expId].compare + ":" + exps;
+                this.$forceUpdate();
+                this.expressions[expId].value = newVal;
+            },
         }
-    }
-});
+
+    })
+
+    const router = new VueRouter({
+        routes: [{
+                path: '/',
+                component: ExpressionEditor
+            }, // No props, no nothing
+            {
+                path: '/:id',
+                component: ExpressionEditor,
+                props: true
+            }, // Pass route.params to props
+        ]
+    })
+
+    new Vue({
+        router,
+        el: '#authoring-app',
+        data() {
+            return {
+                expressionList: expressionList,
+                expressions: expressions,
+                study: study,
+                filterType: '',
+                filterName: '',
+                filterExpType: 'Simple',
+                filterQ: '',
+            }
+        },
+        methods: {
+            filterExpByName() {
+                newExpressionList = [];
+                newExpressionList[0] = JSON.parse(JSON.stringify(expressionList[0]));
+                for (k in expressionList) {
+                    if (expressionList[k].name.toLowerCase().indexOf(this.filterName.toLowerCase()) != -1)
+                        newExpressionList.push(JSON.parse(JSON.stringify(expressionList[k])));
+                }
+                this.expressionList = newExpressionList;
+                this.$forceUpdate();
+            },
+            expFilterKey(event) {
+                if(event.key == "Enter")
+                    this.filterExpByName();
+            },
+            filterExpByQ() {
+                newExpressionList = [];
+                qIds = [];
+                newExpressionList[0] = JSON.parse(JSON.stringify(expressionList[0]));
+                for (k in questions) {
+                    if (questions[k].title.toLowerCase().indexOf(this.filterQ.toLowerCase()) != -1)
+                        qIds.push(parseInt(k));
+                }
+                console.log(qIds)
+                for (k in expressionList) {
+                    if (qIds.indexOf(expressionList[k].questionId) != -1)
+                        newExpressionList.push(JSON.parse(JSON.stringify(expressionList[k])));
+                }
+                this.expressionList = newExpressionList;
+                this.$forceUpdate();
+            },
+            qFilterKey(event) {
+                if(event.key == "Enter")
+                    this.filterExpByQ();
+            },
+            filterExpByType() {
+                newExpressionList = [];
+                newExpressionList[0] = JSON.parse(JSON.stringify(expressionList[0]));
+                for (k in expressionList) {
+                    if (expressionList[k].type == this.filterExpType)
+                        newExpressionList.push(JSON.parse(JSON.stringify(expressionList[k])));
+                    else if (this.filterExpType == "Simple" && ['Text', 'Number', 'Selection'].indexOf(expressionList[k].type) != -1)
+                        newExpressionList.push(JSON.parse(JSON.stringify(expressionList[k])));
+                }
+                this.expressionList = newExpressionList;
+                this.$forceUpdate();
+            },
+        }
+    });
 </script>
