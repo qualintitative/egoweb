@@ -71,7 +71,7 @@ describe('Edit Questions', function () {
     });
     it('Edit Ego ID', async function () {
       await $("button=" + studyTest.idQuestions[0].title).waitForExist(egoOpts.waitTime);
-      btnNewQ = await $("//button[contains(text(),'" + studyTest.idQuestions[0].title + "')]")
+      btnNewQ = await $("//button=" + studyTest.idQuestions[0].title)
 
       qId = await btnNewQ.getAttribute("aria-controls");
       qId = qId.replace("accordion-","");
