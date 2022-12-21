@@ -135,9 +135,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
                 }
             }
         }
-        console.log(alters, $scope.listedAlters);
+        //console.log(alters, $scope.listedAlters);
         $scope.prevAlters = prevAlters;
-        console.log($scope.nGalters);
+        //console.log($scope.nGalters);
     } else {
         alterPromptPage = false;
     }
@@ -233,12 +233,12 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         //}
         if ($scope.questions[k].ALTERID1 && typeof alters[parseInt($scope.questions[k].ALTERID1)] != "undefined") {
             $scope.alterName = alters[parseInt($scope.questions[k].ALTERID1)].NAME;
-            console.log("alter name", $scope.alterName)
+            //console.log("alter name", $scope.alterName)
         }
 
         if ($scope.questions[k].ALTERID2 && typeof prevAlters[parseInt($scope.questions[k].ALTERID2)] != "undefined") {
             $scope.alterMatchName = prevAlters[parseInt($scope.questions[k].ALTERID2)].NAME;
-            console.log("alter match name", $scope.alterMatchName)
+            //console.log("alter match name", $scope.alterMatchName)
         }
 
         if (typeof $scope.questions[k].CITATION == "string")
@@ -529,7 +529,6 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     setTimeout(function() {
 
         if ($scope.askingStyleList != false && $(window).width() > 768) {
-            console.log("fixing header")
             $("table.qTable").floatThead({ top: parseInt($("#content").css("margin-top")) })
             window.scrollTo(0, 0);
             $(window).resize();
@@ -548,7 +547,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
     $scope.print = function(i_Id, g_Id, q_Id) {
         var expressionId = $scope.graphExpressionId;
-        console.log(g_Id, graphs[expressionId])
+        //console.log(g_Id, graphs[expressionId])
         if (g_Id == "" && typeof graphs[expressionId] != "undefined")
             g_Id = graphs[expressionId].ID;
         url = "/interview/graph/" + i_Id + "/" + g_Id + "/" + q_Id;
@@ -573,7 +572,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
 
     $scope.submitForm = function(isValid) {
         // check to make sure the form is completely valid
-        console.log(isValid)
+        //console.log(isValid)
         if (isValid || $scope.refuseCount > 0) {
             for (r in current_array_ids) {
                 if ($scope.refuseCount > 0 && $scope.answers[current_array_ids[r]].SKIPREASON == "NONE" && $('#Answer_' + current_array_ids[r] + '_VALUE').val() == "") {
@@ -629,7 +628,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
             $('.alterSubmit').prop("disabled", true);
             saveAlter.getAlters().then(function(data) {
                 alters = JSON.parse(data);
-                console.log(alters);
+                //console.log(alters);
                 for (k in alters) {
                     if (typeof prevAlters[k] != "undefined") {
                         deletedPrevAlters[k] = $.extend(true, {}, prevAlters[k]);
@@ -743,7 +742,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
             if ($scope.options[array_id][index].checked) {
                 $scope.answers[array_id].SKIPREASON = "NONE";
                 delete $scope.errors[array_id];
-                console.log($scope.answerForm.$submitted, index, $scope.errors[array_id])
+                //console.log($scope.answerForm.$submitted, index, $scope.errors[array_id])
                 for (k in $scope.options[array_id]) {
                     if ($scope.options[array_id][k].ID == "DONT_KNOW" || $scope.options[array_id][k].ID == "REFUSE")
                         $scope.options[array_id][k].checked = false;
@@ -883,8 +882,8 @@ app.directive('checkAnswer', [function() {
                 var valid = true;
                 var array_id = attr.arrayId;
                 var question = questions[attr.questionId];
-                console.log(question);
-                console.log("parsers check:" + value);
+                //console.log(question);
+                //console.log("parsers check:" + value);
 
                 if (attr.answerType == "NAME_GENERATOR") {
                     if ((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.nGalters).length < scope.questions[0].MINLITERAL) {
@@ -1431,7 +1430,7 @@ function buildList() {
             alter_non_list_qs = [];
         }
         if (questionList[j - 1] != undefined && (questionList[j].SUBJECTTYPE != "EGO" || questionList[j].ASKINGSTYLELIST != 1 || questionList[j].PROMPT != questionList[j - 1].PROMPT) && questionList[j - 1].SUBJECTTYPE == "EGO" && Object.keys(ego_question_list).length > 0) {
-            console.log("wait over " + Object.keys(ego_question_list).length);
+            //console.log("wait over " + Object.keys(ego_question_list).length);
             if (ego_question_list[Object.keys(ego_question_list)[0]].ANSWERREASONEXPRESSIONID > 0)
                 evalQIndex.push(i);
             var stemTitle = ego_question_list[Object.keys(ego_question_list)[0]].TITLE

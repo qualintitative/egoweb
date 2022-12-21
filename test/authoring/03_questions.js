@@ -27,20 +27,15 @@ describe('Create Regular Questions', function () {
       }
       await expect(btnNewQ).toBeExisting();
       await btnNewQ.click();
-      //await browser.pause(1000);
       //$("//*[@id='" + qId + "_title']").waitForExist(egoOpts.waitTime);
       await $("//*[@id='" + qId + "_title']").setValue(studyTest.questions[0].title);
       await AuthoringPage.updateNoteField("#" + qId + "_prompt", studyTest.questions[0].prompt);
-      if(qId == '0'){
-        await $('//*[@id="form-0"]').$('[name="Question[answerType]"]').selectByVisibleText(studyTest.questions[0].answerType)
-        await $('//*[@id="form-0"]').$('button=Create').click();
-      }else{
-        await $('//*[@id="form-' + qId + '"]').$('[name="Question[answerType]"]').selectByVisibleText(studyTest.questions[0].answerType)
-        await $('//*[@id="form-' + qId + '"]').$('button=Save').click();
-      }
+      await $('//*[@id="form-' + qId + '"]').$('[name="Question[subjectType]"]').selectByVisibleText(studyTest.questions[0].questionType)
+      await $('//*[@id="form-0"]').$('button=Create').click();
+      await $("button=" + studyTest.questions[0].title).waitForExist(egoOpts.waitTime);
     });
     it('check saved changes to textual_1', async function () {
-      await browser.url(browserUrl);
+      await AuthoringPage.open(browserUrl);
       btnNewQ = await $("//button[contains(text(),'" + studyTest.questions[0].title + "')]")
       await expect(btnNewQ).toBeExisting();
     });;

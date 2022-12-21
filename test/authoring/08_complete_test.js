@@ -44,6 +44,8 @@ describe('Complete Test', function () {
         i++;
         var qId = '0';
         var nltVals = ["NLT_LITERAL","NLT_PREVQUES","NLT_NONE"];
+        await $("button=" + studyTest.questions[i-1].title).waitForExist(egoOpts.waitTime);
+
         btnNewQ = await $('button=Create New Question');
         //expect(btnNewQ).toBeExisting();
         console.log(studyTest.questions[i].title)
@@ -55,8 +57,10 @@ describe('Complete Test', function () {
         await $('//*[@id="form-0"]').$('[name="Question[answerType]"]').selectByVisibleText(studyTest.questions[i].answerType)
         await $('//*[@id="form-0"]').$('[name="Question[subjectType]"]').selectByVisibleText(studyTest.questions[i].questionType)
 
-        if (typeof studyTest.questions[i].params.dontKnowButton != "undefined")
+        if (typeof studyTest.questions[i].params.dontKnowButton != "undefined"){
           await $('//*[@id="form-0"]').$('//label[@for="' + qId + '_dontKnowButton"]').click()
+          browser.pause(1000);
+        }
         if (typeof studyTest.questions[i].params.refuseButton != "undefined")
           await $('//*[@id="form-0"]').$('//label[@for="' + qId + '_refuseButton"]').click()
         if (typeof studyTest.questions[i].params.askingStyleList != "undefined")
@@ -97,9 +101,8 @@ describe('Complete Test', function () {
         }
         
         if (studyTest.questions[i].options.length > 0) {
-         // await $('//*[@id="form-0"]').$('button=Create').scrollIntoView();
           await $('//*[@id="form-0"]').$('button=Create').click();
-          //browser.pause(3000);
+          await $("button=" + studyTest.questions[i].title).waitForExist(egoOpts.waitTime);
           btnNewQ = await $("//button[contains(text(),'" + studyTest.questions[i].title + "')]")
           let qId = await btnNewQ.getAttribute("aria-controls");
           qId = qId.replace("accordion-","");
@@ -107,7 +110,7 @@ describe('Complete Test', function () {
           await btnNewQ.click();
           //console.log("fourth click")
           await btnNewQ.scrollIntoView();
-          await browser.pause(1000);
+          //await browser.pause(1000);
 
 
           for (let j = 0; j < studyTest.questions[i].options.length; j++) {
@@ -117,7 +120,7 @@ describe('Complete Test', function () {
             if (typeof studyTest.questions[i].options[j].otherSpecify != "undefined" && studyTest.questions[i].options[j].otherSpecify == true)
               await $('//*[@id="form-' + qId + '"]').$('//label[@for="' + qId + '_QuestionOption_otherSpecify"]').click()
             await $('//*[@id="form-' + qId + '"]').$('button=Add').click();
-            await browser.pause(500);
+            await browser.pause(1000);
           }
 
         } else if (studyTest.questions[i].questionType == "NAME_GENERATOR") {
@@ -125,16 +128,16 @@ describe('Complete Test', function () {
             await $('//*[@id="form-0"]').$('//*[@id="0_minLiteral"]').setValue(studyTest.questions[i].params.min);
           if (typeof studyTest.questions[i].params.max != "undefined")
             await $('//*[@id="form-0"]').$('//*[@id="0_maxLiteral"]').setValue(studyTest.questions[i].params.max);
-            await $('//*[@id="form-0"]').$('button=Create').click();
+          await $('//*[@id="form-0"]').$('button=Create').click();
           //$("//button[contains(text(),'" + studyTest.questions[i].title + "')]").waitForExist(egoOpts.waitTime);
-          await browser.pause(1000);
+          await $("button=" + studyTest.questions[i].title).waitForExist(egoOpts.waitTime);
 
           btnNewQ = await $("//button[contains(text(),'" + studyTest.questions[i].title + "')]")
           let qId = await btnNewQ.getAttribute("aria-controls");
           qId = qId.replace("accordion-","");
           await btnNewQ.click();
-          await btnNewQ.scrollIntoView();
-          await browser.pause(1000);
+          //await browser.pause(1000);
+          //await btnNewQ.scrollIntoView();
 
           if (typeof studyTest.questions[i].params.alterPrompts != "undefined") {
             var alterPrompts = studyTest.questions[i].params.alterPrompts;
@@ -148,13 +151,16 @@ describe('Complete Test', function () {
         } else {
 
           let createBtn = await $('//*[@id="form-0"]').$('button=Create')
-          btnNewQ = await $("//button[contains(text(),'Create New Question')]")
+          if(i > 2)
+          btnNewQ = await $("//button[contains(text(),'" + studyTest.questions[i-3].title + "')]")
+
+         // btnNewQ = await $("//button[contains(text(),'Create New Question')]")
           await btnNewQ.scrollIntoView();
-        //  await createBtn.scrollIntoView();
+         // await createBtn.scrollIntoView();
           //await browser.pause(1000);
           await createBtn.click();
           //$("//button[contains(text(),'" + studyTest.questions[i].title + "')]").waitForExist(egoOpts.waitTime);
-          await browser.pause(1000)
+          //await browser.pause(1000)
         }
       });
     }

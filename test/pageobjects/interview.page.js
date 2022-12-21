@@ -323,7 +323,7 @@ class IwPage extends Page {
     var val = 0;
     var div = await $("h3=" + interview).getAttribute("data-target");
     await browser.pause(1000);
-    var interviewDiv = await $(div).$(".list-group");
+    var interviewDiv = await $(div);
 
    if (await interviewDiv.isExisting() == true) {
       ids = await interviewDiv.$$("a");

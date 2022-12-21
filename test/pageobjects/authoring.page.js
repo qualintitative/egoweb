@@ -30,8 +30,10 @@ class AuthoringPage extends Page {
     get studyLink () { return $('//div[@aria-label="' + studyTest.settings.title + '"]//a[text()="Authoring"]') }
 
 
-    async open () {
-        await super.open('/admin');
+    async open (url) {
+        if(url == null)
+            url = '/admin'
+        await super.open(url);
     }
 }
 

@@ -1,7 +1,6 @@
 const IwPage = require('../pageobjects/interview.page');
 var assert = require('assert');
 const env = require("../.env");
-const { addConsoleHandler } = require('selenium-webdriver/lib/logging');
 
 describe('Alters', function() {
   before(async function() {
@@ -188,7 +187,7 @@ describe('Alters', function() {
 
     // click next and test skip logic
     await IwPage.next();
-    await browser.pause(5000);
+    await browser.pause(10000);
     await expect(await IwPage.questionTitle.getText()).toBe("alter2");
     await expect(await $(IwPage.getTableCellSelector(1, 1)).getText()).toBe("delta");
 
@@ -214,6 +213,8 @@ describe('Alters', function() {
     await expect(await IwPage.questionTitle.getText()).toBe("alterpair1 - alpha");
 
     var alter_pair_pages = 0;
+    var alters = IwPage.fieldValues['ALTER_PROMPT']['values'];
+
     for (k in IwPage.navLinks) {
       if (k.match("alterpair1")) {
         alter_pair_pages++;
@@ -226,8 +227,10 @@ describe('Alters', function() {
     // iterates through alter pair questions and fills them out randomly
     for (i = 0; i < alter_pair_pages; i++) {
       //browser.scroll(0,0);
-      await $("div=Please select 1 response for each row").waitForExist(egoOpts.waitTime);
+      var qTitle = await IwPage.questionTitle;
+      await $("a#questionTitle=alterpair1 - " + alters[i]).waitForExist(egoOpts.waitTime);
       for (j = 1; j < 15 - i; j++) {
+        
         //browser.scroll(0, (j-2)*41);
         //await browser.pause(500);
         let x = Math.floor(Math.random() * (4 - 2 + 1) + 2);
@@ -238,19 +241,18 @@ describe('Alters', function() {
         await IwPage.getTableCellInputElement(j, x).click();
       }
       await IwPage.next();
-      await browser.pause(2000);
     }
 
     //see if graph has right number of nodes
-    await browser.pause(30000);
+    await browser.pause(5000);
     let result = await browser.execute(function() {
-      return s.graph.nodes().length;
+      return s[0].graph.nodes().length;
     })
     await expect(result).toBe(15);
 
     //see if graph has right number of edges
     let result2 = await browser.execute(function() {
-      return s.graph.edges().length;
+      return s[0].graph.edges().length;
     })
     await expect(result2).toBe(edges);
   });

@@ -54,7 +54,7 @@ AppAsset::register($this);
                         <li id="navbox" class="nav-item dropdown">
 
                             <?php if (Yii::$app->controller->id == 'interview' && Yii::$app->controller->action->id == 'view'): ?>
-                            <a class="nav-link dropdown-toggle" href="http://example.com" id="questionTitle"
+                            <a class="nav-link dropdown-toggle" id="questionTitle"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                             </a>
                             <ul class="dropdown-menu dropdown-menu-right bg-dark" aria-labelledby="navbarDropdownMenuLink"
@@ -74,7 +74,7 @@ AppAsset::register($this);
                     <ul class="navbar-nav ml-auto">
                     <span class="interviewee"></span>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink"
+                            <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                                 <?php echo Yii::$app->controller->id; ?>
                             </a>

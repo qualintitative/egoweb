@@ -67,11 +67,12 @@ describe('Edit Questions', function () {
   describe('Edit Ego ID question', function () {
     it('Go to question list page', async function () {
       browserUrl = await AuthoringPage.egoIdLink.getAttribute("href");
-      await browser.url(browserUrl);
+      await AuthoringPage.open(browserUrl);
     });
     it('Edit Ego ID', async function () {
+      await $("button=" + studyTest.idQuestions[0].title).waitForExist(egoOpts.waitTime);
       btnNewQ = await $("//button[contains(text(),'" + studyTest.idQuestions[0].title + "')]")
-      await expect(btnNewQ).toBeExisting();
+
       qId = await btnNewQ.getAttribute("aria-controls");
       qId = qId.replace("accordion-","");
       await btnNewQ.click();
@@ -81,7 +82,7 @@ describe('Edit Questions', function () {
       await $('//*[@id="form-' + qId + '"]').$('button=Save').click();
     });
     it('check to see if changes are saved', async function () {
-      await browser.url(browserUrl);
+      await AuthoringPage.open(browserUrl);
       btnNewQ = await $("//button[contains(text(),'" + studyTest.idQuestions[1].title + "')]")
       await expect(btnNewQ).toBeExisting();
     });
