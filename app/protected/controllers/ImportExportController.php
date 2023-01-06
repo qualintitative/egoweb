@@ -107,6 +107,7 @@ class ImportExportController extends Controller
         $result = User::find()->all();
         $newOptionIds = array();
         $newUserIds = array();
+        $qIds = [];
         $users = array();
         foreach ($result as $u) {
             $users[$u->email] = intval($u->id);
@@ -225,7 +226,7 @@ class ImportExportController extends Controller
                                 }
                             }
                         }
-                        if ($key!="key" && $key != "id" && $key != "networkNShapeQId") {
+                        if ($key!="key" && $key != "id" && isset($newQuestion->$key)) {
                             $newQuestion->$key = html_entity_decode($value);
                         }
                     }
