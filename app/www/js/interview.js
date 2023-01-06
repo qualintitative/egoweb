@@ -886,6 +886,7 @@ app.directive('checkAnswer', [function() {
                 //console.log("parsers check:" + value);
 
                 if (attr.answerType == "NAME_GENERATOR") {
+                    console.log("min alters", scope.questions[0].MINLITERAL)
                     if ((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.nGalters).length < scope.questions[0].MINLITERAL) {
                         var noun = " people";
                         if (scope.questions[0].MINLITERAL == 1)
@@ -1104,7 +1105,7 @@ app.directive('checkAnswer', [function() {
                 var valid = true;
                 var array_id = attr.arrayId;
                 var question = questions[attr.questionId];
-                if (attr.answerType == "NAME_GENERATOR") {
+                if (question.SUBJECTTYPE == "NAME_GENERATOR") {
                     if ((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.nGalters).length < scope.questions[0].MINLITERAL) {
                         var noun = " people";
                         if (scope.questions[0].MINLITERAL == 1)
