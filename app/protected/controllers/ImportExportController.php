@@ -141,7 +141,8 @@ class ImportExportController extends Controller
                     }
                 }
             }
-            if (!$merge) {
+
+            if ($merge == false) {
                 foreach ($study as $key=>$value) {
                     if (count($value) == 0 && $key != "answerLists" && $key != "expressions") {
                         $newStudy->$key = html_entity_decode($value);
@@ -150,7 +151,6 @@ class ImportExportController extends Controller
                 if (isset($_POST['newName']) && $_POST['newName']) {
                     $newStudy->name = $_POST['newName'];
                 }
-
                 $newStudy->userId = Yii::$app->user->identity->id;
 
                 if ($newStudy->save()) {
@@ -192,6 +192,7 @@ class ImportExportController extends Controller
                 $qCount = 0;
                 $egoCount = 0;
                 foreach ($study->questions->question as $question) {
+                    //print_r($question);
                     if (!$hasNameGen && $question->attributes()->subjectType == "ALTER") {
                         $newQuestion = new Question;
                         $hasNameGen = true;
@@ -208,6 +209,8 @@ class ImportExportController extends Controller
                         $nameGenQId = strval($newQuestion->id);
                     }
                     $newQuestion = new Question;
+                    $qKeys = array_keys($newQuestion->attributes);
+
                     $newQuestion->studyId = $newStudy->id;
                     foreach ($question->attributes() as $key=>$value) {
                         if ($key == "id") {
@@ -226,7 +229,8 @@ class ImportExportController extends Controller
                                 }
                             }
                         }
-                        if ($key!="key" && $key != "id" && isset($newQuestion->$key)) {
+
+                        if ($key!="key" && $key != "id" && in_array($key, $qKeys)) {
                             $newQuestion->$key = html_entity_decode($value);
                         }
                     }
@@ -245,6 +249,7 @@ class ImportExportController extends Controller
                     }
                     if (!$newQuestion->save()) {
                         echo "Question: " . print_r($newQuestion->getErrors());
+                        die();
                     } else {
                         $newQuestionIds[$oldId] = $newQuestion->id;
                     }
@@ -282,7 +287,6 @@ class ImportExportController extends Controller
                     }
                     $newQuestion->save();
                 }
-
 
                 $newStudy = Study::findOne($newStudy->id);
                 if ($newStudy->multiSessionEgoId != 0 && isset($newQuestionIds[intval($newStudy->multiSessionEgoId)])) {
@@ -403,6 +407,7 @@ class ImportExportController extends Controller
                 }
             } else {
                 $nameGenQId = "0";
+                $eIds = [];
                 $questions = Question::findAll(array('studyId'=>$newStudy->id));
                 foreach ($questions as $question) {
                     if ($question->subjectType == "NAME_GENERATOR") {
@@ -410,6 +415,10 @@ class ImportExportController extends Controller
                     }
                     $qIds[$question->title] = $question->id;
                 }
+                echo $newStudy->id;
+                echo "<BR>";
+                print_r($qIds);
+                //die();
                 $options = QuestionOption::findAll(array('studyId'=>$newStudy->id));
                 foreach ($options as $option) {
                     $oIds[$option->questionId . "-" . $option->name] = $option->id;
@@ -420,18 +429,23 @@ class ImportExportController extends Controller
                 }
                 foreach ($study->questions->question as $question) {
                     $q_attributes = $question->attributes();
-                    $newQuestionIds[intval($q_attributes['id'])] = $qIds[strval($q_attributes['title'])];
+                    if(isset($qIds[strval($q_attributes['title'])]))
+                        $newQuestionIds[intval($q_attributes['id'])] = $qIds[strval($q_attributes['title'])];
+                    else
+                        continue;
                     if (isset($question->option)) {
                         foreach ($question->option as $option) {
                             $o_attributes = $option->attributes();
-                            $newOptionIds[intval($o_attributes['id'])] = $oIds[strval($qIds[strval($q_attributes['title'])] . "-" .$o_attributes['name'])];
+                            if(isset( $oIds[strval($qIds[strval($q_attributes['title'])] . "-" .$o_attributes['name'])]))
+                                $newOptionIds[intval($o_attributes['id'])] = $oIds[strval($qIds[strval($q_attributes['title'])] . "-" .$o_attributes['name'])];
                         }
                     }
                 }
                 if (count($study->expressions) != 0) {
                     foreach ($study->expressions->expression as $expression) {
                         $e_attributes = $expression->attributes();
-                        $newExpressionIds[intval($e_attributes['id'])] = $eIds[strval($e_attributes['name'])];
+                        if(isset( $eIds[strval($e_attributes['name'])]))
+                            $newExpressionIds[intval($e_attributes['id'])] = $eIds[strval($e_attributes['name'])];
                     }
                 }
             }
@@ -699,7 +713,7 @@ class ImportExportController extends Controller
                             $newAnswer->studyId = $newStudy->id;
                             $newAnswer->interviewId = $newInterviewId;
 
-                            if (!isset($newQuestionIds[$oldQId]) || !$newQuestionIds[$oldQId]) {
+                            if (!isset($oldQId)  || !isset($newQuestionIds[$oldQId]) || !$newQuestionIds[$oldQId]) {
                                 continue;
                             }
 
