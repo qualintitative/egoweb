@@ -389,6 +389,7 @@ class AuthoringController extends Controller
         }
         $new_question = new Question;
         $new_question->studyId = $study->id;
+        $new_question->subjectType = "EGO";
         $new_question->id = 0;
         $new_question = $new_question->toArray();
         foreach (Question::ANSWERTYPES as $a) {
