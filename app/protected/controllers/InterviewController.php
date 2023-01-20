@@ -115,7 +115,7 @@ class InterviewController extends Controller
             if (!isset($interview)) {
                 $interview = new Interview;
                 $interview->studyId = $study->id;
-                $page = 1;
+                $page = 0;
                 $answers = [];
                 if ($interview->save()) {
                     $interviewId = $interview->id;
