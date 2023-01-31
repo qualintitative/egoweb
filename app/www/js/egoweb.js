@@ -1352,16 +1352,17 @@ function fullscreen() {
 }
 
 function toggleLabels() {
-    var labelT = s.renderers[0].settings("labelThreshold");
+    var sIndex = s.length - 1;
+    var labelT = s[sIndex].renderers[0].settings("labelThreshold");
     if (labelT == 1)
-        s.renderers[0].settings({
+        s[sIndex].renderers[0].settings({
             labelThreshold: 100
         });
     else
-        s.renderers[0].settings({
+        s[sIndex].renderers[0].settings({
             labelThreshold: 1
         });
-    s.refresh();
+    s[sIndex].refresh();
 }
 
 function exitHandler() {
