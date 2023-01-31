@@ -57,7 +57,7 @@ expressions = <?php echo json_encode($expressions, ENT_QUOTES); ?>;
 study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
 answers = <?php echo $answers ?>;
 alters = <?php echo $alters ?>;
-graphs = <?php echo $graphs; ?>;
+graphs = []; //<?php echo $graphs; ?>;
 allNotes = <?php echo $allNotes; ?>;
 notes = [];
 for(k in study){
@@ -243,8 +243,10 @@ new Vue({
             this.$forceUpdate();
         },
         refreshGraph() {
-            if(typeof s != "undefined"){
-                s.stopForceAtlas2();
+            if(typeof s != "undefined" && s.length > 0){
+                sIndex = s.length - 1;
+                s[sIndex].stopForceAtlas2();
+                s = [];
                 $("#infovis").empty();
             }
             initStats(this.question);
