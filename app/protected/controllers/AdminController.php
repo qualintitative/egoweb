@@ -167,7 +167,7 @@ class AdminController extends Controller
             $user->generatePasswordResetToken();
             $userA = $user->toArray();
             $user->save();
-            $userA['link'] = Yii::$app->urlManager->createAbsoluteUrl(['site/reset-password', 'token' => $user->password_reset_token]);
+            $userA['link'] = Yii::$app->urlManager->createAbsoluteUrl(['site/reset-password/'. $user->password_reset_token]);
             $users[] = $userA;
             if (Yii::$app->request->isPost) {
                 if (trim($_POST['User']['email']) == $userA['email']) {
