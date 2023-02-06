@@ -57,7 +57,7 @@ expressions = <?php echo json_encode($expressions, ENT_QUOTES); ?>;
 study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
 answers = <?php echo $answers ?>;
 alters = <?php echo $alters ?>;
-graphs = []; //<?php echo $graphs; ?>;
+graphs = {}; //<?php echo $graphs; ?>;
 allNotes = <?php echo $allNotes; ?>;
 notes = [];
 for(k in study){
@@ -244,9 +244,6 @@ new Vue({
         },
         refreshGraph() {
             if(typeof s != "undefined" && s.length > 0){
-                sIndex = s.length - 1;
-                s[sIndex].stopForceAtlas2();
-                s = [];
                 $("#infovis").empty();
             }
             initStats(this.question);
@@ -303,4 +300,13 @@ new Vue({
 
     }
 })
+function saveNodes() {
+    var nodes = {};
+    var graphNodes = s[s.length - 1].graph.nodes();
+    for(var k in graphNodes){
+        nodes[graphNodes[k].id] = graphNodes[k];
+    }
+    graphs[new_question.NETWORKRELATIONSHIPEXPRID] = {};
+    graphs[new_question.NETWORKRELATIONSHIPEXPRID].NODES = JSON.stringify(nodes);
+}
 </script>

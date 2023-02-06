@@ -1268,11 +1268,12 @@ function initStats(question, container, scalar) {
         });
 
         s.push(newGraph);
-        console.log("net params"  + question.NETWORKPARAMS)
+        console.log("net params", question.NETWORKPARAMS, expressionId, graphs[expressionId])
         if (typeof graphs[expressionId] != "undefined") {
             savedNodes = JSON.parse(graphs[expressionId].NODES);
+            console.log("loading saved nodes", savedNodes, s[s.length - 1].graph.nodes())
             for (var k in savedNodes) {
-                var node = s[s.length - 1].graph.nodes(k.toString());
+                var node = s[s.length - 1].graph.nodes(k);
                 if (node) {
                     node.x = savedNodes[k].x;
                     node.y = savedNodes[k].y;
