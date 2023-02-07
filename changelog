@@ -1,4 +1,6 @@
 # Changelog
+## [2.0.10.16] - 2022-02-07
+- fix for bugs in data visualation page
 
 ## [2.0.10.15] - 2022-12-06
 - added disabled study option and disabled text page
