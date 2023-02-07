@@ -198,7 +198,7 @@ new Vue({
             nodeSize:{questionId:'', options:[{id:-1, size:2}, {id:'default', size:2}]},
             nodeShape:{questionId:'', options:[{id:-1, shape:'circle'},{id:'default', shape:'circle'}]},
             edgeColor:{questionId:'', options:[{id:'default', color:"#000"}]},
-            edgeSize:{questionId:'', options:[{id:'default', size:1}]},
+            edgeSize:{questionId:'', options:[{id:'default', size:0.5}]},
             egoEdgeColor:{questionId:'', options:[]},
             egoEdgeSize:{questionId:'', options:[]},
         }
@@ -318,7 +318,7 @@ function saveNodes() {
     for(var k in graphNodes){
         nodes[graphNodes[k].id] = graphNodes[k];
     }
-    console.log(new_question)
+    console.log("save nodes", new_question)
     graphs[new_question.NETWORKRELATIONSHIPEXPRID] = {};
     graphs[new_question.NETWORKRELATIONSHIPEXPRID].NODES = JSON.stringify(nodes);
 }

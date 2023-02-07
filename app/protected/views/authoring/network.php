@@ -282,9 +282,10 @@
                                     name="Question[uselfExpression]"
                                     text-field="name"
                                     :options="question.alterExps"
+                                    @change="forceUpdate"
                                     >
                                     <template #first>
-                                        <b-form-select-option value="">-- Please select an option --</b-form-select-option>
+                                        <b-form-select-option value="">-- None Selected --</b-form-select-option>
                                     </template>
                                 </b-form-select>
                             </div>

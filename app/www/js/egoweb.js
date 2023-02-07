@@ -664,11 +664,13 @@ function initStats(question, container, scalar) {
     if (alters.length == 0)
         return false;
     var alters2 = $.extend(true, {}, alters);
-console.log(expressionId, expressions, expressions[expressionId])
+
     if (typeof expressions[expressionId] != "undefined")
         var expression = expressions[expressionId];
     if (typeof expressions[starExpressionId] != "undefined")
         var starExpression = expressions[starExpressionId];
+    else if(typeof starExpression != "undefined" && starExpressionId == "")
+        delete starExpression;
     //console.log(expressions, starExpression)
     if (expression == undefined && starExpression == undefined)
         return;
@@ -1157,7 +1159,7 @@ console.log(expressionId, expressions, expressions[expressionId])
     }
 
     var alters2 = $.extend(true, {}, alters);
-    if (starExpression != undefined) {
+    if (!isNaN(starExpressionId)) {
         nodes.push({
             'id': '-1',
             'label': this.params['egoLabel'],
