@@ -543,6 +543,103 @@ function countQuestion(questionId, operator, alterId1, alterId2) {
 }
 
 function initStats(question, container, scalar) {
+    this.edgeColors = {
+        '#000': 'black',
+        '#ccc': 'gray',
+        '#07f': 'blue',
+        '#0c0': 'green',
+        '#f80': 'orange',
+        '#fd0': 'yellow',
+        '#f00': 'red',
+        '#c0f': 'purple',
+    };
+    this.edgeSizes = {
+        "0.5": '0.5',
+        "2": '2',
+        "4": '4',
+        "8": '8',
+    };
+    this.nodeColors = {
+        '#000': 'black',
+        '#ccc': 'gray',
+        '#07f': 'blue',
+        '#0c0': 'green',
+        '#f80': 'orange',
+        '#fd0': 'yellow',
+        '#f00': 'red',
+        '#c0f': 'purple',
+    };
+    this.nodeShapes = {
+        'circle': 'circle',
+        'star': 'star',
+        'diamond': 'diamond',
+        'cross': 'cross',
+        'equilateral': 'triangle',
+        'square': 'square',
+    };
+    this.nodeSizes = {
+        2: '1',
+        4: '2',
+        6: '3',
+        8: '4',
+        10: '5',
+        12: '6',
+        14: '7',
+        16: '8',
+        18: '9',
+        20: '10',
+    };
+    this.gradient = {
+        "red": {
+            0: "#F5D6D6",
+            1: "#ECBEBE",
+            2: "#E2A6A6",
+            3: "#D98E8E",
+            4: "#CF7777",
+            5: "#C65F5F",
+            6: "#BC4747",
+            7: "#B32F2F",
+            8: "#A91717",
+            9: "#A00000"
+        },
+        "blue": {
+            0: "#E3E5FF",
+            1: "#C9D2FF",
+            2: "#B0BFFF",
+            3: "#97ACFF",
+            4: "#7E99FF",
+            5: "#6487FF",
+            6: "#4B74FF",
+            7: "#3261FF",
+            8: "#194EFF",
+            9: "#003CFF"
+        },
+        "green": {
+            0: "#C7FFDD",
+            1: "#B2F4C7",
+            2: "#9EEAB2",
+            3: "#8AE09D",
+            4: "#76D688",
+            5: "#62CB72",
+            6: "#4EC15D",
+            7: "#3AB748",
+            8: "#26AD33",
+            9: "#12A31E"
+        },
+        "black": {
+            0: "#EEEEEE",
+            1: "#D3D3D3",
+            2: "#B9B9B9",
+            3: "#9E9E9E",
+            4: "#848484",
+            5: "#696969",
+            6: "#4F4F4F",
+            7: "#343434",
+            8: "#1A1A1A",
+            9: "#000000"
+        }
+    };
+
     if(scalar == null)
         scalar = 1.5;
     console.log("scalar", scalar);
@@ -559,15 +656,15 @@ function initStats(question, container, scalar) {
     if (!question.NETWORKPARAMS)
         question.NETWORKPARAMS = "[]";
     this.params = JSON.parse(question.NETWORKPARAMS);
+    console.log("params", params)
     if (this.params == null)
         this.params = [];
     alterNames = new Object;
     betweennesses = [];
     if (alters.length == 0)
         return false;
-
     var alters2 = $.extend(true, {}, alters);
-
+console.log(expressionId, expressions, expressions[expressionId])
     if (typeof expressions[expressionId] != "undefined")
         var expression = expressions[expressionId];
     if (typeof expressions[starExpressionId] != "undefined")
@@ -575,7 +672,7 @@ function initStats(question, container, scalar) {
     //console.log(expressions, starExpression)
     if (expression == undefined && starExpression == undefined)
         return;
-
+ 
     //if(expression == undefined && expression.QUESTIONID)
     //var question = questions[expression.QUESTIONID];
 
@@ -665,8 +762,6 @@ function initStats(question, container, scalar) {
 
     for (k in alters) {
         if (typeof connections[alters[k].ID] == "undefined") {
-            //this.isolates[] = $alter.id;
-            //this.nodes[] = $alter.id;
             n.push(alters[k].ID);
             connections[alters[k].ID] = [];
         }
@@ -792,103 +887,6 @@ function initStats(question, container, scalar) {
     }
     maxDegree = Math.max.apply(Math, all);
     minDegree = Math.min.apply(Math, all);
-
-    this.edgeColors = {
-        '#000': 'black',
-        '#ccc': 'gray',
-        '#07f': 'blue',
-        '#0c0': 'green',
-        '#f80': 'orange',
-        '#fd0': 'yellow',
-        '#f00': 'red',
-        '#c0f': 'purple',
-    };
-    this.edgeSizes = {
-        "0.5": '0.5',
-        "2": '2',
-        "4": '4',
-        "8": '8',
-    };
-    this.nodeColors = {
-        '#000': 'black',
-        '#ccc': 'gray',
-        '#07f': 'blue',
-        '#0c0': 'green',
-        '#f80': 'orange',
-        '#fd0': 'yellow',
-        '#f00': 'red',
-        '#c0f': 'purple',
-    };
-    this.nodeShapes = {
-        'circle': 'circle',
-        'star': 'star',
-        'diamond': 'diamond',
-        'cross': 'cross',
-        'equilateral': 'triangle',
-        'square': 'square',
-    };
-    this.nodeSizes = {
-        2: '1',
-        4: '2',
-        6: '3',
-        8: '4',
-        10: '5',
-        12: '6',
-        14: '7',
-        16: '8',
-        18: '9',
-        20: '10',
-    };
-    this.gradient = {
-        "red": {
-            0: "#F5D6D6",
-            1: "#ECBEBE",
-            2: "#E2A6A6",
-            3: "#D98E8E",
-            4: "#CF7777",
-            5: "#C65F5F",
-            6: "#BC4747",
-            7: "#B32F2F",
-            8: "#A91717",
-            9: "#A00000"
-        },
-        "blue": {
-            0: "#E3E5FF",
-            1: "#C9D2FF",
-            2: "#B0BFFF",
-            3: "#97ACFF",
-            4: "#7E99FF",
-            5: "#6487FF",
-            6: "#4B74FF",
-            7: "#3261FF",
-            8: "#194EFF",
-            9: "#003CFF"
-        },
-        "green": {
-            0: "#C7FFDD",
-            1: "#B2F4C7",
-            2: "#9EEAB2",
-            3: "#8AE09D",
-            4: "#76D688",
-            5: "#62CB72",
-            6: "#4EC15D",
-            7: "#3AB748",
-            8: "#26AD33",
-            9: "#12A31E"
-        },
-        "black": {
-            0: "#EEEEEE",
-            1: "#D3D3D3",
-            2: "#B9B9B9",
-            3: "#9E9E9E",
-            4: "#848484",
-            5: "#696969",
-            6: "#4F4F4F",
-            7: "#343434",
-            8: "#1A1A1A",
-            9: "#000000"
-        }
-    };
 
     this.getNodeColor = function(nodeId) {
         var defaultNodeColor = "#07f";
@@ -1170,6 +1168,7 @@ function initStats(question, container, scalar) {
             "size": parseInt(this.getNodeSize(-1)) * scalar,
         })
     }
+
     for (a in alters) {
         if(!isNaN(parseInt(this.params.nodeDisplay))){
             if (evalExpression(this.params.nodeDisplay, alters[a].ID)){

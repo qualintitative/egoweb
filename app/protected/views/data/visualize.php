@@ -225,6 +225,7 @@ new Vue({
                         newOptions.unshift(defaultOption);
                         newOptions.unshift(egoOption);
                         this.question.nParams[p].options = newOptions;
+                        console.log(p, newOptions)
                     }
                 }
             }
@@ -246,10 +247,19 @@ new Vue({
             if(typeof s != "undefined" && s.length > 0){
                 $("#infovis").empty();
             }
+            console.log(this.question.nParams)
+            this.question.NETWORKPARAMS = JSON.stringify(this.question.nParams);
+            this.question.NETWORKRELATIONSHIPEXPRID = parseInt(this.question.networkRelationshipExprId);
             initStats(this.question);
         },
         resetParams(param) {
-            console.log(param)
+            console.log(param, this.question.nParams)
+            if(param == "nodeDisplay"){
+                this.question.nParams[param].options = newOptions;
+                this.question.networkParams = JSON.stringify(this.question.nParams)
+                this.$forceUpdate();
+                return;
+            }
             var newOptions = [];
             var defaultOption, egoOption;
             for(var i = 0; i < this.question.nParams[param].options.length; i++){
@@ -258,7 +268,7 @@ new Vue({
                 if(this.question.nParams[param].options[i].id == -1)
                     egoOption = this.question.nParams[param].options[i];
             }
-            if(param == "nodeColor" || param == "nodeSize"){
+            if(param == "nodeColor" || param == "nodeSize" || param == "nodeShape"){
                 var newOptions = [egoOption, defaultOption];
                 var options = this.question.alterQOptions[this.question.nParams[param].questionId];
             }else{ 
@@ -277,7 +287,6 @@ new Vue({
             for(k in options){
                 var data = {};
                 data["id"] = options[k].id;
-                console.log(options[k])
 
                 if(param == "egoEdgeColor")
                     data[typeName] = "#000";
@@ -285,6 +294,9 @@ new Vue({
                     data[typeName] = "2";
                 else
                     data[typeName] = newOptions[0][typeName];
+
+                if(data["id"] == "degree")
+                    data[typeName] = "red";
 
                 console.log(data)
                 newOptions.push(data);
@@ -306,6 +318,7 @@ function saveNodes() {
     for(var k in graphNodes){
         nodes[graphNodes[k].id] = graphNodes[k];
     }
+    console.log(new_question)
     graphs[new_question.NETWORKRELATIONSHIPEXPRID] = {};
     graphs[new_question.NETWORKRELATIONSHIPEXPRID].NODES = JSON.stringify(nodes);
 }
