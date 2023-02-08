@@ -740,11 +740,11 @@ class DataController extends Controller
             }elseif($question->answerType == "NUMERICAL"){
                 if($question->minLimitType == "NLT_LITERAL")
                     $fields[] = $question->minLiteral;
-                if($question->minLimitType == "NLT_PREVQUES")
+                if(isset($questionTitles[$question->minPrevQues]) && $question->minLimitType == "NLT_PREVQUES")
                     $fields[] = $questionTitles[$question->minPrevQues];
                 if($question->maxLimitType == "NLT_LITERAL")
                     $fields[] = $question->maxLiteral;
-                if($question->maxLimitType == "NLT_PREVQUES")
+                if(isset($questionTitles[$question->maxPrevQues]) && $question->maxLimitType == "NLT_PREVQUES")
                     $fields[] = $questionTitles[$question->maxPrevQues];
                 $fields[] = "";
             }else{
