@@ -871,8 +871,10 @@ class ImportExportController extends Controller
                 }
                 $alter->ordering = json_encode($newOrder);
             }
+            $alter->alterListId = strval($alter->alterListId);
             if (!$alter->save()) {
                 print_r($alter->errors);
+                echo $alter->alterListId;
                 die();
             }
         }
