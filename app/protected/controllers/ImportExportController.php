@@ -587,7 +587,7 @@ class ImportExportController extends Controller
                             }
 
                             $newNote->expressionId = $newExpressionIds[intval($newNote->expressionId)];
-                            $newNote->alterId = $newAlterIds[intval($newNote->alterId)];
+                            $newNote->alterId = strval($newAlterIds[intval($newNote->alterId)]);
 
                             if (!$newNote->save()) {
                                 echo "Note: ";
