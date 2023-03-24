@@ -1286,6 +1286,7 @@ new Vue({
                            //       console.log(p + " changed",this.questions[k].nParams[p].options.length, alterQOptions[this.questions[k].nParams[p].questionId].length, this.questions[k].nParams[p].options, alterQOptions[this.questions[k].nParams[p].questionId])
                             }else if(p == "edgeColor" || p == "edgeSize"){
                                 let oIds = {};
+                                let defaultOption = defaultParams[p].options[0];
                                 console.log("edge options", this.questions[k].nParams[p].options)
                                 for(var i = 0; i < this.questions[k].nParams[p].options.length; i++){
                                     if(this.questions[k].nParams[p].options[i].id == 0 && isNaN(p))
