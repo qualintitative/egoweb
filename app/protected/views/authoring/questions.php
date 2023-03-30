@@ -10,7 +10,7 @@ use yii\helpers\Html;
         <summer-note :model.sync="study.egoIdPrompt" ref="Study_egoIdPrompt" name="Study[egoIdPrompt]" vid="Study_egoIdPrompt"></summer-note>
     </div>
     <?php endif; ?>
-    <div v-sortable.div="{ onUpdate: reorderQuestion, chosenClass: 'is-selected'}">
+    <div v-sortable.div="{ onUpdate: reorderQuestion, chosenClass: 'is-selected'}" style="height:70vh;margin-top:30px;overflow-y:auto">
         <question-editor v-for="(question, k) in questions" v-bind:question="question" :key="question.id" />
     </div>
     <question-editor v-bind:question="new_question" :key="new_question.id" />
@@ -595,7 +595,7 @@ Vue.directive('sortable', {
         el._sortable.option("onUpdate", function(e) {
             if (typeof options.onUpdate != "undefined")
                 options.onUpdate(e);
-            el._sortable.sort(el._sortable.oldOrder)
+            //el._sortable.sort(el._sortable.oldOrder)
         });
 
     },
@@ -1064,7 +1064,7 @@ QestionEditor = Vue.component('question-editor', {
     }
 });
 
-new Vue({
+authoring = new Vue({
     el: '#authoring-app',
     components: {
         QestionEditor: QestionEditor,
@@ -1374,14 +1374,20 @@ new Vue({
             })(this);
         },
         reorderQuestion(event) {
-            var questions = $.extend(true, [], this.questions);
-            questions.splice(event.newIndex, 0, questions.splice(event.oldIndex, 1)[0])
+            var new_questions = $.extend(true, [], this.questions);
+            console.log(event.newIndex, event.oldIndex);
+            new_questions.splice(event.newIndex, 0, new_questions.splice(event.oldIndex, 1)[0])
             qList = [];
-            for (q in questions) {
-                questions[q].ordering = q;
-                qList.push({id:questions[q].id})
+            for (q in new_questions) {
+                if(new_questions[q].ordering != q){
+                    console.log(new_questions[q].title, new_questions[q].ordering, q)
+                    new_questions[q].ordering = q;
+                }
+                qList.push({id:new_questions[q].id})
             }
-            this.questions = questions;
+            this.questions = new_questions;
+            //this.$forceUpdate();
+            //questions = new_questions;
             self = this;
             (function(self) {
                 $.post('/authoring/ajaxreorder/' + self.study.id, {

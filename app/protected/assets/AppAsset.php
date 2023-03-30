@@ -25,7 +25,7 @@ class AppAsset extends AssetBundle
         'js/summernote-bs4.js',
         'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-vue/2.21.2/bootstrap-vue.min.js',
         'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-vue/2.21.2/bootstrap-vue-icons.min.js',
-        '//cdn.jsdelivr.net/npm/sortablejs@1.8.4/Sortable.min.js',
+        'www/js/Sortable.min.js',
     ];
     public $jsOptions = [ 'position' => \yii\web\View::POS_HEAD ];
 

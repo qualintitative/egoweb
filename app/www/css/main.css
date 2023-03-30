@@ -928,7 +928,7 @@ label.prompt,
 
 @media (min-width: 769px) {
     #authoring-app {
-        margin-top: 60px;
+        margin-top: 0;
     }
     ul.authoring-nav {
         position: fixed;
