@@ -32,8 +32,8 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
     <b-card-header header-tag="header" class="p-1" role="tab">
         <b-button block v-b-toggle="'accordion-' + question.id" variant="secondary">{{question.id ? question.title: "Create New Question" }}</b-button>
     </b-card-header>
-    <b-collapse v-bind:id="'accordion-' + question.id" accordion="my-accordion" role="tabpanel">
-        <form :id="'form-' + question.id" method="post">
+    <b-collapse v-bind:id="'accordion-' + question.id" accordion="my-accordion" role="tabpanel" @show="closed = false" @hidden="closed = false">
+        <form :id="'form-' + question.id" method="post" v-if="closed == false">
             <input type="hidden" name="_csrf-protected" :value="csrf">
             <input type="hidden" name="Question[id]" v-model="question.id">
             <input type="hidden" name="Question[studyId]" v-model="question.studyId">
