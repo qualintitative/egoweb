@@ -341,15 +341,12 @@ class Interview extends \yii\db\ActiveRecord
             $ego_id_string = array();
 
             foreach ($ego_id_questions as $question) {
-
-                #OK FOR SQL INJECTION
                 $result = Answer::findOne(array("interviewId" => $this->id, "questionId" => $question->id));
                 if (!$result) {
                     $answer = $study->valueNotYetAnswered;
                 } else {
                     $answer = $result->value;
                 }
-
                 if ($question->answerType == "MULTIPLE_SELECTION") {
                     $optionIds = explode(',', $answer);
                     foreach ($optionIds as $optionId) {
@@ -367,9 +364,9 @@ class Interview extends \yii\db\ActiveRecord
                     }
                     if (!$optionIds) {
                         $ego_ids[] = "";
-                        if ($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER") {
+                        //if ($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER") {
                             $ego_id_string[] = "";
-                        }
+                        //}
                     }
                 } else {
                     $ego_ids[] = str_replace(',', '', $answer);

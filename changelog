@@ -1,6 +1,8 @@
 # Changelog
-## [2.0.10.16] - 2022-02-07
+## [2.0.10.16] - 2022-04-05
 - fix for bugs in data visualation page
+- fixed reordering questions / question editor memory issue
+- fixed export for hidden Ego IDs
 
 ## [2.0.10.15] - 2022-12-06
 - added disabled study option and disabled text page
