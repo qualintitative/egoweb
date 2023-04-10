@@ -472,7 +472,7 @@ class InterviewController extends Controller
 
         // update interview object
         if ($interview) {
-            if ($interview->completed != -1 && is_numeric($_POST['page'])) {
+            if ($interview->completed != -1 && isset($_POST['page']) && is_numeric($_POST['page'])) {
                 $interview->completed = (int)$_POST['page'];
                 $interview->save();
             }

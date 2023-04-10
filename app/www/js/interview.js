@@ -1337,6 +1337,7 @@ function buildList() {
     i = 0;
     masterList[i] = new Object;
     var alter_non_list_qs = [];
+    evalQIndex = [];
     var prev_alter_non_list_qs = [];
     if (study.INTRODUCTION != "") {
         introduction = new Object;

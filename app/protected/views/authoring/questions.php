@@ -595,7 +595,9 @@ Vue.directive('sortable', {
         el._sortable.option("onUpdate", function(e) {
             if (typeof options.onUpdate != "undefined")
                 options.onUpdate(e);
-            //el._sortable.sort(el._sortable.oldOrder)
+            if(vnode.children == undefined){
+                el._sortable.sort(el._sortable.oldOrder)
+            }
         });
 
     },
@@ -876,14 +878,17 @@ QestionEditor = Vue.component('question-editor', {
             this.$forceUpdate();
         },
         reorderOption(event) {
-            var options = $.extend(true, [], this.question.options);
-            options.splice(event.newIndex, 0, options.splice(event.oldIndex, 1)[0])
-            for (o in options) {
-                options[o].ordering = o;
+            var new_options = $.extend(true, [], this.question.options);
+            new_options.splice(event.newIndex, 0, new_options.splice(event.oldIndex, 1)[0])
+            for (o in new_options) {
+                if(new_options[o].ordering != o){
+                    console.log(new_options[o].name, o, new_options[o].ordering)
+                    new_options[o].ordering = o;
+                }
             }
-            this.question.options = options;
+            //this.question.options = new_options;
             $("#QuestionOption_questionId").val(this.question.id);
-            $("#optionsJson").val(JSON.stringify(options))
+            $("#optionsJson").val(JSON.stringify(new_options))
             self = this;
             (function(self) {
                 $.post('/authoring/ajaxreorder/' + self.question.studyId, $("#questionOption").serialize(),
@@ -1375,25 +1380,22 @@ authoring = new Vue({
         },
         reorderQuestion(event) {
             var new_questions = $.extend(true, [], this.questions);
-            console.log(event.newIndex, event.oldIndex);
+            //console.log(event.newIndex, event.oldIndex);
             new_questions.splice(event.newIndex, 0, new_questions.splice(event.oldIndex, 1)[0])
             qList = [];
             for (q in new_questions) {
                 if(new_questions[q].ordering != q){
-                    console.log(new_questions[q].title, new_questions[q].ordering, q)
+                    //console.log(new_questions[q].title, new_questions[q].ordering, q)
                     new_questions[q].ordering = q;
                 }
                 qList.push({id:new_questions[q].id})
             }
             this.questions = new_questions;
-            //this.$forceUpdate();
-            //questions = new_questions;
             self = this;
             (function(self) {
                 $.post('/authoring/ajaxreorder/' + self.study.id, {
                     questions: {
                         ...qList
-                        //...self.questions
                     }
                 }, function(data) {});
             })(self);
