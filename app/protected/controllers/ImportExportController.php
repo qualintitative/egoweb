@@ -964,11 +964,33 @@ class ImportExportController extends Controller
     {
         $study = Study::findOne($id);
         $interviews = Interview::findAll(array('studyId'=>$id));
+        $allInterviewIds = [];
+        $result = Answer::findAll([
+            "studyId"=>$study->id,
+            "questionType"=>"EGO_ID",
+        ]);
+        $egoid_answers = array();
+        foreach ($result as $answer) {
+            if($answer->answerType == "RANDOM_NUMBER" || $answer->answerType == "STORED_VALUE")
+                continue;
+            if(!isset($egoid_answers[$answer->interviewId]))
+                $egoid_answers[$answer->interviewId] = [];
+            $egoid_answers[$answer->interviewId][] = $answer->value;
+        }
+        $egoIds = [];
+        foreach($interviews as $interview){
+            $alters[$interview->id] = 0;
+            if(!isset($egoid_answers[$interview->id]))
+                $egoid_answers[$interview->id] = ["error"];
+            $egoIds[$interview->id] = implode("_", $egoid_answers[$interview->id]);
+            $allInterviewIds[] = $interview->id;
+        }
         return $this->renderAjax(
             '_interviews',
             array(
                 'study'=>$study,
                 'interviews'=>$interviews,
+                'egoIds'=>$egoIds,
             ),
             false,
             true
