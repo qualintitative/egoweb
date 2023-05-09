@@ -367,7 +367,7 @@ function evalExpression(id, alterId1, alterId2) {
         answer = answers[array_id].VALUE;
     else
         answer = "";
-
+    console.log("ansswer", answer, array_id)
     if (expressions[id].TYPE == "Text") {
         if (!answer)
             return expressions[id].RESULTFORUNANSWERED;
@@ -915,7 +915,8 @@ function initStats(question, container, scalar) {
                     range = max;
                     min = 0;
                 }
-                value = Math.round(((value - min) / (range)) * 9);
+                if(range != 0)
+                    value = Math.round(((value - min) / (range)) * 9);
                 var gc_color = "red";
                 for (p in this.params['nodeColor']['options']) {
                     if (this.params['nodeColor']['options'][p]['id'] == this.params['nodeColor']['questionId'])
@@ -983,7 +984,10 @@ function initStats(question, container, scalar) {
                     range = max;
                     min = 0;
                 }
-                value = Math.round(((value - min) / (range)) * 9) + 1;
+                if(range != 0)
+                    value = Math.round(((value - min) / (range)) * 9) + 1;
+                else 
+                    value = defaultNodeSize;
                 return value;
             }
             if (nodeId != -1 && typeof this.params['nodeSize']['questionId'] != "undefined" && this.params['nodeSize']['questionId'] == "betweenness") {
