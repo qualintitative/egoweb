@@ -4,6 +4,8 @@
 - fixed reordering questions / question editor memory issue
 - fixed export for hidden Ego IDs
 - improved export interviews load delay
+- fixed issue with navigation bar blocking authoring page
+- fixed issue with question reordering only working in one direction
 
 ## [2.0.10.15] - 2022-12-06
 - added disabled study option and disabled text page
