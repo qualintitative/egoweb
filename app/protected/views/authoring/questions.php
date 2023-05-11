@@ -3,14 +3,14 @@ use yii\helpers\Html;
 
 ?>
 <?= $this->render('/layouts/nav', ['study'=> $study]); ?>
-<div id="authoring-app">
+<div id="authoring-app" class="mt-md-5">
     <?php if (Yii::$app->controller->action->id == "ego_id"): ?>
     <div class="col-md-12 mb-3">
         <label for="Study_egoIdPrompt" class="col-sm-12 col-form-label">Ego ID Prompt<b-button id="saveEgoId" class="float-right btn btn-success btn-sm col-1" @click="saveStudy">save</b-button></label>
         <summer-note :model.sync="study.egoIdPrompt" ref="Study_egoIdPrompt" name="Study[egoIdPrompt]" vid="Study_egoIdPrompt"></summer-note>
     </div>
     <?php endif; ?>
-    <div v-sortable.div="{ onUpdate: reorderQuestion, chosenClass: 'is-selected'}" style="height:70vh;margin-top:30px;overflow-y:auto">
+    <div v-sortable.div="{ onUpdate: reorderQuestion, chosenClass: 'is-selected'}" style="height:70vh;overflow-y:auto">
         <question-editor v-for="(question, k) in questions" v-bind:question="question" :key="question.id" />
     </div>
     <question-editor v-bind:question="new_question" :key="new_question.id" />

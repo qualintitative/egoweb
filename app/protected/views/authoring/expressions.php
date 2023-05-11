@@ -6,7 +6,7 @@ use common\widgets\Alert;
 ?>
 <?= $this->render('/layouts/nav', ['study' => $study]); ?>
 
-<div id="authoring-app">
+<div id="authoring-app" class="mt-md-5">
     <div class="row py-3">
         <div class="col-12 form-row">
             <div class="col-4">

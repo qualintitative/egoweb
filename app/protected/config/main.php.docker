@@ -66,7 +66,7 @@ return [
                 'mobile/uploadData<url:(.*)>' => 'mobile/upload-data',
                 'debug/<controller>/<action>' => 'debug/<controller>/<action>',
                 'interview/<studyId:\d+>/<interviewId:\d+>' => 'interview/view',
-                'site/reset-password/<token:\w+>' => 'site/reset-password',
+                'site/reset-password/<token:(.*)>' => 'site/reset-password',
                 'interview/<studyId:\d+>' => 'interview/view',
                 'interview/graph/<interviewId:\d+>/<graphId:\d+>/<questionId:\d+>' => 'interview/graph',
                 '<controller>/<id:\d+>' => '<controller>/index',

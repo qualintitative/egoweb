@@ -4,7 +4,7 @@ use yii\bootstrap4\LinkPager;
 
 ?>
 <?= $this->render('/layouts/nav', ['study'=> $study]); ?>
-<div id="authoring-app">
+<div id="authoring-app" class="mt-md-5">
     <div class="row">
         <div class="col-md-4">
             <h4>Users</h4>

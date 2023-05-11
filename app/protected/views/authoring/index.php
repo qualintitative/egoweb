@@ -4,7 +4,7 @@ use yii\helpers\Html;
 ?>
             <?= $this->render('/layouts/nav', ['study'=> $study]); ?>
 
-<div id="authoring-app">
+<div id="authoring-app" class="mt-md-5">
 <?= Html::beginForm(['/authoring/'.$study['id']], 'post', [ 'id'=>'analysis']) ?>
 <div class="row form-group">
     <div class="col-md-6">
