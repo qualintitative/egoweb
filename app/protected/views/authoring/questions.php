@@ -34,7 +34,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
     </b-card-header>
     <b-collapse v-bind:id="'accordion-' + question.id" accordion="my-accordion" role="tabpanel" @show="closed = false" @hidden="closed = false">
         <form :id="'form-' + question.id" method="post" v-if="closed == false">
-        <span class="badge badge-secondary float-right ml-1">qid:{{question.id}}</span>
+            <span class="badge badge-secondary float-right ml-1">qid:{{question.id}}</span>
             <input type="hidden" name="_csrf-protected" :value="csrf">
             <input type="hidden" name="Question[id]" v-model="question.id">
             <input type="hidden" name="Question[studyId]" v-model="question.studyId">

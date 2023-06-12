@@ -695,7 +695,16 @@ class Interview extends \yii\db\ActiveRecord
 
         $matchIntId = "";
         $matchUser = "";
-        $matchAtAll = MatchedAlters::findOne(["studyId"=>$this->studyId]);
+        $study = Study::findOne($this->studyId);
+        if ($study->multiSessionEgoId) {
+            $multiQs = $study->multiIdQs();
+            foreach ($multiQs as $q) {
+                $studyIds[] = $q->studyId;
+            }
+        } else {
+            $studyIds = $this->studyId;
+        }
+        $matchAtAll = MatchedAlters::find()->where(["studyId"=>$studyIds])->one();
         if ($matchAtAll) {
             $match = MatchedAlters::find()->where(["interviewId1" => $this->id])->orWhere(["interviewId2" => $this->id])->one();
             if ($match) {
