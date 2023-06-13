@@ -110,6 +110,13 @@ class Question extends \yii\db\ActiveRecord
         ];
     }
 
+    public function beforeValidate()
+    {
+        $this->allButton = (int)filter_var($this->allButton, FILTER_VALIDATE_BOOLEAN);
+        $this->noneButton = (int)filter_var($this->noneButton, FILTER_VALIDATE_BOOLEAN);
+        return parent::beforeValidate();
+    }
+
     /**
      * {@inheritdoc}
      */

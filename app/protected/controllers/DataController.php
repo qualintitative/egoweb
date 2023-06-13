@@ -353,9 +353,15 @@ class DataController extends Controller
             $headers[] = "Dyads";
             $headers[] = "Isolates";
         }
-        $matchAtAll = MatchedAlters::findOne(array(
-            "studyId" => $study->id,
-        ));
+        if ($study->multiSessionEgoId) {
+            $multiQs = $study->multiIdQs();
+            foreach ($multiQs as $q) {
+                $studyIds[] = $q->studyId;
+            }
+        } else {
+            $studyIds = $this->studyId;
+        }
+        $matchAtAll = MatchedAlters::find()->where(["studyId"=>$studyIds])->one();
 
         if ($matchAtAll) {
             $headers[] = "Dyad Match ID";

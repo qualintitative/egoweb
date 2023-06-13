@@ -304,7 +304,16 @@ class Interview extends \yii\db\ActiveRecord
 
         $matchIntId = "";
         $matchUser = "";
-        $matchAtAll = MatchedAlters::findOne(["studyId"=>$this->studyId]);
+        $study = Study::findOne($this->studyId);
+        if ($study->multiSessionEgoId) {
+            $multiQs = $study->multiIdQs();
+            foreach ($multiQs as $q) {
+                $studyIds[] = $q->studyId;
+            }
+        } else {
+            $studyIds = $this->studyId;
+        }
+        $matchAtAll = MatchedAlters::find()->where(["studyId"=>$studyIds])->one();
         if ($matchAtAll) {
             $match = MatchedAlters::find()
             ->where(new \yii\db\Expression("interviewId1 = $this->id OR interviewId2 = $this->id"))
@@ -324,7 +333,6 @@ class Interview extends \yii\db\ActiveRecord
                     $matchUser = "User not found";
             }
         }
-        $study = Study::findOne($this->studyId);
         $optionsRaw = QuestionOption::findAll(array("studyId" => $study->id));
 
         // create an array with option ID as key

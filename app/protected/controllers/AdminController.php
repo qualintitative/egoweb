@@ -105,18 +105,21 @@ class AdminController extends Controller
         $studyEgoIdQs = [];
         $studies = [];
         $multiStudies = [];
-        $studyByName = [];
         $result = Yii::$app->user->identity->studies;
         $studyNames = [];
+        $singleStudyNames = [];
+        $allStudies = [];
         foreach($result as $study){
             $studyNames[$study->id] = $study->name;
+            $allStudies[$study->name] = $study;
             if($study->multiSessionEgoId){
-                $studyByName[$study->name] = $study;
                 $studyEgoIdQs[] = $study->multiSessionEgoId;
             }else{
+                $singleStudyNames[] = $study->name;
                 $studies[] = $study;
             }
         }
+
 
         $result = Question::findAll([
             "id"=>$studyEgoIdQs,
@@ -126,10 +129,15 @@ class AdminController extends Controller
         foreach($result as $q){
             $multiIdQs[$studyNames[$q->studyId]] = $q->title;
         }
+        foreach($studyNames as $studyName){
+            if(!in_array($studyName, array_keys($multiIdQs)) && !in_array($studyName, $singleStudyNames)){
+                $studies[] = $allStudies[$studyName];
+            }
+        }
         ksort($multiIdQs, SORT_NATURAL | SORT_FLAG_CASE);
         asort($multiIdQs, SORT_NATURAL | SORT_FLAG_CASE);
         foreach($multiIdQs as $multi=>$title){
-            $multiStudies[] = $studyByName[$multi];
+            $multiStudies[] = $allStudies[$multi];
         }
 
         $result = Answer::findAll([

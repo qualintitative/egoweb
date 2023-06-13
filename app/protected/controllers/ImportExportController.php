@@ -480,12 +480,13 @@ class ImportExportController extends Controller
                                     $value = intval($value);
                                 }
                                 if ($key != "id") {
-                                    $newMatch->$key = $value;
+                                    $newMatch->$key = strval($value);
                                 }
                             }
                             $newMatch->studyId = $newStudy->id;
                             if (!$newMatch->save()) {
-                                echo "Matched Alter Error: $newMatch->interviewId1 :" . $newMatch->interviewId2 .":" .print_r($newMatch->errors) . "end";
+                                echo "Matched Alter Error: $newMatch->interviewId1 :" . $newMatch->interviewId2 . ":" . $newMatch->matchedName . ":" . is_string( $newMatch->matchedName) . gettype($newMatch->matchedName);
+                                print_r($newMatch->errors);
                                 die();
                             }
                         }
@@ -522,7 +523,7 @@ class ImportExportController extends Controller
                                     }
                                 }
                             }
-                            $newUser->confirm = $newUser->password;
+                            //$newUser->confirm = $newUser->password;
                             if ($email == false) {
                                 continue;
                             }
