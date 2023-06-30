@@ -359,7 +359,7 @@ class DataController extends Controller
                 $studyIds[] = $q->studyId;
             }
         } else {
-            $studyIds = $this->studyId;
+            $studyIds = $study->id;
         }
         $matchAtAll = MatchedAlters::find()->where(["studyId"=>$studyIds])->one();
 
