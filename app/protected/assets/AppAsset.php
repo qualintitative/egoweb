@@ -12,17 +12,19 @@ class AppAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'css/summernote-bs4.min.css',
+        //'css/summernote-bs4.min.css',
         'www/css/main.css',
         'www/css/all.css',
         'www/css/bootstrap-vue-icons.min.css',
         'www/css/bootstrap-vue.min.css',
+        'https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css',
     ];
     public $js = [
         'www/js/egoweb.js',
         'js/vue.js',
         'js/vue-router.js',
-        'js/summernote-bs4.js',
+    //    'js/summernote-bs4.js',
+    'https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js',
         'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-vue/2.21.2/bootstrap-vue.min.js',
         'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-vue/2.21.2/bootstrap-vue-icons.min.js',
         'www/js/Sortable.min.js',

@@ -216,7 +216,7 @@ function parseEgowebTags(e, id) {
         for (k in varMatch)
             eTags[id].varSnips.push(varMatch[k]);
         for (i = 0; i < eTags[id].varSnips.length; i++) {
-            e = e.replace(eTags[id].varSnips[i], "<img id='var_" + i + "' src='" + imageDir + "var.png'>");
+            e = e.replace(eTags[id].varSnips[i], "<img id='" + id + "_var_" + i + "' src='" + imageDir + "var.png'>");
         }
     }
     var calcMatch = e.match(/<CALC[^\/]+[^>]+\/>/gm);
@@ -225,7 +225,7 @@ function parseEgowebTags(e, id) {
         for (k in calcMatch)
             eTags[id].calcSnips.push(calcMatch[k]);
         for (i = 0; i < eTags[id].calcSnips.length; i++) {
-            e = e.replace(eTags[id].calcSnips[i], "<img id='calc_" + i + "' src='" + imageDir + "calc.png'>");
+            e = e.replace(eTags[id].calcSnips[i], "<img id='" + id + "_calc_" + i + "' src='" + imageDir + "calc.png'>");
         }
     }
     var countMatch = e.match(/<COUNT[^\/]+[^>]+\/>/gm);
@@ -234,7 +234,7 @@ function parseEgowebTags(e, id) {
         for (k in countMatch)
             eTags[id].countSnips.push(countMatch[k]);
         for (i = 0; i < eTags[id].countSnips.length; i++) {
-            e = e.replace(eTags[id].countSnips[i], "<img id='count_" + i + "' src='" + imageDir + "count.png'>");
+            e = e.replace(eTags[id].countSnips[i], "<img id='" + id + "_count_" + i + "' src='" + imageDir + "count.png'>");
         }
     }
     var containsMatch = e.match(/<CONTAINS[^\/]+[^>]+\/>/gm);
@@ -243,7 +243,7 @@ function parseEgowebTags(e, id) {
         for (k in containsMatch)
             eTags[id].containsSnips.push(containsMatch[k]);
         for (i = 0; i < eTags[id].containsSnips.length; i++) {
-            e = e.replace(eTags[id].containsSnips[i], "<img id='contains_" + i + "' src='" + imageDir + "contains.png'>");
+            e = e.replace(eTags[id].containsSnips[i], "<img id='" + id + "_contains_" + i + "' src='" + imageDir + "contains.png'>");
         }
     }
     var ifMatch = e.match(/<IF((.|\n)*)\/>/gm);
@@ -252,7 +252,7 @@ function parseEgowebTags(e, id) {
         for (k in ifMatch)
             eTags[id].ifSnips.push(ifMatch[k]);
         for (i = 0; i < eTags[id].ifSnips.length; i++) {
-            e = e.replace(eTags[id].ifSnips[i], "<img id='if_" + i + "' src='" + imageDir + "if.png'>");
+            e = e.replace(eTags[id].ifSnips[i], "<img id='" + id + "_if_" + i + "' src='" + imageDir + "if.png'>");
         }
     }
     var dateMatch = e.match(/<DATE((.|\n)*)\/>/gm);
@@ -261,7 +261,7 @@ function parseEgowebTags(e, id) {
         for (k in dateMatch)
             eTags[id].dateSnips.push(dateMatch[k]);
         for (i = 0; i < eTags[id].dateSnips.length; i++) {
-            e = e.replace(eTags[id].dateSnips[i], "<img id='date_" + i + "' src='" + imageDir + "date.png'>");
+            e = e.replace(eTags[id].dateSnips[i], "<img id='" + id + "_date_" + i + "' src='" + imageDir + "date.png'>");
         }
     }
     return e;
@@ -269,63 +269,65 @@ function parseEgowebTags(e, id) {
 
 function rebuildEgowebTags(withCode, id) {
     console.log("rebuilding " + id, eTags[id])
-    console.log(withCode)
     var imageDir = "/www/images/";
     if (typeof eTags[id] == "undefined")
         return withCode;
     if (typeof eTags[id].ifSnips != "undefined") {
         var ifSnips = eTags[id].ifSnips;
         for (i = 0; i < ifSnips.length; i++) {
-            withCode = withCode.replace("<img id=\"if_" + i + "\" src=\"" + imageDir + "if.png\">", ifSnips[i]);
+            if (withCode.match("<img id=\"" + id + "_if_" + i + "\" src=\"" + imageDir + "calc.png\">"))
+                withCode = withCode.replace("<img id=\"" + id + "_if_" + i + "\" src=\"" + imageDir + "if.png\">", ifSnips[i]);
+            if (withCode.match("<img id='" + id + "_if_" + i + "' src='" + imageDir + "if.png'>"))
+                withCode = withCode.replace("<img id=\"" + id + "_if_" + i + "\" src='" + imageDir + "if.png'>", ifSnips[i]);
         }
     }
     if (typeof eTags[id].calcSnips != "undefined") {
         var calcSnips = eTags[id].calcSnips;
         for (i = 0; i < calcSnips.length; i++) {
-            if (withCode.match("<img id=\"calc_" + i + "\" src=\"" + imageDir + "calc.png\">"))
-                withCode = withCode.replace("<img id=\"calc_" + i + "\" src=\"" + imageDir + "calc.png\">", calcSnips[i]);
-            if (withCode.match("<img id='calc_" + i + "' src='" + imageDir + "calc.png'>"))
-                withCode = withCode.replace("<img id='calc_" + i + "' src='" + imageDir + "calc.png'>", calcSnips[i]);
+            if (withCode.match("<img id=\"" + id + "_calc_" + i + "\" src=\"" + imageDir + "calc.png\">"))
+                withCode = withCode.replace("<img id=\"" + id + "_calc_" + i + "\" src=\"" + imageDir + "calc.png\">", calcSnips[i]);
+            if (withCode.match("<img id='" + id + "_calc_" + i + "' src='" + imageDir + "calc.png'>"))
+                withCode = withCode.replace("<img id='" + id + "_calc_" + i + "' src='" + imageDir + "calc.png'>", calcSnips[i]);
         }
     }
 
     if (typeof eTags[id].varSnips != "undefined") {
         var varSnips = eTags[id].varSnips;
         for (i = 0; i < varSnips.length; i++) {
-            if (withCode.match("<img id=\"var_" + i + "\" src=\"" + imageDir + "var.png\">"))
-                withCode = withCode.replace("<img id=\"var_" + i + "\" src=\"" + imageDir + "var.png\">", varSnips[i]);
-            if (withCode.match("<img id='var_" + i + "' src='" + imageDir + "var.png'>"))
-                withCode = withCode.replace("<img id='var_" + i + "' src='" + imageDir + "var.png'>", varSnips[i]);
+            if (withCode.match("<img id=\"" + id + "_var_" + i + "\" src=\"" + imageDir + "var.png\">"))
+                withCode = withCode.replace("<img id=\"" + id + "_var_" + i + "\" src=\"" + imageDir + "var.png\">", varSnips[i]);
+            if (withCode.match("<img id='" + id + "_var_" + i + "' src='" + imageDir + "var.png'>"))
+                withCode = withCode.replace("<img id='" + id + "_var_" + i + "' src='" + imageDir + "var.png'>", varSnips[i]);
         }
     }
 
     if (typeof eTags[id].countSnips != "undefined") {
         var countSnips = eTags[id].countSnips;
         for (i = 0; i < countSnips.length; i++) {
-            if (withCode.match("<img id=\"count_" + i + "\" src=\"" + imageDir + "count.png\">"))
-                withCode = withCode.replace("<img id=\"count_" + i + "\" src=\"" + imageDir + "count.png\">", countSnips[i]);
-            if (withCode.match("<img id='count_" + i + "' src='" + imageDir + "count.png'>"))
-                withCode = withCode.replace("<img id='count_" + i + "' src='" + imageDir + "count.png'>", countSnips[i]);
+            if (withCode.match("<img id=\"" + id + "_count_" + i + "\" src=\"" + imageDir + "count.png\">"))
+                withCode = withCode.replace("<img id=\"" + id + "_count_" + i + "\" src=\"" + imageDir + "count.png\">", countSnips[i]);
+            if (withCode.match("<img id='" + id + "_count_" + i + "' src='" + imageDir + "count.png'>"))
+                withCode = withCode.replace("<img id='" + id + "_count_" + i + "' src='" + imageDir + "count.png'>", countSnips[i]);
         }
     }
 
     if (typeof eTags[id].containsSnips != "undefined") {
         var containsSnips = eTags[id].containsSnips;
         for (i = 0; i < containsSnips.length; i++) {
-            if (withCode.match("<img id=\"contains_" + i + "\" src=\"" + imageDir + "contains.png\">"))
-                withCode = withCode.replace("<img id=\"contains_" + i + "\" src=\"" + imageDir + "contains.png\">", containsSnips[i]);
-            if (withCode.match("<img id='contains_" + i + "' src='" + imageDir + "contains.png'>"))
-                withCode = withCode.replace("<img id='contains_" + i + "' src='" + imageDir + "contains.png'>", containsSnips[i]);
+            if (withCode.match("<img id=\"" + id + "_contains_" + i + "\" src=\"" + imageDir + "contains.png\">"))
+                withCode = withCode.replace("<img id=\"" + id + "_contains_" + i + "\" src=\"" + imageDir + "contains.png\">", containsSnips[i]);
+            if (withCode.match("<img id='" + id + "_contains_" + i + "' src='" + imageDir + "contains.png'>"))
+                withCode = withCode.replace("<img id='" + id + "_contains_" + i + "' src='" + imageDir + "contains.png'>", containsSnips[i]);
         }
     }
 
     if (typeof eTags[id].dateSnips != "undefined") {
         var dateSnips = eTags[id].dateSnips;
         for (i = 0; i < dateSnips.length; i++) {
-            if (withCode.match("<img id=\"date_" + i + "\" src=\"" + imageDir + "date.png\">"))
-                withCode = withCode.replace("<img id=\"date_" + i + "\" src=\"" + imageDir + "date.png\">", dateSnips[i]);
-            if (withCode.match("<img id='date_" + i + "' src='" + imageDir + "date.png'>"))
-                withCode = withCode.replace("<img id='date_" + i + "' src='" + imageDir + "date.png'>", dateSnips[i]);
+            if (withCode.match("<img id=\"" + id + "_date_" + i + "\" src=\"" + imageDir + "date.png\">"))
+                withCode = withCode.replace("<img id=\"" + id + "_date_" + i + "\" src=\"" + imageDir + "date.png\">", dateSnips[i]);
+            if (withCode.match("<img id='" + id + "_date_" + i + "' src='" + imageDir + "date.png'>"))
+                withCode = withCode.replace("<img id='" + id + "_date_" + i + "' src='" + imageDir + "date.png'>", dateSnips[i]);
         }
     }
 
@@ -333,6 +335,7 @@ function rebuildEgowebTags(withCode, id) {
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>');
     delete eTags[id];
+    console.log(withCode)
     return withCode;
 }
 

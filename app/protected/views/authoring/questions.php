@@ -633,14 +633,17 @@ SummerNote = Vue.component('summer-note', {
                     if ($(this).summernote('isEmpty')) {
                         text = text.replace('<p><br></p>','')
                     }
+                    text = parseEgowebTags(text, self.vid);
                     $("#" + self.vid).val(text);
+                    //self.$emit("keyup:", text);
+                    console.log("key up:", self.vid, $(this).summernote('code'), text);
                     self.$emit("update:model", text);
-                    parseEgowebTags(text, self.vid);
+
                 },
                 onChangeCodeview: function(e) {
-                    var text = $(this).summernote('code');
-                    console.log("change codeview", text);
-                    $("#" + self.vid.split("_")[0] + "_prompt").val(text);
+                    var text = $("#" + self.vid).val();
+                    $("#" + self.vid).val($(this).summernote('code'));
+                    console.log("change codeview:",self.vid, $(this).summernote('code'), text);
                     self.$emit("update:model", text);
                 },
                 onPaste: function(e) {
