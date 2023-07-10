@@ -1060,6 +1060,7 @@ QestionEditor = Vue.component('question-editor', {
         },
         saveQuestion() {
             $("#" + this.question.id + "_prompt").val(rebuildEgowebTags($("#" + this.question.id + "_prompt").val(), this.question.id + "_prompt"));
+            $("#" + this.question.id + "_citation").val(rebuildEgowebTags($("#" + this.question.id + "_citation").val(), this.question.id + "_citation"));
            $("#form-" + this.question.id).submit();
         },
         duplicateQuestion() {
