@@ -1,5 +1,10 @@
 # Changelog
-## [2.0.10.16] - 2022-04-05
+## [2.0.10.17] - 2023-07-10
+- fixed a bug with tags in the citation
+- fixed security issue in .htaccess
+- fixed exporting issue for matched alters
+
+## [2.0.10.16] - 2023-04-05
 - fix for bugs in data visualation page
 - fixed reordering questions / question editor memory issue
 - fixed export for hidden Ego IDs

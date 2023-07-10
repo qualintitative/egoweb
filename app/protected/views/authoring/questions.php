@@ -167,7 +167,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
 
                     <div class="form-group" v-if="question.askingStyleList == true && question.subjectType == 'EGO'">
                         <label for="Question_citation" class="col-sm-4 col-form-label">Stem and Leaf</label>
-                        <summer-note :model.sync="question.citation" ref="Question_citation" name="Question[citation]" vid="Question_citation"></summer-note>
+                        <summer-note :model.sync="question.citation" ref="Question_citation" name="Question[citation]" :vid="question.id + '_citation'"></summer-note>
                     </div>
 
                     <div v-if="question.answerType == 'NUMERICAL'">
@@ -633,7 +633,7 @@ SummerNote = Vue.component('summer-note', {
                     if ($(this).summernote('isEmpty')) {
                         text = text.replace('<p><br></p>','')
                     }
-                    $("#" + self.vid.split("_")[0] + "_prompt").val(text);
+                    $("#" + self.vid).val(text);
                     self.$emit("update:model", text);
                     parseEgowebTags(text, self.vid);
                 },

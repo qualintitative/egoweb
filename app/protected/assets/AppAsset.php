@@ -20,8 +20,8 @@ class AppAsset extends AssetBundle
     ];
     public $js = [
         'www/js/egoweb.js',
-       'js/vue.js',
-       'js/vue-router.js',
+        'js/vue.js',
+        'js/vue-router.js',
         'js/summernote-bs4.js',
         'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-vue/2.21.2/bootstrap-vue.min.js',
         'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-vue/2.21.2/bootstrap-vue-icons.min.js',
