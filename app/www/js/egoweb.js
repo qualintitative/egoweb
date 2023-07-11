@@ -275,10 +275,10 @@ function rebuildEgowebTags(withCode, id) {
     if (typeof eTags[id].ifSnips != "undefined") {
         var ifSnips = eTags[id].ifSnips;
         for (i = 0; i < ifSnips.length; i++) {
-            if (withCode.match("<img id=\"" + id + "_if_" + i + "\" src=\"" + imageDir + "calc.png\">"))
+            if (withCode.match("<img id=\"" + id + "_if_" + i + "\" src=\"" + imageDir + "if.png\">"))
                 withCode = withCode.replace("<img id=\"" + id + "_if_" + i + "\" src=\"" + imageDir + "if.png\">", ifSnips[i]);
             if (withCode.match("<img id='" + id + "_if_" + i + "' src='" + imageDir + "if.png'>"))
-                withCode = withCode.replace("<img id=\"" + id + "_if_" + i + "\" src='" + imageDir + "if.png'>", ifSnips[i]);
+                withCode = withCode.replace("<img id='" + id + "_if_" + i + "' src='" + imageDir + "if.png'>", ifSnips[i]);
         }
     }
     if (typeof eTags[id].calcSnips != "undefined") {
