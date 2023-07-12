@@ -1921,7 +1921,7 @@ function interpretTags(string, alterId1, alterId2) {
         return string;
 
     // parse out and show logics
-    showlogics = string.match(/<IF (.+?) (==|!=|<|>|<=|>=)+ (.+?) \"(.+?)\" \/>/g);
+    var showlogics = string.match(/<IF (.+?) (==|!=|<|>|<=|>=)+ (.+?) \"(.+?)\" \/>/g);
     for (k in showlogics) {
         showlogic = showlogics[k];
         exp = showlogic.match(/\<IF (.+?) (==|!=|<|>|<=|>=)+ (.+?) \"(.+?)\"/);
