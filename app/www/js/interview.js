@@ -2174,8 +2174,8 @@ function interpretTags(string, alterId1, alterId2) {
                 if (i == 2 || !isNaN(parseInt(exp[i])))
                     continue;
                 if (exp[i].match("/>")) {
-                    console.log("match exp")
                     exp[i] = interpretTags(exp[i]);
+                    console.log("match exp ", exp[i])
                 } else {
 
                     var qTitle = exp[i];
