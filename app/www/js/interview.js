@@ -1919,6 +1919,62 @@ function interpretTags(string, alterId1, alterId2) {
     console.log("interpretting " + string);
     if (string == null)
         return string;
+
+    // parse out and show logics
+    showlogics = string.match(/<IF (.+?) (==|!=|<|>|<=|>=)+ (.+?) \"(.+?)\" \/>/g);
+    for (k in showlogics) {
+        showlogic = showlogics[k];
+        exp = showlogic.match(/\<IF (.+?) (==|!=|<|>|<=|>=)+ (.+?) \"(.+?)\"/);
+        if (exp.length > 1) {
+            for (i = 1; i < 3; i++) {
+                if (i == 2 || !isNaN(parseInt(exp[i])))
+                    continue;
+                if (exp[i].match("/>")) {
+                    exp[i] = interpretTags(exp[i]);
+                    console.log("match exp ", exp[i])
+                } else {
+
+                    var qTitle = exp[i];
+                    var question = getQuestion(qTitle);
+                    if (!question)
+                        continue;
+
+                    var array_id = question.ID;
+                    if (typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
+                        array_id += "-" + alterId1;
+                    else if (typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
+                        array_id += 'and' + alterId2;
+
+                    var lastAnswer = "";
+                    var lastAnswerOps = [];
+
+                    if (typeof answers[array_id] != 'undefined') {
+                        if (question.ANSWERTYPE == "MULTIPLE_SELECTION") {
+                            for (o in options[question.ID]) {
+                                if ($.inArray(options[question.ID][o].ID, answers[array_id].VALUE.split(",")) != -1)
+                                    lastAnswerOps.push(options[question.ID][o].NAME);
+                            }
+                            lastAnswer = lastAnswerOps.join("<br>");
+                        } else {
+                            lastAnswer = answers[array_id].VALUE;
+                        }
+                    } else {
+                        return false;
+                    }
+                    exp[i] = lastAnswer;
+                }
+            }
+            logic = exp[1] + ' ' + exp[2] + ' ' + exp[3];
+            console.log("logic", exp, logic);
+            show = eval(logic);
+            if (show) {
+                string = string.replace(showlogic, exp[4]);
+            } else {
+                string = string.replace(showlogic, "");
+            }
+        }
+    }
+
     // parse out and replace variables
     vars = string.match(/<VAR (.+?) \/>/g);
     for (k in vars) {
@@ -2076,48 +2132,6 @@ function interpretTags(string, alterId1, alterId2) {
             dateVal.setYear(dateVal.getFullYear() + amount);
         }
         var newDate = monthNames[dateVal.getMonth()] + " " + dateVal.getDate() + ", " + dateVal.getFullYear()
-
-        /*
-              var timeArray = [];
-              var bitVals = {
-                'BIT_YEAR': 1,
-                'BIT_MONTH': 2,
-                'BIT_WEEK': 4,
-                'BIT_DAY': 8,
-                'BIT_HOUR': 16,
-                'BIT_MINUTE': 32,
-              };
-              for (var k in bitVals) {
-                if (question.TIMEUNITS & bitVals[k]) {
-                  timeArray.push(k);
-                }
-              }
-
-              
-              var newDate = ""
-              if (in_array("BIT_MONTH", $timeArray))
-                  newDate  = monthNames[dateVal.getMonth()]
-              if (in_array("BIT_DAY", $timeArray))
-                  newDate += " " + dateval.getDate()
-              if (in_array("BIT_YEAR", $timeArray))
-                  newDate += ", " + dateval.getFullYear();
-              if (in_array("BIT_HOUR", $timeArray)){
-                var ampm = "AM"
-                var hours = dateval.getHours()
-                if(hours > 12){
-                  hours = 12 - hours
-                  ampm = "PM"
-                }
-                + " " + amount + " " + period
-                if(hours == 0)
-                  hours = 12
-                var minutes = dateval.getMinutes()
-                if(minutes < 10)
-                  minutes = "0" + minutes;
-              }
-              newDate += " " + hours + ":" + minutes + " " + ampm
-            }
-            */
         string = string.replace('<DATE ' + date + ' />', newDate)
     }
 
@@ -2147,7 +2161,7 @@ function interpretTags(string, alterId1, alterId2) {
                     console.log(options[question.ID][o].NAME, options[question.ID][o].ID.toString(), answers[array_id].VALUE.split(","))
                     if ($.inArray(options[question.ID][o].ID.toString(), answers[array_id].VALUE.split(",")) != -1){
                         lastAnswer = options[question.ID][o].NAME;
-                        console.log("answer compare", answer + ":" + lastAnswer);
+                        console.log("answer compare", answer + ":" + lastAnswer, (lastAnswer == answer));
                         if(lastAnswer == answer){
                             string = string.replace("<CONTAINS " + contains + " />", lastAnswer == answer ? 1 : 0);
                             break;
@@ -2164,60 +2178,7 @@ function interpretTags(string, alterId1, alterId2) {
         }
     }
 
-    // parse out and show logics
-    showlogics = string.match(/<IF (.+?) (==|!=|<|>|<=|>=)+ (.+?) \"(.+?)\" \/>/g);
-    for (k in showlogics) {
-        showlogic = showlogics[k];
-        exp = showlogic.match(/\<IF (.+?) (==|!=|<|>|<=|>=)+ (.+?) \"(.+?)\"/);
-        if (exp.length > 1) {
-            for (i = 1; i < 3; i++) {
-                if (i == 2 || !isNaN(parseInt(exp[i])))
-                    continue;
-                if (exp[i].match("/>")) {
-                    exp[i] = interpretTags(exp[i]);
-                    console.log("match exp ", exp[i])
-                } else {
-
-                    var qTitle = exp[i];
-                    var question = getQuestion(qTitle);
-                    if (!question)
-                        continue;
-
-                    var array_id = question.ID;
-                    if (typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
-                        array_id += "-" + alterId1;
-                    else if (typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
-                        array_id += 'and' + alterId2;
-
-                    var lastAnswer = "";
-                    var lastAnswerOps = [];
-
-                    if (typeof answers[array_id] != 'undefined') {
-                        if (question.ANSWERTYPE == "MULTIPLE_SELECTION") {
-                            for (o in options[question.ID]) {
-                                if ($.inArray(options[question.ID][o].ID, answers[array_id].VALUE.split(",")) != -1)
-                                    lastAnswerOps.push(options[question.ID][o].NAME);
-                            }
-                            lastAnswer = lastAnswerOps.join("<br>");
-                        } else {
-                            lastAnswer = answers[array_id].VALUE;
-                        }
-                    } else {
-                        return false;
-                    }
-                    exp[i] = lastAnswer;
-                }
-            }
-            logic = exp[1] + ' ' + exp[2] + ' ' + exp[3];
-            console.log("logic", exp, logic);
-            show = eval(logic);
-            if (show) {
-                string = string.replace(showlogic, exp[4]);
-            } else {
-                string = string.replace(showlogic, "");
-            }
-        }
-    }
+    
     return string;
 }
 
