@@ -31,9 +31,9 @@ class RegisterListenersPass implements CompilerPassInterface
     protected $eventAliasesParameter;
 
     private $hotPathEvents = [];
-    private $hotPathTagName;
+    private $hotPathTagName = 'container.hot_path';
     private $noPreloadEvents = [];
-    private $noPreloadTagName;
+    private $noPreloadTagName = 'container.no_preload';
 
     public function __construct(string $dispatcherService = 'event_dispatcher', string $listenerTag = 'kernel.event_listener', string $subscriberTag = 'kernel.event_subscriber', string $eventAliasesParameter = 'event_dispatcher.event_aliases')
     {
@@ -50,10 +50,14 @@ class RegisterListenersPass implements CompilerPassInterface
     /**
      * @return $this
      */
-    public function setHotPathEvents(array $hotPathEvents, string $tagName = 'container.hot_path')
+    public function setHotPathEvents(array $hotPathEvents)
     {
         $this->hotPathEvents = array_flip($hotPathEvents);
-        $this->hotPathTagName = $tagName;
+
+        if (1 < \func_num_args()) {
+            trigger_deprecation('symfony/event-dispatcher', '5.4', 'Configuring "$tagName" in "%s" is deprecated.', __METHOD__);
+            $this->hotPathTagName = func_get_arg(1);
+        }
 
         return $this;
     }
@@ -61,10 +65,14 @@ class RegisterListenersPass implements CompilerPassInterface
     /**
      * @return $this
      */
-    public function setNoPreloadEvents(array $noPreloadEvents, string $tagName = 'container.no_preload'): self
+    public function setNoPreloadEvents(array $noPreloadEvents): self
     {
         $this->noPreloadEvents = array_flip($noPreloadEvents);
-        $this->noPreloadTagName = $tagName;
+
+        if (1 < \func_num_args()) {
+            trigger_deprecation('symfony/event-dispatcher', '5.4', 'Configuring "$tagName" in "%s" is deprecated.', __METHOD__);
+            $this->noPreloadTagName = func_get_arg(1);
+        }
 
         return $this;
     }
@@ -102,19 +110,23 @@ class RegisterListenersPass implements CompilerPassInterface
 
                 if (!isset($event['method'])) {
                     $event['method'] = 'on'.preg_replace_callback([
-                        '/(?<=\b)[a-z]/i',
+                        '/(?<=\b|_)[a-z]/i',
                         '/[^a-z0-9]/i',
                     ], function ($matches) { return strtoupper($matches[0]); }, $event['event']);
                     $event['method'] = preg_replace('/[^a-z0-9]/i', '', $event['method']);
 
-                    if (null !== ($class = $container->getDefinition($id)->getClass()) && ($r = $container->getReflectionClass($class, false)) && !$r->hasMethod($event['method']) && $r->hasMethod('__invoke')) {
+                    if (null !== ($class = $container->getDefinition($id)->getClass()) && ($r = $container->getReflectionClass($class, false)) && !$r->hasMethod($event['method'])) {
+                        if (!$r->hasMethod('__invoke')) {
+                            throw new InvalidArgumentException(sprintf('None of the "%s" or "__invoke" methods exist for the service "%s". Please define the "method" attribute on "%s" tags.', $event['method'], $id, $this->listenerTag));
+                        }
+
                         $event['method'] = '__invoke';
                     }
                 }
 
                 $dispatcherDefinition = $globalDispatcherDefinition;
                 if (isset($event['dispatcher'])) {
-                    $dispatcherDefinition = $container->getDefinition($event['dispatcher']);
+                    $dispatcherDefinition = $container->findDefinition($event['dispatcher']);
                 }
 
                 $dispatcherDefinition->addMethodCall('addListener', [$event['event'], [new ServiceClosureArgument(new Reference($id)), $event['method']], $priority]);
@@ -153,7 +165,7 @@ class RegisterListenersPass implements CompilerPassInterface
                     continue;
                 }
 
-                $dispatcherDefinitions[$attributes['dispatcher']] = $container->getDefinition($attributes['dispatcher']);
+                $dispatcherDefinitions[$attributes['dispatcher']] = $container->findDefinition($attributes['dispatcher']);
             }
 
             if (!$dispatcherDefinitions) {

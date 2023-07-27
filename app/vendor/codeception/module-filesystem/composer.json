@@ -16,7 +16,7 @@
     "minimum-stability": "RC",
     "require": {
         "php": ">=5.6.0 <9.0",
-        "codeception/codeception": "^4.0",
+        "codeception/codeception": "*@dev",
         "symfony/finder": ">=2.7 <6.0"
     },
     "conflict": {

@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\bootstrap4;
@@ -17,7 +17,7 @@ use yii\base\InvalidConfigException;
  *
  * ```php
  * <?= $form->field($model, 'item_id')->widget(\yii\bootstrap4\ToggleButtonGroup::class, [
- *     'type' => \yii\bootstrap4\ToggleButtonGroup::TYPE_CHECKBOX
+ *     'type' => \yii\bootstrap4\ToggleButtonGroup::TYPE_CHECKBOX,
  *     'items' => [
  *         'fooValue' => 'BarLabel',
  *         'barValue' => 'BazLabel'
@@ -129,7 +129,8 @@ class ToggleButtonGroup extends InputWidget
             'label' => $label,
             'labelOptions' => $labelOptions,
             'autocomplete' => 'off',
-            'value' => $value
+            'value' => $value,
+            'id' => Html::getInputIdByName($name) . '-' . $index
         ]);
     }
 }

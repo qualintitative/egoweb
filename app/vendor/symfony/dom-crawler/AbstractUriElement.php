@@ -35,7 +35,7 @@ abstract class AbstractUriElement
 
     /**
      * @param \DOMElement $node       A \DOMElement instance
-     * @param string      $currentUri The URI of the page where the link is embedded (or the base href)
+     * @param string|null $currentUri The URI of the page where the link is embedded (or the base href)
      * @param string|null $method     The method to use for the link (GET by default)
      *
      * @throws \InvalidArgumentException if the node is not a link
@@ -104,7 +104,7 @@ abstract class AbstractUriElement
         }
 
         // absolute URL with relative schema
-        if (0 === strpos($uri, '//')) {
+        if (str_starts_with($uri, '//')) {
             return preg_replace('#^([^/]*)//.*$#', '$1', $baseUri).$uri;
         }
 
@@ -142,7 +142,7 @@ abstract class AbstractUriElement
             return $path;
         }
 
-        if ('.' === substr($path, -1)) {
+        if (str_ends_with($path, '.')) {
             $path .= '/';
         }
 

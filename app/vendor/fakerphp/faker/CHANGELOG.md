@@ -1,10 +1,94 @@
 # CHANGELOG
 
-## 2021-03-30, v1.14.1
+## [Unreleased](https://github.com/FakerPHP/Faker/compare/v1.23.0...main)
+
+## [2023-06-12, v1.23.0](https://github.com/FakerPHP/Faker/compare/v1.22.0..v1.23.0)
+
+- Update `randomElements` to return random number of elements when no count is provided (#658)
+
+## [2023-05-14, v1.22.0](https://github.com/FakerPHP/Faker/compare/v1.21.0..v1.22.0)
+
+- Fixed `randomElements()` to accept empty iterator (#605)
+- Added support for passing an `Enum` to `randomElement()` and `randomElements()` (#620)
+- Started rejecting invalid arguments passed to `randomElement()` and `randomElements()` (#642)
+
+## [2022-12-13, v1.21.0](https://github.com/FakerPHP/Faker/compare/v1.20.0..v1.21.0)
+
+- Dropped support for PHP 7.1, 7.2, and 7.3 (#543)
+- Added support for PHP 8.2 (#528)
+
+## [2022-07-20, v1.20.0](https://github.com/FakerPHP/Faker/compare/v1.19.0..v1.20.0)
+
+- Fixed typo in French phone number (#452)
+- Fixed some Hungarian naming bugs (#451)
+- Fixed bug where the NL-BE VAT generation was incorrect (#455)
+- Improve Turkish phone numbers for E164 and added landline support (#460)
+- Add Microsoft Edge User Agent (#464)
+- Added option to set image formats on Faker\Provider\Image (#473)
+- Added support for French color translations (#466)
+- Support filtering timezones by country code (#480)
+- Fixed typo in some greek names (#490)
+- Marked the Faker\Provider\Image as deprecated
+
+## [2022-02-02, v1.19.0](https://github.com/FakerPHP/Faker/compare/v1.18.0..v1.19.0)
+
+- Added color extension to core (#442)
+- Added conflict with `doctrine/persistence` below version `1.4`
+- Fix for support on different Doctrine ORM versions (#414)
+- Fix usage of `Doctrine\Persistence` dependency
+- Fix CZ Person birthNumber docblock return type (#437)
+- Fix is_IS Person docbock types (#439)
+- Fix is_IS Address docbock type (#438)
+- Fix regexify escape backslash in character class (#434)
+- Removed UUID from Generator to be able to extend it (#441)
+
+## [2022-01-23, v1.18.0](https://github.com/FakerPHP/Faker/compare/v1.17.0..v1.18.0)
+
+- Deprecated UUID, use uuid3 to specify version (#427)
+- Reset formatters when adding a new provider (#366)
+- Helper methods to use our custom generators (#155)
+- Set allow-plugins for Composer 2.2 (#405)
+- Fix kk_KZ\Person::individualIdentificationNumber generation (#411)
+- Allow for -> syntax to be used in parsing (#423)
+- Person->name was missing string return type (#424)
+- Generate a valid BE TAX number (#415)
+- Added the UUID extension to Core (#427)
+
+## [2021-12-05, v1.17.0](https://github.com/FakerPHP/Faker/compare/v1.16.0..v1.17.0)
+
+- Partial PHP 8.1 compatibility (#373)
+- Add payment provider for `ne_NP` locale (#375)
+- Add Egyptian Arabic `ar_EG` locale (#377)
+- Updated list of South African TLDs (#383)
+- Fixed formatting of E.164 numbers (#380)
+- Allow `symfony/deprecation-contracts` `^3.0` (#397)
+
+## [2021-09-06, v1.16.0](https://github.com/FakerPHP/Faker/compare/v1.15.0..v1.16.0)
+
+- Add Company extension
+- Add Address extension
+- Add Person extension
+- Add PhoneNumber extension
+- Add VersionExtension (#350)
+- Stricter types in Extension\Container and Extension\GeneratorAwareExtension (#345)
+- Fix deprecated property access in `nl_NL` (#348)
+- Add support for `psr/container` >= 2.0 (#354)
+- Add missing union types in Faker\Generator (#352)
+
+## [2021-07-06, v1.15.0](https://github.com/FakerPHP/Faker/compare/v1.14.1..v1.15.0)
+
+- Updated the generator phpdoc to help identify magic methods (#307)
+- Prevent direct access and triggered deprecation warning for "word" (#302)
+- Updated length on all global e164 numbers (#301)
+- Updated last names from different source (#312)
+- Don't generate birth number of '000' for Swedish personal identity (#306)
+- Add job list for localization id_ID (#339)
+
+## [2021-03-30, v1.14.1](https://github.com/FakerPHP/Faker/compare/v1.14.0..v1.14.1)
 
 - Fix where randomNumber and randomFloat would return a 0 value (#291 / #292)
 
-## 2021-03-29, v1.14.0
+## [2021-03-29, v1.14.0](https://github.com/FakerPHP/Faker/compare/v1.13.0..v1.14.0)
 
 - Fix for realText to ensure the text keeps closer to its boundaries (#152)
 - Fix where regexify produces a random character instead of a literal dot (#135
@@ -36,7 +120,7 @@
 - Various code style updates
 - Added a note about our breaking change promise (#273)
 
-## 2020-12-18, v1.13.0
+## [2020-12-18, v1.13.0](https://github.com/FakerPHP/Faker/compare/v1.12.1..v1.13.0)
 
 Several fixes and new additions in this release. A lot of cleanup has been done
 on the codebase on both tests and consistency.
@@ -64,11 +148,11 @@ on the codebase on both tests and consistency.
 - Remove json_decode from emoji generation (#123)
 - Remove ro street address (#146)
 
-## 2020-12-11, v1.12.1
+## [2020-12-11, v1.12.1](https://github.com/FakerPHP/Faker/compare/v1.12.0..v1.12.1)
 
 This is a security release that prevents a hacker to execute code on the server.
 
-## 2020-11-23, v1.12.0
+## [2020-11-23, v1.12.0](https://github.com/FakerPHP/Faker/compare/v1.11.0..v1.12.0)
 
 - Fix ro_RO first and last day of year calculation offset (#65)
 - Fix en_NG locale test namespaces that did not match PSR-4 (#57)
@@ -76,20 +160,20 @@ This is a security release that prevents a hacker to execute code on the server.
 - Added provider for Lithuanian municipalities (#58)
 - Added blood types provider (#61)
 
-## 2020-11-15, v1.11.0
+## [2020-11-15, v1.11.0](https://github.com/FakerPHP/Faker/compare/v1.10.1..v1.11.0)
 
 - Added Provider for Swedish Municipalities
 - Updates to person names in pt_BR
 - Many code style changes
 
-## 2020-10-28, v1.10.1
+## [2020-10-28, v1.10.1](https://github.com/FakerPHP/Faker/compare/v1.10.0..v1.10.1)
 
 - Updates the Danish addresses in dk_DK
 - Removed offense company names in nl_NL
 - Clarify changelog with original fork
 - Standin replacement for LoremPixel to Placeholder.com (#11)
 
-## 2020-10-27, v1.10.0
+## [2020-10-27, v1.10.0](https://github.com/FakerPHP/Faker/compare/v1.9.1..v1.10.0)
 
 - Support PHP 7.1-8.0
 - Fix typo in de_DE Company Provider

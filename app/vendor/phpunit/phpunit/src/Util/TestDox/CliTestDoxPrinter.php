@@ -65,7 +65,6 @@ class CliTestDoxPrinter extends TestDoxPrinter
         " \e[36m◑\e[0m running tests",
         " \e[36m◒\e[0m running tests",
     ];
-
     private const STATUS_STYLES = [
         BaseTestRunner::STATUS_PASSED => [
             'symbol' => '✔',
@@ -286,7 +285,8 @@ class CliTestDoxPrinter extends TestDoxPrinter
 
         if ($this->colors) {
             $color  = self::STATUS_STYLES[$result['status']]['color'] ?? '';
-            $prefix = array_map(static function ($p) use ($color) {
+            $prefix = array_map(static function ($p) use ($color)
+            {
                 return Color::colorize($color, $p);
             }, self::PREFIX_DECORATED);
         }

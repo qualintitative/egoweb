@@ -8,6 +8,8 @@ class Uuid extends Base
      * Generate name based md5 UUID (version 3).
      *
      * @example '7e57d004-2b97-0e7a-b45f-5387367791cd'
+     *
+     * @return string
      */
     public static function uuid()
     {
@@ -51,7 +53,7 @@ class Uuid extends Base
             $byte[12],
             $byte[13],
             $byte[14],
-            $byte[15]
+            $byte[15],
         );
     }
 }

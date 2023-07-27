@@ -2,70 +2,360 @@
 
 namespace Faker;
 
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
+use Faker\Container\ContainerInterface;
 
 /**
- * @property string $name
- *
- * @method string name(string $gender = null)
- *
- * @property string $firstName
- *
- * @method string firstName(string $gender = null)
- *
- * @property string $firstNameMale
- * @property string $firstNameFemale
- * @property string $lastName
- * @property string $title
- *
- * @method string title(string $gender = null)
- *
- * @property string $titleMale
- * @property string $titleFemale
  * @property string $citySuffix
+ *
+ * @method string citySuffix()
+ *
  * @property string $streetSuffix
+ *
+ * @method string streetSuffix()
+ *
  * @property string $buildingNumber
+ *
+ * @method string buildingNumber()
+ *
  * @property string $city
+ *
+ * @method string city()
+ *
  * @property string $streetName
+ *
+ * @method string streetName()
+ *
  * @property string $streetAddress
- * @property string $secondaryAddress
+ *
+ * @method string streetAddress()
+ *
  * @property string $postcode
+ *
+ * @method string postcode()
+ *
  * @property string $address
- * @property string $state
+ *
+ * @method string address()
+ *
  * @property string $country
- * @property float  $latitude
- * @property float  $longitude
- * @property string $ean13
- * @property string $ean8
- * @property string $isbn13
- * @property string $isbn10
- * @property string $phoneNumber
- * @property string $e164PhoneNumber
- * @property string $catchPhrase
- * @property string $bs
+ *
+ * @method string country()
+ *
+ * @property float $latitude
+ *
+ * @method float latitude($min = -90, $max = 90)
+ *
+ * @property float $longitude
+ *
+ * @method float longitude($min = -180, $max = 180)
+ *
+ * @property float[] $localCoordinates
+ *
+ * @method float[] localCoordinates()
+ *
+ * @property int $randomDigitNotNull
+ *
+ * @method int randomDigitNotNull()
+ *
+ * @property mixed $passthrough
+ *
+ * @method mixed passthrough($value)
+ *
+ * @property string $randomLetter
+ *
+ * @method string randomLetter()
+ *
+ * @property string $randomAscii
+ *
+ * @method string randomAscii()
+ *
+ * @property array $randomElements
+ *
+ * @method array randomElements($array = ['a', 'b', 'c'], $count = 1, $allowDuplicates = false)
+ *
+ * @property mixed $randomElement
+ *
+ * @method mixed randomElement($array = ['a', 'b', 'c'])
+ *
+ * @property int|string|null $randomKey
+ *
+ * @method int|string|null randomKey($array = [])
+ *
+ * @property array|string $shuffle
+ *
+ * @method array|string shuffle($arg = '')
+ *
+ * @property array $shuffleArray
+ *
+ * @method array shuffleArray($array = [])
+ *
+ * @property string $shuffleString
+ *
+ * @method string shuffleString($string = '', $encoding = 'UTF-8')
+ *
+ * @property string $numerify
+ *
+ * @method string numerify($string = '###')
+ *
+ * @property string $lexify
+ *
+ * @method string lexify($string = '????')
+ *
+ * @property string $bothify
+ *
+ * @method string bothify($string = '## ??')
+ *
+ * @property string $asciify
+ *
+ * @method string asciify($string = '****')
+ *
+ * @property string $regexify
+ *
+ * @method string regexify($regex = '')
+ *
+ * @property string $toLower
+ *
+ * @method string toLower($string = '')
+ *
+ * @property string $toUpper
+ *
+ * @method string toUpper($string = '')
+ *
+ * @property int $biasedNumberBetween
+ *
+ * @method int biasedNumberBetween($min = 0, $max = 100, $function = 'sqrt')
+ *
+ * @property string $hexColor
+ *
+ * @method string hexColor()
+ *
+ * @property string $safeHexColor
+ *
+ * @method string safeHexColor()
+ *
+ * @property array $rgbColorAsArray
+ *
+ * @method array rgbColorAsArray()
+ *
+ * @property string $rgbColor
+ *
+ * @method string rgbColor()
+ *
+ * @property string $rgbCssColor
+ *
+ * @method string rgbCssColor()
+ *
+ * @property string $rgbaCssColor
+ *
+ * @method string rgbaCssColor()
+ *
+ * @property string $safeColorName
+ *
+ * @method string safeColorName()
+ *
+ * @property string $colorName
+ *
+ * @method string colorName()
+ *
+ * @property string $hslColor
+ *
+ * @method string hslColor()
+ *
+ * @property array $hslColorAsArray
+ *
+ * @method array hslColorAsArray()
+ *
  * @property string $company
+ *
+ * @method string company()
+ *
  * @property string $companySuffix
+ *
+ * @method string companySuffix()
+ *
  * @property string $jobTitle
- * @property string $creditCardType
- * @property string $creditCardNumber
  *
- * @method string creditCardNumber($type = null, $formatted = false, $separator = '-')
+ * @method string jobTitle()
  *
- * @property \DateTime $creditCardExpirationDate
- * @property string $creditCardExpirationDateString
- * @property array $creditCardDetails
- * @property string $bankAccountNumber
+ * @property int $unixTime
  *
- * @method string iban($countryCode = null, $prefix = '', $length = null)
+ * @method int unixTime($max = 'now')
  *
- * @property string $swiftBicNumber
- * @property string $vat
+ * @property \DateTime $dateTime
+ *
+ * @method \DateTime dateTime($max = 'now', $timezone = null)
+ *
+ * @property \DateTime $dateTimeAD
+ *
+ * @method \DateTime dateTimeAD($max = 'now', $timezone = null)
+ *
+ * @property string $iso8601
+ *
+ * @method string iso8601($max = 'now')
+ *
+ * @property string $date
+ *
+ * @method string date($format = 'Y-m-d', $max = 'now')
+ *
+ * @property string $time
+ *
+ * @method string time($format = 'H:i:s', $max = 'now')
+ *
+ * @property \DateTime $dateTimeBetween
+ *
+ * @method \DateTime dateTimeBetween($startDate = '-30 years', $endDate = 'now', $timezone = null)
+ *
+ * @property \DateTime $dateTimeInInterval
+ *
+ * @method \DateTime dateTimeInInterval($date = '-30 years', $interval = '+5 days', $timezone = null)
+ *
+ * @property \DateTime $dateTimeThisCentury
+ *
+ * @method \DateTime dateTimeThisCentury($max = 'now', $timezone = null)
+ *
+ * @property \DateTime $dateTimeThisDecade
+ *
+ * @method \DateTime dateTimeThisDecade($max = 'now', $timezone = null)
+ *
+ * @property \DateTime $dateTimeThisYear
+ *
+ * @method \DateTime dateTimeThisYear($max = 'now', $timezone = null)
+ *
+ * @property \DateTime $dateTimeThisMonth
+ *
+ * @method \DateTime dateTimeThisMonth($max = 'now', $timezone = null)
+ *
+ * @property string $amPm
+ *
+ * @method string amPm($max = 'now')
+ *
+ * @property string $dayOfMonth
+ *
+ * @method string dayOfMonth($max = 'now')
+ *
+ * @property string $dayOfWeek
+ *
+ * @method string dayOfWeek($max = 'now')
+ *
+ * @property string $month
+ *
+ * @method string month($max = 'now')
+ *
+ * @property string $monthName
+ *
+ * @method string monthName($max = 'now')
+ *
+ * @property string $year
+ *
+ * @method string year($max = 'now')
+ *
+ * @property string $century
+ *
+ * @method string century()
+ *
+ * @property string $timezone
+ *
+ * @method string timezone($countryCode = null)
+ *
+ * @property void $setDefaultTimezone
+ *
+ * @method void setDefaultTimezone($timezone = null)
+ *
+ * @property string $getDefaultTimezone
+ *
+ * @method string getDefaultTimezone()
+ *
+ * @property string $file
+ *
+ * @method string file($sourceDirectory = '/tmp', $targetDirectory = '/tmp', $fullPath = true)
+ *
+ * @property string $randomHtml
+ *
+ * @method string randomHtml($maxDepth = 4, $maxWidth = 4)
+ *
+ * @property string $imageUrl
+ *
+ * @method string imageUrl($width = 640, $height = 480, $category = null, $randomize = true, $word = null, $gray = false, string $format = 'png')
+ *
+ * @property string $image
+ *
+ * @method string image($dir = null, $width = 640, $height = 480, $category = null, $fullPath = true, $randomize = true, $word = null, $gray = false)
+ *
+ * @property string $email
+ *
+ * @method string email()
+ *
+ * @property string $safeEmail
+ *
+ * @method string safeEmail()
+ *
+ * @property string $freeEmail
+ *
+ * @method string freeEmail()
+ *
+ * @property string $companyEmail
+ *
+ * @method string companyEmail()
+ *
+ * @property string $freeEmailDomain
+ *
+ * @method string freeEmailDomain()
+ *
+ * @property string $safeEmailDomain
+ *
+ * @method string safeEmailDomain()
+ *
+ * @property string $userName
+ *
+ * @method string userName()
+ *
+ * @property string $password
+ *
+ * @method string password($minLength = 6, $maxLength = 20)
+ *
+ * @property string $domainName
+ *
+ * @method string domainName()
+ *
+ * @property string $domainWord
+ *
+ * @method string domainWord()
+ *
+ * @property string $tld
+ *
+ * @method string tld()
+ *
+ * @property string $url
+ *
+ * @method string url()
+ *
+ * @property string $slug
+ *
+ * @method string slug($nbWords = 6, $variableNbWords = true)
+ *
+ * @property string $ipv4
+ *
+ * @method string ipv4()
+ *
+ * @property string $ipv6
+ *
+ * @method string ipv6()
+ *
+ * @property string $localIpv4
+ *
+ * @method string localIpv4()
+ *
+ * @property string $macAddress
+ *
+ * @method string macAddress()
+ *
  * @property string $word
+ *
+ * @method string word()
+ *
  * @property array|string $words
  *
  * @method array|string words($nb = 3, $asText = false)
- * @method string word()
  *
  * @property string $sentence
  *
@@ -86,133 +376,182 @@ use Psr\Container\ContainerInterface;
  * @property string $text
  *
  * @method string text($maxNbChars = 200)
- * @method string realText($maxNbChars = 200, $indexSize = 2)
- * @method string realTextBetween($minNbChars = 150, $maxNbChars = 200, $indexSize = 2)
  *
- * @property string $email
- * @property string $safeEmail
- * @property string $freeEmail
- * @property string $companyEmail
- * @property string $freeEmailDomain
- * @property string $safeEmailDomain
- * @property string $userName
- * @property string $password
- *
- * @method string password($minLength = 6, $maxLength = 20)
- *
- * @property string $domainName
- * @property string $domainWord
- * @property string $tld
- * @property string $url
- * @property string $slug
- *
- * @method string slug($nbWords = 6, $variableNbWords = true)
- *
- * @property string $ipv4
- * @property string $ipv6
- * @property string $localIpv4
- * @property string $macAddress
- * @property int       $unixTime
- * @property \DateTime $dateTime
- * @property \DateTime $dateTimeAD
- * @property string    $iso8601
- * @property \DateTime $dateTimeThisCentury
- * @property \DateTime $dateTimeThisDecade
- * @property \DateTime $dateTimeThisYear
- * @property \DateTime $dateTimeThisMonth
- * @property string    $amPm
- * @property string    $dayOfMonth
- * @property string    $dayOfWeek
- * @property string    $month
- * @property string    $monthName
- * @property string    $year
- * @property string    $century
- * @property string    $timezone
- *
- * @method string amPm($max = 'now')
- * @method string date($format = 'Y-m-d', $max = 'now')
- * @method string dayOfMonth($max = 'now')
- * @method string dayOfWeek($max = 'now')
- * @method string iso8601($max = 'now')
- * @method string month($max = 'now')
- * @method string monthName($max = 'now')
- * @method string time($format = 'H:i:s', $max = 'now')
- * @method int unixTime($max = 'now')
- * @method string year($max = 'now')
- * @method \DateTime dateTime($max = 'now', $timezone = null)
- * @method \DateTime dateTimeAd($max = 'now', $timezone = null)
- * @method \DateTime dateTimeBetween($startDate = '-30 years', $endDate = 'now', $timezone = null)
- * @method \DateTime dateTimeInInterval($date = '-30 years', $interval = '+5 days', $timezone = null)
- * @method \DateTime dateTimeThisCentury($max = 'now', $timezone = null)
- * @method \DateTime dateTimeThisDecade($max = 'now', $timezone = null)
- * @method \DateTime dateTimeThisYear($max = 'now', $timezone = null)
- * @method \DateTime dateTimeThisMonth($max = 'now', $timezone = null)
- *
- * @property string $md5
- * @property string $sha1
- * @property string $sha256
- * @property string $locale
- * @property string $countryCode
- * @property string $countryISOAlpha3
- * @property string $languageCode
- * @property string $currencyCode
  * @property bool $boolean
  *
  * @method bool boolean($chanceOfGettingTrue = 50)
  *
- * @property int    $randomDigit
- * @property int    $randomDigitNot
- * @property int    $randomDigitNotNull
- * @property string $randomLetter
- * @property string $randomAscii
+ * @property string $md5
  *
- * @method int|string|null randomKey(array $array = array())
- * @method mixed randomElement(array $array = array('a', 'b', 'c'))
- * @method array randomElements(array $array = array('a', 'b', 'c'), $count = 1, $allowDuplicates = false)
- * @method array|string shuffle($arg = '')
- * @method array shuffleArray(array $array = array())
- * @method string shuffleString($string = '', $encoding = 'UTF-8')
- * @method string numerify($string = '###')
- * @method string lexify($string = '????')
- * @method string bothify($string = '## ??')
- * @method string asciify($string = '****')
- * @method string regexify($regex = '')
- * @method string toLower($string = '')
- * @method string toUpper($string = '')
- * @method Generator optional($weight = 0.5, $default = null)
- * @method Generator unique($reset = false, $maxRetries = 10000)
- * @method Generator valid($validator = null, $maxRetries = 10000)
- * @method mixed passthrough($passthrough)
- * @method int biasedNumberBetween($min = 0, $max = 100, $function = 'sqrt')
+ * @method string md5()
+ *
+ * @property string $sha1
+ *
+ * @method string sha1()
+ *
+ * @property string $sha256
+ *
+ * @method string sha256()
+ *
+ * @property string $locale
+ *
+ * @method string locale()
+ *
+ * @property string $countryCode
+ *
+ * @method string countryCode()
+ *
+ * @property string $countryISOAlpha3
+ *
+ * @method string countryISOAlpha3()
+ *
+ * @property string $languageCode
+ *
+ * @method string languageCode()
+ *
+ * @property string $currencyCode
+ *
+ * @method string currencyCode()
+ *
+ * @property string $emoji
+ *
+ * @method string emoji()
+ *
+ * @property string $creditCardType
+ *
+ * @method string creditCardType()
+ *
+ * @property string $creditCardNumber
+ *
+ * @method string creditCardNumber($type = null, $formatted = false, $separator = '-')
+ *
+ * @property \DateTime $creditCardExpirationDate
+ *
+ * @method \DateTime creditCardExpirationDate($valid = true)
+ *
+ * @property string $creditCardExpirationDateString
+ *
+ * @method string creditCardExpirationDateString($valid = true, $expirationDateFormat = null)
+ *
+ * @property array $creditCardDetails
+ *
+ * @method array creditCardDetails($valid = true)
+ *
+ * @property string $iban
+ *
+ * @method string iban($countryCode = null, $prefix = '', $length = null)
+ *
+ * @property string $swiftBicNumber
+ *
+ * @method string swiftBicNumber()
+ *
+ * @property string $name
+ *
+ * @method string name($gender = null)
+ *
+ * @property string $firstName
+ *
+ * @method string firstName($gender = null)
+ *
+ * @property string $firstNameMale
+ *
+ * @method string firstNameMale()
+ *
+ * @property string $firstNameFemale
+ *
+ * @method string firstNameFemale()
+ *
+ * @property string $lastName
+ *
+ * @method string lastName()
+ *
+ * @property string $title
+ *
+ * @method string title($gender = null)
+ *
+ * @property string $titleMale
+ *
+ * @method string titleMale()
+ *
+ * @property string $titleFemale
+ *
+ * @method string titleFemale()
+ *
+ * @property string $phoneNumber
+ *
+ * @method string phoneNumber()
+ *
+ * @property string $e164PhoneNumber
+ *
+ * @method string e164PhoneNumber()
+ *
+ * @property int $imei
+ *
+ * @method int imei()
+ *
+ * @property string $realText
+ *
+ * @method string realText($maxNbChars = 200, $indexSize = 2)
+ *
+ * @property string $realTextBetween
+ *
+ * @method string realTextBetween($minNbChars = 160, $maxNbChars = 200, $indexSize = 2)
  *
  * @property string $macProcessor
+ *
+ * @method string macProcessor()
+ *
  * @property string $linuxProcessor
+ *
+ * @method string linuxProcessor()
+ *
  * @property string $userAgent
+ *
+ * @method string userAgent()
+ *
  * @property string $chrome
+ *
+ * @method string chrome()
+ *
+ * @property string $msedge
+ *
+ * @method string msedge()
+ *
  * @property string $firefox
+ *
+ * @method string firefox()
+ *
  * @property string $safari
+ *
+ * @method string safari()
+ *
  * @property string $opera
+ *
+ * @method string opera()
+ *
  * @property string $internetExplorer
+ *
+ * @method string internetExplorer()
+ *
  * @property string $windowsPlatformToken
+ *
+ * @method string windowsPlatformToken()
+ *
  * @property string $macPlatformToken
+ *
+ * @method string macPlatformToken()
+ *
+ * @property string $iosMobileToken
+ *
+ * @method string iosMobileToken()
+ *
  * @property string $linuxPlatformToken
+ *
+ * @method string linuxPlatformToken()
+ *
  * @property string $uuid
- * @property string $mimeType
- * @property string $fileExtension
  *
- * @method string file($sourceDirectory = '/tmp', $targetDirectory = '/tmp', $fullPath = true)
- * @method string imageUrl($width = 640, $height = 480, $category = null, $randomize = true, $word = null, $gray = false)
- * @method string image($dir = null, $width = 640, $height = 480, $category = null, $fullPath = true, $randomize = true, $word = null)
- *
- * @property string $hexColor
- * @property string $safeHexColor
- * @property string $rgbColor
- * @property array $rgbColorAsArray
- * @property string $rgbCssColor
- * @property string $safeColorName
- * @property string $colorName
- *
- * @method string randomHtml($maxDepth = 4, $maxWidth = 4)
+ * @method string uuid()
  */
 class Generator
 {
@@ -221,9 +560,14 @@ class Generator
 
     private $container;
 
+    /**
+     * @var UniqueGenerator
+     */
+    private $uniqueGenerator;
+
     public function __construct(ContainerInterface $container = null)
     {
-        $this->container = $container ?: Extension\ContainerBuilder::getDefault();
+        $this->container = $container ?: Container\ContainerBuilder::getDefault();
     }
 
     /**
@@ -231,7 +575,6 @@ class Generator
      *
      * @param class-string<T> $id
      *
-     * @throws ContainerExceptionInterface
      * @throws Extension\ExtensionNotFound
      *
      * @return T
@@ -241,7 +584,7 @@ class Generator
         if (!$this->container->has($id)) {
             throw new Extension\ExtensionNotFound(sprintf(
                 'No Faker extension with id "%s" was loaded.',
-                $id
+                $id,
             ));
         }
 
@@ -257,11 +600,86 @@ class Generator
     public function addProvider($provider)
     {
         array_unshift($this->providers, $provider);
+
+        $this->formatters = [];
     }
 
     public function getProviders()
     {
         return $this->providers;
+    }
+
+    /**
+     * With the unique generator you are guaranteed to never get the same two
+     * values.
+     *
+     * <code>
+     * // will never return twice the same value
+     * $faker->unique()->randomElement(array(1, 2, 3));
+     * </code>
+     *
+     * @param bool $reset      If set to true, resets the list of existing values
+     * @param int  $maxRetries Maximum number of retries to find a unique value,
+     *                         After which an OverflowException is thrown.
+     *
+     * @throws \OverflowException When no unique value can be found by iterating $maxRetries times
+     *
+     * @return self A proxy class returning only non-existing values
+     */
+    public function unique($reset = false, $maxRetries = 10000)
+    {
+        if ($reset || $this->uniqueGenerator === null) {
+            $this->uniqueGenerator = new UniqueGenerator($this, $maxRetries);
+        }
+
+        return $this->uniqueGenerator;
+    }
+
+    /**
+     * Get a value only some percentage of the time.
+     *
+     * @param float $weight A probability between 0 and 1, 0 means that we always get the default value.
+     *
+     * @return self
+     */
+    public function optional(float $weight = 0.5, $default = null)
+    {
+        if ($weight > 1) {
+            trigger_deprecation('fakerphp/faker', '1.16', 'First argument ($weight) to method "optional()" must be between 0 and 1. You passed %f, we assume you meant %f.', $weight, $weight / 100);
+            $weight = $weight / 100;
+        }
+
+        return new ChanceGenerator($this, $weight, $default);
+    }
+
+    /**
+     * To make sure the value meet some criteria, pass a callable that verifies the
+     * output. If the validator fails, the generator will try again.
+     *
+     * The value validity is determined by a function passed as first argument.
+     *
+     * <code>
+     * $values = array();
+     * $evenValidator = function ($digit) {
+     *   return $digit % 2 === 0;
+     * };
+     * for ($i=0; $i < 10; $i++) {
+     *   $values []= $faker->valid($evenValidator)->randomDigit;
+     * }
+     * print_r($values); // [0, 4, 8, 4, 2, 6, 0, 8, 8, 6]
+     * </code>
+     *
+     * @param ?\Closure $validator  A function returning true for valid values
+     * @param int       $maxRetries Maximum number of retries to find a valid value,
+     *                              After which an OverflowException is thrown.
+     *
+     * @throws \OverflowException When no valid value can be found by iterating $maxRetries times
+     *
+     * @return self A proxy class returning only valid values
+     */
+    public function valid(?\Closure $validator = null, int $maxRetries = 10000)
+    {
+        return new ValidGenerator($this, $validator, $maxRetries);
     }
 
     public function seed($seed = null)
@@ -273,31 +691,44 @@ class Generator
         }
     }
 
-    public function format($formatter, $arguments = [])
+    public function format($format, $arguments = [])
     {
-        return call_user_func_array($this->getFormatter($formatter), $arguments);
+        return call_user_func_array($this->getFormatter($format), $arguments);
     }
 
     /**
-     * @param string $formatter
+     * @param string $format
      *
      * @return callable
      */
-    public function getFormatter($formatter)
+    public function getFormatter($format)
     {
-        if (isset($this->formatters[$formatter])) {
-            return $this->formatters[$formatter];
+        if (isset($this->formatters[$format])) {
+            return $this->formatters[$format];
+        }
+
+        if (method_exists($this, $format)) {
+            $this->formatters[$format] = [$this, $format];
+
+            return $this->formatters[$format];
+        }
+
+        // "Faker\Core\Barcode->ean13"
+        if (preg_match('|^([a-zA-Z0-9\\\]+)->([a-zA-Z0-9]+)$|', $format, $matches)) {
+            $this->formatters[$format] = [$this->ext($matches[1]), $matches[2]];
+
+            return $this->formatters[$format];
         }
 
         foreach ($this->providers as $provider) {
-            if (method_exists($provider, $formatter)) {
-                $this->formatters[$formatter] = [$provider, $formatter];
+            if (method_exists($provider, $format)) {
+                $this->formatters[$format] = [$provider, $format];
 
-                return $this->formatters[$formatter];
+                return $this->formatters[$format];
             }
         }
 
-        throw new \InvalidArgumentException(sprintf('Unknown formatter "%s"', $formatter));
+        throw new \InvalidArgumentException(sprintf('Unknown format "%s"', $format));
     }
 
     /**
@@ -309,7 +740,11 @@ class Generator
      */
     public function parse($string)
     {
-        return preg_replace_callback('/\{\{\s?(\w+)\s?\}\}/u', [$this, 'callFormatWithMatches'], $string);
+        $callback = function ($matches) {
+            return $this->format($matches[1]);
+        };
+
+        return preg_replace_callback('/{{\s?(\w+|[\w\\\]+->\w+?)\s?}}/u', $callback, $string);
     }
 
     /**
@@ -458,7 +893,7 @@ class Generator
         return $this->ext(Extension\NumberExtension::class)->randomFloat(
             $nbMaxDecimals !== null ? (int) $nbMaxDecimals : null,
             (float) $min,
-            $max !== null ? (float) $max : null
+            $max !== null ? (float) $max : null,
         );
     }
 
@@ -476,12 +911,32 @@ class Generator
     {
         return $this->ext(Extension\NumberExtension::class)->randomNumber(
             $nbDigits !== null ? (int) $nbDigits : null,
-            (bool) $strict
+            (bool) $strict,
         );
     }
 
+    /**
+     * Get a version number in semantic versioning syntax 2.0.0. (https://semver.org/spec/v2.0.0.html)
+     *
+     * @param bool $preRelease Pre release parts may be randomly included
+     * @param bool $build      Build parts may be randomly included
+     *
+     * @example 1.0.0
+     * @example 1.0.0-alpha.1
+     * @example 1.0.0-alpha.1+b71f04d
+     */
+    public function semver(bool $preRelease = false, bool $build = false): string
+    {
+        return $this->ext(Extension\VersionExtension::class)->semver($preRelease, $build);
+    }
+
+    /**
+     * @deprecated
+     */
     protected function callFormatWithMatches($matches)
     {
+        trigger_deprecation('fakerphp/faker', '1.14', 'Protected method "callFormatWithMatches()" is deprecated and will be removed.');
+
         return $this->format($matches[1]);
     }
 

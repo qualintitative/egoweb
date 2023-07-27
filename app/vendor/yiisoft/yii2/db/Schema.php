@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\db;
@@ -22,19 +22,17 @@ use yii\caching\TagDependency;
  * Schema represents the database schema information that is DBMS specific.
  *
  * @property-read string $lastInsertID The row ID of the last row inserted, or the last value retrieved from
- * the sequence object. This property is read-only.
- * @property-read QueryBuilder $queryBuilder The query builder for this connection. This property is
- * read-only.
- * @property-read string[] $schemaNames All schema names in the database, except system schemas. This property
- * is read-only.
- * @property-read string $serverVersion Server version as a string. This property is read-only.
- * @property-read string[] $tableNames All table names in the database. This property is read-only.
+ * the sequence object.
+ * @property-read QueryBuilder $queryBuilder The query builder for this connection.
+ * @property-read string[] $schemaNames All schema names in the database, except system schemas.
+ * @property-read string $serverVersion Server version as a string.
+ * @property-read string[] $tableNames All table names in the database.
  * @property-read TableSchema[] $tableSchemas The metadata for all tables in the database. Each array element
- * is an instance of [[TableSchema]] or its child class. This property is read-only.
+ * is an instance of [[TableSchema]] or its child class.
  * @property-write string $transactionIsolationLevel The transaction isolation level to use for this
  * transaction. This can be one of [[Transaction::READ_UNCOMMITTED]], [[Transaction::READ_COMMITTED]],
  * [[Transaction::REPEATABLE_READ]] and [[Transaction::SERIALIZABLE]] but also a string containing DBMS specific
- * syntax to be used after `SET TRANSACTION ISOLATION LEVEL`. This property is write-only.
+ * syntax to be used after `SET TRANSACTION ISOLATION LEVEL`.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @author Sergey Makinen <sergey@makinen.ru>
@@ -256,7 +254,7 @@ abstract class Schema extends BaseObject
      * Determines the PDO type for the given PHP data value.
      * @param mixed $data the data whose PDO type is to be determined
      * @return int the PDO type
-     * @see https://secure.php.net/manual/en/pdo.constants.php
+     * @see https://www.php.net/manual/en/pdo.constants.php
      */
     public function getPdoType($data)
     {
@@ -315,7 +313,7 @@ abstract class Schema extends BaseObject
      */
     public function createQueryBuilder()
     {
-        return new QueryBuilder($this->db);
+        return Yii::createObject(QueryBuilder::className(), [$this->db]);
     }
 
     /**
@@ -324,13 +322,13 @@ abstract class Schema extends BaseObject
      * This method may be overridden by child classes to create a DBMS-specific column schema builder.
      *
      * @param string $type type of the column. See [[ColumnSchemaBuilder::$type]].
-     * @param int|string|array $length length or precision of the column. See [[ColumnSchemaBuilder::$length]].
+     * @param int|string|array|null $length length or precision of the column. See [[ColumnSchemaBuilder::$length]].
      * @return ColumnSchemaBuilder column schema builder instance
      * @since 2.0.6
      */
     public function createColumnSchemaBuilder($type, $length = null)
     {
-        return new ColumnSchemaBuilder($type, $length);
+        return Yii::createObject(ColumnSchemaBuilder::className(), [$type, $length]);
     }
 
     /**
@@ -361,7 +359,7 @@ abstract class Schema extends BaseObject
      * @param string $sequenceName name of the sequence object (required by some DBMS)
      * @return string the row ID of the last row inserted, or the last value retrieved from the sequence object
      * @throws InvalidCallException if the DB connection is not active
-     * @see https://secure.php.net/manual/en/function.PDO-lastInsertId.php
+     * @see https://www.php.net/manual/en/function.PDO-lastInsertId.php
      */
     public function getLastInsertID($sequenceName = '')
     {
@@ -373,7 +371,7 @@ abstract class Schema extends BaseObject
     }
 
     /**
-     * @return bool whether this DBMS supports [savepoint](http://en.wikipedia.org/wiki/Savepoint).
+     * @return bool whether this DBMS supports [savepoint](https://en.wikipedia.org/wiki/Savepoint).
      */
     public function supportsSavepoint()
     {
@@ -413,7 +411,7 @@ abstract class Schema extends BaseObject
      * This can be one of [[Transaction::READ_UNCOMMITTED]], [[Transaction::READ_COMMITTED]], [[Transaction::REPEATABLE_READ]]
      * and [[Transaction::SERIALIZABLE]] but also a string containing DBMS specific syntax to be used
      * after `SET TRANSACTION ISOLATION LEVEL`.
-     * @see http://en.wikipedia.org/wiki/Isolation_%28database_systems%29#Isolation_levels
+     * @see https://en.wikipedia.org/wiki/Isolation_%28database_systems%29#Isolation_levels
      */
     public function setTransactionIsolationLevel($level)
     {
@@ -452,7 +450,7 @@ abstract class Schema extends BaseObject
      * Note that if the parameter is not a string, it will be returned without change.
      * @param string $str string to be quoted
      * @return string the properly quoted string
-     * @see https://secure.php.net/manual/en/function.PDO-quote.php
+     * @see https://www.php.net/manual/en/function.PDO-quote.php
      */
     public function quoteValue($str)
     {
@@ -460,7 +458,7 @@ abstract class Schema extends BaseObject
             return $str;
         }
 
-        if (mb_stripos($this->db->dsn, 'odbc:') === false && ($value = $this->db->getSlavePdo()->quote($str)) !== false) {
+        if (mb_stripos((string)$this->db->dsn, 'odbc:') === false && ($value = $this->db->getSlavePdo(true)->quote($str)) !== false) {
             return $value;
         }
 
@@ -480,7 +478,7 @@ abstract class Schema extends BaseObject
     public function quoteTableName($name)
     {
 
-        if (strpos($name, '(') === 0 && strpos($name, ')') === strlen($name) - 1) {
+        if (strncmp($name, '(', 1) === 0 && strpos($name, ')') === strlen($name) - 1) {
             return $name;
         }
         if (strpos($name, '{{') !== false) {
@@ -697,7 +695,7 @@ abstract class Schema extends BaseObject
     public function getServerVersion()
     {
         if ($this->_serverVersion === null) {
-            $this->_serverVersion = $this->db->getSlavePdo()->getAttribute(\PDO::ATTR_SERVER_VERSION);
+            $this->_serverVersion = $this->db->getSlavePdo(true)->getAttribute(\PDO::ATTR_SERVER_VERSION);
         }
         return $this->_serverVersion;
     }
@@ -811,7 +809,7 @@ abstract class Schema extends BaseObject
      */
     protected function normalizePdoRowKeyCase(array $row, $multiple)
     {
-        if ($this->db->getSlavePdo()->getAttribute(\PDO::ATTR_CASE) !== \PDO::CASE_UPPER) {
+        if ($this->db->getSlavePdo(true)->getAttribute(\PDO::ATTR_CASE) !== \PDO::CASE_UPPER) {
             return $row;
         }
 

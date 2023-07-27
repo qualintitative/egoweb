@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\rbac;
@@ -17,8 +17,7 @@ use yii\base\InvalidValueException;
  *
  * For more details and usage information on DbManager, see the [guide article on security authorization](guide:security-authorization).
  *
- * @property-read Role[] $defaultRoleInstances Default roles. The array is indexed by the role names. This
- * property is read-only.
+ * @property-read Role[] $defaultRoleInstances Default roles. The array is indexed by the role names.
  * @property string[] $defaultRoles Default roles. Note that the type of this property differs in getter and
  * setter. See [[getDefaultRoles()]] and [[setDefaultRoles()]] for details.
  *

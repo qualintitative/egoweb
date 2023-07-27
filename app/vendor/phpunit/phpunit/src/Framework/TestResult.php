@@ -17,6 +17,7 @@ use function function_exists;
 use function get_class;
 use function sprintf;
 use function xdebug_get_monitored_functions;
+use function xdebug_is_debugger_active;
 use function xdebug_start_function_monitor;
 use function xdebug_stop_function_monitor;
 use AssertionError;
@@ -112,7 +113,7 @@ final class TestResult implements Countable
     /**
      * @var bool
      */
-    private $convertDeprecationsToExceptions = true;
+    private $convertDeprecationsToExceptions = false;
 
     /**
      * @var bool
@@ -441,7 +442,7 @@ final class TestResult implements Countable
 
             $this->passed[$key] = [
                 'result' => $test->getResult(),
-                'size'   => \PHPUnit\Util\Test::getSize(
+                'size'   => TestUtil::getSize(
                     $class,
                     $test->getName(false)
                 ),
@@ -622,12 +623,15 @@ final class TestResult implements Countable
     {
         Assert::resetCount();
 
+        $size = TestUtil::UNKNOWN;
+
         if ($test instanceof TestCase) {
             $test->setRegisterMockObjectsFromTestArgumentsRecursively(
                 $this->registerMockObjectsFromTestArgumentsRecursively
             );
 
             $isAnyCoverageRequired = TestUtil::requiresCodeCoverageDataCollection($test);
+            $size                  = $test->getSize();
         }
 
         $error      = false;
@@ -660,7 +664,7 @@ final class TestResult implements Countable
 
         $monitorFunctions = $this->beStrictAboutResourceUsageDuringSmallTests &&
             !$test instanceof WarningTestCase &&
-            $test->getSize() == \PHPUnit\Util\Test::SMALL &&
+            $size === TestUtil::SMALL &&
             function_exists('xdebug_start_function_monitor');
 
         if ($monitorFunctions) {
@@ -672,29 +676,25 @@ final class TestResult implements Countable
 
         try {
             if (!$test instanceof WarningTestCase &&
-                $this->enforceTimeLimit &&
-                ($this->defaultTimeLimit || $test->getSize() != \PHPUnit\Util\Test::UNKNOWN) &&
-                extension_loaded('pcntl') && class_exists(Invoker::class)) {
-                switch ($test->getSize()) {
-                    case \PHPUnit\Util\Test::SMALL:
+                $this->shouldTimeLimitBeEnforced($size)) {
+                switch ($size) {
+                    case TestUtil::SMALL:
                         $_timeout = $this->timeoutForSmallTests;
 
                         break;
 
-                    case \PHPUnit\Util\Test::MEDIUM:
+                    case TestUtil::MEDIUM:
                         $_timeout = $this->timeoutForMediumTests;
 
                         break;
 
-                    case \PHPUnit\Util\Test::LARGE:
+                    case TestUtil::LARGE:
                         $_timeout = $this->timeoutForLargeTests;
 
                         break;
 
-                    case \PHPUnit\Util\Test::UNKNOWN:
+                    default:
                         $_timeout = $this->defaultTimeLimit;
-
-                        break;
                 }
 
                 $invoker = new Invoker;
@@ -738,9 +738,11 @@ final class TestResult implements Countable
                 sprintf(
                     '%s in %s:%s',
                     $e->getMessage(),
-                    $frame['file'],
-                    $frame['line']
-                )
+                    $frame['file'] ?? $e->getFile(),
+                    $frame['line'] ?? $e->getLine()
+                ),
+                0,
+                $e
             );
         } catch (Warning $e) {
             $warning = true;
@@ -793,12 +795,12 @@ final class TestResult implements Countable
 
             if ($append && $test instanceof TestCase) {
                 try {
-                    $linesToBeCovered = \PHPUnit\Util\Test::getLinesToBeCovered(
+                    $linesToBeCovered = TestUtil::getLinesToBeCovered(
                         get_class($test),
                         $test->getName(false)
                     );
 
-                    $linesToBeUsed = \PHPUnit\Util\Test::getLinesToBeUsed(
+                    $linesToBeUsed = TestUtil::getLinesToBeUsed(
                         get_class($test),
                         $test->getName(false)
                     );
@@ -875,7 +877,7 @@ final class TestResult implements Countable
             } catch (ReflectionException $e) {
                 throw new Exception(
                     $e->getMessage(),
-                    (int) $e->getCode(),
+                    $e->getCode(),
                     $e
                 );
             }
@@ -890,7 +892,7 @@ final class TestResult implements Countable
                 } catch (ReflectionException $e) {
                     throw new Exception(
                         $e->getMessage(),
-                        (int) $e->getCode(),
+                        $e->getCode(),
                         $e
                     );
                 }
@@ -1228,5 +1230,30 @@ final class TestResult implements Countable
     public function setRegisterMockObjectsFromTestArgumentsRecursively(bool $flag): void
     {
         $this->registerMockObjectsFromTestArgumentsRecursively = $flag;
+    }
+
+    private function shouldTimeLimitBeEnforced(int $size): bool
+    {
+        if (!$this->enforceTimeLimit) {
+            return false;
+        }
+
+        if (!(($this->defaultTimeLimit || $size !== TestUtil::UNKNOWN))) {
+            return false;
+        }
+
+        if (!extension_loaded('pcntl')) {
+            return false;
+        }
+
+        if (!class_exists(Invoker::class)) {
+            return false;
+        }
+
+        if (extension_loaded('xdebug') && xdebug_is_debugger_active()) {
+            return false;
+        }
+
+        return true;
     }
 }

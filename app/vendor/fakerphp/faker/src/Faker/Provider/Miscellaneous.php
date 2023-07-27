@@ -202,11 +202,12 @@ class Miscellaneous extends Base
 
     /**
      * @see https://en.wikipedia.org/wiki/ISO_4217
-     * On date of 2019-09-27
+     * On date of 2023-01-01
      *
      * With the following exceptions:
      * SVC has been replaced by the USD in 2001: https://en.wikipedia.org/wiki/Salvadoran_col%C3%B3n
      * ZWL has been suspended since 2009: https://en.wikipedia.org/wiki/Zimbabwean_dollar
+     * HRK has been replaced by EUR since 2023: https://en.wikipedia.org/wiki/Croatian_kuna
      */
     protected static $currencyCode = [
         'AED', 'AFN', 'ALL', 'AMD', 'ANG', 'AOA', 'ARS', 'AUD', 'AWG', 'AZN',
@@ -214,17 +215,17 @@ class Miscellaneous extends Base
         'BSD', 'BTN', 'BWP', 'BYN', 'BZD', 'CAD', 'CDF', 'CHF', 'CLP', 'CNY',
         'COP', 'CRC', 'CUC', 'CUP', 'CVE', 'CZK', 'DJF', 'DKK', 'DOP', 'DZD',
         'EGP', 'ERN', 'ETB', 'EUR', 'FJD', 'FKP', 'GBP', 'GEL', 'GHS', 'GIP',
-        'GMD', 'GNF', 'GTQ', 'GYD', 'HKD', 'HNL', 'HRK', 'HTG', 'HUF', 'IDR',
-        'ILS', 'INR', 'IQD', 'IRR', 'ISK', 'JMD', 'JOD', 'JPY', 'KES', 'KGS',
-        'KHR', 'KMF', 'KPW', 'KRW', 'KWD', 'KYD', 'KZT', 'LAK', 'LBP', 'LKR',
-        'LRD', 'LSL', 'LYD', 'MAD', 'MDL', 'MGA', 'MKD', 'MMK', 'MNT', 'MOP',
-        'MRU', 'MUR', 'MVR', 'MWK', 'MXN', 'MYR', 'MZN', 'NAD', 'NGN', 'NIO',
-        'NOK', 'NPR', 'NZD', 'OMR', 'PAB', 'PEN', 'PGK', 'PHP', 'PKR', 'PLN',
-        'PYG', 'QAR', 'RON', 'RSD', 'RUB', 'RWF', 'SAR', 'SBD', 'SCR', 'SDG',
-        'SEK', 'SGD', 'SHP', 'SLL', 'SOS', 'SRD', 'SSP', 'STN', 'SYP', 'SZL',
-        'THB', 'TJS', 'TMT', 'TND', 'TOP', 'TRY', 'TTD', 'TWD', 'TZS', 'UAH',
-        'UGX', 'USD', 'UYU', 'UZS', 'VES', 'VND', 'VUV', 'WST', 'XAF', 'XCD',
-        'XOF', 'XPF', 'YER', 'ZAR', 'ZMW',
+        'GMD', 'GNF', 'GTQ', 'GYD', 'HKD', 'HNL', 'HTG', 'HUF', 'IDR', 'ILS',
+        'INR', 'IQD', 'IRR', 'ISK', 'JMD', 'JOD', 'JPY', 'KES', 'KGS', 'KHR',
+        'KMF', 'KPW', 'KRW', 'KWD', 'KYD', 'KZT', 'LAK', 'LBP', 'LKR', 'LRD',
+        'LSL', 'LYD', 'MAD', 'MDL', 'MGA', 'MKD', 'MMK', 'MNT', 'MOP', 'MRU',
+        'MUR', 'MVR', 'MWK', 'MXN', 'MYR', 'MZN', 'NAD', 'NGN', 'NIO', 'NOK',
+        'NPR', 'NZD', 'OMR', 'PAB', 'PEN', 'PGK', 'PHP', 'PKR', 'PLN', 'PYG',
+        'QAR', 'RON', 'RSD', 'RUB', 'RWF', 'SAR', 'SBD', 'SCR', 'SDG', 'SEK',
+        'SGD', 'SHP', 'SLL', 'SOS', 'SRD', 'SSP', 'STN', 'SYP', 'SZL', 'THB',
+        'TJS', 'TMT', 'TND', 'TOP', 'TRY', 'TTD', 'TWD', 'TZS', 'UAH', 'UGX',
+        'USD', 'UYU', 'UZS', 'VES', 'VND', 'VUV', 'WST', 'XAF', 'XCD', 'XOF',
+        'XPF', 'YER', 'ZAR', 'ZMW',
     ];
 
     /**
@@ -243,6 +244,8 @@ class Miscellaneous extends Base
 
     /**
      * @example 'cfcd208495d565ef66e7dff9f98764da'
+     *
+     * @return string
      */
     public static function md5()
     {
@@ -251,6 +254,8 @@ class Miscellaneous extends Base
 
     /**
      * @example 'b5d86317c2a144cd04d0d7c03b2b02666fafadf2'
+     *
+     * @return string
      */
     public static function sha1()
     {
@@ -259,6 +264,8 @@ class Miscellaneous extends Base
 
     /**
      * @example '85086017559ccc40638fcde2fecaf295e0de7ca51b7517b6aebeaaf75b4d4654'
+     *
+     * @return string
      */
     public static function sha256()
     {
@@ -267,6 +274,8 @@ class Miscellaneous extends Base
 
     /**
      * @example 'fr_FR'
+     *
+     * @return string
      */
     public static function locale()
     {
@@ -277,6 +286,8 @@ class Miscellaneous extends Base
      * @example 'FR'
      *
      * @see https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+     *
+     * @return string
      */
     public static function countryCode()
     {
@@ -287,6 +298,8 @@ class Miscellaneous extends Base
      * @example 'FRA'
      *
      * @see https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3
+     *
+     * @return string
      */
     public static function countryISOAlpha3()
     {
@@ -295,6 +308,8 @@ class Miscellaneous extends Base
 
     /**
      * @example 'fr'
+     *
+     * @return string
      */
     public static function languageCode()
     {
@@ -305,6 +320,8 @@ class Miscellaneous extends Base
      * @example 'EUR'
      *
      * @see https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+     *
+     * @return string
      */
     public static function currencyCode()
     {
@@ -315,6 +332,8 @@ class Miscellaneous extends Base
      * Returns an Emoji (Unicode character between U+1F600 and U+1F637).
      *
      * @see https://en.wikipedia.org/wiki/Emoji#Unicode_blocks
+     *
+     * @return string
      */
     public static function emoji()
     {

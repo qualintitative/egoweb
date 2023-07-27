@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\db;
@@ -39,8 +39,8 @@ trait QueryTrait
     /**
      * @var array|null how to sort the query results. This is used to construct the ORDER BY clause in a SQL statement.
      * The array keys are the columns to be sorted by, and the array values are the corresponding sort directions which
-     * can be either [SORT_ASC](https://secure.php.net/manual/en/array.constants.php#constant.sort-asc)
-     * or [SORT_DESC](https://secure.php.net/manual/en/array.constants.php#constant.sort-desc).
+     * can be either [SORT_ASC](https://www.php.net/manual/en/array.constants.php#constant.sort-asc)
+     * or [SORT_DESC](https://www.php.net/manual/en/array.constants.php#constant.sort-desc).
      * The array may also contain [[ExpressionInterface]] objects. If that is the case, the expressions
      * will be converted into strings without any change.
      */
@@ -305,7 +305,7 @@ trait QueryTrait
 
     /**
      * Sets the ORDER BY part of the query.
-     * @param string|array|ExpressionInterface $columns the columns (and the directions) to be ordered by.
+     * @param string|array|ExpressionInterface|null $columns the columns (and the directions) to be ordered by.
      * Columns can be specified in either a string (e.g. `"id ASC, name DESC"`) or an array
      * (e.g. `['id' => SORT_ASC, 'name' => SORT_DESC]`).
      *
@@ -358,12 +358,14 @@ trait QueryTrait
     /**
      * Normalizes format of ORDER BY data.
      *
-     * @param array|string|ExpressionInterface $columns the columns value to normalize. See [[orderBy]] and [[addOrderBy]].
+     * @param array|string|ExpressionInterface|null $columns the columns value to normalize. See [[orderBy]] and [[addOrderBy]].
      * @return array
      */
     protected function normalizeOrderBy($columns)
     {
-        if ($columns instanceof ExpressionInterface) {
+        if (empty($columns)) {
+            return [];
+        } elseif ($columns instanceof ExpressionInterface) {
             return [$columns];
         } elseif (is_array($columns)) {
             return $columns;

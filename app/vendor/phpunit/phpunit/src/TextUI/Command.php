@@ -32,7 +32,6 @@ use function is_string;
 use function printf;
 use function realpath;
 use function sort;
-
 use function sprintf;
 use function str_replace;
 use function stream_resolve_include_path;
@@ -446,6 +445,9 @@ class Command
                     print 'Source directory (relative to path shown above; default: src): ';
                     $src = trim(fgets(STDIN));
 
+                    print 'Cache directory (relative to path shown above; default: .phpunit.cache): ';
+                    $cacheDirectory = trim(fgets(STDIN));
+
                     if ($bootstrapScript === '') {
                         $bootstrapScript = 'vendor/autoload.php';
                     }
@@ -458,6 +460,10 @@ class Command
                         $src = 'src';
                     }
 
+                    if ($cacheDirectory === '') {
+                        $cacheDirectory = '.phpunit.cache';
+                    }
+
                     $generator = new ConfigurationGenerator;
 
                     file_put_contents(
@@ -466,11 +472,13 @@ class Command
                             Version::series(),
                             $bootstrapScript,
                             $testsDirectory,
-                            $src
+                            $src,
+                            $cacheDirectory
                         )
                     );
 
                     print PHP_EOL . 'Generated phpunit.xml in ' . getcwd() . PHP_EOL;
+                    print 'Make sure to exclude the ' . $cacheDirectory . ' directory from version control.' . PHP_EOL;
 
                     exit(TestRunner::SUCCESS_EXIT);
 
@@ -1009,7 +1017,7 @@ class Command
             } catch (ReflectionException $e) {
                 throw new Exception(
                     $e->getMessage(),
-                    (int) $e->getCode(),
+                    $e->getCode(),
                     $e
                 );
             }
@@ -1074,7 +1082,7 @@ class Command
         } catch (ReflectionException $e) {
             throw new Exception(
                 $e->getMessage(),
-                (int) $e->getCode(),
+                $e->getCode(),
                 $e
             );
             // @codeCoverageIgnoreEnd
@@ -1227,6 +1235,16 @@ class Command
     {
         $this->printVersionString();
 
+        $this->warnAboutConflictingOptions(
+            'listGroups',
+            [
+                'filter',
+                'groups',
+                'excludeGroups',
+                'testsuite',
+            ]
+        );
+
         print 'Available test group(s):' . PHP_EOL;
 
         $groups = $suite->getGroups();
@@ -1252,6 +1270,16 @@ class Command
     private function handleListSuites(bool $exit): int
     {
         $this->printVersionString();
+
+        $this->warnAboutConflictingOptions(
+            'listSuites',
+            [
+                'filter',
+                'groups',
+                'excludeGroups',
+                'testsuite',
+            ]
+        );
 
         print 'Available test suite(s):' . PHP_EOL;
 
@@ -1280,6 +1308,15 @@ class Command
     {
         $this->printVersionString();
 
+        $this->warnAboutConflictingOptions(
+            'listTests',
+            [
+                'filter',
+                'groups',
+                'excludeGroups',
+            ]
+        );
+
         $renderer = new TextTestListRenderer;
 
         print $renderer->render($suite);
@@ -1297,6 +1334,15 @@ class Command
     private function handleListTestsXml(TestSuite $suite, string $target, bool $exit): int
     {
         $this->printVersionString();
+
+        $this->warnAboutConflictingOptions(
+            'listTestsXml',
+            [
+                'filter',
+                'groups',
+                'excludeGroups',
+            ]
+        );
 
         $renderer = new XmlTestListRenderer;
 
@@ -1363,6 +1409,64 @@ class Command
                 default:
                     $this->exitWithErrorMessage("unrecognized --order-by option: {$order}");
             }
+        }
+    }
+
+    /**
+     * @psalm-param "listGroups"|"listSuites"|"listTests"|"listTestsXml"|"filter"|"groups"|"excludeGroups"|"testsuite" $key
+     * @psalm-param list<"listGroups"|"listSuites"|"listTests"|"listTestsXml"|"filter"|"groups"|"excludeGroups"|"testsuite"> $keys
+     */
+    private function warnAboutConflictingOptions(string $key, array $keys): void
+    {
+        $warningPrinted = false;
+
+        foreach ($keys as $_key) {
+            if (!empty($this->arguments[$_key])) {
+                printf(
+                    'The %s and %s options cannot be combined, %s is ignored' . PHP_EOL,
+                    $this->mapKeyToOptionForWarning($_key),
+                    $this->mapKeyToOptionForWarning($key),
+                    $this->mapKeyToOptionForWarning($_key)
+                );
+
+                $warningPrinted = true;
+            }
+        }
+
+        if ($warningPrinted) {
+            print PHP_EOL;
+        }
+    }
+
+    /**
+     * @psalm-param "listGroups"|"listSuites"|"listTests"|"listTestsXml"|"filter"|"groups"|"excludeGroups"|"testsuite" $key
+     */
+    private function mapKeyToOptionForWarning(string $key): string
+    {
+        switch ($key) {
+            case 'listGroups':
+                return '--list-groups';
+
+            case 'listSuites':
+                return '--list-suites';
+
+            case 'listTests':
+                return '--list-tests';
+
+            case 'listTestsXml':
+                return '--list-tests-xml';
+
+            case 'filter':
+                return '--filter';
+
+            case 'groups':
+                return '--group';
+
+            case 'excludeGroups':
+                return '--exclude-group';
+
+            case 'testsuite':
+                return '--testsuite';
         }
     }
 }

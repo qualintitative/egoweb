@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\base;
@@ -16,12 +16,9 @@ use yii\di\NotInstantiableException;
  *
  * For more details and usage information on Controller, see the [guide article on controllers](guide:structure-controllers).
  *
- * @property-read Module[] $modules All ancestor modules that this controller is located within. This property
- * is read-only.
+ * @property-read Module[] $modules All ancestor modules that this controller is located within.
  * @property-read string $route The route (module ID, controller ID and action ID) of the current request.
- * This property is read-only.
- * @property-read string $uniqueId The controller ID that is prefixed with the module ID (if any). This
- * property is read-only.
+ * @property-read string $uniqueId The controller ID that is prefixed with the module ID (if any).
  * @property View|\yii\web\View $view The view object that can be used to render views or view files.
  * @property string $viewPath The directory containing the view files for this controller.
  *
@@ -54,7 +51,7 @@ class Controller extends Component implements ViewContextInterface
      */
     public $defaultAction = 'index';
     /**
-     * @var null|string|false the name of the layout to be applied to this controller's views.
+     * @var string|null|false the name of the layout to be applied to this controller's views.
      * This property mainly affects the behavior of [[render()]].
      * Defaults to null, meaning the actual layout value should inherit that from [[module]]'s layout value.
      * If false, no layout will be applied.
@@ -514,6 +511,7 @@ class Controller extends Component implements ViewContextInterface
     public function findLayoutFile($view)
     {
         $module = $this->module;
+        $layout = null;
         if (is_string($this->layout)) {
             $layout = $this->layout;
         } elseif ($this->layout === null) {
@@ -525,7 +523,7 @@ class Controller extends Component implements ViewContextInterface
             }
         }
 
-        if (!isset($layout)) {
+        if ($layout === null) {
             return false;
         }
 

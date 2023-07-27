@@ -2,23 +2,47 @@
 
 namespace Faker;
 
+use Faker\Extension\Extension;
+
 /**
- * Proxy for other generators, to return only unique values. Works with
- * Faker\Generator\Base->unique()
+ * Proxy for other generators that returns only unique values.
+ *
+ * Instantiated through @see Generator::unique().
+ *
+ * @mixin Generator
  */
 class UniqueGenerator
 {
     protected $generator;
     protected $maxRetries;
+
+    /**
+     * Maps from method names to a map with serialized result keys.
+     *
+     * @example [
+     *   'phone' => ['0123' => null],
+     *   'city' => ['London' => null, 'Tokyo' => null],
+     * ]
+     *
+     * @var array<string, array<string, null>>
+     */
     protected $uniques = [];
 
     /**
-     * @param int $maxRetries
+     * @param Extension|Generator                $generator
+     * @param int                                $maxRetries
+     * @param array<string, array<string, null>> $uniques
      */
-    public function __construct(Generator $generator, $maxRetries = 10000)
+    public function __construct($generator, $maxRetries = 10000, &$uniques = [])
     {
         $this->generator = $generator;
         $this->maxRetries = $maxRetries;
+        $this->uniques = &$uniques;
+    }
+
+    public function ext(string $id)
+    {
+        return new self($this->generator->ext($id), $this->maxRetries, $this->uniques);
     }
 
     /**

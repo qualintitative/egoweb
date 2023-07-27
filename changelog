@@ -1,4 +1,7 @@
 # Changelog
+## [2.0.11.0] - 2023-07-28
+- upgraded to Yii2 veersion 2.0.48 for PHP 8.1 compatibility
+
 ## [2.0.10.17] - 2023-07-10
 - fixed a bug with tags in the citation
 - fixed security issue in .htaccess

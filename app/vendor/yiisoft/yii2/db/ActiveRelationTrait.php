@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\db;
@@ -17,8 +17,8 @@ use yii\base\InvalidConfigException;
  * @author Carsten Brandt <mail@cebe.cc>
  * @since 2.0
  *
- * @method ActiveRecordInterface one($db = null)
- * @method ActiveRecordInterface[] all($db = null)
+ * @method ActiveRecordInterface|array|null one($db = null) See [[ActiveQueryInterface::one()]] for more info.
+ * @method ActiveRecordInterface[] all($db = null) See [[ActiveQueryInterface::all()]] for more info.
  * @property ActiveRecord $modelClass
  */
 trait ActiveRelationTrait
@@ -87,18 +87,18 @@ trait ActiveRelationTrait
      * class Order extends ActiveRecord
      * {
      *    public function getOrderItems() {
-     *        return $this->hasMany(OrderItem::className(), ['order_id' => 'id']);
+     *        return $this->hasMany(OrderItem::class, ['order_id' => 'id']);
      *    }
      *
      *    public function getItems() {
-     *        return $this->hasMany(Item::className(), ['id' => 'item_id'])
+     *        return $this->hasMany(Item::class, ['id' => 'item_id'])
      *                    ->via('orderItems');
      *    }
      * }
      * ```
      *
      * @param string $relationName the relation name. This refers to a relation declared in [[primaryModel]].
-     * @param callable $callable a PHP callback for customizing the relation associated with the junction table.
+     * @param callable|null $callable a PHP callback for customizing the relation associated with the junction table.
      * Its signature should be `function($query)`, where `$query` is the query to be customized.
      * @return $this the relation object itself.
      */
@@ -126,7 +126,7 @@ trait ActiveRelationTrait
      * ```php
      * public function getOrders()
      * {
-     *     return $this->hasMany(Order::className(), ['customer_id' => 'id'])->inverseOf('customer');
+     *     return $this->hasMany(Order::class, ['customer_id' => 'id'])->inverseOf('customer');
      * }
      * ```
      *
@@ -135,7 +135,7 @@ trait ActiveRelationTrait
      * ```php
      * public function getCustomer()
      * {
-     *     return $this->hasOne(Customer::className(), ['id' => 'customer_id'])->inverseOf('orders');
+     *     return $this->hasOne(Customer::class, ['id' => 'customer_id'])->inverseOf('orders');
      * }
      * ```
      *
@@ -167,7 +167,7 @@ trait ActiveRelationTrait
 
     /**
      * Finds the related records for the specified primary record.
-     * This method is invoked when a relation of an ActiveRecord is being accessed in a lazy fashion.
+     * This method is invoked when a relation of an ActiveRecord is being accessed lazily.
      * @param string $name the relation name
      * @param ActiveRecordInterface|BaseActiveRecord $model the primary model
      * @return mixed the related record(s)
@@ -289,7 +289,12 @@ trait ActiveRelationTrait
             $link = array_values($deepViaQuery->link);
         }
         foreach ($primaryModels as $i => $primaryModel) {
-            if ($this->multiple && count($link) === 1 && is_array($keys = $primaryModel[reset($link)])) {
+            $keys = null;
+            if ($this->multiple && count($link) === 1) {
+                $primaryModelKey = reset($link);
+                $keys = isset($primaryModel[$primaryModelKey]) ? $primaryModel[$primaryModelKey] : null;
+            }
+            if (is_array($keys)) {
                 $value = [];
                 foreach ($keys as $key) {
                     $key = $this->normalizeModelKey($key);
@@ -386,8 +391,8 @@ trait ActiveRelationTrait
     /**
      * @param array $models
      * @param array $link
-     * @param array $viaModels
-     * @param null|self $viaQuery
+     * @param array|null $viaModels
+     * @param self|null $viaQuery
      * @param bool $checkMultiple
      * @return array
      */
@@ -451,8 +456,9 @@ trait ActiveRelationTrait
     private function mapVia($map, $viaMap) {
         $resultMap = [];
         foreach ($map as $key => $linkKeys) {
+            $resultMap[$key] = [];
             foreach (array_keys($linkKeys) as $linkKey) {
-                $resultMap[$key] = $viaMap[$linkKey];
+                $resultMap[$key] += $viaMap[$linkKey];
             }
         }
         return $resultMap;
@@ -523,7 +529,8 @@ trait ActiveRelationTrait
             // single key
             $attribute = reset($this->link);
             foreach ($models as $model) {
-                if (($value = $model[$attribute]) !== null) {
+                $value = isset($model[$attribute]) || (is_object($model) && property_exists($model, $attribute)) ? $model[$attribute] : null;
+                if ($value !== null) {
                     if (is_array($value)) {
                         $values = array_merge($values, $value);
                     } elseif ($value instanceof ArrayExpression && $value->getDimension() === 1) {
@@ -574,13 +581,15 @@ trait ActiveRelationTrait
     /**
      * @param ActiveRecordInterface|array $model
      * @param array $attributes
-     * @return string
+     * @return string|false
      */
     private function getModelKey($model, $attributes)
     {
         $key = [];
         foreach ($attributes as $attribute) {
-            $key[] = $this->normalizeModelKey($model[$attribute]);
+            if (isset($model[$attribute]) || (is_object($model) && property_exists($model, $attribute))) {
+                $key[] = $this->normalizeModelKey($model[$attribute]);
+            }
         }
         if (count($key) > 1) {
             return serialize($key);
@@ -589,7 +598,7 @@ trait ActiveRelationTrait
     }
 
     /**
-     * @param mixed $value raw key value. Since 2.0.40 non-string values must be convertable to string (like special
+     * @param mixed $value raw key value. Since 2.0.40 non-string values must be convertible to string (like special
      * objects for cross-DBMS relations, for example: `|MongoId`).
      * @return string normalized key value.
      */

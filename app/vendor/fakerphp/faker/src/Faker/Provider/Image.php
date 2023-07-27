@@ -12,6 +12,10 @@ class Image extends Base
      */
     public const BASE_URL = 'https://via.placeholder.com';
 
+    public const FORMAT_JPG = 'jpg';
+    public const FORMAT_JPEG = 'jpeg';
+    public const FORMAT_PNG = 'png';
+
     /**
      * @var array
      *
@@ -35,6 +39,7 @@ class Image extends Base
      * @param bool        $randomize
      * @param string|null $word
      * @param bool        $gray
+     * @param string      $format
      *
      * @return string
      */
@@ -44,9 +49,27 @@ class Image extends Base
         $category = null,
         $randomize = true,
         $word = null,
-        $gray = false
+        $gray = false,
+        $format = 'png'
     ) {
-        $size = sprintf('%dx%d.png', $width, $height);
+        trigger_deprecation(
+            'fakerphp/faker',
+            '1.20',
+            'Provider is deprecated and will no longer be available in Faker 2. Please use a custom provider instead',
+        );
+
+        // Validate image format
+        $imageFormats = static::getFormats();
+
+        if (!in_array(strtolower($format), $imageFormats, true)) {
+            throw new \InvalidArgumentException(sprintf(
+                'Invalid image format "%s". Allowable formats are: %s',
+                $format,
+                implode(', ', $imageFormats),
+            ));
+        }
+
+        $size = sprintf('%dx%d.%s', $width, $height, $format);
 
         $imageParts = [];
 
@@ -69,7 +92,7 @@ class Image extends Base
             self::BASE_URL,
             $size,
             $backgroundColor,
-            count($imageParts) > 0 ? '?text=' . urlencode(implode(' ', $imageParts)) : ''
+            count($imageParts) > 0 ? '?text=' . urlencode(implode(' ', $imageParts)) : '',
         );
     }
 
@@ -79,6 +102,8 @@ class Image extends Base
      * Requires curl, or allow_url_fopen to be on in php.ini.
      *
      * @example '/path/to/dir/13b73edae8443990be1aa8f1a483bc27.png'
+     *
+     * @return bool|string
      */
     public static function image(
         $dir = null,
@@ -88,8 +113,15 @@ class Image extends Base
         $fullPath = true,
         $randomize = true,
         $word = null,
-        $gray = false
+        $gray = false,
+        $format = 'png'
     ) {
+        trigger_deprecation(
+            'fakerphp/faker',
+            '1.20',
+            'Provider is deprecated and will no longer be available in Faker 2. Please use a custom provider instead',
+        );
+
         $dir = null === $dir ? sys_get_temp_dir() : $dir; // GNU/Linux / OS X / Windows compatible
         // Validate directory path
         if (!is_dir($dir) || !is_writable($dir)) {
@@ -99,10 +131,10 @@ class Image extends Base
         // Generate a random filename. Use the server address so that a file
         // generated at the same time on a different server won't have a collision.
         $name = md5(uniqid(empty($_SERVER['SERVER_ADDR']) ? '' : $_SERVER['SERVER_ADDR'], true));
-        $filename = $name . '.png';
+        $filename = sprintf('%s.%s', $name, $format);
         $filepath = $dir . DIRECTORY_SEPARATOR . $filename;
 
-        $url = static::imageUrl($width, $height, $category, $randomize, $word, $gray);
+        $url = static::imageUrl($width, $height, $category, $randomize, $word, $gray, $format);
 
         // save file
         if (function_exists('curl_exec')) {
@@ -123,10 +155,41 @@ class Image extends Base
         } elseif (ini_get('allow_url_fopen')) {
             // use remote fopen() via copy()
             $success = copy($url, $filepath);
+
+            if (!$success) {
+                // could not contact the distant URL or HTTP error - fail silently.
+                return false;
+            }
         } else {
             return new \RuntimeException('The image formatter downloads an image from a remote HTTP server. Therefore, it requires that PHP can request remote hosts, either via cURL or fopen()');
         }
 
         return $fullPath ? $filepath : $filename;
+    }
+
+    public static function getFormats(): array
+    {
+        trigger_deprecation(
+            'fakerphp/faker',
+            '1.20',
+            'Provider is deprecated and will no longer be available in Faker 2. Please use a custom provider instead',
+        );
+
+        return array_keys(static::getFormatConstants());
+    }
+
+    public static function getFormatConstants(): array
+    {
+        trigger_deprecation(
+            'fakerphp/faker',
+            '1.20',
+            'Provider is deprecated and will no longer be available in Faker 2. Please use a custom provider instead',
+        );
+
+        return [
+            static::FORMAT_JPG => constant('IMAGETYPE_JPEG'),
+            static::FORMAT_JPEG => constant('IMAGETYPE_JPEG'),
+            static::FORMAT_PNG => constant('IMAGETYPE_PNG'),
+        ];
     }
 }

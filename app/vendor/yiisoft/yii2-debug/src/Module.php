@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\debug;
@@ -11,6 +11,7 @@ use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
 use yii\helpers\Html;
+use yii\helpers\IpHelper;
 use yii\helpers\Json;
 use yii\helpers\Url;
 use yii\web\ForbiddenHttpException;
@@ -29,10 +30,12 @@ class Module extends \yii\base\Module implements BootstrapInterface
 
     /**
      * @var array the list of IPs that are allowed to access this module.
-     * Each array element represents a single IP filter which can be either an IP address
-     * or an address with wildcard (e.g. 192.168.0.*) to represent a network segment.
-     * The default value is `['127.0.0.1', '::1']`, which means the module can only be accessed
-     * by localhost.
+     * Each array element represents a single IP filter which can be either:
+     * - an IP address (e.g. 1.2.3.4),
+     * - an address with wildcard (e.g. 192.168.0.*) to represent a network segment
+     * - a CIDR range (e.g. 172.16.0.0/12) (available since version 2.1.18).
+     *   The default value is `['127.0.0.1', '::1']`, which means the module can only be accessed
+     *   by localhost.
      */
     public $allowedIPs = ['127.0.0.1', '::1'];
     /**
@@ -57,9 +60,9 @@ class Module extends \yii\base\Module implements BootstrapInterface
      */
     public $controllerNamespace = 'yii\debug\controllers';
     /**
-     * @var LogTarget
+     * @var LogTarget|array|string the logTarget object, or the configuration for creating the logTarget object.
      */
-    public $logTarget;
+    public $logTarget = 'yii\debug\LogTarget';
     /**
      * @var array|Panel[] list of debug panels. The array keys are the panel IDs, and values are the corresponding
      * panel class names or configuration arrays. This will be merged with [[corePanels()]].
@@ -219,9 +222,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
         parent::init();
         $this->dataPath = Yii::getAlias($this->dataPath);
 
-        if (Yii::$app instanceof \yii\web\Application) {
-            $this->initPanels();
-        }
+        $this->initPanels();
     }
 
     /**
@@ -261,8 +262,16 @@ class Module extends \yii\base\Module implements BootstrapInterface
      */
     public function bootstrap($app)
     {
+        if (is_array($this->logTarget)) {
+            if (!isset($this->logTarget['class'])) {
+                $this->logTarget['class'] = 'yii\debug\LogTarget';
+            }
+            $this->logTarget = Yii::createObject($this->logTarget, [$this]);
+        } elseif (is_string($this->logTarget)) {
+            $this->logTarget = Yii::createObject($this->logTarget, [$this]);
+        }
         /* @var $app \yii\base\Application */
-        $this->logTarget = $app->getLog()->targets['debug'] = new LogTarget($this);
+        $app->getLog()->targets['debug'] = $this->logTarget;
 
         // delay attaching event handler to the view component after it is fully configured
         $app->on(Application::EVENT_BEFORE_REQUEST, function () use ($app) {
@@ -275,15 +284,15 @@ class Module extends \yii\base\Module implements BootstrapInterface
         $app->getUrlManager()->addRules([
             [
                 'class' => $this->urlRuleClass,
-                'route' => $this->id,
-                'pattern' => $this->id,
+                'route' => $this->getUniqueId(),
+                'pattern' => $this->getUniqueId(),
                 'normalizer' => false,
                 'suffix' => false
             ],
             [
                 'class' => $this->urlRuleClass,
-                'route' => $this->id . '/<controller>/<action>',
-                'pattern' => $this->id . '/<controller:[\w\-]+>/<action:[\w\-]+>',
+                'route' => $this->getUniqueId() . '/<controller>/<action>',
+                'pattern' => $this->getUniqueId() . '/<controller:[\w\-]+>/<action:[\w\-]+>',
                 'normalizer' => false,
                 'suffix' => false
             ]
@@ -337,7 +346,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
             return;
         }
         $url = Url::toRoute([
-            '/' . $this->id . '/default/view',
+            '/' . $this->getUniqueId() . '/default/view',
             'tag' => $this->logTarget->tag,
         ]);
         $event->sender->getHeaders()
@@ -361,7 +370,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
     public function getToolbarHtml()
     {
         $url = Url::toRoute([
-            '/' . $this->id . '/default/toolbar',
+            '/' . $this->getUniqueId() . '/default/toolbar',
             'tag' => $this->logTarget->tag,
         ]);
 
@@ -387,7 +396,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
 
         /* @var $view View */
         $view = $event->sender;
-        echo $view->renderDynamic('return Yii::$app->getModule("' . $this->id . '")->getToolbarHtml();');
+        echo $view->renderDynamic('return Yii::$app->getModule("' . $this->getUniqueId() . '")->getToolbarHtml();');
 
         // echo is used in order to support cases where asset manager is not available
         echo '<style>' . $view->renderPhpFile(__DIR__ . '/assets/css/toolbar.css') . '</style>';
@@ -406,7 +415,17 @@ class Module extends \yii\base\Module implements BootstrapInterface
 
         $ip = Yii::$app->getRequest()->getUserIP();
         foreach ($this->allowedIPs as $filter) {
-            if ($filter === '*' || $filter === $ip || (($pos = strpos($filter, '*')) !== false && !strncmp($ip, $filter, $pos))) {
+            if ($filter === '*'
+                || $filter === $ip
+                || (
+                    ($pos = strpos($filter, '*')) !== false
+                    && !strncmp($ip, $filter, $pos)
+                )
+                || (
+                    strpos($filter, '/') !== false
+                    && IpHelper::inRange($ip, $filter)
+                )
+            ) {
                 $allowed = true;
                 break;
             }
@@ -444,20 +463,25 @@ class Module extends \yii\base\Module implements BootstrapInterface
      */
     protected function corePanels()
     {
-        return [
+        $corePanels = [
             'config' => ['class' => 'yii\debug\panels\ConfigPanel'],
-            'request' => ['class' => 'yii\debug\panels\RequestPanel'],
-            'router' => ['class' => 'yii\debug\panels\RouterPanel'],
             'log' => ['class' => 'yii\debug\panels\LogPanel'],
             'profiling' => ['class' => 'yii\debug\panels\ProfilingPanel'],
             'db' => ['class' => 'yii\debug\panels\DbPanel'],
             'event' => ['class' => 'yii\debug\panels\EventPanel'],
-            'assets' => ['class' => 'yii\debug\panels\AssetPanel'],
             'mail' => ['class' => 'yii\debug\panels\MailPanel'],
             'timeline' => ['class' => 'yii\debug\panels\TimelinePanel'],
-            'user' => ['class' => 'yii\debug\panels\UserPanel'],
             'dump' => ['class' => 'yii\debug\panels\DumpPanel'],
         ];
+
+        if (Yii::$app instanceof \yii\web\Application) {
+            $corePanels['router'] = ['class' => 'yii\debug\panels\RouterPanel'];
+            $corePanels['request'] = ['class' => 'yii\debug\panels\RequestPanel'];
+            $corePanels['user'] = ['class' => 'yii\debug\panels\UserPanel'];
+            $corePanels['asset'] = ['class' => 'yii\debug\panels\AssetPanel'];
+        }
+
+        return $corePanels;
     }
 
     /**

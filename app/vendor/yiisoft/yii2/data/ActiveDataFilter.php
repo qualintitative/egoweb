@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\data;
@@ -101,7 +101,7 @@ class ActiveDataFilter extends DataFilter
 
         if (!empty($parts)) {
             if (count($parts) > 1) {
-                $parts = array_merge(['AND'], $parts);
+                array_unshift($parts, 'AND');
             } else {
                 $parts = array_shift($parts);
             }

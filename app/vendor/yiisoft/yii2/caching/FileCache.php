@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\caching;
@@ -57,7 +57,7 @@ class FileCache extends Cache
      */
     public $gcProbability = 10;
     /**
-     * @var int the permission to be set for newly created cache files.
+     * @var int|null the permission to be set for newly created cache files.
      * This value will be used by PHP chmod() function. No umask will be applied.
      * If not set, the permission will be determined by the current environment.
      */
@@ -131,7 +131,7 @@ class FileCache extends Cache
      * @param string $key the key identifying the value to be cached
      * @param string $value the value to be cached. Other types (If you have disabled [[serializer]]) unable to get is
      * correct in [[getValue()]].
-     * @param int $duration the number of seconds in which the cached value will expire. 0 means never expire.
+     * @param int $duration the number of seconds in which the cached value will expire. Fewer than or equal to 0 means 1 year expiration time.
      * @return bool true if the value is successfully stored into cache, false otherwise
      */
     protected function setValue($key, $value, $duration)
@@ -245,7 +245,7 @@ class FileCache extends Cache
      */
     public function gc($force = false, $expiredOnly = true)
     {
-        if ($force || mt_rand(0, 1000000) < $this->gcProbability) {
+        if ($force || random_int(0, 1000000) < $this->gcProbability) {
             $this->gcRecursive($this->cachePath, $expiredOnly);
         }
     }
@@ -261,7 +261,7 @@ class FileCache extends Cache
     {
         if (($handle = opendir($path)) !== false) {
             while (($file = readdir($handle)) !== false) {
-                if (strpos($file, '.') === 0) {
+                if (strncmp($file, '.', 1) === 0) {
                     continue;
                 }
                 $fullPath = $path . DIRECTORY_SEPARATOR . $file;

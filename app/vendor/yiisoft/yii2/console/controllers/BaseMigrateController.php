@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\console\controllers;
@@ -37,7 +37,7 @@ abstract class BaseMigrateController extends Controller
      */
     public $defaultAction = 'up';
     /**
-     * @var string|array the directory containing the migration classes. This can be either
+     * @var string|array|null the directory containing the migration classes. This can be either
      * a [path alias](guide:concept-aliases) or a directory path.
      *
      * Migration classes located at this path should be declared without a namespace.
@@ -54,7 +54,7 @@ abstract class BaseMigrateController extends Controller
      * as the migration name contains the origin of the migration in the history, which is not the case when
      * using multiple migration paths.
      *
-     * @see $migrationNamespaces
+     * @see migrationNamespaces
      */
     public $migrationPath = ['@app/migrations'];
     /**
@@ -75,7 +75,7 @@ abstract class BaseMigrateController extends Controller
      * ```
      *
      * @since 2.0.10
-     * @see $migrationPath
+     * @see migrationPath
      */
     public $migrationNamespaces = [];
     /**
@@ -84,6 +84,20 @@ abstract class BaseMigrateController extends Controller
      * or a file path.
      */
     public $templateFile;
+    /**
+     * @var int|null the permission to be set for newly generated migration files.
+     * This value will be used by PHP chmod() function. No umask will be applied.
+     * If not set, the permission will be determined by the current environment.
+     * @since 2.0.43
+     */
+    public $newFileMode;
+    /**
+     * @var string|int|null the user and/or group ownership to be set for newly generated migration files.
+     * If not set, the ownership will be determined by the current environment.
+     * @since 2.0.43
+     * @see FileHelper::changeOwnership()
+     */
+    public $newFileOwnership;
     /**
      * @var bool indicates whether the console output should be compacted.
      * If this is set to true, the individual commands ran within the migration will not be output to the console.
@@ -573,9 +587,7 @@ abstract class BaseMigrateController extends Controller
      */
     public function actionNew($limit = 10)
     {
-        if ($limit === 'all') {
-            $limit = null;
-        } else {
+        if ($limit !== 'all') {
             $limit = (int) $limit;
             if ($limit < 1) {
                 throw new Exception('The limit must be greater than 0.');
@@ -588,7 +600,7 @@ abstract class BaseMigrateController extends Controller
             $this->stdout("No new migrations found. Your system is up-to-date.\n", Console::FG_GREEN);
         } else {
             $n = count($migrations);
-            if ($limit && $n > $limit) {
+            if ($limit !== 'all' && $n > $limit) {
                 $migrations = array_slice($migrations, 0, $limit);
                 $this->stdout("Showing $limit out of $n new " . ($n === 1 ? 'migration' : 'migrations') . ":\n", Console::FG_YELLOW);
             } else {
@@ -620,7 +632,7 @@ abstract class BaseMigrateController extends Controller
      * For example:
      *
      * ```
-     * yii migrate/create 'app\\migrations\\createUserTable'
+     * yii migrate/create app\\migrations\\createUserTable
      * ```
      *
      * In case [[migrationPath]] is not set and no namespace is provided, the first entry of [[migrationNamespaces]] will be used.
@@ -662,6 +674,8 @@ abstract class BaseMigrateController extends Controller
 
                 return ExitCode::IOERR;
             }
+
+            FileHelper::changeOwnership($file, $this->newFileOwnership, $this->newFileMode);
 
             $this->stdout("New migration created successfully.\n", Console::FG_GREEN);
         }
@@ -978,7 +992,7 @@ abstract class BaseMigrateController extends Controller
 
     /**
      * Returns the migration history.
-     * @param int $limit the maximum number of records in the history to be returned. `null` for "no limit".
+     * @param int|null $limit the maximum number of records in the history to be returned. `null` for "no limit".
      * @return array the migration history
      */
     abstract protected function getMigrationHistory($limit);

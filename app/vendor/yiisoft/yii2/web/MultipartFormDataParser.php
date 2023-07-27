@@ -1,8 +1,8 @@
 <?php
 /**
- * @link http://www.yiiframework.com/
+ * @link https://www.yiiframework.com/
  * @copyright Copyright (c) 2008 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license https://www.yiiframework.com/license/
  */
 
 namespace yii\web;
@@ -109,7 +109,7 @@ class MultipartFormDataParser extends BaseObject implements RequestParserInterfa
     public function getUploadFileMaxCount()
     {
         if ($this->_uploadFileMaxCount === null) {
-            $this->_uploadFileMaxCount = ini_get('max_file_uploads');
+            $this->_uploadFileMaxCount = (int)ini_get('max_file_uploads');
         }
 
         return $this->_uploadFileMaxCount;
