@@ -1291,6 +1291,10 @@ class Interview extends \yii\db\ActiveRecord
         if (!$options) {
             $allOptions = QuestionOption::findAll(array("studyId"=>$study->id));
             foreach ($allOptions as $option) {
+                if ($option->otherSpecify) {
+                    $options[] = $option;
+                    continue;
+                }
                 if (preg_match("/OTHER \(*SPECIFY\)*/i", $option->name)) {
                     $options[] = $option;
                 }
@@ -1371,9 +1375,9 @@ class Interview extends \yii\db\ActiveRecord
             } else {
                 $answerArray = array();
                 $otherSpecifies = array();
-                if (!isset($answers[$question->id])) {
-                    continue;
-                }
+                //if (!isset($answers[$question->id])) {
+                //    continue;
+                //}
                 $response = $answers[$question->id]->otherSpecifyText;
                 if (!$response) {
                     continue;
@@ -1464,7 +1468,7 @@ class Interview extends \yii\db\ActiveRecord
         $x->setIndent(true);
         $x->startElement('interview');
         foreach ($columns['interview'] as $attr) {
-            if (!in_array($attr, $exclude)) {
+            if (!in_array($attr, $exclude) &&  $interview->$attr != null) {
                 $x->writeAttribute($attr, $interview->$attr);
             }
         }
@@ -1473,7 +1477,7 @@ class Interview extends \yii\db\ActiveRecord
             foreach ($answers[$interview->id] as $answer) {
                 $x->startElement('answer');
                 foreach ($columns['answer'] as $attr) {
-                    if (!in_array($attr, $exclude)) {
+                    if (!in_array($attr, $exclude) && $answer->$attr != null) {
                         $x->writeAttribute($attr, $answer->$attr);
                     }
                 }
@@ -1486,7 +1490,7 @@ class Interview extends \yii\db\ActiveRecord
             foreach ($alters[$interview->id] as $alter) {
                 $x->startElement('alter');
                 foreach ($columns['alters'] as $attr) {
-                    if (!in_array($attr, $exclude)) {
+                    if (!in_array($attr, $exclude) && $alter->$attr != null) {
                         $x->writeAttribute($attr, $alter->$attr);
                     }
                 }
@@ -1499,7 +1503,7 @@ class Interview extends \yii\db\ActiveRecord
             foreach ($graphs[$interview->id] as $graph) {
                 $x->startElement('graph');
                 foreach ($columns['graphs'] as $attr) {
-                    if (!in_array($attr, $exclude)) {
+                    if (!in_array($attr, $exclude) && $graph->$attr != null) {
                         $x->writeAttribute($attr, $graph->$attr);
                     }
                 }
@@ -1512,7 +1516,7 @@ class Interview extends \yii\db\ActiveRecord
             foreach ($notes[$interview->id] as $note) {
                 $x->startElement('note');
                 foreach ($columns['notes'] as $attr) {
-                    if (!in_array($attr, $exclude)) {
+                    if (!in_array($attr, $exclude) && $note->$attr != null) {
                         $x->writeAttribute($attr, $note->$attr);
                     }
                 }
@@ -1525,7 +1529,7 @@ class Interview extends \yii\db\ActiveRecord
             foreach ($matches[$interview->id] as $match) {
                 $x->startElement('matchedAlter');
                 foreach ($columns['matchedAlters'] as $attr) {
-                    if (!in_array($attr, $exclude)) {
+                    if (!in_array($attr, $exclude) && $match->$attr != null) {
                         $x->writeAttribute($attr, $match->$attr);
                     }
                 }
@@ -1537,7 +1541,7 @@ class Interview extends \yii\db\ActiveRecord
                 foreach ($user as $u) {
                     $x->startElement('user');
                     foreach ($columns['user'] as $attr) {
-                        if (!in_array($attr, $exclude)) {
+                        if (!in_array($attr, $exclude) &&  $u->$attr != null) {
                             $x->writeAttribute($attr, $u->$attr);
                         }
                     }

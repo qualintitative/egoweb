@@ -32,4 +32,4 @@ $this->registerAssetBundle(\yii\web\JqueryAsset::className(), \yii\web\View::POS
 use app\assets\InterviewAsset;
 InterviewAsset::register($this);
 ?>
-<div id="ngView" ng-view class="row"></div>
+<div id="ngView" ng-view></div>

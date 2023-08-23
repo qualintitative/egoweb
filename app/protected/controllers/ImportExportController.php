@@ -125,15 +125,11 @@ class ImportExportController extends Controller
             foreach ($study->attributes() as $key=>$value) {
                 if ($key == "active") {
                     $value = intval($value);
-                }
-                if ($key == "id") {
+                }elseif ($key == "id") {
                     $value = null;
-                }
-                if (in_array($key, array_keys($newStudy->attributes))) {
+                } elseif (in_array($key, array_keys($newStudy->attributes))) {
                     $newStudy->$key = html_entity_decode($value);
-                }
-
-                if ($key == "name") {
+                }elseif ($key == "name") {
                     $oldStudy = Study::findOne(array("name"=>strval($value)));
                     if ($oldStudy && !$_POST['newName']) {
                         $merge = true;
@@ -1097,7 +1093,8 @@ class ImportExportController extends Controller
         $x->startDocument('1.0', 'UTF-8');
         $x->startElement('study');
         foreach ($columns['study'] as $attr) {
-            $x->writeAttribute($attr, $study->$attr);
+            if($study->$attr != null)
+                $x->writeAttribute($attr, $study->$attr);
         }
         $x->writeElement('introduction', $study->introduction);
         $x->writeElement('egoIdPrompt', $study->egoIdPrompt);
@@ -1108,7 +1105,7 @@ class ImportExportController extends Controller
             foreach ($alterLists as $alterList) {
                 $x->startElement('alterList');
                 foreach ($columns['alterList'] as $attr) {
-                    if (!in_array($attr, $exclude)) {
+                    if (!in_array($attr, $exclude) && $alterList->$attr != null) {
                         $x->writeAttribute($attr, $alterList->$attr);
                     }
                 }
@@ -1121,7 +1118,7 @@ class ImportExportController extends Controller
             foreach ($alterPrompts as $alterPrompt) {
                 $x->startElement('alterPrompt');
                 foreach ($columns['alterPrompt'] as $attr) {
-                    if (!in_array($attr, $exclude)) {
+                    if (!in_array($attr, $exclude) && $alterPrompt->$attr != null) {
                         $x->writeAttribute($attr, $alterPrompt->$attr);
                     }
                 }
@@ -1134,7 +1131,7 @@ class ImportExportController extends Controller
             foreach ($questions as $question) {
                 $x->startElement('question');
                 foreach ($columns['question'] as $attr) {
-                    if (!in_array($attr, $exclude)) {
+                    if (!in_array($attr, $exclude) && $question->$attr != null) {
                         $x->writeAttribute($attr, $question->$attr);
                     }
                 }
@@ -1145,7 +1142,7 @@ class ImportExportController extends Controller
                     foreach ($options as $option) {
                         $x->startElement('option');
                         foreach ($columns['questionOption'] as $attr) {
-                            if (!in_array($attr, $exclude)) {
+                            if (!in_array($attr, $exclude) && $option->$attr != null) {
                                 $x->writeAttribute($attr, $option->$attr);
                             }
                         }
@@ -1161,7 +1158,7 @@ class ImportExportController extends Controller
             foreach ($expressions as $expression) {
                 $x->startElement('expression');
                 foreach ($columns['expression'] as $attr) {
-                    if (!in_array($attr, $exclude)) {
+                    if (!in_array($attr, $exclude) && $expression->$attr != null) {
                         $x->writeAttribute($attr, $expression->$attr);
                     }
                 }

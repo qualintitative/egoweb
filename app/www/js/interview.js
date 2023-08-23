@@ -529,7 +529,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     setTimeout(function() {
 
         if ($scope.askingStyleList != false && $(window).width() > 768) {
-            $("table.qTable").floatThead({ top: parseInt($("#content").css("margin-top")) })
+          //  $("table.qTable").floatThead({ top: parseInt($("#content").css("margin-top")) })
             window.scrollTo(0, 0);
             $(window).resize();
         } else {
@@ -592,7 +592,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
             if ($scope.hasRefuse)
                 $scope.refuseCount++;
             window.scrollTo(0, 0);
-            $("table.qTable").floatThead('reflow');
+         //   $("table.qTable").floatThead('reflow');
         }
     };
 
@@ -1096,7 +1096,7 @@ app.directive('checkAnswer', [function() {
                         }
                     }
                 }
-                $("table.qTable").floatThead('reflow');
+             //   $("table.qTable").floatThead('reflow');
                 ngModel.$setValidity('checkAnswer', valid);
                 return valid ? value : undefined;
             });
@@ -1323,7 +1323,7 @@ app.directive('checkAnswer', [function() {
                         }
                     }
                 }
-                $("table.qTable").floatThead('reflow');
+              //  $("table.qTable").floatThead('reflow');
                 ngModel.$setValidity('checkAnswer', valid);
                 return value;
             });
