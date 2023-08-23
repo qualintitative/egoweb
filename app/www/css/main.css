@@ -3,6 +3,7 @@
 }
 
 #promptHeader {
+    background-color: #fff;
     padding-top: 40px;
     min-height: 120px;
     padding-bottom:20px;
@@ -913,9 +914,6 @@ label.prompt,
     display: table-cell;
 }
 
-.multi:nth-child(even) {
-    background-color: #f7f7f7;
-}
 
 .multi:nth-child(even).bg-danger {
     background-color: #efc7c7;
@@ -1174,6 +1172,12 @@ background-color: #fff;
 .sidebar-heading {
     font-size: .75rem;
     text-transform: uppercase;
+}
+[role="main"] {
+    padding-top: 70px;
+}
+[role="main"].interview {
+    padding-top: 0;
 }
 /*
 [role="main"] {

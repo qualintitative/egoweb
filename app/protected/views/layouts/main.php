@@ -123,11 +123,13 @@ AppAsset::register($this);
                 </div>
                 <?php endif; ?>
             </nav>
-
+            <?php if (Yii::$app->controller->id != 'interview'): ?>
+    <div class="container-xl">
+<?php endif;?>
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
-        <main role="main">
+        <main role="main" class="<?php echo Yii::$app->controller->id;?>">
 
             <?= Alert::widget() ?>
 
@@ -135,6 +137,9 @@ AppAsset::register($this);
 
         </main>
 
+        <?php if (Yii::$app->controller->id != 'interview'): ?>
+</div>
+<?php endif;?>
     <footer class="footer footer-copyright">
         <div class="container">
             <?php if (Yii::$app->controller->id != 'interview'): ?>
