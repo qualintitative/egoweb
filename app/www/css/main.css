@@ -14,6 +14,8 @@
 
 .nav-button-group{
     padding-bottom:20px;
+    margin-bottom:40px;
+
     position:sticky;
     left:0;
 }
@@ -368,16 +370,16 @@ td {
 
 @media (max-width: 768px) {
     div.table-responsive {
+        padding: 0;
+
         overflow:auto;
-        width:92vw;
         max-height:100vh;
     }
     #promptHeader {
-        width:92vw;
+        padding:15px;
     }
-    #aut
-    [role="main"] {
-        padding-top: 20px!important;
+    .nav-button-group {
+        padding-left:15px;
     }
     .row.ng-scope {
         margin-left:0!important;
@@ -687,10 +689,7 @@ a.btn {
     margin-bottom: 15px;
 }
 
-#answerForm .table-responsive {
-margin-bottom:0;
-padding-bottom:40px;
-}
+
 .multi label {
     padding-left: 10px;
 }
@@ -698,8 +697,10 @@ padding-bottom:40px;
 div.table-responsive {
     overflow:auto;
     max-height:100vh;
+    margin-bottom:0;
 }
 table.qTable{
+    width:100%;
     min-width:640px;
 }
 
@@ -959,13 +960,15 @@ label.prompt,
 
 @media (min-width: 769px) {
     div.table-responsive {
+        padding:40px;
+        padding-top:0
         margin-top:50px;
         overflow:auto;
-        width:calc(100vw-160px);
+        width:100%;
         max-height:100vh;
     }
     #promptHeader {
-        width:calc(100vw-160px);
+        width:100%;
     }
     #authoring-app {
         margin-top: 0;
@@ -1143,6 +1146,11 @@ background-color: #fff;
     top: 0;
     z-index: 2;
 }
+
+.qTable thead td {
+    background-color: #fff;
+
+  }
 
 .qTable tr:nth-of-type(odd) td:first-child {
     background-color: #ddd;

@@ -123,20 +123,17 @@ AppAsset::register($this);
                 </div>
                 <?php endif; ?>
             </nav>
-    <div class="container-xl">
 
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
         <main role="main">
 
-        <?= Alert::widget() ?>
+            <?= Alert::widget() ?>
 
             <?= $content ?>
 
         </main>
-
-    </div>
 
     <footer class="footer footer-copyright">
         <div class="container">

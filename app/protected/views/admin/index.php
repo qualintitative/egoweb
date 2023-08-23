@@ -6,7 +6,8 @@ use app\models\Interview;
 ?>
 
 
-       
+<div class="container-xl">
+
 
 <div id="accordion" class="fill-page">
 <div><h3>Multi-session Studies</h3></div>
@@ -207,3 +208,4 @@ $this->registerAssetBundle(\yii\web\JqueryAsset::className(), \yii\web\View::POS
 use app\assets\DataAsset;
 DataAsset::register($this);
 ?>
+</div>
