@@ -141,7 +141,7 @@
                     ng-repeat="question in questions">
                     <td
                         ng-if="question.SUBJECTTYPE == 'EGO_ID' && question.ANSWERTYPE != 'RANDOM_NUMBER' && question.ANSWERTYPE != 'STORED_VALUE'">
-                        {{ question.PROMPT }}
+                        <label>{{ question.PROMPT }}</label>
                     </td>
                     <td
                         ng-if="question.SUBJECTTYPE == 'EGO_ID' && (question.ANSWERTYPE == 'RANDOM_NUMBER' || question.ANSWERTYPE == 'STORED_VALUE')">

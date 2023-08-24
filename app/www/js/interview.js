@@ -443,7 +443,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         if ($scope.colspan == false) {
             $scope.colspan = 1
             $scope.colspan = $scope.colspan + Object.keys($scope.options[array_id]).length;
-            if ($scope.askingStyleList != false && ($scope.questions[k].ANSWERTYPE == "NUMERICAL" || $scope.questions[k].ANSWERTYPE == "TEXTUAL")) {
+            if ($scope.questions[k].SUBJECTTYPE == "EGO_ID" || ($scope.askingStyleList != false && ($scope.questions[k].ANSWERTYPE == "NUMERICAL" || $scope.questions[k].ANSWERTYPE == "TEXTUAL"))) {
                 $scope.colspan = $scope.colspan + 1;
             }
         }

@@ -959,7 +959,7 @@ label.prompt,
 @media (min-width: 769px) {
     div.table-responsive {
         padding:40px;
-        padding-top:0
+        padding-top:0;
         margin-top:50px;
         overflow:auto;
         width:100%;
