@@ -404,6 +404,9 @@ td {
     .prev-alters {
         min-height: 100px!important;
     }
+    [role="main"].interview {
+        padding-top: 30px;
+    }
 }
 
 .ng-scope label {
@@ -1176,9 +1179,7 @@ background-color: #fff;
 [role="main"] {
     padding-top: 70px;
 }
-[role="main"].interview {
-    padding-top: 0;
-}
+
 /*
 [role="main"] {
     padding-top: 70px;
