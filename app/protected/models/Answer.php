@@ -58,10 +58,10 @@ class Answer extends \yii\db\ActiveRecord
 
     public function afterFind()
     {
-        if (strlen($this->value) >= 8) {
+        if ($this->value && strlen($this->value) >= 8) {
             $this->value = Tools::decrypt($this->value);
         }
-        if (strlen($this->otherSpecifyText) >= 8) {
+        if ($this->otherSpecifyText && strlen($this->otherSpecifyText) >= 8) {
             $this->otherSpecifyText = Tools::decrypt($this->otherSpecifyText);
         }
 

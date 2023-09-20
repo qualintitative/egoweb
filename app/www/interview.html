@@ -22,8 +22,8 @@
 </div>
 
 <div ng-if="subjectType == 'NAME_GENERATOR'"
-    ng-class="{'col-xs-12 col-sm-9': questions[0].SUBJECTTYPE == 'NAME_GENERATOR', 'col-md-12': questions[0].SUBJECTTYPE != 'NAME_GENERATOR'}">
-    <div id="floatHeader">
+    class="col-xs-12 col-sm-12 row">
+    <div id="floatHeader" class="col-sm-9 col-xs-12 pl-5">
         <div class="col-sm-12 no-padding" ng-if="header != ''" ng-bind-html="header">
             {{ header }}
         </div>
@@ -85,37 +85,38 @@
             </form>
         </div>
     </div>
+    <div id="alterListBox" class="col-xs-12 col-sm-3" ng-if="questions[0].SUBJECTTYPE == 'NAME_GENERATOR'">
+        <span class="name-title">Names</span>
+        <table class="items" width="100%">
+            <tbody>
+                <tr class="multi" ng-repeat="alter in nGalters track by $index">
+                    <td style="width:25px;" id="ordering">{{ $index + 1 }}</td>
+                    <td style="width:auto;">{{ alter.NAME }}</td>
+                    <td style="width:25px;"><a class="alter-delete" title="Delete"
+                            ng-click="removeAlter(alter.ID, questions[0].ID)"><span class="fas fa-times"></span></a></td>
+                </tr>
+            </tbody>
+        </table>
+        <div ng-if='keys(nGalters).length == 0'>
+            <br>
+        </div>
+        <div ng-if='keys(listedAlters).length > 0' class="prev-alters">
+            <span class="name-title">Listed Names</span>
+            <div ng-repeat="pAlter in listedAlters">
+                <label>{{ pAlter.NAME }}</label><br>
+            </div>
+        </div>
+        <div ng-if='keys(prevAlters).length > 0 && showPrevAlters' class="prev-alters">
+            <span class="name-title">Previous Names</span>
+            <div ng-repeat="pAlter in prevAlters">
+                <label>{{ pAlter.NAME }}</label><br>
+            </div>
+        </div>
+    </div>
 </div>
 
 
-<div id="alterListBox" class="col-xs-12 col-sm-3" ng-if="questions[0].SUBJECTTYPE == 'NAME_GENERATOR'">
-    <span class="name-title">Names</span>
-    <table class="items" width="100%">
-        <tbody>
-            <tr class="multi" ng-repeat="alter in nGalters track by $index">
-                <td style="width:25px;" id="ordering">{{ $index + 1 }}</td>
-                <td style="width:auto;">{{ alter.NAME }}</td>
-                <td style="width:25px;"><a class="alter-delete" title="Delete"
-                        ng-click="removeAlter(alter.ID, questions[0].ID)"><span class="fas fa-times"></span></a></td>
-            </tr>
-        </tbody>
-    </table>
-    <div ng-if='keys(nGalters).length == 0'>
-        <br>
-    </div>
-    <div ng-if='keys(listedAlters).length > 0' class="prev-alters">
-        <span class="name-title">Listed Names</span>
-        <div ng-repeat="pAlter in listedAlters">
-            <label>{{ pAlter.NAME }}</label><br>
-        </div>
-    </div>
-    <div ng-if='keys(prevAlters).length > 0 && showPrevAlters' class="prev-alters">
-        <span class="name-title">Previous Names</span>
-        <div ng-repeat="pAlter in prevAlters">
-            <label>{{ pAlter.NAME }}</label><br>
-        </div>
-    </div>
-</div>
+
 
 <form id="answerForm" name="answerForm" qid="{{qId}}" ng-submit="submitForm(answerForm.$valid)" novalidate
     ng-class="{'col-sm-6': subjectType == 'NETWORK' || subjectType == 'MULTI_GRAPH'}">
