@@ -942,9 +942,14 @@ label.prompt,
     display: table-cell;
 }
 
-
+.multi:nth-child(odd).bg-danger {
+    background-color: #efc7c7;
+}
 .multi:nth-child(even).bg-danger {
     background-color: #efc7c7;
+}
+.multi:nth-child(even) {
+    background-color: #fff;
 }
 
 .multi div {
@@ -1184,7 +1189,6 @@ table.qTable td.alter-name {
 
 .qTable thead td {
     background-color: #fff;
-
 }
 
 .qTable tr:nth-of-type(odd) td:first-child {
