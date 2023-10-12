@@ -385,7 +385,7 @@ td {
 
 @media (max-width: 768px) {
     div.table-responsive {
-        padding: 0;
+        padding: 20px;
         width: 100vw;
         overflow: auto;
         max-height: 100vh;
@@ -396,7 +396,7 @@ td {
     }
 
     .nav-button-group {
-        padding-left: 15px;
+        padding-left: 0;
     }
 
     .row.ng-scope {
