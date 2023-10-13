@@ -156,14 +156,16 @@
 
 <form id="answerForm" name="answerForm" qid="{{qId}}" ng-submit="submitForm(answerForm.$valid)" novalidate
     ng-class="{'col-sm-6': subjectType == 'NETWORK' || subjectType == 'MULTI_GRAPH'}">
+    <div id="promptHeader" colspan={{colspan}} ng-bind-html="prompt">{{ prompt }}<br></div>
     <div ng-class="{'table-responsive ': subjectType != 'NETWORK'}">
         <table id="qTable" ng-class="{qTable: askingStyleList != false}" ng-if="askingStyleList != false">
             <thead>
                 <tr>
+                <!--
                     <td  colspan={{colspan}} >
                         <div id="promptHeader" colspan={{colspan}} ng-bind-html="prompt">{{ prompt }}<br></div>
                     </td>
-
+                -->
                 </tr>
                 <tr class="panel multi multi-header"
                     ng-if="askingStyleList != false && questions[0].SUBJECTTYPE != 'PREFACE'"">
