@@ -1004,6 +1004,8 @@ label.prompt,
     }
 
     #promptHeader {
+        padding-left: 40px;
+        padding-top:0;
         width: 100%;
     }
 

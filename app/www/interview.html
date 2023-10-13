@@ -156,17 +156,10 @@
 
 <form id="answerForm" name="answerForm" qid="{{qId}}" ng-submit="submitForm(answerForm.$valid)" novalidate
     ng-class="{'col-sm-6': subjectType == 'NETWORK' || subjectType == 'MULTI_GRAPH'}">
-    <div id="promptHeader" colspan={{colspan}} ng-bind-html="prompt">{{ prompt }}<br></div>
+    <div ng-if="subjectType != 'NAME_GENERATOR'" id="promptHeader" colspan={{colspan}} ng-bind-html="prompt">{{ prompt }}<br></div>
     <div ng-class="{'table-responsive ': subjectType != 'NETWORK'}">
         <table id="qTable" ng-class="{qTable: askingStyleList != false}" ng-if="askingStyleList != false">
             <thead>
-                <tr>
-                <!--
-                    <td  colspan={{colspan}} >
-                        <div id="promptHeader" colspan={{colspan}} ng-bind-html="prompt">{{ prompt }}<br></div>
-                    </td>
-                -->
-                </tr>
                 <tr class="panel multi multi-header"
                     ng-if="askingStyleList != false && questions[0].SUBJECTTYPE != 'PREFACE'"">
                     <td style=" min-width:180px">
@@ -461,7 +454,6 @@
 
         <div
             ng-if="askingStyleList == false && subjectType != 'NAME_GENERATOR' && (keys(questions).length == 1 || subjectType == 'EGO_ID')">
-            <div ng-if="prompt != ''" ng-bind-html="prompt">{{ prompt }}</div>
             <div id="realHeader" class="panel multi multi-header" ng-if="askingStyleList != false">
                 <div style="width:180px"></div>
                 <div ng-if="(answerType == 'TEXTUAL' || answerType == 'NUMERICAL') && askingStyleList != false"
