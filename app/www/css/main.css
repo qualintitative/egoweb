@@ -1316,6 +1316,7 @@ a.bg-dark {
 }
 
 #answerForm {
+    width:100%;
     font-size: 1.125rem;
 }
 
