@@ -16,7 +16,7 @@
 #promptHeader {
     background-color: #fff;
     padding-top: 40px;
-    min-height: 120px;
+    min-height: 80px;
     padding-bottom: 20px;
     position: sticky;
     left: 0;
@@ -385,7 +385,7 @@ td {
 
 @media (max-width: 768px) {
     div.table-responsive {
-        padding: 20px;
+       /* padding: 20px;*/
         width: 100vw;
         overflow: auto;
         max-height: 100vh;
@@ -434,6 +434,7 @@ td {
 
 .ng-scope label {
     width: auto;
+    margin-left:5px;
     max-width: 90%;
 }
 
@@ -719,7 +720,7 @@ a.btn {
 
 
 .multi label {
-    padding-left: 10px;
+    padding-left: 20px;
 }
 
 div.table-responsive {
@@ -1190,6 +1191,9 @@ table.qTable td.alter-name {
 }
 
 .qTable thead td {
+    background-color: #fff;
+}
+.qTable thead tr:nth-of-type(odd) td:first-child {
     background-color: #fff;
 }
 

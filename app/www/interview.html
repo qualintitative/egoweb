@@ -460,7 +460,7 @@
                     style="width:{{ fixedWidth }}"></div>
                 <div ng-repeat="option in options[askingStyleList]">{{ option.NAME }}</div>
             </div>
-            <div class="panel" ng-if="hideQ == false" ng-class="{multi: question.ASKINGSTYLELIST == true}"
+            <div class="panel pl-3" ng-if="hideQ == false" ng-class="{multi: question.ASKINGSTYLELIST == true}"
                 ng-repeat="question in questions">
                 <h4
                     ng-if="question.SUBJECTTYPE == 'EGO_ID' && question.ANSWERTYPE != 'RANDOM_NUMBER' && question.ANSWERTYPE != 'STORED_VALUE'">
@@ -719,7 +719,7 @@
             ng-if="(conclusion == true && redirect == false) || (questions[0].ANSWERTYPE == 'CONCLUSION' && redirect != false)"
             name="conclusion" value='1' type="hidden">
 
-        <div class="form-group nav-button-group clear-left btn-top mt-3">
+        <div class="form-group nav-button-group clear-left btn-top mt-3 pl-3">
             <button ng-if="page > 0 && questions[0].ANSWERTYPE != 'CONCLUSION'" id="back" class='btn graybutton'
                 ng-click="goBack();" onclick="return false;">Back</button>
             <button
