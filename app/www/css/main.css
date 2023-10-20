@@ -384,8 +384,16 @@ td {
 }
 
 @media (max-width: 768px) {
+    .qTable thead td {
+        width: 120px;
+    }
+
+    .qTable thead label {
+        margin-left: 0;
+    }
+
     div.table-responsive {
-       /* padding: 20px;*/
+        /* padding: 20px;*/
         width: 100vw;
         overflow: auto;
         max-height: 100vh;
@@ -434,7 +442,7 @@ td {
 
 .ng-scope label {
     width: auto;
-    margin-left:5px;
+    margin-left: 5px;
     max-width: 90%;
 }
 
@@ -946,9 +954,11 @@ label.prompt,
 .multi:nth-child(odd).bg-danger {
     background-color: #efc7c7;
 }
+
 .multi:nth-child(even).bg-danger {
     background-color: #efc7c7;
 }
+
 .multi:nth-child(even) {
     background-color: #fff;
 }
@@ -995,7 +1005,7 @@ label.prompt,
         margin-left: auto;
         order: 2;
     }
-    
+
     div.table-responsive {
         padding: 40px;
         padding-top: 0;
@@ -1006,7 +1016,7 @@ label.prompt,
 
     #promptHeader {
         padding-left: 40px;
-        padding-top:0;
+        padding-top: 0;
         width: 100%;
     }
 
@@ -1193,6 +1203,7 @@ table.qTable td.alter-name {
 .qTable thead td {
     background-color: #fff;
 }
+
 .qTable thead tr:nth-of-type(odd) td:first-child {
     background-color: #fff;
 }
@@ -1320,7 +1331,7 @@ a.bg-dark {
 }
 
 #answerForm {
-    width:100%;
+    width: 100%;
     font-size: 1.125rem;
 }
 
