@@ -22,8 +22,7 @@
     </span>
 </div>
 
-<div ng-if="subjectType == 'NAME_GENERATOR'"
-    class="col-xs-12 col-sm-12 row">
+<div ng-if="subjectType == 'NAME_GENERATOR'" class="col-xs-12 col-sm-12 row">
     <div id="floatHeader" class="col-sm-9 col-xs-12 pl-5">
         <div class="col-sm-12 no-padding" ng-if="header != ''" ng-bind-html="header">
             {{ header }}
@@ -98,7 +97,8 @@
                     <td style="width:25px;" id="ordering">{{ $index + 1 }}</td>
                     <td style="width:auto;">{{ alter.NAME }}</td>
                     <td style="width:25px;"><a class="alter-delete" title="Delete"
-                            ng-click="removeAlter(alter.ID, questions[0].ID)"><span class="fas fa-times"></span></a></td>
+                            ng-click="removeAlter(alter.ID, questions[0].ID)"><span class="fas fa-times"></span></a>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -139,16 +139,17 @@
             </div>
             <button id="toggleButton" class="btn btn-warning print-button" style="margin-top:10px"
                 onclick="toggleLabels()">Toggle Labels</button>
-                <form id="graph-form" method="post"  ng-if="subjectType == 'NETWORK' && (graphExpressionId > 0 || starExpressionId > 0 )">
-                    <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
-                    <input value="{{ graphId }}" name="Graph[id]" id="Graph_id" type="hidden">
-                    <input value="{{ graphInterviewId }}" name="Graph[interviewId]" id="Graph_interviewId" type="hidden">
-                    <input value="{{ graphExpressionId }}" name="Graph[expressionId]" id="Graph_expressionId" type="hidden">
-                    <input value="{{ graphNodes }}" name="Graph[nodes]" id="Graph_nodes" type="hidden">
-                    <input value="{{ graphParams }}" name="Graph[params]" id="Graph_params" type="hidden">
-                    <button id="redrawButton" class="btn btn-danger print-button" style="margin-top:10px"
-                        onclick="redraw();return false;">Redraw</button>
-                </form>
+            <form id="graph-form" method="post"
+                ng-if="subjectType == 'NETWORK' && (graphExpressionId > 0 || starExpressionId > 0 )">
+                <input name="YII_CSRF_TOKEN" value='{{ csrf }}' type="hidden">
+                <input value="{{ graphId }}" name="Graph[id]" id="Graph_id" type="hidden">
+                <input value="{{ graphInterviewId }}" name="Graph[interviewId]" id="Graph_interviewId" type="hidden">
+                <input value="{{ graphExpressionId }}" name="Graph[expressionId]" id="Graph_expressionId" type="hidden">
+                <input value="{{ graphNodes }}" name="Graph[nodes]" id="Graph_nodes" type="hidden">
+                <input value="{{ graphParams }}" name="Graph[params]" id="Graph_params" type="hidden">
+                <button id="redrawButton" class="btn btn-danger print-button" style="margin-top:10px"
+                    onclick="redraw();return false;">Redraw</button>
+            </form>
         </div>
     </div>
 </div>
@@ -156,7 +157,8 @@
 
 <form id="answerForm" name="answerForm" qid="{{qId}}" ng-submit="submitForm(answerForm.$valid)" novalidate
     ng-class="{'col-sm-6': subjectType == 'NETWORK' || subjectType == 'MULTI_GRAPH'}">
-    <div ng-if="subjectType != 'NAME_GENERATOR'" id="promptHeader" colspan={{colspan}} ng-bind-html="prompt">{{ prompt }}<br></div>
+    <div ng-if="subjectType != 'NAME_GENERATOR'" id="promptHeader" colspan={{colspan}} ng-bind-html="prompt">{{ prompt
+        }}<br></div>
     <div ng-class="{'table-responsive ': subjectType != 'NETWORK'}">
         <table id="qTable" ng-class="{qTable: askingStyleList != false}" ng-if="askingStyleList != false">
             <thead>
@@ -450,7 +452,7 @@
                 </tr>
             </tbody>
         </table>
-   
+
 
         <div
             ng-if="askingStyleList == false && subjectType != 'NAME_GENERATOR' && (keys(questions).length == 1 || subjectType == 'EGO_ID')">
