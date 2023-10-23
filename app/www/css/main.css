@@ -1001,6 +1001,10 @@ label.prompt,
 }
 
 @media (min-width: 769px) {
+    #floatHeader{
+        padding-left:40px;
+    }
+
     #visualizePlugin {
         margin-left: auto;
         order: 2;
