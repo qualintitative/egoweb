@@ -385,7 +385,7 @@ td {
 
 @media (max-width: 768px) {
     .qTable thead td {
-        width: 120px;
+        width: 130px;
     }
 
     .qTable thead label {
@@ -729,6 +729,11 @@ a.btn {
 
 .multi label {
     padding-left: 20px;
+}
+
+thead .multi label {
+    padding-left: 10px;
+    padding-right:10px;
 }
 
 div.table-responsive {
