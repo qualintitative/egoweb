@@ -387,7 +387,9 @@ td {
     .qTable thead td {
         width: 130px;
     }
-
+    .qTable td:first-child {
+        width: 180px;
+    }
     .qTable thead label {
         margin-left: 0;
     }
@@ -1006,6 +1008,9 @@ label.prompt,
 }
 
 @media (min-width: 769px) {
+    .qTable td:first-child {
+        width: 25%;
+    }
     #floatHeader{
         padding-left:40px;
     }
@@ -1069,10 +1074,6 @@ label.prompt,
         overflow-y: scroll;
         position: fixed;
     }
-}
-
-table.qTable td:first-child {
-    text-align: left;
 }
 
 table.qTable td.alter-name {
@@ -1198,9 +1199,8 @@ table.qTable td.alter-name {
     position: sticky;
     left: 0;
     z-index: 1;
-    width: 180px;
+    text-align: left;
     background-color: #fff;
-
 }
 
 .qTable thead {
