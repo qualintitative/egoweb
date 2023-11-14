@@ -1111,7 +1111,7 @@ app.directive('checkAnswer', [function() {
                         var noun = " people";
                         if (scope.questions[0].MINLITERAL == 1)
                             noun = " person";
-                        scope.errors[0] = 'Please list ata least ' + scope.questions[0].MINLITERAL + noun + ".";
+                        scope.errors[0] = 'Please list at least ' + scope.questions[0].MINLITERAL + noun + ".";
                         //scope.errors[array_id] = 'Please list ata least ' + scope.questions[0].MINLITERAL + noun + ".";
                         valid = false;
                     } else {
