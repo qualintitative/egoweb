@@ -35,7 +35,7 @@ class AlterList extends \yii\db\ActiveRecord
             [['studyId', 'ordering'], 'required'],
             [['studyId', 'ordering'], 'integer'],
             [['name', 'email',"nameGenQIds"], 'string'],
-            [['interviewerId'],'default','value'=>0],
+            [['interviewerId','ordering'],'default','value'=>0],
         ];
     }
 

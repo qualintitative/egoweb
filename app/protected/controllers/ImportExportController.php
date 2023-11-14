@@ -168,6 +168,8 @@ class ImportExportController extends Controller
                                 $newAlterList->$key = html_entity_decode($value);
                             }
                         }
+                        if(!$newAlterList->ordering)
+                            $newAlterList->ordering = 0;
                         $newAlterList->studyId = $newStudy->id;
                         if (!$newAlterList->save()) {
                             echo "Alter list: $newAlterList->name [". gettype($newAlterList->name) . "]: $newAlterList->email";
@@ -677,9 +679,10 @@ class ImportExportController extends Controller
                                     $answerType = $value;
                                 }
                             }
-
-                            $newAnswer->value = html_entity_decode($newAnswer->value, ENT_QUOTES);
-
+                            if($newAnswer->value != null)
+                               $newAnswer->value = html_entity_decode($newAnswer->value, ENT_QUOTES);
+                            else
+                                $newAnswer->value = "";
 
                             if ($answerType == "MULTIPLE_SELECTION" && !in_array($newAnswer->value, array($newStudy->valueRefusal,$newStudy->valueDontKnow,$newStudy->valueLogicalSkip,$newStudy->valueNotYetAnswered))) {
                                 $values = explode(',', $newAnswer->value);
@@ -823,7 +826,7 @@ class ImportExportController extends Controller
                 }
                 $alter->interviewId = implode(',', $values);
             }
-            if (preg_match("/,/", $alter->alterListId)) {
+            if ($alter->alterListId != null && preg_match("/,/", $alter->alterListId)) {
                 $values = explode(',', $alter->alterListId);
                 $vs = array();
                 foreach ($values as $value) {

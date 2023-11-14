@@ -135,7 +135,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
                 }
             }
         }
-        //console.log(alters, $scope.listedAlters);
+        console.log("alters", $scope.nGalters, $scope.listedAlters);
         $scope.prevAlters = prevAlters;
         //console.log($scope.nGalters);
     } else {
@@ -887,7 +887,7 @@ app.directive('checkAnswer', [function() {
 
                 if (attr.answerType == "NAME_GENERATOR") {
                     console.log("min alters", scope.questions[0].MINLITERAL)
-                    if ((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.nGalters).length < scope.questions[0].MINLITERAL) {
+                    if (((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW") || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.nGalters).length < scope.questions[0].MINLITERAL) {
                         var noun = " people";
                         if (scope.questions[0].MINLITERAL == 1)
                             noun = " person";
@@ -1106,11 +1106,13 @@ app.directive('checkAnswer', [function() {
                 var array_id = attr.arrayId;
                 var question = questions[attr.questionId];
                 if (question.SUBJECTTYPE == "NAME_GENERATOR") {
-                    if ((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW" || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.nGalters).length < scope.questions[0].MINLITERAL) {
+                   // alert('error ' + scope.answers[array_id])
+                    if (((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW") || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.nGalters).length < scope.questions[0].MINLITERAL) {
                         var noun = " people";
                         if (scope.questions[0].MINLITERAL == 1)
                             noun = " person";
-                        scope.errors[array_id] = 'Please list at least ' + scope.questions[0].MINLITERAL + noun + ".";
+                        scope.errors[0] = 'Please list ata least ' + scope.questions[0].MINLITERAL + noun + ".";
+                        //scope.errors[array_id] = 'Please list ata least ' + scope.questions[0].MINLITERAL + noun + ".";
                         valid = false;
                     } else {
                         delete scope.errors[0];
