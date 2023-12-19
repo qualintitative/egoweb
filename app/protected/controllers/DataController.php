@@ -113,7 +113,7 @@ class DataController extends Controller
             if (!isset($expressions[$studyId]))
                 $expressions[$studyId] = [];
             foreach ($result as $e) {
-                $expressions[$studyId][$e->id] = $all_studies[$e->studyId] . ":" . $e->name;
+                $expressions[$studyId][$e->id] = $e->name;
             }
         }
 

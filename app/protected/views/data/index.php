@@ -293,18 +293,24 @@ function deleteInterviews() {
             <div class="col-sm-4 float-right">
                 <a class="btn btn-sm btn-info float-right" href="/authoring/<?php echo $study->id; ?>">Authoring</a>
             </div>
+            <?php if(count($all_studies) > 1): ?>
+                <div class="col-sm-12 float-left  mb-2">
+                    This <b>mutlisession study</b> includes interviews from
+                    <?php echo implode(", ", $all_studies);?>
+                </div>
+            <?php endif;?>
             <?php foreach($multiStudyIds as $studyId): ?>
-            <div class="col-sm-12 float-left">
-                Network Statistics
+            <div class="col-sm-12 float-left  mb-2">
+                <?php echo(count($all_studies) > 0 ? $all_studies[$studyId] :""); ?> Network Statistics
                 <?php echo Html::dropDownList('expressionId', '', $expressions[$studyId], ['id'=> $studyId."_expId", 'prompt' => '(none)',
                 'onchange' => '$("#'.$studyId.'_expressionId").val($(this).val())']);
                 ?>
             </div>
             <?php endforeach; ?>
-            <div class="col-sm-8 float-left mb-3">
+            <div class="col-sm-8 float-left mb-1">
                 <input type="checkbox" id="withAlters1" checked> Include Alter Names
             </div>
-            <div class="col-sm-12 float-left">
+            <div class="col-sm-12 float-left mb-2">
                 <input type="checkbox" id="multiSession1" checked> Include Multisession data
             </div>
         </div>
