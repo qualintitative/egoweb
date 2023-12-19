@@ -1,4 +1,5 @@
 <?php
+
 namespace app\controllers;
 
 use app\models\ResendVerificationEmailForm;
@@ -86,53 +87,77 @@ class DataController extends Controller
         $study = Study::findOne($id);
         $this->view->title = $study->name;
         $questionIds = [];
-        $questions = Question::findAll(array("subjectType"=>"ALTER_PAIR", "studyId"=>$id));
-        foreach ($questions as $question) {
-            $questionIds[] = $question->id;
+
+        if ($study->multiSessionEgoId) {
+            $all_studies = [];
+            $multiStudyIds = $study->multiStudyIds();
+            $questions = Question::findAll(array("subjectType" => "ALTER_PAIR", "studyId" => $multiStudyIds));
+            foreach ($questions as $question) {
+                $questionIds[] = $question->id;
+            }
+            $result = Study::find()->where(["id" => $multiStudyIds])->all();
+            foreach ($result as $s) {
+                $all_studies[$s->id] = $s->name;
+            }
+        } else {
+            $questions = Question::findAll(array("subjectType" => "ALTER_PAIR", "studyId" => $id));
+            foreach ($questions as $question) {
+                $questionIds[] = $question->id;
+            }
+            $multiStudyIds = $id;
+            $all_studies = false;
         }
-        $expressions = ArrayHelper::map(
-            Expression::findAll(["studyId"=>$study->id, "questionId"=>$questionIds]),
-            'id',
-            'name'
-        );
+        $expressions = [];
+        foreach ($multiStudyIds as $studyId) {
+            $result = Expression::findAll(["studyId" => $studyId, "questionId" => $questionIds]);
+            if (!isset($expressions[$studyId]))
+                $expressions[$studyId] = [];
+            foreach ($result as $e) {
+                $expressions[$studyId][$e->id] = $all_studies[$e->studyId] . ":" . $e->name;
+            }
+        }
+
         $alters = [];
         $allInterviewIds = [];
-        $interviews = Interview::find()->where(["studyId"=>$study->id])->all();
+        $interviews = Interview::find()->where(["studyId" => $multiStudyIds])->all();
         $result = Answer::findAll([
-            "studyId"=>$study->id,
-            "questionType"=>"EGO_ID",
+            "studyId" => $multiStudyIds,
+            "questionType" => "EGO_ID",
         ]);
+
         $egoid_answers = array();
         foreach ($result as $answer) {
-            if($answer->answerType == "RANDOM_NUMBER" || $answer->answerType == "STORED_VALUE")
+            if ($answer->answerType == "RANDOM_NUMBER" || $answer->answerType == "STORED_VALUE")
                 continue;
-            if(!isset($egoid_answers[$answer->interviewId]))
+            if (!isset($egoid_answers[$answer->interviewId]))
                 $egoid_answers[$answer->interviewId] = [];
             $egoid_answers[$answer->interviewId][] = $answer->value;
         }
+
+
         $egoIds = [];
-        foreach($interviews as $interview){
+        foreach ($interviews as $interview) {
             $alters[$interview->id] = 0;
-            if(!isset($egoid_answers[$interview->id]))
+            if (!isset($egoid_answers[$interview->id]))
                 $egoid_answers[$interview->id] = ["error"];
             $egoIds[$interview->id] = implode("_", $egoid_answers[$interview->id]);
             $allInterviewIds[] = $interview->id;
+            $interviewStudyIds[$interview->id] = $interview->studyId;
         }
         $allAlters = (new \yii\db\Query())
-        ->select(['interviewId'])
-        ->from('alters')
-        ->all();
-        foreach($allAlters as $alter){
+            ->select(['interviewId'])
+            ->from('alters')
+            ->all();
+        foreach ($allAlters as $alter) {
             $interviewIds = explode(",", $alter['interviewId']);
-            foreach($interviewIds as $interviewId){
-                if(in_array($interviewId, $allInterviewIds)){
-                    if(isset($alters[$interviewId]))
+            foreach ($interviewIds as $interviewId) {
+                if (in_array($interviewId, $allInterviewIds)) {
+                    if (isset($alters[$interviewId]))
                         $alters[$interviewId]++;
                 }
             }
-
         }
-        return $this->render('index', ['study'=>$study, 'expressions'=>$expressions, 'interviews'=>$interviews, 'alters' => $alters, 'egoIds' => $egoIds]);
+        return $this->render('index', ['study' => $study, 'all_studies' => $all_studies, 'interviewStudyIds' => $interviewStudyIds, 'multiStudyIds'=> $multiStudyIds,'expressions' => $expressions, 'interviews' => $interviews, 'alters' => $alters, 'egoIds' => $egoIds]);
     }
 
 
@@ -148,7 +173,7 @@ class DataController extends Controller
             $studyId = $interview->studyId;
             $study = Study::findOne($studyId);
             $this->view->title = $study->name;
-            $questions = Question::findAll(["subjectType"=>"ALTER_PAIR", "studyId"=>$studyId]);
+            $questions = Question::findAll(["subjectType" => "ALTER_PAIR", "studyId" => $studyId]);
             $questionIds = array();
             foreach ($questions as $question) {
                 $questionIds[] = $question->id;
@@ -157,13 +182,13 @@ class DataController extends Controller
             if (!$questionIds) {
                 $questionIds = 0;
             }
-            $alter_pair_expressions = Expression::findAll(["questionId"=>$questionIds, "studyId"=>$studyId]);
-         
-            $result = Question::find()->where(["studyId"=>$studyId])->andWhere(['!=', 'subjectType', 'EGO_ID'])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+            $alter_pair_expressions = Expression::findAll(["questionId" => $questionIds, "studyId" => $studyId]);
+
+            $result = Question::find()->where(["studyId" => $studyId])->andWhere(['!=', 'subjectType', 'EGO_ID'])->orderBy(["ordering" => "ASC"])->asArray()->all();
             $questions = [];
             $notes = [];
             foreach ($result as $question) {
-                $question['options'] = QuestionOption::find()->where(['questionId'=>$question['id']])->orderBy(["ordering"=>"ASC"])->asArray()->all();
+                $question['options'] = QuestionOption::find()->where(['questionId' => $question['id']])->orderBy(["ordering" => "ASC"])->asArray()->all();
                 $questions[$question['id']] = $question;
             }
             $new_question = new Question;
@@ -171,15 +196,15 @@ class DataController extends Controller
             $new_question->subjectType = "NETWORK";
             $new_question = $new_question->toArray();
             $expressions = [];
-            $results = Expression::find()->where(["studyId"=>$study->id])->asArray()->all();
+            $results = Expression::find()->where(["studyId" => $study->id])->asArray()->all();
             foreach ($results as $expression) {
                 $expressions[$expression['id']] = $expression;
             }
-            $answerList = Answer::findAll(array('interviewId'=>$id));
+            $answerList = Answer::findAll(array('interviewId' => $id));
             foreach ($answerList as $answer) {
                 if ($answer->alterId1 && $answer->alterId2) {
                     $array_id = $answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2;
-                } elseif ($answer->alterId1 && ! $answer->alterId2) {
+                } elseif ($answer->alterId1 && !$answer->alterId2) {
                     $array_id = $answer->questionId . "-" . $answer->alterId1;
                 } else {
                     $array_id = $answer->questionId;
@@ -188,17 +213,17 @@ class DataController extends Controller
             }
             $alters = array();
             $results = Alters::find()
-            ->where(new \yii\db\Expression("FIND_IN_SET(:interviewId, interviewId)"))
-            ->addParams([':interviewId' => $id])
-            ->all();
+                ->where(new \yii\db\Expression("FIND_IN_SET(:interviewId, interviewId)"))
+                ->addParams([':interviewId' => $id])
+                ->all();
             foreach ($results as $result) {
                 $alters[$result->id] = Tools::mToA($result);
             }
-            $results = Graph::find()->where(array('interviewId'=>$id))->all();
+            $results = Graph::find()->where(array('interviewId' => $id))->all();
             foreach ($results as $result) {
                 $graphs[$result->expressionId] = Tools::mToA($result);
             }
-            $results = Note::find()->where(array("interviewId"=>$id))->all();
+            $results = Note::find()->where(array("interviewId" => $id))->all();
             foreach ($results as $result) {
                 $notes[$result->expressionId][$result->alterId] = $result->notes;
             }
@@ -206,10 +231,10 @@ class DataController extends Controller
                 $this->renderPartial(
                     'print',
                     array(
-                        'graphs'=>$graphs,
-                        'studyId'=>$studyId,
-                        'alter_pair_expressions'=> $alter_pair_expressions,
-                        'interviewId'=>$_GET['interviewId'],
+                        'graphs' => $graphs,
+                        'studyId' => $studyId,
+                        'alter_pair_expressions' => $alter_pair_expressions,
+                        'interviewId' => $_GET['interviewId'],
                     ),
                     false,
                     true
@@ -218,19 +243,19 @@ class DataController extends Controller
                 return $this->render(
                     'visualize',
                     array(
-                        'graphs'=>$graphs,
-                        'study'=>$study,
-                        'interview'=>$interview,
-                        'studyId'=>$studyId,
-                        'alter_pair_expressions'=> $alter_pair_expressions,
-                        'interviewId'=>$id,
-                        'questions'=>$questions,
-                        'expressions'=>$expressions,
-                        'new_question'=>$new_question,
-                        "answers"=>json_encode($answers),
-                        "alters"=>json_encode($alters),
-                        "graphs"=>json_encode($graphs),
-                        "allNotes"=>json_encode($notes),
+                        'graphs' => $graphs,
+                        'study' => $study,
+                        'interview' => $interview,
+                        'studyId' => $studyId,
+                        'alter_pair_expressions' => $alter_pair_expressions,
+                        'interviewId' => $id,
+                        'questions' => $questions,
+                        'expressions' => $expressions,
+                        'new_question' => $new_question,
+                        "answers" => json_encode($answers),
+                        "alters" => json_encode($alters),
+                        "graphs" => json_encode($graphs),
+                        "allNotes" => json_encode($notes),
                     )
                 );
             }
@@ -243,13 +268,10 @@ class DataController extends Controller
      */
     public function actionExportegoalter()
     {
-        if (!isset($_POST['studyId'])) {
-            die("no study selected");
-        }
-
-        $filePath = getcwd()."/assets/".$_POST['studyId'];
+        $interview = Interview::findOne($_POST['interviewId']);
+        $filePath = getcwd() . "/assets/" . $interview->studyId;
         if (file_exists($filePath . "/" . $_POST['interviewId'] . "-ego-alter.csv")) {
-            return $this->renderAjax("/layouts/ajax", ["json"=>"success"]);
+            return $this->renderAjax("/layouts/ajax", ["json" => "success"]);
         }
 
         if (!is_dir($filePath)) {
@@ -266,25 +288,18 @@ class DataController extends Controller
             $multiSesh = boolval($_POST['multiSession']);
         }
 
-        $interview = Interview::findOne($_POST['interviewId']);
         if ($interview) {
             $file = fopen($filePath . "/" . $_POST['interviewId'] . "-ego-alter.csv", "w") or die("Unable to open file!");
             $interview->exportEgoAlterData($file, $withAlters, $multiSesh);
-            return $this->renderAjax("/layouts/ajax", ["json"=>"success"]);
+            return $this->renderAjax("/layouts/ajax", ["json" => "success"]);
         }
-        return $this->renderAjax("/layouts/ajax", ["json"=>"fail"]);
+        return $this->renderAjax("/layouts/ajax", ["json" => "fail"]);
     }
 
     public function actionExportegoalterall()
     {
         if (!isset($_POST['studyId']) || $_POST['studyId'] == "") {
             die("nothing to export");
-        }
-
-        if (isset($_POST['expressionId'])) {
-            $expressionId = $_POST['expressionId'];
-        } else {
-            $expressionId = '';
         }
 
         $withAlters = false;
@@ -297,62 +312,13 @@ class DataController extends Controller
             $multiSesh = boolval($_POST['multiSession']);
         }
 
-        $study = Study::findOne($_POST['studyId']);
-
-        // fetch questions
-        $all_questions = Question::find()->where(["studyId"=>$_POST['studyId']])->orderBy(["ordering"=>"ASC"])->all();
-        $ego_id_questions = [];
-        $ego_questions = [];
-        $alter_questions = [];
-        $network_questions = [];
-        $name_gen_questions = [];
-        $previous_questions = [];
-        foreach ($all_questions as $question) {
-            if ($question->subjectType == "EGO_ID") {
-                $ego_id_questions[] = $question;
-            }
-            if ($question->subjectType == "EGO") {
-                $ego_questions[] = $question;
-            }
-            if ($question->subjectType == "ALTER") {
-                $alter_questions[] = $question;
-            }
-            if ($question->subjectType == "NETWORK") {
-                $network_questions[] = $question;
-            }
-            if ($question->subjectType == "NAME_GENERATOR") {
-                $name_gen_questions[] = $question;
-            }
-            if ($question->subjectType == "PREVIOUS_ALTER") {
-                $previous_questions[] = $question;
-            }
-        }
-
         $headers = array();
         $headers[] = 'Interview ID';
         $headers[] = "EgoID";
         $headers[] = 'Start Time';
         $headers[] = 'End Time';
-        foreach ($ego_id_questions as $question) {
-            $headers[] = $question->title;
-        }
-        foreach ($ego_questions as $question) {
-            $headers[] = $question->title;
-        }
-        foreach ($network_questions as $question) {
-            $headers[] = $question->title;
-        }
-        if ($expressionId) {
-            $headers[] = "Density";
-            $headers[] = "Max Degree Value";
-            $headers[] = "Max Betweenness Value";
-            $headers[] = "Max Eigenvector Value";
-            $headers[] = "Degree Centralization";
-            $headers[] = "Betweenness Centralization";
-            $headers[] = "Components";
-            $headers[] = "Dyads";
-            $headers[] = "Isolates";
-        }
+
+        $study = Study::findOne($_POST['studyId']);
         if ($study->multiSessionEgoId) {
             $multiQs = $study->multiIdQs();
             foreach ($multiQs as $q) {
@@ -361,56 +327,151 @@ class DataController extends Controller
         } else {
             $studyIds = $study->id;
         }
-        $matchAtAll = MatchedAlters::find()->where(["studyId"=>$studyIds])->one();
 
-        if ($matchAtAll) {
-            $headers[] = "Dyad Match ID";
-            $headers[] = "Match User";
-            $headers[] = "Alter Number";
-            if ($withAlters) {
-                $headers[] = "Alter Name";
-                $headers[] = "Matched Alter Name";
+        $indents = [];
+        // fetch questions
+        foreach ($studyIds as $studyId) {
+            $hCount = 0;
+            $all_questions = Question::find()->where(["studyId" => $studyId])->orderBy(["ordering" => "ASC"])->all();
+            $ego_id_questions = [];
+            $ego_questions = [];
+            $alter_questions = [];
+            $network_questions = [];
+            $name_gen_questions = [];
+            $previous_questions = [];
+            foreach ($all_questions as $question) {
+                if ($question->subjectType == "EGO_ID") {
+                    $ego_id_questions[] = $question;
+                }
+                if ($question->subjectType == "EGO") {
+                    $ego_questions[] = $question;
+                }
+                if ($question->subjectType == "ALTER") {
+                    $alter_questions[] = $question;
+                }
+                if ($question->subjectType == "NETWORK") {
+                    $network_questions[] = $question;
+                }
+                if ($question->subjectType == "NAME_GENERATOR") {
+                    $name_gen_questions[] = $question;
+                }
+                if ($question->subjectType == "PREVIOUS_ALTER") {
+                    $previous_questions[] = $question;
+                }
             }
-            $headers[] = "Alter Pair ID";
-        } else {
-            $headers[] = "Alter Number";
-            if ($withAlters) {
-                $headers[] = "Alter Name";
-            }
-        }
-        foreach ($name_gen_questions as $question) {
-            $headers[] = $question->title;
-        }
-        foreach ($previous_questions as $question) {
-            $headers[] = $question->title;
-        }
-        foreach ($alter_questions as $question) {
-            $headers[] = $question->title;
-        }
-        if ($expressionId) {
-            $headers[] = "Degree";
-            $headers[] = "Betweenness";
-            $headers[] = "Eigenvector";
-        }
 
-        if ($multiSesh && isset($study->multiSessionEgoId) && $study->multiSessionEgoId) {
-            $headers[] = 'Alter ID';
-            $multiQs = $study->multiIdQs();
-            foreach ($multiQs as $q) {
-                $s = Study::findOne($q->studyId);
-                $headers[] = $s->name;
+            foreach ($ego_id_questions as $question) {
+                $headers[] = $question->title;
+                $hCount++;
             }
+            foreach ($ego_questions as $question) {
+                $headers[] = $question->title;
+                $hCount++;
+            }
+            foreach ($network_questions as $question) {
+                $headers[] = $question->title;
+                $hCount++;
+            }
+
+            if (isset($_POST[$studyId . '_expressionId']) && $_POST[$studyId . '_expressionId'] != "" ) {
+                $headers[] = "Density";
+                $headers[] = "Max Degree Value";
+                $headers[] = "Max Betweenness Value";
+                $headers[] = "Max Eigenvector Value";
+                $headers[] = "Degree Centralization";
+                $headers[] = "Betweenness Centralization";
+                $headers[] = "Components";
+                $headers[] = "Dyads";
+                $headers[] = "Isolates";
+                $hCount += 9;
+            }
+            $matchAtAll = MatchedAlters::find()->where(["studyId" => $studyId])->one();
+
+            if ($matchAtAll) {
+                $headers[] = "Dyad Match ID";
+                $headers[] = "Match User";
+                $headers[] = "Alter Number";
+                $hCount += 3;
+                if ($withAlters) {
+                    $headers[] = "Alter Name";
+                    $headers[] = "Matched Alter Name";
+                    $hCount += 2;
+                }
+                $headers[] = "Alter Pair ID";
+                $hCount++;
+            } else {
+                $headers[] = "Alter Number";
+                $hCount++;
+                if ($withAlters) {
+                    $headers[] = "Alter Name";
+                    $hCount++;
+                }
+            }
+            foreach ($name_gen_questions as $question) {
+                $headers[] = $question->title;
+                $hCount++;
+            }
+            foreach ($previous_questions as $question) {
+                $headers[] = $question->title;
+                $hCount++;
+            }
+            foreach ($alter_questions as $question) {
+                $headers[] = $question->title;
+                $hCount++;
+            }
+            if (isset($_POST[$studyId . '_expressionId']) && $_POST[$studyId . '_expressionId'] != "" ) {
+                $headers[] = "Degree";
+                $headers[] = "Betweenness";
+                $headers[] = "Eigenvector";
+                $hCount += 3;
+            }
+
+            if ($multiSesh && $study->multiSessionEgoId) {
+                $headers[] = 'Alter ID';
+                $hCount++;
+                $multiQs = $study->multiIdQs();
+                foreach ($multiQs as $q) {
+                    $s = Study::findOne($studyId);
+                    $headers[] = $s->name;
+                    $hCount++;
+                }
+            }
+            $indents[$studyId] = $hCount;
         }
 
         $interviewIds = array();
         $interviewIds = explode(",", $_POST['interviewIds']);
+        $interviews = Interview::findAll(["id" => $interviewIds]);
+
 
         $text = implode(',', $headers) . "\n";
-        foreach ($interviewIds as $interviewId) {
-            $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . "-ego-alter.csv";
+        foreach ($interviews as $interview) {
+            $filePath = getcwd() . "/assets/" . $interview->studyId . "/" . $interview->id . "-ego-alter.csv";
             if (file_exists($filePath)) {
-                $text .= file_get_contents($filePath);
-                unlink($filePath);
+                if (array_search($interview->studyId, $studyIds) > 0) {
+                    // indent file output
+                    $rows = explode("\n", file_get_contents($filePath));
+                    foreach ($rows as $row) {
+                        $cols = explode(",", $row);
+                        $line = [];
+                        foreach ($cols as $index => $col) {
+                            $line[] = $col;
+                            if ($index == 3) {
+                                for ($i = 0; $i < array_search($interview->studyId, $studyIds); $i++) {
+                                    for ($j = 0; $j < $indents[$studyIds[$i]]; $j++) {
+                                        $line[] = "";
+                                    }
+                                }
+                            }
+                        }
+                        if($row != "")
+                            $text .= implode(",", $line) . "\n";
+                    }
+                    unlink($filePath);
+                } else {
+                    $text .= file_get_contents($filePath);
+                    unlink($filePath);
+                }
             }
         }
         return $this->response->sendContentAsFile($text, $study->name . '-ego-alter.csv')->send();
@@ -422,7 +483,7 @@ class DataController extends Controller
             die("no study selected");
         }
 
-        $filePath = getcwd()."/assets/".$_POST['studyId'];
+        $filePath = getcwd() . "/assets/" . $_POST['studyId'];
         if (file_exists($filePath . "/" . $_POST['interviewId'] . "-ego-level.csv")) {
             echo "success";
         }
@@ -440,9 +501,9 @@ class DataController extends Controller
         if ($interview) {
             $file = fopen($filePath . "/" . $_POST['interviewId'] . "-ego-level.csv", "w") or die("Unable to open file!");
             $interview->exportEgoLevel($file);
-            return $this->renderAjax("/layouts/ajax", ["json"=>"success"]);
+            return $this->renderAjax("/layouts/ajax", ["json" => "success"]);
         }
-        return $this->renderAjax("/layouts/ajax", ["json"=>"fail"]);
+        return $this->renderAjax("/layouts/ajax", ["json" => "fail"]);
     }
 
     public function actionExportegolevelall()
@@ -452,7 +513,7 @@ class DataController extends Controller
         }
 
         $study = Study::findOne($_POST['studyId']);
-        $optionsRaw = QuestionOption::findAll(["studyId"=>$study->id]);
+        $optionsRaw = QuestionOption::findAll(["studyId" => $study->id]);
 
         // create an array with option ID as key
         $options = array();
@@ -461,7 +522,7 @@ class DataController extends Controller
         }
 
         // fetch questions
-        $all_questions = Question::find()->where(["studyId"=>$_POST['studyId']])->orderBy(["ordering"=>"ASC"])->all();
+        $all_questions = Question::find()->where(["studyId" => $_POST['studyId']])->orderBy(["ordering" => "ASC"])->all();
         $ego_id_questions = [];
         $ego_questions = [];
         $alter_questions = [];
@@ -505,7 +566,7 @@ class DataController extends Controller
 
         $text = implode(',', $headers) . "\n";
         foreach ($interviewIds as $interviewId) {
-            $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . "-ego-level.csv";
+            $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/" . $interviewId . "-ego-level.csv";
             if (file_exists($filePath)) {
                 $text .= file_get_contents($filePath);
                 unlink($filePath);
@@ -522,9 +583,9 @@ class DataController extends Controller
 
         $study = Study::findOne($_POST['studyId']);
 
-        $filePath = getcwd()."/assets/".$_POST['studyId'];
+        $filePath = getcwd() . "/assets/" . $_POST['studyId'];
         if (file_exists($filePath . "/" . $_POST['interviewId'] . "-alter-pair.csv")) {
-            return $this->renderAjax("/layouts/ajax", ["json"=>"success"]);
+            return $this->renderAjax("/layouts/ajax", ["json" => "success"]);
         }
 
         if (!is_dir($filePath)) {
@@ -540,9 +601,9 @@ class DataController extends Controller
         if ($interview) {
             $file = fopen($filePath . "/" . $_POST['interviewId'] . "-alter-pair.csv", "w") or die("Unable to open file!");
             $interview->exportAlterPairData($file, $study, $withAlters);
-            return $this->renderAjax("/layouts/ajax", ["json"=>"success"]);
+            return $this->renderAjax("/layouts/ajax", ["json" => "success"]);
         }
-        return $this->renderAjax("/layouts/ajax", ["json"=>"fail"]);
+        return $this->renderAjax("/layouts/ajax", ["json" => "fail"]);
     }
 
     public function actionExportalterpairall()
@@ -551,7 +612,7 @@ class DataController extends Controller
             die("no study selected");
         }
 
-        $filePath = getcwd()."/assets/".$_POST['studyId'];
+        $filePath = getcwd() . "/assets/" . $_POST['studyId'];
 
         $withAlters = false;
         if (isset($_POST['withAlters'])) {
@@ -560,7 +621,7 @@ class DataController extends Controller
 
         $study = Study::findOne($_POST['studyId']);
 
-        $alter_pair_questions = Question::findAll(["studyId"=>$study->id, "subjectType"=>"ALTER_PAIR"]);
+        $alter_pair_questions = Question::findAll(["studyId" => $study->id, "subjectType" => "ALTER_PAIR"]);
 
         $idNumber = "Number";
 
@@ -581,10 +642,10 @@ class DataController extends Controller
 
         $interviewIds = array();
         $interviewIds = explode(",", $_POST['interviewIds']);
-        
+
         $text = implode(',', $headers) . "\n";
         foreach ($interviewIds as $interviewId) {
-            $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . "-alter-pair.csv";
+            $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/" . $interviewId . "-alter-pair.csv";
             if (file_exists($filePath)) {
                 $text .= file_get_contents($filePath);
                 unlink($filePath);
@@ -595,23 +656,23 @@ class DataController extends Controller
 
     public function actionExportother()
     {
-        $filePath = getcwd()."/assets/".$_POST['studyId'];
+        $filePath = getcwd() . "/assets/" . $_POST['studyId'];
         if (file_exists($filePath . "/" . $_POST['interviewId'] . "-other-specify.csv")) {
-            return $this->renderAjax("/layouts/ajax", ["json"=>"success"]);
+            return $this->renderAjax("/layouts/ajax", ["json" => "success"]);
         }
 
         if (!is_dir($filePath)) {
             mkdir($filePath, 0777, true);
         }
-        
+
         $study = Study::findOne($_POST['studyId']);
         $interview = Interview::findOne($_POST['interviewId']);
         if ($interview) {
             $file = fopen($filePath . "/" . $_POST['interviewId'] . "-other-specify.csv", "w") or die("Unable to open file!");
             $interview->exportOtherData($file, $study);
-            return $this->renderAjax("/layouts/ajax", ["json"=>"success"]);
+            return $this->renderAjax("/layouts/ajax", ["json" => "success"]);
         }
-        return $this->renderAjax("/layouts/ajax", ["json"=>"fail"]);
+        return $this->renderAjax("/layouts/ajax", ["json" => "fail"]);
     }
 
     public function actionExportotherall()
@@ -633,7 +694,7 @@ class DataController extends Controller
         $text = implode(',', $headers) . "\n";
         $interviewIds = explode(",", $_POST['interviewIds']);
         foreach ($interviewIds as $interviewId) {
-            $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . "-other-specify.csv";
+            $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/" . $interviewId . "-other-specify.csv";
             if (file_exists($filePath)) {
                 $text .= file_get_contents($filePath);
                 unlink($filePath);
@@ -644,23 +705,23 @@ class DataController extends Controller
 
     public function actionExportcompletion()
     {
-        $filePath = getcwd()."/assets/".$_POST['studyId'];
+        $filePath = getcwd() . "/assets/" . $_POST['studyId'];
         if (file_exists($filePath . "/" . $_POST['interviewId'] . "-completion-time.csv")) {
-            return $this->renderAjax("/layouts/ajax", ["json"=>"success"]);
+            return $this->renderAjax("/layouts/ajax", ["json" => "success"]);
         }
 
         if (!is_dir($filePath)) {
             mkdir($filePath, 0777, true);
         }
-        
+
         $study = Study::findOne($_POST['studyId']);
         $interview = Interview::findOne($_POST['interviewId']);
         if ($interview) {
             $file = fopen($filePath . "/" . $_POST['interviewId'] . "-completion-time.csv", "w") or die("Unable to open file!");
             $interview->exportCompletionData($file, $study);
-            return $this->renderAjax("/layouts/ajax", ["json"=>"success"]);
+            return $this->renderAjax("/layouts/ajax", ["json" => "success"]);
         }
-        return $this->renderAjax("/layouts/ajax", ["json"=>"fail"]);
+        return $this->renderAjax("/layouts/ajax", ["json" => "fail"]);
     }
 
 
@@ -675,14 +736,14 @@ class DataController extends Controller
         $headers = array();
         $headers[] = 'INTERVIEW ID';
         $headers[] = "EGO ID";
-        $all_questions = Question::find()->where(["studyId"=>$_POST['studyId']])->orderBy(["ordering"=>"ASC"])->all();
+        $all_questions = Question::find()->where(["studyId" => $_POST['studyId']])->orderBy(["ordering" => "ASC"])->all();
         foreach ($all_questions as $question) {
             $headers[] = $question->title;
         }
         $text = implode(',', $headers) . "\n";
         $interviewIds = explode(",", $_POST['interviewIds']);
         foreach ($interviewIds as $interviewId) {
-            $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/". $interviewId . "-completion-time.csv";
+            $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/" . $interviewId . "-completion-time.csv";
             if (file_exists($filePath)) {
                 $text .= file_get_contents($filePath);
                 unlink($filePath);
@@ -697,72 +758,72 @@ class DataController extends Controller
         $text = "";
         $rows = [];
         $study = Study::findOne($id);
-        $fields = ["Question Order","Question Title", "Question Prompt", "Stem and Leaf", "Subject Type", "Response Type", "Min", "Max","Options", "Skip Logic Expression"];
+        $fields = ["Question Order", "Question Title", "Question Prompt", "Stem and Leaf", "Subject Type", "Response Type", "Min", "Max", "Options", "Skip Logic Expression"];
         $rows[] = implode(",", $fields);
-        $results = Expression::find()->where(["studyId"=>$id])->all();
+        $results = Expression::find()->where(["studyId" => $id])->all();
         $expressions;
-        foreach($results as $expression){
+        foreach ($results as $expression) {
             $expressions[$expression->id] = $expression->name;
         }
-        $questions = Question::find()->where(["studyId"=>$id])->orderBy(["ordering"=>"ASC"])->all();
+        $questions = Question::find()->where(["studyId" => $id])->orderBy(["ordering" => "ASC"])->all();
         $questionTitles = [];
         $allQuestions = [];
-        foreach($questions as $question){
+        foreach ($questions as $question) {
             $questionTitles[$question->id] = $question->title;
-            if($question->subjectType == "EGO_ID")
+            if ($question->subjectType == "EGO_ID")
                 $allQuestions[] = $question;
         }
-        foreach($questions as $question){
-            if($question->subjectType != "EGO_ID")
-            $allQuestions[] = $question;
+        foreach ($questions as $question) {
+            if ($question->subjectType != "EGO_ID")
+                $allQuestions[] = $question;
         }
         $egoIdCount = 0;
-        foreach($allQuestions as $question){
-            $question->prompt = str_replace('’', "'",$question->prompt);
+        foreach ($allQuestions as $question) {
+            $question->prompt = str_replace('’', "'", $question->prompt);
             $question->prompt = preg_replace('/[[:^print:]]/', " ", $question->prompt);
-            $question->citation = str_replace('’', "'",$question->citation);
+            $question->citation = str_replace('’', "'", $question->citation);
             $question->citation = preg_replace('/[[:^print:]]/', " ", $question->citation);
             $fields = [];
             $fields[] = $question->ordering + 1 + ($question->subjectType == "EGO_ID" ? 0 : $egoIdCount);
             $fields[] = $question->title;
-            $fields[] = '"' . strip_tags(str_replace('"', "'",$question->prompt)) . '"';
-            $fields[] = '"' . strip_tags(str_replace('"', "'",$question->citation)) . '"';
+            $fields[] = '"' . strip_tags(str_replace('"', "'", $question->prompt)) . '"';
+            $fields[] = '"' . strip_tags(str_replace('"', "'", $question->citation)) . '"';
             $fields[] = $question->subjectType;
             $fields[] = $question->answerType;
-            if($question->answerType == "MULTIPLE_SELECTION"){
+            if ($question->answerType == "MULTIPLE_SELECTION") {
                 $fields[] = $question->minCheckableBoxes;
                 $fields[] = $question->maxCheckableBoxes;
                 $optionString = [];
-                $options = QuestionOption::find()->where(["questionId"=>$question->id])->orderBy(["ordering"=>"ASC"])->all();
-                foreach($options as $option){
-                    $optionString[] = "'". $option->name . "'" .  ' = ' . $option->value;
+                $options = QuestionOption::find()->where(["questionId" => $question->id])->orderBy(["ordering" => "ASC"])->all();
+                foreach ($options as $option) {
+                    $optionString[] = "'" . $option->name . "'" .  ' = ' . $option->value;
                 }
-                if($question->dontKnowButton)
-                    $optionString[] = "'". ($question->dontKnowText ? $question->dontKnowText : "Don't Know") . "'" .  ' = ' . $study->valueDontKnow;
-                if($question->refuseButton)
-                    $optionString[] = "'". ($question->refuseText ? $question->refuseText :"Refuse") . "'" .  ' = ' . $study->valueRefusal;
+                if ($question->dontKnowButton)
+                    $optionString[] = "'" . ($question->dontKnowText ? $question->dontKnowText : "Don't Know") . "'" .  ' = ' . $study->valueDontKnow;
+                if ($question->refuseButton)
+                    $optionString[] = "'" . ($question->refuseText ? $question->refuseText : "Refuse") . "'" .  ' = ' . $study->valueRefusal;
 
                 $fields[] = '"' . implode("; ", $optionString) . '"';
-            }elseif($question->answerType == "NUMERICAL"){
-                if($question->minLimitType == "NLT_LITERAL")
+            } elseif ($question->answerType == "NUMERICAL") {
+                if ($question->minLimitType == "NLT_LITERAL")
                     $fields[] = $question->minLiteral;
-                if(isset($questionTitles[$question->minPrevQues]) && $question->minLimitType == "NLT_PREVQUES")
+                if (isset($questionTitles[$question->minPrevQues]) && $question->minLimitType == "NLT_PREVQUES")
                     $fields[] = $questionTitles[$question->minPrevQues];
-                if($question->maxLimitType == "NLT_LITERAL")
+                if ($question->maxLimitType == "NLT_LITERAL")
                     $fields[] = $question->maxLiteral;
-                if(isset($questionTitles[$question->maxPrevQues]) && $question->maxLimitType == "NLT_PREVQUES")
+                if (isset($questionTitles[$question->maxPrevQues]) && $question->maxLimitType == "NLT_PREVQUES")
                     $fields[] = $questionTitles[$question->maxPrevQues];
                 $fields[] = "";
-            }else{
+            } else {
                 $fields[] = "";
                 $fields[] = "";
                 $fields[] = "";
             }
-            if($question->answerReasonExpressionId){
+            if ($question->answerReasonExpressionId) {
                 $fields[] = $expressions[$question->answerReasonExpressionId];
             }
             $rows[] = implode(",", $fields);
-            if($question->subjectType == "EGO_ID")
+            if ($question->subjectType == "EGO_ID")
                 $egoIdCount++;
         }
         $text = implode("\r\n", $rows);
@@ -772,7 +833,7 @@ class DataController extends Controller
     public function actionSavegraph()
     {
         if ($_POST['Graph']) {
-            $graph = Graph::findOne(array("interviewId"=>$_POST['Graph']['interviewId'],"expressionId"=>$_POST['Graph']['expressionId']));
+            $graph = Graph::findOne(array("interviewId" => $_POST['Graph']['interviewId'], "expressionId" => $_POST['Graph']['expressionId']));
             if (!$graph) {
                 $graph = new Graph;
             }
@@ -780,11 +841,11 @@ class DataController extends Controller
             if ($graph->save()) {
                 //echo "success";
                 $graphs = array();
-                $results = Graph::findAll(array('interviewId'=>$_POST['Graph']['interviewId']));
+                $results = Graph::findAll(array('interviewId' => $_POST['Graph']['interviewId']));
                 foreach ($results as $result) {
                     $graphs[$result->expressionId] = Tools::mToA($result);
                 }
-                return $this->renderAjax("/layouts/ajax", ["json"=>json_encode($graphs)]);
+                return $this->renderAjax("/layouts/ajax", ["json" => json_encode($graphs)]);
             }
         }
     }
@@ -813,7 +874,7 @@ class DataController extends Controller
                 $model->expressionId = $_GET['expressionId'];
                 $model->alterId = $_GET['alterId'];
             }
-            return $this->renderAjax('_form_note', array('model'=>$model));
+            return $this->renderAjax('_form_note', array('model' => $model));
         }
     }
 
@@ -858,13 +919,13 @@ class DataController extends Controller
         foreach ($interviewIds as $interviewId) {
             $interview = Interview::findOne($interviewId);
             if ($interview) {
-                $answers = Answer::findAll(array("interviewId"=>$interviewId));
+                $answers = Answer::findAll(array("interviewId" => $interviewId));
                 foreach ($answers as $answer) {
                     $answer->delete();
                 }
                 $alters = Alters::find()
-                ->where(new \yii\db\Expression("FIND_IN_SET(" . $interviewId .", interviewId)"))
-                ->all();
+                    ->where(new \yii\db\Expression("FIND_IN_SET(" . $interviewId . ", interviewId)"))
+                    ->all();
                 foreach ($alters as $alter) {
                     if (strstr($alter->interviewId, ",")) {
                         $interviewIds = explode(",", $alter->interviewId);

@@ -502,7 +502,18 @@ class Interview extends \yii\db\ActiveRecord
                 $answers[] = count($stats->components);
                 $answers[] = count($stats->dyads);
                 $answers[] = count($stats->isolates);
+            }elseif (isset($_POST['expressionId']) && $_POST['expressionId']) {
+                $answers[] = "";
+                $answers[] = "";
+                $answers[] = "";
+                $answers[] = "";
+                $answers[] = "";
+                $answers[] = "";
+                $answers[] = "";
+                $answers[] = "";
+                $answers[] = "";
             }
+
 
             if (isset($alter->id)) {
                 if ($matchAtAll) {

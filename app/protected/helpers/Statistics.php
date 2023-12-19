@@ -185,7 +185,10 @@ class Statistics
 
     public function getBetweenness($alterId)
     {
-        return $this->betweenesses[$alterId];
+        if(isset($this->betweenesses[$alterId]))
+            return $this->betweenesses[$alterId];
+        else
+            return false;
     }
 
     public function getBetweenesses()

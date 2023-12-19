@@ -9,6 +9,8 @@ use yii\data\Pagination;
 use yii\bootstrap4\LinkPager;
 ?>
 <script>
+interviewStudyIds = <?php echo json_encode($interviewStudyIds); ?>;
+
 function exportEgoLevel() {
     var total = $("input[type='checkbox'][name*='export']:checked").length;
     var finished = 0;
@@ -81,11 +83,11 @@ function exportEgo() {
             type: "POST",
             url: rootUrl + "/data/exportegoalter",
             data: {
-                studyId: $("#studyId").val(),
+                studyId: interviewStudyIds[interviewId],
                 interviewId: interviewId,
                 withAlters: withAlters,
                 multiSession: multiSesh,
-                expressionId: $("#expressionId").val(),
+                expressionId: $("#" +  interviewStudyIds[interviewId]+ "_expId").val(),
                 YII_CSRF_TOKEN: $("input[name='YII_CSRF_TOKEN']").val()
             },
             success: function(data) {
@@ -291,12 +293,14 @@ function deleteInterviews() {
             <div class="col-sm-4 float-right">
                 <a class="btn btn-sm btn-info float-right" href="/authoring/<?php echo $study->id; ?>">Authoring</a>
             </div>
+            <?php foreach($multiStudyIds as $studyId): ?>
             <div class="col-sm-12 float-left">
                 Network Statistics
-                <?php echo Html::dropDownList('expressionId', '', $expressions, ['prompt' => '(none)',
-                'onchange' => '$("#expressionId").val($(this).val())']);
+                <?php echo Html::dropDownList('expressionId', '', $expressions[$studyId], ['id'=> $studyId."_expId", 'prompt' => '(none)',
+                'onchange' => '$("#'.$studyId.'_expressionId").val($(this).val())']);
                 ?>
             </div>
+            <?php endforeach; ?>
             <div class="col-sm-8 float-left mb-3">
                 <input type="checkbox" id="withAlters1" checked> Include Alter Names
             </div>
@@ -327,6 +331,9 @@ function deleteInterviews() {
         <tr>
             <th><input type="checkbox" onclick="$('input[type=checkbox]').prop('checked', $(this).prop('checked'))"
                     data-toggle="tooltip" data-placement="top" title="Select All"></th>
+            <?php if($study->multiSessionEgoId): ?>
+            <th class="d-none d-sm-table-cell">Study</th>
+            <?php endif; ?>
             <th>Ego ID</th>
             <th class="d-none d-sm-table-cell">Started</th>
             <th class="d-none d-sm-table-cell">Completed</th>
@@ -352,7 +359,11 @@ function deleteInterviews() {
                 $intlen = "";
             }
             echo "<tr>";
-            echo "<td>" . Html::checkbox('export[' . $interview->id . ']', false, ['id'=>'export_' . $interview->id  ]) . "</td><td>" . $egoIds[$interview->id] . "</td>";
+            echo "<td>" . Html::checkbox('export[' . $interview->id . ']', false, ['id'=>'export_' . $interview->id  ]) . "</td>";
+            if($study->multiSessionEgoId){
+                echo "<td>" . $all_studies[$interview->studyId] . "</td>";
+            }
+            echo "<td>" . $egoIds[$interview->id] . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . \Yii::$app->formatter->asDate($interview->start_date, "php:Y-m-d H:i:s") . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . $completed . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . $intlen . "</td>";
@@ -382,7 +393,9 @@ echo LinkPager::widget([
 <?php
 echo Html::hiddenInput('studyId', $study->id, [ 'id'=>'studyId']);
 echo Html::hiddenInput('interviewIds', '', [ 'id'=>'interviewIds']);
-echo Html::hiddenInput('expressionId', '', [ 'id'=>'expressionId']);
+foreach($multiStudyIds as $studyId){
+echo Html::hiddenInput($studyId . '_expressionId', '', [ 'id'=>$studyId . '_expressionId']);
+}
 echo Html::hiddenInput('withAlters', "1", array('id' => 'withAlters'));
 echo Html::hiddenInput('multiSession', "1", array('id' => 'multiSession'));
 
