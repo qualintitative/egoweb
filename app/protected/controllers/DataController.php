@@ -582,6 +582,7 @@ class DataController extends Controller
         }
 
         $study = Study::findOne($_POST['studyId']);
+        $multiStudyIds = $study->multiStudyIds();
 
         $filePath = getcwd() . "/assets/" . $_POST['studyId'];
         if (file_exists($filePath . "/" . $_POST['interviewId'] . "-alter-pair.csv")) {

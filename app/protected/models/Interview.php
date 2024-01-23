@@ -1221,10 +1221,11 @@ class Interview extends \yii\db\ActiveRecord
             $i++;
         }
         $alters2 = $alters;
+        $multiStudyIds = $study->multiStudyIds();
 
-        $alter_pair_questions = Question::findAll(["studyId"=>$study->id, "subjectType"=>"ALTER_PAIR"]);
+        $alter_pair_questions = Question::findAll(["studyId"=>$multiStudyIds, "subjectType"=>"ALTER_PAIR"]);
 
-        $optionsRaw = QuestionOption::findAll(array('studyId' => $study->id));
+        $optionsRaw = QuestionOption::findAll(array('studyId' => $multiStudyIds));
         // create an array with option ID as key
         $options = array();
         foreach ($optionsRaw as $option) {
@@ -1317,7 +1318,9 @@ class Interview extends \yii\db\ActiveRecord
         foreach ($options as $option) {
             $other_options[$option->id] = $option;
             if (!isset($other_qs[$option->questionId])) {
-                $other_qs[$option->questionId] = Question::findOne($option->questionId);
+                $other_q = Question::findOne($option->questionId);
+                if($other_q)
+                    $other_qs[$option->questionId] = $other_q;
             }
         }
 
@@ -1389,7 +1392,9 @@ class Interview extends \yii\db\ActiveRecord
                 //if (!isset($answers[$question->id])) {
                 //    continue;
                 //}
-                $response = $answers[$question->id]->otherSpecifyText;
+                $response = false;
+                if(isset($answers[$question->id]))
+                    $response = $answers[$question->id]->otherSpecifyText;
                 if (!$response) {
                     continue;
                 }
