@@ -36,13 +36,13 @@ class Interview extends \yii\db\ActiveRecord
     {
         return [
             [['active', 'studyId', 'completed', 'start_date', 'complete_date'], 'integer'],
-            ['start_date','default', 'value'=>time()],
+            ['start_date', 'default', 'value' => time()],
         ];
     }
 
     public function multiInterviewIds($interviewId = null)
     {
-        if(!$this->_multiInterviewIds){
+        if (!$this->_multiInterviewIds) {
             $study = Study::findOne($this->studyId);
             $egoAnswer = Answer::findOne(array("interviewId" => $this->id, "questionId" => $study->multiSessionEgoId));
             $interviewIds = array();
@@ -66,14 +66,14 @@ class Interview extends \yii\db\ActiveRecord
 
     public function getAnswers($asArray = false)
     {
-        if(!$this->_answers || $asArray){
+        if (!$this->_answers || $asArray) {
             $interviewIds = $this->multiInterviewIds();
-            $results = Answer::findAll(array('interviewId'=>$interviewIds));
+            $results = Answer::findAll(array('interviewId' => $interviewIds));
             $this->_answers = [];
             foreach ($results as $answer) {
                 if ($answer->alterId1 && $answer->alterId2) {
                     $array_id = $answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2;
-                } elseif ($answer->alterId1 && ! $answer->alterId2) {
+                } elseif ($answer->alterId1 && !$answer->alterId2) {
                     $array_id = $answer->questionId . "-" . $answer->alterId1;
                 } else {
                     $array_id = $answer->questionId;
@@ -82,7 +82,7 @@ class Interview extends \yii\db\ActiveRecord
                 $answersArray[$array_id] = Tools::mToA($answer);
             }
         }
-        if($asArray)
+        if ($asArray)
             return $answersArray;
         return $this->_answers;
     }
@@ -121,8 +121,8 @@ class Interview extends \yii\db\ActiveRecord
         }
 
         $egoQs = Question::find()
-        ->where(new \yii\db\Expression("studyId = $studyId and subjectType = 'EGO_ID' AND answerType != 'RANDOM_NUMBER'"))
-        ->orderBy(["ordering"=>"ASC"])->all();
+            ->where(new \yii\db\Expression("studyId = $studyId and subjectType = 'EGO_ID' AND answerType != 'RANDOM_NUMBER'"))
+            ->orderBy(["ordering" => "ASC"])->all();
         $study = Study::findOne($studyId);
 
         if (count($egoQs) == 0) {
@@ -150,7 +150,7 @@ class Interview extends \yii\db\ActiveRecord
                 $egoIdQ->value = $study->valueDontKnow;
             }
             if (!$egoIdQ->save()) {
-                echo $egoQ->title.':'.$egoIdQ->value;
+                echo $egoQ->title . ':' . $egoIdQ->value;
                 print_r($egoIdQ->errors);
                 die();
             }
@@ -206,15 +206,15 @@ class Interview extends \yii\db\ActiveRecord
     public function getEgoId()
     {
         $egoIdString = [];
-        $questions = Question::find()->where(array('studyId'=>$this->studyId,'subjectType' => "EGO_ID"))->orderBy(["ordering"=>"ASC"])->all();
+        $questions = Question::find()->where(array('studyId' => $this->studyId, 'subjectType' => "EGO_ID"))->orderBy(["ordering" => "ASC"])->all();
         $ego_id_questions = [];
         $options = [];
         foreach ($questions as $question) {
-            if($question->answerType == "STORED_VALUE" || $question->answerType == "RANDOM_NUMBER")
+            if ($question->answerType == "STORED_VALUE" || $question->answerType == "RANDOM_NUMBER")
                 continue;
             $ego_id_questions[$question->id] = $question;
             if ($question->answerType == "MULTIPLE_SELECTION") {
-                $result = QuestionOption::find()->where(["questionId"=>$question->id])->orderBy(["ordering"=>"ASC"])->all();
+                $result = QuestionOption::find()->where(["questionId" => $question->id])->orderBy(["ordering" => "ASC"])->all();
                 foreach ($result as $option) {
                     $options[$option->id] = $option->name;
                 }
@@ -233,46 +233,69 @@ class Interview extends \yii\db\ActiveRecord
 
     public function exportEgoAlterData($file = null, $withAlters = false, $multiSession = true)
     {
-        $all_questions = Question::find()->where(["studyId"=>$this->studyId])->orderBy(["ordering"=>"ASC"])->all();
+        $all_questions = Question::find()->where(["studyId" => $this->studyId])->orderBy(["ordering" => "ASC"])->all();
         $ego_id_questions = [];
         $ego_questions = [];
         $alter_questions = [];
         $network_questions = [];
         $name_gen_questions = [];
         $previous_questions = [];
-        foreach ($all_questions as $question) {
-            if ($question->subjectType == "EGO_ID") {
-                $ego_id_questions[] = $question;
-            }
-            if ($question->subjectType == "EGO") {
-                $ego_questions[] = $question;
-            }
-            if ($question->subjectType == "ALTER") {
-                $alter_questions[] = $question;
-            }
-            if ($question->subjectType == "NETWORK") {
-                $network_questions[] = $question;
-            }
-            if ($question->subjectType == "NAME_GENERATOR") {
-                $name_gen_questions[] = $question;
-            }
-            if ($question->subjectType == "PREVIOUS_ALTER") {
-                $previous_questions[] = $question;
-            }
+        $study = Study::findOne($this->studyId);
+        $multiStudyIds = $study->multiStudyIds();
+        $studyNames = [];
+        foreach ($multiStudyIds as $studyId) {
+            $s = Study::findOne($studyId);
+            $studyNames[$studyId] = $s->name;
+            $all_questions[$studyId] = Question::find()->where(["studyId" => $studyId])->orderBy(["ordering" => "ASC"])->all();
         }
-
         $alters = Alters::find()
-        ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id .", interviewId)"))
+        ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id . ", interviewId)"))
         ->all();
+        foreach ($multiStudyIds as $studyId) {
+            $ego_id_questions[$studyId] = [];
+            $ego_questions[$studyId] = [];
+            $alter_questions[$studyId] = [];
+            $network_questions[$studyId] = [];
+            $name_gen_questions[$studyId] = [];
+            $previous_questions[$studyId] = [];
+            foreach ($all_questions[$studyId] as $question) {
+                if ($question->subjectType == "EGO_ID") {
+                    $ego_id_questions[$studyId][] = $question;
+                }
+                if ($question->subjectType == "EGO") {
+                    $ego_questions[$studyId][] = $question;
+                }
+                if ($question->subjectType == "ALTER") {
+                    $alter_questions[$studyId][] = $question;
+                }
+                if ($question->subjectType == "NETWORK") {
+                    $network_questions[$studyId][] = $question;
+                }
+                if ($question->subjectType == "NAME_GENERATOR") {
+                    $name_gen_questions[$studyId][] = $question;
+                }
+                if ($question->subjectType == "PREVIOUS_ALTER") {
+                    $previous_questions[$studyId][] = $question;
+                }
+            }
+          
+    
+        }
 
-        if (!$alters) {
-            $alters = array('0' => new Alters);
-        } else {
-            if (isset($_POST['expressionId']) && $_POST['expressionId']) {
-                $stats = new Statistics;
-                $stats->initComponents($this->id, $_POST['expressionId']);
+        $interviewIds = $this->multiInterviewIds();
+        foreach($interviewIds as $interviewId){
+            $interview = Interview::findOne($interviewId);
+            if (!$alters) {
+                $alters = array('0' => new Alters);
+            } else {
+                if (isset($_POST[$interview->studyId . '_expressionId']) && $_POST[$interview->studyId . '_expressionId']) {
+                    $stats[$interviewId] = new Statistics;
+                    $stats[$interviewId]->initComponents($interviewId, $_POST[$interview->studyId . '_expressionId']);
+                }
             }
         }
+
+
 
         $study = Study::findOne($this->studyId);
         $multiQs = false;
@@ -288,8 +311,8 @@ class Interview extends \yii\db\ActiveRecord
             }
             foreach ($prevIds as $i_id) {
                 $results = Alters::find()
-                ->where(new \yii\db\Expression("FIND_IN_SET(" . $i_id .", interviewId)"))
-                ->all();
+                    ->where(new \yii\db\Expression("FIND_IN_SET(" . $i_id . ", interviewId)"))
+                    ->all();
                 foreach ($results as $result) {
                     $aInts = explode(",", $result->interviewId);
                     if (!in_array($this->id, $aInts)) {
@@ -313,11 +336,11 @@ class Interview extends \yii\db\ActiveRecord
         } else {
             $studyIds = $this->studyId;
         }
-        $matchAtAll = MatchedAlters::find()->where(["studyId"=>$studyIds])->one();
+        $matchAtAll = MatchedAlters::find()->where(["studyId" => $studyIds])->one();
         if ($matchAtAll) {
             $match = MatchedAlters::find()
-            ->where(new \yii\db\Expression("interviewId1 = $this->id OR interviewId2 = $this->id"))
-            ->one();
+                ->where(new \yii\db\Expression("interviewId1 = $this->id OR interviewId2 = $this->id"))
+                ->one();
             if ($match) {
                 if ($this->id == $match->interviewId1) {
                     $matchInt = Interview::findOne($match->interviewId2);
@@ -325,15 +348,15 @@ class Interview extends \yii\db\ActiveRecord
                     $matchInt = Interview::findOne($match->interviewId1);
                 }
                 $matchIntId = $match->getMatchId();
-                
+
                 $matchU = User::findOne($match->userId);
-                if($matchU)
-                   $matchUser = $matchU->name;
+                if ($matchU)
+                    $matchUser = $matchU->name;
                 else
                     $matchUser = "User not found";
             }
         }
-        $optionsRaw = QuestionOption::findAll(array("studyId" => $study->id));
+        $optionsRaw = QuestionOption::findAll(array("studyId" => $multiStudyIds));
 
         // create an array with option ID as key
         $options = array();
@@ -342,225 +365,72 @@ class Interview extends \yii\db\ActiveRecord
             $options[$option->id] = $option->value;
             $optionLabels[$option->id] = $option->name;
         }
+
         foreach ($alters as $alter) {
             $answers = array();
-            $answers[] = $this->id;
-            $ego_ids = array();
-            $ego_id_string = array();
-
-            foreach ($ego_id_questions as $question) {
-                $result = Answer::findOne(array("interviewId" => $this->id, "questionId" => $question->id));
-                if (!$result) {
-                    $answer = $study->valueNotYetAnswered;
-                } else {
-                    $answer = $result->value;
-                }
-                if ($question->answerType == "MULTIPLE_SELECTION") {
-                    $optionIds = explode(',', $answer);
-                    foreach ($optionIds as $optionId) {
-                        if (isset($options[$optionId])) {
-                            $ego_ids[] = $options[$optionId];
-                            if ($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER") {
-                                $ego_id_string[] = $optionLabels[$optionId];
-                            }
-                        } else {
-                            $ego_ids[] = "MISSING_OPTION ($optionId)";
-                            if ($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER") {
-                                $ego_id_string[] = "MISSING_OPTION ($optionId)";
+            foreach ($interviewIds as $interviewId) {
+                $interview = Interview::findOne($interviewId);
+                $answers[] = $interviewId;
+                $ego_ids = array();
+                $ego_id_string = array();
+                foreach ($ego_id_questions[$interview->studyId] as $question) {
+                    $result = Answer::findOne(array("interviewId" =>  $interviewId, "questionId" => $question->id));
+                    if (!$result) {
+                        $answer = $study->valueNotYetAnswered;
+                    } else {
+                        $answer = $result->value;
+                    }
+                    if ($question->answerType == "MULTIPLE_SELECTION") {
+                        $optionIds = explode(',', $answer);
+                        foreach ($optionIds as $optionId) {
+                            if (isset($options[$optionId])) {
+                                $ego_ids[] = $options[$optionId];
+                                if ($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER") {
+                                    $ego_id_string[] = $optionLabels[$optionId];
+                                }
+                            } else {
+                                $ego_ids[] = "MISSING_OPTION ($optionId)";
+                                if ($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER") {
+                                    $ego_id_string[] = "MISSING_OPTION ($optionId)";
+                                }
                             }
                         }
-                    }
-                    if (!$optionIds) {
-                        $ego_ids[] = "";
-                        //if ($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER") {
+                        if (!$optionIds) {
+                            $ego_ids[] = "";
+                            //if ($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER") {
                             $ego_id_string[] = "";
-                        //}
-                    }
-                } else {
-                    $ego_ids[] = str_replace(',', '', $answer);
-                    if ($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER") {
-                        $ego_id_string[] = str_replace(',', '', $answer);
-                    }
-                }
-            }
-            $answers[] = implode("_", $ego_id_string);
-            $answers[] = date("Y-m-d H:i:s", $this->start_date);
-            if($this->completed == -1)
-                $answers[] = date("Y-m-d H:i:s", $this->complete_date);
-            else
-                $answers[] = "";
-            foreach ($ego_ids as $eid) {
-                $answers[] = $eid;
-            }
-            foreach ($ego_questions as $question) {
-                $answer = Answer::findOne(array("interviewId" => $this->id, "questionId" => $question->id));
-                if (!$answer) {
-                    $answers[] = $study->valueNotYetAnswered;
-                    continue;
-                }
-
-                if ($answer->value !== "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip) {
-                    if ($question->answerType == "SELECTION") {
-                        if (isset($options[$answer->value])) {
-                            $answers[] = $options[$answer->value];
-                        } else {
-                            $answers[] = "";
+                            //}
                         }
-                    } elseif ($question->answerType == "MULTIPLE_SELECTION") {
-                        $optionIds = explode(',', $answer->value);
-                        $list = array();
-                        foreach ($optionIds as $optionId) {
-                            if (isset($options[$optionId])) {
-                                $list[] = $options[$optionId];
-                            }
-                        }
-                        $answers[] = implode('; ', $list);
-                    } elseif ($question->answerType == "TIME_SPAN") {
-                        if (!strstr($answer->value, ";")) {
-                            $times = array();
-                            if (preg_match("/(\d*)\sYEARS/i", $answer->value, $test)) {
-                                $times[] = $test[0];
-                            }
-                            if (preg_match("/(\d*)\sMONTHS/i", $answer->value, $test)) {
-                                $times[] = $test[0];
-                            }
-                            if (preg_match("/(\d*)\sWEEKS/i", $answer->value, $test)) {
-                                $times[] = $test[0];
-                            }
-                            if (preg_match("/(\d*)\sDAYS/i", $answer->value, $test)) {
-                                $times[] = $test[0];
-                            }
-                            if (preg_match("/(\d*)\sHOURS/i", $answer->value, $test)) {
-                                $times[] = $test[0];
-                            }
-                            if (preg_match("/(\d*)\sMINUTES/i", $answer->value, $test)) {
-                                $times[] = $test[0];
-                            }
-                            $answer->value = implode("; ", $times);
-                        }
-                        $answers[] = $answer->value;
                     } else {
-                        $answer->value = preg_replace('/amp;/', "", $answer->value);
-                        $answers[] = htmlspecialchars_decode($answer->value, ENT_QUOTES);
+                        $ego_ids[] = str_replace(',', '', $answer);
+                        if ($question->answerType != "STORED_VALUE" && $question->answerType != "RANDOM_NUMBER") {
+                            $ego_id_string[] = str_replace(',', '', $answer);
+                        }
                     }
-                } elseif ($answer->skipReason == "DONT_KNOW") {
-                    $answers[] = $study->valueDontKnow;
-                } elseif ($answer->skipReason == "REFUSE") {
-                    $answers[] = $study->valueRefusal;
-                } elseif ($answer->value == $study->valueLogicalSkip) {
-                    $answers[] = $study->valueLogicalSkip;
-                } else {
+                }
+                $answers[] = implode("_", $ego_id_string);
+                $answers[] = date("Y-m-d H:i:s", $interview->start_date);
+                if ($interview->completed == -1)
+                    $answers[] = date("Y-m-d H:i:s", $interview->complete_date);
+                else
                     $answers[] = "";
+                foreach ($ego_ids as $eid) {
+                    $answers[] = $eid;
                 }
-            }
-
-            foreach ($network_questions as $question) {
-                $answer = Answer::findOne(array("interviewId" => $this->id, "questionId" => $question->id));
-                if (!$answer) {
-                    $answers[] = $study->valueNotYetAnswered;
-                    continue;
-                }
-                if ($answer->value !== "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip) {
-                    if ($question->answerType == "SELECTION") {
-                        if (isset($options[$answer])) {
-                            $answers[] = $options[$answer];
-                        } else {
-                            $answers[] = "";
-                        }
-                    } elseif ($question->answerType == "MULTIPLE_SELECTION") {
-                        $optionIds = explode(',', $answer->value);
-                        $list = array();
-                        foreach ($optionIds as $optionId) {
-                            if (isset($options[$optionId])) {
-                                $list[] = $options[$optionId];
-                            }
-                        }
-                        $answers[] = implode('; ', $list);
-                    } else {
-                        $answer->value = preg_replace('/amp;/', "", $answer->value);
-                        $answers[] = htmlspecialchars_decode($answer->value);
-                    }
-                } elseif ($answer->skipReason == "DONT_KNOW") {
-                    $answers[] = $study->valueDontKnow;
-                } elseif ($answer->skipReason == "REFUSE") {
-                    $answers[] = $study->valueRefusal;
-                } elseif ($answer->value == $study->valueLogicalSkip) {
-                    $answers[] = $study->valueLogicalSkip;
-                } else {
-                    $answers[] = "";
-                }
-            }
-
-
-            if (isset($stats)) {
-                $answers[] = $stats->getDensity();
-                $answers[] = $stats->maxDegree();
-                $answers[] = $stats->maxBetweenness();
-                $answers[] = $stats->maxEigenvector();
-                $answers[] = $stats->degreeCentralization();
-                $answers[] = $stats->betweennessCentralization();
-                $answers[] = count($stats->components);
-                $answers[] = count($stats->dyads);
-                $answers[] = count($stats->isolates);
-            }elseif (isset($_POST['expressionId']) && $_POST['expressionId']) {
-                $answers[] = "";
-                $answers[] = "";
-                $answers[] = "";
-                $answers[] = "";
-                $answers[] = "";
-                $answers[] = "";
-                $answers[] = "";
-                $answers[] = "";
-                $answers[] = "";
-            }
-
-
-            if (isset($alter->id)) {
-                if ($matchAtAll) {
-                    $matchId = "";
-                    $matchName = "";
-                    $match = MatchedAlters::find()
-                    ->where(new \yii\db\Expression("alterId1 = $alter->id OR alterId2 = $alter->id"))
-                    ->one();
-                    if ($match) {
-                        $matchId = $match->id;
-                        $matchName = $match->matchedName;
-                    }
-                    $answers[] = $matchIntId;
-                    $answers[] = $matchUser;
-                    $answers[] = $count;
-                    if ($withAlters) {
-                        $answers[] = $alter->name;
-                        $answers[] = $matchName;
-                    }
-                    $answers[] = $matchId;
-                } else {
-                    $answers[] = $count;
-                    if ($withAlters) {
-                        $answers[] = $alter->name;
-                    }
-                }
-                foreach ($name_gen_questions as $question) {
-                    if (count($name_gen_questions) == 1) {
-                        $answers[]  = 1;
-                        continue;
-                    }
-                    $nameGenQIds = explode(",", $alter->nameGenQIds);
-                    if (in_array($question->id, $nameGenQIds)) {
-                        $answers[]  = 1;
-                    } else {
-                        $answers[]  = 0;
-                    }
-                }
-                foreach ($previous_questions as $question) {
-                    $answer = Answer::findOne(array("interviewId" => $this->id, "questionId" => $question->id, "alterId1" => $alter->id));
+                foreach ($ego_questions[$interview->studyId]  as $question) {
+                    $answer = Answer::findOne(array("interviewId" =>  $interviewId, "questionId" => $question->id));
                     if (!$answer) {
                         $answers[] = $study->valueNotYetAnswered;
                         continue;
                     }
-                    if ($answer->value != "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip) {
+
+                    if ($answer->value !== "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip) {
                         if ($question->answerType == "SELECTION") {
-                            $answers[] = $options[$answer->value];
+                            if (isset($options[$answer->value])) {
+                                $answers[] = $options[$answer->value];
+                            } else {
+                                $answers[] = "";
+                            }
                         } elseif ($question->answerType == "MULTIPLE_SELECTION") {
                             $optionIds = explode(',', $answer->value);
                             $list = array();
@@ -569,13 +439,34 @@ class Interview extends \yii\db\ActiveRecord
                                     $list[] = $options[$optionId];
                                 }
                             }
-                            if (count($list) == 0) {
-                                $answers[] = $study->valueNotYetAnswered;
-                            } else {
-                                $answers[] = implode('; ', $list);
+                            $answers[] = implode('; ', $list);
+                        } elseif ($question->answerType == "TIME_SPAN") {
+                            if (!strstr($answer->value, ";")) {
+                                $times = array();
+                                if (preg_match("/(\d*)\sYEARS/i", $answer->value, $test)) {
+                                    $times[] = $test[0];
+                                }
+                                if (preg_match("/(\d*)\sMONTHS/i", $answer->value, $test)) {
+                                    $times[] = $test[0];
+                                }
+                                if (preg_match("/(\d*)\sWEEKS/i", $answer->value, $test)) {
+                                    $times[] = $test[0];
+                                }
+                                if (preg_match("/(\d*)\sDAYS/i", $answer->value, $test)) {
+                                    $times[] = $test[0];
+                                }
+                                if (preg_match("/(\d*)\sHOURS/i", $answer->value, $test)) {
+                                    $times[] = $test[0];
+                                }
+                                if (preg_match("/(\d*)\sMINUTES/i", $answer->value, $test)) {
+                                    $times[] = $test[0];
+                                }
+                                $answer->value = implode("; ", $times);
                             }
+                            $answers[] = $answer->value;
                         } else {
-                            $answers[] =  htmlspecialchars_decode($answer->value);
+                            $answer->value = preg_replace('/amp;/', "", $answer->value);
+                            $answers[] = htmlspecialchars_decode($answer->value, ENT_QUOTES);
                         }
                     } elseif ($answer->skipReason == "DONT_KNOW") {
                         $answers[] = $study->valueDontKnow;
@@ -587,15 +478,20 @@ class Interview extends \yii\db\ActiveRecord
                         $answers[] = "";
                     }
                 }
-                foreach ($alter_questions as $question) {
-                    $answer = Answer::findOne(array("interviewId" => $this->id, "questionId" => $question->id, "alterId1" => $alter->id));
+
+                foreach ($network_questions[$interview->studyId]  as $question) {
+                    $answer = Answer::findOne(array("interviewId" =>  $interviewId, "questionId" => $question->id));
                     if (!$answer) {
                         $answers[] = $study->valueNotYetAnswered;
                         continue;
                     }
-                    if ($answer->value != "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip) {
+                    if ($answer->value !== "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip) {
                         if ($question->answerType == "SELECTION") {
-                            $answers[] = $options[$answer->value];
+                            if (isset($options[$answer])) {
+                                $answers[] = $options[$answer];
+                            } else {
+                                $answers[] = "";
+                            }
                         } elseif ($question->answerType == "MULTIPLE_SELECTION") {
                             $optionIds = explode(',', $answer->value);
                             $list = array();
@@ -604,13 +500,10 @@ class Interview extends \yii\db\ActiveRecord
                                     $list[] = $options[$optionId];
                                 }
                             }
-                            if (count($list) == 0) {
-                                $answers[] = $study->valueNotYetAnswered;
-                            } else {
-                                $answers[] = implode('; ', $list);
-                            }
+                            $answers[] = implode('; ', $list);
                         } else {
-                            $answers[] =  htmlspecialchars_decode($answer->value);
+                            $answer->value = preg_replace('/amp;/', "", $answer->value);
+                            $answers[] = htmlspecialchars_decode($answer->value);
                         }
                     } elseif ($answer->skipReason == "DONT_KNOW") {
                         $answers[] = $study->valueDontKnow;
@@ -622,34 +515,168 @@ class Interview extends \yii\db\ActiveRecord
                         $answers[] = "";
                     }
                 }
-            } else {
-                $answers[] = 0;
-                $answers[] = "";
-                foreach ($alter_questions as $question) {
-                    $answers[] = $study->valueNotYetAnswered;
+
+
+                if (isset($stats[$interviewId])) {
+                    $answers[] = $stats[$interviewId]->getDensity();
+                    $answers[] = $stats[$interviewId]->maxDegree();
+                    $answers[] = $stats[$interviewId]->maxBetweenness();
+                    $answers[] = $stats[$interviewId]->maxEigenvector();
+                    $answers[] = $stats[$interviewId]->degreeCentralization();
+                    $answers[] = $stats[$interviewId]->betweennessCentralization();
+                    $answers[] = count($stats[$interviewId]->components);
+                    $answers[] = count($stats[$interviewId]->dyads);
+                    $answers[] = count($stats[$interviewId]->isolates);
+                } elseif (isset($_POST['expressionId']) && $_POST['expressionId']) {
+                    $answers[] = "";
+                    $answers[] = "";
+                    $answers[] = "";
+                    $answers[] = "";
+                    $answers[] = "";
+                    $answers[] = "";
+                    $answers[] = "";
+                    $answers[] = "";
+                    $answers[] = "";
                 }
-            }
-
-            if (isset($stats)) {
-                $answers[] = $stats->getDegree($alter->id);
-                $answers[] = $stats->getBetweenness($alter->id);
-                $answers[] = $stats->eigenvectorCentrality($alter->id);
-            }
 
 
-            if ($multiSession && $multiQs) {
-                $answers[] = $alter->id;
-                $aInts = explode(",", $alter->interviewId);
-                $aStudies = array();
-                foreach ($aInts as $aInt) {
-                    $int = Interview::findOne($aInt);
-                    if ($int) {
-                        $aStudies[] = $int->studyId;
+                if (isset($alter->id)) {
+                    if ($matchAtAll) {
+                        $matchId = "";
+                        $matchName = "";
+                        $match = MatchedAlters::find()
+                            ->where(new \yii\db\Expression("alterId1 = $alter->id OR alterId2 = $alter->id"))
+                            ->one();
+                        if ($match) {
+                            $matchId = $match->id;
+                            $matchName = $match->matchedName;
+                        }
+                        $answers[] = $matchIntId;
+                        $answers[] = $matchUser;
+                        $answers[] = $count;
+                        if ($withAlters) {
+                            $answers[] = $alter->name;
+                            $answers[] = $matchName;
+                        }
+                        $answers[] = $matchId;
+                    } else {
+                        $answers[] = $count;
+                        if ($withAlters) {
+                            $answers[] = $alter->name;
+                        }
+                    }
+                    foreach ($name_gen_questions[$interview->studyId] as $question) {
+                        if (count($name_gen_questions) == 1) {
+                            $answers[]  = 1;
+                            continue;
+                        }
+                        $nameGenQIds = explode(",", $alter->nameGenQIds);
+                        if (in_array($question->id, $nameGenQIds)) {
+                            $answers[]  = 1;
+                        } else {
+                            $answers[]  = 0;
+                        }
+                    }
+                    foreach ($previous_questions[$interview->studyId]  as $question) {
+                        $answer = Answer::findOne(array("interviewId" =>  $interviewId, "questionId" => $question->id, "alterId1" => $alter->id));
+                        if (!$answer) {
+                            $answers[] = $study->valueNotYetAnswered;
+                            continue;
+                        }
+                        if ($answer->value != "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip) {
+                            if ($question->answerType == "SELECTION") {
+                                $answers[] = $options[$answer->value];
+                            } elseif ($question->answerType == "MULTIPLE_SELECTION") {
+                                $optionIds = explode(',', $answer->value);
+                                $list = array();
+                                foreach ($optionIds as $optionId) {
+                                    if (isset($options[$optionId])) {
+                                        $list[] = $options[$optionId];
+                                    }
+                                }
+                                if (count($list) == 0) {
+                                    $answers[] = $study->valueNotYetAnswered;
+                                } else {
+                                    $answers[] = implode('; ', $list);
+                                }
+                            } else {
+                                $answers[] =  htmlspecialchars_decode($answer->value);
+                            }
+                        } elseif ($answer->skipReason == "DONT_KNOW") {
+                            $answers[] = $study->valueDontKnow;
+                        } elseif ($answer->skipReason == "REFUSE") {
+                            $answers[] = $study->valueRefusal;
+                        } elseif ($answer->value == $study->valueLogicalSkip) {
+                            $answers[] = $study->valueLogicalSkip;
+                        } else {
+                            $answers[] = "";
+                        }
+                    }
+                    foreach ($alter_questions[$interview->studyId]  as $question) {
+                        $answer = Answer::findOne(array("interviewId" =>  $interviewId, "questionId" => $question->id, "alterId1" => $alter->id));
+                        if (!$answer) {
+                            $answers[] = $study->valueNotYetAnswered;
+                            continue;
+                        }
+                        if ($answer->value != "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip) {
+                            if ($question->answerType == "SELECTION") {
+                                $answers[] = $options[$answer->value];
+                            } elseif ($question->answerType == "MULTIPLE_SELECTION") {
+                                $optionIds = explode(',', $answer->value);
+                                $list = array();
+                                foreach ($optionIds as $optionId) {
+                                    if (isset($options[$optionId])) {
+                                        $list[] = $options[$optionId];
+                                    }
+                                }
+                                if (count($list) == 0) {
+                                    $answers[] = $study->valueNotYetAnswered;
+                                } else {
+                                    $answers[] = implode('; ', $list);
+                                }
+                            } else {
+                                $answers[] =  htmlspecialchars_decode($answer->value);
+                            }
+                        } elseif ($answer->skipReason == "DONT_KNOW") {
+                            $answers[] = $study->valueDontKnow;
+                        } elseif ($answer->skipReason == "REFUSE") {
+                            $answers[] = $study->valueRefusal;
+                        } elseif ($answer->value == $study->valueLogicalSkip) {
+                            $answers[] = $study->valueLogicalSkip;
+                        } else {
+                            $answers[] = "";
+                        }
+                    }
+                } else {
+                    $answers[] = 0;
+                    $answers[] = "";
+                    foreach ($alter_questions as $question) {
+                        $answers[] = $study->valueNotYetAnswered;
                     }
                 }
-                foreach ($multiQs as $q) {
-                    $answers[] = intval(in_array($q->studyId, $aStudies));
+
+                if (isset($stats[$interviewId])) {
+                    $answers[] = $stats[$interviewId]->getDegree($alter->id);
+                    $answers[] = $stats[$interviewId]->getBetweenness($alter->id);
+                    $answers[] = $stats[$interviewId]->eigenvectorCentrality($alter->id);
                 }
+
+
+                if ($multiSession && $multiQs) {
+                    $answers[] = $alter->id;
+                    $aInts = explode(",", $alter->interviewId);
+                    $aStudies = array();
+                    foreach ($aInts as $aInt) {
+                        $int = Interview::findOne($aInt);
+                        if ($int) {
+                            $aStudies[] = $int->studyId;
+                        }
+                    }
+                    foreach ($multiQs as $q) {
+                        $answers[] = intval(in_array($q->studyId, $aStudies));
+                    }
+                }
+        
             }
             if ($file === null) {
                 $all_answers[] = $answers;
@@ -668,13 +695,13 @@ class Interview extends \yii\db\ActiveRecord
 
     public function exportEgoAlterDataJSON($file = null, $noAlters = false)
     {
-        $all_questions = Question::find()->where(["studyId"=>$this->studyId])->orderBy(["ordering"=>"ASC"])->all();
         $ego_id_questions = [];
         $ego_questions = [];
         $alter_questions = [];
         $network_questions = [];
         $name_gen_questions = [];
         $previous_questions = [];
+        $all_questions = Question::find()->where(["studyId" => $this->studyId])->orderBy(["ordering" => "ASC"])->all();
         foreach ($all_questions as $question) {
             if ($question->subjectType == "EGO_ID") {
                 $ego_id_questions[] = $question;
@@ -697,11 +724,11 @@ class Interview extends \yii\db\ActiveRecord
         }
 
         $alters = Alters::find()
-        ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id .", interviewId)"))
-        ->all();
+            ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id . ", interviewId)"))
+            ->all();
 
         if (!$alters || $noAlters === true) {
-            $alters = array('0'=>array('id'=>null));
+            $alters = array('0' => array('id' => null));
         } else {
             if (isset($_POST['expressionId']) && $_POST['expressionId']) {
                 $stats = new Statistics;
@@ -723,7 +750,7 @@ class Interview extends \yii\db\ActiveRecord
         } else {
             $studyIds = $this->studyId;
         }
-        $matchAtAll = MatchedAlters::find()->where(["studyId"=>$studyIds])->one();
+        $matchAtAll = MatchedAlters::find()->where(["studyId" => $studyIds])->one();
         if ($matchAtAll) {
             $match = MatchedAlters::find()->where(["interviewId1" => $this->id])->orWhere(["interviewId2" => $this->id])->one();
             if ($match) {
@@ -738,21 +765,23 @@ class Interview extends \yii\db\ActiveRecord
             }
         }
         $all_answers = array();
+        // create an array with option ID as key
+        $options = array();
+        $optionLabels = array();
+        $optionsRaw = QuestionOption::findAll(array("studyId" => $study->id));
+        foreach ($optionsRaw as $option) {
+            $options[$option->id] = $option->value;
+            $optionLabels[$option->id] = $option->name;
+        }
+
         foreach ($alters as $alter) {
             $answers = array();
             $answers['Interview ID'] = $this->id;
             $ego_ids = array();
             $ego_id_string = array();
             $study = Study::findOne($this->studyId);
-            $optionsRaw = QuestionOption::findAll(array("studyId"=>$study->id));
 
-            // create an array with option ID as key
-            $options = array();
-            $optionLabels = array();
-            foreach ($optionsRaw as $option) {
-                $options[$option->id] = $option->value;
-                $optionLabels[$option->id] = $option->name;
-            }
+
             foreach ($ego_id_questions as $question) {
                 $result = Answer::findOne(array("interviewId" => $this->id, "questionId" => $question->id));
                 $answer = $result->value;
@@ -787,7 +816,7 @@ class Interview extends \yii\db\ActiveRecord
             }
             $answers["EgoID"] = implode("_", $ego_id_string);
             $answers['Start Time'] = date("Y-m-d H:i:s", $this->start_date);
-            if($this->completed == -1)
+            if ($this->completed == -1)
                 $answers['End Time'] = date("Y-m-d H:i:s", $this->complete_date);
             else
                 $answers['End Time'] = "";
@@ -795,7 +824,7 @@ class Interview extends \yii\db\ActiveRecord
                 $answers[$title] = $eid;
             }
             foreach ($ego_questions as $question) {
-                $answer = Answer::findOne(array("interviewId"=>$this->id, "questionId"=>$question->id));
+                $answer = Answer::findOne(array("interviewId" => $this->id, "questionId" => $question->id));
                 if (!$answer) {
                     $answers[$question->title] = $study->valueNotYetAnswered;
                     continue;
@@ -856,7 +885,7 @@ class Interview extends \yii\db\ActiveRecord
             }
 
             foreach ($network_questions as $question) {
-                $answer = Answer::findOne(array("interviewId"=>$this->id, "questionId"=>$question->id));
+                $answer = Answer::findOne(array("interviewId" => $this->id, "questionId" => $question->id));
                 if (!$answer) {
                     $answers[$question->title] = $study->valueNotYetAnswered;
                     continue;
@@ -907,13 +936,13 @@ class Interview extends \yii\db\ActiveRecord
                 if ($matchAtAll) {
                     $matchId = "";
                     $matchName = "";
-                    $match = MatchedAlters::find()->where(["alterId1"=>$alter->id])->orWhere(["alterId2"=>$alter->id])->one();
+                    $match = MatchedAlters::find()->where(["alterId1" => $alter->id])->orWhere(["alterId2" => $alter->id])->one();
                     if ($match) {
                         $matchId = $match->id;
                         $matchName = $match->matchedName;
                     }
-                    
-                    
+
+
                     $answers["Dyad Match ID"] = $matchIntId;
                     $answers["Match User"] = $matchUser;
                     $answers["Alter Number"] = $count;
@@ -937,7 +966,7 @@ class Interview extends \yii\db\ActiveRecord
                     }
                 }
                 foreach ($alter_questions as $question) {
-                    $answer = Answer::findOne(array("interviewId"=>$this->id, "questionId"=>$question->id, "alterId1"=>$alter->id));
+                    $answer = Answer::findOne(array("interviewId" => $this->id, "questionId" => $question->id, "alterId1" => $alter->id));
                     if (!$answer) {
                         $answers[$question->title] = $study->valueNotYetAnswered;
                         continue;
@@ -974,7 +1003,7 @@ class Interview extends \yii\db\ActiveRecord
             } else {
                 $answers['Alter Number'] = 0;
                 $answers['Alter Name'] = "";
-                
+
                 foreach ($alter_questions as $question) {
                     $answers[$question->title] = $study->valueNotYetAnswered;
                 }
@@ -1005,7 +1034,7 @@ class Interview extends \yii\db\ActiveRecord
 
     public function exportEgoLevel($file)
     {
-        $all_questions = Question::find()->where(["studyId"=>$this->studyId])->orderBy(["ordering"=>"ASC"])->all();
+        $all_questions = Question::find()->where(["studyId" => $this->studyId])->orderBy(["ordering" => "ASC"])->all();
         $ego_id_questions = [];
         $ego_questions = [];
         $alter_questions = [];
@@ -1057,8 +1086,8 @@ class Interview extends \yii\db\ActiveRecord
         }
 
         $alters = Alters::find()
-        ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id .", interviewId)"))
-        ->all();
+            ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id . ", interviewId)"))
+            ->all();
 
         foreach ($ego_id_questions as $question) {
             $result = Answer::findOne(array("interviewId" => $this->id, "questionId" => $question->id));
@@ -1098,7 +1127,7 @@ class Interview extends \yii\db\ActiveRecord
         }
         $answers[] = implode("_", $ego_id_string);
         $answers[] = date("Y-m-d H:i:s", $this->start_date);
-        if($this->completed == -1)
+        if ($this->completed == -1)
             $answers[] = date("Y-m-d H:i:s", $this->complete_date);
         else
             $answers[] = "";
@@ -1212,8 +1241,8 @@ class Interview extends \yii\db\ActiveRecord
     public function exportAlterPairData($file, $study, $withAlters = false)
     {
         $alters = Alters::find()
-        ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id .", interviewId)"))
-        ->all();
+            ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id . ", interviewId)"))
+            ->all();
         $i = 1;
         $alterNum = array();
         foreach ($alters as $alter) {
@@ -1222,8 +1251,14 @@ class Interview extends \yii\db\ActiveRecord
         }
         $alters2 = $alters;
         $multiStudyIds = $study->multiStudyIds();
-
-        $alter_pair_questions = Question::findAll(["studyId"=>$multiStudyIds, "subjectType"=>"ALTER_PAIR"]);
+        $studyNames = [];
+        $alter_pair_questions = [];
+        foreach ($multiStudyIds as $studyId) {
+            $study = Study::findOne($studyId);
+            $studyNames[$studyId] = $study->name;
+            $alter_pair_questions[$studyId] = Question::findAll(["studyId" => $studyId, "subjectType" => "ALTER_PAIR"]);
+        }
+        $interviewIds = $this->multiInterviewIds();
 
         $optionsRaw = QuestionOption::findAll(array('studyId' => $multiStudyIds));
         // create an array with option ID as key
@@ -1232,21 +1267,33 @@ class Interview extends \yii\db\ActiveRecord
             $options[$option->id] = $option->value;
         }
         $result = Answer::findAll([
-            "interviewId"=>$this->id,
-            "questionType"=>"ALTER_PAIR",
+            "interviewId" => $interviewIds,
+            "questionType" => "ALTER_PAIR",
         ]);
+
+        // get matched ids,
+        // print row with 2 ides
         $ap_answers = array();
         foreach ($result as $answer) {
             $ap_answers[$answer->questionId][$answer->alterId1][$answer->alterId2] = $answer;
         }
-        $ego_id = Interview::getEgoId($this->id);
+
+        $ego_id = [];
+        foreach ($interviewIds as $interviewId) {
+            $interview = Interview::findOne($interviewId);
+            $ego_id[$interviewId] = $interview->getEgoId();
+        }
+        $matches = MatchedAlters::find()->where(['interviewId1' => $this->id])->orWhere(['interviewId2' => $this->id])->all();
 
         foreach ($alters as $alter) {
             array_shift($alters2);
             foreach ($alters2 as $alter2) {
                 $answers = array();
-                $answers[] = $this->id;
-                $answers[] = $ego_id;
+                foreach ($interviewIds as $interviewId) {
+                    $answers[] =  $interviewId;
+                    $answers[] = $ego_id[$interviewId];
+                }
+                //  $answers[] = $ego_id[$alter->interviewId];
                 $answers[] = $alterNum[$alter->id];
                 if ($withAlters) {
                     $answers[] = str_replace(",", ";", $alter->name);
@@ -1255,40 +1302,41 @@ class Interview extends \yii\db\ActiveRecord
                 if ($withAlters) {
                     $answers[] = $alter2->name;
                 }
-                foreach ($alter_pair_questions as $question) {
-                    if(!isset($ap_answers[$question->id][$alter->id][$alter2->id]))
-                        continue;
-                    $result = $ap_answers[$question->id][$alter->id][$alter2->id];
-                    
-                    $answer = $result->value;
-                    $skipReason = $result->skipReason;
-                    if ($answer != "" && $skipReason == "NONE") {
-                        if ($question->answerType == "SELECTION") {
-                            $answers[] = $options[$answer];
-                        } elseif ($question->answerType == "MULTIPLE_SELECTION") {
-                            $optionIds = explode(',', $answer);
-                            $list = array();
-                            foreach ($optionIds as $optionId) {
-                                if (isset($options[$optionId])) {
-                                    $list[] = $options[$optionId];
+                foreach ($multiStudyIds as $studyId) {
+                    foreach ($alter_pair_questions[$studyId] as $question) {
+                        if (!isset($ap_answers[$question->id][$alter->id][$alter2->id]))
+                            continue;
+                        $result = $ap_answers[$question->id][$alter->id][$alter2->id];
+                        $answer = $result->value;
+                        $skipReason = $result->skipReason;
+                        if ($answer != "" && $skipReason == "NONE") {
+                            if ($question->answerType == "SELECTION") {
+                                $answers[] = $options[$answer];
+                            } elseif ($question->answerType == "MULTIPLE_SELECTION") {
+                                $optionIds = explode(',', $answer);
+                                $list = array();
+                                foreach ($optionIds as $optionId) {
+                                    if (isset($options[$optionId])) {
+                                        $list[] = $options[$optionId];
+                                    }
                                 }
-                            }
-                            if (count($list) == 0) {
-                                $answers[] = $study->valueNotYetAnswered;
+                                if (count($list) == 0) {
+                                    $answers[] = $study->valueNotYetAnswered;
+                                } else {
+                                    $answers[] = implode('; ', $list);
+                                }
                             } else {
-                                $answers[] = implode('; ', $list);
+                                if (!$answer) {
+                                    $answer = $study->valueNotYetAnswered;
+                                }
+                                $answers[] = $answer;
                             }
-                        } else {
-                            if (!$answer) {
-                                $answer = $study->valueNotYetAnswered;
+                        } elseif (!$answer && ($skipReason == "DONT_KNOW" || $skipReason == "REFUSE")) {
+                            if ($skipReason == "DONT_KNOW") {
+                                $answers[] = $study->valueDontKnow;
+                            } else {
+                                $answers[] = $study->valueRefusal;
                             }
-                            $answers[] = $answer;
-                        }
-                    } elseif (!$answer && ($skipReason == "DONT_KNOW" || $skipReason == "REFUSE")) {
-                        if ($skipReason == "DONT_KNOW") {
-                            $answers[] = $study->valueDontKnow;
-                        } else {
-                            $answers[] = $study->valueRefusal;
                         }
                     }
                 }
@@ -1299,9 +1347,9 @@ class Interview extends \yii\db\ActiveRecord
 
     public function exportOtherData($file, $study)
     {
-        $options = QuestionOption::findAll(array("otherSpecify"=>true, "studyId"=>$study->id));
+        $options = QuestionOption::findAll(array("otherSpecify" => true, "studyId" => $study->id));
         if (!$options) {
-            $allOptions = QuestionOption::findAll(array("studyId"=>$study->id));
+            $allOptions = QuestionOption::findAll(array("studyId" => $study->id));
             foreach ($allOptions as $option) {
                 if ($option->otherSpecify) {
                     $options[] = $option;
@@ -1319,18 +1367,18 @@ class Interview extends \yii\db\ActiveRecord
             $other_options[$option->id] = $option;
             if (!isset($other_qs[$option->questionId])) {
                 $other_q = Question::findOne($option->questionId);
-                if($other_q)
+                if ($other_q)
                     $other_qs[$option->questionId] = $other_q;
             }
         }
 
- 
+
         $answers = array();
-        $answerList = Answer::findAll(array('interviewId'=>$this->id));
+        $answerList = Answer::findAll(array('interviewId' => $this->id));
         foreach ($answerList as $a) {
             if ($a->alterId1 && $a->alterId2) {
                 $answers[$a->questionId . "-" . $a->alterId1 . "and" . $a->alterId2] = $a;
-            } elseif ($a->alterId1 && ! $a->alterId2) {
+            } elseif ($a->alterId1 && !$a->alterId2) {
                 $answers[$a->questionId . "-" . $a->alterId1] = $a;
             } else {
                 $answers[$a->questionId] = $a;
@@ -1339,8 +1387,8 @@ class Interview extends \yii\db\ActiveRecord
         foreach ($other_qs as $question) {
             if ($question->subjectType == "ALTER") {
                 $alters = Alters::find()
-                ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id .", interviewId)"))
-                ->all();
+                    ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id . ", interviewId)"))
+                    ->all();
                 foreach ($alters as $alter) {
                     $answerArray = array();
                     $otherSpecifies = array();
@@ -1375,7 +1423,7 @@ class Interview extends \yii\db\ActiveRecord
                         }
                     }
 
-                    foreach ($answerArray as $i=>$a) {
+                    foreach ($answerArray as $i => $a) {
                         $answer = array();
                         $answer[] = $this->id;
                         $answer[] = Interview::getEgoId($this->id);
@@ -1393,7 +1441,7 @@ class Interview extends \yii\db\ActiveRecord
                 //    continue;
                 //}
                 $response = false;
-                if(isset($answers[$question->id]))
+                if (isset($answers[$question->id]))
                     $response = $answers[$question->id]->otherSpecifyText;
                 if (!$response) {
                     continue;
@@ -1420,7 +1468,7 @@ class Interview extends \yii\db\ActiveRecord
                     }
                 }
 
-                foreach ($answerArray as $i=>$a) {
+                foreach ($answerArray as $i => $a) {
                     $answer = array();
                     $answer[] = $this->id;
                     $answer[] = Interview::getEgoId($this->id);
@@ -1439,15 +1487,15 @@ class Interview extends \yii\db\ActiveRecord
         $row = array();
         $row[] = $this->id;
         $row[] = Interview::getEgoId($this->id);
-        $all_questions = Question::find()->where(["studyId"=>$this->studyId])->orderBy(["ordering"=>"ASC"])->all();
-        foreach ($all_questions as $question){
-            $answer = Answer::findOne(["interviewId"=>$this->id, "questionId"=>$question->id]);
+        $all_questions = Question::find()->where(["studyId" => $this->studyId])->orderBy(["ordering" => "ASC"])->all();
+        foreach ($all_questions as $question) {
+            $answer = Answer::findOne(["interviewId" => $this->id, "questionId" => $question->id]);
             if ($answer) {
-                if($answer->timestamp)
+                if ($answer->timestamp)
                     $row[] = date("Y-m-d H:i:s", $answer->timestamp);
                 else
                     $row[] = "";
-            }else{
+            } else {
                 $row[] = "";
             }
         }
@@ -1461,9 +1509,9 @@ class Interview extends \yii\db\ActiveRecord
         $answer = Answer::findAll(array("interviewId" => $interview->id));
         $answers[$interview->id] = $answer;
         $alter = Alters::find()
-        ->where(new \yii\db\Expression("FIND_IN_SET(" . $interview->id .", interviewId)"))
-        ->orderBy(['ordering'=>'ASC'])
-        ->all();
+            ->where(new \yii\db\Expression("FIND_IN_SET(" . $interview->id . ", interviewId)"))
+            ->orderBy(['ordering' => 'ASC'])
+            ->all();
         $alters[$interview->id] = $alter;
         $graph = Graph::findAll(array("interviewId" => $interview->id));
         $graphs[$interview->id] = $graph;

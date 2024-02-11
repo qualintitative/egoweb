@@ -157,7 +157,7 @@ class DataController extends Controller
                 }
             }
         }
-        return $this->render('index', ['study' => $study, 'all_studies' => $all_studies, 'interviewStudyIds' => $interviewStudyIds, 'multiStudyIds'=> $multiStudyIds,'expressions' => $expressions, 'interviews' => $interviews, 'alters' => $alters, 'egoIds' => $egoIds]);
+        return $this->render('index', ['study' => $study, 'all_studies' => $all_studies, 'interviewStudyIds' => $interviewStudyIds, 'multiStudyIds' => $multiStudyIds, 'expressions' => $expressions, 'interviews' => $interviews, 'alters' => $alters, 'egoIds' => $egoIds]);
     }
 
 
@@ -313,10 +313,6 @@ class DataController extends Controller
         }
 
         $headers = array();
-        $headers[] = 'Interview ID';
-        $headers[] = "EgoID";
-        $headers[] = 'Start Time';
-        $headers[] = 'End Time';
 
         $study = Study::findOne($_POST['studyId']);
         if ($study->multiSessionEgoId) {
@@ -359,7 +355,11 @@ class DataController extends Controller
                     $previous_questions[] = $question;
                 }
             }
-
+            $headers[] = 'Interview ID';
+            $headers[] = "EgoID";
+            $headers[] = 'Start Time';
+            $headers[] = 'End Time';
+    
             foreach ($ego_id_questions as $question) {
                 $headers[] = $question->title;
                 $hCount++;
@@ -373,7 +373,7 @@ class DataController extends Controller
                 $hCount++;
             }
 
-            if (isset($_POST[$studyId . '_expressionId']) && $_POST[$studyId . '_expressionId'] != "" ) {
+            if (isset($_POST[$studyId . '_expressionId']) && $_POST[$studyId . '_expressionId'] != "") {
                 $headers[] = "Density";
                 $headers[] = "Max Degree Value";
                 $headers[] = "Max Betweenness Value";
@@ -419,7 +419,7 @@ class DataController extends Controller
                 $headers[] = $question->title;
                 $hCount++;
             }
-            if (isset($_POST[$studyId . '_expressionId']) && $_POST[$studyId . '_expressionId'] != "" ) {
+            if (isset($_POST[$studyId . '_expressionId']) && $_POST[$studyId . '_expressionId'] != "") {
                 $headers[] = "Degree";
                 $headers[] = "Betweenness";
                 $headers[] = "Eigenvector";
@@ -456,15 +456,16 @@ class DataController extends Controller
                         $line = [];
                         foreach ($cols as $index => $col) {
                             $line[] = $col;
+                            /*
                             if ($index == 3) {
                                 for ($i = 0; $i < array_search($interview->studyId, $studyIds); $i++) {
                                     for ($j = 0; $j < $indents[$studyIds[$i]]; $j++) {
                                         $line[] = "";
                                     }
                                 }
-                            }
+                            }*/
                         }
-                        if($row != "")
+                        if ($row != "")
                             $text .= implode(",", $line) . "\n";
                     }
                     unlink($filePath);
@@ -621,24 +622,33 @@ class DataController extends Controller
         }
 
         $study = Study::findOne($_POST['studyId']);
+        $multiStudyIds = $study->multiStudyIds();
 
-        $alter_pair_questions = Question::findAll(["studyId" => $study->id, "subjectType" => "ALTER_PAIR"]);
-
-        $idNumber = "Number";
+        $alter_pair_questions = [];
+        $studyNames = [];
+        foreach ($multiStudyIds as $studyId) {
+            $study = Study::findOne($studyId);
+            $studyNames[$studyId] = $study->name;
+            $alter_pair_questions[$studyId] = Question::findAll(["studyId" => $studyId, "subjectType" => "ALTER_PAIR"]);
+        }
 
         $headers = array();
-        $headers[] = 'Interview ID';
-        $headers[] = 'EgoID';
-        $headers[] = "Alter 1 " . $idNumber;
+        foreach ($multiStudyIds as $studyId) {
+            $headers[] = $studyNames[$studyId] . ' Interview ID';
+            $headers[] = $studyNames[$studyId] . ' EgoID';
+        }
+        $headers[] = "Alter 1 Number";
         if ($withAlters) {
             $headers[] = "Alter 1 Name";
         }
-        $headers[] = "Alter 2 " . $idNumber;
+        $headers[] = "Alter 2 Number";
         if ($withAlters) {
             $headers[] = "Alter 2 Name";
         }
-        foreach ($alter_pair_questions as $question) {
-            $headers[] = $question->title;
+        foreach ($multiStudyIds as $studyId) {
+            foreach ($alter_pair_questions[$studyId] as $question) {
+                $headers[] = $question->title;
+            }
         }
 
         $interviewIds = array();
