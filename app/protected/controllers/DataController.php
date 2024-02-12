@@ -637,18 +637,16 @@ class DataController extends Controller
         foreach ($multiStudyIds as $studyId) {
             $headers[] = $studyNames[$studyId] . ' Interview ID';
             $headers[] = $studyNames[$studyId] . ' EgoID';
-        }
-        $headers[] = "Alter 1 Number";
-        if ($withAlters) {
-            $headers[] = "Alter 1 Name";
-        }
-        $headers[] = "Alter 2 Number";
-        if ($withAlters) {
-            $headers[] = "Alter 2 Name";
-        }
-        foreach ($multiStudyIds as $studyId) {
+            $headers[] = "Alter 1 ID";
+            if ($withAlters) {
+                $headers[] = "Alter 1 Name";
+            }
+            $headers[] = "Alter 2 ID";
+            if ($withAlters) {
+                $headers[] = "Alter 2 Name";
+            }
             foreach ($alter_pair_questions[$studyId] as $question) {
-                $headers[] = $question->title;
+                $headers[] = $studyNames[$studyId] . "_". $question->title;
             }
         }
 

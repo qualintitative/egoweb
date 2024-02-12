@@ -249,8 +249,8 @@ class Interview extends \yii\db\ActiveRecord
             $all_questions[$studyId] = Question::find()->where(["studyId" => $studyId])->orderBy(["ordering" => "ASC"])->all();
         }
         $alters = Alters::find()
-        ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id . ", interviewId)"))
-        ->all();
+            ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id . ", interviewId)"))
+            ->all();
         foreach ($multiStudyIds as $studyId) {
             $ego_id_questions[$studyId] = [];
             $ego_questions[$studyId] = [];
@@ -278,12 +278,10 @@ class Interview extends \yii\db\ActiveRecord
                     $previous_questions[$studyId][] = $question;
                 }
             }
-          
-    
         }
 
         $interviewIds = $this->multiInterviewIds();
-        foreach($interviewIds as $interviewId){
+        foreach ($interviewIds as $interviewId) {
             $interview = Interview::findOne($interviewId);
             if (!$alters) {
                 $alters = array('0' => new Alters);
@@ -664,8 +662,8 @@ class Interview extends \yii\db\ActiveRecord
 
                 if ($multiSession && $multiQs) {
                     $answers[] = $alter->id;
-                    if( $alter->interviewId != null)
-                    $aInts = explode(",", $alter->interviewId);
+                    if ($alter->interviewId != null)
+                        $aInts = explode(",", $alter->interviewId);
                     $aStudies = array();
                     foreach ($aInts as $aInt) {
                         $int = Interview::findOne($aInt);
@@ -677,7 +675,6 @@ class Interview extends \yii\db\ActiveRecord
                         $answers[] = intval(in_array($q->studyId, $aStudies));
                     }
                 }
-        
             }
             if ($file === null) {
                 $all_answers[] = $answers;
@@ -1280,11 +1277,13 @@ class Interview extends \yii\db\ActiveRecord
         }
 
         $ego_id = [];
+        $interviews = [];
         foreach ($interviewIds as $interviewId) {
-            $interview = Interview::findOne($interviewId);
-            $ego_id[$interviewId] = $interview->getEgoId();
+            $interviews[$interviewId] = Interview::findOne($interviewId);
+            $ego_id[$interviewId] = $interviews[$interviewId]->getEgoId();
         }
         $matches = MatchedAlters::find()->where(['interviewId1' => $this->id])->orWhere(['interviewId2' => $this->id])->all();
+        // foreach ($multiStudyIds as $studyId) {
 
         foreach ($alters as $alter) {
             array_shift($alters2);
@@ -1293,20 +1292,21 @@ class Interview extends \yii\db\ActiveRecord
                 foreach ($interviewIds as $interviewId) {
                     $answers[] =  $interviewId;
                     $answers[] = $ego_id[$interviewId];
-                }
-                //  $answers[] = $ego_id[$alter->interviewId];
-                $answers[] = $alterNum[$alter->id];
-                if ($withAlters) {
-                    $answers[] = str_replace(",", ";", $alter->name);
-                }
-                $answers[] = $alterNum[$alter2->id];
-                if ($withAlters) {
-                    $answers[] = $alter2->name;
-                }
-                foreach ($multiStudyIds as $studyId) {
+                    $studyId = $interviews[$interviewId]->studyId;
+                    //  $answers[] = $ego_id[$alter->interviewId];
+                    $answers[] = $alter->id;
+                    if ($withAlters) {
+                        $answers[] = str_replace(",", ";", $alter->name);
+                    }
+                    $answers[] = $alter2->id;
+                    if ($withAlters) {
+                        $answers[] = $alter2->name;
+                    }
                     foreach ($alter_pair_questions[$studyId] as $question) {
-                        if (!isset($ap_answers[$question->id][$alter->id][$alter2->id]))
+                        if (!isset($ap_answers[$question->id][$alter->id][$alter2->id])) {
+                            $answers[] = "";
                             continue;
+                        }
                         $result = $ap_answers[$question->id][$alter->id][$alter2->id];
                         $answer = $result->value;
                         $skipReason = $result->skipReason;
@@ -1338,12 +1338,15 @@ class Interview extends \yii\db\ActiveRecord
                             } else {
                                 $answers[] = $study->valueRefusal;
                             }
+                        } else {
+                            $answers[] = "";
                         }
                     }
                 }
                 fputcsv($file, $answers);
             }
         }
+        //  }
     }
 
     public function exportOtherData($file, $study)
