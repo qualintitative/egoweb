@@ -453,10 +453,10 @@ class DataController extends Controller
                     // indent file output
                     $rows = explode("\n", file_get_contents($filePath));
                     $cols = explode(",", $rows[0]);
-                    if(!in_array($cols[1], $exported)){
-                        $exported[] = $cols[1];
+                    if(!in_array($cols[0], $exported)){
+                        $exported[] = $cols[0];
                     }else{
-                     continue;
+                  //   continue;
                     }
                     foreach ($rows as $row) {
                      
