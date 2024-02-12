@@ -104,8 +104,8 @@ class DataController extends Controller
             foreach ($questions as $question) {
                 $questionIds[] = $question->id;
             }
-            $multiStudyIds = $id;
-            $all_studies = false;
+            $multiStudyIds = [$id];
+            $all_studies [$id] = $study->name;
         }
         $expressions = [];
         foreach ($multiStudyIds as $studyId) {
@@ -321,7 +321,7 @@ class DataController extends Controller
                 $studyIds[] = $q->studyId;
             }
         } else {
-            $studyIds = $study->id;
+            $studyIds[] = $study->id;
         }
 
         $indents = [];
@@ -445,34 +445,35 @@ class DataController extends Controller
 
 
         $text = implode(',', $headers) . "\n";
+        $exported = [];
         foreach ($interviews as $interview) {
             $filePath = getcwd() . "/assets/" . $interview->studyId . "/" . $interview->id . "-ego-alter.csv";
             if (file_exists($filePath)) {
-                if (array_search($interview->studyId, $studyIds) > 0) {
+             //   if (array_search($interview->studyId, $studyIds) > 0) {
                     // indent file output
                     $rows = explode("\n", file_get_contents($filePath));
+                    $cols = explode(",", $rows[0]);
+                    if(!in_array($cols[1], $exported)){
+                        $exported[] = $cols[1];
+                    }else{
+                     continue;
+                    }
                     foreach ($rows as $row) {
+                     
                         $cols = explode(",", $row);
                         $line = [];
+                      
                         foreach ($cols as $index => $col) {
                             $line[] = $col;
-                            /*
-                            if ($index == 3) {
-                                for ($i = 0; $i < array_search($interview->studyId, $studyIds); $i++) {
-                                    for ($j = 0; $j < $indents[$studyIds[$i]]; $j++) {
-                                        $line[] = "";
-                                    }
-                                }
-                            }*/
                         }
                         if ($row != "")
                             $text .= implode(",", $line) . "\n";
                     }
                     unlink($filePath);
-                } else {
-                    $text .= file_get_contents($filePath);
-                    unlink($filePath);
-                }
+            //    } else {
+                   // $text .= file_get_contents($filePath);
+                 //   unlink($filePath);
+               // }
             }
         }
         return $this->response->sendContentAsFile($text, $study->name . '-ego-alter.csv')->send();

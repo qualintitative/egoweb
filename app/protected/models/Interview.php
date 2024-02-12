@@ -664,6 +664,7 @@ class Interview extends \yii\db\ActiveRecord
 
                 if ($multiSession && $multiQs) {
                     $answers[] = $alter->id;
+                    if( $alter->interviewId != null)
                     $aInts = explode(",", $alter->interviewId);
                     $aStudies = array();
                     foreach ($aInts as $aInt) {

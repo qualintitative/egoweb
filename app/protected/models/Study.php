@@ -103,7 +103,7 @@ class Study extends \yii\db\ActiveRecord
                 $multiStudyIds[] = $question->studyId;
             }
         } else {
-            $multiStudyIds = $this->id;
+            $multiStudyIds[] = $this->id;
         }
         return $multiStudyIds;
     }
