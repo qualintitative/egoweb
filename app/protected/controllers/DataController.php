@@ -456,7 +456,7 @@ class DataController extends Controller
                     if(!in_array($cols[0], $exported)){
                         $exported[] = $cols[0];
                     }else{
-                  //   continue;
+                     continue;
                     }
                     foreach ($rows as $row) {
                      
