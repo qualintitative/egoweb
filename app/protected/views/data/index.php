@@ -11,6 +11,7 @@ use yii\bootstrap4\LinkPager;
 ?>
 <script>
     interviewStudyIds = <?php echo json_encode($interviewStudyIds); ?>;
+    multiStudyIds = <?php echo json_encode($multiStudyIds); ?>;
 
     function exportEgoLevel() {
         var total = $("input[type='checkbox'][name*='export']:checked").length;
@@ -85,6 +86,7 @@ use yii\bootstrap4\LinkPager;
                 interviewId: interviewId,
                 withAlters: withAlters,
                 multiSession: multiSesh,
+                studyOrder: $('#studyOrder').val(),
                 expressionId: $("#" + interviewStudyIds[interviewId] + "_expId").val(),
                 YII_CSRF_TOKEN: $("input[name='YII_CSRF_TOKEN']").val()
             }
@@ -144,6 +146,7 @@ use yii\bootstrap4\LinkPager;
                     studyId: $("#studyId").val(),
                     interviewId: interviewId,
                     withAlters: withAlters,
+                    studyOrder: $('#studyOrder').val(),
                     expressionId: $("#expressionId").val(),
                     YII_CSRF_TOKEN: $("input[name='YII_CSRF_TOKEN']").val()
                 },
@@ -292,36 +295,44 @@ use yii\bootstrap4\LinkPager;
         }
     }
 </script>
-
-<div class="card">
-    <div class="card-body">
-        <div>
-            <div class="col-sm-4 float-right">
-                <a class="btn btn-sm btn-info float-right" href="/authoring/<?php echo $study->id; ?>">Authoring</a>
+<div id="data-app" class="card">
+    <div class="p-3 row">
+        <div class="col-sm-8 p-2">
+            <div class='mr-1'>
+                <input type="checkbox" id="multiSession1" v-model='multiSesh'> Include Multisession data
             </div>
-            <?php if (count($all_studies) > 1) : ?>
-                <div class="col-sm-12 float-left  mb-2">
-                    This <b>mutlisession study</b> includes interviews from
-                    <?php echo implode(", ", $all_studies); ?>
-                </div>
-            <?php endif; ?>
-            <?php foreach ($multiStudyIds as $studyId) : ?>
-                <div class="col-sm-12 float-left  mb-2">
-                    <?php echo (count($all_studies) > 0 ? $all_studies[$studyId] : ""); ?> Network Statistics
-                    <?php echo Html::dropDownList('expressionId', '', $expressions[$studyId], [
-                        'id' => $studyId . "_expId", 'prompt' => '(none)',
-                        'onchange' => '$("#' . $studyId . '_expressionId").val($(this).val())'
-                    ]);
-                    ?>
-                </div>
-            <?php endforeach; ?>
-            <div class="col-sm-8 float-left mb-1">
-                <input type="checkbox" id="withAlters1" checked> Include Alter Names
-            </div>
-            <div class="col-sm-12 float-left mb-2">
-                <input type="checkbox" id="multiSession1" checked> Include Multisession data
+            <input type="checkbox" id="withAlters1" checked> Include Alter Names
+        </div>
+        <div class="col-sm-4">
+            <a class="btn btn-sm btn-info float-right" href="/authoring/<?php echo $study->id; ?>">Authoring</a>
+        </div>
+    </div>
+    <div class="card-body" v-sortable.div="{ onUpdate: reorderStudy, chosenClass: 'is-selected'}">
+        <div v-for="(studyId,index) in multiStudyIds" :key="studyId" class="col-sm-12 float-left row mb-2">
+            <label v-if="multiSesh" class="col-sm-2">
+                {{studyOrder.indexOf(studyId) + 1}}_<a :href="'/data/' + studyId">{{all_studies[studyId ]}}</a>
+            </label>
+            <label v-if="!multiSesh && studyId == <?php echo $study->id; ?>" class="col-sm-2">
+                Network Expression
+            </label>
+            <div v-if="multiSesh || (!multiSesh && studyId == <?php echo $study->id; ?>)" class="col-sm-10">
+                <b-form-select v-on:change="getSelectedItem($event, studyId)" v-model="expression[studyId]" :options="expressions[studyId]" :name="studyId + '_expId'" :id="studyId + '_expId'">
+                    <template #first>
+                        <b-form-select-option value="">(select network expression)</b-form-select-option>
+                    </template>
+                </b-form-select>
             </div>
         </div>
+        <div v-if="multiSesh" class="col-sm-12 mb-1 row">
+            <label class="col-sm-2">Filename</label>
+            <div class="col-sm-6">
+                <input name="filename" class="form-control">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
         <div id="status"></div>
         <div class="progress row mb-3">
             <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100">
@@ -357,10 +368,6 @@ use yii\bootstrap4\LinkPager;
     <tbody>
         <?php
         $items = Interview::find()->where(["studyId" => $study->id])->all();
-        //$pagination = new Pagination(['totalCount' => $result->count(), 'pageSize'=>500]);
-        //$items = $result->offset($pagination->offset)
-        //->limit($pagination->limit)
-        //->all();
         foreach ($interviews as $interview) {
 
             if ($interview->completed == -1) {
@@ -394,13 +401,6 @@ use yii\bootstrap4\LinkPager;
 
     </tbody>
 </table>
-<?php
-/*
-echo LinkPager::widget([
-    'pagination' => $pagination,
-    ]);
-*/
-?>
 <?= Html::beginForm([''], 'post', ['id' => 'analysis']) ?>
 <?php
 echo Html::hiddenInput('studyId', $study->id, ['id' => 'studyId']);
@@ -410,24 +410,103 @@ foreach ($multiStudyIds as $studyId) {
 }
 echo Html::hiddenInput('withAlters', "1", array('id' => 'withAlters'));
 echo Html::hiddenInput('multiSession', "1", array('id' => 'multiSession'));
+echo Html::hiddenInput('studyOrder', "", array('id' => 'studyOrder'));
 
 ?>
 <?= Html::endForm() ?>
 <?php
-$this->registerAssetBundle(\yii\web\JqueryAsset::className(), \yii\web\View::POS_HEAD);
+$this->registerAssetBundle(\yii\web\JqueryAsset::class, \yii\web\View::POS_HEAD);
 
 use app\assets\DataAsset;
 
 DataAsset::register($this);
 ?>
 <script>
+    csrf = '<?php echo Yii::$app->request->getCsrfToken(); ?>';
+    all_studies = <?php echo json_encode($all_studies, ENT_QUOTES); ?>;
+    expressions = <?php echo json_encode($expressions, ENT_QUOTES); ?>;
+
     $(document).ready(function() {
-        $('#dTable').DataTable({
+        table = $('#dTable').DataTable({
             lengthMenu: [10, 50, 100, 500, 2500],
             "emptyTable": "No data available in table",
             //  "info":           "", //"Showing _START_ to _END_ of _TOTAL_ entries",
             //  "infoEmpty":      "", //"Showing 0 to 0 of 0 entries",
             //  "paging": false
         });
+        filterTable("<?php echo $study->name; ?>")
     });
+    filterTable = function(studyName) {
+        if ($('#multiSession1').prop('checked'))
+            studyName = ''
+        table.columns(1).search(studyName, true, false).draw();
+    }
+    Vue.directive('sortable', {
+        twoWay: true,
+        deep: true,
+        bind: function(el, binding, vnode) {
+            var options = {
+                ...binding.value,
+                draggable: Object.keys(binding.modifiers)[0]
+            };
+            if (Object.keys(binding.modifiers)[0] == "tr")
+                el._sortable = Sortable.create(el.querySelector("tbody"), options);
+            else
+                el._sortable = Sortable.create(el, options);
+            el._sortable.option("onChoose", function(e) {
+                el._sortable.oldOrder = el._sortable.toArray();
+            });
+            el._sortable.option("onUpdate", function(e) {
+                if (typeof options.onUpdate != "undefined")
+                    options.onUpdate(e);
+                if (vnode.children == undefined) {
+                    el._sortable.sort(el._sortable.oldOrder)
+                }
+            });
+
+        },
+        update: function(value) {}
+    });
+
+
+    data = new Vue({
+        el: '#data-app',
+        components: {},
+        data() {
+            return {
+                all_studies: all_studies,
+                expressions: expressions,
+                multiStudyIds: multiStudyIds,
+                multiSesh: true,
+                expression: [],
+                studyOrder: [],
+            }
+        },
+        created() {
+            for (m in multiStudyIds) {
+                this.studyOrder[m] = multiStudyIds[m]
+                this.expression[multiStudyIds[m]] = ''
+            }
+        },
+        mounted() {
+            var self = this;
+        },
+        methods: {
+            reorderStudy(event) {
+                console.log(event.newIndex, event.oldIndex)
+                console.log(this.studyOrder)
+                const new_place = this.studyOrder[event.newIndex];
+                const old_place = this.studyOrder[event.oldIndex];
+                console.log(new_place, old_place);
+                this.studyOrder[event.newIndex] = old_place
+                this.studyOrder[event.oldIndex] = new_place
+                $("#studyOrder").val(this.studyOrder.join(","))
+                this.$forceUpdate();
+                self = this;
+            },
+            getSelectedItem(data, studyId) {
+                $("#" + studyId + "_expressionId").val(data)
+            },
+        }
+    })
 </script>
