@@ -116,7 +116,6 @@ use common\widgets\Alert;
 
 
         <div v-if="expressions[id].questionId > 0">
-                
             <div v-if="expressions[id].type == 'Selection'">
                 <div class="row form-group">
                     <label for="Expression_name" class="col-md-2 col-form-label">TRUE if</label>
@@ -144,7 +143,6 @@ use common\widgets\Alert;
 
             <div v-if="expressions[id].type == 'Number'">
             <div class="row form-group">
-
                 <label class="col-sm-5">Expression is true for an answer is</label>
                 <b-form-select v-model="expressions[id].operator"  name="Expression[operator]" class="col-sm-3 mb-3">
                 <b-form-select-option value="Greater">Greater Than</b-form-select-option>
@@ -153,7 +151,6 @@ use common\widgets\Alert;
                 <b-form-select-option value="LessOrEqual">Less Or Equal To</b-form-select-option>
                 <b-form-select-option value="Less">Less Than</b-form-select-option>
                 </b-form-select>
-               
                     <div class="col-md-3">
                         <input type="text" v-model="expressions[id].value" class="form-control" name="Expression[value]" id="Expression_value">
                     </div>

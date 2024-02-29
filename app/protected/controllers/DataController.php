@@ -490,7 +490,11 @@ class DataController extends Controller
                 // }
             }
         }
-        return $this->response->sendContentAsFile($text, $study->name . '-ego-alter.csv')->send();
+        if(isset($_POST['filename']) && $_POST['filename'])
+            $filename = $_POST['filename'];
+        else 
+            $filename = $study->name . '-ego-alter';
+        return $this->response->sendContentAsFile($text, $filename . '.csv')->send();
     }
 
     public function actionExportegolevel()
@@ -706,7 +710,11 @@ class DataController extends Controller
                 unlink($filePath);
             }
         }
-        return $this->response->sendContentAsFile($text, $study->name . '-alter-pair.csv')->send();
+        if(isset($_POST['filename']) && $_POST['filename'])
+            $filename = $_POST['filename'];
+        else 
+            $filename = $study->name . '-alter-pair';
+        return $this->response->sendContentAsFile($text, $filename . '.csv')->send();
     }
 
     public function actionExportother()

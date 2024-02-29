@@ -326,7 +326,7 @@ use yii\bootstrap4\LinkPager;
         <div v-if="multiSesh" class="col-sm-12 mb-1 row">
             <label class="col-sm-2">Filename</label>
             <div class="col-sm-6">
-                <input name="filename" class="form-control">
+                <input id="filename" class="form-control" onchange="$('#realFilename').val($(this).val())">
             </div>
         </div>
     </div>
@@ -408,6 +408,7 @@ echo Html::hiddenInput('interviewIds', '', ['id' => 'interviewIds']);
 foreach ($multiStudyIds as $studyId) {
     echo Html::hiddenInput($studyId . '_expressionId', '', ['id' => $studyId . '_expressionId', 'class' => 'expId']);
 }
+echo Html::hiddenInput('filename', "", array('id' => 'realFilename'));
 echo Html::hiddenInput('withAlters', "1", array('id' => 'withAlters'));
 echo Html::hiddenInput('multiSession', "1", array('id' => 'multiSession'));
 echo Html::hiddenInput('studyOrder', "", array('id' => 'studyOrder'));
