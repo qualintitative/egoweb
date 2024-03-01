@@ -491,7 +491,7 @@ class DataController extends Controller
             }
         }
         if(isset($_POST['filename']) && $_POST['filename'])
-            $filename = $_POST['filename'];
+            $filename = $_POST['filename']  . '-ego-alter';
         else 
             $filename = $study->name . '-ego-alter';
         return $this->response->sendContentAsFile($text, $filename . '.csv')->send();
@@ -711,7 +711,7 @@ class DataController extends Controller
             }
         }
         if(isset($_POST['filename']) && $_POST['filename'])
-            $filename = $_POST['filename'];
+            $filename = $_POST['filename']  . '-alter-pair';
         else 
             $filename = $study->name . '-alter-pair';
         return $this->response->sendContentAsFile($text, $filename . '.csv')->send();
