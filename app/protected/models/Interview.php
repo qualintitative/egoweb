@@ -321,7 +321,7 @@ class Interview extends \yii\db\ActiveRecord
         if (isset($study->multiSessionEgoId) && $study->multiSessionEgoId) {
             $multiQs = $study->multiIdQs();
         }
-
+        $aInts = [];
         if ($multiSession && $multiQs) {
             //  $interviewIds = $this->multiInterviewIds();
             $prevIds = array();
@@ -683,8 +683,13 @@ class Interview extends \yii\db\ActiveRecord
 
                 if ($multiSession && $multiQs && $interviewId == $interviewIds[count($interviewIds) - 1]) {
                     $answers[] = $alter->id;
-                    if ($alter->interviewId != null)
-                        $aInts = explode(",", $alter->interviewId);
+                    if ($alter->interviewId != null){
+                        if(stristr($alter->interviewId, ","))
+                            $aInts = explode(",", $alter->interviewId);
+                        else
+                            $aInts = [$alter->interviewId];
+                    }else 
+                        continue;
                     $aStudies = array();
                     foreach ($aInts as $aInt) {
                         $int = Interview::findOne($aInt);
