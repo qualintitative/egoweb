@@ -333,6 +333,7 @@ class DataController extends Controller
         } else {
             $studyIds[] = $study->id;
         }
+        ksort($studyIds);
 
         $indents = [];
         foreach ($studyIds as $index => $studyId) {
