@@ -367,75 +367,75 @@ class DataController extends Controller
             }
             $counter = "";
             if ($multiSesh)
-                $counter = ($index + 1) . "_";
-            $headers[] = $counter . 'Interview ID';
-            $headers[] = $counter . "EgoID";
-            $headers[] = $counter . 'Start Time';
-            $headers[] = $counter .  'End Time';
+                $counter = "_" .  ($index + 1) ;
+            $headers[] = 'Interview ID' . $counter;
+            $headers[] =  "EgoID" . $counter;
+            $headers[] = 'Start Time' . $counter;
+            $headers[] =  'End Time' . $counter;
 
             foreach ($ego_id_questions as $question) {
-                $headers[] =  $counter . $question->title;
+                $headers[] =  $question->title  . $counter;
                 $hCount++;
             }
             foreach ($ego_questions as $question) {
-                $headers[] = $counter . $question->title;
+                $headers[] = $question->title  . $counter;
                 $hCount++;
             }
             foreach ($network_questions as $question) {
-                $headers[] = $counter .  $question->title;
+                $headers[] =  $question->title  . $counter;
                 $hCount++;
             }
 
             if (isset($_POST[$studyId . '_expressionId']) && $_POST[$studyId . '_expressionId'] != "") {
-                $headers[] = $counter . "Density";
-                $headers[] = $counter . "Max Degree Value";
-                $headers[] = $counter . "Max Betweenness Value";
-                $headers[] = $counter . "Max Eigenvector Value";
-                $headers[] = $counter . "Degree Centralization";
-                $headers[] = $counter . "Betweenness Centralization";
-                $headers[] = $counter . "Components";
-                $headers[] = $counter . "Dyads";
-                $headers[] = $counter . "Isolates";
+                $headers[] =  "Density"  . $counter;
+                $headers[] = "Max Degree Value"  . $counter;
+                $headers[] =  "Max Betweenness Value"  . $counter;
+                $headers[] = "Max Eigenvector Value"  . $counter;
+                $headers[] = "Degree Centralization"  . $counter;
+                $headers[] =  "Betweenness Centralization"  . $counter;
+                $headers[] = "Components"  . $counter;
+                $headers[] =  "Dyads"  . $counter;
+                $headers[] =  "Isolates"  . $counter;
                 $hCount += 9;
             }
             $matchAtAll = MatchedAlters::find()->where(["studyId" => $studyId])->one();
 
             if ($matchAtAll) {
-                $headers[] = $counter . "Dyad Match ID";
-                $headers[] = $counter . "Match User";
-                $headers[] = $counter . "Alter Number";
+                $headers[] =  "Dyad Match ID"  . $counter;
+                $headers[] =  "Match User"  . $counter;
+                $headers[] =  "Alter Number"  . $counter;
                 $hCount += 3;
                 if ($withAlters) {
-                    $headers[] = $counter .  "Alter Name";
-                    $headers[] = $counter .  "Matched Alter Name";
+                    $headers[] =  "Alter Name"  . $counter;
+                    $headers[] =  "Matched Alter Name"  . $counter;
                     $hCount += 2;
                 }
-                $headers[] = $counter .  "Alter Pair ID";
+                $headers[] =   "Alter Pair ID"  . $counter;
                 $hCount++;
             } else {
-                $headers[] = $counter .  "Alter Number";
+                $headers[] =  "Alter Number"  . $counter;
                 $hCount++;
                 if ($withAlters) {
-                    $headers[] = $counter .  "Alter Name";
+                    $headers[] =  "Alter Name"  . $counter;
                     $hCount++;
                 }
             }
             foreach ($name_gen_questions as $question) {
-                $headers[] = $counter .  $question->title;
+                $headers[] =  $question->title  . $counter;
                 $hCount++;
             }
             foreach ($previous_questions as $question) {
-                $headers[] = $counter . $question->title;
+                $headers[] = $question->title  . $counter;
                 $hCount++;
             }
             foreach ($alter_questions as $question) {
-                $headers[] = $counter . $question->title;
+                $headers[] = $question->title  . $counter;
                 $hCount++;
             }
             if (isset($_POST[$studyId . '_expressionId']) && $_POST[$studyId . '_expressionId'] != "") {
-                $headers[] = $counter .  "Degree";
-                $headers[] = $counter . "Betweenness";
-                $headers[] = $counter .  "Eigenvector";
+                $headers[] =  "Degree"  . $counter;
+                $headers[] =  "Betweenness"  . $counter;
+                $headers[] =   "Eigenvector"  . $counter;
                 $hCount += 3;
             }
       
@@ -670,12 +670,12 @@ class DataController extends Controller
 
         $headers = array();
         foreach ($studyIds as $index => $studyId) {
-            $counter = ($index + 1) . "_";
-            $headers[] = $counter . $studyNames[$studyId] . ' Interview ID';
-            $headers[] = $counter . $studyNames[$studyId] . ' EgoID';
+            $counter = "_" .  ($index + 1) ;
+            $headers[] =  $studyNames[$studyId] . ' Interview ID'  . $counter;
+            $headers[] =  $studyNames[$studyId] . ' EgoID'  . $counter;
         }
         foreach ($studyIds as $index => $studyId) {
-            $counter = ($index + 1) . "_";
+            $counter =  "_" . ($index + 1);
             if ($index == 0) {
                 $headers[] = "Alter 1 Number";
 
@@ -690,7 +690,7 @@ class DataController extends Controller
             }
             foreach ($alter_pair_questions[$studyId] as $question) {
 
-                $headers[] = $counter . $question->title;
+                $headers[] = $question->title  . $counter;
             }
         }
 
