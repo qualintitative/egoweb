@@ -674,7 +674,7 @@ class DataController extends Controller
             if ($multiSesh)
                 $counter = "_" .  ($index + 1) ;
             $headers[] =  $studyNames[$studyId] . ' Interview ID'  . $counter;
-            $headers[] =  $studyNames[$studyId] . ' EgoID'  . $counter;
+            $headers[] =  'EgoID'  . $counter;
         }
         foreach ($studyIds as $index => $studyId) {
             $counter = "";
