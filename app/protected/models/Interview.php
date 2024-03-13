@@ -1345,14 +1345,11 @@ class Interview extends \yii\db\ActiveRecord
         foreach ($alters as $alter) {
             //array_shift($alters2);
             foreach ($alters2 as $alter2) {
-
                 $answers = array();
                 $count = 0;
-                $max_count  = 0;
                 foreach ($interviewIds as $index => $interviewId) {
                     $studyId = $interviews[$interviewId]->studyId;
                     foreach ($alter_pair_questions[$studyId] as $question) {
-                        $max_count++;
                         if (isset($ap_answers[$question->id][$alter->id][$alter2->id])) {
                             $count++;
                         }
@@ -1362,7 +1359,7 @@ class Interview extends \yii\db\ActiveRecord
                     continue;
 
                 foreach ($interviewIds as $interviewId) {
-                    $answers[] =  $interviewId.";".$max_count.";".$count;
+                    $answers[] =  $interviewId;
                     $answers[] = $ego_id[$interviewId];
                 }
                 foreach ($interviewIds as $index => $interviewId) {
