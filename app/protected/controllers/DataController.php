@@ -443,15 +443,9 @@ class DataController extends Controller
         }
         if ($multiSesh &&  $study->multiSessionEgoId ) {
             $headers[] =  'Alter ID';
-          //  $hCount++;
-            //$multiQs = $study->multiIdQs();
-            //foreach ($multiQs as $q) {
                 foreach ($studyIds as $index => $studyId) {
-
                     $headers[] = $studyNames[$studyId];
-             //   $hCount++;
                 }
-           // }
         }
 
         $interviewIds = array();
@@ -491,7 +485,7 @@ class DataController extends Controller
                 // }
             }
         }
-        if(isset($_POST['filename']) && $_POST['filename'])
+        if(isset($_POST['filename']) && $_POST['filename'] && $multiSesh)
             $filename = $_POST['filename']  . '-ego-alter';
         else 
             $filename = $study->name . '-ego-alter';
@@ -615,14 +609,17 @@ class DataController extends Controller
         }
 
         $withAlters = false;
-        if (isset($_POST['withAlters'])) {
+        if (isset($_POST['withAlters']))
             $withAlters = boolval($_POST['withAlters']);
-        }
+        
+        $multiSesh = false;
+        if (isset($_POST['multiSession']))
+            $multiSesh = boolval($_POST['multiSession']);
 
         $interview = Interview::findOne($_POST['interviewId']);
         if ($interview) {
             $file = fopen($filePath . "/" . $_POST['interviewId'] . "-alter-pair.csv", "w") or die("Unable to open file!");
-            $interview->exportAlterPairData($file, $study, $withAlters);
+            $interview->exportAlterPairData($file, $study, $withAlters, $multiSesh);
             return $this->renderAjax("/layouts/ajax", ["json" => "success"]);
         }
         return $this->renderAjax("/layouts/ajax", ["json" => "fail"]);
@@ -665,9 +662,9 @@ class DataController extends Controller
 
         $alter_pair_questions = [];
         $studyNames = [];
-        foreach ($multiStudyIds as $studyId) {
-            $study = Study::findOne($studyId);
-            $studyNames[$studyId] = $study->name;
+        foreach ($studyIds as $studyId) {
+            $s = Study::findOne($studyId);
+            $studyNames[$studyId] = $s->name;
             $alter_pair_questions[$studyId] = Question::findAll(["studyId" => $studyId, "subjectType" => "ALTER_PAIR"]);
         }
 
@@ -711,7 +708,7 @@ class DataController extends Controller
                 unlink($filePath);
             }
         }
-        if(isset($_POST['filename']) && $_POST['filename'])
+        if(isset($_POST['filename']) && $_POST['filename'] && $multiSesh)
             $filename = $_POST['filename']  . '-alter-pair';
         else 
             $filename = $study->name . '-alter-pair';

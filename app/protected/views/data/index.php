@@ -64,12 +64,12 @@ use yii\bootstrap4\LinkPager;
         var finished = 0;
         withAlters = 0;
         var batchSize = 1;
-        multiSesh = 1;
+        multiSesh = 0;
         var interviews = $("input[type='checkbox'][name*='export']:checked");
         if ($("#withAlters1").prop("checked") == true)
             withAlters = 1;
-        if ($("#multiSession1").prop("checked") == false)
-            multiSesh = 0;
+        if ($("#multiSession1").prop("checked") == true)
+            multiSesh = 1;
         $("#withAlters").val(withAlters);
         $("#multiSession").val(multiSesh);
         $(".progress-bar").width(0);
@@ -127,9 +127,13 @@ use yii\bootstrap4\LinkPager;
         var batchSize = 1;
         var interviews = $("input[type='checkbox'][name*='export']:checked");
         withAlters = 0;
+        multiSesh = 0;
         if ($("#withAlters1").prop("checked") == true)
             withAlters = 1;
+        if ($("#multiSession1").prop("checked") == true)
+            multiSesh = 1;
         $("#withAlters").val(withAlters);
+        $("#multiSession").val(multiSesh);
         $(".progress-bar").width(0);
         var batchPromiseRecursive = function() {
             if (interviews.length == 0) {
@@ -146,6 +150,7 @@ use yii\bootstrap4\LinkPager;
                     studyId: $("#studyId").val(),
                     interviewId: interviewId,
                     withAlters: withAlters,
+                    multiSession: multiSesh,
                     studyOrder: $('#studyOrder').val(),
                     expressionId: $("#expressionId").val(),
                     YII_CSRF_TOKEN: $("input[name='YII_CSRF_TOKEN']").val()
@@ -478,7 +483,7 @@ DataAsset::register($this);
                 all_studies: all_studies,
                 expressions: expressions,
                 multiStudyIds: multiStudyIds,
-                multiSesh: true,
+                multiSesh: false,
                 expression: [],
                 studyOrder: [],
             }

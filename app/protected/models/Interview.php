@@ -683,12 +683,12 @@ class Interview extends \yii\db\ActiveRecord
 
                 if ($multiSession && $multiQs && $interviewId == $interviewIds[count($interviewIds) - 1]) {
                     $answers[] = $alter->id;
-                    if ($alter->interviewId != null){
-                        if(stristr($alter->interviewId, ","))
+                    if ($alter->interviewId != null) {
+                        if (stristr($alter->interviewId, ","))
                             $aInts = explode(",", $alter->interviewId);
                         else
                             $aInts = [$alter->interviewId];
-                    }else 
+                    } else
                         continue;
                     $aStudies = array();
                     foreach ($aInts as $aInt) {
@@ -1262,38 +1262,59 @@ class Interview extends \yii\db\ActiveRecord
         fclose($file);
     }
 
-    public function exportAlterPairData($file, $study, $withAlters = false)
+    public function exportAlterPairData($file, $study, $withAlters = false, $multiSession = false)
     {
-        $alters = Alters::find()
-            ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id . ", interviewId)"))
-            ->all();
-        $i = 1;
-        $alterNum = array();
-        foreach ($alters as $alter) {
-            $alterNum[$alter->id] = $i;
-            $i++;
-        }
-        $alters2 = $alters;
-        $multiStudyIds = $study->multiStudyIds();
+
         $studyNames = [];
         $alter_pair_questions = [];
         $interviewIds = [];
+        $i = 1;
+        $alterNum = array();
+        $alters = [];
+
+
+        if ($multiSession) {
+            $multiStudyIds = $study->multiStudyIds();
+            $multiIds = $this->multiInterviewIds();
+            if (isset($_POST['studyOrder']) && $_POST['studyOrder']) {
+                $studyOrder = explode(",", $_POST['studyOrder']);
+                foreach ($multiIds as $multiId) {
+                    $interview =  Interview::findOne($multiId);
+                    $interviewIds[array_search($interview->studyId, $studyOrder)] = $interview->id;
+                }
+            } else {
+                $interviewIds = $multiIds;
+            }
+            ksort($interviewIds);
+            foreach ($interviewIds as $interviewId) {
+                $result = Alters::find()
+                    ->where(new \yii\db\Expression("FIND_IN_SET(" . $interviewId . ", interviewId)"))
+                    ->all();
+                foreach ($result as $alter) {
+                    if (!in_array($alter->id, $alterNum)) {
+                        $alters[] = $alter;
+                        $alterNum[$alter->id] = $i;
+                        $i++;
+                    }
+                }
+            }
+        } else {
+            $multiStudyIds = [$study->id];
+            $interviewIds = [$this->id];
+            $alters = Alters::find()
+                ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id . ", interviewId)"))
+                ->all();
+            foreach ($alters as $alter) {
+                $alterNum[$alter->id] = $i;
+                $i++;
+            }
+        }
         foreach ($multiStudyIds as $studyId) {
             $study = Study::findOne($studyId);
             $studyNames[$studyId] = $study->name;
             $alter_pair_questions[$studyId] = Question::findAll(["studyId" => $studyId, "subjectType" => "ALTER_PAIR"]);
         }
-        $multiIds = $this->multiInterviewIds();
-        if (isset($_POST['studyOrder']) && $_POST['studyOrder']) {
-            $studyOrder = explode(",", $_POST['studyOrder']);
-            foreach ($multiIds as $multiId) {
-                $interview =  Interview::findOne($multiId);
-                $interviewIds[array_search($interview->studyId, $studyOrder)] = $interview->id;
-            }
-        } else {
-            $interviewIds = $multiIds;
-        }
-        ksort($interviewIds);
+        $alters2 = $alters;
         $optionsRaw = QuestionOption::findAll(array('studyId' => $multiStudyIds));
         // create an array with option ID as key
         $options = array();
@@ -1322,11 +1343,26 @@ class Interview extends \yii\db\ActiveRecord
         // foreach ($multiStudyIds as $studyId) {
 
         foreach ($alters as $alter) {
-            array_shift($alters2);
+            //array_shift($alters2);
             foreach ($alters2 as $alter2) {
+
                 $answers = array();
+                $count = 0;
+                $max_count  = 0;
+                foreach ($interviewIds as $index => $interviewId) {
+                    $studyId = $interviews[$interviewId]->studyId;
+                    foreach ($alter_pair_questions[$studyId] as $question) {
+                        $max_count++;
+                        if (isset($ap_answers[$question->id][$alter->id][$alter2->id])) {
+                            $count++;
+                        }
+                    }
+                }
+                if($count == 0)
+                    continue;
+
                 foreach ($interviewIds as $interviewId) {
-                    $answers[] =  $interviewId;
+                    $answers[] =  $interviewId.";".$max_count.";".$count;
                     $answers[] = $ego_id[$interviewId];
                 }
                 foreach ($interviewIds as $index => $interviewId) {
