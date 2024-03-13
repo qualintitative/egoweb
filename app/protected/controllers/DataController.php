@@ -670,12 +670,16 @@ class DataController extends Controller
 
         $headers = array();
         foreach ($studyIds as $index => $studyId) {
-            $counter = "_" .  ($index + 1) ;
+            $counter = "";
+            if ($multiSesh)
+                $counter = "_" .  ($index + 1) ;
             $headers[] =  $studyNames[$studyId] . ' Interview ID'  . $counter;
             $headers[] =  $studyNames[$studyId] . ' EgoID'  . $counter;
         }
         foreach ($studyIds as $index => $studyId) {
-            $counter =  "_" . ($index + 1);
+            $counter = "";
+            if ($multiSesh)
+                $counter =  "_" . ($index + 1);
             if ($index == 0) {
                 $headers[] = "Alter 1 Number";
 
