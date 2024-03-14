@@ -339,6 +339,7 @@ class DataController extends Controller
         foreach ($studyIds as $index => $studyId) {
             $hCount = 0;
             $all_questions = Question::find()->where(["studyId" => $studyId])->orderBy(["ordering" => "ASC"])->all();
+            $s = Study::findOne($studyId);
             $ego_id_questions = [];
             $ego_questions = [];
             $alter_questions = [];
@@ -368,7 +369,7 @@ class DataController extends Controller
             $counter = "";
             if ($multiSesh)
                 $counter = "_" .  ($index + 1) ;
-            $headers[] = 'Interview ID' . $counter;
+            $headers[] = $s->name . ' Interview ID' . $counter;
             $headers[] =  "EgoID" . $counter;
             $headers[] = 'Start Time' . $counter;
             $headers[] =  'End Time' . $counter;
