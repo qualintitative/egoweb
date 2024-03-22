@@ -93,17 +93,16 @@ class Study extends \yii\db\ActiveRecord
 
     public function multiStudyIds()
     {
+        $multiStudyIds[] = $this->id;
         if ($this->multiSessionEgoId) {
             $questions = Question::find()
             ->where(new \yii\db\Expression("title = (SELECT title FROM question WHERE id = " . $this->multiSessionEgoId . ")"))
             ->orderBy(["id"=>"ASC"])
             ->all();
-            $multiStudyIds = array();
             foreach ($questions as $question) {
-                $multiStudyIds[] = $question->studyId;
+                if(!in_array($question->studyId,$multiStudyIds))
+                   $multiStudyIds[] = $question->studyId;
             }
-        } else {
-            $multiStudyIds[] = $this->id;
         }
         return $multiStudyIds;
     }
