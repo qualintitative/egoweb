@@ -416,7 +416,7 @@ foreach ($multiStudyIds as $studyId) {
 echo Html::hiddenInput('filename', "", array('id' => 'realFilename'));
 echo Html::hiddenInput('withAlters', "1", array('id' => 'withAlters'));
 echo Html::hiddenInput('multiSession', "1", array('id' => 'multiSession'));
-echo Html::hiddenInput('studyOrder', "", array('id' => 'studyOrder'));
+echo Html::hiddenInput('studyOrder', implode(",",$multiStudyIds), array('id' => 'studyOrder'));
 
 ?>
 <?= Html::endForm() ?>
