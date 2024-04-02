@@ -71,7 +71,7 @@ class Study extends \yii\db\ActiveRecord
         ];
     }
 
-    public function multiIdQs()
+    public function multiIdQs($studyOrder = false)
     {
         if ($this->multiSessionEgoId == 0) {
             return false;
@@ -84,10 +84,14 @@ class Study extends \yii\db\ActiveRecord
         foreach ($studies as $study) {
             $newEgoIdQ = Question::findOne($study->multiSessionEgoId);
             if ($newEgoIdQ && $newEgoIdQ->title == $egoIdQ->title) {
-                $multiIdQs[] = $newEgoIdQ;
+                if($studyOrder)
+                    $multiIdQs[array_search($newEgoIdQ->studyId, $studyOrder)] =  $newEgoIdQ;
+                else
+                    $multiIdQs[] = $newEgoIdQ;
             }
         }
-
+        if($studyOrder)
+            ksort($multiIdQs);
         return $multiIdQs;
     }
 

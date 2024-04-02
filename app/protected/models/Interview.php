@@ -281,6 +281,7 @@ class Interview extends \yii\db\ActiveRecord
         }
         $multiIds = $this->multiInterviewIds();
         $interviews = [];
+        $multiQs = false;
         if ($multiSession) {
             if ($studyOrder && stristr($studyOrder, ",")) {
                 $studyOrder = explode(",", $studyOrder);
@@ -289,10 +290,14 @@ class Interview extends \yii\db\ActiveRecord
                     $interviews[$multiId] = $interview;
                     $interviewIds[array_search($interview->studyId, $studyOrder)] = $interview->id;
                 }
+                $multiQs = $study->multiIdQs($studyOrder);
             } else {
+                $studyOrder = [];
                 $interviewIds = $multiIds;
+                $multiQs = $study->multiIdQs();
             }
         } else {
+            $studyOrder = [];
             $interviewIds = [$this->id];
         }
         ksort($interviewIds);
@@ -317,10 +322,7 @@ class Interview extends \yii\db\ActiveRecord
         }
 
         $study = Study::findOne($this->studyId);
-        $multiQs = false;
-        if (isset($study->multiSessionEgoId) && $study->multiSessionEgoId) {
-            $multiQs = $study->multiIdQs();
-        }
+
         $aInts = [];
         if ($multiSession && $multiQs) {
             //  $interviewIds = $this->multiInterviewIds();
@@ -348,7 +350,7 @@ class Interview extends \yii\db\ActiveRecord
         $matchUser = "";
         $study = Study::findOne($this->studyId);
         if ($study->multiSessionEgoId) {
-            $multiQs = $study->multiIdQs();
+         //   $multiQs = $study->multiIdQs($studyOrder);
             foreach ($multiQs as $q) {
                 $studyIds[] = $q->studyId;
             }
@@ -1043,7 +1045,6 @@ class Interview extends \yii\db\ActiveRecord
             } else {
                 fputcsv($file, $answers);
             }
-            //$text .= implode(',', $answers) . "\n";
             $count++;
         }
 
@@ -1278,6 +1279,7 @@ class Interview extends \yii\db\ActiveRecord
             $multiIds = $this->multiInterviewIds();
             if (isset($_POST['studyOrder']) && $_POST['studyOrder']) {
                 $studyOrder = explode(",", $_POST['studyOrder']);
+
                 foreach ($multiIds as $multiId) {
                     $interview =  Interview::findOne($multiId);
                     $interviewIds[array_search($interview->studyId, $studyOrder)] = $interview->id;
