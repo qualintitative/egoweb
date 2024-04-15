@@ -104,8 +104,11 @@ class Study extends \yii\db\ActiveRecord
             ->orderBy(["id"=>"ASC"])
             ->all();
             foreach ($questions as $question) {
-                if(!in_array($question->studyId,$multiStudyIds))
-                   $multiStudyIds[] = $question->studyId;
+                if(!in_array($question->studyId,$multiStudyIds)){
+                    $study = Study::findOne($question->studyId);
+                    if($study->multiSessionEgoId == $question->studyId)
+                        $multiStudyIds[] = $question->studyId;
+                }
             }
         }
         return $multiStudyIds;
