@@ -106,7 +106,7 @@ class Study extends \yii\db\ActiveRecord
             foreach ($questions as $question) {
                 if(!in_array($question->studyId,$multiStudyIds)){
                     $study = Study::findOne($question->studyId);
-                    if($study->multiSessionEgoId == $question->studyId)
+                    if($study->multiSessionEgoId)
                         $multiStudyIds[] = $question->studyId;
                 }
             }
