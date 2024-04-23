@@ -157,6 +157,7 @@ class InterviewController extends Controller
         $questions = array();
         $questionList = array();
         $network_questions = array();
+        $ego_id_questions = [];
         $autocompleteList = false;
         $interview = false;
         $prevAlters = array();
