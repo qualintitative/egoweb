@@ -9,10 +9,14 @@ use yii\helpers\Html;
         <label for="Study_egoIdPrompt" class="col-sm-12 col-form-label">Ego ID Prompt<b-button id="saveEgoId" class="float-right btn btn-success btn-sm col-1" @click="saveStudy">save</b-button></label>
         <summer-note :model.sync="study.egoIdPrompt" ref="Study_egoIdPrompt" name="Study[egoIdPrompt]" vid="Study_egoIdPrompt"></summer-note>
     </div>
-    <?php endif; ?>
-    <div v-sortable.div="{ onUpdate: reorderQuestion, chosenClass: 'is-selected'}" style="height:70vh;overflow-y:auto">
+    <div v-sortable.div="{ onUpdate: reorderQuestion, chosenClass: 'is-selected'}" style="height:45vh;overflow-y:auto">
         <question-editor v-for="(question, k) in questions" v-bind:question="question" :key="question.id" />
     </div>
+    <?php else: ?>
+    <div v-sortable.div="{ onUpdate: reorderQuestion, chosenClass: 'is-selected'}" style="height:75vh;overflow-y:auto">
+        <question-editor v-for="(question, k) in questions" v-bind:question="question" :key="question.id" />
+    </div>
+    <?php endif; ?>
     <question-editor v-bind:question="new_question" :key="new_question.id" />
 </div>
 <script>

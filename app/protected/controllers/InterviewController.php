@@ -626,7 +626,9 @@ class InterviewController extends Controller
                 }
             }
             $ordering = json_decode($alter->ordering, true);
-            $alterListIds = explode(",", $prevAlter->alterListId);
+            $alterListIds = [];
+            if($prevAlter->alterListId != null)
+              $alterListIds = explode(",", $prevAlter->alterListId);
             $alterListIds = array_filter($alterListIds, function ($value) {
                 return !is_null($value) && $value !== '';
             });
@@ -688,7 +690,9 @@ class InterviewController extends Controller
                     $alter->alterListId =  implode(",", $alterListIds);
                     $alter->save();
                 } else {
-                    $alterListIds = explode(",", $prevAlter->alterListId);
+                    $alterListIds = [];
+                    if($prevAlter->alterListId != null)
+                        $alterListIds = explode(",", $prevAlter->alterListId);
                     $alterListIds = array_filter($alterListIds, function ($value) {
                         return !is_null($value) && $value !== '';
                     });

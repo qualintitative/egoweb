@@ -349,8 +349,8 @@ class Interview extends \yii\db\ActiveRecord
         $matchIntId = "";
         $matchUser = "";
         $study = Study::findOne($this->studyId);
-        if ($study->multiSessionEgoId) {
-         //   $multiQs = $study->multiIdQs($studyOrder);
+        if ($study->multiSessionEgoId && $multiSession) {
+            //$multiQs = $study->multiIdQs($studyOrder);
             foreach ($multiQs as $q) {
                 $studyIds[] = $q->studyId;
             }
