@@ -49,12 +49,15 @@ class Interview extends \yii\db\ActiveRecord
             $multiIdQs = $study->multiIdQs();
             if ($study && $study->multiSessionEgoId && $egoAnswer) {
                 foreach ($multiIdQs as $q) {
-                    $newAnswers = Answer::findAll(array("studyId" => $q->studyId, "questionId" => $q->id));
-                    foreach ($newAnswers as $a) {
-                        if ($a->value == $egoAnswer->value) {
-                            $interviewIds[] = $a->interviewId;
+                    $newAnswer = Answer::findOne(array("studyId" => $q->studyId, "questionId" => $q->id));
+                    if($newAnswer){
+                        if ($newAnswer->value == $egoAnswer->value) {
+                            $interviewIds[] = $newAnswer->interviewId;
                         }
+                    }else{
+                        $interviewIds[] = false;
                     }
+                    
                 }
             } else {
                 $interviewIds = [$this->id];
@@ -66,7 +69,8 @@ class Interview extends \yii\db\ActiveRecord
 
     public function getAnswers($asArray = false)
     {
-        if (!$this->_answers || $asArray) {
+        $answersArray  = [];
+        if (!$this->_answers) {
             $interviewIds = $this->multiInterviewIds();
             $results = Answer::findAll(array('interviewId' => $interviewIds));
             $this->_answers = [];
@@ -296,6 +300,8 @@ class Interview extends \yii\db\ActiveRecord
                 $interviewIds = $multiIds;
                 $multiQs = $study->multiIdQs();
             }
+            if(!isset($interviewIds))
+                $interviewIds = [$this->id];
         } else {
             $studyOrder = [];
             $interviewIds = [$this->id];
@@ -394,7 +400,6 @@ class Interview extends \yii\db\ActiveRecord
             $answers = array();
             foreach ($interviewIds as $index=>$interviewId) {
                 $interview = $interviews[$interviewId];
-                $answers[] = $interviewId;
                 $ego_ids = array();
                 $ego_id_string = array();
                 foreach ($ego_id_questions[$interview->studyId] as $question) {
@@ -434,6 +439,7 @@ class Interview extends \yii\db\ActiveRecord
                 }
                 if($index == 0)
                     $answers[] = implode("_", $ego_id_string);
+                $answers[] = $interviewId;
                 $answers[] = date("Y-m-d H:i:s", $interview->start_date);
                 if ($interview->completed == -1)
                     $answers[] = date("Y-m-d H:i:s", $interview->complete_date);
