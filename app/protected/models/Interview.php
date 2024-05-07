@@ -386,10 +386,13 @@ class Interview extends \yii\db\ActiveRecord
             $options[$option->id] = $option->value;
             $optionLabels[$option->id] = $option->name;
         }
-
+        $alterIds = [];
         foreach ($alters as $alter) {
+            if(in_array($alter->id, $alterIds))
+                continue;
+            $altersIds[] = $alter->id;
             $answers = array();
-            foreach ($interviewIds as $interviewId) {
+            foreach ($interviewIds as $index=>$interviewId) {
                 $interview = $interviews[$interviewId];
                 $answers[] = $interviewId;
                 $ego_ids = array();
@@ -429,7 +432,8 @@ class Interview extends \yii\db\ActiveRecord
                         }
                     }
                 }
-                $answers[] = implode("_", $ego_id_string);
+                if($index == 0)
+                    $answers[] = implode("_", $ego_id_string);
                 $answers[] = date("Y-m-d H:i:s", $interview->start_date);
                 if ($interview->completed == -1)
                     $answers[] = date("Y-m-d H:i:s", $interview->complete_date);
