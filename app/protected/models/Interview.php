@@ -40,22 +40,28 @@ class Interview extends \yii\db\ActiveRecord
         ];
     }
 
-    public function multiInterviewIds($interviewId = null)
+    public function multiInterviewIds($studyOrder = false)
     {
         if (!$this->_multiInterviewIds) {
             $study = Study::findOne($this->studyId);
             $egoAnswer = Answer::findOne(array("interviewId" => $this->id, "questionId" => $study->multiSessionEgoId));
             $interviewIds = array();
-            $multiIdQs = $study->multiIdQs();
+            $multiIdQs = $study->multiIdQs($studyOrder);
             if ($study && $study->multiSessionEgoId && $egoAnswer) {
                 foreach ($multiIdQs as $q) {
-                    $newAnswer = Answer::findOne(array("studyId" => $q->studyId, "questionId" => $q->id));
-                    if($newAnswer){
-                        if ($newAnswer->value == $egoAnswer->value) {
-                            $interviewIds[] = $newAnswer->interviewId;
+                    $newAnswers = Answer::findAll(array("studyId" => $q->studyId, "questionId" => $q->id));
+                    if($newAnswers){
+                        $found = false;
+                        foreach($newAnswers as $newAnswer){
+                            if ($newAnswer->value == $egoAnswer->value) {
+                                $interviewIds[] = $newAnswer->interviewId;
+                                $found = true;
+                            }
                         }
+                        if(!$found)
+                            $interviewIds[] = 0;
                     }else{
-                        $interviewIds[] = false;
+                        $interviewIds[] = 0;
                     }
                     
                 }
@@ -283,48 +289,52 @@ class Interview extends \yii\db\ActiveRecord
                 }
             }
         }
-        $multiIds = $this->multiInterviewIds();
         $interviews = [];
         $multiQs = false;
         if ($multiSession) {
             if ($studyOrder && stristr($studyOrder, ",")) {
                 $studyOrder = explode(",", $studyOrder);
-                foreach ($multiIds as $multiId) {
-                    $interview =  Interview::findOne($multiId);
-                    $interviews[$multiId] = $interview;
-                    $interviewIds[array_search($interview->studyId, $studyOrder)] = $interview->id;
-                }
                 $multiQs = $study->multiIdQs($studyOrder);
+                $multiIds = $this->multiInterviewIds($studyOrder);
+                foreach ($multiIds as $index=>$multiId) {
+                    if($multiId != 0){
+                        $interview =  Interview::findOne($multiId);
+                        $interviews[$multiId] = $interview;
+                       // $interviewIds[array_search($interview->studyId, $studyOrder)] = $interview->id;
+                        $interviewIds[$index] = $interview->id;
+                    }else{
+                        $interview =  new Interview;
+                        $interview->studyId = $studyOrder[$index];
+                        $interviews[0] = $interview;
+                        $interviewIds[$index] = 0;
+                    }
+                }
             } else {
                 $studyOrder = [];
-                $interviewIds = $multiIds;
+                $interviewIds = $this->multiInterviewIds();
                 $multiQs = $study->multiIdQs();
             }
-            if(!isset($interviewIds))
-                $interviewIds = [$this->id];
+            //if(!isset($interviewIds))
+            //    $interviewIds = [$this->id];
         } else {
             $studyOrder = [];
             $interviewIds = [$this->id];
+            $interviews[$this->id] = $this;
         }
         ksort($interviewIds);
 
 
-        foreach ($interviewIds as $interviewId) {
-            if (isset($interviews[$interviewId])) {
-                $interview = $interviews[$interviewId];
-            } else {
-                $interview = Interview::findOne($interviewId);
-                $interviews[$interviewId] = $interview;
-            }
+        foreach ($interviews as $interview) {
             if (!$alters) {
                 $alters = array('0' => new Alters);
             } else {
-                if (isset($_POST[$interview->studyId . '_expressionId']) && $_POST[$interview->studyId . '_expressionId']) {
-                    $stats[$interviewId] = new Statistics;
-                    $stats[$interviewId]->initComponents($interviewId, $_POST[$interview->studyId . '_expressionId']);
+                if($interview->id){
+                    if (isset($_POST[$interview->studyId . '_expressionId']) && $_POST[$interview->studyId . '_expressionId']) {
+                        $stats[$interview->id] = new Statistics;
+                        $stats[$interview->id]->initComponents($interview->id, $_POST[$interview->studyId . '_expressionId']);
+                    }
                 }
             }
-            $interviews[$interviewId] = $interview;
         }
 
         $study = Study::findOne($this->studyId);
@@ -356,7 +366,6 @@ class Interview extends \yii\db\ActiveRecord
         $matchUser = "";
         $study = Study::findOne($this->studyId);
         if ($study->multiSessionEgoId && $multiSession) {
-            //$multiQs = $study->multiIdQs($studyOrder);
             foreach ($multiQs as $q) {
                 $studyIds[] = $q->studyId;
             }
@@ -403,9 +412,9 @@ class Interview extends \yii\db\ActiveRecord
                 $ego_ids = array();
                 $ego_id_string = array();
                 foreach ($ego_id_questions[$interview->studyId] as $question) {
-                    $result = Answer::findOne(array("interviewId" =>  $interviewId, "questionId" => $question->id));
+                    $result = Answer::findOne(array("interviewId" =>  $interview->id, "questionId" => $question->id));
                     if (!$result) {
-                        $answer = $study->valueNotYetAnswered;
+                        $answer = "";
                     } else {
                         $answer = $result->value;
                     }
@@ -439,17 +448,24 @@ class Interview extends \yii\db\ActiveRecord
                 }
                 if($index == 0)
                     $answers[] = implode("_", $ego_id_string);
-                $answers[] = $interviewId;
-                $answers[] = date("Y-m-d H:i:s", $interview->start_date);
-                if ($interview->completed == -1)
-                    $answers[] = date("Y-m-d H:i:s", $interview->complete_date);
-                else
+                if($interview->id){
+                    $answers[] = $interview->id;
+                    $answers[] = date("Y-m-d H:i:s", $interview->start_date);
+                    if ($interview->completed == -1)
+                        $answers[] = date("Y-m-d H:i:s", $interview->complete_date);
+                    else
+                        $answers[] = "";
+                }else{
                     $answers[] = "";
+                    $answers[] = "";
+                    $answers[] = "";
+                }
+
                 foreach ($ego_ids as $eid) {
                     $answers[] = $eid;
                 }
                 foreach ($ego_questions[$interview->studyId]  as $question) {
-                    $answer = Answer::findOne(array("interviewId" =>  $interviewId, "questionId" => $question->id));
+                    $answer = Answer::findOne(array("interviewId" =>  $interview->id, "questionId" => $question->id));
                     if (!$answer) {
                         $answers[] = $study->valueNotYetAnswered;
                         continue;
@@ -548,16 +564,16 @@ class Interview extends \yii\db\ActiveRecord
                 }
 
 
-                if (isset($stats[$interviewId])) {
-                    $answers[] = $stats[$interviewId]->getDensity();
-                    $answers[] = $stats[$interviewId]->maxDegree();
-                    $answers[] = $stats[$interviewId]->maxBetweenness();
-                    $answers[] = $stats[$interviewId]->maxEigenvector();
-                    $answers[] = $stats[$interviewId]->degreeCentralization();
-                    $answers[] = $stats[$interviewId]->betweennessCentralization();
-                    $answers[] = count($stats[$interviewId]->components);
-                    $answers[] = count($stats[$interviewId]->dyads);
-                    $answers[] = count($stats[$interviewId]->isolates);
+                if (isset($stats[$interview->id])) {
+                    $answers[] = $stats[$interview->id]->getDensity();
+                    $answers[] = $stats[$interview->id]->maxDegree();
+                    $answers[] = $stats[$interview->id]->maxBetweenness();
+                    $answers[] = $stats[$interview->id]->maxEigenvector();
+                    $answers[] = $stats[$interview->id]->degreeCentralization();
+                    $answers[] = $stats[$interview->id]->betweennessCentralization();
+                    $answers[] = count($stats[$interview->id]->components);
+                    $answers[] = count($stats[$interview->id]->dyads);
+                    $answers[] = count($stats[$interview->id]->isolates);
                 } elseif (isset($_POST['expressionId']) && $_POST['expressionId']) {
                     $answers[] = "";
                     $answers[] = "";
@@ -609,7 +625,7 @@ class Interview extends \yii\db\ActiveRecord
                         }
                     }
                     foreach ($previous_questions[$interview->studyId]  as $question) {
-                        $answer = Answer::findOne(array("interviewId" =>  $interviewId, "questionId" => $question->id, "alterId1" => $alter->id));
+                        $answer = Answer::findOne(array("interviewId" =>  $interview->id, "questionId" => $question->id, "alterId1" => $alter->id));
                         if (!$answer) {
                             $answers[] = $study->valueNotYetAnswered;
                             continue;
@@ -644,7 +660,7 @@ class Interview extends \yii\db\ActiveRecord
                         }
                     }
                     foreach ($alter_questions[$interview->studyId]  as $question) {
-                        $answer = Answer::findOne(array("interviewId" =>  $interviewId, "questionId" => $question->id, "alterId1" => $alter->id));
+                        $answer = Answer::findOne(array("interviewId" =>  $interview->id, "questionId" => $question->id, "alterId1" => $alter->id));
                         if (!$answer) {
                             $answers[] = $study->valueNotYetAnswered;
                             continue;
@@ -686,14 +702,14 @@ class Interview extends \yii\db\ActiveRecord
                     }
                 }
 
-                if (isset($stats[$interviewId])) {
-                    $answers[] = $stats[$interviewId]->getDegree($alter->id);
-                    $answers[] = $stats[$interviewId]->getBetweenness($alter->id);
-                    $answers[] = $stats[$interviewId]->eigenvectorCentrality($alter->id);
+                if (isset($stats[$interview->id])) {
+                    $answers[] = $stats[$interview->id]->getDegree($alter->id);
+                    $answers[] = $stats[$interview->id]->getBetweenness($alter->id);
+                    $answers[] = $stats[$interview->id]->eigenvectorCentrality($alter->id);
                 }
 
 
-                if ($multiSession && $multiQs && $interviewId == $interviewIds[count($interviewIds) - 1]) {
+                if ($multiSession && $multiQs && $interview->id == $interviewIds[count($interviewIds) - 1]) {
                     $answers[] = $alter->id;
                     if ($alter->interviewId != null) {
                         if (stristr($alter->interviewId, ","))
