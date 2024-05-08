@@ -706,6 +706,10 @@ class Interview extends \yii\db\ActiveRecord
                     $answers[] = $stats[$interview->id]->getDegree($alter->id);
                     $answers[] = $stats[$interview->id]->getBetweenness($alter->id);
                     $answers[] = $stats[$interview->id]->eigenvectorCentrality($alter->id);
+                }else{
+                    $answers[] = "";
+                    $answers[] = "";
+                    $answers[] = "";
                 }
 
 
