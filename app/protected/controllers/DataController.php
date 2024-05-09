@@ -119,7 +119,7 @@ class DataController extends Controller
 
         $alters = [];
         $allInterviewIds = [];
-        $interviews = Interview::find()->where(["studyId" => $id])->all();
+        $interviews = Interview::find()->where(["studyId" => $multiStudyIds])->all();
         $result = Answer::findAll([
             "studyId" => $multiStudyIds,
             "questionType" => "EGO_ID",
@@ -370,7 +370,7 @@ class DataController extends Controller
             $counter = "";
             if ($multiSesh)
                 $counter = "_" .  ($index + 1) ;
-            $headers[] = $s->name . ' Interview ID' . $counter;
+            $headers[] = 'Interview ID' . $counter;
             $headers[] = 'Start Time' . $counter;
             $headers[] =  'End Time' . $counter;
 

@@ -253,6 +253,7 @@ class Interview extends \yii\db\ActiveRecord
         $study = Study::findOne($this->studyId);
         $multiStudyIds = $study->multiStudyIds();
         $studyNames = [];
+        $alterIds = [];
         foreach ($multiStudyIds as $studyId) {
             $s = Study::findOne($studyId);
             $studyNames[$studyId] = $s->name;
@@ -261,6 +262,9 @@ class Interview extends \yii\db\ActiveRecord
         $alters = Alters::find()
             ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id . ", interviewId)"))
             ->all();
+        foreach($alters as $alter){
+            $alterIds[] = $alter->id;
+        }
         foreach ($multiStudyIds as $studyId) {
             $ego_id_questions[$studyId] = [];
             $ego_questions[$studyId] = [];
@@ -353,7 +357,10 @@ class Interview extends \yii\db\ActiveRecord
                 foreach ($results as $result) {
                     $aInts = explode(",", $result->interviewId);
                     if (!in_array($this->id, $aInts)) {
-                        $alters[] = $result;
+                        if(!in_array($result->id, $alterIds)){
+                            $alters[] = $result;
+                            $alterIds[] = $alter->id;
+                        }
                     }
                 }
             }
@@ -401,7 +408,6 @@ class Interview extends \yii\db\ActiveRecord
             $options[$option->id] = $option->value;
             $optionLabels[$option->id] = $option->name;
         }
-        $alterIds = [];
         foreach ($alters as $alter) {
             if(in_array($alter->id, $alterIds))
                 continue;
@@ -446,8 +452,7 @@ class Interview extends \yii\db\ActiveRecord
                         }
                     }
                 }
-                if($index == 0)
-                    $answers[] = implode("_", $ego_id_string);
+                $answers[] = implode("_", $ego_id_string);
                 if($interview->id){
                     $answers[] = $interview->id;
                     $answers[] = date("Y-m-d H:i:s", $interview->start_date);
@@ -455,14 +460,16 @@ class Interview extends \yii\db\ActiveRecord
                         $answers[] = date("Y-m-d H:i:s", $interview->complete_date);
                     else
                         $answers[] = "";
+                    foreach ($ego_ids as $eid) {
+                        $answers[] = $eid;
+                    }
                 }else{
                     $answers[] = "";
                     $answers[] = "";
                     $answers[] = "";
-                }
-
-                foreach ($ego_ids as $eid) {
-                    $answers[] = $eid;
+                    foreach ($ego_id_questions[$interview->studyId] as $question) {
+                        $answers[] = "";
+                    }
                 }
                 foreach ($ego_questions[$interview->studyId]  as $question) {
                     $answer = Answer::findOne(array("interviewId" =>  $interview->id, "questionId" => $question->id));
