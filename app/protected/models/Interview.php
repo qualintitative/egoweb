@@ -305,12 +305,15 @@ class Interview extends \yii\db\ActiveRecord
                         $interview =  Interview::findOne($multiId);
                        // $interviewIds[array_search($interview->studyId, $studyOrder)] = $interview->id;
                        // $interviewIds[$index] = $interview->id;
+                       $interviews[$multiId] = $interview;
                     }else{
-                        $interview =  new Interview;
-                        $interview->studyId = $studyOrder[$index];
-                        //$interviewIds[$index] = 0;
+                        if(isset($studyOrder[$index])){
+                            $interview =  new Interview;
+                            $interview->studyId = $studyOrder[$index];
+                            //$interviewIds[$index] = 0;
+                            $interviews[$multiId] = $interview;
+                        }
                     }
-                    $interviews[$multiId] = $interview;
                 }
             } else {
                 $studyOrder = [];
@@ -427,8 +430,7 @@ class Interview extends \yii\db\ActiveRecord
                 else
                     $answers[] = $study->valueNotYetAnswered;
             }
-            foreach ($interviewIds as $index=>$interviewId) {
-                $interview = $interviews[$interviewId];
+            foreach ($interviews as $index=>$interview) {
                 $ego_ids = array();
                 $ego_id_string = array();
                 foreach ($ego_id_questions[$interview->studyId] as $question) {
