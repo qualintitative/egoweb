@@ -299,26 +299,23 @@ class Interview extends \yii\db\ActiveRecord
             if ($studyOrder && stristr($studyOrder, ",")) {
                 $studyOrder = explode(",", $studyOrder);
                 $multiQs = $study->multiIdQs($studyOrder);
-                $interviewIds = $this->multiInterviewIds($studyOrder);
-                foreach ($interviewIds as $index=>$multiId) {
+                $multiIds = $this->multiInterviewIds($studyOrder);
+                foreach ($multiIds as $index=>$multiId) {
                     if($multiId > 0){
                         $interview =  Interview::findOne($multiId);
                        // $interviewIds[array_search($interview->studyId, $studyOrder)] = $interview->id;
-                       // $interviewIds[$index] = $interview->id;
+                       $interviewIds[] = $interview->id;
                        $interviews[$multiId] = $interview;
                     }else{
                         if(isset($studyOrder[$index])){
                             $interview =  new Interview;
                             $interview->studyId = $studyOrder[$index];
                             //$interviewIds[$index] = 0;
+                            $interviewIds[] = -$multiId;
                             $interviews[$multiId] = $interview;
                         }
                     }
                 }
-            } else {
-                $studyOrder = [];
-                $interviewIds = $this->multiInterviewIds();
-                $multiQs = $study->multiIdQs();
             }
             //if(!isset($interviewIds))
             //    $interviewIds = [$this->id];
@@ -736,7 +733,6 @@ class Interview extends \yii\db\ActiveRecord
                         $answers[] = "";
                     }
                 }
-
 
                 if ($multiSession && $multiQs && $index == count($interviews) - 1) {
                     $answers[] = $alter->id;
