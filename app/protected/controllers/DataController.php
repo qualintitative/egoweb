@@ -336,7 +336,8 @@ class DataController extends Controller
         ksort($studyIds);
 
         $indents = [];
-        $headers[] =  "EgoID";
+        if($multiSesh)
+            $headers[] =  "Multi-session EgoID";
         foreach ($studyIds as $index => $studyId) {
             $hCount = 0;
             $all_questions = Question::find()->where(["studyId" => $studyId])->orderBy(["ordering" => "ASC"])->all();
@@ -370,6 +371,7 @@ class DataController extends Controller
             $counter = "";
             if ($multiSesh)
                 $counter = "_" .  ($index + 1) ;
+            $headers[] = 'EgoID' . $counter;
             $headers[] = 'Interview ID' . $counter;
             $headers[] = 'Start Time' . $counter;
             $headers[] =  'End Time' . $counter;

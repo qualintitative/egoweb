@@ -304,7 +304,7 @@ use yii\bootstrap4\LinkPager;
     <div class="p-3 row">
         <div class="col-sm-8 p-2">
             <div class='mr-1'>
-                <input type="checkbox" id="multiSession1" v-model='multiSesh'> Include Multisession data
+                <input type="checkbox" id="multiSession1" @click="filter" v-model='multiSesh'> Include Multisession data
             </div>
             <input type="checkbox" id="withAlters1" checked> Include Alter Names
         </div>
@@ -358,7 +358,7 @@ use yii\bootstrap4\LinkPager;
 <table id="dTable" class="table table-striped table-bordered table-list">
     <thead>
         <tr>
-            <th><input type="checkbox" onclick="$('input[type=checkbox]').prop('checked', $(this).prop('checked'))" data-toggle="tooltip" data-placement="top" title="Select All"></th>
+            <th><input type="checkbox" onclick="$('input.interview_check[type=checkbox]').prop('checked', $(this).prop('checked'))" data-toggle="tooltip" data-placement="top" title="Select All"></th>
             <?php if ($study->multiSessionEgoId) : ?>
                 <th class="d-none d-sm-table-cell">Study</th>
             <?php endif; ?>
@@ -383,7 +383,7 @@ use yii\bootstrap4\LinkPager;
                 $intlen = "";
             }
             echo "<tr>";
-            echo "<td>" . Html::checkbox('export[' . $interview->id . ']', false, ['id' => 'export_' . $interview->id]) . "</td>";
+            echo "<td>" . Html::checkbox('export[' . $interview->id . ']', false, ['id' => 'export_' . $interview->id, 'class'=>'interview_check']) . "</td>";
             if ($study->multiSessionEgoId) {
                 echo "<td>" . $all_studies[$interview->studyId] . "</td>";
             }
@@ -509,6 +509,9 @@ DataAsset::register($this);
                 $("#studyOrder").val(this.studyOrder.join(","))
                 this.$forceUpdate();
                 self = this;
+            },
+            filter(event) {
+                filterTable("<?php echo $study->name; ?>")
             },
             getSelectedItem(data, studyId) {
                 $("#" + studyId + "_expressionId").val(data)

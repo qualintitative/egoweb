@@ -359,7 +359,7 @@ class Interview extends \yii\db\ActiveRecord
                     if (!in_array($this->id, $aInts)) {
                         if(!in_array($result->id, $alterIds)){
                             $alters[] = $result;
-                            $alterIds[] = $alter->id;
+                            $alterIds[] = $result->id;
                         }
                     }
                 }
@@ -409,10 +409,25 @@ class Interview extends \yii\db\ActiveRecord
             $optionLabels[$option->id] = $option->name;
         }
         foreach ($alters as $alter) {
-            if(in_array($alter->id, $alterIds))
-                continue;
-            $altersIds[] = $alter->id;
             $answers = array();
+            if($multiSession){
+                $multiE = false;
+                foreach ($interviewIds as $index=>$interviewId) {
+                    if($multiE)
+                        break;
+                    foreach ($multiQs as $q) {
+                        $multiEgo = Answer::findOne(array("interviewId" =>  $interviewId, "questionId" => $q->id));
+                        if($multiEgo){
+                            $multiE = $multiEgo->value;
+                            break;
+                        }
+                    }
+                }
+                if($multiE)
+                    $answers[] = $multiE;
+                else
+                    $answers[] = $study->valueNotYetAnswered;
+            }
             foreach ($interviewIds as $index=>$interviewId) {
                 $interview = $interviews[$interviewId];
                 $ego_ids = array();
