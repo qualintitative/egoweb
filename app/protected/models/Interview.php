@@ -733,26 +733,25 @@ class Interview extends \yii\db\ActiveRecord
                         $answers[] = "";
                     }
                 }
-
-                if ($multiSession && $multiQs && $index == count($interviews) - 1) {
-                    $answers[] = $alter->id;
-                    if ($alter->interviewId != null) {
-                        if (stristr($alter->interviewId, ","))
-                            $aInts = explode(",", $alter->interviewId);
-                        else
-                            $aInts = [$alter->interviewId];
-                    } else
-                        continue;
-                    $aStudies = array();
-                    foreach ($aInts as $aInt) {
-                        $int = Interview::findOne($aInt);
-                        if ($int) {
-                            $aStudies[] = $int->studyId;
-                        }
+            }
+            if ($multiSession && $multiQs) {
+                $answers[] = $alter->id;
+                if ($alter->interviewId != null) {
+                    if (stristr($alter->interviewId, ","))
+                        $aInts = explode(",", $alter->interviewId);
+                    else
+                        $aInts = [$alter->interviewId];
+                } else
+                    continue;
+                $aStudies = array();
+                foreach ($aInts as $aInt) {
+                    $int = Interview::findOne($aInt);
+                    if ($int) {
+                        $aStudies[] = $int->studyId;
                     }
-                    foreach ($multiQs as $q) {
-                        $answers[] = intval(in_array($q->studyId, $aStudies));
-                    }
+                }
+                foreach ($multiQs as $q) {
+                    $answers[] = intval(in_array($q->studyId, $aStudies));
                 }
             }
             if ($file === null) {
