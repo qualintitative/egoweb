@@ -336,55 +336,63 @@ class DataController extends Controller
         ksort($studyIds);
 
         $indents = [];
-        if($multiSesh)
-            $headers[] =  "Multi-session EgoID";
-        foreach ($studyIds as $index => $studyId) {
-            $hCount = 0;
-            $all_questions = Question::find()->where(["studyId" => $studyId])->orderBy(["ordering" => "ASC"])->all();
-            $s = Study::findOne($studyId);
+        if ($multiSesh)
+            $headers[] =  "Link ID";
             $ego_id_questions = [];
             $ego_questions = [];
             $alter_questions = [];
             $network_questions = [];
             $name_gen_questions = [];
             $previous_questions = [];
+        foreach ($studyIds as $index => $studyId) {
+            $all_questions = Question::find()->where(["studyId" => $studyId])->orderBy(["ordering" => "ASC"])->all();
+            $ego_id_questions[$studyId] = [];
+            $ego_questions[$studyId]  = [];
+            $alter_questions[$studyId]  = [];
+            $network_questions[$studyId]  = [];
+            $name_gen_questions[$studyId]  = [];
+            $previous_questions[$studyId]  = [];
             foreach ($all_questions as $question) {
                 if ($question->subjectType == "EGO_ID") {
-                    $ego_id_questions[] = $question;
+                    $ego_id_questions[$studyId][] = $question;
                 }
                 if ($question->subjectType == "EGO") {
-                    $ego_questions[] = $question;
+                    $ego_questions[$studyId][] = $question;
                 }
                 if ($question->subjectType == "ALTER") {
-                    $alter_questions[] = $question;
+                    $alter_questions[$studyId][] = $question;
                 }
                 if ($question->subjectType == "NETWORK") {
-                    $network_questions[] = $question;
+                    $network_questions[$studyId][] = $question;
                 }
                 if ($question->subjectType == "NAME_GENERATOR") {
-                    $name_gen_questions[] = $question;
+                    $name_gen_questions[$studyId][] = $question;
                 }
                 if ($question->subjectType == "PREVIOUS_ALTER") {
-                    $previous_questions[] = $question;
+                    $previous_questions[$studyId][] = $question;
                 }
             }
+        }
+        foreach ($studyIds as $index => $studyId) {
+            $hCount = 0;
+            
             $counter = "";
             if ($multiSesh)
-                $counter = "_" .  ($index + 1) ;
+                $counter = "_" .  ($index + 1);
             $headers[] = 'EgoID' . $counter;
             $headers[] = 'Interview ID' . $counter;
             $headers[] = 'Start Time' . $counter;
             $headers[] =  'End Time' . $counter;
 
-            foreach ($ego_id_questions as $question) {
+            foreach ($ego_id_questions[$studyId] as $question) {
                 $headers[] =  $question->title  . $counter;
                 $hCount++;
             }
-            foreach ($ego_questions as $question) {
+            foreach ($ego_questions[$studyId] as $question) {
                 $headers[] = $question->title  . $counter;
                 $hCount++;
             }
-            foreach ($network_questions as $question) {
+            foreach ($network_questions[$studyId] as $question) {
                 $headers[] =  $question->title  . $counter;
                 $hCount++;
             }
@@ -401,37 +409,42 @@ class DataController extends Controller
                 $headers[] =  "Isolates"  . $counter;
                 $hCount += 9;
             }
-            $matchAtAll = MatchedAlters::find()->where(["studyId" => $studyId])->one();
-
-            if ($matchAtAll) {
-                $headers[] =  "Dyad Match ID"  . $counter;
-                $headers[] =  "Match User"  . $counter;
-                $headers[] =  "Alter Number"  . $counter;
-                $hCount += 3;
-                if ($withAlters) {
-                    $headers[] =  "Alter Name"  . $counter;
-                    $headers[] =  "Matched Alter Name"  . $counter;
-                    $hCount += 2;
-                }
-                $headers[] =   "Alter Pair ID"  . $counter;
-                $hCount++;
-            } else {
-                $headers[] =  "Alter Number"  . $counter;
-                $hCount++;
-                if ($withAlters) {
-                    $headers[] =  "Alter Name"  . $counter;
-                    $hCount++;
-                }
+        }
+        $matchAtAll = MatchedAlters::find()->where(["studyId" => $studyId])->one();
+        if ($matchAtAll) {
+            $headers[] =  "Dyad Match ID"  . $counter;
+            $headers[] =  "Match User"  . $counter;
+            $headers[] =  "Alter Number"  . $counter;
+            $hCount += 3;
+            if ($withAlters) {
+                $headers[] =  "Alter Name"  . $counter;
+                $headers[] =  "Matched Alter Name"  . $counter;
+                $hCount += 2;
             }
-            foreach ($name_gen_questions as $question) {
+            $headers[] =   "Alter Pair ID"  . $counter;
+            $hCount++;
+        } else {
+            $headers[] =  "Alter Number";
+            $hCount++;
+            if ($withAlters) {
+                $headers[] =  "Alter Name";
+                $hCount++;
+            }
+        }
+
+        foreach ($studyIds as $index => $studyId) {
+            $counter = "";
+            if ($multiSesh)
+                $counter = "_" .  ($index + 1);
+            foreach ($name_gen_questions[$studyId] as $question) {
                 $headers[] =  $question->title  . $counter;
                 $hCount++;
             }
-            foreach ($previous_questions as $question) {
+            foreach ($previous_questions[$studyId] as $question) {
                 $headers[] = $question->title  . $counter;
                 $hCount++;
             }
-            foreach ($alter_questions as $question) {
+            foreach ($alter_questions[$studyId] as $question) {
                 $headers[] = $question->title  . $counter;
                 $hCount++;
             }
@@ -441,14 +454,14 @@ class DataController extends Controller
                 $headers[] =   "Eigenvector"  . $counter;
                 $hCount += 3;
             }
-      
+
             $indents[$studyId] = $hCount;
         }
-        if ($multiSesh &&  $study->multiSessionEgoId ) {
+        if ($multiSesh &&  $study->multiSessionEgoId) {
             $headers[] =  'Alter ID';
-                foreach ($studyIds as $index => $studyId) {
-                    $headers[] = $studyNames[$studyId];
-                }
+            foreach ($studyIds as $index => $studyId) {
+                $headers[] = $studyNames[$studyId];
+            }
         }
 
         $interviewIds = array();
@@ -488,9 +501,9 @@ class DataController extends Controller
                 // }
             }
         }
-        if(isset($_POST['filename']) && $_POST['filename'] && $multiSesh)
+        if (isset($_POST['filename']) && $_POST['filename'] && $multiSesh)
             $filename = $_POST['filename']  . '-ego-alter';
-        else 
+        else
             $filename = $study->name . '-ego-alter';
         return $this->response->sendContentAsFile($text, $filename . '.csv')->send();
     }
@@ -614,7 +627,7 @@ class DataController extends Controller
         $withAlters = false;
         if (isset($_POST['withAlters']))
             $withAlters = boolval($_POST['withAlters']);
-        
+
         $multiSesh = false;
         if (isset($_POST['multiSession']))
             $multiSesh = boolval($_POST['multiSession']);
@@ -675,7 +688,7 @@ class DataController extends Controller
         foreach ($studyIds as $index => $studyId) {
             $counter = "";
             if ($multiSesh)
-                $counter = "_" .  ($index + 1) ;
+                $counter = "_" .  ($index + 1);
             $headers[] =  $studyNames[$studyId] . ' Interview ID'  . $counter;
             $headers[] =  'EgoID'  . $counter;
         }
@@ -715,9 +728,9 @@ class DataController extends Controller
                 unlink($filePath);
             }
         }
-        if(isset($_POST['filename']) && $_POST['filename'] && $multiSesh)
+        if (isset($_POST['filename']) && $_POST['filename'] && $multiSesh)
             $filename = $_POST['filename']  . '-alter-pair';
-        else 
+        else
             $filename = $study->name . '-alter-pair';
         return $this->response->sendContentAsFile($text, $filename . '.csv')->send();
     }
@@ -829,7 +842,6 @@ class DataController extends Controller
         $fields = ["Question Order", "Question Title", "Question Prompt", "Stem and Leaf", "Subject Type", "Response Type", "Min", "Max", "Options", "Skip Logic Expression"];
         $rows[] = implode(",", $fields);
         $results = Expression::find()->where(["studyId" => $id])->all();
-        $expressions;
         foreach ($results as $expression) {
             $expressions[$expression->id] = $expression->name;
         }

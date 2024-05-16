@@ -334,7 +334,7 @@ class Study extends \yii\db\ActiveRecord
                 ob_start();
                 var_dump($newAlterPrompt->errors);
                 $errorMsg = ob_get_clean();
-                throw new CHttpException(500, "AlterPrompt: " . $errorMsg);
+            //    throw new CHttpException(500, "AlterPrompt: " . $errorMsg);
             }
         }
 
