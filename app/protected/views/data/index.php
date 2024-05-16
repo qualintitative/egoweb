@@ -440,7 +440,9 @@ DataAsset::register($this);
             //  "infoEmpty":      "", //"Showing 0 to 0 of 0 entries",
             //  "paging": false
         });
+        <?php if ($study->multiSessionEgoId) : ?>
         filterTable("<?php echo $study->name; ?>")
+        <?php endif; ?>
     });
     filterTable = function(studyName) {
         if ($('#multiSession1').prop('checked'))
