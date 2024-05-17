@@ -136,13 +136,34 @@ class DataController extends Controller
 
 
         $egoIds = [];
+        $dupeCount = [];
         foreach ($interviews as $interview) {
             $alters[$interview->id] = 0;
             if (!isset($egoid_answers[$interview->id]))
                 $egoid_answers[$interview->id] = ["error"];
-            $egoIds[$interview->id] = implode("_", $egoid_answers[$interview->id]);
+            $ego_id_string = implode("_", $egoid_answers[$interview->id]);
+            $egoIds[$interview->id] = $ego_id_string;
+            if(!isset( $dupeCount[$interview->studyId."_".$ego_id_string]))
+                $dupeCount[$interview->studyId."_".$ego_id_string] = 1;
+            else
+                $dupeCount[$interview->studyId."_".$ego_id_string]++;
             $allInterviewIds[] = $interview->id;
             $interviewStudyIds[$interview->id] = $interview->studyId;
+        }
+        $allDupes = [];
+        $isDupe = [];
+        foreach($allInterviewIds as $interviewId){
+            $dupeId = $interviewStudyIds[$interviewId] . "_" . $egoIds[$interviewId];
+            if(isset($dupeCount[$dupeId]) && $dupeCount[$dupeId] > 1){
+                $isDupe[] = $interviewId;
+                $allDupes[] = $egoIds[$interviewId];
+            }
+        }
+        foreach($allInterviewIds as $interviewId){
+            $dupeId = $egoIds[$interviewId];
+            if(in_array($dupeId, $allDupes) and !in_array($interviewId, $isDupe)){
+                $isDupe[] = $interviewId;
+            }
         }
         $allAlters = (new \yii\db\Query())
             ->select(['interviewId'])
@@ -157,7 +178,7 @@ class DataController extends Controller
                 }
             }
         }
-        return $this->render('index', ['study' => $study, 'all_studies' => $all_studies, 'interviewStudyIds' => $interviewStudyIds, 'multiStudyIds' => $multiStudyIds, 'expressions' => $expressions, 'interviews' => $interviews, 'alters' => $alters, 'egoIds' => $egoIds]);
+        return $this->render('index', ['study' => $study, 'all_studies' => $all_studies, 'interviewStudyIds' => $interviewStudyIds, 'multiStudyIds' => $multiStudyIds, 'expressions' => $expressions, 'interviews' => $interviews, 'alters' => $alters, 'egoIds' => $egoIds, 'isDupe'=>$isDupe]);
     }
 
 

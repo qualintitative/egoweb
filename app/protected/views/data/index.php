@@ -66,10 +66,29 @@ use yii\bootstrap4\LinkPager;
         var batchSize = 1;
         multiSesh = 0;
         var interviews = $("input[type='checkbox'][name*='export']:checked");
+
         if ($("#withAlters1").prop("checked") == true)
             withAlters = 1;
         if ($("#multiSession1").prop("checked") == true)
             multiSesh = 1;
+        if(multiSesh == 1){
+            dupesFound = false;
+            interviews.each(function(){
+                console.log($(this));
+                if(typeof $(this).attr("id") != "undefined"){
+                var intId = parseInt($(this).attr("id").match(/\d+/g)[0]);
+                if(isDupe.indexOf(intId) != -1){
+                    dupesFound = true;
+                }
+                }
+            });
+            if(dupesFound){
+                alert("Please de-select interviews with duplicate Ego Ids before export")
+                return false;
+            }
+               
+            
+        }
         $("#withAlters").val(withAlters);
         $("#multiSession").val(multiSesh);
         $(".progress-bar").width(0);
@@ -329,6 +348,7 @@ use yii\bootstrap4\LinkPager;
             </div>
         </div>
         <div v-if="multiSesh" class="col-sm-12 mb-1 row">
+            <div class="alert alert-default col-12">Interviews with duplicate EGO IDs are highlighted in <span class="alert-warning p-1">yellow</span><br>Incomplete interviews with duplicate EGO IDs and no alters are highlighted in <span class="alert-danger p-1">red</span></div>
             <label class="col-sm-2">Filename</label>
             <div class="col-sm-6">
                 <input id="filename" class="form-control" onchange="$('#realFilename').val($(this).val())">
@@ -362,10 +382,11 @@ use yii\bootstrap4\LinkPager;
             <?php if ($study->multiSessionEgoId) : ?>
                 <th class="d-none d-sm-table-cell">Study</th>
             <?php endif; ?>
-            <th>Ego ID</th>
+            <th class="d-none d-sm-table-cell">InterviewID</th>
+            <th>EgoID</th>
             <th class="d-none d-sm-table-cell">Started</th>
             <th class="d-none d-sm-table-cell">Completed</th>
-            <th class="d-none d-sm-table-cell">Interview Length</th>
+            <th class="d-none d-sm-table-cell">Length (min)</th>
             <th class="d-none d-sm-table-cell"># of Alters</th>
             <th><em class="fa fa-cog"></em></th>
         </tr>
@@ -387,6 +408,7 @@ use yii\bootstrap4\LinkPager;
             if ($study->multiSessionEgoId) {
                 echo "<td>" . $all_studies[$interview->studyId] . "</td>";
             }
+            echo "<td>" . $interview->id . "</td>";
             echo "<td>" . $egoIds[$interview->id] . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . \Yii::$app->formatter->asDate($interview->start_date, "php:Y-m-d H:i:s") . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . $completed . "</td>";
@@ -431,11 +453,21 @@ DataAsset::register($this);
     csrf = '<?php echo Yii::$app->request->getCsrfToken(); ?>';
     all_studies = <?php echo json_encode($all_studies, ENT_QUOTES); ?>;
     expressions = <?php echo json_encode($expressions, ENT_QUOTES); ?>;
-
+    isDupe = <?php echo json_encode($isDupe, ENT_QUOTES); ?>;
     $(document).ready(function() {
         table = $('#dTable').DataTable({
             lengthMenu: [10, 50, 100, 500, 2500],
             "emptyTable": "No data available in table",
+            "rowCallback": function(row, data, dataIndex ) {
+                console.log(parseInt(data[2]))
+        if(  isDupe.indexOf(parseInt(data[2])) != -1  ){
+            if(data[6] == "" && data[7] == 0){
+                $('td', row).addClass('alert-danger');
+            }else{
+                $('td', row).addClass('alert-warning');
+            }
+        }
+    },
             //  "info":           "", //"Showing _START_ to _END_ of _TOTAL_ entries",
             //  "infoEmpty":      "", //"Showing 0 to 0 of 0 entries",
             //  "paging": false
