@@ -124,13 +124,22 @@ class DataController extends Controller
             "studyId" => $multiStudyIds,
             "questionType" => "EGO_ID",
         ]);
-
+        $multiQs = $study->multiIdQs();
+        $egoQs = [];
+        foreach($multiQs as $multiQ){
+            $egoQs[] = $multiQ->id;
+        }
         $egoid_answers = array();
+        $linkIds = [];
+        
         foreach ($result as $answer) {
             if ($answer->answerType == "RANDOM_NUMBER" || $answer->answerType == "STORED_VALUE")
                 continue;
             if (!isset($egoid_answers[$answer->interviewId]))
                 $egoid_answers[$answer->interviewId] = [];
+            if(in_array($answer->questionId, $egoQs))
+                $linkIds[$answer->interviewId] = $answer->value;
+
             $egoid_answers[$answer->interviewId][] = $answer->value;
         }
 
@@ -154,15 +163,8 @@ class DataController extends Controller
         $isDupe = [];
         foreach($allInterviewIds as $interviewId){
             $dupeId = $interviewStudyIds[$interviewId] . "_" . $egoIds[$interviewId];
-            if(isset($dupeCount[$dupeId]) && $dupeCount[$dupeId] > 1){
-                $isDupe[] = $interviewId;
-                $allDupes[] = $egoIds[$interviewId];
-            }
-        }
-        foreach($allInterviewIds as $interviewId){
-            $dupeId = $egoIds[$interviewId];
-            if(in_array($dupeId, $allDupes) and !in_array($interviewId, $isDupe)){
-                $isDupe[] = $interviewId;
+            if(isset($dupeCount[$dupeId]) && $dupeCount[$dupeId] > 1 && !in_array($linkIds[$interviewId], $isDupe)){
+                $isDupe[] = $linkIds[$interviewId];
             }
         }
         $allAlters = (new \yii\db\Query())
@@ -178,7 +180,7 @@ class DataController extends Controller
                 }
             }
         }
-        return $this->render('index', ['study' => $study, 'all_studies' => $all_studies, 'interviewStudyIds' => $interviewStudyIds, 'multiStudyIds' => $multiStudyIds, 'expressions' => $expressions, 'interviews' => $interviews, 'alters' => $alters, 'egoIds' => $egoIds, 'isDupe'=>$isDupe]);
+        return $this->render('index', ['study' => $study, 'all_studies' => $all_studies, 'interviewStudyIds' => $interviewStudyIds, 'multiStudyIds' => $multiStudyIds, 'expressions' => $expressions, 'interviews' => $interviews, 'alters' => $alters, 'egoIds' => $egoIds, 'isDupe'=>$isDupe, 'linkIds'=> $linkIds]);
     }
 
 

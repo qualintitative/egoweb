@@ -12,6 +12,7 @@ use yii\bootstrap4\LinkPager;
 <script>
     interviewStudyIds = <?php echo json_encode($interviewStudyIds); ?>;
     multiStudyIds = <?php echo json_encode($multiStudyIds); ?>;
+    linkIds = <?php echo json_encode($linkIds); ?>;
 
     function exportEgoLevel() {
         var total = $("input[type='checkbox'][name*='export']:checked").length;
@@ -74,12 +75,11 @@ use yii\bootstrap4\LinkPager;
         if(multiSesh == 1){
             dupesFound = false;
             interviews.each(function(){
-                console.log($(this));
                 if(typeof $(this).attr("id") != "undefined"){
-                var intId = parseInt($(this).attr("id").match(/\d+/g)[0]);
-                if(isDupe.indexOf(intId) != -1){
-                    dupesFound = true;
-                }
+                    var intId = parseInt($(this).attr("id").match(/\d+/g)[0]);
+                    if(isDupe.indexOf(linkIds[intId]) != -1){
+                        dupesFound = true;
+                    }
                 }
             });
             if(dupesFound){
@@ -381,8 +381,8 @@ use yii\bootstrap4\LinkPager;
             <th><input type="checkbox" onclick="$('input.interview_check[type=checkbox]').prop('checked', $(this).prop('checked'))" data-toggle="tooltip" data-placement="top" title="Select All"></th>
             <?php if ($study->multiSessionEgoId) : ?>
                 <th class="d-none d-sm-table-cell">Study</th>
+                <th class="d-none d-sm-table-cell">LinkID</th>
             <?php endif; ?>
-            <th class="d-none d-sm-table-cell">InterviewID</th>
             <th>EgoID</th>
             <th class="d-none d-sm-table-cell">Started</th>
             <th class="d-none d-sm-table-cell">Completed</th>
@@ -408,7 +408,7 @@ use yii\bootstrap4\LinkPager;
             if ($study->multiSessionEgoId) {
                 echo "<td>" . $all_studies[$interview->studyId] . "</td>";
             }
-            echo "<td>" . $interview->id . "</td>";
+            echo "<td>" . $linkIds[$interview->id] . "</td>";
             echo "<td>" . $egoIds[$interview->id] . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . \Yii::$app->formatter->asDate($interview->start_date, "php:Y-m-d H:i:s") . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . $completed . "</td>";
@@ -459,8 +459,7 @@ DataAsset::register($this);
             lengthMenu: [10, 50, 100, 500, 2500],
             "emptyTable": "No data available in table",
             "rowCallback": function(row, data, dataIndex ) {
-                console.log(parseInt(data[2]))
-        if(  isDupe.indexOf(parseInt(data[2])) != -1  ){
+        if(  isDupe.indexOf(data[2]) != -1  ){
             if(data[6] == "" && data[7] == 0){
                 $('td', row).addClass('alert-danger');
             }else{
