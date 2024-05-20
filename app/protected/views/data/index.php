@@ -407,8 +407,12 @@ use yii\bootstrap4\LinkPager;
             echo "<td>" . Html::checkbox('export[' . $interview->id . ']', false, ['id' => 'export_' . $interview->id, 'class'=>'interview_check']) . "</td>";
             if ($study->multiSessionEgoId) {
                 echo "<td>" . $all_studies[$interview->studyId] . "</td>";
+                if(isset($linkIds[$interview->id])){
+                    echo "<td>" . $linkIds[$interview->id] . "</td>";
+                }else{
+                    echo "<td></td>";
+                }
             }
-            echo "<td>" . $linkIds[$interview->id] . "</td>";
             echo "<td>" . $egoIds[$interview->id] . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . \Yii::$app->formatter->asDate($interview->start_date, "php:Y-m-d H:i:s") . "</td>";
             echo "<td class='d-none d-sm-table-cell'>" . $completed . "</td>";
@@ -454,13 +458,14 @@ DataAsset::register($this);
     all_studies = <?php echo json_encode($all_studies, ENT_QUOTES); ?>;
     expressions = <?php echo json_encode($expressions, ENT_QUOTES); ?>;
     isDupe = <?php echo json_encode($isDupe, ENT_QUOTES); ?>;
+    exists = <?php echo json_encode($exists, ENT_QUOTES); ?>;
     $(document).ready(function() {
         table = $('#dTable').DataTable({
             lengthMenu: [10, 50, 100, 500, 2500],
             "emptyTable": "No data available in table",
             "rowCallback": function(row, data, dataIndex ) {
         if(  isDupe.indexOf(data[2]) != -1  ){
-            if(data[6] == "" && data[7] == 0){
+            if(data[6] == "" && data[7] == 0 && exists.indexOf(parseInt(data[2])) == -1){
                 $('td', row).addClass('alert-danger');
             }else{
                 $('td', row).addClass('alert-warning');

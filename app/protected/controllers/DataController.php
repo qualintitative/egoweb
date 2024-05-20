@@ -124,6 +124,16 @@ class DataController extends Controller
             "studyId" => $multiStudyIds,
             "questionType" => "EGO_ID",
         ]);
+        $all_answers = Answer::find()
+        ->where(['studyId'=>$multiStudyIds])
+        ->andWhere(['<>','questionType', "EGO_ID"])
+        ->all();
+        $exists = [];
+        foreach($all_answers as $answer){
+            if($answer->value != $study->valueNotYetAnswered)
+                $exists[] = $answer->interviewId;
+        }
+        $exists = array_values(array_unique($exists));
         $multiQs = $study->multiIdQs();
         $egoQs = [];
         foreach($multiQs as $multiQ){
@@ -159,11 +169,10 @@ class DataController extends Controller
             $allInterviewIds[] = $interview->id;
             $interviewStudyIds[$interview->id] = $interview->studyId;
         }
-        $allDupes = [];
         $isDupe = [];
         foreach($allInterviewIds as $interviewId){
             $dupeId = $interviewStudyIds[$interviewId] . "_" . $egoIds[$interviewId];
-            if(isset($dupeCount[$dupeId]) && $dupeCount[$dupeId] > 1 && !in_array($linkIds[$interviewId], $isDupe)){
+            if(isset($linkIds[$interviewId]) && isset($dupeCount[$dupeId]) && $dupeCount[$dupeId] > 1 && !in_array($linkIds[$interviewId], $isDupe)){
                 $isDupe[] = $linkIds[$interviewId];
             }
         }
@@ -180,7 +189,19 @@ class DataController extends Controller
                 }
             }
         }
-        return $this->render('index', ['study' => $study, 'all_studies' => $all_studies, 'interviewStudyIds' => $interviewStudyIds, 'multiStudyIds' => $multiStudyIds, 'expressions' => $expressions, 'interviews' => $interviews, 'alters' => $alters, 'egoIds' => $egoIds, 'isDupe'=>$isDupe, 'linkIds'=> $linkIds]);
+        return $this->render('index', [
+            'study' => $study,
+            'all_studies' => $all_studies,
+            'interviewStudyIds' => $interviewStudyIds,
+            'multiStudyIds' => $multiStudyIds,
+            'expressions' => $expressions,
+            'interviews' => $interviews,
+            'alters' => $alters,
+            'egoIds' => $egoIds,
+            'isDupe'=>$isDupe,
+            'linkIds'=> $linkIds,
+            'exists'=>$exists
+        ]);
     }
 
 
