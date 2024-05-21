@@ -379,6 +379,7 @@ use yii\bootstrap4\LinkPager;
     <thead>
         <tr>
             <th><input type="checkbox" onclick="$('input.interview_check[type=checkbox]').prop('checked', $(this).prop('checked'))" data-toggle="tooltip" data-placement="top" title="Select All"></th>
+            <th class="d-none d-sm-table-cell">ID</th>
             <?php if ($study->multiSessionEgoId) : ?>
                 <th class="d-none d-sm-table-cell">Study</th>
                 <th class="d-none d-sm-table-cell">LinkID</th>
@@ -405,6 +406,7 @@ use yii\bootstrap4\LinkPager;
             }
             echo "<tr>";
             echo "<td>" . Html::checkbox('export[' . $interview->id . ']', false, ['id' => 'export_' . $interview->id, 'class'=>'interview_check']) . "</td>";
+            echo "<td>" . $interview->id . "</td>";
             if ($study->multiSessionEgoId) {
                 echo "<td>" . $all_studies[$interview->studyId] . "</td>";
                 if(isset($linkIds[$interview->id])){
@@ -464,8 +466,8 @@ DataAsset::register($this);
             lengthMenu: [10, 50, 100, 500, 2500],
             "emptyTable": "No data available in table",
             "rowCallback": function(row, data, dataIndex ) {
-        if(  isDupe.indexOf(data[2]) != -1  ){
-            if(data[6] == "" && data[7] == 0 && exists.indexOf(parseInt(data[2])) == -1){
+        if(  isDupe.indexOf(data[3]) != -1  ){
+            if(data[7] == "" && data[8] == 0 && exists.indexOf(parseInt(data[1])) == -1){
                 $('td', row).addClass('alert-danger');
             }else{
                 $('td', row).addClass('alert-warning');
@@ -483,7 +485,7 @@ DataAsset::register($this);
     filterTable = function(studyName) {
         if ($('#multiSession1').prop('checked'))
             studyName = ''
-        table.columns(1).search(studyName, true, false).draw();
+        table.columns(2).search(studyName, true, false).draw();
     }
     Vue.directive('sortable', {
         twoWay: true,

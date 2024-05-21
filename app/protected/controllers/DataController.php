@@ -122,18 +122,8 @@ class DataController extends Controller
         $interviews = Interview::find()->where(["studyId" => $multiStudyIds])->all();
         $result = Answer::findAll([
             "studyId" => $multiStudyIds,
-            "questionType" => "EGO_ID",
+            "questionType" => ["EGO", "EGO_ID", "ALTER"],
         ]);
-        $all_answers = Answer::find()
-        ->where(['studyId'=>$multiStudyIds])
-        ->andWhere(['<>','questionType', "EGO_ID"])
-        ->all();
-        $exists = [];
-        foreach($all_answers as $answer){
-            if($answer->value != $study->valueNotYetAnswered)
-                $exists[] = $answer->interviewId;
-        }
-        $exists = array_values(array_unique($exists));
         $multiQs = $study->multiIdQs();
         $egoQs = [];
         foreach($multiQs as $multiQ){
@@ -141,18 +131,25 @@ class DataController extends Controller
         }
         $egoid_answers = array();
         $linkIds = [];
-        
+        $exists = [];
+
         foreach ($result as $answer) {
-            if ($answer->answerType == "RANDOM_NUMBER" || $answer->answerType == "STORED_VALUE")
-                continue;
-            if (!isset($egoid_answers[$answer->interviewId]))
-                $egoid_answers[$answer->interviewId] = [];
-            if(in_array($answer->questionId, $egoQs))
-                $linkIds[$answer->interviewId] = $answer->value;
-
-            $egoid_answers[$answer->interviewId][] = $answer->value;
+            if($answer->questionType == "EGO_ID"){
+                if ($answer->answerType == "RANDOM_NUMBER" || $answer->answerType == "STORED_VALUE")
+                    continue;
+                if (!isset($egoid_answers[$answer->interviewId]))
+                    $egoid_answers[$answer->interviewId] = [];
+                if(in_array($answer->questionId, $egoQs))
+                    $linkIds[$answer->interviewId] = $answer->value;
+                $egoid_answers[$answer->interviewId][] = $answer->value;
+            }
         }
-
+        foreach ($result as $answer) {
+            if($answer->questionType != "EGO_ID"){
+                if(!in_array($answer->interviewId, $exists))
+                    $exists[] = $answer->interviewId;
+            }
+        }
 
         $egoIds = [];
         $dupeCount = [];
