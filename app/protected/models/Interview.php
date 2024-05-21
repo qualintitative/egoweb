@@ -365,8 +365,8 @@ class Interview extends \yii\db\ActiveRecord
             $alters = Alters::find()
                 ->where(new \yii\db\Expression("FIND_IN_SET(" . $this->id . ", interviewId)"))
                 ->all();
-            foreach ($alters as $alter) {
-                $alterIds[] = $alter->id;
+            if(!$alters){
+                $alters = ["id"=>null];
             }
         }
 
@@ -552,7 +552,7 @@ class Interview extends \yii\db\ActiveRecord
                 }
 
                 foreach ($network_questions[$interview->studyId]  as $question) {
-                    $answer = Answer::findOne(array("interviewId" =>  $interviewId, "questionId" => $question->id));
+                    $answer = Answer::findOne(array("interviewId" =>  $interview->id, "questionId" => $question->id));
                     if (!$answer) {
                         $answers[] = $study->valueNotYetAnswered;
                         continue;
@@ -611,30 +611,33 @@ class Interview extends \yii\db\ActiveRecord
                     $answers[] = "";
                 }
             }
-                if ($matchAtAll) {
-                    $matchId = "";
-                    $matchName = "";
-                    $match = MatchedAlters::find()
-                        ->where(new \yii\db\Expression("alterId1 = $alter->id OR alterId2 = $alter->id"))
-                        ->one();
-                    if ($match) {
-                        $matchId = $match->id;
-                        $matchName = $match->matchedName;
-                    }
-                    $answers[] = $matchIntId;
-                    $answers[] = $matchUser;
-                    $answers[] = $count;
-                    if ($withAlters) {
-                        $answers[] = $alter->name;
-                        $answers[] = $matchName;
-                    }
-                    $answers[] = $matchId;
-                } else {
-                    $answers[] = $count;
-                    if ($withAlters) {
-                        $answers[] = $alter->name;
-                    }
+            if ($matchAtAll) {
+                $matchId = "";
+                $matchName = "";
+                $match = MatchedAlters::find()
+                    ->where(new \yii\db\Expression("alterId1 = $alter->id OR alterId2 = $alter->id"))
+                    ->one();
+                if ($match) {
+                    $matchId = $match->id;
+                    $matchName = $match->matchedName;
                 }
+                $answers[] = $matchIntId;
+                $answers[] = $matchUser;
+                $answers[] = $count;
+                if ($withAlters) {
+                    $answers[] = $alter->name;
+                    $answers[] = $matchName;
+                }
+                $answers[] = $matchId;
+            } else {
+                $answers[] = $count;
+                if ($withAlters ) {
+                    if($alter != null)
+                        $answers[] = $alter->name;
+                    else
+                        $answers[] = "";
+                }
+            }
             
             foreach ($interviews as $index => $interview) {
 
@@ -723,9 +726,13 @@ class Interview extends \yii\db\ActiveRecord
                         }
                     }
                 } else {
-                    $answers[] = 0;
-                    $answers[] = "";
-                    foreach ($alter_questions as $question) {
+                    foreach ($name_gen_questions[$interview->studyId] as $question) {
+                        $answers[] = "0";
+                    }
+                    foreach ($previous_questions[$interview->studyId] as $question) {
+                        $answers[] = $study->valueNotYetAnswered;
+                    }
+                    foreach ($alter_questions[$interview->studyId] as $question) {
                         $answers[] = $study->valueNotYetAnswered;
                     }
                 }
