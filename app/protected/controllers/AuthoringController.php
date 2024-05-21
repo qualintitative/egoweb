@@ -340,10 +340,14 @@ class AuthoringController extends Controller
         $this->view->title = $study->name;
         if ($study->multiSessionEgoId) {
             $multiQs = $study->multiIdQs();
-            foreach ($multiQs as $q) {
-                $studyIds[] = $q->studyId;
-                $s = Study::findOne($q->studyId);
-                $studyNames[$q->studyId] = $s->name;
+            if(count($multiQs) > 0){
+                foreach ($multiQs as $q) {
+                    $studyIds[] = $q->studyId;
+                    $s = Study::findOne($q->studyId);
+                    $studyNames[$q->studyId] = $s->name;
+                }
+            }else{
+                $studyIds = $id;
             }
         } else {
             $studyIds = $id;

@@ -122,7 +122,7 @@ class DataController extends Controller
         $interviews = Interview::find()->where(["studyId" => $multiStudyIds])->all();
         $result = Answer::findAll([
             "studyId" => $multiStudyIds,
-            "questionType" => ["EGO", "EGO_ID", "ALTER"],
+            "questionType" => "EGO_ID",
         ]);
         $multiQs = $study->multiIdQs();
         $egoQs = [];
@@ -134,25 +134,20 @@ class DataController extends Controller
         $exists = [];
 
         foreach ($result as $answer) {
-            if($answer->questionType == "EGO_ID"){
-                if ($answer->answerType == "RANDOM_NUMBER" || $answer->answerType == "STORED_VALUE")
-                    continue;
-                if (!isset($egoid_answers[$answer->interviewId]))
-                    $egoid_answers[$answer->interviewId] = [];
-                if(in_array($answer->questionId, $egoQs))
-                    $linkIds[$answer->interviewId] = $answer->value;
-                $egoid_answers[$answer->interviewId][] = $answer->value;
-            }
+            if ($answer->answerType == "RANDOM_NUMBER" || $answer->answerType == "STORED_VALUE")
+                continue;
+            if (!isset($egoid_answers[$answer->interviewId]))
+                $egoid_answers[$answer->interviewId] = [];
+            if(in_array($answer->questionId, $egoQs))
+                $linkIds[$answer->interviewId] = $answer->value;
+            $egoid_answers[$answer->interviewId][] = $answer->value;
         }
-        foreach ($result as $answer) {
-            if($answer->questionType != "EGO_ID"){
-                if(!in_array($answer->interviewId, $exists))
-                    $exists[] = $answer->interviewId;
-            }
-        }
+
+        
 
         $egoIds = [];
         $dupeCount = [];
+        $interviewStudyIds = [];
         foreach ($interviews as $interview) {
             $alters[$interview->id] = 0;
             if (!isset($egoid_answers[$interview->id]))
@@ -165,6 +160,13 @@ class DataController extends Controller
                 $dupeCount[$interview->studyId."_".$ego_id_string]++;
             $allInterviewIds[] = $interview->id;
             $interviewStudyIds[$interview->id] = $interview->studyId;
+        }
+        $connection = Yii::$app->getDb();
+        $command = $connection->createCommand("SELECT count(*) as count, interviewId FROM answer where interviewId  IN (". implode(",",$allInterviewIds).") AND questionType != 'EGO_ID' GROUP BY interviewId");
+        $result = $command->queryAll();
+        foreach ($result as $row) {
+            if(!in_array($row['interviewId'], $exists))
+                $exists[] = $row['interviewId'];
         }
         $isDupe = [];
         foreach($allInterviewIds as $interviewId){
