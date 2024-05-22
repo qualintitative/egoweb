@@ -161,12 +161,14 @@ class DataController extends Controller
             $allInterviewIds[] = $interview->id;
             $interviewStudyIds[$interview->id] = $interview->studyId;
         }
-        $connection = Yii::$app->getDb();
-        $command = $connection->createCommand("SELECT count(*) as count, interviewId FROM answer where interviewId  IN (". implode(",",$allInterviewIds).") AND questionType != 'EGO_ID' GROUP BY interviewId");
-        $result = $command->queryAll();
-        foreach ($result as $row) {
-            if(!in_array($row['interviewId'], $exists))
-                $exists[] = $row['interviewId'];
+        if(count($allInterviewIds) > 0){
+            $connection = Yii::$app->getDb();
+            $command = $connection->createCommand("SELECT count(*) as count, interviewId FROM answer where interviewId  IN (". implode(",",$allInterviewIds).") AND questionType != 'EGO_ID' GROUP BY interviewId");
+            $result = $command->queryAll();
+            foreach ($result as $row) {
+                if(!in_array($row['interviewId'], $exists))
+                    $exists[] = $row['interviewId'];
+            }
         }
         $isDupe = [];
         foreach($allInterviewIds as $interviewId){
@@ -381,12 +383,12 @@ class DataController extends Controller
         $indents = [];
         if ($multiSesh)
             $headers[] =  "Link ID";
-            $ego_id_questions = [];
-            $ego_questions = [];
-            $alter_questions = [];
-            $network_questions = [];
-            $name_gen_questions = [];
-            $previous_questions = [];
+        $ego_id_questions = [];
+        $ego_questions = [];
+        $alter_questions = [];
+        $network_questions = [];
+        $name_gen_questions = [];
+        $previous_questions = [];
         foreach ($studyIds as $index => $studyId) {
             $all_questions = Question::find()->where(["studyId" => $studyId])->orderBy(["ordering" => "ASC"])->all();
             $ego_id_questions[$studyId] = [];
@@ -522,7 +524,8 @@ class DataController extends Controller
                 $rows = explode("\n", file_get_contents($filePath));
                 $cols = explode(",", $rows[0]);
                 if (!in_array($cols[0], $exported)) {
-                    $exported[] = $cols[0];
+                    if($multiSesh)
+                        $exported[] = $cols[0];
                 } else {
                     continue;
                 }

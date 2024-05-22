@@ -288,7 +288,7 @@ class Interview extends \yii\db\ActiveRecord
             }
         }
         $interviews = [];
-        $multiQs = false;
+        $multiQs = [];
         if ($multiSession) {
             if ($studyOrder && stristr($studyOrder, ",")) {
                 $studyOrder = explode(",", $studyOrder);

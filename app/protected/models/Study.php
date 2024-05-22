@@ -74,7 +74,7 @@ class Study extends \yii\db\ActiveRecord
     public function multiIdQs($studyOrder = false)
     {
         if ($this->multiSessionEgoId == 0) {
-            return false;
+            return [];
         }
         $egoIdQ = Question::findOne($this->multiSessionEgoId);
         $multiIdQs = array();
