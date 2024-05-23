@@ -15,7 +15,7 @@
 
 <div ng-if="subjectType != 'NAME_GENERATOR'" class="col-sm-12">
     <span
-        ng-if="(answerForm.$submitted || typeof errors[0] != 'undefined') && errors">
+        ng-if="(answerForm.$submitted || errors[0]) && errors">
         <div class="alert alert-danger" role="alert" ng-if="$index == 0" ng-repeat="error in errors">
             {{ error }}
         </div>

@@ -1105,6 +1105,7 @@ app.directive('checkAnswer', [function() {
                 var valid = true;
                 var array_id = attr.arrayId;
                 var question = questions[attr.questionId];
+
                 if (question.SUBJECTTYPE == "NAME_GENERATOR") {
                    // alert('error ' + scope.answers[array_id])
                     if (((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW") || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.nGalters).length < scope.questions[0].MINLITERAL) {
@@ -1986,11 +1987,11 @@ function interpretTags(string, alterId1, alterId2) {
             continue;
 
         var array_id = question.ID;
-        if (typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER' && question.STUDYID == study.ID)
+        if (typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
             array_id += "-" + alterId1;
-        else if (typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER' && question.STUDYID != study.ID)
-            array_id += "-" + alterId2;
-        else if (typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
+        //else if (typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER' && question.STUDYID != study.ID)
+        //    array_id += "-" + alterId1;
+        if (typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
             array_id += 'and' + alterId2;
 
         var lastAnswer = "";

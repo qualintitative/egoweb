@@ -976,7 +976,7 @@ class InterviewController extends Controller
         foreach ($answerList as $answer) {
             if ($answer->alterId1 && $answer->alterId2) {
                 $array_id = $answer->questionId . "-" . $answer->alterId1 . "and" . $answer->alterId2;
-            } elseif ($answer->alterId1 && ! $answer->alterId2) {
+            } elseif ($answer->alterId1 && !$answer->alterId2) {
                 $array_id = $answer->questionId . "-" . $answer->alterId1;
             } else {
                 $array_id = $answer->questionId;

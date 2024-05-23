@@ -1052,8 +1052,10 @@ class ImportExportController extends Controller
         $alterPrompts = AlterPrompt::findAll(array("studyId"=>$study->id));
 
         $study->introduction = Tools::sanitizeXml($study->introduction);
+        if(!$study->egoIdPrompt)
+            $study->egoIdPrompt = "";
         $study->egoIdPrompt = Tools::sanitizeXml($study->egoIdPrompt);
-        $study->alterPrompt = Tools::sanitizeXml($study->alterPrompt);
+//        $study->alterPrompt = Tools::sanitizeXml($study->alterPrompt);
         $study->conclusion = Tools::sanitizeXml($study->conclusion);
 
         if (count($interviewIds) > 0) {
