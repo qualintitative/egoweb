@@ -1346,13 +1346,20 @@ class Interview extends \yii\db\ActiveRecord
             if ($studyOrder) {
                 $studyOrder = explode(",", $studyOrder);
                 $multiIds = $this->multiInterviewIds($studyOrder);
-                foreach ($multiIds as $multiId) {
+                foreach ($multiIds as $index=>$multiId) {
                     $interview =  Interview::findOne($multiId);
-                    $interviews[] = $interview;
-                    $interviewIds[] = $interview->id;
+                    if($interview){
+                        $interviews[] = $interview;
+                        $interviewIds[] = $interview->id;
+                    }else{
+                        $interview =  new Interview();
+                        $interview->studyId = $studyOrder[$index];
+                        $interviews[] = $interview;
+                        $interviewIds[] = -$index;
+                    }
                 }
             } else {
-                $interviewIds = $this->multiInterviewIds($studyOrder);
+                $interviewIds = $this->multiInterviewIds();
             }
             $alters = Alters::find()
             ->where(new \yii\db\Expression("FIND_IN_SET(" . $interviewIds[0] . ", interviewId)"))
@@ -1448,12 +1455,18 @@ class Interview extends \yii\db\ActiveRecord
                 if($multiSession)
                     $answers[] =  $interviews[0]->getEgoId(true);
 
-                foreach ($interviews as $interview) {
-                    $answers[] =  $interview->id;
-                    $answers[] = $ego_id[$interview->id];
+                foreach ($interviewIds as $index=>$interviewId) {
+                    if($interview->studyId > 0){
+                    $answers[] =  $interviewId;
+                    $answers[] = $ego_id[$interviewId];
+                    }else{
+                        $answers[] = "";
+                        $answers[] = "";
+                    }
                 }
                 foreach ($interviews as $index=>$interview) {
                     $studyId = $interview->studyId;
+                    $study = Study::findOne($studyId);
                     //  $answers[] = $ego_id[$alter->interviewId];
                     if ($index == 0) {
                         $answers[] = $alterNum[$alter->id];
@@ -1464,10 +1477,11 @@ class Interview extends \yii\db\ActiveRecord
                         if ($withAlters) {
                             $answers[] = $alter2->name;
                         }
+    
                     }
                     foreach ($alter_pair_questions[$studyId] as $question) {
                         if (!isset($ap_answers[$question->id][$alter->id][$alter2->id])) {
-                            $answers[] = "";
+                            $answers[] = $study->valueNotYetAnswered;
                             continue;
                         }
                         $result = $ap_answers[$question->id][$alter->id][$alter2->id];
