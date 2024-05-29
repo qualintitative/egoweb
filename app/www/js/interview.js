@@ -1987,12 +1987,14 @@ function interpretTags(string, alterId1, alterId2) {
             continue;
 
         var array_id = question.ID;
-        if (typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
+        console.log("alter1", alterId1, "alter2", alterId2)
+        if (typeof alterId2 == 'undefined' && question.SUBJECTTYPE == 'ALTER')
             array_id += "-" + alterId1;
-        //else if (typeof alterId1 != 'undefined' && question.SUBJECTTYPE == 'ALTER' && question.STUDYID != study.ID)
-        //    array_id += "-" + alterId1;
-        if (typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
-            array_id += 'and' + alterId2;
+        else if (typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER')
+            array_id += "-" + alterId2;
+        else if (typeof alterId2 != 'undefined' && question.SUBJECTTYPE == 'ALTER_PAIR')
+            array_id += "-" + alterId1 + 'and' + alterId2;
+        console.log("array_id", array_id)
 
         var lastAnswer = "";
         var lastAnswerOps = [];

@@ -681,7 +681,7 @@ class DataController extends Controller
         $interview = Interview::findOne($_POST['interviewId']);
         if ($interview) {
             $file = fopen($filePath . "/" . $_POST['interviewId'] . "-alter-pair.csv", "w") or die("Unable to open file!");
-            $interview->exportAlterPairData($file, $study, $withAlters, $multiSesh);
+            $interview->exportAlterPairData($file, $study, $withAlters, $multiSesh, $_POST['studyOrder']);
             return $this->renderAjax("/layouts/ajax", ["json" => "success"]);
         }
         return $this->renderAjax("/layouts/ajax", ["json" => "fail"]);
@@ -731,11 +731,13 @@ class DataController extends Controller
         }
 
         $headers = array();
+        if ($multiSesh)
+            $headers[] =  'Link ID';
         foreach ($studyIds as $index => $studyId) {
             $counter = "";
             if ($multiSesh)
                 $counter = "_" .  ($index + 1);
-            $headers[] =  $studyNames[$studyId] . ' Interview ID'  . $counter;
+            $headers[] =  'Interview ID'  . $counter;
             $headers[] =  'EgoID'  . $counter;
         }
         foreach ($studyIds as $index => $studyId) {
