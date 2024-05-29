@@ -776,6 +776,8 @@ class DataController extends Controller
                 $rows = explode("\n", file_get_contents($filePath));
                 $cols = explode(",", $rows[0]);
                 $len = count($cols);
+                if($len < 2)
+                    continue;
                 $array_id = $cols[$len - 2] . "and" . $cols[$len - 1];
                 if (!in_array($array_id, $exported)) {
                     if($multiSesh)
