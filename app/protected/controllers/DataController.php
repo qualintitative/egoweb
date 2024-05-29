@@ -769,10 +769,29 @@ class DataController extends Controller
         $interviewIds = explode(",", $_POST['interviewIds']);
 
         $text = implode(',', $headers) . "\n";
+        $exported = [];
         foreach ($interviewIds as $interviewId) {
             $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/" . $interviewId . "-alter-pair.csv";
             if (file_exists($filePath)) {
-                $text .= file_get_contents($filePath);
+                $rows = explode("\n", file_get_contents($filePath));
+                $cols = explode(",", $rows[0]);
+                $len = count($cols);
+                $array_id = $cols[$len - 2] . "and" . $cols[$len - 1];
+                if (!in_array($array_id, $exported)) {
+                    if($multiSesh)
+                        $exported[] = $array_id;
+                } else {
+                    continue;
+                }
+                foreach ($rows as $row) {
+                    $cols = explode(",", $row);
+                    $line = [];
+                    foreach ($cols as $index => $col) {
+                        $line[] = $col;
+                    }
+                    if ($row != "")
+                        $text .= implode(",", $line) . "\n";
+                }
                 unlink($filePath);
             }
         }

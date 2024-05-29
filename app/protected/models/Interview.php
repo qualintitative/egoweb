@@ -1452,13 +1452,21 @@ class Interview extends \yii\db\ActiveRecord
                 if(in_array($array_id, $array_ids))
                     continue;
                 $array_ids[] = $array_id;
-                if($multiSession)
-                    $answers[] =  $interviews[0]->getEgoId(true);
+                if($multiSession){
+                    foreach ($interviewIds as $index=>$interviewId) {
+                        $eId = $interviews[0]->getEgoId(true);
+                        if($eId){
+                            $answers[] = $eId;
+                            break;
+                        }
+                    }
+                }
+
 
                 foreach ($interviewIds as $index=>$interviewId) {
-                    if($interview->studyId > 0){
-                    $answers[] =  $interviewId;
-                    $answers[] = $ego_id[$interviewId];
+                    if($interviewId > 0){
+                        $answers[] =  $interviewId;
+                        $answers[] = $ego_id[$interviewId];
                     }else{
                         $answers[] = "";
                         $answers[] = "";
@@ -1610,7 +1618,7 @@ class Interview extends \yii\db\ActiveRecord
                     foreach ($answerArray as $i => $a) {
                         $answer = array();
                         $answer[] = $this->id;
-                        $answer[] = Interview::getEgoId($this->id);
+                        $answer[] = $this->getEgoId();
                         $answer[] = $question->title;
                         $answer[] = $alter->name;
                         $answer[] = $i;
@@ -1655,7 +1663,7 @@ class Interview extends \yii\db\ActiveRecord
                 foreach ($answerArray as $i => $a) {
                     $answer = array();
                     $answer[] = $this->id;
-                    $answer[] = Interview::getEgoId($this->id);
+                    $answer[] = $this->getEgoId();
                     $answer[] = $question->title;
                     $answer[] = "";
                     $answer[] = $i;
@@ -1670,7 +1678,7 @@ class Interview extends \yii\db\ActiveRecord
     {
         $row = array();
         $row[] = $this->id;
-        $row[] = Interview::getEgoId($this->id);
+        $row[] = $this->getEgoId();
         $all_questions = Question::find()->where(["studyId" => $this->studyId])->orderBy(["ordering" => "ASC"])->all();
         foreach ($all_questions as $question) {
             $answer = Answer::findOne(["interviewId" => $this->id, "questionId" => $question->id]);
