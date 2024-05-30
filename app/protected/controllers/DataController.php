@@ -551,7 +551,7 @@ class DataController extends Controller
             $filename = $_POST['filename']  . '-ego-alter';
         else
             $filename = $study->name . '-ego-alter';
-        return $this->response->sendContentAsFile($text, $filename . '.csv')->send();
+        return $this->response->sendContentAsFile($text, $filename . '.csv', "text/csv; charset=UTF-8")->send();
     }
 
     public function actionExportegolevel()
@@ -649,7 +649,7 @@ class DataController extends Controller
                 unlink($filePath);
             }
         }
-        return $this->response->sendContentAsFile($text, $study->name . '-ego-level.csv')->send();
+        return $this->response->sendContentAsFile($text, $study->name . '-ego-level.csv', "text/csv; charset=UTF-8")->send();
     }
 
     public function actionExportalterpair()
@@ -801,7 +801,7 @@ class DataController extends Controller
             $filename = $_POST['filename']  . '-alter-pair';
         else
             $filename = $study->name . '-alter-pair';
-        return $this->response->sendContentAsFile($text, $filename . '.csv')->send();
+        return $this->response->sendContentAsFile($text, $filename . '.csv', "text/csv; charset=UTF-8")->send();
     }
 
     public function actionExportother()
@@ -850,7 +850,7 @@ class DataController extends Controller
                 unlink($filePath);
             }
         }
-        return $this->response->sendContentAsFile($text, $study->name . '-other-specify.csv')->send();
+        return $this->response->sendContentAsFile($text, $study->name . '-other-specify.csv', "text/csv; charset=UTF-8")->send();
     }
 
     public function actionExportcompletion()

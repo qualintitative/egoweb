@@ -1453,8 +1453,10 @@ class Interview extends \yii\db\ActiveRecord
                     continue;
                 $array_ids[] = $array_id;
                 if($multiSession){
-                    foreach ($interviewIds as $index=>$interviewId) {
-                        $eId = $interviews[0]->getEgoId(true);
+                    foreach ($interviews as $index=>$interview) {
+                        if(!$interview->id)
+                            continue;
+                        $eId = $interview->getEgoId(true);
                         if($eId){
                             $answers[] = $eId;
                             break;
