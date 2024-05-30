@@ -1569,7 +1569,7 @@ function buildList() {
                         // last name distance
                         if (ls.distance <= maxlTol) {
                             // first letter of first name matches
-                            if (first1 == first2 && matchedIds[k].indexOf(l) == -1) {
+                            if (matchedIds[k].indexOf(l) == -1) {
                                 // l is alter2 id
                                 if (ls.distance < lDist[k]) {
                                     lDist[k] = ls.distance;

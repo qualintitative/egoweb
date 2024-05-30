@@ -461,8 +461,15 @@ DataAsset::register($this);
     expressions = <?php echo json_encode($expressions, ENT_QUOTES); ?>;
     isDupe = <?php echo json_encode($isDupe, ENT_QUOTES); ?>;
     exists = <?php echo json_encode($exists, ENT_QUOTES); ?>;
+    <?php if ($study->multiSessionEgoId):?>
+    columnDef = [{ orderable: false }, null, null, null, null,  null, null, null, null, { orderable: false }];
+    <?php else: ?>
+    columnDef = [{ orderable: false }, null, null,  null, null, null, null, { orderable: false }];
+    <?php endif; ?>
     $(document).ready(function() {
         table = $('#dTable').DataTable({
+            order: [[1, 'desc']],
+            columns: columnDef,
             lengthMenu: [10, 50, 100, 500, 2500],
             "emptyTable": "No data available in table",
             "rowCallback": function(row, data, dataIndex ) {
