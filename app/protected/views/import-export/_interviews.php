@@ -3,6 +3,11 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 ?>
+<div class="col-12">
+    <div class="col-3 p-3">
+        <input onkeyup="regexSearch($(this).val())" placeholder="Filter Ego ID" />
+    </div>
+</div>
 <table id="interview-table"> 
     <thead>
         <th class="col-1"><input type="checkbox" onclick="$('input.export[type=checkbox]').prop('checked', $(this).prop('checked'))" data-toggle="tooltip" data-placement="top" title="Select All"></th>
@@ -31,7 +36,13 @@ use yii\helpers\Url;
     </tbody>
     </table>
     <script>
-                table = $('#interview-table').DataTable( {
+    function regexSearch(val){
+        jQuery('#interview-table').DataTable()
+                    .columns(1)
+                    .search(val,true,false)
+                    .draw();
+    }
+    table = $('#interview-table').DataTable( {
         paging: false,
         info: false,
         order: [[1, 'asc']],
@@ -41,4 +52,6 @@ use yii\helpers\Url;
             { orderable: false, targets:[0,-1] }
         ]
     });
+    $("#interview-table_filter").hide()
+
         </script>
