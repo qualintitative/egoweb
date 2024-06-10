@@ -3,9 +3,12 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 
 ?>
-<div class="col-12">
-    <div class="col-3 p-3">
+<div class="col-12 row">
+    <div class="col-6 p-3">
         <input onkeyup="regexSearch($(this).val())" placeholder="Filter Ego ID" />
+    </div>
+    <div class="col-4 p-3">
+        <input type="checkbox" onchange="noAlterSearch($(this).is(':checked'))" /> With Alters Only
     </div>
 </div>
 <table id="interview-table"> 
@@ -42,12 +45,34 @@ use yii\helpers\Url;
                     .search(val,true,false)
                     .draw();
     }
+    function noAlterSearch(checked){
+        if(checked){
+        jQuery('#interview-table').DataTable()
+                    .columns(3)
+                    .search('^((?!(0)).)*$',true,false)
+                    .draw();
+        }else{
+            jQuery('#interview-table').DataTable()
+                    .columns(3)
+                    .search('',true,false)
+                    .draw();
+        }
+    }
+    
     table = $('#interview-table').DataTable( {
-        paging: false,
+        //paging: false,
         info: false,
+        lengthMenu: [10, 50, 100, 250, 500],
         order: [[1, 'asc']],
-
         rowReorder: true,
+        pageLength: 500,
+        pagingType: 'simple_numbers',
+        language: {
+    paginate: {
+      next: '>', // or '→'
+      previous: '<' // or '←' 
+    }
+  },
         columnDefs: [
             { orderable: false, targets:[0,-1] }
         ]
