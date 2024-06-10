@@ -969,6 +969,12 @@ class ImportExportController extends Controller
             "studyId"=>$study->id,
             "questionType"=>"EGO_ID",
         ]);
+        $alters = [];
+        $allAlters = (new \yii\db\Query())
+        ->select(['interviewId'])
+        ->from('alters')
+        ->all();
+
         $egoid_answers = array();
         foreach ($result as $answer) {
             if($answer->answerType == "RANDOM_NUMBER" || $answer->answerType == "STORED_VALUE")
@@ -985,10 +991,23 @@ class ImportExportController extends Controller
             $egoIds[$interview->id] = implode("_", $egoid_answers[$interview->id]);
             $allInterviewIds[] = $interview->id;
         }
+        foreach ($allAlters as $alter) {
+            $interviewIds = explode(",", $alter['interviewId']);
+            //print_r($interviewIds);
+            foreach ($interviewIds as $interviewId) {
+                if (in_array($interviewId, $allInterviewIds)) {
+                    if (isset($alters[$interviewId]))
+                        $alters[$interviewId]++;
+                    else
+                        $alters[$interviewId] = 1;
+                }
+            }
+        }
         return $this->renderAjax(
             '_interviews',
             array(
                 'study'=>$study,
+                'alters'=>$alters,
                 'interviews'=>$interviews,
                 'egoIds'=>$egoIds,
             ),

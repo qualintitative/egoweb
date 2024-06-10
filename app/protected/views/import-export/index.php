@@ -2,7 +2,9 @@
 use yii\helpers\Html;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Url;
+use app\assets\DataAsset;
 
+DataAsset::register($this);
 ?>
 
 <div class="row">

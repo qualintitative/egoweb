@@ -372,19 +372,22 @@ use common\widgets\Alert;
             }
             expressions[0].countExpressions = countExpressions;
             for (k in this.expressions) {
-                if (this.expressions[k].value) {
-                    if (expressions[k].type != "Counting")
+                console.log(this.expressions[k])
+                if(k == 0)
+                    continue
+                //if (this.expressions[k].value) {
+                    if (this.expressions[k].type != "Counting")
                         this.normalExpressions.push(expressions[k])
                     this.expressions[k].countExpressions = [];
                     for (x in countExpressions) {
                         if (countExpressions[x].id != expressions[k].id)
                             this.expressions[k].countExpressions.push(countExpressions[x]);
                     }
-                    if (this.expressions[k].value.match(","))
+                    if (this.expressions[k].value != "" && this.expressions[k].value.match(","))
                         this.expressions[k].selectedOptions = this.expressions[k].value.split(",")
                     else
                         this.expressions[k].selectedOptions = [this.expressions[k].value]
-                    if (this.expressions[k].value.match(":")) {
+                    if (this.expressions[k].value != "" && this.expressions[k].value.match(":")) {
                         parts = this.expressions[k].value.split(":")
                         if (this.expressions[k].type == "Counting") {
                             this.expressions[k].multiplier = parts[0];
@@ -418,7 +421,7 @@ use common\widgets\Alert;
                         else
                             this.expressions[k].selectedQuestions = [this.expressions[k].value];
                     }
-                }
+                //}
             }
 
         },
