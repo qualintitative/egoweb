@@ -137,6 +137,7 @@ DataAsset::register($this);
           </div>
           <div id="send-interviews"></div>
 
+
           <div id="sendNotice" class="col-sm-12 alert alert-success" style="display:none"></div>
           <div id="sendError" class="col-sm-12 alert alert-danger" style="display:none"></div>
           <div class="progress" style="clear:both">
@@ -146,7 +147,12 @@ DataAsset::register($this);
 
           <textarea id="sendJson" class="hidden"></textarea>
         </div>
+        
         <?= Html::endForm() ?>
+        <div class="row mb-3">
+          <label class="col-sm-3">New Study Name</label>
+          <div class='col-sm-7'><input id="newStudyName" /></div>
+            </div>
         <div class="col-sm-2" style="clear:both">
             <button id="sendSync" class="btn btn-primary" onclick="getData();return false;">Send</button>
           </div>
@@ -216,8 +222,9 @@ DataAsset::register($this);
 
         
         return $.post('<?= Url::to(['/import-export/send']); ?>' + "/" + $("#sendStudy option:selected").val(), {
-            "YII_CSRF_TOKEN": $("input[name='YII_CSRF_TOKEN']").val(),
+            "YII_CSRF_TOKEN": $("input[name='_csrf-protected']").val(),
             "serverId": $("#serverAddress option:selected").val(),
+            'newStudyName':$("#newStudyName").val(),
             "export[]": $(thisInt).val()
           })
           .done(function(res) {

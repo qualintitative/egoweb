@@ -8,7 +8,6 @@ use yii\helpers\Url;
         <input onkeyup="regexSearch($(this).val())" placeholder="Filter Ego ID" />
     </div>
     <div class="col-4 p-3">
-        <input type="checkbox" onchange="noAlterSearch($(this).is(':checked'))" /> With Alters Only
     </div>
 </div>
 <table id="interview-table"> 
@@ -44,13 +43,26 @@ use yii\helpers\Url;
                     .columns(1)
                     .search(val,true,false)
                     .draw();
+
     }
     function noAlterSearch(checked){
         if(checked){
-        jQuery('#interview-table').DataTable()
-                    .columns(3)
-                    .search('^((?!(0)).)*$',true,false)
-                    .draw();
+                    table.search.fixed('range', function (searchStr, data, index) {
+    var min = (checked ? 1 : 0);
+    var max = 10000;
+    var age = parseFloat(data[3]) || 0; // use data for the age column
+ 
+    if (
+        (isNaN(min) && isNaN(max)) ||
+        (isNaN(min) && age <= max) ||
+        (min <= age && isNaN(max)) ||
+        (min <= age && age <= max)
+    ) {
+        return true;
+    }
+ 
+    return false;
+}).draw();
         }else{
             jQuery('#interview-table').DataTable()
                     .columns(3)

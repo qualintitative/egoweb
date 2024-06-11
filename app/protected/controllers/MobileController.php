@@ -53,6 +53,7 @@ class MobileController extends Controller
                     // Allow credentials (cookies, authorization headers, etc.) to be exposed to the browser
                     // 'Access-Control-Allow-Credentials' => null,
                     // Allow OPTIONS caching
+                    'Access-Control-Allow-Private-Network' => true,
                     'Access-Control-Max-Age' => 86400,
                     // Allow the X-Pagination-Current-Page header to be exposed to the browser.
                     'Access-Control-Expose-Headers' => ['X-Pagination-Current-Page'],
@@ -397,6 +398,8 @@ class MobileController extends Controller
                 foreach ($data['questions'] as $q) {
                     if ($nameGenExists == false && $q['SUBJECTTYPE'] == "ALTER") {
                         $question = new Question;
+                        if(!isset($ordering))
+                            $ordering  = -1;
                         $add = 1;
                         $question->attributes = array(
                             'subjectType' => "NAME_GENERATOR",

@@ -38,8 +38,27 @@ class ImportExportController extends Controller
     public function behaviors()
     {
         return [
+            'corsFilter' => [
+                'class' => \yii\filters\Cors::class,
+                'cors' => [
+                    // restrict access to
+                    'Origin' => ['*'],
+                    // Allow only POST and PUT methods
+                    // 'Access-Control-Request-Method' => ['POST', 'PUT'],
+                    // Allow only headers 'X-Wsse'
+
+                    // Allow credentials (cookies, authorization headers, etc.) to be exposed to the browser
+                    // 'Access-Control-Allow-Credentials' => null,
+                    // Allow OPTIONS caching
+                    'Access-Control-Allow-Private-Network'=>true,
+                    'Access-Control-Max-Age' => 86400,
+                    // Allow the X-Pagination-Current-Page header to be exposed to the browser.
+                    'Access-Control-Expose-Headers' => ['X-Pagination-Current-Page'],
+                ],
+                'request'=>Yii::$app->request
+            ],
             'access' => [
-                'class' => AccessControl::className(),
+                'class' => AccessControl::class,
                 'rules' => [
                     [
                         'allow' => true,
@@ -64,6 +83,11 @@ class ImportExportController extends Controller
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
+    }
+
+    public function beforeAction($action) {
+        $this->enableCsrfValidation = false;
+        return parent::beforeAction($action);
     }
 
     /**
@@ -134,6 +158,13 @@ class ImportExportController extends Controller
                     if ($oldStudy && !$_POST['newName']) {
                         $merge = true;
                         $newStudy = $oldStudy;
+                    }
+                    if($_POST['newName']){
+                        $oldStudy = Study::findOne(array("name"=>strval($_POST['newName'])));
+                        if ($oldStudy){
+                            $merge = true;
+                            $newStudy = $oldStudy;
+                        }
                     }
                 }
             }
@@ -1292,8 +1323,12 @@ class ImportExportController extends Controller
                     $notes[] = $result->notes;
                 }
             }
+            $mstudy = Tools::mToA($study);
+            if($_POST['newStudyName']){
+                $mstudy['NAME'] = $_POST['newStudyName'];
+            }
             $studies[] = array(
-             "study"=>Tools::mToA($study),
+             "study"=>$mstudy,
              "questions"=>$questions,
              "expressions"=>$expressions,
              "questionOptions"=>$options,
