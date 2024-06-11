@@ -650,6 +650,20 @@ class InterviewController extends Controller
             $prevAlter->ordering = json_encode($prevOrdering);
             $prevAlter->nameGenQIds = implode(",", $prevNameQIds);
             $prevAlter->save();
+            $a1_answers = Answer::findALl([
+                "alterId1" => $alter->id,
+            ]);
+            $a2_answers = Answer::findALl([
+                "alterId2" => $alter->id,
+            ]);
+            foreach($a1_answers as $a1){
+                $a1->alterId1 = $prevAlter->id;
+                $a1->save();
+            }
+            foreach($a2_answers as $a2){
+                $a2->alterId2 = $prevAlter->id;
+                $a2->save();
+            }
             if ($alter) {
                 $alter->delete();
             }

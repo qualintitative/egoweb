@@ -56,7 +56,9 @@ use app\models\Interview;
                     </div>
                     <script>
 $(function(){
-    $('#study-<?php echo $study->id; ?>').DataTable( {paging: false, info: false,
+    $('#study-<?php echo $study->id; ?>').DataTable( {
+        paging: false,
+        info: false,
         rowReorder: true,
         pageLength: 500,
         columnDefs: [
