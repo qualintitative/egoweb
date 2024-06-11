@@ -322,6 +322,7 @@ class MobileController extends Controller
             if (isset($data['study']['NAME'])) {
                 $oldStudy = Study::findOne(array("name"=>$data['study']['NAME']));
                 if ($oldStudy) {
+                    /*
                     $interviews = Interview::findAll(array("studyId"=>$oldStudy->id));
                     foreach ($interviews as $interview) {
                         $egoId = $interview->egoid;
@@ -329,7 +330,7 @@ class MobileController extends Controller
                             $json = $egoId . ": interview already exists";
                             return $this->renderAjax('/layouts/ajax', ["json"=>$json]);
                         }
-                    }
+                    }*/
                 }
             } else {
                 throw new \yii\web\HttpException(500, 'Internal Server Error');
