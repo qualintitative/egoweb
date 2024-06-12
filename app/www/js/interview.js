@@ -1522,8 +1522,8 @@ function buildList() {
                         continue;
 
                     //match first letter of first name
-                    if (alters[k].NAME.toLowerCase().charAt(0) != alters2[l].NAME.toLowerCase().charAt(0))
-                        continue;
+                    // if (alters[k].NAME.toLowerCase().charAt(0) != alters2[l].NAME.toLowerCase().charAt(0))
+                    //    continue;
                     //  if(alters[k].NAME.toLowerCase() == alters2[l].NAME.toLowerCase())
                     //   continue;
                     name1 = alters[k].NAME.trim().toLowerCase().replace(/\./g, ' ').trim().split(" ");

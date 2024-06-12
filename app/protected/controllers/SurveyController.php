@@ -170,7 +170,7 @@ class SurveyController extends Controller
                 'completed' => $interview->completed,
                 'start_date' => $interview->start_date,
                 'complete_date' => $interview->complete_date,
-                'status' => empty($interview->start_date) ? 'not started' : empty($interview->complete_date) ? 'started' : 'completed'
+                'status' => (empty($interview->start_date) ? 'not started' : (empty($interview->complete_date) ? 'started' : 'completed'))
             ), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
