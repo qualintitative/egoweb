@@ -192,7 +192,7 @@
                             }}</label>
                         <label ng-show="question.SUBJECTTYPE == 'PREVIOUS_ALTER'">{{ prevAlters[question.ALTERID1].NAME
                             }}</label>
-                        <label ng-show="question.SUBJECTTYPE == 'MERGE_ALTER'">{{ question.CITATION }}</label>
+                        <label ng-show="question.SUBJECTTYPE == 'MERGE_ALTER'" ng-bind-html="question.CITATION"></label>
                     </td>
                     <td
                         ng-if="(question.ANSWERTYPE == 'TEXTUAL' || question.ANSWERTYPE == 'NUMERICAL' || question.ANSWERTYPE == 'STORED_VALUE' || question.ANSWERTYPE == 'RANDOM_NUMBER')">
