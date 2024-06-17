@@ -1594,13 +1594,16 @@ function buildList() {
                     var question = $.extend(true, {}, questionList[j]);
                     question.PROMPT = question.PROMPT.replace(/\$\$1/g, alters[k].NAME);
                     question.PROMPT = question.PROMPT.replace(/\$\$2/g, alters2[l].NAME);
-                    question.TITLE = question.TITLE + " - " + alters[k].NAME + " and " + alters2[l].NAME;
+                    question.CITATION = question.CITATION.replace(/\$\$1/g, alters[k].NAME);
+                    question.CITATION = question.CITATION.replace(/\$\$2/g, alters2[l].NAME);
                     question.ALTERID1 = alters[k].ID;
                     question.ALTERID2 = alters2[l].ID;
                     question.array_id = question.ID + '-' + question.ALTERID1 + 'and' + question.ALTERID2;
                     if (parseInt(questionList[j].ASKINGSTYLELIST) == 1) {
+                        question.TITLE = question.TITLE + " - " + alters[k].NAME;
                         merge_alter_question_list[question.array_id] = question;
                     } else {
+                        question.TITLE = question.TITLE + " - " + alters[k].NAME + " and " + alters2[l].NAME;
                         if (preface.PROMPT != "") {
                             if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
                                 evalQIndex.push(i);
@@ -1615,22 +1618,23 @@ function buildList() {
                         i++;
                         masterList[i] = new Object;
                     }
-                    if (questionList[j].ASKINGSTYLELIST == 1) {
-                        if (Object.keys(merge_alter_question_list).length > 0) {
-                            if (preface.PROMPT != "") {
-                                if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
-                                    evalQIndex.push(i);
-                                masterList[i][0] = $.extend(true, {}, preface);
-                                preface.PROMPT = "";
-                                i++;
-                                masterList[i] = new Object;
-                            }
+
+                }
+                if (parseInt(questionList[j].ASKINGSTYLELIST) == 1) {
+                    if (Object.keys(merge_alter_question_list).length > 0) {
+                        if (preface.PROMPT != "") {
                             if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
                                 evalQIndex.push(i);
-                            masterList[i] = merge_alter_question_list;
+                            masterList[i][0] = $.extend(true, {}, preface);
+                            preface.PROMPT = "";
                             i++;
                             masterList[i] = new Object;
                         }
+                        if (questionList[j].ANSWERREASONEXPRESSIONID > 0)
+                            evalQIndex.push(i);
+                        masterList[i] = merge_alter_question_list;
+                        i++;
+                        masterList[i] = new Object;
                     }
                 }
             }

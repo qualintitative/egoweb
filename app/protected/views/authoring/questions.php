@@ -169,7 +169,7 @@ study = <?php echo json_encode($study->toArray(), ENT_QUOTES); ?>;
                         </div>
                     </div>
 
-                    <div class="form-group" v-if="question.askingStyleList == true && question.subjectType == 'EGO'">
+                    <div class="form-group" v-if="question.askingStyleList == true && (question.subjectType == 'EGO' || question.subjectType == 'MERGE_ALTER')">
                         <label for="Question_citation" class="col-sm-4 col-form-label">Stem and Leaf</label>
                         <summer-note :model.sync="question.citation" ref="Question_citation" name="Question[citation]" :vid="question.id + '_citation'"></summer-note>
                     </div>

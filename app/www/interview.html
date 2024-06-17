@@ -166,6 +166,9 @@
                     ng-if="askingStyleList != false && questions[0].SUBJECTTYPE != 'PREFACE'"">
                     <td style=" min-width:180px">
                     </td>
+                    <td
+                    ng-if="subjectType == 'MERGE_ALTER'">
+                    </td>
                     <td ng-if="(answerType == 'TEXTUAL' || answerType == 'NUMERICAL') && askingStyleList != false"
                         style="width:{{ fixedWidth }}"></td>
                     <td ng-repeat="option in options[askingStyleList]"><label>{{ option.NAME }}</label></td>
@@ -177,6 +180,10 @@
                     <td
                         ng-if="question.SUBJECTTYPE == 'EGO_ID' && question.ANSWERTYPE != 'RANDOM_NUMBER' && question.ANSWERTYPE != 'STORED_VALUE'">
                         <label>{{ question.PROMPT }}</label>
+                    </td>
+                    <td
+                    ng-if="question.SUBJECTTYPE == 'MERGE_ALTER'">
+                    <label>{{ question.CITATION }}</label>
                     </td>
                     <td
                         ng-if="question.SUBJECTTYPE == 'EGO_ID' && (question.ANSWERTYPE == 'RANDOM_NUMBER' || question.ANSWERTYPE == 'STORED_VALUE')">
