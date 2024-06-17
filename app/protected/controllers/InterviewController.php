@@ -599,6 +599,8 @@ class InterviewController extends Controller
     {
         $prevAlter = Alters::findOne($Answer['alterId2']);
         $alter = Alters::findOne($Answer['alterId1']);
+        if(!$alter)
+            return;
         if ($Answer['value'] == "MATCH") {
             $intIds = explode(",", $prevAlter->interviewId);
             $intIds = array_unique($intIds);

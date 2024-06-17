@@ -342,7 +342,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
                 $scope.dates[array_id].AMPM = "";
         }
 
-        if ($scope.questions[k].ANSWERTYPE == "MULTIPLE_SELECTION") {
+        if ($scope.questions[k].ANSWERTYPE == "MULTIPLE_SELECTION" && $scope.questions[k].SUBJECTTYPE !=  "MERGE_ALTER") {
             $scope.phrase = "Please select ";
             if ($scope.questions[k].MINCHECKABLEBOXES != null && $scope.questions[k].MINCHECKABLEBOXES != null && $scope.questions[k].MAXCHECKABLEBOXES != "" && $scope.questions[k].MINCHECKABLEBOXES == $scope.questions[k].MAXCHECKABLEBOXES)
                 $scope.phrase += $scope.questions[k].MAXCHECKABLEBOXES;
@@ -470,7 +470,10 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
         }
         //console.log("other spec", $scope.otherSpecify);
         if ($scope.questions[k].SUBJECTTYPE != "EGO_ID") {
-            $scope.prompt = $sce.trustAsHtml(interpretTags($scope.questions[k].PROMPT, $scope.questions[k].ALTERID1, $scope.questions[k].ALTERID2) + '<br><div class="orangeText">' + $scope.phrase + "</div>");
+            if ($scope.questions[k].SUBJECTTYPE == "MERGE_ALTER")
+                $scope.prompt = $sce.trustAsHtml(interpretTags($scope.questions[k].PROMPT, $scope.questions[k].ALTERID1) );
+            else
+                $scope.prompt = $sce.trustAsHtml(interpretTags($scope.questions[k].PROMPT, $scope.questions[k].ALTERID1, $scope.questions[k].ALTERID2) + '<br><div class="orangeText">' + $scope.phrase + "</div>");
         } else {
             $scope.prompt = $sce.trustAsHtml(study.EGOIDPROMPT);
             $scope.questions[k].PROMPT = $scope.questions[k].PROMPT.replace(/(<([^>]+)>)/ig, '');
@@ -692,15 +695,17 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     $scope.multiSelect = function(v, index, array_id) {
         //  if(1 == 1){
         //   alert('g')
-        if (v == "UNMATCH" || v == "NEW_NAME") {
-            if ($scope.options[array_id][index].checked) {
-                if ($scope.alterName.trim().toLowerCase() == $scope.alterMatchName.trim().toLowerCase())
-                    $scope.errors[array_id] = "Please modify the name so it's not identical to the previous name entered.";
-            } else {
-                delete $scope.errors[array_id];
-            }
-        } else if (v == "MATCH") {
+        if($scope.askingStyleList == false){
+            if (v == "UNMATCH" || v == "NEW_NAME") {
+                if ($scope.options[array_id][index].checked) {
+                    if ($scope.alterName.trim().toLowerCase() == $scope.alterMatchName.trim().toLowerCase())
+                        $scope.errors[array_id] = "Please modify the name so it's not identical to the previous name entered.";
+                } else {
+                    delete $scope.errors[array_id];
+                }
+            } else if (v == "MATCH") {
             delete $scope.errors[array_id];
+            }
         }
         if (typeof $scope.questions[array_id] != "undefined")
             var question = $scope.questions[array_id];
@@ -1061,6 +1066,9 @@ app.directive('checkAnswer', [function() {
                                 checks++;
                             }
                         }
+                        if(question.SUBJECTTYPE == "MERGE_ALTER"){
+                            checks = $('input[value="0"]:checked').length
+                        }
                         //console.log("check list range: " + checks);
 
                         if (checks < question.MINLISTRANGE || checks > question.MAXLISTRANGE) {
@@ -1070,7 +1078,7 @@ app.directive('checkAnswer', [function() {
                                     errorMsg = question.MINLISTRANGE + " - " + question.MAXLISTRANGE;
                                 else
                                     errorMsg = "just " + question.MINLISTRANGE;
-                            } else if (!question.MINLISTRANGE && !question.MAXLISTRANGE) {
+                            } else if ((!question.MINLISTRANGE || parseInt(question.MINLISTRANGE) == 0) && question.MAXLISTRANGE) {
                                 errorMsg = "up to " + question.MAXLISTRANGE;
                             } else {
                                 errorMsg = "at least " + question.MINLISTRANGE;
@@ -1105,7 +1113,8 @@ app.directive('checkAnswer', [function() {
                 var valid = true;
                 var array_id = attr.arrayId;
                 var question = questions[attr.questionId];
-
+                console.log("attr", attr)
+                console.log(question)
                 if (question.SUBJECTTYPE == "NAME_GENERATOR") {
                    // alert('error ' + scope.answers[array_id])
                     if (((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW") || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.nGalters).length < scope.questions[0].MINLITERAL) {
@@ -1286,8 +1295,12 @@ app.directive('checkAnswer', [function() {
                                 checks++;
                             }
                         }
+                        if(question.SUBJECTTYPE == "MERGE_ALTER"){
+                            checks = $('input[value="0"]:checked').length
+                        }
 
-                        //console.log("check list range: " + checks);
+
+                        console.log("check list range: " + checks);
 
                         if (checks < question.MINLISTRANGE || checks > question.MAXLISTRANGE) {
                             errorMsg = "";
@@ -1296,15 +1309,24 @@ app.directive('checkAnswer', [function() {
                                     errorMsg = question.MINLISTRANGE + " - " + question.MAXLISTRANGE;
                                 else
                                     errorMsg = "just " + question.MINLISTRANGE;
-                            } else if (!question.MINLISTRANGE && !question.MAXLISTRANGE) {
-                                errorMsg = "up to " + question.MAXLISTRANGE;
+                            } else if ((!question.MINLISTRANGE || parseInt(question.MINLISTRANGE) == 0) && question.MAXLISTRANGE) {
+                                    if(parseInt(question.MAXLISTRANGE) == 1)
+                                        errorMsg = question.MAXLISTRANGE;
+                                    else 
+                                        errorMsg = "no more than " + question.MAXLISTRANGE;
                             } else {
                                 errorMsg = "at least " + question.MINLISTRANGE;
                             }
 
                             valid = false;
-                            scope.errors[array_id] = "Please select " + errorMsg + " response(s).  You selected " + checks + ".";
-
+                            if(question.SUBJECTTYPE == "MERGE_ALTER"){
+                                sLabel = "name";
+                            }else{
+                                sLabel = "response";
+                                if(parseInt( question.MAXLISTRANGE) > 1)
+                                    sLabel = "responses";
+                            }
+                            scope.errors[array_id] = "Please select " + errorMsg + " " + sLabel + ".  You selected " + checks + ".";
                         } else {
                             for (k in scope.errors) {
                                 if (scope.errors[k].match("Please select "))
@@ -1598,6 +1620,14 @@ function buildList() {
                     question.CITATION = question.CITATION.replace(/\$\$2/g, alters2[l].NAME);
                     question.ALTERID1 = alters[k].ID;
                     question.ALTERID2 = alters2[l].ID;
+                    question.ANSWERTYPE = "MULTIPLE_SELECTION"
+                    question.WITHLISTRANGE = 1;
+                    question.MINLISTRANGE = 0;
+                    question.MAXLISTRANGE = 1;
+                    questions[question.ID].ANSWERTYPE = "MULTIPLE_SELECTION"
+                    questions[question.ID].WITHLISTRANGE = 1;
+                    questions[question.ID].MINLISTRANGE = 0;
+                    questions[question.ID].MAXLISTRANGE = 1;
                     question.array_id = question.ID + '-' + question.ALTERID1 + 'and' + question.ALTERID2;
                     if (parseInt(questionList[j].ASKINGSTYLELIST) == 1) {
                         question.TITLE = question.TITLE + " - " + alters[k].NAME;
@@ -1863,6 +1893,7 @@ function buildList() {
     conclusion = new Object;
     conclusion.TITLE = "CONCLUSION";
     conclusion.ANSWERTYPE = "CONCLUSION";
+    conclusion.SUBJECTTYPE = "CONCLUSION";
     if(study.ACTIVE == 0 && isGuest){
         conclusion.PROMPT = study.DISABLED;
         masterList = [];
