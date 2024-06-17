@@ -1080,10 +1080,36 @@ class DataController extends Controller
                         $interviewIds = explode(",", $alter->interviewId);
                         $interviewIds = array_diff($interviewIds, array($interviewId));
                         $alter->interviewId = implode(",", $interviewIds);
+                        if($alter->alterListId != null){
+                            $alterListIds = explode(",", $alter->alterListId);
+                            $alterListIds = array_filter($alterListIds, function ($value) {
+                                return !is_null($value) && $value !== '';
+                            });
+                            $alterListIds = array_diff($alterListIds, [$interviewId]);
+                            $alterListIds = array_unique($alterListIds);
+                            $alter->alterListId =  implode(",", $alterListIds);
+                        }
                         $alter->save();
                     } else {
                         $alter->delete();
                     }
+                }
+                $alters = Alters::find()
+                ->where(new \yii\db\Expression("FIND_IN_SET(" . $interviewId . ", alterListId)"))
+                ->all();
+                foreach ($alters as $alter) {
+                    if (strstr($alter->alterListId, ",")) {
+                        $alterListIds = explode(",", $alter->alterListId);
+                        $alterListIds = array_filter($alterListIds, function ($value) {
+                            return !is_null($value) && $value !== '';
+                        });
+                    }else{
+                        $alterListIds = [$alter->alterListId];
+                    }
+                    $alterListIds = array_diff($alterListIds, [$interviewId]);
+                    $alterListIds = array_unique($alterListIds);
+                    $alter->alterListId =  implode(",", $alterListIds);
+                    $alter->save();
                 }
                 $interview->delete();
             }
