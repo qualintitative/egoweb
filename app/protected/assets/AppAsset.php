@@ -17,16 +17,14 @@ class AppAsset extends AssetBundle
         'www/css/all.css',
         'www/css/bootstrap-vue-icons.min.css',
         'www/css/bootstrap-vue.min.css',
-      //  'https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css',
     ];
     public $js = [
         'www/js/egoweb.js',
         'js/vue.js',
         'js/vue-router.js',
        'js/summernote-bs4.js',
-    //'https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js',
-        'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-vue/2.21.2/bootstrap-vue.min.js',
-        'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-vue/2.21.2/bootstrap-vue-icons.min.js',
+        'js/bootstrap-vue.min.js',
+        'js/bootstrap-vue-icons.min.js',
         'www/js/Sortable.min.js',
     ];
     public $jsOptions = [ 'position' => \yii\web\View::POS_HEAD ];
