@@ -18,6 +18,12 @@ use yii\bootstrap4\LinkPager;
         var total = $("input[type='checkbox'][name*='export']:checked").length;
         var finished = 0;
         var batchSize = 1;
+        multiSesh = 0;
+        withAlters = 0;
+        if ($("#withAlters1").prop("checked") == true)
+            withAlters = 1;
+        if ($("#multiSession1").prop("checked") == true)
+            multiSesh = 1;
         var interviews = $("input[type='checkbox'][name*='export']:checked");
         $(".progress-bar").width(0);
         var batchPromiseRecursive = function() {
@@ -34,6 +40,9 @@ use yii\bootstrap4\LinkPager;
                 data: {
                     studyId: $("#studyId").val(),
                     interviewId: interviewId,
+                    multiSession:multiSesh,
+                    withAlters:withAlters,
+                    studyOrder: $('#studyOrder').val(),
                     expressionId: $("#expressionId").val(),
                     YII_CSRF_TOKEN: $("input[name='YII_CSRF_TOKEN']").val()
                 },

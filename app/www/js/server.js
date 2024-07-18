@@ -24,7 +24,8 @@ $(function(){
     }, 100);
 })
 $(document).keydown(function(e) {
-    if(typeof  $("#qTable")[0] != "undefined")
+    columns = 0;
+    if(typeof  $("#qTable")[0] != "undefined" && $("#qTable")[0].rows.length > 0)
         columns = $("#qTable")[0].rows[0].cells.length - 1;
 	if($("textarea").length == 1 &&  e.keyCode == 13){
         e.preventDefault();

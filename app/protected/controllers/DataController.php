@@ -565,6 +565,12 @@ class DataController extends Controller
             echo "success";
         }
 
+        $multiSesh = false;
+        if (isset($_POST['multiSession'])) {
+            $multiSesh = boolval($_POST['multiSession']);
+        }
+
+
         if (!is_dir($filePath)) {
             mkdir($filePath, 0777, true);
         }
@@ -574,10 +580,14 @@ class DataController extends Controller
             $withAlters = boolval($_POST['withAlters']);
         }
 
+        $studyOrder = [];
+        if(isset($_POST['studyOrder']))
+            $studyOrder =  $_POST['studyOrder'];
+
         $interview = Interview::findOne($_POST['interviewId']);
         if ($interview) {
             $file = fopen($filePath . "/" . $_POST['interviewId'] . "-ego-level.csv", "w") or die("Unable to open file!");
-            $interview->exportEgoLevel($file);
+            $interview->exportEgoLevel($file, $multiSesh, $studyOrder);
             return $this->renderAjax("/layouts/ajax", ["json" => "success"]);
         }
         return $this->renderAjax("/layouts/ajax", ["json" => "fail"]);
@@ -590,53 +600,97 @@ class DataController extends Controller
         }
 
         $study = Study::findOne($_POST['studyId']);
-        $optionsRaw = QuestionOption::findAll(["studyId" => $study->id]);
+        $headers = array();
 
-        // create an array with option ID as key
-        $options = array();
-        foreach ($optionsRaw as $option) {
-            $options[$option->id] = $option->value;
+        $multiSesh = false;
+        if (isset($_POST['multiSession'])) {
+            $multiSesh = boolval($_POST['multiSession']);
         }
 
-        // fetch questions
-        $all_questions = Question::find()->where(["studyId" => $_POST['studyId']])->orderBy(["ordering" => "ASC"])->all();
+        $headers = array();
+        $studyIds = [];
+        $studyNames = [];
+        $study = Study::findOne($_POST['studyId']);
+        if ($study->multiSessionEgoId && $multiSesh) {
+            $multiQs = $study->multiIdQs();
+            $studyOrder =  $_POST['studyOrder'];
+            if ($studyOrder && stristr($studyOrder, ","))
+                $studyOrder = explode(",", $studyOrder);
+            foreach ($multiQs as $q) {
+                $s = Study::findOne($q->studyId);
+                $studyNames[$s->id] = $s->name;
+                if ($studyOrder && stristr($_POST['studyOrder'], ",")) {
+                    $studyIds[array_search($q->studyId, $studyOrder)] =  $q->studyId;
+                } else {
+                    $studyIds[] = $q->studyId;
+                }
+            }
+        } else {
+            $studyIds[] = $study->id;
+        }
+        ksort($studyIds);
+
+        if ($multiSesh)
+            $headers[] =  "Link ID";
         $ego_id_questions = [];
         $ego_questions = [];
         $alter_questions = [];
         $network_questions = [];
         $name_gen_questions = [];
-        foreach ($all_questions as $question) {
-            if ($question->subjectType == "EGO_ID") {
-                $ego_id_questions[] = $question;
+        $previous_questions = [];
+        foreach ($studyIds as $index => $studyId) {
+            $all_questions = Question::find()->where(["studyId" => $studyId])->orderBy(["ordering" => "ASC"])->all();
+            $ego_id_questions[$studyId] = [];
+            $ego_questions[$studyId]  = [];
+            $alter_questions[$studyId]  = [];
+            $network_questions[$studyId]  = [];
+            $name_gen_questions[$studyId]  = [];
+            $previous_questions[$studyId]  = [];
+            foreach ($all_questions as $question) {
+                if ($question->subjectType == "EGO_ID") {
+                    $ego_id_questions[$studyId][] = $question;
+                }
+                if ($question->subjectType == "EGO") {
+                    $ego_questions[$studyId][] = $question;
+                }
+                if ($question->subjectType == "ALTER") {
+                    $alter_questions[$studyId][] = $question;
+                }
+                if ($question->subjectType == "NETWORK") {
+                    $network_questions[$studyId][] = $question;
+                }
+                if ($question->subjectType == "NAME_GENERATOR") {
+                    $name_gen_questions[$studyId][] = $question;
+                }
+                if ($question->subjectType == "PREVIOUS_ALTER") {
+                    $previous_questions[$studyId][] = $question;
+                }
             }
-            if ($question->subjectType == "EGO") {
-                $ego_questions[] = $question;
+        }
+        foreach ($studyIds as $index => $studyId) {
+            $hCount = 0;
+            $counter = "";
+            if ($multiSesh)
+                $counter = "_" .  ($index + 1);
+            $headers[] = 'EgoID' . $counter;
+            $headers[] = 'Interview ID' . $counter;
+            $headers[] = 'Start Time' . $counter;
+            $headers[] =  'End Time' . $counter;
+
+            foreach ($ego_id_questions[$studyId] as $question) {
+                $headers[] =  $question->title  . $counter;
+                $hCount++;
             }
-            if ($question->subjectType == "ALTER") {
-                $alter_questions[] = $question;
+            foreach ($ego_questions[$studyId] as $question) {
+                $headers[] = $question->title  . $counter;
+                $hCount++;
             }
-            if ($question->subjectType == "NETWORK") {
-                $network_questions[] = $question;
-            }
-            if ($question->subjectType == "NAME_GENERATOR") {
-                $name_gen_questions[] = $question;
+            foreach ($network_questions[$studyId] as $question) {
+                $headers[] =  $question->title  . $counter;
+                $hCount++;
             }
         }
 
-        $headers = array();
-        $headers[] = 'Interview ID';
-        $headers[] = "EgoID";
-        $headers[] = 'Start Time';
-        $headers[] = 'End Time';
-        foreach ($ego_id_questions as $question) {
-            $headers[] = $question->title;
-        }
-        foreach ($ego_questions as $question) {
-            $headers[] = $question->title;
-        }
-        foreach ($network_questions as $question) {
-            $headers[] = $question->title;
-        }
 
         $interviewIds = array();
         $interviewIds = explode(",", $_POST['interviewIds']);
