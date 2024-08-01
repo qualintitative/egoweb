@@ -599,17 +599,14 @@ class DataController extends Controller
             die("nothing to export");
         }
 
-        $study = Study::findOne($_POST['studyId']);
-        $headers = array();
-
+        $headers = [];
+        $studyIds = [];
+        $studyNames = [];
         $multiSesh = false;
         if (isset($_POST['multiSession'])) {
             $multiSesh = boolval($_POST['multiSession']);
         }
 
-        $headers = array();
-        $studyIds = [];
-        $studyNames = [];
         $study = Study::findOne($_POST['studyId']);
         if ($study->multiSessionEgoId && $multiSesh) {
             $multiQs = $study->multiIdQs();

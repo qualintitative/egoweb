@@ -3,11 +3,12 @@
     background-color: #f8d7da !important;
     border-color: #f5c6cb !important;
 }
-
+/*
 #ngView {
     display: flex;
     flex-wrap: wrap;
 }
+*/
 
 #realHeader {
     background-color: #fff;

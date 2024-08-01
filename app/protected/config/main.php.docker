@@ -90,7 +90,7 @@ return [
         'APIPassword' => 'yourpasswordhere',
         'encryptionAlgo' => 'AES-128-CBC',
         'encryptionKey' => 'old_key1old_key1',
-        'user.passwordResetTokenExpire' => 3600,
+        'user.passwordResetTokenExpire' => 86400,
         'user.passwordMinLength' => 8,
     ],
 ];
