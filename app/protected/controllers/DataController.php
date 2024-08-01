@@ -420,7 +420,6 @@ class DataController extends Controller
         }
         foreach ($studyIds as $index => $studyId) {
             $hCount = 0;
-            
             $counter = "";
             if ($multiSesh)
                 $counter = "_" .  ($index + 1);
@@ -959,72 +958,104 @@ class DataController extends Controller
         $text = "";
         $rows = [];
         $study = Study::findOne($id);
+        $studyIds = [];
+        $multiSesh = false;
+        if (isset($_GET['multiSession'])) {
+            $multiSesh = boolval($_GET['multiSession']);
+        }
+        if ($study->multiSessionEgoId && $multiSesh) {
+            $multiStudyIds = $study->multiStudyIds();
+            $studyOrder =  $_GET['studyOrder'];
+            if ($studyOrder && stristr($studyOrder, ","))
+                $studyOrder = explode(",", $studyOrder);
+            foreach ($multiStudyIds as $studyId) {
+                if ($studyOrder && stristr($_GET['studyOrder'], ",")) {
+                    $studyIds[array_search($studyId, $studyOrder)] =  $studyId;
+                } else {
+                    $studyIds[] = $studyId;
+                }
+            }
+        } else {
+            $studyIds[] = $study->id;
+        }
+        ksort($studyIds);
+
         $fields = ["Question Order", "Question Title", "Question Prompt", "Stem and Leaf", "Subject Type", "Response Type", "Min", "Max", "Options", "Skip Logic Expression"];
         $rows[] = implode(",", $fields);
-        $results = Expression::find()->where(["studyId" => $id])->all();
-        foreach ($results as $expression) {
-            $expressions[$expression->id] = $expression->name;
-        }
-        $questions = Question::find()->where(["studyId" => $id])->orderBy(["ordering" => "ASC"])->all();
-        $questionTitles = [];
-        $allQuestions = [];
-        foreach ($questions as $question) {
-            $questionTitles[$question->id] = $question->title;
-            if ($question->subjectType == "EGO_ID")
-                $allQuestions[] = $question;
-        }
-        foreach ($questions as $question) {
-            if ($question->subjectType != "EGO_ID")
-                $allQuestions[] = $question;
-        }
-        $egoIdCount = 0;
-        foreach ($allQuestions as $question) {
-            $question->prompt = str_replace('’', "'", $question->prompt);
-            $question->prompt = preg_replace('/[[:^print:]]/', " ", $question->prompt);
-            $question->citation = str_replace('’', "'", $question->citation);
-            $question->citation = preg_replace('/[[:^print:]]/', " ", $question->citation);
-            $fields = [];
-            $fields[] = $question->ordering + 1 + ($question->subjectType == "EGO_ID" ? 0 : $egoIdCount);
-            $fields[] = $question->title;
-            $fields[] = '"' . strip_tags(str_replace('"', "'", $question->prompt)) . '"';
-            $fields[] = '"' . strip_tags(str_replace('"', "'", $question->citation)) . '"';
-            $fields[] = $question->subjectType;
-            $fields[] = $question->answerType;
-            if ($question->answerType == "MULTIPLE_SELECTION") {
-                $fields[] = $question->minCheckableBoxes;
-                $fields[] = $question->maxCheckableBoxes;
-                $optionString = [];
-                $options = QuestionOption::find()->where(["questionId" => $question->id])->orderBy(["ordering" => "ASC"])->all();
-                foreach ($options as $option) {
-                    $optionString[] = "'" . $option->name . "'" .  ' = ' . $option->value;
+        foreach($studyIds as $index=>$studyId){
+            $counter = "";
+            if ($multiSesh)
+                $counter = "_" .  ($index + 1);
+            $results = Expression::find()->where(["studyId" => $studyId])->all();
+            foreach ($results as $expression) {
+                $expressions[$expression->id] = $expression->name;
+            }
+            $questions = Question::find()->where(["studyId" => $studyId])->orderBy(["ordering" => "ASC"])->all();
+            $questionTitles = [];
+            $allQuestions = [];
+            foreach ($questions as $question) {
+                $questionTitles[$question->id] = $question->title;
+                if ($question->subjectType == "EGO_ID")
+                    $allQuestions[] = $question;
+            }
+            foreach ($questions as $question) {
+                if ($question->subjectType != "EGO_ID")
+                    $allQuestions[] = $question;
+            }
+            $egoIdCount = 0;
+            foreach ($allQuestions as $question) {
+                $question->prompt = str_replace('’', "'", $question->prompt);
+                $question->prompt = preg_replace('/[[:^print:]]/', " ", $question->prompt);
+                if($question->citation){
+                    $question->citation = str_replace('’', "'", $question->citation);
+                    $question->citation = preg_replace('/[[:^print:]]/', " ", $question->citation);
                 }
-                if ($question->dontKnowButton)
-                    $optionString[] = "'" . ($question->dontKnowText ? $question->dontKnowText : "Don't Know") . "'" .  ' = ' . $study->valueDontKnow;
-                if ($question->refuseButton)
-                    $optionString[] = "'" . ($question->refuseText ? $question->refuseText : "Refuse") . "'" .  ' = ' . $study->valueRefusal;
+                $fields = [];
+                $fields[] = $question->ordering + 1 + ($question->subjectType == "EGO_ID" ? 0 : $egoIdCount);
+                $fields[] = $question->title . $counter;
+                $fields[] = '"' . strip_tags(str_replace('"', "'", $question->prompt)) . '"';
+                if($question->citation)
+                    $fields[] = '"' . strip_tags(str_replace('"', "'", $question->citation)) . '"';
+                else
+                    $fields[] = "";
+                $fields[] = $question->subjectType;
+                $fields[] = $question->answerType;
+                if ($question->answerType == "MULTIPLE_SELECTION") {
+                    $fields[] = $question->minCheckableBoxes;
+                    $fields[] = $question->maxCheckableBoxes;
+                    $optionString = [];
+                    $options = QuestionOption::find()->where(["questionId" => $question->id])->orderBy(["ordering" => "ASC"])->all();
+                    foreach ($options as $option) {
+                        $optionString[] = "'" . $option->name . "'" .  ' = ' . $option->value;
+                    }
+                    if ($question->dontKnowButton)
+                        $optionString[] = "'" . ($question->dontKnowText ? $question->dontKnowText : "Don't Know") . "'" .  ' = ' . $study->valueDontKnow;
+                    if ($question->refuseButton)
+                        $optionString[] = "'" . ($question->refuseText ? $question->refuseText : "Refuse") . "'" .  ' = ' . $study->valueRefusal;
 
-                $fields[] = '"' . implode("; ", $optionString) . '"';
-            } elseif ($question->answerType == "NUMERICAL") {
-                if ($question->minLimitType == "NLT_LITERAL")
-                    $fields[] = $question->minLiteral;
-                if (isset($questionTitles[$question->minPrevQues]) && $question->minLimitType == "NLT_PREVQUES")
-                    $fields[] = $questionTitles[$question->minPrevQues];
-                if ($question->maxLimitType == "NLT_LITERAL")
-                    $fields[] = $question->maxLiteral;
-                if (isset($questionTitles[$question->maxPrevQues]) && $question->maxLimitType == "NLT_PREVQUES")
-                    $fields[] = $questionTitles[$question->maxPrevQues];
-                $fields[] = "";
-            } else {
-                $fields[] = "";
-                $fields[] = "";
-                $fields[] = "";
+                    $fields[] = '"' . implode("; ", $optionString) . '"';
+                } elseif ($question->answerType == "NUMERICAL") {
+                    if ($question->minLimitType == "NLT_LITERAL")
+                        $fields[] = $question->minLiteral;
+                    if (isset($questionTitles[$question->minPrevQues]) && $question->minLimitType == "NLT_PREVQUES")
+                        $fields[] = $questionTitles[$question->minPrevQues];
+                    if ($question->maxLimitType == "NLT_LITERAL")
+                        $fields[] = $question->maxLiteral;
+                    if (isset($questionTitles[$question->maxPrevQues]) && $question->maxLimitType == "NLT_PREVQUES")
+                        $fields[] = $questionTitles[$question->maxPrevQues];
+                    $fields[] = "";
+                } else {
+                    $fields[] = "";
+                    $fields[] = "";
+                    $fields[] = "";
+                }
+                if ($question->answerReasonExpressionId) {
+                    $fields[] = $expressions[$question->answerReasonExpressionId];
+                }
+                $rows[] = implode(",", $fields);
+                if ($question->subjectType == "EGO_ID")
+                    $egoIdCount++;
             }
-            if ($question->answerReasonExpressionId) {
-                $fields[] = $expressions[$question->answerReasonExpressionId];
-            }
-            $rows[] = implode(",", $fields);
-            if ($question->subjectType == "EGO_ID")
-                $egoIdCount++;
         }
         $text = implode("\r\n", $rows);
         return $this->response->sendContentAsFile($text, $study->name . '-codebook.csv')->send();

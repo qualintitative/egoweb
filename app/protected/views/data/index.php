@@ -313,7 +313,10 @@ use yii\bootstrap4\LinkPager;
     }
 
     function exportCodebook() {
-        document.location = rootUrl + "/data/codebook/<?php echo $study->id; ?>";
+        var multiSesh = 0;
+        if ($("#multiSession1").prop("checked") == true)
+            multiSesh = 1;
+        document.location = rootUrl + "/data/codebook/<?php echo $study->id; ?>?studyOrder="  + $('#studyOrder').val() + "&multiSession=" + multiSesh;
     }
 
     function deleteInterviews() {
