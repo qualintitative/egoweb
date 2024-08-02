@@ -692,9 +692,18 @@ class DataController extends Controller
         $interviewIds = explode(",", $_POST['interviewIds']);
 
         $text = implode(',', $headers) . "\n";
+        $exported = [];
         foreach ($interviewIds as $interviewId) {
             $filePath = getcwd() . "/assets/" . $_POST['studyId'] . "/" . $interviewId . "-ego-level.csv";
             if (file_exists($filePath)) {
+                $rows = explode("\n", file_get_contents($filePath));
+                $cols = explode(",", $rows[0]);
+                if (!in_array($cols[0], $exported)) {
+                    if($multiSesh)
+                        $exported[] = $cols[0];
+                } else {
+                    continue;
+                }
                 $text .= file_get_contents($filePath);
                 unlink($filePath);
             }

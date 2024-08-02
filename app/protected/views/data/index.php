@@ -24,6 +24,8 @@ use yii\bootstrap4\LinkPager;
             withAlters = 1;
         if ($("#multiSession1").prop("checked") == true)
             multiSesh = 1;
+        $("#withAlters").val(withAlters);
+        $("#multiSession").val(multiSesh);
         var interviews = $("input[type='checkbox'][name*='export']:checked");
         $(".progress-bar").width(0);
         var batchPromiseRecursive = function() {
