@@ -708,7 +708,11 @@ class DataController extends Controller
                 unlink($filePath);
             }
         }
-        return $this->response->sendContentAsFile($text, $study->name . '-ego-level.csv', "text/csv; charset=UTF-8")->send();
+        if (isset($_POST['filename']) && $_POST['filename'] && $multiSesh)
+            $filename = $_POST['filename']  . '-ego-level';
+        else
+            $filename = $study->name . '-ego-level';
+        return $this->response->sendContentAsFile($text, $filename . '.csv', "text/csv; charset=UTF-8")->send();
     }
 
     public function actionExportalterpair()
