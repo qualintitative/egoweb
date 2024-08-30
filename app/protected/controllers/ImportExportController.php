@@ -390,6 +390,9 @@ class ImportExportController extends Controller
                             $params = json_decode(htmlspecialchars_decode($question->networkParams), true);
                             if ($params) {
                                 foreach ($params as $k => &$param) {
+                                    if (is_numeric($param) && isset($newExpressionIds[intval($param)])) {
+                                        $param = $newExpressionIds[intval($param)];
+                                    }
                                     if (isset($param['questionId']) && stristr($param['questionId'], "expression")) {
                                         list($label, $expressionId) = explode("_", $param['questionId']);
                                         if (isset($newExpressionIds[intval($expressionId)])) {
@@ -411,6 +414,18 @@ class ImportExportController extends Controller
                                 }
                             }
                             $question->networkParams = json_encode($params);
+                        }
+
+                        if ($question->subjectType == "MULTI_GRAPH") {
+                            $graphs = json_decode(htmlspecialchars_decode($question->networkGraphs), true);
+                            if ($graphs) {
+                                foreach ($graphs as $k => &$graph) {
+                                    if (isset($graph['questionId']) && is_numeric($graph['questionId']) && isset($newQuestionIds[intval($graph['questionId'])])) {
+                                        $graph['questionId'] = $newQuestionIds[intval($graph['questionId'])];
+                                    }
+                                }
+                            }
+                            $question->networkGraphs = json_encode($graphs);
                         }
 
                         if (isset($newExpressionIds[$question->answerReasonExpressionId])) {
@@ -891,7 +906,7 @@ class ImportExportController extends Controller
             }
 
             if (stristr($alter->ordering, "{")) {
-                $nGorder = json_decode($alter->ordering, true);
+                $nGorder = json_decode(htmlspecialchars_decode($alter->ordering), true);
                 $newOrder = array();
                 foreach ($nGorder as $nQid=>$norder) {
                     if (isset($newQuestionIds[intval($nQid)])) {
