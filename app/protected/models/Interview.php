@@ -1752,7 +1752,6 @@ class Interview extends \yii\db\ActiveRecord
         $answers[$interview->id] = $answer;
         $alter = Alters::find()
             ->where(new \yii\db\Expression("FIND_IN_SET(" . $interview->id . ", interviewId)"))
-            ->orderBy(['ordering' => 'ASC'])
             ->all();
         $alters[$interview->id] = $alter;
         $graph = Graph::findAll(array("interviewId" => $interview->id));
