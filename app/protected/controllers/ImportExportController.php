@@ -1212,7 +1212,7 @@ class ImportExportController extends Controller
                     foreach ($options as $option) {
                         $x->startElement('option');
                         foreach ($columns['questionOption'] as $attr) {
-                            if (!in_array($attr, $exclude) && $option->$attr != null) {
+                            if (!in_array($attr, $exclude) && $option->$attr !== null) {
                                 $x->writeAttribute($attr, $option->$attr);
                             }
                         }
