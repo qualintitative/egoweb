@@ -2037,11 +2037,13 @@ function interpretTags(string, alterId1, alterId2) {
             if (question.ANSWERTYPE == "MULTIPLE_SELECTION") {
                 for (o in options[question.ID]) {
                     if(options[question.ID][o].OTHERSPECIFY == true){
-                        var specify = answers[array_id].OTHERSPECIFYTEXT.split(";;");
-                        for (s in specify) {
-                            var pair = specify[s].split(":");
-                            if(pair[0] == options[question.ID][o].ID)
-                               lastAnswerOps.push(options[question.ID][o].NAME + " ("+htmldecode(pair[1])+")");
+                        if (typeof answers[array_id].OTHERSPECIFYTEXT != "undefined" && answers[array_id].OTHERSPECIFYTEXT != null && answers[array_id].OTHERSPECIFYTEXT != "") {
+                            var specify = answers[array_id].OTHERSPECIFYTEXT.split(";;");
+                            for (s in specify) {
+                                var pair = specify[s].split(":");
+                                if(pair[0] == options[question.ID][o].ID)
+                                lastAnswerOps.push(options[question.ID][o].NAME + " ("+htmldecode(pair[1])+")");
+                            }
                         }
                     }else{
                         if (options[question.ID][o].ID.toString() == answers[array_id].VALUE.toString() || $.inArray(options[question.ID][o].ID.toString(), answers[array_id].VALUE.split(",")) != -1)
