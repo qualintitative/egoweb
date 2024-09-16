@@ -475,9 +475,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
             else
                 $scope.prompt = $sce.trustAsHtml(interpretTags($scope.questions[k].PROMPT, $scope.questions[k].ALTERID1, $scope.questions[k].ALTERID2) + '<br><div class="orangeText">' + $scope.phrase + "</div>");
         } else {
-            if($scope.questions[k].PROMPT == null)
-                $scope.questions[k].PROMPT = "";
-            $scope.prompt = $sce.trustAsHtml($scope.questions[k].PROMPT.replace(/(<([^>]+)>)/ig, ''));
+            if(study.EGOIDPROMPT == null)
+                study.EGOIDPROMPT = "";
+            $scope.prompt = $sce.trustAsHtml(study.EGOIDPROMPT.replace(/(<([^>]+)>)/ig, ''));
         }
 
         if ($scope.questions[k].SUBJECTTYPE == "NETWORK") {
