@@ -455,7 +455,11 @@ class AuthoringController extends Controller
                 }
                 $url = Url::base(true) . Url::toRoute("/interview/".$study['id']."#/page/0/".$key);
             }
-            $alterList[] = ["id"=>$item->id, "name"=>$item->name, "email"=>$item->email, "nameGenQIds"=>$item->nameGenQIds, "nameGenQIdsArray"=>explode(",", $item->nameGenQIds), "interviewerId"=>$item->interviewerId, "url"=>$url];
+            if($item->nameGenQIds != null && stristr(",", $item->nameGenQIds))
+                $nameGenQIds = explode(",", $item->nameGenQIds);
+            else
+                $nameGenQIds = "";
+            $alterList[] = ["id"=>$item->id, "name"=>$item->name, "email"=>$item->email, "nameGenQIds"=>$item->nameGenQIds, "nameGenQIdsArray"=>$nameGenQIds, "interviewerId"=>$item->interviewerId, "url"=>$url];
         }
         $result = User::find()->where(['<=', 'permissions', 5])->andWhere(['not', ['id'=>$userIds]])->all();
         foreach ($result as $item) {

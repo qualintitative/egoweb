@@ -100,6 +100,7 @@ class AdminController extends Controller
             return $this->response->redirect(Url::toRoute('/admin'));
         }
 
+
         $this->view->title = "EgoWeb 2.0";
         $interviews = [];
         $egoid_answers = [];
@@ -175,7 +176,8 @@ class AdminController extends Controller
         $users = [];
         $userExists = false;
         foreach ($result as $user) {
-            $user->generatePasswordResetToken();
+            if (!User::isPasswordResetTokenValid($user->password_reset_token)) 
+                $user->generatePasswordResetToken();
             $userA = $user->toArray();
             $user->save();
             $userA['link'] = Yii::$app->urlManager->createAbsoluteUrl(['site/reset-password/' . $user->password_reset_token]);

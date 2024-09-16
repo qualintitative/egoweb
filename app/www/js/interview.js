@@ -181,7 +181,7 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
     }
 
     for (var k in $scope.questions) {
-        if(typeof interviewId == "undefined" && $scope.questions[k].SUBJECTTYPE != "EGO_ID"){
+        if(typeof interviewId == "undefined" && $scope.questions[k].SUBJECTTYPE != "EGO_ID" && $scope.questions[k].ANSWERTYPE != "INTRODUCTION"){
             $scope.errors[0] = 'The this interview is currently set to provide an ID from an external platform or url. The interview cannot be initiated within the EgoWeb platform. Please change this setting or initiate this interview externally. Settings can be changed in study authoring by deselecting Hide Ego Id Page (for studies will Ego Id prefills)';
         }
         var array_id = $scope.questions[k].array_id;
@@ -475,8 +475,9 @@ app.controller('interviewController', ['$scope', '$log', '$routeParams', '$sce',
             else
                 $scope.prompt = $sce.trustAsHtml(interpretTags($scope.questions[k].PROMPT, $scope.questions[k].ALTERID1, $scope.questions[k].ALTERID2) + '<br><div class="orangeText">' + $scope.phrase + "</div>");
         } else {
-            $scope.prompt = $sce.trustAsHtml(study.EGOIDPROMPT);
-            $scope.questions[k].PROMPT = $scope.questions[k].PROMPT.replace(/(<([^>]+)>)/ig, '');
+            if($scope.questions[k].PROMPT == null)
+                $scope.questions[k].PROMPT = "";
+            $scope.prompt = $sce.trustAsHtml($scope.questions[k].PROMPT.replace(/(<([^>]+)>)/ig, ''));
         }
 
         if ($scope.questions[k].SUBJECTTYPE == "NETWORK") {
@@ -1115,7 +1116,7 @@ app.directive('checkAnswer', [function() {
                 var question = questions[attr.questionId];
                 console.log("attr", attr)
                 console.log(question)
-                if (question.SUBJECTTYPE == "NAME_GENERATOR") {
+                if (typeof question != 'undefined' && question.SUBJECTTYPE == "NAME_GENERATOR") {
                    // alert('error ' + scope.answers[array_id])
                     if (((typeof scope.answers[array_id] != "undefined" && scope.answers[array_id].SKIPREASON != "REFUSE" && scope.answers[array_id].SKIPREASON != "DONT_KNOW") || typeof scope.answers[array_id] == "undefined") && Object.keys(scope.nGalters).length < scope.questions[0].MINLITERAL) {
                         var noun = " people";

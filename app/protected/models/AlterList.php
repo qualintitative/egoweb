@@ -53,10 +53,10 @@ class AlterList extends \yii\db\ActiveRecord
 
     public function afterFind()
     {
-        if (strlen($this->name) >= 8) {
+        if ($this->name != null && strlen($this->name) >= 8) {
             $this->name = Tools::decrypt($this->name);
         }
-        if (strlen($this->email) >= 8) {
+        if ($this->email != null && strlen($this->email) >= 8) {
             $this->email = Tools::decrypt($this->email);
         }
     

@@ -1,4 +1,7 @@
 # Changelog
+## [2.0.11.0] - 2024-09-16
+- various bug fixes
+
 ## [2.0.11.0] - 2023-07-28
 - upgraded to Yii2 veersion 2.0.48 for PHP 8.1 compatibility
 - improved multisession export
