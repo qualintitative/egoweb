@@ -69,7 +69,7 @@
                                 <label class="offset-sm-4 col-sm-5 col-form-label">{{item.name}}</label>
                                 <div class="col-sm-3">
                                     <b-form-select 
-                                    v-if="!isNaN(question.nParams.nodeColor.questionId)" 
+                                    v-if="question.nParams.nodeColor.questionId != 'degree' && question.nParams.nodeColor.questionId != 'eigenvector' && question.nParams.nodeColor.questionId != 'centrality'" 
                                     v-model="question.nParams.nodeColor.options[index+2].color"
                                         :options="colors"
                                         size="xs"
@@ -80,7 +80,7 @@
                                         </template>
                                     </b-form-select>
                                     <b-form-select 
-                                    v-if="isNaN(question.nParams.nodeColor.questionId)" 
+                                    v-if="question.nParams.nodeColor.questionId == 'degree' || question.nParams.nodeColor.questionId == 'eigenvector' || question.nParams.nodeColor.questionId == 'centrality'" 
                                     v-model="question.nParams.nodeColor.options[index+2].color"
                                         :options="gradients"
                                         size="xs"
