@@ -1617,8 +1617,10 @@ function buildList() {
                     var question = $.extend(true, {}, questionList[j]);
                     question.PROMPT = question.PROMPT.replace(/\$\$1/g, alters[k].NAME);
                     question.PROMPT = question.PROMPT.replace(/\$\$2/g, alters2[l].NAME);
-                    question.CITATION = question.CITATION.replace(/\$\$1/g, alters[k].NAME);
-                    question.CITATION = question.CITATION.replace(/\$\$2/g, alters2[l].NAME);
+                    if(question.ASKINGSTYLELIST){
+                        question.CITATION = question.CITATION.replace(/\$\$1/g, alters[k].NAME);
+                        question.CITATION = question.CITATION.replace(/\$\$2/g, alters2[l].NAME);
+                    }
                     question.ALTERID1 = alters[k].ID;
                     question.ALTERID2 = alters2[l].ID;
                     question.ANSWERTYPE = "MULTIPLE_SELECTION"
