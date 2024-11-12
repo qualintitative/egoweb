@@ -1457,7 +1457,12 @@ function buildList() {
             }
             alter_non_list_qs = [];
         }
-        if (questionList[j - 1] != undefined && (questionList[j].SUBJECTTYPE != "EGO" || questionList[j].ASKINGSTYLELIST != 1 || questionList[j].PROMPT != questionList[j - 1].PROMPT) && questionList[j - 1].SUBJECTTYPE == "EGO" && Object.keys(ego_question_list).length > 0) {
+        if (questionList[j - 1] != undefined &&   questionList[j - 1].SUBJECTTYPE == "EGO" && Object.keys(ego_question_list).length > 0 &&
+            (questionList[j].SUBJECTTYPE != "EGO" || 
+            questionList[j].ASKINGSTYLELIST != 1 || 
+            questionList[j].PROMPT != questionList[j - 1].PROMPT ||
+            j ==  questionList.length - 1
+            ) ) {
             //console.log("wait over " + Object.keys(ego_question_list).length);
             if (ego_question_list[Object.keys(ego_question_list)[0]].ANSWERREASONEXPRESSIONID > 0)
                 evalQIndex.push(i);
