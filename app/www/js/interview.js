@@ -1463,6 +1463,9 @@ function buildList() {
             questionList[j].PROMPT != questionList[j - 1].PROMPT ||
             j ==  questionList.length - 1
             ) ) {
+            if( questionList[j].PROMPT == questionList[j - 1].PROMPT )
+                ego_question_list[parseInt(questionList[j].ORDERING) + 1] = questionList[j];
+
             //console.log("wait over " + Object.keys(ego_question_list).length);
             if (ego_question_list[Object.keys(ego_question_list)[0]].ANSWERREASONEXPRESSIONID > 0)
                 evalQIndex.push(i);
