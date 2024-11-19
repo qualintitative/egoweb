@@ -81,6 +81,7 @@ class Expression extends \yii\db\ActiveRecord
         if (is_numeric($this->questionId)) {
             if ($this->question->subjectType == 'ALTER_PAIR') {
                 $array_id = $this->questionId . '-' .  $alterId1 . "and" . $alterId2;
+                $array_id_2 = $this->questionId . '-' .  $alterId2 . "and" . $alterId1;
             } elseif ($this->question->subjectType == 'ALTER') {
                 $array_id = $this->questionId . '-' .  $alterId1;
             } else {
@@ -89,7 +90,11 @@ class Expression extends \yii\db\ActiveRecord
             if (isset($answers[$array_id])) {
                 $answer = $answers[$array_id]->value;
             } else {
-                $answer = "";
+                if (isset($array_id_2) && isset($answers[$array_id_2])) {
+                    $answer = $answers[$array_id_2]->value;
+                }else{
+                    $answer = "";
+                }
             }
         }
 

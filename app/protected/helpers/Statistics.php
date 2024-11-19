@@ -306,10 +306,12 @@ class Statistics
 
     public function getDensity()
     {
-        $possibleEdges = 0;
+        
+       /* $possibleEdges = 0;
         for ($i = 0; $i < count($this->alters); $i++) {
             $possibleEdges = $possibleEdges + $i;
-        }
+        }*/
+        $possibleEdges = ( count($this->alters) - 1) *  count($this->alters) / 2;
         $density = count($this->adjacencies) < 1 ? 0.0 : count($this->adjacencies) / $possibleEdges;
         return round($density, 3);
     }

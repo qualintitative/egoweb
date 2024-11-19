@@ -363,13 +363,21 @@ function evalExpression(id, alterId1, alterId2) {
         array_id = questionId;
     if (typeof alterId1 != 'undefined' && subjectType == 'ALTER')
         array_id += "-" + alterId1;
-    else if (typeof alterId2 != 'undefined' && subjectType == 'ALTER_PAIR')
+    else if (typeof alterId2 != 'undefined' && subjectType == 'ALTER_PAIR'){
+        array_id_2 = array_id.slice();
+        array_id_2 += "-" + alterId2 + 'and' + alterId1;
         array_id += "-" + alterId1 + 'and' + alterId2;
+    }
 
     if (typeof answers[array_id] != "undefined")
         answer = answers[array_id].VALUE;
-    else
-        answer = "";
+    else{
+        if (subjectType == 'ALTER_PAIR' && typeof answers[array_id_2] != "undefined"){
+            answer = answers[array_id_2].VALUE;
+        }else{
+            answer = "";
+        }
+    }
     console.log("ansswer", answer, array_id)
     if (expressions[id].TYPE == "Text") {
         if (!answer)
