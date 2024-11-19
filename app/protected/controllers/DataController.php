@@ -380,7 +380,6 @@ class DataController extends Controller
         }
         ksort($studyIds);
 
-        $indents = [];
         if ($multiSesh)
             $headers[] =  "Link ID";
         $ego_id_questions = [];
@@ -482,29 +481,27 @@ class DataController extends Controller
                 $counter = "_" .  ($index + 1);
             foreach ($name_gen_questions[$studyId] as $question) {
                 $headers[] =  $question->title  . $counter;
-                $hCount++;
             }
             foreach ($previous_questions[$studyId] as $question) {
                 $headers[] = $question->title  . $counter;
-                $hCount++;
             }
             foreach ($alter_questions[$studyId] as $question) {
                 $headers[] = $question->title  . $counter;
-                $hCount++;
             }
             if (isset($_POST[$studyId . '_expressionId']) && $_POST[$studyId . '_expressionId'] != "") {
                 $headers[] =  "Degree"  . $counter;
                 $headers[] =  "Betweenness"  . $counter;
                 $headers[] =   "Eigenvector"  . $counter;
-                $hCount += 3;
             }
 
-            $indents[$studyId] = $hCount;
         }
         if ($multiSesh &&  $study->multiSessionEgoId) {
             $headers[] =  'Alter ID';
             foreach ($studyIds as $index => $studyId) {
-                $headers[] = $studyNames[$studyId];
+                $counter = "";
+                if ($multiSesh)
+                    $counter = "_" .  ($index + 1);
+                $headers[] = $studyNames[$studyId] . $counter;
             }
         }
 

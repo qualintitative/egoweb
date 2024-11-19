@@ -484,7 +484,7 @@ DataAsset::register($this);
         table = $('#dTable').DataTable({
             order: [[1, 'desc']],
             columns: columnDef,
-            lengthMenu: [10, 50, 100, 500, 2500],
+            lengthMenu: [10, 50, 100, 500, 2500, 5000],
             "emptyTable": "No data available in table",
             "rowCallback": function(row, data, dataIndex ) {
         if(  isDupe.indexOf(data[3]) != -1  ){
