@@ -182,8 +182,7 @@ use yii\bootstrap4\LinkPager;
                     withAlters: withAlters,
                     multiSession: multiSesh,
                     studyOrder: $('#studyOrder').val(),
-                    expressionId: $("#expressionId").val(),
-                    YII_CSRF_TOKEN: $("input[name='YII_CSRF_TOKEN']").val()
+                    '_csrf-protected': $("input[name='_csrf-protected']").val()
                 },
                 success: function(data) {
                     finished++;

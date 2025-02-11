@@ -642,7 +642,7 @@ class Interview extends \yii\db\ActiveRecord
                 if (isset($alter->id)) {
                     
                     foreach ($name_gen_questions[$interview->studyId] as $question) {
-                        if (count($name_gen_questions) == 1) {
+                        if (count($name_gen_questions[$interview->studyId]) == 1) {
                             $answers[]  = 1;
                             continue;
                         }
@@ -1488,7 +1488,9 @@ class Interview extends \yii\db\ActiveRecord
                 foreach ($interviews as $interview) {
                     $studyId = $interview->studyId;
                     foreach ($alter_pair_questions[$studyId] as $question) {
-                        if (isset($ap_answers[$question->id][$alter->id][$alter2->id])) {
+                        if (isset($ap_answers[$question->id][$alter->id][$alter2->id])  ||
+                        isset($ap_answers[$question->id][$alter2->id][$alter->id])
+                        ) {
                             $count++;
                         }
                     }
@@ -1497,7 +1499,11 @@ class Interview extends \yii\db\ActiveRecord
                     continue;
     
                 $array_id = $alter->id."and".$alter2->id;
+
                 if(in_array($array_id, $array_ids))
+                    continue;
+                    $array_id = $alter2->id."and".$alter->id;
+                    if(in_array($array_id, $array_ids))
                     continue;
                 $array_ids[] = $array_id;
                 if($multiSession){
@@ -1543,6 +1549,8 @@ class Interview extends \yii\db\ActiveRecord
                             continue;
                         }
                         $result = $ap_answers[$question->id][$alter->id][$alter2->id];
+                        if(!$result && isset($ap_answers[$question->id][$alter2->id][$alter->id]))
+                            $result = $ap_answers[$question->id][$alter2->id][$alter->id];
                         $answer = $result->value;
 
                         $skipReason = $result->skipReason;

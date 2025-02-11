@@ -29,8 +29,9 @@ class AlterPrompt extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['studyId', 'afterAltersEntered', 'display'], 'required'],
+            [['studyId', 'display'], 'required'],
             [['studyId', 'afterAltersEntered', 'questionId'], 'integer'],
+            ['afterAltersEntered','default', 'value'=>"0"],
             [['display'], 'string'],
         ];
     }

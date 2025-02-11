@@ -687,6 +687,8 @@ class ImportExportController extends Controller
                             if (isset($newExpressionIds[intval($newGraph->expressionId)])) {
                                 $newGraph->expressionId = $newExpressionIds[intval($newGraph->expressionId)];
                             }
+                            if(!$newGraph->expressionId)
+                                continue;
 
                             if (!$newGraph->save()) {
                                 print_r($newExpressionIds);

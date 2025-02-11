@@ -364,7 +364,7 @@ function evalExpression(id, alterId1, alterId2) {
     if (typeof alterId1 != 'undefined' && subjectType == 'ALTER')
         array_id += "-" + alterId1;
     else if (typeof alterId2 != 'undefined' && subjectType == 'ALTER_PAIR'){
-        array_id_2 = array_id.slice();
+        array_id_2 = array_id.toString().slice();
         array_id_2 += "-" + alterId2 + 'and' + alterId1;
         array_id += "-" + alterId1 + 'and' + alterId2;
     }
