@@ -386,6 +386,7 @@ class DataController extends Controller
         $ego_questions = [];
         $alter_questions = [];
         $network_questions = [];
+        $multi_graph_questions = [];
         $name_gen_questions = [];
         $previous_questions = [];
         foreach ($studyIds as $index => $studyId) {
@@ -396,6 +397,8 @@ class DataController extends Controller
             $network_questions[$studyId]  = [];
             $name_gen_questions[$studyId]  = [];
             $previous_questions[$studyId]  = [];
+            $multi_graph_questions[$studyId] = [];
+
             foreach ($all_questions as $question) {
                 if ($question->subjectType == "EGO_ID") {
                     $ego_id_questions[$studyId][] = $question;
@@ -408,6 +411,9 @@ class DataController extends Controller
                 }
                 if ($question->subjectType == "NETWORK") {
                     $network_questions[$studyId][] = $question;
+                }
+                if ($question->subjectType == "MULTI_GRAPH") {
+                    $multi_graph_questions[$studyId][] = $question;
                 }
                 if ($question->subjectType == "NAME_GENERATOR") {
                     $name_gen_questions[$studyId][] = $question;
@@ -436,6 +442,10 @@ class DataController extends Controller
                 $hCount++;
             }
             foreach ($network_questions[$studyId] as $question) {
+                $headers[] =  $question->title  . $counter;
+                $hCount++;
+            }
+            foreach ($multi_graph_questions[$studyId] as $question) {
                 $headers[] =  $question->title  . $counter;
                 $hCount++;
             }

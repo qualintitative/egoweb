@@ -251,6 +251,7 @@ class Interview extends \yii\db\ActiveRecord
         $alter_questions = [];
         $network_questions = [];
         $name_gen_questions = [];
+        $multi_graph_questions = [];
         $previous_questions = [];
         $study = Study::findOne($this->studyId);
         $studyNames = [];
@@ -271,6 +272,7 @@ class Interview extends \yii\db\ActiveRecord
             $network_questions[$studyId] = [];
             $name_gen_questions[$studyId] = [];
             $previous_questions[$studyId] = [];
+            $multi_graph_questions[$studyId] = [];
             foreach ($all_questions[$studyId] as $question) {
                 if ($question->subjectType == "EGO_ID") {
                     $ego_id_questions[$studyId][] = $question;
@@ -283,6 +285,9 @@ class Interview extends \yii\db\ActiveRecord
                 }
                 if ($question->subjectType == "NETWORK") {
                     $network_questions[$studyId][] = $question;
+                }
+                if ($question->subjectType == "MULTI_GRAPH") {
+                    $multi_graph_questions[$studyId][] = $question;
                 }
                 if ($question->subjectType == "NAME_GENERATOR") {
                     $name_gen_questions[$studyId][] = $question;
@@ -550,6 +555,43 @@ class Interview extends \yii\db\ActiveRecord
                 }
 
                 foreach ($network_questions[$interview->studyId]  as $question) {
+                    $answer = Answer::findOne(array("interviewId" =>  $interview->id, "questionId" => $question->id));
+                    if (!$answer) {
+                        $answers[] = $study->valueNotYetAnswered;
+                        continue;
+                    }
+                    if ($answer->value !== "" && $answer->skipReason == "NONE" && $answer->value != $study->valueLogicalSkip) {
+                        if ($question->answerType == "SELECTION") {
+                            if (isset($options[$answer])) {
+                                $answers[] = $options[$answer];
+                            } else {
+                                $answers[] = "";
+                            }
+                        } elseif ($question->answerType == "MULTIPLE_SELECTION") {
+                            $optionIds = explode(',', $answer->value);
+                            $list = array();
+                            foreach ($optionIds as $optionId) {
+                                if (isset($options[$optionId])) {
+                                    $list[] = $options[$optionId];
+                                }
+                            }
+                            $answers[] = implode('; ', $list);
+                        } else {
+                            $answer->value = preg_replace('/amp;/', "", $answer->value);
+                            $answers[] = htmlspecialchars_decode($answer->value);
+                        }
+                    } elseif ($answer->skipReason == "DONT_KNOW") {
+                        $answers[] = $study->valueDontKnow;
+                    } elseif ($answer->skipReason == "REFUSE") {
+                        $answers[] = $study->valueRefusal;
+                    } elseif ($answer->value == $study->valueLogicalSkip) {
+                        $answers[] = $study->valueLogicalSkip;
+                    } else {
+                        $answers[] = "";
+                    }
+                }
+
+                foreach ($multi_graph_questions[$interview->studyId]  as $question) {
                     $answer = Answer::findOne(array("interviewId" =>  $interview->id, "questionId" => $question->id));
                     if (!$answer) {
                         $answers[] = $study->valueNotYetAnswered;
