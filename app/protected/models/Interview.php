@@ -1541,13 +1541,15 @@ class Interview extends \yii\db\ActiveRecord
                     continue;
     
                 $array_id = $alter->id."and".$alter2->id;
-
                 if(in_array($array_id, $array_ids))
                     continue;
-                    $array_id = $alter2->id."and".$alter->id;
-                    if(in_array($array_id, $array_ids))
+                $array_ids[] = $array_id;
+                
+                $array_id = $alter2->id."and".$alter->id;
+                if(in_array($array_id, $array_ids))
                     continue;
                 $array_ids[] = $array_id;
+                
                 if($multiSession){
                     foreach ($interviews as $index=>$interview) {
                         if(!$interview->id)
