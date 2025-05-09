@@ -32,7 +32,7 @@ class Tools
         }else{
             $ivSize = 16;
             $iv = openssl_random_pseudo_bytes($ivSize);
-            $ops_encrypt_data = @openssl_encrypt($data, 'AES-128-CBC', $key, false, $iv);
+            $ops_encrypt_data = @openssl_encrypt($data, $algo, $key, false, $iv);
             $encrypted = base64_encode($iv . base64_decode($ops_encrypt_data));
         }
         return $encrypted;
@@ -52,7 +52,7 @@ class Tools
             $ivSize = 16;
             $iv = substr($data, 0, $ivSize);
             $ops_data = substr($data, $ivSize, strlen($data));
-            $decrypted = @openssl_decrypt($ops_data, 'AES-128-CBC', $key, OPENSSL_RAW_DATA | OPENSSL_NO_PADDING, $iv);
+            $decrypted = @openssl_decrypt($ops_data, $algo, $key, OPENSSL_RAW_DATA | OPENSSL_NO_PADDING, $iv);
         }
         return Tools::ops_pkcs5_unpad($decrypted);
     }

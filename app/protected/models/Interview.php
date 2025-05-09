@@ -215,6 +215,7 @@ class Interview extends \yii\db\ActiveRecord
     public function getEgoId($link = false)
     {
         $egoIdString = [];
+        $trueEgoIdString = [];
         $questions = Question::find()->where(array('studyId' => $this->studyId, 'subjectType' => "EGO_ID"))->orderBy(["ordering" => "ASC"])->all();
         $ego_id_questions = [];
         $options = [];
@@ -232,15 +233,26 @@ class Interview extends \yii\db\ActiveRecord
         }
         $answers = Answer::find()->where(array("interviewId" => $this->id, 'questionType' => "EGO_ID"))->andWhere(['!=', 'answerType', 'STORED_VALUE'])->andWhere(['!=', 'answerType', 'RANDOM_NUMBER'])->all();
         foreach ($answers as $answer) {
-            if($link && $study->multiSessionEgoId != $answer->questionId)
-                continue;
-            if (isset($ego_id_questions[$answer->questionId]) && $ego_id_questions[$answer->questionId]->answerType == "MULTIPLE_SELECTION" && isset($options[$answer->value])) {
-                $egoIdString[] = $options[$answer->value];
-            } else {
-                $egoIdString[] = $answer->value;
+            if($link && $study->multiSessionEgoId != $answer->questionId){
+                if (isset($ego_id_questions[$answer->questionId]) && $ego_id_questions[$answer->questionId]->answerType == "MULTIPLE_SELECTION" && isset($options[$answer->value])) {
+                    $egoIdString[] = $options[$answer->value];
+                } else {
+                    $egoIdString[] = $answer->value;
+                }
+            }else{
+                if (isset($ego_id_questions[$answer->questionId]) && $ego_id_questions[$answer->questionId]->answerType == "MULTIPLE_SELECTION" && isset($options[$answer->value])) {
+                    $egoIdString[] = $options[$answer->value];
+                    $trueEgoIdString[] = $options[$answer->value];
+                } else {
+                    $egoIdString[] = $answer->value;
+                    $trueEgoIdString[] = $answer->value;
+                }
             }
         }
-        return implode("_", $egoIdString);
+        if($link)
+            return [implode("_", $trueEgoIdString), implode("_", $egoIdString)];
+        else
+            return implode("_", $egoIdString);
     }
 
     public function exportEgoAlterData($file = null, $withAlters = false, $multiSession = true, $studyOrder = "")
@@ -651,7 +663,7 @@ class Interview extends \yii\db\ActiveRecord
                     $answers[] = "";
                 }
             }
-            if ($matchAtAll) {
+            if ($matchAtAll && $alter != null) {
                 $matchId = "";
                 $matchName = "";
                 $match = MatchedAlters::find()
@@ -1519,7 +1531,7 @@ class Interview extends \yii\db\ActiveRecord
 
         $ego_id = [];
         foreach ($interviews as $interview) {
-            $ego_id[$interview->id] = $interview->getEgoId();
+            $ego_id[$interview->id] = $interview->getEgoId(true);
         }
         $array_ids = [];
         foreach ($alters as $alter) {
@@ -1554,9 +1566,9 @@ class Interview extends \yii\db\ActiveRecord
                     foreach ($interviews as $index=>$interview) {
                         if(!$interview->id)
                             continue;
-                        $eId = $interview->getEgoId(true);
-                        if($eId){
-                            $answers[] = $eId;
+                        //$eId = $interview->getEgoId(true);
+                        if(isset($ego_id[$interview->id] )){
+                            $answers[] = $ego_id[$interview->id][0];
                             break;
                         }
                     }
@@ -1566,7 +1578,7 @@ class Interview extends \yii\db\ActiveRecord
                 foreach ($interviewIds as $index=>$interviewId) {
                     if($interviewId > 0){
                         $answers[] =  $interviewId;
-                        $answers[] = $ego_id[$interviewId];
+                        $answers[] = $ego_id[$interviewId][1];
                     }else{
                         $answers[] = "";
                         $answers[] = "";
