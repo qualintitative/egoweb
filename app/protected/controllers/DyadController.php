@@ -5,7 +5,7 @@ use app\models\ResendVerificationEmailForm;
 use app\models\VerifyEmailForm;
 use Yii;
 use yii\base\InvalidArgumentException;
-use yii\web\BadRequestHttpException;
+use yii\web\ServerErrorHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -79,8 +79,12 @@ class DyadController extends Controller
     public function actionMatching()
     {
         $this->view->title = "EgoWeb 2.0";
+        if (!isset($_POST['export'])) {
+            throw new ServerErrorHttpException( "You must select 2 interviews to use dyad match");
+
+        }
         if (count($_POST['export']) < 2) {
-            die("You must select at least 2 interviews");
+            throw new ServerErrorHttpException( "You must select 2 interviews to use dyad match");
         }
 
         foreach ($_POST['export'] as $key=>$value) {
@@ -115,7 +119,7 @@ class DyadController extends Controller
         ->where(new \yii\db\Expression("FIND_IN_SET(" . $interview2->id .", interviewId)"))
         ->orderBy(['id'=>'ASC'])
         ->all();
-
+        $alters2 = [];
         foreach ($result as $alter) {
             $alters2[$alter->id] = $alter->name;
         }
