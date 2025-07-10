@@ -27,6 +27,7 @@ networkParams = {};
     }
 
 })();
+
 $(function() {
     $('body').on('hidden.bs.modal', '#myModal', function() {
         $(this).removeData('bs.modal');
