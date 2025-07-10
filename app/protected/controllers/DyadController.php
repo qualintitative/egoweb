@@ -83,7 +83,7 @@ class DyadController extends Controller
             throw new ServerErrorHttpException( "You must select 2 interviews to use dyad match");
 
         }
-        if (count($_POST['export']) < 2) {
+        if (count($_POST['export']) != 2) {
             throw new ServerErrorHttpException( "You must select 2 interviews to use dyad match");
         }
 
