@@ -495,7 +495,7 @@ class ImportExportController extends Controller
             }
 
 
-
+            $newInterviewIdList = [];
             if (count($study->interviews) != 0) {
                 foreach ($study->interviews->interview as $interview) {
                     $newInterview = new Interview;
@@ -513,6 +513,7 @@ class ImportExportController extends Controller
                         die();
                     } else {
                         $newInterviewId = Yii::$app->db->getLastInsertID();
+                        $newInterviewIdList[] = $newInterviewId;
                         $newInterviewIds[intval($oldInterviewId)] =  $newInterviewId;
                     }
 
@@ -926,7 +927,7 @@ class ImportExportController extends Controller
                 die();
             }
         }
-        
+        $allPrevAnswers = Answer::findAll(array("interviewId"=>$newInterviewIdList, "questionType"=>"PREVIOUS_ALTER"));
         foreach ($newInterviewIds as $oldId=>$newId) {
             $matches = MatchedAlters::findAll(array("interviewId1"=>$oldId));
             if (count($matches) > 0) {
@@ -949,7 +950,6 @@ class ImportExportController extends Controller
                     $match->save();
                 }
             }
-            
             $matches = MatchedAlters::findAll(array("interviewId2"=>$oldId));
             if (count($matches) > 0) {
                 foreach ($matches as $match) {
@@ -971,13 +971,15 @@ class ImportExportController extends Controller
                     $match->save();
                 }
             }
-            $prevAnswers = Answer::findAll(array("interviewId"=>$newId, "questionType"=>"PREVIOUS_ALTER"));
-            if (count($prevAnswers) > 0) {
-                foreach ($prevAnswers as $prevAnswer) {
-                    if(!isset($newAlterIds[intval($prevAnswer->alterId1)]))
-                        continue;
-                    $prevAnswer->alterId1 = $newAlterIds[intval($prevAnswer->alterId1)];
-                    $prevAnswer->save();
+            if(count($allPrevAnswers) > 0){
+                $prevAnswers = Answer::findAll(array("interviewId"=>$newId, "questionType"=>"PREVIOUS_ALTER"));
+                if (count($prevAnswers) > 0) {
+                    foreach ($prevAnswers as $prevAnswer) {
+                        if(!isset($newAlterIds[intval($prevAnswer->alterId1)]))
+                            continue;
+                        $prevAnswer->alterId1 = $newAlterIds[intval($prevAnswer->alterId1)];
+                        $prevAnswer->save();
+                    }
                 }
             }
         }
@@ -1124,13 +1126,13 @@ class ImportExportController extends Controller
         $study->egoIdPrompt = Tools::sanitizeXml($study->egoIdPrompt);
 //        $study->alterPrompt = Tools::sanitizeXml($study->alterPrompt);
         $study->conclusion = Tools::sanitizeXml($study->conclusion);
-
+        /*
         if (count($interviewIds) > 0) {
             $interviews = Interview::findAll(array("id"=>$interviewIds));
             foreach ($interviews as $result) {
                 $interview[$result->id] = $result;
-                $answer = Answer::findAll(array("interviewId"=>$result->id));
-                $answers[$result->id] = $answer;
+                //$answer = Answer::findAll(array("interviewId"=>$result->id));
+                //$answers[$result->id] = $answer;
                 $alter = Alters::find()
                 ->where(new \yii\db\Expression("FIND_IN_SET(" . $result->id .", interviewId)"))
                 ->orderBy(['ordering'=>'ASC'])
@@ -1143,7 +1145,7 @@ class ImportExportController extends Controller
                 $other = array();
                 $others[$result->id] = $other;
             }
-        }
+        }*/
         $columns = array();
 
         $columns['study'] = Yii::$app->db->getTableSchema("study")->getColumnNames();
