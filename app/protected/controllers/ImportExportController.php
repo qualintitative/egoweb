@@ -151,8 +151,6 @@ class ImportExportController extends Controller
                     $value = intval($value);
                 }elseif ($key == "id") {
                     $value = null;
-                } elseif (in_array($key, array_keys($newStudy->attributes))) {
-                    $newStudy->$key = html_entity_decode($value);
                 }elseif ($key == "name") {
                     $oldStudy = Study::findOne(array("name"=>strval($value)));
                     if ($oldStudy && !$_POST['newName']) {
@@ -160,12 +158,15 @@ class ImportExportController extends Controller
                         $newStudy = $oldStudy;
                     }
                     if($_POST['newName']){
+                        echo strval($_POST['newName']);
                         $oldStudy = Study::findOne(array("name"=>strval($_POST['newName'])));
                         if ($oldStudy){
                             $merge = true;
                             $newStudy = $oldStudy;
                         }
                     }
+                } elseif (in_array($key, array_keys($newStudy->attributes))) {
+                    $newStudy->$key = html_entity_decode($value);
                 }
             }
 
