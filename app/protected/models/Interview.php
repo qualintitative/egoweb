@@ -696,10 +696,10 @@ class Interview extends \yii\db\ActiveRecord
                 if (isset($alter->id)) {
                     
                     foreach ($name_gen_questions[$interview->studyId] as $question) {
-                        if (count($name_gen_questions[$interview->studyId]) == 1) {
-                            $answers[]  = 1;
-                            continue;
-                        }
+                        //if (count($name_gen_questions[$interview->studyId]) == 1) {
+                        //    $answers[]  = 1;
+                        //    continue;
+                        //}
                         $nameGenQIds = explode(",", $alter->nameGenQIds);
                         if (in_array($question->id, $nameGenQIds)) {
                             $answers[]  = "1";

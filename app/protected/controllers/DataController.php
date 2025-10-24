@@ -996,6 +996,12 @@ class DataController extends Controller
                 }
             }
         } else {
+            if($multiSesh){
+              $ids = preg_split(",", $_GET['studyOrder']);
+              foreach($ids as $id){
+                $studyIds[] = intval($id);
+              }
+            }
             $studyIds[] = $study->id;
         }
         ksort($studyIds);
@@ -1069,7 +1075,7 @@ class DataController extends Controller
                     $fields[] = "";
                     $fields[] = "";
                 }
-                if ($question->answerReasonExpressionId) {
+                if ($question->answerReasonExpressionId && isset( $expressions[$question->answerReasonExpressionId])) {
                     $fields[] = $expressions[$question->answerReasonExpressionId];
                 }
                 $rows[] = implode(",", $fields);

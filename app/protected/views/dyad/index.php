@@ -12,6 +12,10 @@ function getInterviews(dropdown, container){
     $(container).html(data);
   });
 }
+function exportCodebook() {
+        var multiSesh = 1;
+        document.location = rootUrl + "/data/codebook/" + $($("select")[0]).val() + "?studyOrder="  + $($("select")[0]).val() + "," + $($("select")[1]).val() + "&multiSession=" + multiSesh;
+    }
 </script>
 <div class="card">
 <div class="card-body">
@@ -61,7 +65,9 @@ echo Html::dropdownlist(
 </div>
 <div class="card">
 <div class="card-body">
-<button class='btn btn-primary'>Dyad Match</button><br style='clear:both'>
+<button class='btn btn-primary'>Dyad Match</button>
+<button class='btn btn-success' onclick="exportCodebook();return false;">Export Codebook</button><br style='clear:both'>
+
 </div>
 </div>
 </form>
